@@ -8,6 +8,11 @@ package com.king.tooth.sys.entity;
 public abstract class AbstractSysResourceEntity extends BasicEntity implements ISysResource{
 	
 	/**
+	 * 资源名
+	 */
+	protected String resourceName;
+	
+	/**
 	 * 是否启用
 	 */
 	protected int isEnabled;

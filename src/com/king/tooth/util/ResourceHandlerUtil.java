@@ -51,7 +51,6 @@ public class ResourceHandlerUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void initBasicPropValsForSave(String entityName, Map<String, Object> data, String shortDesc) {
-		data.put(ResourceNameConstants.PROJECT_ID, CurrentThreadContext.getProjectId());
 		data.put(ResourceNameConstants.ID, getIdentity());
 		
 		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
@@ -80,8 +79,6 @@ public class ResourceHandlerUtil {
 	 * @return id
 	 */
 	public static String initBasicPropValsForSave(Object data, String shortDesc) {
-		ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_PROJECT_ID, new Class[]{String.class}, new Object[]{CurrentThreadContext.getProjectId()});
-		
 		String id = getIdentity();
 		ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_ID, new Class[]{String.class}, new Object[]{id});
 		

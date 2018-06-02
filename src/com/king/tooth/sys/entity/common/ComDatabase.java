@@ -89,9 +89,6 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	public ComDatabase() {
 		this.isEnabled = ENABLED_RESOURCE_STATUS;
 	}
-	public ComDatabase(String id) {
-		this.id = id;
-	}
 	/**
 	 * 构造函数
 	 * <p>其他参数赋值，可以通过调用setXXX方法赋值[除去构造函数中参数对应的属性不需要调用setXXX方法]</p>
@@ -177,6 +174,9 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		this.dbType = dbType;
 	}
 	public String getLoginUserName() {
+		if(StrUtils.isEmpty(loginUserName)){
+			throw new NullPointerException("登录数据库的用户名不能为空！");
+		}
 		return loginUserName;
 	}
 	public void setLoginPassword(String loginPassword) {
@@ -239,7 +239,7 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 			// 如果和我oracle配置库的ip和端口一样，就说明是使用的我们的库，oracle实例名，要用我们的
 			if(SysConfig.getSystemConfig("db.default.ip").equals(getDbIp()) 
 					&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
-				this.dbInstanceName = SysConfig.getSystemConfig("db.instancename");
+				this.dbInstanceName = SysConfig.getSystemConfig("db.default.instancename");
 			}
 			// 否则，说明是客户自己买的数据库服务器，程序要连接过去，这里直接记录实例名即可
 			else{
@@ -250,11 +250,14 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		
 		// 目前，否则就是sqlserver数据库
 		if(StrUtils.isEmpty(dbInstanceName)){
-			throw new IllegalArgumentException("sqlserver的数据库名不能为空！");
+			throw new NullPointerException("sqlserver的数据库名不能为空！");
 		}
 		this.dbInstanceName = dbInstanceName;
 	}
 	public void setLoginUserName(String loginUserName) {
+		if(StrUtils.isEmpty(loginUserName)){
+			throw new NullPointerException("登录数据库的用户名不能为空！");
+		}
 		this.loginUserName = loginUserName;
 	}
 	public int getIsDbCapacityErr() {
@@ -276,7 +279,6 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		return tmpLogFile;
 	}
 	
-	
 	public String toString(){
 		return dbDisplayName;
 	}
@@ -286,19 +288,14 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	 * @return
 	 */
 	public String getUrl() {
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(getDbType())){
-			return DynamicDataConstants.getDataBaseLinkUrl(dbType, dbIp, dbPort, dbInstanceName);
-		}else if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(getDbType())){
-			return DynamicDataConstants.getDataBaseLinkUrl(dbType, dbIp, dbPort, dbInstanceName);
-		}
-		return null;
+		return DynamicDataConstants.getDataBaseLinkUrl(getDbType(), getDbIp(), getDbPort(), getDbInstanceName());
 	}
 	/**
 	 * 获取数据库驱动
 	 * 默认是oracle数据库
 	 * @return
 	 */
-	public String getDriverClassName() {
+	public String getDBDriverClass() {
 		return DynamicDataConstants.getDataBaseDriver(getDbType());
 	}
 	/**

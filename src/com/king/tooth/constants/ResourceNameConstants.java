@@ -21,14 +21,6 @@ public class ResourceNameConstants {
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
-	 * 所属的项目主键的属性名称
-	 */
-	public static final String PROJECT_ID = "projectId";
-	/**
-	 * 设置所属的项目主键的方法
-	 */
-	public static final String SET_PROJECT_ID = "setProjectId";
-	/**
 	 * 主键的属性名称
 	 */
 	public static final String ID = "id";

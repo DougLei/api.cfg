@@ -67,40 +67,4 @@ public class CurrentThreadContext {
 		setCurrentThreadData();
 		currentThreadContext.get().setCurrentSession(session);
 	}
-	
-	//-------------------------------------------------------------------
-	/**
-	 * 获取当前线程的数据库主键
-	 * @return
-	 */
-	public static final String getDatabaseId(){
-		setCurrentThreadData();
-		return currentThreadContext.get().getDatabaseId();
-	}
-	/**
-	 * 给当前线程设置要调用的数据库主键
-	 * @param databaseId
-	 */
-	public static final void setDatabaseId(String databaseId){
-		setCurrentThreadData();
-		currentThreadContext.get().setDatabaseId(databaseId);
-	}
-	
-	//-------------------------------------------------------------------
-	/**
-	 * 获取当前线程的项目主键
-	 * @return
-	 */
-	public static final String getProjectId(){
-		setCurrentThreadData();
-		return currentThreadContext.get().getProjectId();
-	}
-	/**
-	 * 给当前线程设置要调用的项目主键
-	 * @param projectId
-	 */
-	public static final void setProjectId(String projectId){
-		setCurrentThreadData();
-		currentThreadContext.get().setProjectId(projectId);
-	}
 }

@@ -25,6 +25,11 @@ public interface ISysResource {
 	 * 4：数据库资源类型
 	 */
 	public static final int DATABASE_RESOURCE_TYPE = 4;
+	/**
+	 * 资源类型
+	 * 5：项目资源类型
+	 */
+	public static final int PROJECT_RESOURCE_TYPE = 4;
 	
 	/**
 	 * 资源状态

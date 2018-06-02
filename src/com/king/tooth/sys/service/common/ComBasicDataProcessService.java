@@ -76,7 +76,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	private void initCfgDatabaseInfo() {
 		List<CfgTabledata> cfgTables = new ArrayList<CfgTabledata>(31);
 		try {
-			CurrentThreadContext.setProjectId(SysConfig.getSystemConfig("cfg.project.id"));
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			
@@ -93,8 +92,13 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			cfgTables.add(new CfgDatabaseComSqlScriptLinks().toCreateTable(dbType));
 			cfgTables.add(new ComProjectCfgTabledataLinks().toCreateTable(dbType));
 			addCommonTables(cfgTables, dbType);
+			
+			
+			ComDatabase database = new ComDatabase();
+			database.setDbDisplayName("配置平台数据库");
+			database.setLoginUserName(SysConfig.getSystemConfig("jdbc.username"));
 			// 开始创建配置表
-			DBTableHandler dbHandler = new DBTableHandler();
+			DBTableHandler dbHandler = new DBTableHandler(database);
 			dbHandler.createTable(cfgTables);
 			
 			insertResources(SysConfig.getSystemConfig("cfg.database.id"), cfgTables);// 将这些表资源插入到资源表
@@ -144,15 +148,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		// 建立账户和客户的关联关系
 		Map<String, Object> customerComSysAccountDataLink = ResourceHandlerUtil.getDataLinksObject(sinoforceCustomerId, adminAccountId, 2, null, null);
 		HibernateUtil.saveObject("CfgCustomerComSysAccountLinks", customerComSysAccountDataLink , "系统初始化配置客户和帐号关系");
-		
-		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 给本公司(西安博道工业科技有限公司)添加一个测试项目
-		ComProject testProject = new ComProject();
-		testProject.setDatabaseId(SysConfig.getSystemConfig("test.database.id"));
-		testProject.setName("SmartOne-测试项目");
-		testProject.setOwnerCustomerId(sinoforceCustomerId);
-		testProject.setIsTest(1);
-		HibernateUtil.saveObject(testProject, "系统初始化测试项目");
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典数据

@@ -6,10 +6,8 @@ import java.util.Map;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
-import com.king.tooth.sys.entity.common.ComHibernateHbmConfdata;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.freemarker.FreemarkerUtil;
-import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 对hibernate的hbm映射文件操作
@@ -54,9 +52,9 @@ public class HibernateHbmHandler {
 		dataModel.put("columns", tabledata.getColumns());
 		String hbmMappingContent = FreemarkerUtil.process(HBM_FTL_FILE_PATH, dataModel);
 		
-		ComHibernateHbmConfdata hbmData = new ComHibernateHbmConfdata(
-				tabledata.getId(), hbmMappingContent, tabledata.getVersion(), tabledata.getIsDatalinkTable());
-		HibernateUtil.saveObject(hbmData, null);
+//		ComHibernateHbmConfdata hbmData = new ComHibernateHbmConfdata(
+//				tabledata.getId(), hbmMappingContent, tabledata.getIsDatalinkTable());
+//		HibernateUtil.saveObject(hbmData, null);
 		return hbmMappingContent;
 	}
 }

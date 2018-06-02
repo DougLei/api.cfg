@@ -7,12 +7,13 @@ import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.jdbc.util.DynamicDataLinkTableUtil;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 对数据库表的操作
+ * 对数据表的操作
  * 创建/删除
  * @author DougLei
  */
@@ -32,8 +33,8 @@ public class DBTableHandler {
 	 * 构造函数
 	 * @param database 数据库对象 
 	 */
-	public DBTableHandler(){
-		dblink = new DBLink();
+	public DBTableHandler(ComDatabase database){
+		dblink = new DBLink(database);
 		newAbstractCreateTableInstance();
 	}
 	
