@@ -4,6 +4,6 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources"/>
         <property name="java-output-path" value="/sinoforce/bin"/>
-        <property name="context-root" value="api.cfg"/>
+        <property name="context-root" value="cfg"/>
     </wb-module>
 </project-modules>
