@@ -18,6 +18,5 @@
 		<property name="isVisibility" column="is_visibility" type="integer" />
 		<property name="isOper" column="is_oper" type="integer" />
 		<property name="secretLevels" column="secret_levels" type="string" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

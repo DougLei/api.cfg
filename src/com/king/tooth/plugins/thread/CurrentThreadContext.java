@@ -2,7 +2,6 @@ package com.king.tooth.plugins.thread;
 
 import org.hibernate.Session;
 
-import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 
 /**
@@ -103,6 +102,5 @@ public class CurrentThreadContext {
 	public static final void setProjectId(String projectId){
 		setCurrentThreadData();
 		currentThreadContext.get().setProjectId(projectId);
-		currentThreadContext.get().setDatabaseId(ProjectIdRefDatabaseIdMapping.getDbId(projectId));
 	}
 }

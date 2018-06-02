@@ -24,6 +24,5 @@
 		<property name="isTest" column="is_test" type="integer" />
 		<property name="isDeployment" column="is_deployment" type="integer" />
 		<property name="version" column="version" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

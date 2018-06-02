@@ -194,12 +194,6 @@ public class ComDatabase extends BasicEntity implements ITable{
 	public void setDbIp(String dbIp) {
 		this.dbIp = dbIp;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public String getId() {
 		return id;
 	}

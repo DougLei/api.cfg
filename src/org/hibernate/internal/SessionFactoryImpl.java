@@ -1,7 +1,6 @@
 package org.hibernate.internal;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -133,7 +132,6 @@ import org.jboss.logging.Logger;
 
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -1805,274 +1803,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 		return (SessionFactoryImpl) locateSessionFactoryOnDeserialization( uuid, name );
 	}
 	
-	
-	/**
-	 * 添加新的配置文件
-	 * @author DougLei
-	 * @param cfg
-	 * @return 新添加的映射文件集合 
-	 *         Map<String,ClassMetadata>  classMeta
-	 */
-	private Map<String,ClassMetadata> appendNewHbmConfig(Configuration cfg){
-		Log4jUtil.debug("add new config .....");
-		cfg.buildMappings();
-		Mapping mapping = cfg.buildMapping();
-		this.properties.putAll( cfg.getProperties() );
-		
-		final RegionFactory regionFactory = cacheAccess.getRegionFactory();
-		Iterator classes = cfg.getClassMappings();
-		while ( classes.hasNext() ) {
-			PersistentClass model = (PersistentClass) classes.next();
-			if ( !model.isInherited() ) {
-				IdentifierGenerator generator = model.getIdentifier().createIdentifierGenerator(
-						cfg.getIdentifierGeneratorFactory(),
-						getDialect(),
-				        settings.getDefaultCatalogName(),
-				        settings.getDefaultSchemaName(),
-				        (RootClass) model
-				);
-				identifierGenerators.put( model.getEntityName(), generator );
-			}
-		}
-
-		///////////////////////////////////////////////////////////////////////
-		// Prepare persisters and link them up with their cache
-		// region/access-strategy
-
-		final String cacheRegionPrefix = settings.getCacheRegionPrefix() == null ? "" : settings.getCacheRegionPrefix() + ".";
-
-		final PersisterFactory persisterFactory = serviceRegistry.getService( PersisterFactory.class );
-
-		Map entityAccessStrategies = new HashMap();
-		Map<String,ClassMetadata> classMeta = new HashMap<String,ClassMetadata>();
-		classes = cfg.getClassMappings();
-		while ( classes.hasNext() ) {
-			final PersistentClass model = (PersistentClass) classes.next();
-			model.prepareTemporaryTables( mapping, getDialect() );
-			final String cacheRegionName = cacheRegionPrefix + model.getRootClass().getCacheRegionName();
-			// cache region is defined by the root-class in the hierarchy...
-			EntityRegionAccessStrategy accessStrategy = ( EntityRegionAccessStrategy ) entityAccessStrategies.get( cacheRegionName );
-			if ( accessStrategy == null && settings.isSecondLevelCacheEnabled() ) {
-				final AccessType accessType = AccessType.fromExternalName( model.getCacheConcurrencyStrategy() );
-				if ( accessType != null ) {
-					LOG.tracef( "Building shared cache region for entity data [%s]", model.getEntityName() );
-					EntityRegion entityRegion = regionFactory.buildEntityRegion( cacheRegionName, properties, CacheDataDescriptionImpl.decode( model ) );
-					accessStrategy = entityRegion.buildAccessStrategy( accessType );
-					entityAccessStrategies.put( cacheRegionName, accessStrategy );
-					cacheAccess.addCacheRegion( cacheRegionName, entityRegion );
-				}
-			}
-			
-			NaturalIdRegionAccessStrategy naturalIdAccessStrategy = null;
-			if ( model.hasNaturalId() && model.getNaturalIdCacheRegionName() != null ) {
-				final String naturalIdCacheRegionName = cacheRegionPrefix + model.getNaturalIdCacheRegionName();
-				naturalIdAccessStrategy = ( NaturalIdRegionAccessStrategy ) entityAccessStrategies.get( naturalIdCacheRegionName );
-				
-				if ( naturalIdAccessStrategy == null && settings.isSecondLevelCacheEnabled() ) {
-					final CacheDataDescriptionImpl cacheDataDescription = CacheDataDescriptionImpl.decode( model );
-					
-					NaturalIdRegion naturalIdRegion = null;
-					try {
-						naturalIdRegion = regionFactory.buildNaturalIdRegion( naturalIdCacheRegionName, properties,
-								cacheDataDescription );
-					}
-					catch ( UnsupportedOperationException e ) {
-						LOG.warnf(
-								"Shared cache region factory [%s] does not support natural id caching; " +
-										"shared NaturalId caching will be disabled for not be enabled for %s",
-								regionFactory.getClass().getName(),
-								model.getEntityName()
-						);
-					}
-					
-					if (naturalIdRegion != null) {
-						naturalIdAccessStrategy = naturalIdRegion.buildAccessStrategy( regionFactory.getDefaultAccessType() );
-						entityAccessStrategies.put( naturalIdCacheRegionName, naturalIdAccessStrategy );
-						cacheAccess.addCacheRegion(  naturalIdCacheRegionName, naturalIdRegion );
-					}
-				}
-			}
-			
-			EntityPersister cp = persisterFactory.createEntityPersister(
-					model,
-					accessStrategy,
-					naturalIdAccessStrategy,
-					this,
-					mapping
-			);
-			entityPersisters.put( model.getEntityName(), cp );
-			classMeta.put( model.getEntityName(), cp.getClassMetadata() );
-		}
-		classMetadata.putAll(classMeta);
-		
-		Map<String,Set<String>> tmpEntityToCollectionRoleMap = new HashMap<String,Set<String>>();
-		Map<String,CollectionMetadata> tmpCollectionMetadata = new HashMap<String,CollectionMetadata>();
-		Iterator collections = cfg.getCollectionMappings();
-		while ( collections.hasNext() ) {
-			Collection model = (Collection) collections.next();
-			final String cacheRegionName = cacheRegionPrefix + model.getCacheRegionName();
-			final AccessType accessType = AccessType.fromExternalName( model.getCacheConcurrencyStrategy() );
-			CollectionRegionAccessStrategy accessStrategy = null;
-			if ( accessType != null && settings.isSecondLevelCacheEnabled() ) {
-				LOG.tracev( "Building shared cache region for collection data [{0}]", model.getRole() );
-				CollectionRegion collectionRegion = regionFactory.buildCollectionRegion( cacheRegionName, properties, CacheDataDescriptionImpl
-						.decode( model ) );
-				accessStrategy = collectionRegion.buildAccessStrategy( accessType );
-				entityAccessStrategies.put( cacheRegionName, accessStrategy );
-				cacheAccess.addCacheRegion( cacheRegionName, collectionRegion );
-			}
-			CollectionPersister persister = persisterFactory.createCollectionPersister(
-					cfg,
-					model,
-					accessStrategy,
-					this
-			) ;
-			collectionPersisters.put( model.getRole(), persister );
-			tmpCollectionMetadata.put( model.getRole(), persister.getCollectionMetadata() );
-			Type indexType = persister.getIndexType();
-			if ( indexType != null && indexType.isAssociationType() && !indexType.isAnyType() ) {
-				String entityName = ( ( AssociationType ) indexType ).getAssociatedEntityName( this );
-				Set roles = tmpEntityToCollectionRoleMap.get( entityName );
-				if ( roles == null ) {
-					roles = new HashSet();
-					tmpEntityToCollectionRoleMap.put( entityName, roles );
-				}
-				roles.add( persister.getRole() );
-			}
-			Type elementType = persister.getElementType();
-			if ( elementType.isAssociationType() && !elementType.isAnyType() ) {
-				String entityName = ( ( AssociationType ) elementType ).getAssociatedEntityName( this );
-				Set roles = tmpEntityToCollectionRoleMap.get( entityName );
-				if ( roles == null ) {
-					roles = new HashSet();
-					tmpEntityToCollectionRoleMap.put( entityName, roles );
-				}
-				roles.add( persister.getRole() );
-			}
-		}
-		
-		Iterator itr = tmpEntityToCollectionRoleMap.entrySet().iterator();
-		while ( itr.hasNext() ) {
-			final Map.Entry entry = ( Map.Entry ) itr.next();
-			entry.setValue( Collections.unmodifiableSet( ( Set ) entry.getValue() ) );
-		}
-
-		//Named Queries:
-		namedQueries.putAll(cfg.getNamedQueries());
-		namedSqlQueries.putAll(cfg.getNamedSQLQueries());
-		sqlResultSetMappings.putAll(cfg.getSqlResultSetMappings());
-		imports.putAll(cfg.getImports());
-
-		// after *all* persisters and named queries are registered
-		Iterator iter = entityPersisters.values().iterator();
-		while ( iter.hasNext() ) {
-			final EntityPersister persister = ( ( EntityPersister ) iter.next() );
-			persister.postInstantiate();
-			registerEntityNameResolvers( persister );
-
-		}
-		iter = collectionPersisters.values().iterator();
-		while ( iter.hasNext() ) {
-			final CollectionPersister persister = ( ( CollectionPersister ) iter.next() );
-			persister.postInstantiate();
-		}
-
-		//JNDI + Serialization:
-
-		SessionFactoryRegistry.INSTANCE.addSessionFactory(
-				uuid,
-				name,
-				settings.isSessionFactoryNameAlsoJndiName(),
-				this,
-				serviceRegistry.getService( JndiService.class )
-		);
-
-		LOG.debug( "Instantiated session factory" );
-
-		settings.getMultiTableBulkIdStrategy().prepare(
-				jdbcServices,
-				buildLocalConnectionAccess(),
-				cfg.createMappings(),
-				cfg.buildMapping(),
-				properties
-		);
-
-
-		if ( settings.isAutoCreateSchema() ) {
-			new SchemaExport( serviceRegistry, cfg )
-					.setImportSqlCommandExtractor( serviceRegistry.getService( ImportSqlCommandExtractor.class ) )
-					.create( false, true );
-		}
-		if ( settings.isAutoUpdateSchema() ) {
-			new SchemaUpdate( serviceRegistry, cfg ).execute( false, true );
-		}
-		if ( settings.isAutoValidateSchema() ) {
-			new SchemaValidator( serviceRegistry, cfg ).validate();
-		}
-		if ( settings.isAutoDropSchema() ) {
-			schemaExport = new SchemaExport( serviceRegistry, cfg )
-					.setImportSqlCommandExtractor( serviceRegistry.getService( ImportSqlCommandExtractor.class ) );
-		}
-
-		//checking for named queries
-		if ( settings.isNamedQueryStartupCheckingEnabled() ) {
-			final Map<String,HibernateException> errors = checkNamedQueries();
-			if ( ! errors.isEmpty() ) {
-				StringBuilder failingQueries = new StringBuilder( "Errors in named queries: " );
-				String sep = "";
-				for ( Map.Entry<String,HibernateException> entry : errors.entrySet() ) {
-					LOG.namedQueryError( entry.getKey(), entry.getValue() );
-					failingQueries.append( sep ).append( entry.getKey() );
-					sep = ", ";
-				}
-				throw new HibernateException( failingQueries.toString() );
-			}
-		}
-
-		// this needs to happen after persisters are all ready to go...
-		itr = cfg.iterateFetchProfiles();
-		while ( itr.hasNext() ) {
-			final org.hibernate.mapping.FetchProfile mappingProfile =
-					( org.hibernate.mapping.FetchProfile ) itr.next();
-			final FetchProfile fetchProfile = new FetchProfile( mappingProfile.getName() );
-			for ( org.hibernate.mapping.FetchProfile.Fetch mappingFetch : mappingProfile.getFetches() ) {
-				// resolve the persister owning the fetch
-				final String entityName = getImportedClassName( mappingFetch.getEntity() );
-				final EntityPersister owner = entityName == null
-						? null
-						: entityPersisters.get( entityName );
-				if ( owner == null ) {
-					throw new HibernateException(
-							"Unable to resolve entity reference [" + mappingFetch.getEntity()
-									+ "] in fetch profile [" + fetchProfile.getName() + "]"
-					);
-				}
-
-				// validate the specified association fetch
-				Type associationType = owner.getPropertyType( mappingFetch.getAssociation() );
-				if ( associationType == null || !associationType.isAssociationType() ) {
-					throw new HibernateException( "Fetch profile [" + fetchProfile.getName() + "] specified an invalid association" );
-				}
-
-				// resolve the style
-				final Fetch.Style fetchStyle = Fetch.Style.parse( mappingFetch.getStyle() );
-
-				// then construct the fetch instance...
-				fetchProfile.addFetch( new Association( owner, mappingFetch.getAssociation() ), fetchStyle );
-				((Loadable) owner).registerAffectingFetchProfile( fetchProfile.getName() );
-			}
-			fetchProfiles.put( fetchProfile.getName(), fetchProfile );
-		}
-
-		this.customEntityDirtinessStrategy = determineCustomEntityDirtinessStrategy();
-		this.currentTenantIdentifierResolver = determineCurrentTenantIdentifierResolver( cfg.getCurrentTenantIdentifierResolver() );
-		this.transactionEnvironment = new TransactionEnvironmentImpl( this );
-		this.observer.sessionFactoryCreated(this);
-		
-		return classMeta;
-	}  
-	
-	
 	/**
 	 * <pre>
 	 *   hibernate每个映射配置文件中entity-name和property数组的缓存
@@ -2090,26 +1820,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 * </pre>
 	 */
 	private transient final List<String> hibernateDataLinkResourceNameList = new ArrayList<String>();
-	
-	/**
-	 * 【数据流方式】添加新的配置文件
-	 * @author DougLei
-	 * @param input
-	 * @return 新添加的映射文件集合
-	 *         Map<String,ClassMetadata>  classMeta
-	 */
-	public void appendNewHbmConfig(List<InputStream> input){
-		if(input == null || input.size() == 0){
-			Log4jUtil.debug("sessionFactory要追加的映射文件信息为null");
-			return;
-		}
-		Configuration cfg = new Configuration();
-		for (InputStream in : input) {
-			cfg.addInputStream(in);
-		}
-		Map<String, ClassMetadata> newMappingConfClassMetadata = appendNewHbmConfig(cfg);
-		appendToHibernateDefineResourcePropNameMap(newMappingConfClassMetadata, true);
-	}
 	
 	/**
 	 * 将新追加入系统的hibernate配置映射文件元数据，加入到hibernateDefineResourcePropNameMap缓存中
@@ -2260,17 +1970,5 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 			}
 		}
 		return databaseType;
-	}
-
-	/**
-	 * 从sessionFactory中删除对应表的所有hbm映射信息
-	 * @param resourceNames
-	 */
-	public void removeHbmConfig(List<String> resourceNames) {
-		for (String resourceName : resourceNames) {
-			classMetadata.remove(resourceName);
-			hibernateDefineResourcePropNameMap.remove(resourceName);
-			hibernateDataLinkResourceNameList.remove(resourceName);
-		}
 	}
 }

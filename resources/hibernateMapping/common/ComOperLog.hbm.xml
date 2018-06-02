@@ -18,6 +18,5 @@
 		<property name="operData" column="oper_data" type="string" />
 		<property name="operResultIsSuccess" column="oper_result_is_success" type="integer" />
 		<property name="errorMsg" column="error_msg" type="string" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

@@ -93,12 +93,6 @@ public class ComModuleOperation extends BasicEntity implements ITable{
 	public String getLastUpdatedUserId() {
 		return lastUpdatedUserId;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public String getCode() {
 		return code;
 	}

@@ -26,6 +26,5 @@
 		<property name="comments" column="comments" type="string" />
 		<property name="version" column="version" type="integer" />
 		<property name="isCreated" column="is_created" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

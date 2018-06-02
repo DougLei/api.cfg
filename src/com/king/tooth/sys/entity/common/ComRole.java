@@ -110,12 +110,6 @@ public class ComRole extends BasicEntity implements ITable{
 	public int getOrderCode() {
 		return orderCode;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public List<ComPermission> getPermissions() {
 		return permissions;
 	}

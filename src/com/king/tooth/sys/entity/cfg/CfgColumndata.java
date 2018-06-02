@@ -134,12 +134,6 @@ public class CfgColumndata extends BasicEntity implements ITable{
 	public Date getLastUpdateTime() {
 		return lastUpdateTime;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public int getIsDataDictionary() {
 		return isDataDictionary;
 	}

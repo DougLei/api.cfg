@@ -25,6 +25,5 @@
 		<property name="isCreated" column="is_created" type="integer" />
 		<property name="isEnabled" column="is_enabled" type="integer" />
 		<property name="comments" column="comments" type="string" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

@@ -181,12 +181,6 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 		}
 		return dbType;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public String getTableName() {
 		return tableName;
 	}

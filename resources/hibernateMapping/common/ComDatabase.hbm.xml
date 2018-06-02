@@ -26,6 +26,5 @@
 		<property name="isDbCapacityErr" column="is_db_capacity_err" type="integer" />
 		<property name="dbCapacityDesc" column="db_capacity_desc" type="string" />
 		<property name="isCreated" column="is_created" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

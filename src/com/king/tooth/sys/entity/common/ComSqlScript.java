@@ -202,12 +202,6 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}

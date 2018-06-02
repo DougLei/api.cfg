@@ -12,6 +12,5 @@
 		<property name="leftId" column="left_id" type="string" />
 		<property name="rightId" column="right_id" type="string" />
 		<property name="orderCode" column="order_code" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

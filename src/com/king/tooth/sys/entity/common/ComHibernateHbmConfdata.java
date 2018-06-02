@@ -81,12 +81,6 @@ public class ComHibernateHbmConfdata extends BasicEntity implements ITable{
 	public int getIsDatalinkTableMapping() {
 		return isDatalinkTableMapping;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public String getId() {
 		return id;
 	}

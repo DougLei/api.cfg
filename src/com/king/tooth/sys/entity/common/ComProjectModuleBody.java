@@ -102,12 +102,6 @@ public class ComProjectModuleBody extends BasicEntity implements ITable{
 	public void setVersion(int version) {
 		this.version = version;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public int getIsEnabled() {
 		return isEnabled;
 	}

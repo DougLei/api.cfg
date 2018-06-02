@@ -9,8 +9,6 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
-import com.king.tooth.sys.entity.run.RunDept;
-import com.king.tooth.sys.entity.run.RunPosition;
 
 /**
  * [通用的]人员资源对象
@@ -94,15 +92,6 @@ public class ComUser extends BasicEntity implements ITable{
 	
 	//-------------------------------------------------------------------------
 	
-	/**
-	 * 所具有的职务集合
-	 */
-	private List<RunPosition> positions;
-	/**
-	 * 所属部门
-	 */
-	private RunDept dept;
-	
 	public ComUser() {
 		this.userStatus = 1;
 	}
@@ -113,20 +102,11 @@ public class ComUser extends BasicEntity implements ITable{
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
-	public List<RunPosition> getPositions() {
-		return positions;
-	}
 	public void setId(String id) {
 		this.id = id;
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
@@ -136,15 +116,6 @@ public class ComUser extends BasicEntity implements ITable{
 	}
 	public void setLastUpdatedUserId(String lastUpdatedUserId) {
 		this.lastUpdatedUserId = lastUpdatedUserId;
-	}
-	public void setPositions(List<RunPosition> positions) {
-		this.positions = positions;
-	}
-	public RunDept getDept() {
-		return dept;
-	}
-	public void setDept(RunDept dept) {
-		this.dept = dept;
 	}
 	public String getNikeName() {
 		return nikeName;

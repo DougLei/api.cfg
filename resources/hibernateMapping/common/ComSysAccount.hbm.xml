@@ -23,6 +23,5 @@
 		<property name="accountStatusDes" column="account_status_des" type="string" />
 		<property name="validDate" column="valid_date" type="timestamp" />
 		<property name="isUnDelete" column="is_un_delete" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>
