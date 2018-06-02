@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.king.tooth.sys.entity.common.ComSqlScript" table="COM_SQL_SCRIPT">
+		<id name="id" column="id" type="string">
+			<generator class="assigned" />
+		</id>
+		<property name="createUserId" column="create_user_id" type="string" />
+		<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />
+		<property name="createTime" column="create_time" type="timestamp" />
+		<property name="lastUpdateTime" column="last_update_time" type="timestamp" />
+		
+		<property name="sqlScriptCaption" column="sql_script_caption" type="string" />
+		<property name="sqlScriptResourceName" column="sql_script_resource_name" type="string" />
+		<property name="dbType" column="db_type" type="string" />
+		<property name="sqlScriptType" column="sql_script_type" type="string" />
+		<property name="sqlScriptContent" column="sql_script_content" type="string" />
+		<property name="sqlScriptParameters" column="sql_script_parameters" type="string" />
+		<property name="sqlQueryResultColumns" column="sql_query_result_columns" type="string" />
+		<property name="procedureName" column="procedure_name" type="string" />
+		<property name="procedureParameters" column="procedure_parameters" type="string" />
+		<property name="isCreated" column="is_created" type="integer" />
+		<property name="isEnabled" column="is_enabled" type="integer" />
+		<property name="comments" column="comments" type="string" />
+		<property name="projectId" column="project_id" type="string" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.king.tooth.sys.entity.cfg.CfgCustomer" table="CFG_CUSTOMER">
+		<id name="id" column="id" type="string">
+			<generator class="assigned" />
+		</id>
+		<property name="createUserId" column="create_user_id" type="string" />
+		<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />
+		<property name="createTime" column="create_time" type="timestamp" />
+		<property name="lastUpdateTime" column="last_update_time" type="timestamp" />
+		
+		<property name="name" column="name" type="string" />
+		<property name="shortName" column="short_name" type="string" />
+		<property name="addr" column="addr" type="string" />
+		<property name="taxNum" column="tax_num" type="string" />
+		<property name="tel" column="tel" type="string" />
+		<property name="bank" column="bank" type="string" />
+		<property name="bankCardNo" column="bank_card_no" type="string" />
+		<property name="contactUserName" column="contact_user_name" type="string" />
+		<property name="contactUserTel" column="contact_user_tel" type="string" />
+		<property name="contactUserEmail" column="contact_user_email" type="string" />
+		<property name="remark" column="remark" type="string" />
+		<property name="isUnDelete" column="is_un_delete" type="integer" />
+		<property name="projectId" column="project_id" type="string" />
+	</class>
+</hibernate-mapping>

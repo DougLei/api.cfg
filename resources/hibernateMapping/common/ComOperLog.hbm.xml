@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.king.tooth.sys.entity.common.ComOperLog" table="COM_OPER_LOG">
+		<id name="id" column="id" type="string">
+			<generator class="assigned" />
+		</id>
+		<property name="createUserId" column="create_user_id" type="string" />
+		<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />
+		<property name="createTime" column="create_time" type="timestamp" />
+		<property name="lastUpdateTime" column="last_update_time" type="timestamp" />
+		
+		<property name="reqLogId" column="req_log_id" type="string" />
+		<property name="operType" column="oper_type" type="string" />
+		<property name="operData" column="oper_data" type="string" />
+		<property name="operResultIsSuccess" column="oper_result_is_success" type="integer" />
+		<property name="errorMsg" column="error_msg" type="string" />
+		<property name="projectId" column="project_id" type="string" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						">
+	
+	<!-- 装配hibernate的配置，创建配置平台的sessionFactory实例  -->
+	<bean id="cfgSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" scope="singleton">
+		<property name="dataSource" ref="cfgDataSource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+			</props>
+		</property>
+		<property name="mappingLocations" >
+			<array>
+				<value>classpath:hibernateMapping/cfg/**/**.hbm.xml</value>
+				<value>classpath:hibernateMapping/common/**/*.hbm.xml</value>
+			</array>
+		</property>
+	</bean>
+	
+	<!-- 装配hibernate的配置，创建测试平台的sessionFactory实例  -->
+	<bean id="testSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" scope="singleton">
+		<property name="dataSource" ref="testDataSource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+			</props>
+		</property>
+		<property name="mappingLocations" >
+			<array>
+				<value>classpath:hibernateMapping/run/**/**.hbm.xml</value>
+				<value>classpath:hibernateMapping/common/**/*.hbm.xml</value>
+			</array>
+		</property>
+	</bean>
+	
+	<!-- 配置动态sessionFactory持有者对象 -->
+	<bean id="dynamicSessionFactoryHolder" class="com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHolder">
+		<property name="sessionFactorys">
+			<map key-type="java.lang.String">
+				<entry key="${cfg.database.id}" value-ref="cfgSessionFactory"></entry>
+				<entry key="${test.database.id}" value-ref="testSessionFactory"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 配置动态的hibernate sessionFactory操作者对象 -->
+	<bean id="dynamicHibernateSessionFactoryHandler" class="com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler">
+		<property name="sessionFactoryHolder" ref="dynamicSessionFactoryHolder"></property>
+	</bean>
+	
+</beans>

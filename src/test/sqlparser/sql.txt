@@ -1,0 +1,6 @@
+create proc pp
+@name varchar,
+@age int output
+as
+set @age=2
+go

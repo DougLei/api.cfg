@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.king.tooth.sys.entity.common.ComProject" table="COM_PROJECT">
+		<id name="id" column="id" type="string">
+			<generator class="assigned" />
+		</id>
+		<property name="createUserId" column="create_user_id" type="string" />
+		<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />
+		<property name="createTime" column="create_time" type="timestamp" />
+		<property name="lastUpdateTime" column="last_update_time" type="timestamp" />
+		
+		<property name="ownerCustomerId" column="owner_customer_id" type="string" />
+		<property name="databaseId" column="database_id" type="string" />
+		<property name="name" column="name" type="string" />
+		<property name="descs" column="descs" type="string" />
+		<property name="progressStatus" column="progress_status" type="integer" />
+		<property name="startDate" column="start_date" type="timestamp" />
+		<property name="planEndDate" column="plan_end_date" type="timestamp" />
+		<property name="endDate" column="end_date" type="timestamp" />
+		<property name="isTest" column="is_test" type="integer" />
+		<property name="isDeployment" column="is_deployment" type="integer" />
+		<property name="version" column="version" type="integer" />
+		<property name="projectId" column="project_id" type="string" />
+	</class>
+</hibernate-mapping>

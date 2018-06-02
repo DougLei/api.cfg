@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						">
+	<description>Spring配置的主文件，包括引用整合其他框架的配置文件</description>
+	
+	<!-- 读取参数配置 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				 <value>classpath:jdbc.properties</value>
+				 <value>classpath:redis.properties</value>
+			</list>
+		</property>
+	</bean>
+   	
+   	<!-- spring容器启动时，将applicationContext注入到该类的属性中 -->
+   	<bean id="springContextHelper" class="com.king.tooth.util.SpringContextHelper" scope="singleton"></bean>
+   	
+   	
+    <!-- 引入整合其他框架的配置文件 -->
+   	<!-- 整合redis -->
+   	<import resource="classpath:spring-redis.xml"/>
+   	<!-- 整合datasource -->
+   	<import resource="classpath:spring-datasource.xml"/>
+   	<!-- 整合hibernate -->
+   	<import resource="classpath:spring-hibernate.xml"/>
+   	
+</beans>

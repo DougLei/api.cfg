@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.king.tooth.sys.entity.common.ComModuleOperation" table="COM_MODULE_OPERATION">
+		<id name="id" column="id" type="string">
+			<generator class="assigned" />
+		</id>
+		<property name="createUserId" column="create_user_id" type="string" />
+		<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />
+		<property name="createTime" column="create_time" type="timestamp" />
+		<property name="lastUpdateTime" column="last_update_time" type="timestamp" />
+		
+		<property name="moduleId" column="module_id" type="string" />
+		<property name="name" column="name" type="string" />
+		<property name="code" column="code" type="string" />
+		<property name="url" column="url" type="string" />
+		<property name="icon" column="icon" type="string" />
+		<property name="isHide" column="is_hide" type="integer" />
+		<property name="orderCode" column="order_code" type="integer" />
+		<property name="isEnabled" column="is_enabled" type="integer" />
+		<property name="isPermissionConstraint" column="is_permission_constraint" type="integer" />
+		<property name="projectId" column="project_id" type="string" />
+	</class>
+</hibernate-mapping>

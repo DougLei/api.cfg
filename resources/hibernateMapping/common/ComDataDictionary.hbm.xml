@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.king.tooth.sys.entity.common.ComDataDictionary" table="COM_DATA_DICTIONARY">
+		<id name="id" column="id" type="string">
+			<generator class="assigned" />
+		</id>
+		<property name="createUserId" column="create_user_id" type="string" />
+		<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />
+		<property name="createTime" column="create_time" type="timestamp" />
+		<property name="lastUpdateTime" column="last_update_time" type="timestamp" />
+		
+		<property name="code" column="code" type="string" />
+		<property name="parentCodeId" column="parent_code_id" type="string" />
+		<property name="codeCaption" column="code_caption" type="string" />
+		<property name="codeValue" column="code_value" type="string" />
+		<property name="orderCode" column="order_code" type="integer" />
+		<property name="comments" column="comments" type="string" />
+		<property name="projectId" column="project_id" type="string" />
+	</class>
+</hibernate-mapping>

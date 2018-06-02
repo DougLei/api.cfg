@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						">
+
+	<!-- redis连接池配置 --> 
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">  
+        <property name="maxIdle" value="${redis.maxIdle}" /> 
+        <property name="maxTotal" value="${redis.maxActive}" />
+        <property name="maxWaitMillis" value="${redis.maxWait}" />  
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />  
+    </bean>
+    
+    <!-- redis连接工厂-->  
+   	<bean id="connectionFactory"  class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">  
+         <property name="poolConfig" ref="poolConfig" />  
+         <property name="hostName" value="${redis.host}" />  
+         <property name="port" value="${redis.port}" />  
+         <property name="password" value="${redis.password}" />  
+         <property name="timeout" value="${redis.timeout}" />  
+   	</bean> 
+   	
+   	<!-- spring整合redis的支持类  -->
+   	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">  
+		<property name="connectionFactory" ref="connectionFactory" />
+		
+		<!-- 配置key的编译策略:用string -->
+		<property name="keySerializer">
+			<bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+		
+		<!-- 配置value的编译策略:用序列化 -->
+		<property name="valueSerializer">
+			<bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+		</property>
+   	</bean>
+   	
+   	<!-- 配置redis的常用操作管理类 -->
+   	<bean id="basicRedisOps" class="com.king.tooth.plugins.redis.BasicRedisHandler"></bean>
+  
+   	<!-- 配置redis的常用操作管理类的默认实现 -->
+   	<bean id="defaultRedisOps" class="com.king.tooth.plugins.redis.DefaultRedisHandler"></bean>
+   	
+   	<!-- 配置redis的常用操作工具类 -->
+   	<bean id="redisHandlerUtil" class="com.king.tooth.util.redis.RedisHandlerUtil">
+   		<property name="defaultRedisOps" ref="defaultRedisOps"></property>
+   	</bean>
+</beans>
