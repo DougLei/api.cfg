@@ -1,0 +1,1 @@
+-server -Xms512m -Xmx1024m -XX:PermSize=256M -XX:MaxPermSize=512m
