@@ -11,7 +11,7 @@ import org.hibernate.internal.HbmConfPropMetadata;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.AbstractSysResourceEntity;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -106,16 +106,16 @@ public class BuiltinQueryCondFuncUtil {
 		}
 		
 		HbmConfPropMetadata[] hibernateDefineResourceProps = null;
-		if(requestResourceType == ISysResource.TABLE_RESOURCE_TYPE){
+		if(requestResourceType == AbstractSysResourceEntity.TABLE_RESOURCE_TYPE){
 			hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(resourceName);
 		}
 		
 		String dbScriptStatements = null;
 		IQueryCondFuncEntity queryCondFuncEntity = null;
 		for (Entry<String, String> entry : queryCondParamsSet) {
-			if(requestResourceType == ISysResource.TABLE_RESOURCE_TYPE){
+			if(requestResourceType == AbstractSysResourceEntity.TABLE_RESOURCE_TYPE){
 				queryCondFuncEntity = new HqlQueryCondFuncEntity(HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, entry.getKey()), entry.getValue());
-			}else if(requestResourceType == ISysResource.SQLSCRIPT_RESOURCE_TYPE){
+			}else if(requestResourceType == AbstractSysResourceEntity.SQLSCRIPT_RESOURCE_TYPE){
 				queryCondFuncEntity = new SqlQueryCondFuncEntity(entry.getKey(), entry.getValue());
 			}
 			

@@ -22,8 +22,9 @@
 		<property name="sqlQueryResultColumns" column="sql_query_result_columns" type="string" />
 		<property name="procedureName" column="procedure_name" type="string" />
 		<property name="procedureParameters" column="procedure_parameters" type="string" />
-		<property name="isCreated" column="is_created" type="integer" />
-		<property name="isEnabled" column="is_enabled" type="integer" />
 		<property name="comments" column="comments" type="string" />
+		<property name="isEnabled" column="is_enabled" type="integer" />
+		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
+		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
 	</class>
 </hibernate-mapping>

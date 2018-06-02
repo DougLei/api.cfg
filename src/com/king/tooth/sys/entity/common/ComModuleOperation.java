@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.AbstractSysResourceEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -63,7 +63,7 @@ public class ComModuleOperation extends BasicEntity implements ITable{
 	
 	public ComModuleOperation() {
 		this.isPermissionConstraint = 1;
-		this.isEnabled = ISysResource.ENABLED_RESOURCE_STATUS;
+		this.isEnabled = AbstractSysResourceEntity.ENABLED_RESOURCE_STATUS;
 	}
 	
 	public String getName() {

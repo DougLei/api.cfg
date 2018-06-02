@@ -160,24 +160,6 @@ public class HibernateUtil {
 	
 	//------------------------------------------------------------------------------------------------------
 	
-//	/**
-//	 * 【文件方式】添加新的配置文件
-//	 * @param hbmFiles
-//	 */
-//	public static void appendNewConfig(String... hbmFiles){
-//		getSessionFactory().appendNewConfig(hbmFiles);
-//	}
-//	
-//	/**
-//	 * 【数据流方式】添加新的配置文件
-//	 * @param input
-//	 */
-//	public static void appendNewConfig(InputStream... input){
-//		getSessionFactory().appendNewConfig(input);
-//	}
-	
-	//------------------------------------------------------------------------------------------------------
-	
 	/**
 	 * 根据实体类名，即资源名，获取hibernate映射文件中，配置定义的属性信息集合
 	 * @param resourceName

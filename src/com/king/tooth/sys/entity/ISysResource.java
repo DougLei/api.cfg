@@ -1,12 +1,10 @@
 package com.king.tooth.sys.entity;
 
-
 /**
  * 系统资源接口
  * @author DougLei
  */
 public interface ISysResource {
-	
 	/**
 	 * 资源类型
 	 * 1：表资源类型
@@ -22,6 +20,11 @@ public interface ISysResource {
 	 * 3：代码资源类型
 	 */
 	public static final int CODE_RESOURCE_TYPE = 3;
+	/**
+	 * 资源类型
+	 * 4：数据库资源类型
+	 */
+	public static final int DATABASE_RESOURCE_TYPE = 4;
 	
 	/**
 	 * 资源状态
@@ -39,19 +42,22 @@ public interface ISysResource {
 	 * @return
 	 */
 	public int getResourceType();
+	
 	/**
 	 * 获取资源的状态
 	 * @return
 	 */
 	public int getIsEnabled();
+	
 	/**
 	 * 获取资源名
 	 * @return
 	 */
 	public String getResourceName();
+	
 	/**
-	 * 获取资源引用的目标资源主键
+	 * 获取资源主键
 	 * @return
 	 */
-	public String getRefResourceId();
+	public String getResourceId();
 }

@@ -8,10 +8,8 @@ import java.util.Random;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.AbstractSysResourceEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComHibernateHbmConfdata;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -21,7 +19,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
+public class CfgTabledata extends AbstractSysResourceEntity implements ITable{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -71,10 +69,6 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 	 */
 	private String subRefParentColumnName;
 	/**
-	 * 是否启用
-	 */
-	private int isEnabled;
-	/**
 	 * 版本
 	 */
 	private int version;
@@ -82,30 +76,16 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 	 * 注释
 	 */
 	private String comments;
-
 	/**
 	 * 是否是关系表，默认是0
 	 */
 	private int isDatalinkTable;
-	/**
-	 * 是否被创建
-	 */
-	private int isCreated;
 	
 	//-----------------------------------------------------------------------
-	/**
-	 * 是否立即创建
-	 * <p>给前端用的属性</p>
-	 */
-	private int isCreateNow;
 	/**
 	 * 列集合
 	 */
 	private List<CfgColumndata> columns;
-	/**
-	 * hibernate映射配置数据信息资源对象
-	 */
-	private ComHibernateHbmConfdata hibernateHbmConfdata;
 	/**
 	 * 数据库类型
 	 */
@@ -169,12 +149,6 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public ComHibernateHbmConfdata getHibernateHbmConfdata() {
-		return hibernateHbmConfdata;
-	}
-	public void setHibernateHbmConfdata(ComHibernateHbmConfdata hibernateHbmConfdata) {
-		this.hibernateHbmConfdata = hibernateHbmConfdata;
-	}
 	public String getDbType() {
 		if(StrUtils.isEmpty(dbType)){
 			dbType = HibernateUtil.getCurrentDatabaseType();
@@ -220,12 +194,6 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 	public void setIsEnabled(int isEnabled) {
 		this.isEnabled = isEnabled;
 	}
-	public int getIsCreated() {
-		return isCreated;
-	}
-	public void setIsCreated(int isCreated) {
-		this.isCreated = isCreated;
-	}
 	public int getVersion() {
 		return version;
 	}
@@ -249,6 +217,18 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 	}
 	public String getLastUpdatedUserId() {
 		return lastUpdatedUserId;
+	}
+	public int getIsDeploymentTest() {
+		return isDeploymentTest;
+	}
+	public void setIsDeploymentTest(int isDeploymentTest) {
+		this.isDeploymentTest = isDeploymentTest;
+	}
+	public int getIsDeploymentRun() {
+		return isDeploymentRun;
+	}
+	public void setIsDeploymentRun(int isDeploymentRun) {
+		this.isDeploymentRun = isDeploymentRun;
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
@@ -289,12 +269,6 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 	public String getSubRefParentColumnName() {
 		return subRefParentColumnName;
 	}
-	public int getIsCreateNow() {
-		return isCreateNow;
-	}
-	public void setIsCreateNow(int isCreateNow) {
-		this.isCreateNow = isCreateNow;
-	}
 	public void setSubRefParentColumnName(String subRefParentColumnName) {
 		this.subRefParentColumnName = subRefParentColumnName;
 	}
@@ -311,7 +285,7 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 		table.setName("[配置系统]表数据信息资源对象表");
 		table.setComments("[配置系统]表数据信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(18);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(19);
 		
 		CfgColumndata nameColumn = new CfgColumndata("name");
 		nameColumn.setName("显示的汉字名称");
@@ -385,20 +359,12 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 		subRefParentColumnNameColumn.setOrderCode(9);
 		columns.add(subRefParentColumnNameColumn);
 		
-		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
-		isEnabledColumn.setName("是否启用");
-		isEnabledColumn.setComments("是否启用");
-		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
-		isEnabledColumn.setLength(1);
-		isEnabledColumn.setOrderCode(10);
-		columns.add(isEnabledColumn);
-		
 		CfgColumndata commentsColumn = new CfgColumndata("comments");
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);
 		commentsColumn.setLength(200);
-		commentsColumn.setOrderCode(11);
+		commentsColumn.setOrderCode(10);
 		columns.add(commentsColumn);
 		
 		CfgColumndata versionColumn = new CfgColumndata("version");
@@ -406,16 +372,32 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 		versionColumn.setComments("版本");
 		versionColumn.setColumnType(DataTypeConstants.INTEGER);
 		versionColumn.setLength(3);
-		versionColumn.setOrderCode(12);
+		versionColumn.setOrderCode(11);
 		columns.add(versionColumn);
 		
-		CfgColumndata isCreatedColumn = new CfgColumndata("is_created");
-		isCreatedColumn.setName("是否被创建");
-		isCreatedColumn.setComments("是否被创建");
-		isCreatedColumn.setColumnType(DataTypeConstants.INTEGER);
-		isCreatedColumn.setLength(1);
-		isCreatedColumn.setOrderCode(13);
-		columns.add(isCreatedColumn);
+		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
+		isEnabledColumn.setName("是否启用");
+		isEnabledColumn.setComments("是否启用");
+		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
+		isEnabledColumn.setLength(1);
+		isEnabledColumn.setOrderCode(12);
+		columns.add(isEnabledColumn);
+		
+		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
+		isDeploymentTestColumn.setName("是否部署到测试平台");
+		isDeploymentTestColumn.setComments("是否部署到测试平台");
+		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentTestColumn.setLength(1);
+		isDeploymentTestColumn.setOrderCode(13);
+		columns.add(isDeploymentTestColumn);
+		
+		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
+		isDeploymentRunColumn.setName("是否部署到运行平台");
+		isDeploymentRunColumn.setComments("是否部署到运行平台");
+		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentRunColumn.setLength(1);
+		isDeploymentRunColumn.setOrderCode(14);
+		columns.add(isDeploymentRunColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -428,7 +410,7 @@ public class CfgTabledata extends BasicEntity implements ISysResource,ITable{
 	public int getResourceType() {
 		return TABLE_RESOURCE_TYPE;
 	}
-	public String getRefResourceId() {
+	public String getResourceId() {
 		return getId();
 	}
 }

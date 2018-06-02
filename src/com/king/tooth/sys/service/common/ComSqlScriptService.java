@@ -3,7 +3,7 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.AbstractSysResourceEntity;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.util.StrUtils;
@@ -32,10 +32,10 @@ public class ComSqlScriptService extends AbstractResourceService {
 		if(sqlScriptResource == null){
 			throw new IllegalArgumentException("不存在请求的sql脚本资源：" + resourceName);
 		}
-		if(sqlScriptResource.getIsCreated() == 0){
+		if(sqlScriptResource.getIsEnabled() == 0){
 			throw new IllegalArgumentException("请求的sql脚本资源未被创建，请联系管理员：" + resourceName);
 		}
-		if(sqlScriptResource.getIsEnabled() == ISysResource.UNENABLED_RESOURCE_STATUS){
+		if(sqlScriptResource.getIsEnabled() == AbstractSysResourceEntity.UNENABLED_RESOURCE_STATUS){
 			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员：" + resourceName);
 		}
 		return sqlScriptResource;

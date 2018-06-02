@@ -3,16 +3,14 @@ package com.king.tooth.sys.entity.common;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.AbstractSysResourceEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
-import com.king.tooth.sys.entity.cfg.database.DBFile;
+import com.king.tooth.sys.entity.common.database.DBFile;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -21,7 +19,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDatabase extends BasicEntity implements ITable{
+public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	
 	/**
 	 * 数字库名
@@ -62,10 +60,7 @@ public class ComDatabase extends BasicEntity implements ITable{
 	 */
 	private String cfgTmplogFileContent;
 	private DBFile tmpLogFile;
-	/**
-	 * 是否启用
-	 */
-	private int isEnabled;
+	
 	/**
 	 * 数据库容量是否异常
 	 */
@@ -74,10 +69,6 @@ public class ComDatabase extends BasicEntity implements ITable{
 	 * 数据库容量描述内容(用来做系统警告，例如容量不足等提示)
 	 */
 	private String dbCapacityDesc;
-	/**
-	 * 是否被创建
-	 */
-	private int isCreated;
 	
 	//------------------------------------------------------------------------
 	/**
@@ -96,7 +87,7 @@ public class ComDatabase extends BasicEntity implements ITable{
 	 * </pre>
 	 */
 	public ComDatabase() {
-		this.isEnabled = ISysResource.ENABLED_RESOURCE_STATUS;
+		this.isEnabled = ENABLED_RESOURCE_STATUS;
 	}
 	public ComDatabase(String id) {
 		this.id = id;
@@ -212,12 +203,6 @@ public class ComDatabase extends BasicEntity implements ITable{
 	public void setDbPort(int dbPort) {
 		this.dbPort = dbPort;
 	}
-	public int getIsCreated() {
-		return isCreated;
-	}
-	public void setIsCreated(int isCreated) {
-		this.isCreated = isCreated;
-	}
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -330,7 +315,7 @@ public class ComDatabase extends BasicEntity implements ITable{
 		table.setName("[通用的]数据库数据信息资源对象表");
 		table.setComments("[通用的]数据库数据信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(18);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
 		
 		CfgColumndata dbDisplayNameColumn = new CfgColumndata("db_display_name");
 		dbDisplayNameColumn.setName("数字库名");
@@ -404,20 +389,12 @@ public class ComDatabase extends BasicEntity implements ITable{
 		cfgTmplogFileContentColumn.setOrderCode(10);
 		columns.add(cfgTmplogFileContentColumn);
 		
-		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
-		isEnabledColumn.setName("是否启用");
-		isEnabledColumn.setComments("是否启用");
-		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
-		isEnabledColumn.setLength(1);
-		isEnabledColumn.setOrderCode(11);
-		columns.add(isEnabledColumn);
-		
 		CfgColumndata isDbCapacityErrColumn = new CfgColumndata("is_db_capacity_err");
 		isDbCapacityErrColumn.setName("数据库容量是否异常");
 		isDbCapacityErrColumn.setComments("数据库容量是否异常");
 		isDbCapacityErrColumn.setColumnType(DataTypeConstants.INTEGER);
 		isDbCapacityErrColumn.setLength(1);
-		isDbCapacityErrColumn.setOrderCode(13);
+		isDbCapacityErrColumn.setOrderCode(11);
 		columns.add(isDbCapacityErrColumn);
 		
 		CfgColumndata dbCapacityDescColumn = new CfgColumndata("db_capacity_desc");
@@ -425,16 +402,32 @@ public class ComDatabase extends BasicEntity implements ITable{
 		dbCapacityDescColumn.setComments("数据库容量描述内容:用来做系统警告，例如容量不足等提示");
 		dbCapacityDescColumn.setColumnType(DataTypeConstants.STRING);
 		dbCapacityDescColumn.setLength(200);
-		dbCapacityDescColumn.setOrderCode(14);
+		dbCapacityDescColumn.setOrderCode(12);
 		columns.add(dbCapacityDescColumn);
 		
-		CfgColumndata isCreatedColumn = new CfgColumndata("is_created");
-		isCreatedColumn.setName("是否被创建");
-		isCreatedColumn.setComments("是否被创建");
-		isCreatedColumn.setColumnType(DataTypeConstants.INTEGER);
-		isCreatedColumn.setLength(1);
-		isCreatedColumn.setOrderCode(15);
-		columns.add(isCreatedColumn);
+		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
+		isEnabledColumn.setName("是否启用");
+		isEnabledColumn.setComments("是否启用");
+		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
+		isEnabledColumn.setLength(1);
+		isEnabledColumn.setOrderCode(13);
+		columns.add(isEnabledColumn);
+		
+		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
+		isDeploymentTestColumn.setName("是否部署到测试平台");
+		isDeploymentTestColumn.setComments("是否部署到测试平台");
+		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentTestColumn.setLength(1);
+		isDeploymentTestColumn.setOrderCode(14);
+		columns.add(isDeploymentTestColumn);
+		
+		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
+		isDeploymentRunColumn.setName("是否部署到运行平台");
+		isDeploymentRunColumn.setComments("是否部署到运行平台");
+		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentRunColumn.setLength(1);
+		isDeploymentRunColumn.setOrderCode(15);
+		columns.add(isDeploymentRunColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -442,5 +435,15 @@ public class ComDatabase extends BasicEntity implements ITable{
 
 	public String toDropTable() {
 		return "COM_DATABASE";
+	}
+	
+	public int getResourceType() {
+		return DATABASE_RESOURCE_TYPE;
+	}
+	public String getResourceName() {
+		return getDbDisplayName();
+	}
+	public String getResourceId() {
+		return getId();
 	}
 }
