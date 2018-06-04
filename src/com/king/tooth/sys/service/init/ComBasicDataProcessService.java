@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.init;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -6,10 +6,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgCustomer;
+import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDataLinks;
@@ -29,6 +31,8 @@ import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.ComVerifyCode;
 import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.common.ComSysAccountService;
+import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -86,6 +90,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
+		tables.add(new CfgHibernateHbm().toCreateTable(dbType));
 		tables.add(new CfgColumndata().toCreateTable(dbType));
 		tables.add(new CfgCustomer().toCreateTable(dbType));
 		tables.add(new CfgTabledata().toCreateTable(dbType));

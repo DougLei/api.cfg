@@ -11,7 +11,7 @@ import javax.servlet.ServletContextListener;
 import org.springframework.util.Assert;
 
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.sys.service.common.ComBasicDataProcessService;
+import com.king.tooth.sys.service.init.ComBasicDataProcessService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;

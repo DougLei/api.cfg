@@ -85,6 +85,11 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 	 * 是否内置
 	 */
 	private int isBuiltin;
+	/**
+	 * 是否创建hbm文件
+	 * <p>只有isBuiltin=1的时候，这个值才有效</p>
+	 */
+	private int isCreateHbm;
 	
 	//-----------------------------------------------------------------------
 	/**
@@ -259,6 +264,12 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 	public void setSubRefParentColumnName(String subRefParentColumnName) {
 		this.subRefParentColumnName = subRefParentColumnName;
 	}
+	public int getIsCreateHbm() {
+		return isCreateHbm;
+	}
+	public void setIsCreateHbm(int isCreateHbm) {
+		this.isCreateHbm = isCreateHbm;
+	}
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
@@ -281,13 +292,18 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 		this.isBuiltin = isBuiltin;
 	}
 	
+	public void clear(){
+		if(columns != null && columns.size()>0){
+			columns.clear();
+		}
+	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "CFG_TABLEDATA");
 		table.setName("[配置系统]表数据信息资源对象表");
 		table.setComments("[配置系统]表数据信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(19);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
 		
 		CfgColumndata nameColumn = new CfgColumndata("name");
 		nameColumn.setName("显示的汉字名称");
@@ -400,6 +416,14 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 		isBuiltinColumn.setLength(1);
 		isBuiltinColumn.setOrderCode(14);
 		columns.add(isBuiltinColumn);
+		
+		CfgColumndata isCreateHbmColumn = new CfgColumndata("is_create_hbm");
+		isCreateHbmColumn.setName("是否创建hbm文件");
+		isCreateHbmColumn.setComments("是否创建hbm文件:只有isBuiltin=1的时候，这个值才有效");
+		isCreateHbmColumn.setColumnType(DataTypeConstants.INTEGER);
+		isCreateHbmColumn.setLength(1);
+		isCreateHbmColumn.setOrderCode(15);
+		columns.add(isCreateHbmColumn);
 		
 		table.setColumns(columns);
 		return table;
