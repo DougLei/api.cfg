@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.sys.entity.AbstractSysResourceEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.util.StrUtils;
@@ -21,11 +21,11 @@ public class ComSysResourceService extends AbstractResourceService{
 	 * @param databaseId
 	 * @param resource
 	 */
-	public void insertSysResource(String databaseId, AbstractSysResourceEntity iresource){
+	public void insertSysResource(String databaseId, ISysResource iresource){
 		ComSysResource resource = new ComSysResource();
 		resource.setDatabaseId(databaseId);
 		resource.setIsEnabled(iresource.getIsEnabled());
-		resource.setRefResourceId(iresource.getResourceId());
+		resource.setRefResourceId(iresource.getRefResourceId());
 		resource.setResourceName(iresource.getResourceName());
 		resource.setResourceType(iresource.getResourceType());
 		HibernateUtil.saveObject(resource, "添加一条新资源");
@@ -65,7 +65,7 @@ public class ComSysResourceService extends AbstractResourceService{
 		if(resource == null){
 			throw new IllegalArgumentException("不存在请求的资源：" + resourceName);
 		}
-		if(resource.getIsEnabled() == AbstractSysResourceEntity.UNENABLED_RESOURCE_STATUS){
+		if(resource.getIsEnabled() == ISysResource.UNENABLED_RESOURCE_STATUS){
 			throw new IllegalArgumentException("请求的资源被禁用，请联系管理员：" + resourceName);
 		}
 		return resource;

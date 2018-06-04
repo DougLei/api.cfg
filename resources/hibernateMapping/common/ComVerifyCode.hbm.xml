@@ -16,5 +16,6 @@
 		<property name="verifyCode" column="verify_code" type="string" />
 		<property name="reqAccountId" column="req_account_id" type="string" />
 		<property name="reqIp" column="req_ip" type="string" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

@@ -27,4 +27,5 @@
    	<import resource="classpath:spring-datasource.xml"/>
    	<!-- 整合hibernate -->
    	<import resource="classpath:spring-hibernate.xml"/>
+   	
 </beans>

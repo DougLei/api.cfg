@@ -24,5 +24,6 @@
 		<property name="reqDate" column="req_date" type="timestamp" />
 		<property name="respDate" column="resp_date" type="timestamp" />
 		<property name="reqToken" column="req_token" type="string" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

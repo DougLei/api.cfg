@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.sys.entity.AbstractSysResourceEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.StrUtils;
@@ -61,7 +61,7 @@ public class RequestBody implements Serializable{
 				throw new IllegalArgumentException("平台目前不支持同时处理不同类型[sql资源和table资源]的资源");
 			}
 			
-			if(requestResource.getResourceType() == AbstractSysResourceEntity.SQLSCRIPT_RESOURCE_TYPE
+			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT_RESOURCE_TYPE
 					&& !requestResource.getResourceName().equals(requestParentResource.getResourceName())){
 				throw new IllegalArgumentException("平台目前不支持处理[sql资源]的主子关系查询");
 			}
@@ -95,7 +95,7 @@ public class RequestBody implements Serializable{
 	 * 请求的资源类型
 	 * 1：表资源类型
 	 * 2：sql脚本资源类型
-	 * <p>@see AbstractSysResourceEntity.XXX_RESOURCE_TYPE</p>
+	 * <p>@see ISysResource.XXX_RESOURCE_TYPE</p>
 	 */
 	private int requestResourceType;
 	

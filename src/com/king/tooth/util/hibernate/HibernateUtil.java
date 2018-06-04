@@ -21,6 +21,7 @@ import org.hibernate.jdbc.Work;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
@@ -40,11 +41,17 @@ import com.king.tooth.util.StrUtils;
 public class HibernateUtil {
 	
 	/**
+	 * 动态hibernate sessionfactory操作者
+	 */
+	private transient static final DynamicHibernateSessionFactoryHandler dynamicSessionFactoryHandler = 
+			SpringContextHelper.getBean(DynamicHibernateSessionFactoryHandler.class);
+	
+	/**
 	 * 从动态sessionFactory中获得对应的sessionFactory对象
 	 * @return
 	 */
 	private static SessionFactoryImpl getSessionFactory(){
-		return SpringContextHelper.getBean(SessionFactoryImpl.class);
+		return dynamicSessionFactoryHandler.getSessionFactory();
 	}
 	
 	/**
@@ -157,6 +164,24 @@ public class HibernateUtil {
 		Log4jUtil.debug("执行sql语句的条件参数集合为：{}", queryCondParameters);
 		return resultColumns;
 	}
+	
+	//------------------------------------------------------------------------------------------------------
+	
+//	/**
+//	 * 【文件方式】添加新的配置文件
+//	 * @param hbmFiles
+//	 */
+//	public static void appendNewConfig(String... hbmFiles){
+//		getSessionFactory().appendNewConfig(hbmFiles);
+//	}
+//	
+//	/**
+//	 * 【数据流方式】添加新的配置文件
+//	 * @param input
+//	 */
+//	public static void appendNewConfig(InputStream... input){
+//		getSessionFactory().appendNewConfig(input);
+//	}
 	
 	//------------------------------------------------------------------------------------------------------
 	

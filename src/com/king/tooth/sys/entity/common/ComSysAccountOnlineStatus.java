@@ -125,6 +125,12 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable{
 	public void setToken(String token) {
 		this.token = token;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	public String getLoginIp() {
 		return loginIp;
 	}

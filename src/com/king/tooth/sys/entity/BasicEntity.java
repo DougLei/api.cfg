@@ -29,4 +29,10 @@ public class BasicEntity implements Serializable{
 	 * 最后修改时间
 	 */
 	protected Date lastUpdateTime;
+	
+	/**
+	 * 所属的项目主键
+	 * <p>用来区分不同项目的数据</p>
+	 */
+	protected String projectId;
 }

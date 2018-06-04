@@ -82,6 +82,12 @@ public class ComPermission extends BasicEntity implements ITable{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	public void setCreateUserId(String createUserId) {
 		this.createUserId = createUserId;
 	}

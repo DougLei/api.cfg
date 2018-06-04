@@ -17,5 +17,6 @@
 		<property name="isDatalinkTableMapping" column="is_datalink_table_mapping" type="integer" />
 		<property name="fileContent" column="file_content" type="string" />
 		<property name="version" column="version" type="integer" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

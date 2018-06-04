@@ -196,7 +196,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 * 构造函数
 	 * @param requestUrlParams
 	 * @param queryCondParameterValues hql参数值集合
-	 * @param requestResourceType 请求的资源类型 @see AbstractSysResourceEntity.XXX_RESOURCE_TYPE
+	 * @param requestResourceType 请求的资源类型 @see ISysResource.XXX_RESOURCE_TYPE
 	 */
 	public BuiltinTableResourceBMProcesser(Map<String, String> requestUrlParams, List<Object> hqlParameterValues){
 		// 这三个key值来自      @see PlatformServlet.processSpecialData()

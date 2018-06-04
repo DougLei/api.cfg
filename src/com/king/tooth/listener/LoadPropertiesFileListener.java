@@ -10,7 +10,9 @@ import javax.servlet.ServletContextListener;
 
 import org.springframework.util.Assert;
 
+import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.sys.service.common.ComBasicDataProcessService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
@@ -59,12 +61,20 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	 * 初始化系统配置
 	 */
 	private void initSystemConfig() {
+		// 初始化配置系统的项目id和数据库id映射
+		ProjectIdRefDatabaseIdMapping.initBasicProjectIdRefDatabaseIdMapping();
 		// 初始化资源处理器配置
 		ProcesserConfig.initResourceProcesserConfig();
 		// 初始化路由解析规则配置
 		RouteBodyAnalysis.initRouteRuleConfig();
 		// 初始化系统内置查询条件函数配置
 		BuiltinQueryCondFuncUtil.initBuiltinQueryCondFuncConfig();
+		// 系统启动时，初始化配置数据库的表和所有基础数据
+		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
+			new ComBasicDataProcessService().loadSysBasicDatasBySysFirstStart();
+		}else{
+			new ComBasicDataProcessService().loadSysConfDatasBySysStart();
+		}
 	}
 
 	public void contextDestroyed(ServletContextEvent sc) {

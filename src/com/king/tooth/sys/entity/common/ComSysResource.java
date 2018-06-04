@@ -122,6 +122,12 @@ public class ComSysResource extends BasicEntity implements ITable{
 	public int getResourceType() {
 		return resourceType;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	public void setResourceType(int resourceType) {
 		this.resourceType = resourceType;
 	}

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.database;
+package com.king.tooth.sys.entity.cfg.database;
 
 import java.io.File;
 

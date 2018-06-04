@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.internal.SessionFactoryImpl;
+
+import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
+import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgCustomer;
@@ -42,19 +46,32 @@ import com.king.tooth.sys.entity.common.datalinks.ComProjectComProjectModuleLink
 import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComRoleComPermissionLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComSysAccountComRoleLinks;
+import com.king.tooth.sys.entity.run.RunDept;
+import com.king.tooth.sys.entity.run.RunOrg;
+import com.king.tooth.sys.entity.run.RunPosition;
+import com.king.tooth.sys.entity.run.datalinks.ComUserRunDeptLinks;
+import com.king.tooth.sys.entity.run.datalinks.ComUserRunPositionLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * [通用的]基础数据处理器
  * @author DougLei
  */
+@SuppressWarnings("unchecked")
 public class ComBasicDataProcessService extends AbstractResourceService{
+
+	/**
+	 * 测试项目主键
+	 * <p>在配置库添加了一个测试项目，记录测试项目的id，在初始化测试库的时候，会用到该id</p>
+	 */
+	private String testProjectId;
 	
 	/**
 	 * 系统首次启动时，初始化系统的基础数据
@@ -62,6 +79,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	public void loadSysBasicDatasBySysFirstStart() {
 		try {
 			initCfgDatabaseInfo();
+			initTestDatabaseInfo();
 			updateInitConfig();
 			Log4jUtil.debug("系统初始化完成！");
 		} catch (Exception e) {
@@ -76,6 +94,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	private void initCfgDatabaseInfo() {
 		List<CfgTabledata> cfgTables = new ArrayList<CfgTabledata>(31);
 		try {
+			CurrentThreadContext.setProjectId(SysConfig.getSystemConfig("cfg.project.id"));
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			
@@ -92,13 +111,8 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			cfgTables.add(new CfgDatabaseComSqlScriptLinks().toCreateTable(dbType));
 			cfgTables.add(new ComProjectCfgTabledataLinks().toCreateTable(dbType));
 			addCommonTables(cfgTables, dbType);
-			
-			
-			ComDatabase database = new ComDatabase();
-			database.setDbDisplayName("配置平台数据库");
-			database.setLoginUserName(SysConfig.getSystemConfig("jdbc.username"));
 			// 开始创建配置表
-			DBTableHandler dbHandler = new DBTableHandler(database);
+			DBTableHandler dbHandler = new DBTableHandler();
 			dbHandler.createTable(cfgTables);
 			
 			insertResources(SysConfig.getSystemConfig("cfg.database.id"), cfgTables);// 将这些表资源插入到资源表
@@ -150,8 +164,85 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		HibernateUtil.saveObject("CfgCustomerComSysAccountLinks", customerComSysAccountDataLink , "系统初始化配置客户和帐号关系");
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 给本公司(西安博道工业科技有限公司)添加一个测试项目
+		ComProject testProject = new ComProject();
+		testProject.setDatabaseId(SysConfig.getSystemConfig("test.database.id"));
+		testProject.setName("SmartOne-测试项目");
+		testProject.setOwnerCustomerId(sinoforceCustomerId);
+		testProject.setIsTest(1);
+		testProjectId = HibernateUtil.saveObject(testProject, "系统初始化测试项目");
+		
+		// 记录项目id和数据库id的映射
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(testProjectId, testProject.getDatabaseId());
+		
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典数据
-		insertDataDictionary();
+		insertDataDictionary(true);
+	}
+	
+	/**
+	 * 初始化测试库信息
+	 * @param dbType
+	 */
+	private void initTestDatabaseInfo(){
+		List<CfgTabledata> testTables = new ArrayList<CfgTabledata>(27);
+		try {
+			CurrentThreadContext.setProjectId(testProjectId);
+			HibernateUtil.openSessionToCurrentThread();
+			HibernateUtil.beginTransaction();
+			
+			String dbType = SysConfig.getSystemConfig("jdbc.dbType");
+			// 3个基础表
+			testTables.add(new RunDept().toCreateTable(dbType));
+			testTables.add(new RunOrg().toCreateTable(dbType));
+			testTables.add(new RunPosition().toCreateTable(dbType));
+			// 2个关系表
+			testTables.add(new ComUserRunDeptLinks().toCreateTable(dbType));
+			testTables.add(new ComUserRunPositionLinks().toCreateTable(dbType));
+			addCommonTables(testTables, dbType);
+			// 开始创建测试表
+			DBTableHandler dbHandler = new DBTableHandler();
+			dbHandler.createTable(testTables);
+			
+			insertResources(SysConfig.getSystemConfig("test.database.id"), testTables);// 将这些表资源插入到资源表
+			insertTestDatabaseOfBasicDatas();// 插入测试库的基础数据
+			
+			HibernateUtil.commitTransaction();
+		} catch (Exception e) {
+			HibernateUtil.rollbackTransaction();
+			throw e;
+		}finally{
+			testTables.clear();// 清空表集合
+			HibernateUtil.closeCurrentThreadSession();
+			CurrentThreadContext.clearCurrentThreadData();
+		}
+	}
+	
+	/**
+	 * 插入测试库的基础数据
+	 */
+	private void insertTestDatabaseOfBasicDatas() {
+		ComSysAccountService comSysAccountService = new ComSysAccountService();
+		
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 添加系统管理员和对应的用户
+		ComSysAccount admin = new ComSysAccount();
+		admin.setLoginName("admin");
+		admin.setAccountType(3);
+		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		admin.setIsUnDelete(1);
+		String adminAccountId = comSysAccountService.saveComSysAccount(admin, "系统初始化系统管理员");
+		
+		ComUser adminUser = new ComUser();
+		adminUser.setAccountId(adminAccountId);
+		adminUser.setNikeName("sysadmin");
+		adminUser.setRealName("系统管理员");
+		adminUser.setIsUnDelete(1);
+		HibernateUtil.saveObject(adminUser, "系统初始化系统管理员");
+		
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 添加数据字段数据
+		insertDataDictionary(false);
 	}
 	
 	/**
@@ -221,28 +312,31 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	//---------------------------------------------------------------------------------------------------
 	/**
 	 * 添加数据字典的基础数据
+	 * @param isCfgProject 是否是配置平台项目，如果是配置平台项目，要添加一些专属的数据字典信息
 	 */
-	private void insertDataDictionary() {
-		// CfgColumndata.columnType 字段数据类型
-		insertDataDictionary(null, "cfgcolumndata.columntype", "字符串", "string", 1);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "布尔值", "boolean", 2);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "整型", "integer", 3);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "浮点型", "double", 4);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "日期", "date", 5);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "字符大字段", "clob", 6);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "二进制大字段", "blob", 7);
-		
-		// ComDatabase.dbType 数据库类型
-		insertDataDictionary(null, "cfgdatabase.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(null, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2);
-		
-		// CfgTabledata.tableType 表类型
-		insertDataDictionary(null, "cfgtabledata.tabletype", "单表", "1", 1);
-		insertDataDictionary(null, "cfgtabledata.tabletype", "树表", "2", 2);
-		insertDataDictionary(null, "cfgtabledata.tabletype", "父子关系表", "3", 3);
-		// CfgTabledata.dbType 数据库类型
-		insertDataDictionary(null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
+	private void insertDataDictionary(boolean isCfgProject) {
+		if(isCfgProject){
+			// CfgColumndata.columnType 字段数据类型
+			insertDataDictionary(null, "cfgcolumndata.columntype", "字符串", "string", 1);
+			insertDataDictionary(null, "cfgcolumndata.columntype", "布尔值", "boolean", 2);
+			insertDataDictionary(null, "cfgcolumndata.columntype", "整型", "integer", 3);
+			insertDataDictionary(null, "cfgcolumndata.columntype", "浮点型", "double", 4);
+			insertDataDictionary(null, "cfgcolumndata.columntype", "日期", "date", 5);
+			insertDataDictionary(null, "cfgcolumndata.columntype", "字符大字段", "clob", 6);
+			insertDataDictionary(null, "cfgcolumndata.columntype", "二进制大字段", "blob", 7);
+			
+			// ComDatabase.dbType 数据库类型
+			insertDataDictionary(null, "cfgdatabase.dbtype", "oracle", "oracle", 1);
+			insertDataDictionary(null, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2);
+			
+			// CfgTabledata.tableType 表类型
+			insertDataDictionary(null, "cfgtabledata.tabletype", "单表", "1", 1);
+			insertDataDictionary(null, "cfgtabledata.tabletype", "树表", "2", 2);
+			insertDataDictionary(null, "cfgtabledata.tabletype", "父子关系表", "3", 3);
+			// CfgTabledata.dbType 数据库类型
+			insertDataDictionary(null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
+			insertDataDictionary(null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
+		}
 		
 		// ComOperLog.operType 操作的类型
 		insertDataDictionary(null, "comoperLog.opertype", "查询", "select", 1);
@@ -302,5 +396,65 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		dataDictionary.setCodeValue(codeValue);
 		dataDictionary.setOrderCode(orderCode);
 		return HibernateUtil.saveObject(dataDictionary, "系统初始化添加内置数据字典");
+	}
+
+	//---------------------------------------------------------------------------------------------------
+	/**
+	 * 系统启动时，加载所有配置数据
+	 */
+	public void loadSysConfDatasBySysStart() {
+		// 加载数据库、项目、资源
+		CurrentThreadContext.setProjectId(SysConfig.getSystemConfig("cfg.project.id"));
+		HibernateUtil.openSessionToCurrentThread();
+		
+		String hql = "from ComDatabase where isEnabled=1 and isCreated=1";
+		List<ComDatabase> databases = HibernateUtil.executeListQueryByHql(hql, null);
+
+		// 动态添加数据源和sessionFactory
+		if(databases.size() > 0){
+			for (ComDatabase database : databases) {
+				DynamicDBUtil.addDataSource(database);
+			}
+		}
+		
+		// 将测试库也加入进来，因为他内置到系统中，没有存储到数据库中【配置库是系统库，这里不做处理】
+		// 下来要关联项目id和数据库id的映射
+		databases.add(new ComDatabase(SysConfig.getSystemConfig("test.database.id")));
+		
+		// 关联项目id和数据库id的映射
+		hql = "select new ComProject(id, databaseId) from ComProject where isDeployment=1";
+		List<ComProject> projects = HibernateUtil.executeListQueryByHql(hql, null);
+		if(projects != null && projects.size() > 0){
+			for (ComDatabase database : databases) {
+				for (ComProject project : projects) {
+					if(project.getDatabaseId().equals(database.getId())){
+						ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(project.getId(), database.getId());
+						break;
+					}
+				}
+			}
+			projects.clear();
+		}
+		
+		// 加载各个数据库的hbm映射文件
+		List<Object> hbms = null;
+		SessionFactoryImpl sessionFactoryImpl = null;
+		hql = "select fileContent from ComHibernateHbmConfdata where id in (select refResourceId from ComSysResource where isEnabled=1 and resourceType = 1 and databaseId = ?)";
+		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
+		for (ComDatabase database : databases) {
+			hbms = HibernateUtil.executeListQueryByHqlArr(hql, database.getId());
+			if(hbms!=null && hbms.size()>0){
+				sessionFactoryImpl = DynamicDBUtil.getSessionFactory(database.getId());
+				if(sessionFactoryImpl == null){
+					throw new NullPointerException("系统无法获取databaseId为["+database.getId()+"]的sessionFactory！");
+				}
+				hibernateHbmHandler.appendNewHbmConfig(hbms, sessionFactoryImpl);
+				hbms.clear();
+			}
+		}
+		databases.clear();
+		
+		HibernateUtil.closeCurrentThreadSession();
+		CurrentThreadContext.clearCurrentThreadData();
 	}
 }

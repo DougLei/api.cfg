@@ -21,5 +21,6 @@
 		<property name="loginDate" column="login_date" type="timestamp" />
 		<property name="tryLoginTimes" column="try_login_times" type="integer" />
 		<property name="lastOperDate" column="last_oper_date" type="timestamp" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

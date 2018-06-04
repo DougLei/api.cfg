@@ -19,5 +19,6 @@
 		<property name="codeValue" column="code_value" type="string" />
 		<property name="orderCode" column="order_code" type="integer" />
 		<property name="comments" column="comments" type="string" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

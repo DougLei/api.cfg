@@ -14,5 +14,6 @@
 		<property name="orderCode" column="order_code" type="integer" />
 		<property name="leftResourceName" column="left_resource_name" type="string" />
 		<property name="rightResourceName" column="right_resource_name" type="string" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

@@ -18,5 +18,6 @@
 		<property name="descs" column="descs" type="string" />
 		<property name="orderCode" column="order_code" type="integer" />
 		<property name="isEnabled" column="is_enabled" type="integer" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

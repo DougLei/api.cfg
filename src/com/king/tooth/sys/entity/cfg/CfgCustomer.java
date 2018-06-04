@@ -118,6 +118,12 @@ public class CfgCustomer extends BasicEntity implements ITable{
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	public void setId(String id) {
 		this.id = id;
 	}

@@ -3,14 +3,16 @@ package com.king.tooth.sys.entity.common;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.sys.entity.AbstractSysResourceEntity;
+import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
-import com.king.tooth.sys.entity.common.database.DBFile;
+import com.king.tooth.sys.entity.cfg.database.DBFile;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -19,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDatabase extends AbstractSysResourceEntity implements ITable{
+public class ComDatabase extends BasicEntity implements ITable{
 	
 	/**
 	 * 数字库名
@@ -60,7 +62,10 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	 */
 	private String cfgTmplogFileContent;
 	private DBFile tmpLogFile;
-	
+	/**
+	 * 是否启用
+	 */
+	private int isEnabled;
 	/**
 	 * 数据库容量是否异常
 	 */
@@ -69,6 +74,10 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	 * 数据库容量描述内容(用来做系统警告，例如容量不足等提示)
 	 */
 	private String dbCapacityDesc;
+	/**
+	 * 是否被创建
+	 */
+	private int isCreated;
 	
 	//------------------------------------------------------------------------
 	/**
@@ -87,7 +96,10 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	 * </pre>
 	 */
 	public ComDatabase() {
-		this.isEnabled = ENABLED_RESOURCE_STATUS;
+		this.isEnabled = ISysResource.ENABLED_RESOURCE_STATUS;
+	}
+	public ComDatabase(String id) {
+		this.id = id;
 	}
 	/**
 	 * 构造函数
@@ -174,9 +186,6 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		this.dbType = dbType;
 	}
 	public String getLoginUserName() {
-		if(StrUtils.isEmpty(loginUserName)){
-			throw new NullPointerException("登录数据库的用户名不能为空！");
-		}
 		return loginUserName;
 	}
 	public void setLoginPassword(String loginPassword) {
@@ -184,6 +193,12 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	}
 	public void setDbIp(String dbIp) {
 		this.dbIp = dbIp;
+	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
 	}
 	public String getId() {
 		return id;
@@ -202,6 +217,12 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	}
 	public void setDbPort(int dbPort) {
 		this.dbPort = dbPort;
+	}
+	public int getIsCreated() {
+		return isCreated;
+	}
+	public void setIsCreated(int isCreated) {
+		this.isCreated = isCreated;
 	}
 	public void setId(String id) {
 		this.id = id;
@@ -239,7 +260,7 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 			// 如果和我oracle配置库的ip和端口一样，就说明是使用的我们的库，oracle实例名，要用我们的
 			if(SysConfig.getSystemConfig("db.default.ip").equals(getDbIp()) 
 					&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
-				this.dbInstanceName = SysConfig.getSystemConfig("db.default.instancename");
+				this.dbInstanceName = SysConfig.getSystemConfig("db.instancename");
 			}
 			// 否则，说明是客户自己买的数据库服务器，程序要连接过去，这里直接记录实例名即可
 			else{
@@ -250,14 +271,11 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		
 		// 目前，否则就是sqlserver数据库
 		if(StrUtils.isEmpty(dbInstanceName)){
-			throw new NullPointerException("sqlserver的数据库名不能为空！");
+			throw new IllegalArgumentException("sqlserver的数据库名不能为空！");
 		}
 		this.dbInstanceName = dbInstanceName;
 	}
 	public void setLoginUserName(String loginUserName) {
-		if(StrUtils.isEmpty(loginUserName)){
-			throw new NullPointerException("登录数据库的用户名不能为空！");
-		}
 		this.loginUserName = loginUserName;
 	}
 	public int getIsDbCapacityErr() {
@@ -279,6 +297,7 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		return tmpLogFile;
 	}
 	
+	
 	public String toString(){
 		return dbDisplayName;
 	}
@@ -288,14 +307,19 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 	 * @return
 	 */
 	public String getUrl() {
-		return DynamicDataConstants.getDataBaseLinkUrl(getDbType(), getDbIp(), getDbPort(), getDbInstanceName());
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(getDbType())){
+			return DynamicDataConstants.getDataBaseLinkUrl(dbType, dbIp, dbPort, dbInstanceName);
+		}else if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(getDbType())){
+			return DynamicDataConstants.getDataBaseLinkUrl(dbType, dbIp, dbPort, dbInstanceName);
+		}
+		return null;
 	}
 	/**
 	 * 获取数据库驱动
 	 * 默认是oracle数据库
 	 * @return
 	 */
-	public String getDBDriverClass() {
+	public String getDriverClassName() {
 		return DynamicDataConstants.getDataBaseDriver(getDbType());
 	}
 	/**
@@ -312,7 +336,7 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		table.setName("[通用的]数据库数据信息资源对象表");
 		table.setComments("[通用的]数据库数据信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(18);
 		
 		CfgColumndata dbDisplayNameColumn = new CfgColumndata("db_display_name");
 		dbDisplayNameColumn.setName("数字库名");
@@ -386,12 +410,20 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		cfgTmplogFileContentColumn.setOrderCode(10);
 		columns.add(cfgTmplogFileContentColumn);
 		
+		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
+		isEnabledColumn.setName("是否启用");
+		isEnabledColumn.setComments("是否启用");
+		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
+		isEnabledColumn.setLength(1);
+		isEnabledColumn.setOrderCode(11);
+		columns.add(isEnabledColumn);
+		
 		CfgColumndata isDbCapacityErrColumn = new CfgColumndata("is_db_capacity_err");
 		isDbCapacityErrColumn.setName("数据库容量是否异常");
 		isDbCapacityErrColumn.setComments("数据库容量是否异常");
 		isDbCapacityErrColumn.setColumnType(DataTypeConstants.INTEGER);
 		isDbCapacityErrColumn.setLength(1);
-		isDbCapacityErrColumn.setOrderCode(11);
+		isDbCapacityErrColumn.setOrderCode(13);
 		columns.add(isDbCapacityErrColumn);
 		
 		CfgColumndata dbCapacityDescColumn = new CfgColumndata("db_capacity_desc");
@@ -399,32 +431,16 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 		dbCapacityDescColumn.setComments("数据库容量描述内容:用来做系统警告，例如容量不足等提示");
 		dbCapacityDescColumn.setColumnType(DataTypeConstants.STRING);
 		dbCapacityDescColumn.setLength(200);
-		dbCapacityDescColumn.setOrderCode(12);
+		dbCapacityDescColumn.setOrderCode(14);
 		columns.add(dbCapacityDescColumn);
 		
-		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
-		isEnabledColumn.setName("是否启用");
-		isEnabledColumn.setComments("是否启用");
-		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
-		isEnabledColumn.setLength(1);
-		isEnabledColumn.setOrderCode(13);
-		columns.add(isEnabledColumn);
-		
-		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
-		isDeploymentTestColumn.setName("是否部署到测试平台");
-		isDeploymentTestColumn.setComments("是否部署到测试平台");
-		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentTestColumn.setLength(1);
-		isDeploymentTestColumn.setOrderCode(14);
-		columns.add(isDeploymentTestColumn);
-		
-		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
-		isDeploymentRunColumn.setName("是否部署到运行平台");
-		isDeploymentRunColumn.setComments("是否部署到运行平台");
-		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentRunColumn.setLength(1);
-		isDeploymentRunColumn.setOrderCode(15);
-		columns.add(isDeploymentRunColumn);
+		CfgColumndata isCreatedColumn = new CfgColumndata("is_created");
+		isCreatedColumn.setName("是否被创建");
+		isCreatedColumn.setComments("是否被创建");
+		isCreatedColumn.setColumnType(DataTypeConstants.INTEGER);
+		isCreatedColumn.setLength(1);
+		isCreatedColumn.setOrderCode(15);
+		columns.add(isCreatedColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -432,15 +448,5 @@ public class ComDatabase extends AbstractSysResourceEntity implements ITable{
 
 	public String toDropTable() {
 		return "COM_DATABASE";
-	}
-	
-	public int getResourceType() {
-		return DATABASE_RESOURCE_TYPE;
-	}
-	public String getResourceName() {
-		return getDbDisplayName();
-	}
-	public String getResourceId() {
-		return getId();
 	}
 }

@@ -21,9 +21,9 @@
 		<property name="startDate" column="start_date" type="timestamp" />
 		<property name="planEndDate" column="plan_end_date" type="timestamp" />
 		<property name="endDate" column="end_date" type="timestamp" />
+		<property name="isTest" column="is_test" type="integer" />
+		<property name="isDeployment" column="is_deployment" type="integer" />
 		<property name="version" column="version" type="integer" />
-		<property name="isEnabled" column="is_enabled" type="integer" />
-		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
-		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

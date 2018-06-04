@@ -31,8 +31,8 @@ public class DatabaseHandler {
 	 * 构造函数
 	 * @param database 动态数据库对象 
 	 */
-	public DatabaseHandler(ComDatabase database){
-		dblink = new DBLink(database);
+	public DatabaseHandler(){
+		dblink = new DBLink();
 		newAbstractCreateDatabaseInstance();
 	}
 	

@@ -98,6 +98,12 @@ public class ComReqLog extends BasicEntity implements ITable{
 	public String getReqUrlParams() {
 		return reqUrlParams;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	public void setId(String id) {
 		this.id = id;
 	}

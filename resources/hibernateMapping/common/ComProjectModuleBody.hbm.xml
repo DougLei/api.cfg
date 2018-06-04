@@ -17,5 +17,6 @@
 		<property name="moduleBody" column="module_body" type="string" />
 		<property name="isEnabled" column="is_enabled" type="integer" />
 		<property name="version" column="version" type="integer" />
+		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>	

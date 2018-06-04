@@ -82,6 +82,12 @@ public class ComOperLog extends BasicEntity implements ITable{
 	public String getOperType() {
 		return operType;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	public void setOperType(String operType) {
 		this.operType = operType;
 	}

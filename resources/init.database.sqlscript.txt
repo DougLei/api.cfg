@@ -1,4 +1,3 @@
-
 --oracle 配置平台数据库
 create temporary tablespace TMPLOG_SmartOneCfg 
 	tempfile 'D:\db\cfg\TMPLOG_SmartOneCfg.dbf' 
@@ -14,6 +13,7 @@ create user SmartOneCfg identified by "1"
 	default tablespace MAIN_SmartOneCfg 
 	temporary tablespace TMPLOG_SmartOneCfg;
 grant connect,resource,dba to SmartOneCfg;
+
 
 /*
  删除数据库
