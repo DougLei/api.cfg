@@ -30,6 +30,5 @@
 		<property name="workNo" column="work_no" type="string" />
 		<property name="secretLevel" column="secret_level" type="integer" />
 		<property name="descs" column="descs" type="string" />
-		<property name="isUnDelete" column="is_un_delete" type="integer" />
 	</class>
 </hibernate-mapping>

@@ -85,10 +85,6 @@ public class ComUser extends BasicEntity implements ITable{
 	 * 描述
 	 */
 	private String descs;
-	/**
-	 * 是否不能删除
-	 */
-	private int isUnDelete;
 	
 	//-------------------------------------------------------------------------
 	
@@ -222,12 +218,6 @@ public class ComUser extends BasicEntity implements ITable{
 	public void setEmployedDate(Date employedDate) {
 		this.employedDate = employedDate;
 	}
-	public int getIsUnDelete() {
-		return isUnDelete;
-	}
-	public void setIsUnDelete(int isUnDelete) {
-		this.isUnDelete = isUnDelete;
-	}
 	public String getDescs() {
 		return descs;
 	}
@@ -241,7 +231,7 @@ public class ComUser extends BasicEntity implements ITable{
 		table.setName("[通用的]人员资源对象表");
 		table.setComments("[通用的]人员资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(24);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(23);
 		
 		CfgColumndata accountIdColumn = new CfgColumndata("account_id");
 		accountIdColumn.setName("账户主键");
@@ -378,14 +368,6 @@ public class ComUser extends BasicEntity implements ITable{
 		descsColumn.setLength(2000);
 		descsColumn.setOrderCode(17);
 		columns.add(descsColumn);
-		
-		CfgColumndata isUnDeleteColumn = new CfgColumndata("is_un_delete");
-		isUnDeleteColumn.setName("是否不能删除");
-		isUnDeleteColumn.setComments("是否不能删除");
-		isUnDeleteColumn.setColumnType(DataTypeConstants.INTEGER);
-		isUnDeleteColumn.setLength(1);
-		isUnDeleteColumn.setOrderCode(18);
-		columns.add(isUnDeleteColumn);
 		
 		table.setColumns(columns);
 		return table;

@@ -1,5 +1,7 @@
 package com.king.tooth.util.hibernate;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -160,21 +162,19 @@ public class HibernateUtil {
 	
 	//------------------------------------------------------------------------------------------------------
 	
-//	/**
-//	 * 【文件方式】添加新的配置文件
-//	 * @param hbmFiles
-//	 */
-//	public static void appendNewConfig(String... hbmFiles){
-//		getSessionFactory().appendNewConfig(hbmFiles);
-//	}
-//	
-//	/**
-//	 * 【数据流方式】添加新的配置文件
-//	 * @param input
-//	 */
-//	public static void appendNewConfig(InputStream... input){
-//		getSessionFactory().appendNewConfig(input);
-//	}
+	/**
+	 * 【数据流方式】添加新的配置文件
+	 * @param hbmContent
+	 */
+	public static void appendNewConfig(String... hbmContents){
+		if(hbmContents != null && hbmContents.length > 0){
+			List<InputStream> inputs = new ArrayList<InputStream>(hbmContents.length);
+			for(String hbmContent: hbmContents){
+				inputs.add(new ByteArrayInputStream(hbmContent.getBytes()));
+			}
+			getSessionFactory().appendNewHbmConfig(inputs);
+		}
+	}
 	
 	//------------------------------------------------------------------------------------------------------
 	

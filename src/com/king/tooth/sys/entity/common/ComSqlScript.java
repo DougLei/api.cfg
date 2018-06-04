@@ -84,6 +84,10 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	 * 备注
 	 */
 	private String comments;
+	/**
+	 * 是否内置
+	 */
+	private int isBuiltin;
 	
 	//--------------------------------------------------------
 	/**
@@ -275,6 +279,13 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	public void setIsDeploymentRun(int isDeploymentRun) {
 		this.isDeploymentRun = isDeploymentRun;
 	}
+	public int getIsBuiltin() {
+		return isBuiltin;
+	}
+	public void setIsBuiltin(int isBuiltin) {
+		this.isBuiltin = isBuiltin;
+	}
+	
 	
 	private void setGsqlParser(){
 		if(this.gsqlParser == null){
@@ -340,7 +351,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 		table.setName("[通用的]sql脚本资源对象表");
 		table.setComments("[通用的]sql脚本资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(17);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(18);
 		
 		CfgColumndata sqlScriptCaptionColumn = new CfgColumndata("sql_script_caption");
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
@@ -436,6 +447,14 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 		isDeploymentRunColumn.setLength(1);
 		isDeploymentRunColumn.setOrderCode(12);
 		columns.add(isDeploymentRunColumn);
+		
+		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
+		isBuiltinColumn.setName("是否内置");
+		isBuiltinColumn.setComments("是否内置");
+		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
+		isBuiltinColumn.setLength(1);
+		isBuiltinColumn.setOrderCode(13);
+		columns.add(isBuiltinColumn);
 		
 		table.setColumns(columns);
 		return table;

@@ -72,6 +72,8 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 		// 系统启动时，初始化配置数据库的表和所有基础数据
 		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
 			new ComBasicDataProcessService().loadSysBasicDatasBySysFirstStart();
+		}else{
+			new ComBasicDataProcessService().loadSysBasicDatasBySysStart();
 		}
 	}
 

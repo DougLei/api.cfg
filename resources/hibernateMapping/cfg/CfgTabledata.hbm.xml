@@ -26,5 +26,6 @@
 		<property name="version" column="version" type="integer" />
 		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
 		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
+		<property name="isBuiltin" column="is_builtin" type="integer" />
 	</class>
 </hibernate-mapping>

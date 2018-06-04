@@ -81,6 +81,10 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 	 * 是否是关系表，默认是0
 	 */
 	private int isDatalinkTable;
+	/**
+	 * 是否内置
+	 */
+	private int isBuiltin;
 	
 	//-----------------------------------------------------------------------
 	/**
@@ -270,13 +274,20 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 	public void setIsDeploymentRun(int isDeploymentRun) {
 		this.isDeploymentRun = isDeploymentRun;
 	}
-
+	public int getIsBuiltin() {
+		return isBuiltin;
+	}
+	public void setIsBuiltin(int isBuiltin) {
+		this.isBuiltin = isBuiltin;
+	}
+	
+	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "CFG_TABLEDATA");
 		table.setName("[配置系统]表数据信息资源对象表");
 		table.setComments("[配置系统]表数据信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(18);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(19);
 		
 		CfgColumndata nameColumn = new CfgColumndata("name");
 		nameColumn.setName("显示的汉字名称");
@@ -381,6 +392,14 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 		isDeploymentRunColumn.setLength(1);
 		isDeploymentRunColumn.setOrderCode(13);
 		columns.add(isDeploymentRunColumn);
+		
+		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
+		isBuiltinColumn.setName("是否内置");
+		isBuiltinColumn.setComments("是否内置");
+		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
+		isBuiltinColumn.setLength(1);
+		isBuiltinColumn.setOrderCode(14);
+		columns.add(isBuiltinColumn);
 		
 		table.setColumns(columns);
 		return table;

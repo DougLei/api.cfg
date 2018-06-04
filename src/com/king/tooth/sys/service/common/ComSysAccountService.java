@@ -8,6 +8,7 @@ import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.util.CryptographyUtil;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -53,6 +54,13 @@ public class ComSysAccountService extends AbstractResourceService{
 		}
 		if(account.getAccountStatus() == 3){
 			account.setMessage("您的账号已过期(原因:"+account.getAccountStatusDes()+")，请联系管理员");
+			return account;
+		}
+		if((account.getValidDate().getTime() - System.currentTimeMillis()) < 0){
+			account.setAccountStatus(3);
+			account.setAccountStatusDes("超出使用期限["+DateUtil.formatDate(account.getValidDate())+"]");
+			account.setMessage("您的账号已过期(原因:"+account.getAccountStatusDes()+")，请联系管理员");
+			HibernateUtil.updateObject(account, null);
 			return account;
 		}
 		return account;

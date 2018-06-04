@@ -6,9 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgCustomer;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -34,7 +33,6 @@ import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -61,24 +59,12 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 初始化配置库信息
 	 */
 	private void initCfgDatabaseInfo() {
-		List<CfgTabledata> cfgTables = new ArrayList<CfgTabledata>(31);
+		List<CfgTabledata> cfgTables = createTables();
 		try {
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			
-			String dbType = SysConfig.getSystemConfig("jdbc.dbType");
-			// 3个配置表
-			cfgTables.add(new CfgTabledata().toCreateTable(dbType));
-			cfgTables.add(new CfgColumndata().toCreateTable(dbType));
-			cfgTables.add(new CfgCustomer().toCreateTable(dbType));
-			// X个关系表
-			
-			addCommonTables(cfgTables, dbType);
-			// 开始创建配置表
-//			DBTableHandler dbHandler = new DBTableHandler();
-//			dbHandler.createTable(cfgTables);
-			
-			insertResources(SysConfig.getSystemConfig("cfg.database.id"), cfgTables);// 将这些表资源插入到资源表
+			insertResources(cfgTables);// 将这些表资源插入到资源表
 			insertCfgDatabaseOfBasicDatas();// 插入配置库的基础数据
 			
 			HibernateUtil.commitTransaction();
@@ -92,6 +78,50 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
+	 * 创建表
+	 * @return 
+	 */
+	private List<CfgTabledata> createTables(){
+		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(20);
+		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
+		
+		tables.add(new ComSysResource().toCreateTable(dbType));
+		tables.add(new CfgColumndata().toCreateTable(dbType));
+		tables.add(new CfgCustomer().toCreateTable(dbType));
+		tables.add(new CfgTabledata().toCreateTable(dbType));
+		tables.add(new ComDatabase().toCreateTable(dbType));
+		tables.add(new ComDataDictionary().toCreateTable(dbType));
+		tables.add(new ComDataLinks().toCreateTable(dbType));
+		tables.add(new ComModuleOperation().toCreateTable(dbType));
+		tables.add(new ComOperLog().toCreateTable(dbType));
+		tables.add(new ComPermission().toCreateTable(dbType));
+		tables.add(new ComProject().toCreateTable(dbType));
+		tables.add(new ComProjectModule().toCreateTable(dbType));
+		tables.add(new ComProjectModuleBody().toCreateTable(dbType));
+		tables.add(new ComReqLog().toCreateTable(dbType));
+		tables.add(new ComRole().toCreateTable(dbType));
+		tables.add(new ComSqlScript().toCreateTable(dbType));
+		tables.add(new ComSysAccount().toCreateTable(dbType));
+		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
+		tables.add(new ComUser().toCreateTable(dbType));
+		tables.add(new ComVerifyCode().toCreateTable(dbType));
+		
+		// 开始创建表
+		ComDatabase database = new ComDatabase();
+		database.setDbType(dbType);
+		database.setDbInstanceName(SysConfig.getSystemConfig("db.default.instancename"));
+		database.setLoginUserName(SysConfig.getSystemConfig("jdbc.username"));
+		database.setLoginPassword(SysConfig.getSystemConfig("jdbc.password"));
+		database.setDbIp(SysConfig.getSystemConfig("db.default.ip"));
+		database.setDbPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
+		DBTableHandler dbHandler = new DBTableHandler(database);
+		dbHandler.createTable(tables);
+		
+		tables.remove(0);// 移除资源表
+		return tables;
+	}
+	
+	/**
 	 * 插入配置库的基础数据
 	 */
 	private void insertCfgDatabaseOfBasicDatas() {
@@ -100,29 +130,15 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加公司配置平台管理员和对应的用户【不需要角色，这个是超级管理员】
 		ComSysAccount admin = new ComSysAccount();
-		admin.setLoginName("admin");
-		admin.setAccountType(0);
+		admin.setLoginName("administrator");
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		admin.setIsUnDelete(1);
-		String adminAccountId = comSysAccountService.saveComSysAccount(admin, "系统初始化配置平台管理员");
+		String adminAccountId = comSysAccountService.saveComSysAccount(admin, null);
 		
 		ComUser adminUser = new ComUser();
 		adminUser.setAccountId(adminAccountId);
 		adminUser.setNikeName("administrator");
 		adminUser.setRealName("配置平台管理员");
-		adminUser.setIsUnDelete(1);
-		HibernateUtil.saveObject(adminUser, "系统初始化配置平台管理员");
-		
-		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 添加客户信息(初始化是本公司：博道工业)
-		CfgCustomer sinoforceCustomer = new CfgCustomer();
-		sinoforceCustomer.setName("西安博道工业科技有限公司");
-		sinoforceCustomer.setShortName("博道工业");
-		String sinoforceCustomerId = HibernateUtil.saveObject(sinoforceCustomer, "系统初始化博道工业客户信息");
-		
-		// 建立账户和客户的关联关系
-		Map<String, Object> customerComSysAccountDataLink = ResourceHandlerUtil.getDataLinksObject(sinoforceCustomerId, adminAccountId, 2, null, null);
-		HibernateUtil.saveObject("CfgCustomerComSysAccountLinks", customerComSysAccountDataLink , "系统初始化配置客户和帐号关系");
+		HibernateUtil.saveObject(adminUser, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典数据
@@ -131,13 +147,12 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	
 	/**
 	 * 将表资源添加到资源表中
-	 * @param databaseId
 	 * @param tables
 	 */
-	private void insertResources(String databaseId, List<CfgTabledata> tables) {
+	private void insertResources(List<CfgTabledata> tables) {
 		ComSysResourceService comSysResourceService = new ComSysResourceService();
 		for (CfgTabledata table : tables) {
-			comSysResourceService.insertSysResource(databaseId, table);
+			comSysResourceService.insertSysResource(table);
 		}
 	}
 	
@@ -162,32 +177,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		}
 	}
 	
-	/**
-	 * 添加通用表
-	 * <p>目前有XXX个</p>
-	 * @param commonTables
-	 * @param dbType
-	 */
-	private void addCommonTables(List<CfgTabledata> commonTables, String dbType){
-		commonTables.add(new ComDatabase().toCreateTable(dbType));
-		commonTables.add(new ComDataDictionary().toCreateTable(dbType));
-		commonTables.add(new ComDataLinks().toCreateTable(dbType));
-		commonTables.add(new ComModuleOperation().toCreateTable(dbType));
-		commonTables.add(new ComPermission().toCreateTable(dbType));
-		commonTables.add(new ComProject().toCreateTable(dbType));
-		commonTables.add(new ComProjectModule().toCreateTable(dbType));
-		commonTables.add(new ComProjectModuleBody().toCreateTable(dbType));
-		commonTables.add(new ComReqLog().toCreateTable(dbType));
-		commonTables.add(new ComOperLog().toCreateTable(dbType));
-		commonTables.add(new ComRole().toCreateTable(dbType));
-		commonTables.add(new ComSqlScript().toCreateTable(dbType));
-		commonTables.add(new ComSysAccount().toCreateTable(dbType));
-		commonTables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
-		commonTables.add(new ComSysResource().toCreateTable(dbType));
-		commonTables.add(new ComUser().toCreateTable(dbType));
-		commonTables.add(new ComVerifyCode().toCreateTable(dbType));
-	}
-	
 	//---------------------------------------------------------------------------------------------------
 	/**
 	 * 添加数据字典的基础数据
@@ -209,7 +198,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		// CfgTabledata.tableType 表类型
 		insertDataDictionary(null, "cfgtabledata.tabletype", "单表", "1", 1);
 		insertDataDictionary(null, "cfgtabledata.tabletype", "树表", "2", 2);
-		insertDataDictionary(null, "cfgtabledata.tabletype", "父子关系表", "3", 3);
+		insertDataDictionary(null, "cfgtabledata.tabletype", "主子表", "3", 3);
 		// CfgTabledata.dbType 数据库类型
 		insertDataDictionary(null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
 		insertDataDictionary(null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
@@ -223,15 +212,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		// ComPermission.permissionType 权限的类型
 		insertDataDictionary(null, "compermission.permissiontype", "模块", "1", 1);
 		insertDataDictionary(null, "compermission.permissiontype", "页面操作", "2", 2);
-		
-		// ComProject.progressStatus 项目进度
-		insertDataDictionary(null, "comproject.progressstatus", "调研", "1", 1);
-		insertDataDictionary(null, "comproject.progressstatus", "设计", "2", 2);
-		insertDataDictionary(null, "comproject.progressstatus", "开发", "3", 3);
-		insertDataDictionary(null, "comproject.progressstatus", "测试", "4", 4);
-		insertDataDictionary(null, "comproject.progressstatus", "试运行", "5", 5);
-		insertDataDictionary(null, "comproject.progressstatus", "上线", "6", 6);
-		insertDataDictionary(null, "comproject.progressstatus", "验收", "7", 7);
 		
 		// ComSysAccount.accountType 账户类型
 		insertDataDictionary(null, "comsysaccount.accounttype", "超级管理员", "0", 0);
@@ -248,6 +228,9 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		// ComSysResource.resourceType 账户状态
 		insertDataDictionary(null, "comsysresource.resourcetype", "表资源", "1", 1);
 		insertDataDictionary(null, "comsysresource.resourcetype", "sql脚本资源", "2", 2);
+		insertDataDictionary(null, "comsysresource.resourcetype", "代码资源", "2", 2);
+		insertDataDictionary(null, "comsysresource.resourcetype", "数据库资源", "2", 2);
+		insertDataDictionary(null, "comsysresource.resourcetype", "项目资源", "2", 2);
 		
 		// ComUser.userStatus 账户状态
 		insertDataDictionary(null, "comuser.userstatus", "在职", "1", 1);
@@ -272,5 +255,14 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		dataDictionary.setCodeValue(codeValue);
 		dataDictionary.setOrderCode(orderCode);
 		return HibernateUtil.saveObject(dataDictionary, "系统初始化添加内置数据字典");
+	}
+	
+	//------------------------------------------------------------------------------------
+	/**
+	 * 系统每次启动时，加载相关的配置信息
+	 * 主要是hbm内容
+	 */
+	public void loadSysBasicDatasBySysStart() {
+		
 	}
 }

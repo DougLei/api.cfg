@@ -45,7 +45,7 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	private String emails;
 	/**
 	 * 账户类型
-	 * 		0:超级管理员(和用户表有对应)，只有一个，而且只是在配置平台中有
+	 * 		0/null:超级管理员(和用户表有对应)，只有一个，而且只是在配置平台中有
 	 * 		1.游客：虚拟账号(和用户表没有对应)
 	 * 		2.客户(企业)：实体帐号(和用户表有对应)
 	 * 		3.普通账户：实体帐号(和用户表有对应)
@@ -69,10 +69,6 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	 * 账户有效期限
 	 */
 	private Date validDate;
-	/**
-	 * 是否不能删除
-	 */
-	private int isUnDelete;
 	
 	//-------------------------------------------------------------------------
 	
@@ -211,12 +207,6 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	public int getAccountType() {
 		return accountType;
 	}
-	public int getIsUnDelete() {
-		return isUnDelete;
-	}
-	public void setIsUnDelete(int isUnDelete) {
-		this.isUnDelete = isUnDelete;
-	}
 	public void setAccountType(int accountType) {
 		this.accountType = accountType;
 	}
@@ -226,7 +216,7 @@ public class ComSysAccount extends BasicEntity implements ITable{
 		table.setName("[通用的]系统账户资源对象表");
 		table.setComments("[通用的]系统账户资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(16);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(15);
 		
 		CfgColumndata loginNameColumn = new CfgColumndata("login_name");
 		loginNameColumn.setName("登录名");
@@ -270,7 +260,7 @@ public class ComSysAccount extends BasicEntity implements ITable{
 		
 		CfgColumndata accountTypeColumn = new CfgColumndata("account_type");
 		accountTypeColumn.setName("账户类型");
-		accountTypeColumn.setComments("账户类型:0:超级管理员(和用户表有对应)，只有一个，而且只是在配置平台中有、1.游客：虚拟账号(和用户表没有对应)、2.客户(企业)：实体帐号(和用户表有对应)、3.普通账户：(和用户表有对应)、4.普通虚拟账户：(和用户表没有对应)。只有超级管理员才能修改这个字段的值，其他地方，这个值只能通过系统指定的硬编码去管理");
+		accountTypeColumn.setComments("账户类型:0/null:超级管理员(和用户表有对应)，只有一个，而且只是在配置平台中有、1.游客：虚拟账号(和用户表没有对应)、2.客户(企业)：实体帐号(和用户表有对应)、3.普通账户：(和用户表有对应)、4.普通虚拟账户：(和用户表没有对应)。只有超级管理员才能修改这个字段的值，其他地方，这个值只能通过系统指定的硬编码去管理");
 		accountTypeColumn.setColumnType(DataTypeConstants.INTEGER);
 		accountTypeColumn.setLength(1);
 		accountTypeColumn.setOrderCode(6);
@@ -298,14 +288,6 @@ public class ComSysAccount extends BasicEntity implements ITable{
 		validDateColumn.setColumnType(DataTypeConstants.DATE);
 		validDateColumn.setOrderCode(9);
 		columns.add(validDateColumn);
-		
-		CfgColumndata isUnDeleteColumn = new CfgColumndata("is_un_delete");
-		isUnDeleteColumn.setName("是否不能删除");
-		isUnDeleteColumn.setComments("是否不能删除");
-		isUnDeleteColumn.setColumnType(DataTypeConstants.INTEGER);
-		isUnDeleteColumn.setLength(1);
-		isUnDeleteColumn.setOrderCode(10);
-		columns.add(isUnDeleteColumn);
 		
 		table.setColumns(columns);
 		return table;

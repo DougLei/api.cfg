@@ -148,7 +148,7 @@ public class ComDatabaseService extends AbstractResourceService{
 				HibernateUtil.updateObject(table, null);
 				
 				// 将hbm资源加入到资源表中
-				comSysResourceService.insertSysResource(database.getId(), table);
+				comSysResourceService.insertSysResource(table);
 			}
 			
 			// 创建对应的hibernate hbm文件数据
@@ -250,7 +250,7 @@ public class ComDatabaseService extends AbstractResourceService{
 				HibernateUtil.updateObject(sqlScript, null);
 				
 				// 将sql脚本资源加入到资源表中
-				comSysResourceService.insertSysResource(database.getId(), sqlScript);
+				comSysResourceService.insertSysResource(sqlScript);
 			}
 			sqlScripts.clear();// 清空内存
 		}
