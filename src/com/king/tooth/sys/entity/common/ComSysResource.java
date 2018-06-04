@@ -23,8 +23,6 @@ public class ComSysResource extends BasicEntity implements ITable{
 	private String resourceName;
 	/**
 	 * 资源类型
-	 * 1:表资源
-	 * 2:sql脚本资源
 	 */
 	private int resourceType;
 	/**
@@ -101,7 +99,7 @@ public class ComSysResource extends BasicEntity implements ITable{
 		
 		CfgColumndata resourceTypeColumn = new CfgColumndata("resource_type");
 		resourceTypeColumn.setName("资源类型");
-		resourceTypeColumn.setComments("资源类型：1:表资源、2:sql脚本资源");
+		resourceTypeColumn.setComments("资源类型");
 		resourceTypeColumn.setColumnType(DataTypeConstants.INTEGER);
 		resourceTypeColumn.setLength(1);
 		resourceTypeColumn.setOrderCode(2);

@@ -1,80 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-  <context-param>
-    <param-name>contextConfigLocation</param-name>
-    <param-value>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+		<!-- 加载顺序：content-param -> listener -> filter -> servlet -->
+
+<!-- ****************************************************************************************************  -->		
+		
+		<!-- 配置spring -->
+		<context-param>  
+			<param-name>contextConfigLocation</param-name>  
+			<param-value>
 				classpath:spring.xml
-			</param-value>
-  </context-param>
-  <context-param>
-    <param-name>log4jConfigLocation</param-name>
-    <param-value>classpath:log4j.properties</param-value>
-  </context-param>
-  <listener>
-    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
-  <listener>
-    <listener-class>com.king.tooth.listener.LoadPropertiesFileListener</listener-class>
-  </listener>
-  <filter>
-    <filter-name>corsFilter</filter-name>
-    <filter-class>com.king.tooth.filter.CorsFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>corsFilter</filter-name>
-    <url-pattern>/common/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>funcExecTimeFilter</filter-name>
-    <filter-class>com.king.tooth.filter.FuncExecTimeFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>funcExecTimeFilter</filter-name>
-    <url-pattern>/common/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>encodingFilter</filter-name>
-    <filter-class>com.king.tooth.filter.EncodingFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>encodingFilter</filter-name>
-    <url-pattern>/common/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>databaseConnectionFilter</filter-name>
-    <filter-class>com.king.tooth.filter.PrepareFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>databaseConnectionFilter</filter-name>
-    <url-pattern>/common/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>recordReqLogFilter</filter-name>
-    <filter-class>com.king.tooth.filter.RecordReqLogFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>recordReqLogFilter</filter-name>
-    <url-pattern>/common/*</url-pattern>
-  </filter-mapping>
-  <servlet>
-    <servlet-name>commonDispatcherServlet</servlet-name>
-    <servlet-class>com.king.tooth.web.servlet.CommonDispatcherServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>commonDispatcherServlet</servlet-name>
-    <url-pattern>/common/*</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>springMvc</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:spring-mvc.xml</param-value>
-    </init-param>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>springMvc</servlet-name>
-    <url-pattern>/common/sm/*</url-pattern>
-  </servlet-mapping>
+			</param-value>  
+		</context-param>  
+		
+		<!-- 配置log4j -->
+		<context-param>
+			<param-name>log4jConfigLocation</param-name>
+			<param-value>classpath:log4j.properties</param-value>
+		</context-param>
+		
+<!-- ****************************************************************************************************  -->		
+		
+		<!-- 配置spring的listener，加载其核心组建 -->
+		<listener>
+			<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		</listener>
+		
+		<!-- 系统初始化 -->
+		<listener>
+			<listener-class>com.king.tooth.listener.LoadPropertiesFileListener</listener-class>
+		</listener>
+
+<!-- ****************************************************************************************************  -->		
+		
+		<!-- 配置跨域请求过滤器，解决跨域请求问题 -->
+		<filter>
+			<filter-name>corsFilter</filter-name>
+			<filter-class>com.king.tooth.filter.CorsFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>corsFilter</filter-name>
+			<url-pattern>/common/*</url-pattern>
+		</filter-mapping>
+		
+		<!-- 配置记录方法执行时间过滤器，用作性能监控 -->
+		<filter>
+			<filter-name>funcExecTimeFilter</filter-name>
+			<filter-class>com.king.tooth.filter.FuncExecTimeFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>funcExecTimeFilter</filter-name>
+			<url-pattern>/common/*</url-pattern>
+		</filter-mapping>
+		
+		<!-- 配置字符编码过滤器 -->
+		<filter>
+			<filter-name>encodingFilter</filter-name>
+			<filter-class>com.king.tooth.filter.EncodingFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>encodingFilter</filter-name>
+			<url-pattern>/common/*</url-pattern>
+		</filter-mapping>
+		
+		<!-- 配置预处理的过滤器 -->
+		<filter>
+			<filter-name>databaseConnectionFilter</filter-name>
+			<filter-class>com.king.tooth.filter.PrepareFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>databaseConnectionFilter</filter-name>
+			<url-pattern>/common/*</url-pattern>
+		</filter-mapping>
+		
+		<!-- 配置记录请求日志的过滤器 -->
+		<filter>
+			<filter-name>recordReqLogFilter</filter-name>
+			<filter-class>com.king.tooth.filter.RecordReqLogFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>recordReqLogFilter</filter-name>
+			<url-pattern>/common/*</url-pattern>
+		</filter-mapping>
+		
+		<!-- 配置验证请求是否有效的过滤器 -->
+		<filter>
+			<filter-name>varifyReqValidFilter</filter-name>
+			<filter-class>com.king.tooth.filter.VarifyReqValidFilter</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>varifyReqValidFilter</filter-name>
+			<url-pattern>/common/*</url-pattern>
+		</filter-mapping> 
+		
+<!-- ****************************************************************************************************  -->		
+		
+		<!-- 名为common的servlet总控制器 -->
+		<servlet>
+			<servlet-name>commonDispatcherServlet</servlet-name>
+			<servlet-class>com.king.tooth.web.servlet.CommonDispatcherServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>commonDispatcherServlet</servlet-name>
+			<url-pattern>/common/*</url-pattern>
+		</servlet-mapping>
+		
+		<!-- 配置springmvc控制器 -->
+		<servlet>
+		    <servlet-name>springMvc</servlet-name>
+		    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		    <init-param>
+	            <param-name>contextConfigLocation</param-name>
+	            <param-value>classpath:spring-mvc.xml</param-value>
+	        </init-param>
+		    <load-on-startup>1</load-on-startup>
+		</servlet>
+		<servlet-mapping>
+		    <servlet-name>springMvc</servlet-name>
+		    <url-pattern>/common/sm/*</url-pattern>
+		</servlet-mapping>
+		
+<!-- ****************************************************************************************************  -->		
+
 </web-app>

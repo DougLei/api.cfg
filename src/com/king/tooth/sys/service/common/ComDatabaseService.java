@@ -3,7 +3,6 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -77,8 +76,6 @@ public class ComDatabaseService extends AbstractResourceService{
 		hql = "delete ComSysResource where databaseId = '"+database.getId()+"'";
 		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
 		
-		// 将项目id和数据库id的映射关系清除
-		ProjectIdRefDatabaseIdMapping.clearMapping(database.getId());
 	}
 	
 	

@@ -21,61 +21,6 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 public class CfgTabledataController extends AbstractResourceController{
 	
 	/**
-	 * 查看详细
-	 * <p>请求方式：GET</p>
-	 * @return
-	 */
-	@RequestMapping(value="/detail/{id}", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody detail(@PathVariable String id){
-		return null;
-	}
-	
-	/**
-	 * 查询
-	 * <p>请求方式：GET</p>
-	 * @return
-	 */
-	@RequestMapping(value="/search", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody search(@RequestBody CfgTabledata tabledata){
-		return null;
-	}
-	
-	/**
-	 * 新增
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	@RequestMapping(value="/add", method = RequestMethod.POST)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody add(@RequestBody CfgTabledata tabledata){
-		return null;
-	}
-	
-	/**
-	 * 修改
-	 * <p>请求方式：PUT</p>
-	 * @return
-	 */
-	@RequestMapping(value="/update", method = RequestMethod.PUT)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody update(@RequestBody CfgTabledata tabledata){
-		return null;
-	}
-	
-	/**
-	 * 删除
-	 * <p>请求方式：DELETE</p>
-	 * @return
-	 */
-	@RequestMapping(value="/delete", method = RequestMethod.DELETE)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody delete(@RequestBody CfgTabledata tabledata){
-		return null;
-	}
-	
-	/**
 	 * 创建表，即建模
 	 * <p>请求方式：POST</p>
 	 * @return

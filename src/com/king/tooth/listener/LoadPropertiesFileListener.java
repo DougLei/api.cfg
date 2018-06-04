@@ -10,7 +10,6 @@ import javax.servlet.ServletContextListener;
 
 import org.springframework.util.Assert;
 
-import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.service.common.ComBasicDataProcessService;
 import com.king.tooth.util.PropertiesUtil;
@@ -61,8 +60,6 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	 * 初始化系统配置
 	 */
 	private void initSystemConfig() {
-		// 初始化配置系统的项目id和数据库id映射
-		ProjectIdRefDatabaseIdMapping.initBasicProjectIdRefDatabaseIdMapping();
 		// 初始化资源处理器配置
 		ProcesserConfig.initResourceProcesserConfig();
 		// 初始化路由解析规则配置
