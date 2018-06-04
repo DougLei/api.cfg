@@ -9,6 +9,7 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.util.StrUtils;
 
 /**
  * [通用的]系统资源对象
@@ -41,6 +42,9 @@ public class ComSysResource extends BasicEntity implements ITable{
 		return resourceName;
 	}
 	public String getRefResourceId() {
+		if(StrUtils.isEmpty(refResourceId)){
+			return "built-in-resource";
+		}
 		return refResourceId;
 	}
 	public void setRefResourceId(String refResourceId) {
