@@ -106,16 +106,16 @@ public class BuiltinQueryCondFuncUtil {
 		}
 		
 		HbmConfPropMetadata[] hibernateDefineResourceProps = null;
-		if(requestResourceType == ISysResource.TABLE_RESOURCE_TYPE){
+		if(requestResourceType == ISysResource.TABLE){
 			hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(resourceName);
 		}
 		
 		String dbScriptStatements = null;
 		IQueryCondFuncEntity queryCondFuncEntity = null;
 		for (Entry<String, String> entry : queryCondParamsSet) {
-			if(requestResourceType == ISysResource.TABLE_RESOURCE_TYPE){
+			if(requestResourceType == ISysResource.TABLE){
 				queryCondFuncEntity = new HqlQueryCondFuncEntity(HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, entry.getKey()), entry.getValue());
-			}else if(requestResourceType == ISysResource.SQLSCRIPT_RESOURCE_TYPE){
+			}else if(requestResourceType == ISysResource.SQLSCRIPT){
 				queryCondFuncEntity = new SqlQueryCondFuncEntity(entry.getKey(), entry.getValue());
 			}
 			

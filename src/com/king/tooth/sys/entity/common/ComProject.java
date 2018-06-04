@@ -5,18 +5,18 @@ import java.util.Date;
 import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgCustomer;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.util.StrUtils;
 
 /**
  * [通用的]项目信息资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProject extends BasicEntity implements ITable{
+public class ComProject extends AbstractSysResource implements ITable{
 	
 	/**
 	 * 所属的客户主键
@@ -35,85 +35,18 @@ public class ComProject extends BasicEntity implements ITable{
 	 * 项目描述
 	 */
 	private String descs;
-	/**
-	 * 项目进度
-	 * 	1.调研、2.设计、3.开发、4.测试、5.试运行、6.上线、7.验收...
-	 */
-	private int progressStatus;
-	/**
-	 * 启项时间
-	 */
-	private Date startDate;
-	/**
-	 * 预计结项时间
-	 */
-	private Date planEndDate;
-	/**
-	 * 实际结项时间
-	 */
-	private Date endDate;
-	/**
-	 * 版本
-	 */
-	private int version;
-	/**
-	 * 是否测试
-	 * <p>到测试平台</p>
-	 */
-	private int isTest;
-	/**
-	 * 是否部署
-	 * <p>到运行平台</p>
-	 */
-	private int isDeployment;
 	
 	//-----------------------------------------------------------
 	
-	/**
-	 * 所属客户
-	 */
-	private CfgCustomer customer;
-	/**
-	 * 所包含的模块集合
-	 */
-	private List<ComProjectModule> projectModules;
-	/**
-	 * 所属的数据库
-	 */
-	private ComDatabase database;
-	
-	
 	public ComProject() {
-		this.version = 1;
 	}
 	public ComProject(String id, String databaseId) {
 		this.id = id;
 		this.databaseId = databaseId;
 	}
 
-	public List<ComProjectModule> getProjectModules() {
-		return projectModules;
-	}
-	public void setProjectModules(List<ComProjectModule> projectModules) {
-		this.projectModules = projectModules;
-	}
-	public CfgCustomer getCustomer() {
-		return customer;
-	}
-	public int getIsDeployment() {
-		return isDeployment;
-	}
-	public void setIsDeployment(int isDeployment) {
-		this.isDeployment = isDeployment;
-	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
@@ -142,13 +75,13 @@ public class ComProject extends BasicEntity implements ITable{
 	public void setLastUpdatedUserId(String lastUpdatedUserId) {
 		this.lastUpdatedUserId = lastUpdatedUserId;
 	}
-	public void setCustomer(CfgCustomer customer) {
-		this.customer = customer;
-	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
+		if(StrUtils.isEmpty(name)){
+			throw new NullPointerException("项目名称不能为空");
+		}
 		this.name = name;
 	}
 	public String getDatabaseId() {
@@ -160,47 +93,8 @@ public class ComProject extends BasicEntity implements ITable{
 	public String getDescs() {
 		return descs;
 	}
-	public ComDatabase getDatabase() {
-		return database;
-	}
-	public void setDatabase(ComDatabase database) {
-		this.database = database;
-	}
 	public void setDescs(String descs) {
 		this.descs = descs;
-	}
-	public int getProgressStatus() {
-		return progressStatus;
-	}
-	public void setProgressStatus(int progressStatus) {
-		this.progressStatus = progressStatus;
-	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-	public Date getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-	public Date getPlanEndDate() {
-		return planEndDate;
-	}
-	public int getIsTest() {
-		return isTest;
-	}
-	public void setIsTest(int isTest) {
-		this.isTest = isTest;
-	}
-	public void setPlanEndDate(Date planEndDate) {
-		this.planEndDate = planEndDate;
-	}
-	public Date getEndDate() {
-		return endDate;
 	}
 	public String getOwnerCustomerId() {
 		return ownerCustomerId;
@@ -208,16 +102,26 @@ public class ComProject extends BasicEntity implements ITable{
 	public void setOwnerCustomerId(String ownerCustomerId) {
 		this.ownerCustomerId = ownerCustomerId;
 	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public int getIsDeploymentTest() {
+		return isDeploymentTest;
 	}
+	public void setIsDeploymentTest(int isDeploymentTest) {
+		this.isDeploymentTest = isDeploymentTest;
+	}
+	public int getIsDeploymentRun() {
+		return isDeploymentRun;
+	}
+	public void setIsDeploymentRun(int isDeploymentRun) {
+		this.isDeploymentRun = isDeploymentRun;
+	}
+
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT");
 		table.setName("[通用的]项目信息资源对象表");
 		table.setComments("[通用的]项目信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(16);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(11);
 		
 		CfgColumndata ownerCustomerIdColumn = new CfgColumndata("owner_customer_id");
 		ownerCustomerIdColumn.setName("所属的客户主键");
@@ -251,63 +155,34 @@ public class ComProject extends BasicEntity implements ITable{
 		descsColumn.setOrderCode(4);
 		columns.add(descsColumn);
 		
-		CfgColumndata progressStatusColumn = new CfgColumndata("progress_status");
-		progressStatusColumn.setName("项目进度");
-		progressStatusColumn.setComments("项目进度：1.调研、2.设计、3.开发、4.测试、5.试运行、6.上线、7.验收...");
-		progressStatusColumn.setColumnType(DataTypeConstants.INTEGER);
-		progressStatusColumn.setLength(1);
-		progressStatusColumn.setOrderCode(5);
-		columns.add(progressStatusColumn);
-		
-		CfgColumndata startDateColumn = new CfgColumndata("start_date");
-		startDateColumn.setName("启项时间");
-		startDateColumn.setComments("启项时间");
-		startDateColumn.setColumnType(DataTypeConstants.DATE);
-		startDateColumn.setOrderCode(6);
-		columns.add(startDateColumn);
-		
-		CfgColumndata planEndDateColumn = new CfgColumndata("plan_end_date");
-		planEndDateColumn.setName("预计结项时间");
-		planEndDateColumn.setComments("预计结项时间");
-		planEndDateColumn.setColumnType(DataTypeConstants.DATE);
-		planEndDateColumn.setOrderCode(7);
-		columns.add(planEndDateColumn);
-		
-		CfgColumndata endDateColumn = new CfgColumndata("end_date");
-		endDateColumn.setName("实际结项时间");
-		endDateColumn.setComments("实际结项时间");
-		endDateColumn.setColumnType(DataTypeConstants.DATE);
-		endDateColumn.setOrderCode(8);
-		columns.add(endDateColumn);
-		
-		CfgColumndata isTestColumn = new CfgColumndata("is_test");
-		isTestColumn.setName("是否测试");
-		isTestColumn.setComments("是否测试：到测试平台");
-		isTestColumn.setColumnType(DataTypeConstants.INTEGER);
-		isTestColumn.setLength(1);
-		isTestColumn.setOrderCode(9);
-		columns.add(isTestColumn);
-		
-		CfgColumndata isDeploymentColumn = new CfgColumndata("is_deployment");
-		isDeploymentColumn.setName("是否部署");
-		isDeploymentColumn.setComments("是否部署：到运行平台");
-		isDeploymentColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentColumn.setLength(1);
-		isDeploymentColumn.setOrderCode(10);
-		columns.add(isDeploymentColumn);
-		
-		CfgColumndata versionColumn = new CfgColumndata("version");
-		versionColumn.setName("版本");
-		versionColumn.setComments("版本");
-		versionColumn.setColumnType(DataTypeConstants.INTEGER);
-		versionColumn.setLength(3);
-		versionColumn.setOrderCode(11);
-		columns.add(versionColumn);
+		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
+		isDeploymentTestColumn.setName("是否部署到测试环境");
+		isDeploymentTestColumn.setComments("是否部署到测试环境");
+		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentTestColumn.setLength(1);
+		isDeploymentTestColumn.setOrderCode(5);
+		columns.add(isDeploymentTestColumn);
+
+		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
+		isDeploymentRunColumn.setName("是否部署到正式环境");
+		isDeploymentRunColumn.setComments("是否部署到正式环境");
+		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentRunColumn.setLength(1);
+		isDeploymentRunColumn.setOrderCode(6);
+		columns.add(isDeploymentRunColumn);
 		
 		table.setColumns(columns);
 		return table;
 	}
 	public String toDropTable() {
 		return "COM_PROJECT";
+	}
+	
+	public int getResourceType() {
+		return PROJECT;
+	}
+	
+	public String getResourceName() {
+		return name;
 	}
 }

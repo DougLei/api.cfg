@@ -24,7 +24,5 @@
 		<property name="contactUserTel" column="contact_user_tel" type="string" />
 		<property name="contactUserEmail" column="contact_user_email" type="string" />
 		<property name="remark" column="remark" type="string" />
-		<property name="isUnDelete" column="is_un_delete" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
 	</class>
 </hibernate-mapping>

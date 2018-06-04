@@ -28,17 +28,6 @@ public class DynamicBasicDataColumnUtil {
 	 * @param table
 	 */
 	public static void initBasicColumnToTable(CfgTabledata table){
-		// projectId
-		CfgColumndata projectIdColumn = new CfgColumndata("project_id");
-		projectIdColumn.setIsKey(1);
-		projectIdColumn.setIsNullabled(0);
-		projectIdColumn.setColumnType(DataTypeConstants.STRING);
-		projectIdColumn.setLength(32);
-		projectIdColumn.setName("所属的项目主键");
-		projectIdColumn.setComments("所属的项目主键:用来区分不同项目的数据");
-		projectIdColumn.setOrderCode(9994);
-		table.getColumns().add(projectIdColumn);
-		
 		// id
 		CfgColumndata idColumn = new CfgColumndata("id");
 		idColumn.setIsKey(1);

@@ -7,9 +7,9 @@
 	
 	<!-- 配置平台的数据源 -->
 	<bean id="cfgDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">  
-         <property name="url" value="${jdbc.cfg.url}" />  
-         <property name="username" value="${jdbc.cfg.username}" />  
-         <property name="password" value="${jdbc.cfg.password}" />  
+         <property name="url" value="${jdbc.url}" />  
+         <property name="username" value="${jdbc.username}" />  
+         <property name="password" value="${jdbc.password}" />  
          <property name="driverClassName" value="${jdbc.driverClassName}" />
           
          <property name="maxActive" value="${druid.datasource.maxActive}" /> 
@@ -19,35 +19,4 @@
          <property name="poolPreparedStatements" value="${druid.datasource.poolPreparedStatements}" /> 
          <property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.datasource.maxPoolPreparedStatementPerConnectionSize}" />
 	</bean>  
-	
-	<!-- 测试平台的数据源 -->
-	<bean id="testDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">  
-         <property name="url" value="${jdbc.test.url}" />  
-         <property name="username" value="${jdbc.test.username}" />  
-         <property name="password" value="${jdbc.test.password}" />  
-         <property name="driverClassName" value="${jdbc.driverClassName}" />
-          
-         <property name="maxActive" value="${druid.datasource.maxActive}" /> 
-         <property name="minIdle" value="${druid.datasource.minIdle}" /> 
-         <property name="maxWait" value="${druid.datasource.maxWait}" /> 
-         <property name="timeBetweenEvictionRunsMillis" value="${druid.datasource.timeBetweenEvictionRunsMillis}" /> 
-         <property name="poolPreparedStatements" value="${druid.datasource.poolPreparedStatements}" /> 
-         <property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.datasource.maxPoolPreparedStatementPerConnectionSize}" />
-	</bean>  
-	
-	<!-- 配置动态数据源持有者对象 -->
-	<bean id="dynamicDataSourceHolder" class="com.king.tooth.plugins.datasource.dynamic.DynamicDataSourceHolder" scope="singleton">
-		<property name="dataSources">
-			<map key-type="java.lang.String">
-				<entry key="${cfg.database.id}" value-ref="cfgDataSource"></entry>
-				<entry key="${test.database.id}" value-ref="testDataSource"></entry>
-			</map>
-		</property>
-	</bean>
-	
-	<!-- 配置动态的druid数据源操作者对象 -->
-	<bean id="dynamicDruidDataSourceHandler" class="com.king.tooth.plugins.datasource.dynamic.druid.DynamicDruidDataSourceHandler">
-		<property name="dataSourceHolder" ref="dynamicDataSourceHolder"></property>
-	</bean>
-	
 </beans>

@@ -61,7 +61,7 @@ public class RequestBody implements Serializable{
 				throw new IllegalArgumentException("平台目前不支持同时处理不同类型[sql资源和table资源]的资源");
 			}
 			
-			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT_RESOURCE_TYPE
+			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT
 					&& !requestResource.getResourceName().equals(requestParentResource.getResourceName())){
 				throw new IllegalArgumentException("平台目前不支持处理[sql资源]的主子关系查询");
 			}

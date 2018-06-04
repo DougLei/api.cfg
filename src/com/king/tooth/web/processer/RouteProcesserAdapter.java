@@ -114,9 +114,9 @@ public class RouteProcesserAdapter implements Serializable {
 	 * @return
 	 */
 	private String getResourceProcessPackageName(int processResourceType) {
-		if(processResourceType == ISysResource.TABLE_RESOURCE_TYPE){
+		if(processResourceType == ISysResource.TABLE){
 			return TABLE_RESOURCE_PROCESSER_PACKAGE_NAME;
-		}else if(processResourceType == ISysResource.SQLSCRIPT_RESOURCE_TYPE){
+		}else if(processResourceType == ISysResource.SQLSCRIPT){
 			return SQL_RESOURCE_PROCESSER_PACKAGE_NAME;
 		}
 		throw new IllegalArgumentException("[processResourceType="+processResourceType+"]，没有匹配到对应的资源类型处理器，请检查[api.platform.processer.properties]配置文件中，key为route.processer.adapter.json的数据中，processResourceType的值是否配置正确");

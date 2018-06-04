@@ -7,7 +7,6 @@ import java.util.List;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgCustomer;
@@ -95,7 +94,7 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	private List<ComRole> roles;
 	
 	public ComSysAccount() {
-		this.accountStatus = ISysResource.ENABLED_RESOURCE_STATUS;
+		this.accountStatus = 1;
 	}
 	
 	public String getLoginName() {
@@ -121,12 +120,6 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;

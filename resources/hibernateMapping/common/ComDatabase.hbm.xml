@@ -22,10 +22,7 @@
 		<property name="dbPort" column="db_port" type="integer" />
 		<property name="cfgMainFileContent" column="cfg_main_file_content" type="string" />
 		<property name="cfgTmplogFileContent" column="cfg_tmplog_file_content" type="string" />
-		<property name="isEnabled" column="is_enabled" type="integer" />
-		<property name="isDbCapacityErr" column="is_db_capacity_err" type="integer" />
-		<property name="dbCapacityDesc" column="db_capacity_desc" type="string" />
-		<property name="isCreated" column="is_created" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
+		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
+		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
 	</class>
 </hibernate-mapping>

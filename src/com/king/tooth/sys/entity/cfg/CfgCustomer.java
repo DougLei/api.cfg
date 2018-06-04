@@ -7,8 +7,6 @@ import java.util.List;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.entity.common.ComProject;
 
 /**
  * [配置系统]客户资源对象
@@ -62,37 +60,12 @@ public class CfgCustomer extends BasicEntity implements ITable{
 	 * 备注
 	 */
 	private String remark;
-	/**
-	 * 是否不能删除
-	 */
-	private int isUnDelete;
 	
 	
 	//--------------------------------------------------
-	/**
-	 * 所拥有的项目对象集合
-	 */
-	private List<ComProject> projects;
-	/**
-	 * 所拥有的的数据库集合
-	 */
-	private List<ComDatabase> databases;
 	
-	
-	public List<ComProject> getProjects() {
-		return projects;
-	}
-	public void setProjects(List<ComProject> projects) {
-		this.projects = projects;
-	}
 	public String getName() {
 		return name;
-	}
-	public int getIsUnDelete() {
-		return isUnDelete;
-	}
-	public void setIsUnDelete(int isUnDelete) {
-		this.isUnDelete = isUnDelete;
 	}
 	public String getId() {
 		return id;
@@ -118,12 +91,6 @@ public class CfgCustomer extends BasicEntity implements ITable{
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -141,12 +108,6 @@ public class CfgCustomer extends BasicEntity implements ITable{
 	}
 	public String getAddr() {
 		return addr;
-	}
-	public List<ComDatabase> getDatabases() {
-		return databases;
-	}
-	public void setDatabases(List<ComDatabase> databases) {
-		this.databases = databases;
 	}
 	public void setAddr(String addr) {
 		this.addr = addr;
@@ -200,13 +161,12 @@ public class CfgCustomer extends BasicEntity implements ITable{
 		this.remark = remark;
 	}
 	
-	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "CFG_CUSTOMER");
 		table.setName("[配置系统]客户资源对象表");
 		table.setComments("[配置系统]客户资源对象表：当ComUser中userType=2时，这个表中会存储一条相应的数据信息，也和帐号主键关联");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(17);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(16);
 		
 		CfgColumndata nameColumn = new CfgColumndata("name");
 		nameColumn.setName("客户名称");
@@ -295,14 +255,6 @@ public class CfgCustomer extends BasicEntity implements ITable{
 		remarkColumn.setLength(200);
 		remarkColumn.setOrderCode(11);
 		columns.add(remarkColumn);
-		
-		CfgColumndata isUnDeleteColumn = new CfgColumndata("is_un_delete");
-		isUnDeleteColumn.setName("是否不能删除");
-		isUnDeleteColumn.setComments("是否不能删除");
-		isUnDeleteColumn.setColumnType(DataTypeConstants.INTEGER);
-		isUnDeleteColumn.setLength(1);
-		isUnDeleteColumn.setOrderCode(12);
-		columns.add(isUnDeleteColumn);
 		
 		table.setColumns(columns);
 		return table;

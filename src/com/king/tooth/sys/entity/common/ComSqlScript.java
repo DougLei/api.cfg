@@ -12,8 +12,7 @@ import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.exception.gsp.AnalyzeSqlScriptException;
 import com.king.tooth.exception.gsp.EDBVendorIsNullException;
 import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
-import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -33,7 +32,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  * @author StoneKing
  */
 @SuppressWarnings("serial")
-public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
+public class ComSqlScript extends AbstractSysResource implements ITable{
 	/**
 	 * sql脚本的标题
 	 */
@@ -69,8 +68,6 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 	private String sqlQueryResultColumns;
 	private List<SqlQueryResultColumn> sqlQueryResultColumnList;
 	
-	
-	
 	/**
 	 * 存储过程名称
 	 * <p>[该属性针对存储过程的sql语句]</p>
@@ -83,20 +80,12 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 	private String procedureParameters;
 	private List<ProcedureSqlScriptParameter> procedureParameterList;
 	
-	
-	/**
-	 * 是否启用
-	 */
-	private int isEnabled;
 	/**
 	 * 备注
 	 */
 	private String comments;
-	/**
-	 * 是否被创建
-	 */
-	private int isCreated;
 	
+	//--------------------------------------------------------
 	/**
 	 * 解析对象
 	 */
@@ -107,10 +96,7 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 	 */
 	private FinalSqlScriptStatement finalSqlScript;
 	
-	//--------------------------------------------------------
-	
 	public ComSqlScript() {
-		this.isEnabled = ENABLED_RESOURCE_STATUS;
 	}
 	public ComSqlScript(String sqlName, String sqlScriptContent) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
 		this();
@@ -202,12 +188,6 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
@@ -244,20 +224,8 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 		this.procedureParameters = procedureParameters;
 		this.procedureParameterList = JsonUtil.parseArray(procedureParameters, ProcedureSqlScriptParameter.class);
 	}
-	public int getIsEnabled() {
-		return isEnabled;
-	}
-	public int getIsCreated() {
-		return isCreated;
-	}
-	public void setIsCreated(int isCreated) {
-		this.isCreated = isCreated;
-	}
 	public String getProcedureParameters() {
 		return procedureParameters;
-	}
-	public void setIsEnabled(int isEnabled) {
-		this.isEnabled = isEnabled;
 	}
 	public String getProcedureName() {
 		return procedureName;
@@ -294,6 +262,18 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 	}
 	public void setFinalSqlScript(FinalSqlScriptStatement finalSqlScript) {
 		this.finalSqlScript = finalSqlScript;
+	}
+	public int getIsDeploymentTest() {
+		return isDeploymentTest;
+	}
+	public void setIsDeploymentTest(int isDeploymentTest) {
+		this.isDeploymentTest = isDeploymentTest;
+	}
+	public int getIsDeploymentRun() {
+		return isDeploymentRun;
+	}
+	public void setIsDeploymentRun(int isDeploymentRun) {
+		this.isDeploymentRun = isDeploymentRun;
 	}
 	
 	private void setGsqlParser(){
@@ -433,29 +413,29 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 		procedureParametersColumn.setOrderCode(9);
 		columns.add(procedureParametersColumn);
 		
-		CfgColumndata isCreatedColumn = new CfgColumndata("is_created");
-		isCreatedColumn.setName("是否被创建");
-		isCreatedColumn.setComments("是否被创建");
-		isCreatedColumn.setColumnType(DataTypeConstants.INTEGER);
-		isCreatedColumn.setLength(1);
-		isCreatedColumn.setOrderCode(10);
-		columns.add(isCreatedColumn);
-		
-		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
-		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("是否有效");
-		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
-		isEnabledColumn.setLength(1);
-		isEnabledColumn.setOrderCode(11);
-		columns.add(isEnabledColumn);
-		
 		CfgColumndata commentsColumn = new CfgColumndata("comments");
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);
 		commentsColumn.setLength(200);
-		commentsColumn.setOrderCode(12);
+		commentsColumn.setOrderCode(10);
 		columns.add(commentsColumn);
+		
+		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
+		isDeploymentTestColumn.setName("是否部署到测试环境");
+		isDeploymentTestColumn.setComments("是否部署到测试环境");
+		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentTestColumn.setLength(1);
+		isDeploymentTestColumn.setOrderCode(11);
+		columns.add(isDeploymentTestColumn);
+
+		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
+		isDeploymentRunColumn.setName("是否部署到正式环境");
+		isDeploymentRunColumn.setComments("是否部署到正式环境");
+		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentRunColumn.setLength(1);
+		isDeploymentRunColumn.setOrderCode(12);
+		columns.add(isDeploymentRunColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -466,13 +446,10 @@ public class ComSqlScript extends BasicEntity implements ISysResource, ITable{
 	}
 	
 	public int getResourceType() {
-		return SQLSCRIPT_RESOURCE_TYPE;
+		return SQLSCRIPT;
 	}
 	
 	public String getResourceName() {
-		return getSqlScriptResourceName();
-	}
-	public String getRefResourceId() {
-		return getId();
+		return sqlScriptResourceName;
 	}
 }

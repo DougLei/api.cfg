@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -57,7 +56,7 @@ public class ComProjectModule extends BasicEntity implements ITable{
 	private List<ComModuleOperation> moduleOperations;
 	
 	public ComProjectModule() {
-		this.isEnabled = ISysResource.ENABLED_RESOURCE_STATUS;
+		this.isEnabled = 1;
 	}
 	
 	public String getParentId() {
@@ -83,12 +82,6 @@ public class ComProjectModule extends BasicEntity implements ITable{
 	}
 	public void setCode(String code) {
 		this.code = code;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	public String getUrl() {
 		return url;

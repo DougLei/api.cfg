@@ -7,12 +7,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -30,14 +28,6 @@ public class PrepareFilter extends AbstractFilter{
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) req;
-		String projectId = request.getHeader("_projId");
-		if(StrUtils.isEmpty(projectId)){
-			printResult("request header中，请求操作的_projId(项目id)值不能为空！", resp);
-			return;
-		}
-		
-		CurrentThreadContext.setProjectId(projectId);
 		try {
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();

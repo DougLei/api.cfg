@@ -17,13 +17,7 @@
 		<property name="databaseId" column="database_id" type="string" />
 		<property name="name" column="name" type="string" />
 		<property name="descs" column="descs" type="string" />
-		<property name="progressStatus" column="progress_status" type="integer" />
-		<property name="startDate" column="start_date" type="timestamp" />
-		<property name="planEndDate" column="plan_end_date" type="timestamp" />
-		<property name="endDate" column="end_date" type="timestamp" />
-		<property name="isTest" column="is_test" type="integer" />
-		<property name="isDeployment" column="is_deployment" type="integer" />
-		<property name="version" column="version" type="integer" />
-		<property name="projectId" column="project_id" type="string" />
+		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
+		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
 	</class>
 </hibernate-mapping>

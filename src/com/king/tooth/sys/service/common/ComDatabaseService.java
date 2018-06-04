@@ -3,20 +3,13 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.internal.SessionFactoryImpl;
-
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
-import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractResourceService;
-import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -32,25 +25,19 @@ public class ComDatabaseService extends AbstractResourceService{
 	 * @param database
 	 */
 	public void createDatabaseModel(ComDatabase database){
-		if(database.getIsEnabled() == ISysResource.UNENABLED_RESOURCE_STATUS){
-			throw new IllegalArgumentException("操作的数据库["+database.getDbDisplayName()+"/"+database.getDbInstanceName()+"]被禁用，请联系管理员");
-		}
-		
 		// 如果ip和port和我们的数据库配置一致，判断为使用我们的数据库
 		if(SysConfig.getSystemConfig("db.default.ip").equals(database.getDbIp()) 
 				&& SysConfig.getSystemConfig("db.default.port").equals(database.getDbPort()+"")
-				&& database.getIsCreated() == 0){
-			DatabaseHandler databaseHandler = new DatabaseHandler();
-			databaseHandler.createDatabase(database);
+//				&& database.getIsCreated() == 0
+				){
+//			DatabaseHandler databaseHandler = new DatabaseHandler();
+//			databaseHandler.createDatabase(database);
 		}
-		if(database.getIsCreated() == 0){
-			// 修改被创建的状态为1，即被创建
-			database.setIsCreated(1);
-			HibernateUtil.updateObject(database, null);
-		}
-		
-		// 动态添加数据源和sessionFactory
-		DynamicDBUtil.addDataSource(database);
+//		if(database.getIsCreated() == 0){
+//			// 修改被创建的状态为1，即被创建
+//			database.setIsCreated(1);
+//			HibernateUtil.updateObject(database, null);
+//		}
 	}
 	
 	/**
@@ -60,37 +47,32 @@ public class ComDatabaseService extends AbstractResourceService{
 	 * @param database
 	 */
 	public void dropDatabaseModel(ComDatabase database){
-		if(database.getIsEnabled() == ISysResource.UNENABLED_RESOURCE_STATUS){
-			throw new IllegalArgumentException("操作的数据库[displayName:"+database.getDbDisplayName()+"/instanceName:"+database.getDbInstanceName()+"]被禁用，请联系管理员");
-		}
 		
 		// 如果ip和port和我们的数据库配置一致，判断为使用我们的数据库
 		if(SysConfig.getSystemConfig("db.default.ip").equals(database.getDbIp()) 
 				&& SysConfig.getSystemConfig("db.default.port").equals(database.getDbPort()+"")
-				&& database.getIsCreated() == 1){
-			DatabaseHandler databaseHandler = new DatabaseHandler();
-			databaseHandler.dropDatabase(database);
+//				&& database.getIsCreated() == 1
+				){
+//			DatabaseHandler databaseHandler = new DatabaseHandler();
+//			databaseHandler.dropDatabase(database);
 		}
-		if(database.getIsCreated() == 1){
-			// 修改被创建的状态为0，即没有创建
-			database.setIsCreated(0);
-			HibernateUtil.updateObject(database, null);
-		}
-		
-		// 动态删除数据源和sessionFactory
-		DynamicDBUtil.removeDataSource(database.getId());
+//		if(database.getIsCreated() == 1){
+//			// 修改被创建的状态为0，即没有创建
+//			database.setIsCreated(0);
+//			HibernateUtil.updateObject(database, null);
+//		}
 		
 		// ---------hql写法
 		// 修改该库下所有的表的isCreated=0
-		String hql = "update CfgTabledata set isCreated=0 where isCreated = 1 and id in (select rightId from CfgDatabaseCfgTabledataLinks where leftId = '"+database.getId()+"')";
+		String hql = "update CfgTabledata set isCreated=0 where isCreated = 1 and id in (select rightId from ComDatabaseCfgTabledataLinks where leftId = '"+database.getId()+"')";
 		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
 		
 		// 修改该库下所有的sql脚本的isCreated=0
-		hql = "update ComSqlScript set isCreated=0 where isCreated = 1 and id in (select rightId from CfgDatabaseComSqlScriptLinks where leftId = '"+database.getId()+"')";
+		hql = "update ComSqlScript set isCreated=0 where isCreated = 1 and id in (select rightId from ComDatabaseComSqlScriptLinks where leftId = '"+database.getId()+"')";
 		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
 		
 		// 删除该库下，所有表的hbm数据、资源数据
-		hql = "delete ComHibernateHbmConfdata where tableId in (select rightId from CfgDatabaseCfgTabledataLinks where leftId = '"+database.getId()+"')";
+		hql = "delete ComHibernateHbmConfdata where tableId in (select rightId from ComDatabaseCfgTabledataLinks where leftId = '"+database.getId()+"')";
 		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
 		hql = "delete ComSysResource where databaseId = '"+database.getId()+"'";
 		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
@@ -106,12 +88,12 @@ public class ComDatabaseService extends AbstractResourceService{
 	 * @param database
 	 */
 	private void resourceValidDatabase(ComDatabase database){
-		if(database.getIsEnabled() == ISysResource.UNENABLED_RESOURCE_STATUS){
-			throw new IllegalArgumentException("操作的数据库[displayName:"+database.getDbDisplayName()+"/instanceName:"+database.getDbInstanceName()+"]被禁用，请联系管理员");
-		}
-		if(database.getIsCreated() == 0){
-			throw new IllegalArgumentException("操作的数据库[displayName:"+database.getDbDisplayName()+"/instanceName:"+database.getDbInstanceName()+"]没有被创建，请联系管理员");
-		}
+//		if(database.getIsEnabled() == ISysResource.UNENABLED_RESOURCE_STATUS){
+//			throw new IllegalArgumentException("操作的数据库[displayName:"+database.getDbDisplayName()+"/instanceName:"+database.getDbInstanceName()+"]被禁用，请联系管理员");
+//		}
+//		if(database.getIsCreated() == 0){
+//			throw new IllegalArgumentException("操作的数据库[displayName:"+database.getDbDisplayName()+"/instanceName:"+database.getDbInstanceName()+"]没有被创建，请联系管理员");
+//		}
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -120,13 +102,13 @@ public class ComDatabaseService extends AbstractResourceService{
 	 * @param database
 	 * @return
 	 */
-	private SessionFactoryImpl getSessionFactory(ComDatabase database){
-		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(database.getId());
-		if(sessionFactory == null){
-			throw new NullPointerException("指定数据库[displayName:"+database.getDbDisplayName()+"/instanceName:"+database.getDbInstanceName()+"/id:"+database.getId()+"]的sessionFactory为空，请联系管理员");
-		}
-		return sessionFactory;
-	}
+//	private SessionFactoryImpl getSessionFactory(ComDatabase database){
+//		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(database.getId());
+//		if(sessionFactory == null){
+//			throw new NullPointerException("指定数据库[displayName:"+database.getDbDisplayName()+"/instanceName:"+database.getDbInstanceName()+"/id:"+database.getId()+"]的sessionFactory为空，请联系管理员");
+//		}
+//		return null;
+//	}
 	
 	/**
 	 * 创建数据表模型
@@ -149,20 +131,20 @@ public class ComDatabaseService extends AbstractResourceService{
 		resourceValidDatabase(database);
 		int len = tables.size();
 		for(int i = 0; i < len; i++){
-			if(tables.get(i).getIsCreated() == 1){
-				tables.remove(i--);
-			}
+//			if(tables.get(i).getIsCreated() == 1){
+//				tables.remove(i--);
+//			}
 		}
 		
 		if(tables != null && tables.size() > 0){
 			// 执行建表操作
-			DBTableHandler tableHandler = new DBTableHandler();
-			tableHandler.createTable(tables);
+//			DBTableHandler tableHandler = new DBTableHandler();
+//			tableHandler.createTable(tables);
 			
 			ComSysResourceService comSysResourceService = new ComSysResourceService();
 			// 修改表是否被创建的字段值
 			for (CfgTabledata table : tables) {
-				table.setIsCreated(1);
+//				table.setIsCreated(1);
 				HibernateUtil.updateObject(table, null);
 				
 				// 将hbm资源加入到资源表中
@@ -170,9 +152,9 @@ public class ComDatabaseService extends AbstractResourceService{
 			}
 			
 			// 创建对应的hibernate hbm文件数据
-			SessionFactoryImpl sessionFactory = getSessionFactory(database);
-			HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-			hibernateHbmHandler.createHbmMappingContent(tables, sessionFactory);
+//			SessionFactoryImpl sessionFactory = getSessionFactory(database);
+//			HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
+//			hibernateHbmHandler.createHbmMappingContent(tables, sessionFactory);
 			
 			tables.clear();// 清空内存
 		}
@@ -200,33 +182,33 @@ public class ComDatabaseService extends AbstractResourceService{
 		if(tables != null && tables.size() > 0){
 			int len = tables.size();
 			for(int i = 0; i < len; i++){
-				if(tables.get(i).getIsCreated() == 0){
-					tables.remove(i--);
-				}
+//				if(tables.get(i).getIsCreated() == 0){
+//					tables.remove(i--);
+//				}
 			}
 			
 			if(tables != null && tables.size() > 0){
 				// 执行删表操作
-				DBTableHandler tableHandler = new DBTableHandler();
-				tableHandler.dropTable(tables);
+//				DBTableHandler tableHandler = new DBTableHandler();
+//				tableHandler.dropTable(tables);
 				
 				// 修改表是否被创建的字段值
 				List<Object> tableIds = new ArrayList<Object>(tables.size());// 记录被删除的表的id，后续删除对应的资源数据
 				for (CfgTabledata table : tables) {
-					table.setIsCreated(0);
+//					table.setIsCreated(0);
 					HibernateUtil.updateObject(table, null);
 					
 					tableIds.add(table.getId());
 				}
 				
 				// 将hbm资源从资源表中删除
-				ComSysResourceService comSysResourceService = new ComSysResourceService();
-				comSysResourceService.deleteSysResource(tableIds);
+//				ComSysResourceService comSysResourceService = new ComSysResourceService();
+//				comSysResourceService.deleteSysResource(tableIds);
 				
 				// 创建对应的hibernate hbm文件数据
-				SessionFactoryImpl sessionFactory = getSessionFactory(database);
-				HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-				hibernateHbmHandler.dropHbmMappingContent(tables, sessionFactory);
+//				SessionFactoryImpl sessionFactory = getSessionFactory(database);
+//				HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
+//				hibernateHbmHandler.dropHbmMappingContent(tables, sessionFactory);
 				
 				// 清空内存
 				tableIds.clear();
@@ -255,16 +237,16 @@ public class ComDatabaseService extends AbstractResourceService{
 		resourceValidDatabase(database);
 		int len = sqlScripts.size();
 		for(int i = 0; i < len; i++){
-			if(sqlScripts.get(i).getIsCreated() == 1){
-				sqlScripts.remove(i--);
-			}
+//			if(sqlScripts.get(i).getIsCreated() == 1){
+//				sqlScripts.remove(i--);
+//			}
 		}
 		
 		if(sqlScripts != null && sqlScripts.size() > 0){
 			ComSysResourceService comSysResourceService = new ComSysResourceService();
 			// 修改sql脚本资源是否被创建的字段值
 			for (ComSqlScript sqlScript : sqlScripts) {
-				sqlScript.setIsCreated(1);
+//				sqlScript.setIsCreated(1);
 				HibernateUtil.updateObject(sqlScript, null);
 				
 				// 将sql脚本资源加入到资源表中
@@ -294,24 +276,24 @@ public class ComDatabaseService extends AbstractResourceService{
 		if(sqlScripts != null && sqlScripts.size() > 0){
 			int len = sqlScripts.size();
 			for(int i = 0; i < len; i++){
-				if(sqlScripts.get(i).getIsCreated() == 0){
-					sqlScripts.remove(i--);
-				}
+//				if(sqlScripts.get(i).getIsCreated() == 0){
+//					sqlScripts.remove(i--);
+//				}
 			}
 			
 			if(sqlScripts != null && sqlScripts.size() > 0){
 				// 修改sql脚本资源是否被创建的字段值
 				List<Object> sqlScriptIds = new ArrayList<Object>(sqlScripts.size());// 记录被删除的sql脚本的id，后续删除对应的资源数据
 				for (ComSqlScript sqlScript : sqlScripts) {
-					sqlScript.setIsCreated(0);
+//					sqlScript.setIsCreated(0);
 					HibernateUtil.updateObject(sqlScript, null);
 					
 					sqlScriptIds.add(sqlScript.getId());
 				}
 				
 				// 将表资源从资源表中删除
-				ComSysResourceService comSysResourceService = new ComSysResourceService();
-				comSysResourceService.deleteSysResource(sqlScriptIds);
+//				ComSysResourceService comSysResourceService = new ComSysResourceService();
+//				comSysResourceService.deleteSysResource(sqlScriptIds);
 				
 				// 清空内存
 				sqlScriptIds.clear();
