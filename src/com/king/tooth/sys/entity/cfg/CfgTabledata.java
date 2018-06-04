@@ -432,8 +432,10 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 	public String toDropTable() {
 		return "CFG_TABLEDATA";
 	}
-	
 	public int getResourceType() {
 		return TABLE;
+	}
+	public String getResourceId() {
+		return getId();
 	}
 }

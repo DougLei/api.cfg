@@ -368,4 +368,7 @@ public class ComDatabase extends AbstractSysResource implements ITable{
 	public String getResourceName() {
 		return getDbDisplayName();
 	}
+	public String getResourceId() {
+		return getId();
+	}
 }

@@ -18,6 +18,10 @@ import com.king.tooth.sys.entity.cfg.CfgTabledata;
 public class ComSysResource extends BasicEntity implements ITable{
 	
 	/**
+	 * 引用的资源主键
+	 */
+	private String refResourceId;
+	/**
 	 * 资源名
 	 */
 	private String resourceName;
@@ -35,6 +39,12 @@ public class ComSysResource extends BasicEntity implements ITable{
 	
 	public String getResourceName() {
 		return resourceName;
+	}
+	public String getRefResourceId() {
+		return refResourceId;
+	}
+	public void setRefResourceId(String refResourceId) {
+		this.refResourceId = refResourceId;
 	}
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
@@ -87,14 +97,22 @@ public class ComSysResource extends BasicEntity implements ITable{
 		table.setName("[通用的]系统资源对象表");
 		table.setComments("[通用的]系统资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(8);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(9);
+		
+		CfgColumndata refResourceIdColumn = new CfgColumndata("ref_resource_id");
+		refResourceIdColumn.setName("引用的资源主键");
+		refResourceIdColumn.setComments("引用的资源主键");
+		refResourceIdColumn.setColumnType(DataTypeConstants.STRING);
+		refResourceIdColumn.setLength(32);
+		refResourceIdColumn.setOrderCode(1);
+		columns.add(refResourceIdColumn);
 		
 		CfgColumndata resourceNameColumn = new CfgColumndata("resource_name");
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		resourceNameColumn.setColumnType(DataTypeConstants.STRING);
 		resourceNameColumn.setLength(100);
-		resourceNameColumn.setOrderCode(1);
+		resourceNameColumn.setOrderCode(2);
 		columns.add(resourceNameColumn);
 		
 		CfgColumndata resourceTypeColumn = new CfgColumndata("resource_type");
@@ -102,7 +120,7 @@ public class ComSysResource extends BasicEntity implements ITable{
 		resourceTypeColumn.setComments("资源类型");
 		resourceTypeColumn.setColumnType(DataTypeConstants.INTEGER);
 		resourceTypeColumn.setLength(1);
-		resourceTypeColumn.setOrderCode(2);
+		resourceTypeColumn.setOrderCode(3);
 		columns.add(resourceTypeColumn);
 		
 		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
@@ -110,7 +128,7 @@ public class ComSysResource extends BasicEntity implements ITable{
 		isEnabledColumn.setComments("是否启用");
 		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
 		isEnabledColumn.setLength(1);
-		isEnabledColumn.setOrderCode(3);
+		isEnabledColumn.setOrderCode(4);
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);

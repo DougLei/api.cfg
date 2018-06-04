@@ -37,4 +37,9 @@ public interface ISysResource {
 	 * @return
 	 */
 	public String getResourceName();
+	/**
+	 * 获取资源主键
+	 * @return
+	 */
+	public String getResourceId();
 }

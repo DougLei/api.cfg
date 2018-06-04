@@ -22,8 +22,9 @@ public class ComSysResourceService extends AbstractResourceService{
 	 * @param resource
 	 */
 	public void insertSysResource(ISysResource iresource){
-		String sql = "insert into com_sys_resource values(?,?,?,?,?,?,?,?)";
+		String sql = "insert into com_sys_resource values(?,?,?,?,?,?,?,?,?)";
 		List<Object> parameters = new ArrayList<Object>(8);
+		parameters.add(iresource.getResourceId());
 		parameters.add(iresource.getResourceName());
 		parameters.add(iresource.getResourceType());
 		parameters.add(1);

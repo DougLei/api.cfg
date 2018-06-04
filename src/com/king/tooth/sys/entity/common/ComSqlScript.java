@@ -467,8 +467,10 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	public int getResourceType() {
 		return SQLSCRIPT;
 	}
-	
 	public String getResourceName() {
 		return sqlScriptResourceName;
+	}	
+	public String getResourceId() {
+		return getId();
 	}
 }

@@ -181,8 +181,10 @@ public class ComProject extends AbstractSysResource implements ITable{
 	public int getResourceType() {
 		return PROJECT;
 	}
-	
 	public String getResourceName() {
 		return name;
+	}	
+	public String getResourceId() {
+		return getId();
 	}
 }

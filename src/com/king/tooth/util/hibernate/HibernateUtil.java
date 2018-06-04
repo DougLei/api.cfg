@@ -332,6 +332,18 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
+	 * @param hqlDes 传入的hql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述，主要用作Log4j日记记录  @see SqlStatementType
+	 * @param modifyHql
+	 * @param parameterArr
+	 */
+	public static void executeUpdateByHqlArr(String hqlDes, String modifyHql, Object... parameterArr){
+		List<Object> parameters = processParameterArr(parameterArr);
+		executeUpdateByHql(hqlDes, modifyHql, parameters);
+	}
+	
+	/**
+	 * 修改数据
+	 * <p>删除语句、修改语句、新增语句</p>
 	 * @param sqlDes 传入的sql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述，主要用作Log4j日记记录 @see SqlStatementType
 	 * @param modifySql
 	 * @param parameters
@@ -348,6 +360,18 @@ public class HibernateUtil {
 		} catch (HibernateException e) {
 			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}数据的时候出现了异常信息：{}", sqlDes, ExceptionUtil.getErrMsg(e));
 		}
+	}
+	
+	/**
+	 * 修改数据
+	 * <p>删除语句、修改语句、新增语句</p>
+	 * @param sqlDes 传入的sql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述，主要用作Log4j日记记录 @see SqlStatementType
+	 * @param modifySql
+	 * @param parameterArr
+	 */
+	public static void executeUpdateBySqlArr(String sqlDes, String modifySql, Object... parameterArr){
+		List<Object> parameters = processParameterArr(parameterArr);
+		executeUpdateBySql(sqlDes, modifySql, parameters);
 	}
 	
 	private static List<Object> processParameterArr(Object... parameterArr){
