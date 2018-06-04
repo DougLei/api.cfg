@@ -95,6 +95,7 @@ public class ComSqlScriptService extends AbstractResourceService {
 	 * @return
 	 */
 	public void deployingSqlScript(String[] sqlScriptIdArr) {
+		
 	}
 
 	/**
@@ -102,5 +103,6 @@ public class ComSqlScriptService extends AbstractResourceService {
 	 * @return
 	 */
 	public void cancelDeployingSqlScript(String[] sqlScriptIdArr) {
+		
 	}
 }

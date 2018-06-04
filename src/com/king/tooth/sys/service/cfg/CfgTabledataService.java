@@ -90,6 +90,7 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * @return
 	 */
 	public void deployingTable(String[] tableIdArr) {
+		
 	}
 
 	/**
@@ -97,5 +98,6 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * @return
 	 */
 	public void cancelDeployingTable(String[] tableIdArr) {
+		
 	}
 }
