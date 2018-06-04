@@ -17,7 +17,6 @@
 		<property name="databaseId" column="database_id" type="string" />
 		<property name="name" column="name" type="string" />
 		<property name="descs" column="descs" type="string" />
-		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
 		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
 	</class>
 </hibernate-mapping>

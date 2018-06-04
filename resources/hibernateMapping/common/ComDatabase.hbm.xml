@@ -22,7 +22,6 @@
 		<property name="dbPort" column="db_port" type="integer" />
 		<property name="cfgMainFileContent" column="cfg_main_file_content" type="string" />
 		<property name="cfgTmplogFileContent" column="cfg_tmplog_file_content" type="string" />
-		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
 		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
 	</class>
 </hibernate-mapping>

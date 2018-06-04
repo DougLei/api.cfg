@@ -1,5 +1,8 @@
 package com.king.tooth.sys.service.cfg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
@@ -34,7 +37,7 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * 创建表数据模型
 	 * @param tableIdArr
 	 */
-	public void createTabledataModel(String[] tableIdArr) {
+	public void createTableModel(String[] tableIdArr) {
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		CfgTabledata table = null;
 		CfgHibernateHbm hbm = null;
@@ -53,6 +56,8 @@ public class CfgTabledataService extends AbstractResourceService{
 			HibernateUtil.updateObject(table, null);
 			
 			comSysResourceService.insertSysResource(table);
+			
+			HibernateUtil.appendNewConfig(hbm.getHbmContent());
 		}
 	}
 
@@ -60,11 +65,13 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * 删除表数据模型
 	 * @param tableIdArr
 	 */
-	public void dropTabledataModel(Object[] tableIdArr) {
+	public void dropTableModel(Object[] tableIdArr) {
 		int len = tableIdArr.length;
+		List<String> entityNames = new ArrayList<String>(len);
 		StringBuilder in = new StringBuilder(" in (");
 		for (int i=0;i<len;i++) {
 			in.append("?").append(",");
+			entityNames.add(HibernateUtil.executeUniqueQueryByHqlArr("select resourceName from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableIdArr[i])+"");
 		}
 		in.setLength(in.length()-1);
 		in.append(")");
@@ -72,5 +79,23 @@ public class CfgTabledataService extends AbstractResourceService{
 		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete CfgHibernateHbm where tableId " + in, tableIdArr);
 		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id " + in, tableIdArr);
 		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update CfgTabledata set isCreateHbm=0 where id " + in, tableIdArr);
+		HibernateUtil.removeConfig(entityNames);
+		entityNames.clear();
+	}
+
+	//--------------------------------------------------------
+	
+	/**
+	 * 发布表
+	 * @return
+	 */
+	public void deployingTable(String[] tableIdArr) {
+	}
+
+	/**
+	 * 删除表，即删模
+	 * @return
+	 */
+	public void cancelDeployingTable(String[] tableIdArr) {
 	}
 }

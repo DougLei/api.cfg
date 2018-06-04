@@ -88,6 +88,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	 * 是否内置
 	 */
 	private int isBuiltin;
+	/**
+	 * 是否创建内置资源
+	 * <p>只有isBuiltin=1的时候，这个值才有效</p>
+	 */
+	private int isCreateBuiltinResource;
 	
 	//--------------------------------------------------------
 	/**
@@ -267,12 +272,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	public void setFinalSqlScript(FinalSqlScriptStatement finalSqlScript) {
 		this.finalSqlScript = finalSqlScript;
 	}
-	public int getIsDeploymentTest() {
-		return isDeploymentTest;
-	}
-	public void setIsDeploymentTest(int isDeploymentTest) {
-		this.isDeploymentTest = isDeploymentTest;
-	}
 	public int getIsDeploymentRun() {
 		return isDeploymentRun;
 	}
@@ -285,8 +284,17 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	public void setIsBuiltin(int isBuiltin) {
 		this.isBuiltin = isBuiltin;
 	}
+	public int getIsCreateBuiltinResource() {
+		return isCreateBuiltinResource;
+	}
+	public void setIsCreateBuiltinResource(int isCreateBuiltinResource) {
+		this.isCreateBuiltinResource = isCreateBuiltinResource;
+	}
 	
 	
+	public void setGsqlParser(TGSqlParser gsqlParser) {
+		this.gsqlParser = gsqlParser;
+	}
 	private void setGsqlParser(){
 		if(this.gsqlParser == null){
 			if(StrUtils.notEmpty(this.sqlScriptContent)){
@@ -432,20 +440,12 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 		commentsColumn.setOrderCode(10);
 		columns.add(commentsColumn);
 		
-		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
-		isDeploymentTestColumn.setName("是否部署到测试环境");
-		isDeploymentTestColumn.setComments("是否部署到测试环境");
-		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentTestColumn.setLength(1);
-		isDeploymentTestColumn.setOrderCode(11);
-		columns.add(isDeploymentTestColumn);
-
 		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
 		isDeploymentRunColumn.setName("是否部署到正式环境");
 		isDeploymentRunColumn.setComments("是否部署到正式环境");
 		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
 		isDeploymentRunColumn.setLength(1);
-		isDeploymentRunColumn.setOrderCode(12);
+		isDeploymentRunColumn.setOrderCode(11);
 		columns.add(isDeploymentRunColumn);
 		
 		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
@@ -453,8 +453,16 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 		isBuiltinColumn.setComments("是否内置");
 		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 		isBuiltinColumn.setLength(1);
-		isBuiltinColumn.setOrderCode(13);
+		isBuiltinColumn.setOrderCode(12);
 		columns.add(isBuiltinColumn);
+		
+		CfgColumndata isCreateBuiltinResourceColumn = new CfgColumndata("is_create_builtin_resource");
+		isCreateBuiltinResourceColumn.setName("是否创建内置资源");
+		isCreateBuiltinResourceColumn.setComments("是否创建内置资源：只有isBuiltin=1的时候，这个值才有效");
+		isCreateBuiltinResourceColumn.setColumnType(DataTypeConstants.INTEGER);
+		isCreateBuiltinResourceColumn.setLength(1);
+		isCreateBuiltinResourceColumn.setOrderCode(13);
+		columns.add(isCreateBuiltinResourceColumn);
 		
 		table.setColumns(columns);
 		return table;

@@ -224,12 +224,6 @@ public class ComDatabase extends AbstractSysResource implements ITable{
 	public DBFile getTmpLogFile() {
 		return tmpLogFile;
 	}
-	public int getIsDeploymentTest() {
-		return isDeploymentTest;
-	}
-	public void setIsDeploymentTest(int isDeploymentTest) {
-		this.isDeploymentTest = isDeploymentTest;
-	}
 	public int getIsDeploymentRun() {
 		return isDeploymentRun;
 	}
@@ -264,7 +258,7 @@ public class ComDatabase extends AbstractSysResource implements ITable{
 		table.setName("[通用的]数据库数据信息资源对象表");
 		table.setComments("[通用的]数据库数据信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(17);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(16);
 		
 		CfgColumndata dbDisplayNameColumn = new CfgColumndata("db_display_name");
 		dbDisplayNameColumn.setName("数字库名");
@@ -338,20 +332,12 @@ public class ComDatabase extends AbstractSysResource implements ITable{
 		cfgTmplogFileContentColumn.setOrderCode(10);
 		columns.add(cfgTmplogFileContentColumn);
 		
-		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
-		isDeploymentTestColumn.setName("是否部署到测试环境");
-		isDeploymentTestColumn.setComments("是否部署到测试环境");
-		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentTestColumn.setLength(1);
-		isDeploymentTestColumn.setOrderCode(11);
-		columns.add(isDeploymentTestColumn);
-		
 		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
 		isDeploymentRunColumn.setName("是否部署到正式环境");
 		isDeploymentRunColumn.setComments("是否部署到正式环境");
 		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
 		isDeploymentRunColumn.setLength(1);
-		isDeploymentRunColumn.setOrderCode(12);
+		isDeploymentRunColumn.setOrderCode(11);
 		columns.add(isDeploymentRunColumn);
 		
 		table.setColumns(columns);

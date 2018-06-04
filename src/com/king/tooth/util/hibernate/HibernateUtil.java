@@ -164,7 +164,21 @@ public class HibernateUtil {
 	
 	/**
 	 * 【数据流方式】添加新的配置文件
-	 * @param hbmContent
+	 * @param hbmContents
+	 */
+	public static void appendNewConfig(List<String> hbmContents){
+		if(hbmContents != null && hbmContents.size() > 0){
+			List<InputStream> inputs = new ArrayList<InputStream>(hbmContents.size());
+			for(String hbmContent: hbmContents){
+				inputs.add(new ByteArrayInputStream(hbmContent.getBytes()));
+			}
+			getSessionFactory().appendNewHbmConfig(inputs);
+		}
+	}
+	
+	/**
+	 * 【数据流方式】添加新的配置文件
+	 * @param hbmContents
 	 */
 	public static void appendNewConfig(String... hbmContents){
 		if(hbmContents != null && hbmContents.length > 0){
@@ -173,6 +187,16 @@ public class HibernateUtil {
 				inputs.add(new ByteArrayInputStream(hbmContent.getBytes()));
 			}
 			getSessionFactory().appendNewHbmConfig(inputs);
+		}
+	}
+	
+	/**
+	 * 删除配置
+	 * @param entityNames
+	 */
+	public static void removeConfig(List<String> entityNames){
+		if(entityNames != null && entityNames.size() > 0){
+			getSessionFactory().removeHbmConfig(entityNames);
 		}
 	}
 	

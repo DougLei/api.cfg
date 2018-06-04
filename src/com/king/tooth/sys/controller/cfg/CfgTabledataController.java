@@ -20,7 +20,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @RequestMapping("/CfgTabledata")
 public class CfgTabledataController extends AbstractResourceController{
 	
-	private CfgTabledataService cfgTabledataService = new CfgTabledataService();
+	private CfgTabledataService tabledataService = new CfgTabledataService();
 	
 	/**
 	 * 创建表，即建模
@@ -29,13 +29,13 @@ public class CfgTabledataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/create/{ids}", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody createTabledataModel(@PathVariable String ids){
+	public ResponseBody createTableModel(@PathVariable String ids){
 		if(StrUtils.isEmpty(ids)){
-			return installResponseBody("要创建的数据模型id不能为空", null);
+			return installResponseBody("要创建的表id不能为空", null);
 		}
 		String[] tableIdArr = ids.split(",");
-		cfgTabledataService.createTabledataModel(tableIdArr);
-		return installResponseBody("建模成功", null);
+		tabledataService.createTableModel(tableIdArr);
+		return installResponseBody("创建成功", null);
 	}
 	
 	/**
@@ -45,12 +45,46 @@ public class CfgTabledataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/drop/{ids}", method = RequestMethod.DELETE)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody dropTabledataModel(@PathVariable String ids){
+	public ResponseBody dropTableModel(@PathVariable String ids){
 		if(StrUtils.isEmpty(ids)){
-			return installResponseBody("要删除的数据模型id不能为空", null);
+			return installResponseBody("要删除的表id不能为空", null);
 		}
 		String[] tableIdArr = ids.split(",");
-		cfgTabledataService.dropTabledataModel(tableIdArr);
+		tabledataService.dropTableModel(tableIdArr);
 		return installResponseBody("删除成功", null);
+	}
+	
+	//--------------------------------------------------------
+	
+	/**
+	 * 发布表
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	@RequestMapping(value="/deploying/{ids}", method = RequestMethod.POST)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody deployingTable(@PathVariable String ids){
+		if(StrUtils.isEmpty(ids)){
+			return installResponseBody("要发布的表id不能为空", null);
+		}
+		String[] tableIdArr = ids.split(",");
+		tabledataService.deployingTable(tableIdArr);
+		return installResponseBody("发布成功", null);
+	}
+	
+	/**
+	 * 取消发布表
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping(value="/cancelDeploy/{ids}", method = RequestMethod.DELETE)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody cancelDeployingTable(@PathVariable String ids){
+		if(StrUtils.isEmpty(ids)){
+			return installResponseBody("要取消发布的表id不能为空", null);
+		}
+		String[] tableIdArr = ids.split(",");
+		tabledataService.cancelDeployingTable(tableIdArr);
+		return installResponseBody("取消发布成功", null);
 	}
 }

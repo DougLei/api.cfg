@@ -102,12 +102,6 @@ public class ComProject extends AbstractSysResource implements ITable{
 	public void setOwnerCustomerId(String ownerCustomerId) {
 		this.ownerCustomerId = ownerCustomerId;
 	}
-	public int getIsDeploymentTest() {
-		return isDeploymentTest;
-	}
-	public void setIsDeploymentTest(int isDeploymentTest) {
-		this.isDeploymentTest = isDeploymentTest;
-	}
 	public int getIsDeploymentRun() {
 		return isDeploymentRun;
 	}
@@ -121,7 +115,7 @@ public class ComProject extends AbstractSysResource implements ITable{
 		table.setName("[通用的]项目信息资源对象表");
 		table.setComments("[通用的]项目信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(11);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(10);
 		
 		CfgColumndata ownerCustomerIdColumn = new CfgColumndata("owner_customer_id");
 		ownerCustomerIdColumn.setName("所属的客户主键");
@@ -155,20 +149,12 @@ public class ComProject extends AbstractSysResource implements ITable{
 		descsColumn.setOrderCode(4);
 		columns.add(descsColumn);
 		
-		CfgColumndata isDeploymentTestColumn = new CfgColumndata("is_deployment_test");
-		isDeploymentTestColumn.setName("是否部署到测试环境");
-		isDeploymentTestColumn.setComments("是否部署到测试环境");
-		isDeploymentTestColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentTestColumn.setLength(1);
-		isDeploymentTestColumn.setOrderCode(5);
-		columns.add(isDeploymentTestColumn);
-
 		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
 		isDeploymentRunColumn.setName("是否部署到正式环境");
 		isDeploymentRunColumn.setComments("是否部署到正式环境");
 		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
 		isDeploymentRunColumn.setLength(1);
-		isDeploymentRunColumn.setOrderCode(6);
+		isDeploymentRunColumn.setOrderCode(5);
 		columns.add(isDeploymentRunColumn);
 		
 		table.setColumns(columns);

@@ -24,7 +24,6 @@
 		<property name="subRefParentColumnName" column="sub_ref_parent_column_name" type="string" />
 		<property name="comments" column="comments" type="string" />
 		<property name="version" column="version" type="integer" />
-		<property name="isDeploymentTest" column="is_deployment_test" type="integer" />
 		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
 		<property name="isBuiltin" column="is_builtin" type="integer" />
 		<property name="isCreateHbm" column="is_create_hbm" type="integer" />

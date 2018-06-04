@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
@@ -38,6 +39,36 @@ public class CfgHibernateHbm extends BasicEntity implements ITable{
 	}
 	public String toDropTable() {
 		return "CFG_HIBERNATE_HBM";
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCreateUserId() {
+		return createUserId;
+	}
+	public void setCreateUserId(String createUserId) {
+		this.createUserId = createUserId;
+	}
+	public String getLastUpdatedUserId() {
+		return lastUpdatedUserId;
+	}
+	public void setLastUpdatedUserId(String lastUpdatedUserId) {
+		this.lastUpdatedUserId = lastUpdatedUserId;
+	}
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public Date getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+	public void setLastUpdateTime(Date lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
 	}
 	
 

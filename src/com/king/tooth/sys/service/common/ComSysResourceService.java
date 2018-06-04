@@ -27,7 +27,7 @@ public class ComSysResourceService extends AbstractResourceService{
 		parameters.add(iresource.getResourceId());
 		parameters.add(iresource.getResourceName());
 		parameters.add(iresource.getResourceType());
-		parameters.add(1);
+		parameters.add(1);// isEnabled
 		parameters.addAll(ResourceHandlerUtil.getBasicPropVals(null));
 		HibernateUtil.executeUpdateBySql(SqlStatementType.INSERT, sql, parameters);
 	}

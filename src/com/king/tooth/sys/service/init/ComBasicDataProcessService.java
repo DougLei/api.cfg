@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.SysDatabaseInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgCustomer;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.cfg.datalinks.ComDatabaseCfgTabledataLinks;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDataLinks;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -30,6 +32,7 @@ import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.ComVerifyCode;
+import com.king.tooth.sys.entity.common.datalinks.ComDatabaseComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.sys.service.common.ComSysAccountService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
@@ -43,6 +46,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * [通用的]基础数据处理器
  * @author DougLei
  */
+@SuppressWarnings("unchecked")
 public class ComBasicDataProcessService extends AbstractResourceService{
 
 	/**
@@ -86,7 +90,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * @return 
 	 */
 	private List<CfgTabledata> createTables(){
-		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(20);
+		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(22);
 		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
@@ -110,16 +114,11 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
 		tables.add(new ComUser().toCreateTable(dbType));
 		tables.add(new ComVerifyCode().toCreateTable(dbType));
+		tables.add(new ComDatabaseCfgTabledataLinks().toCreateTable(dbType));
+		tables.add(new ComDatabaseComSqlScriptLinks().toCreateTable(dbType));
 		
 		// 开始创建表
-		ComDatabase database = new ComDatabase();
-		database.setDbType(dbType);
-		database.setDbInstanceName(SysConfig.getSystemConfig("db.default.instancename"));
-		database.setLoginUserName(SysConfig.getSystemConfig("jdbc.username"));
-		database.setLoginPassword(SysConfig.getSystemConfig("jdbc.password"));
-		database.setDbIp(SysConfig.getSystemConfig("db.default.ip"));
-		database.setDbPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
-		DBTableHandler dbHandler = new DBTableHandler(database);
+		DBTableHandler dbHandler = new DBTableHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
 		dbHandler.createTable(tables);
 		
 		tables.remove(0);// 移除资源表
@@ -264,10 +263,20 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	
 	//------------------------------------------------------------------------------------
 	/**
-	 * 系统每次启动时，加载相关的配置信息
+	 * 系统每次启动时，加载hbm的配置信息
 	 * 主要是hbm内容
 	 */
 	public void loadSysBasicDatasBySysStart() {
-		
+		List<Object> hbmContents = HibernateUtil.executeListQueryByHql("select hbmContent from CfgHibernateHbm", null);
+		if(hbmContents != null && hbmContents.size() > 0){
+			List<String> hcs = new ArrayList<String>(hbmContents.size());
+			for (Object obj : hbmContents) {
+				hcs.add(obj+"");
+			}
+			
+			HibernateUtil.appendNewConfig(hcs);
+			hcs.clear();
+			hbmContents.clear();
+		}
 	}
 }
