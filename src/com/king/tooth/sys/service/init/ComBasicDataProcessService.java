@@ -134,6 +134,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加公司配置平台管理员和对应的用户【不需要角色，这个是超级管理员】
 		ComSysAccount admin = new ComSysAccount();
+		admin.setLoginPwd(SysConfig.getSystemConfig("account.default.pwd"));
 		admin.setLoginName("administrator");
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 		String adminAccountId = comSysAccountService.saveComSysAccount(admin, null);

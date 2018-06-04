@@ -15,6 +15,7 @@ import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.service.common.ComSysAccountOnlineStatusService;
 import com.king.tooth.sys.service.common.ComSysAccountService;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -49,6 +50,10 @@ public class VarifyReqValidFilter extends AbstractFilter{
 	 * @throws IOException
 	 */
 	private String varifyRequestIsValid(HttpServletRequest request) throws IOException{
+		if(ResourceHandlerUtil.isLoginRequest(request)){
+			return null;
+		}
+		
 		String token = request.getHeader("_token");
 		if(StrUtils.isEmpty(token)){
 			return "请先登录";

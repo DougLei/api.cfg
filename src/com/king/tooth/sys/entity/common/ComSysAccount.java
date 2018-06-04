@@ -106,9 +106,6 @@ public class ComSysAccount extends BasicEntity implements ITable{
 		return loginPwd;
 	}
 	public void setLoginPwd(String loginPwd) {
-		if(StrUtils.notEmpty(loginPwd)){
-			loginPwd = CryptographyUtil.encodeMd5AccountPassword(loginPwd, getLoginPwdKey());
-		}
 		this.loginPwd = loginPwd;
 	}
 	public String getTel() {

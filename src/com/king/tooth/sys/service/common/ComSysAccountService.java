@@ -107,7 +107,7 @@ public class ComSysAccountService extends AbstractResourceService{
 			return accountOnlineStatus;
 		}
 		
-		String queryAccountHql = "from ComSysAccount loginName = ? or tel = ? or emails = ?";
+		String queryAccountHql = "from ComSysAccount where loginName = ? or tel = ? or emails = ?";
 		ComSysAccount loginAccount = (ComSysAccount) HibernateUtil.executeUniqueQueryByHqlArr(queryAccountHql, accountName, accountName, accountName);
 		
 		if(loginAccount == null){

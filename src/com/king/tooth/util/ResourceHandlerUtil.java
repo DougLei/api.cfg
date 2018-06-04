@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hibernate.internal.HbmConfPropMetadata;
 
 import com.king.tooth.constants.DataTypeConstants;
@@ -20,6 +22,20 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 public class ResourceHandlerUtil {
+	
+	/**
+	 * 判断是否是登录请求
+	 * @param request
+	 * @return
+	 */
+	public static boolean isLoginRequest(HttpServletRequest request){
+		System.out.println(request.getRequestURI());
+		System.out.println(request.getRequestURL());
+		if(request.getRequestURI().endsWith("ComSysAccount/login")){
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * 获取唯一标识id
