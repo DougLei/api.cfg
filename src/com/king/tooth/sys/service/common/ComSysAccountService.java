@@ -54,7 +54,7 @@ public class ComSysAccountService extends AbstractResourceService{
 	 */
 	public ComSysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
 		ComSysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
-		CurrentThreadContext.setCurrentAccount(accountOnlineStatus.getAccount());// 记录当前账户对象到当前线程中
+		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		
 		if(accountOnlineStatus.getIsSave()){
 			HibernateUtil.saveObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
@@ -109,7 +109,8 @@ public class ComSysAccountService extends AbstractResourceService{
 			return accountOnlineStatus;
 		}
 		
-		accountOnlineStatus.setAccount(loginAccount);
+		accountOnlineStatus.setAccountId(loginAccount.getId());
+		accountOnlineStatus.setAccountName(loginAccount.getLoginName());
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
 		accountOnlineStatus.setLoginDate(new Date());
 		accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值

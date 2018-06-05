@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -279,6 +280,9 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("reqDate", reqDate);
 		json.put("respDate", reqDate);
+		if(this.createTime != null){
+			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
+		}
 		return json;
 	}
 }

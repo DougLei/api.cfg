@@ -2,7 +2,7 @@ package com.king.tooth.plugins.thread;
 
 import org.hibernate.Session;
 
-import com.king.tooth.sys.entity.common.ComSysAccount;
+import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 
 /**
  * 当前线程的数据对象
@@ -17,7 +17,7 @@ class CurrentThreadData {
 	/**
 	 * 当前线程的帐号对象上下文
 	 */
-	private ComSysAccount currentAccount;
+	private ComSysAccountOnlineStatus currentAccountOnlineStatus;
 	
 	
 	public Session getCurrentSession() {
@@ -26,10 +26,11 @@ class CurrentThreadData {
 	public void setCurrentSession(Session currentSession) {
 		this.currentSession = currentSession;
 	}
-	public ComSysAccount getCurrentAccount() {
-		return currentAccount;
+	public ComSysAccountOnlineStatus getCurrentAccountOnlineStatus() {
+		return currentAccountOnlineStatus;
 	}
-	public void setCurrentAccount(ComSysAccount currentAccount) {
-		this.currentAccount = currentAccount;
+	public void setCurrentAccountOnlineStatus(
+			ComSysAccountOnlineStatus currentAccountOnlineStatus) {
+		this.currentAccountOnlineStatus = currentAccountOnlineStatus;
 	}
 }

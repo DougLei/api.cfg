@@ -441,6 +441,10 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		return "CfgTabledata";
 	}
 	public JSONObject toEntity() {
-		return JsonUtil.toJsonObject(this);
+		JSONObject json = JsonUtil.toJsonObject(this);
+		if(this.createTime != null){
+			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
+		}
+		return json;
 	}
 }

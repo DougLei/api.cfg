@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -386,6 +387,9 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("employedDate", employedDate);
+		if(this.createTime != null){
+			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
+		}
 		return json;
 	}
 }

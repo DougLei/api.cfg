@@ -1,9 +1,7 @@
 package com.king.tooth.util;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -76,8 +74,8 @@ public class ResourceHandlerUtil {
 			data.put(ResourceNameConstants.LAST_UPDATE_TIME, currentDate);
 			
 			// 比如注册操作，肯定没有创建人
-			if(CurrentThreadContext.getCurrentAccount() != null){
-				String currentAccountId = CurrentThreadContext.getCurrentAccount().getId();
+			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
+				String currentAccountId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 				data.put(ResourceNameConstants.CREATE_USER_ID, currentAccountId);
 				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  currentAccountId);
 			}else{
@@ -97,39 +95,15 @@ public class ResourceHandlerUtil {
 	public static void initBasicPropValsForUpdate(String entityName, Map<String, Object> data, String shortDesc) {
 		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
 				&& !entityName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 不是关系表，才要修改这些值
-			data.put(ResourceNameConstants.LAST_UPDATE_TIME,  shortDesc);
+			data.put(ResourceNameConstants.LAST_UPDATE_TIME,  new Date());
 			
 			// 比如注册操作，肯定没有创建人
-			if(CurrentThreadContext.getCurrentAccount() != null){
-				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  CurrentThreadContext.getCurrentAccount().getId());
+			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
+				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 			}else{
 				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  shortDesc);
 			}
 		}
-	}
-	
-	/**
-	 * 获取基础属性数据的值集合
-	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return
-	 */
-	public static List<Object> getBasicPropVals(String shortDesc){
-		List<Object> basic = new ArrayList<Object>(5);
-		basic.add(getIdentity());
-		
-		Date currentDate = new Date();
-		basic.add(currentDate);
-		basic.add(currentDate);
-		
-		if(CurrentThreadContext.getCurrentAccount() != null){
-			String currentAccountId = CurrentThreadContext.getCurrentAccount().getId();
-			basic.add(currentAccountId);
-			basic.add(currentAccountId);
-		}else{
-			basic.add(shortDesc);
-			basic.add(shortDesc);
-		}
-		return basic;
 	}
 	
 	/**

@@ -9,6 +9,7 @@ import java.util.List;
 import com.alibaba.druid.sql.parser.ParserException;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.exception.gsp.AnalyzeSqlScriptException;
 import com.king.tooth.exception.gsp.EDBVendorIsNullException;
@@ -510,6 +511,10 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return "ComSqlScript";
 	}
 	public JSONObject toEntity() {
-		return JsonUtil.toJsonObject(this);
+		JSONObject json = JsonUtil.toJsonObject(this);
+		if(this.createTime != null){
+			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
+		}
+		return json;
 	}
 }

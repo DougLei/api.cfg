@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -64,7 +63,6 @@ public abstract class PostProcesser extends RequestProcesser {
 	 * @param data
 	 */
 	protected void saveData(String resourceName, Map<String, Object> data){
-		data = ResourceHandlerUtil.validDataProp(resourceName, data);
 		HibernateUtil.saveObject(resourceName, data, null);
 	}
 	

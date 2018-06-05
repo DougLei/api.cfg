@@ -294,8 +294,8 @@ public class HibernateUtil {
 			return data.get(ResourceNameConstants.ID)+"";
 		} catch (Exception e) {
 			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			throw e;
 		}
-		return null;
 	}
 	
 	/**
@@ -306,6 +306,7 @@ public class HibernateUtil {
 	 * @return id
 	 */
 	public static String saveObject(String entityName, Map<String, Object> data, String shortDesc){
+		data = ResourceHandlerUtil.validDataProp(entityName, data);
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
 		try {
 			getCurrentThreadSession().save(entityName, data);
@@ -313,8 +314,8 @@ public class HibernateUtil {
 			return data.get(ResourceNameConstants.ID)+"";
 		} catch (Exception e) {
 			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			throw e;
 		}
-		return null;
 	}
 	
 	/**
@@ -326,10 +327,11 @@ public class HibernateUtil {
 		JSONObject data = entity.toEntity();
 		ResourceHandlerUtil.initBasicPropValsForUpdate(entity.getEntityName(), data, shortDesc);
 		try {
-			getCurrentThreadSession().update(entity.getEntityName(), data);
+			getCurrentThreadSession().merge(entity.getEntityName(), data);
 			Log4jUtil.debug("修改数据成功[{}]", data);
 		} catch (Exception e) {
 			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			throw e;
 		}
 	}
 	
@@ -386,6 +388,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}了{}条数据", sqlDes, modifyCount);
 		} catch (HibernateException e) {
 			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}数据的时候出现了异常信息：{}", sqlDes, ExceptionUtil.getErrMsg(e));
+			throw e;
 		}
 	}
 	

@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -373,6 +374,10 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		return "ComDatabase";
 	}
 	public JSONObject toEntity() {
-		return JsonUtil.toJsonObject(this);
+		JSONObject json = JsonUtil.toJsonObject(this);
+		if(this.createTime != null){
+			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
+		}
+		return json;
 	}
 }

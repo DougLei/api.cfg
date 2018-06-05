@@ -71,7 +71,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 			return currentAccount.getMessage();
 		}
 		
-		CurrentThreadContext.setCurrentAccount(currentAccount);// 记录当前账户对象到当前线程中
+		CurrentThreadContext.setCurrentAccountOnlineStatus(onlineStatus);// 记录当前账户在线对象到当前线程中
 		
 		// 修改最后的操作时间
 		onlineStatus.setLastOperDate(new Date());

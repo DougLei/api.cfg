@@ -27,6 +27,9 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String formatDate(Date date){
+		if(date == null){
+			return null;
+		}
 		return sdfDetail.format(date);
 	}
 	
@@ -36,6 +39,9 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date parseDate(String dateStr){
+		if(StrUtils.isEmpty(dateStr)){
+			return null;
+		}
 		try {
 			if(dateStr.indexOf(":") != -1){
 				return sdfDetail.parse(dateStr);
