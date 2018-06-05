@@ -74,7 +74,7 @@ public class ComSysAccountService extends AbstractResourceService{
 		ComSysAccountOnlineStatus accountOnlineStatus = findAccountOnlineStatus(loginIp, accountName);
 		
 		if(accountOnlineStatus.getTryLoginTimes() > LoginConstants.tryLoginTimes){
-			long lastOperDateDuration = accountOnlineStatus.getLastOperDate().getTime() - System.currentTimeMillis();
+			long lastOperDateDuration = System.currentTimeMillis() - accountOnlineStatus.getLastOperDate().getTime();
 			if(lastOperDateDuration < LoginConstants.overLoginfailTimesDateDuration){
 				accountOnlineStatus.setMessage("您尝试登录次数大于系统限制的"+LoginConstants.tryLoginTimes+"次，请"+((LoginConstants.overLoginfailTimesDateDuration-lastOperDateDuration)/60000)+"分钟后再试");
 				return accountOnlineStatus;
@@ -113,6 +113,7 @@ public class ComSysAccountService extends AbstractResourceService{
 		accountOnlineStatus.setAccountName(loginAccount.getLoginName());
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
 		accountOnlineStatus.setLoginDate(new Date());
+		accountOnlineStatus.setTryLoginTimes(0);
 		accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
 		return accountOnlineStatus;
 	}
@@ -130,18 +131,19 @@ public class ComSysAccountService extends AbstractResourceService{
 			onlineStatus = new ComSysAccountOnlineStatus();
 			onlineStatus.setTryLoginTimes(1);
 			onlineStatus.setIsSave(true);
+			onlineStatus.setLastOperDate(new Date());
 		}else{
 			// 判断上一次操作的时间至当前时间，是否超过了login.timeout.datelimit的时间，如果超过了，则将tryLoginTimes归为1
 			long duration = System.currentTimeMillis() - onlineStatus.getLastOperDate().getTime();
 			if(LoginConstants.loginTimeoutDatelimit < duration){
 				onlineStatus.setTryLoginTimes(1);
+				onlineStatus.setLastOperDate(new Date());
 			}else{
 				onlineStatus.setTryLoginTimes(onlineStatus.getTryLoginTimes() + 1);	
 			}
 		}
 		onlineStatus.setLoginIp(loginIp);
 		onlineStatus.setAccountName(accountName);
-		onlineStatus.setLastOperDate(new Date());
 		onlineStatus.setIsError(1);// 一开始标识为有错误
 		return onlineStatus;
 	}

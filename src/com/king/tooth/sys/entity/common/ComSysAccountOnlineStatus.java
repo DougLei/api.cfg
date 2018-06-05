@@ -236,7 +236,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		tryLoginTimesColumn.setName("本次尝试登录的次数");
 		tryLoginTimesColumn.setComments("本次尝试登录的次数");
 		tryLoginTimesColumn.setColumnType(DataTypeConstants.INTEGER);
-		tryLoginTimesColumn.setLength(1);
+		tryLoginTimesColumn.setLength(3);
 		tryLoginTimesColumn.setOrderCode(7);
 		columns.add(tryLoginTimesColumn);
 		
