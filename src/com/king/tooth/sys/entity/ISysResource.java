@@ -28,6 +28,31 @@ public interface ISysResource {
 	public static final int PROJECT = 5;
 	
 	/**
+	 * GET
+	 */
+	public static final String GET = "get";
+	/**
+	 * POST
+	 */
+	public static final String POST = "post";
+	/**
+	 * PUT
+	 */
+	public static final String PUT = "put";
+	/**
+	 * DELETE
+	 */
+	public static final String DELETE = "delete";
+	/**
+	 * ALL
+	 */
+	public static final String ALL = "all";
+	/**
+	 * NONE
+	 */
+	public static final String NONE = "none";
+	
+	/**
 	 * 获取资源类型
 	 * @return
 	 */
@@ -42,4 +67,10 @@ public interface ISysResource {
 	 * @return
 	 */
 	public String getResourceId();
+	
+	/**
+	 * 请求资源的方式
+	 * @return
+	 */
+	public String getReqResourceMethod();
 }

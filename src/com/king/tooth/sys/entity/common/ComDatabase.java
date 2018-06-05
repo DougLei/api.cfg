@@ -194,6 +194,9 @@ public class ComDatabase extends AbstractSysResource implements ITable{
 	public void setDbDisplayName(String dbDisplayName) {
 		this.dbDisplayName = dbDisplayName;
 	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
 	public void setDbInstanceName(String dbInstanceName) {
 		// 如果数据库类型是oracle数据库
 		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(getDbType())){
@@ -356,5 +359,11 @@ public class ComDatabase extends AbstractSysResource implements ITable{
 	}
 	public String getResourceId() {
 		return getId();
+	}
+	public String getReqResourceMethod() {
+		if(reqResourceMethod == null){
+			return ALL;
+		}
+		return reqResourceMethod;
 	}
 }

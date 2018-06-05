@@ -108,6 +108,9 @@ public class ComProject extends AbstractSysResource implements ITable{
 	public void setIsDeploymentRun(int isDeploymentRun) {
 		this.isDeploymentRun = isDeploymentRun;
 	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
 
 	
 	public CfgTabledata toCreateTable(String dbType) {
@@ -172,5 +175,11 @@ public class ComProject extends AbstractSysResource implements ITable{
 	}	
 	public String getResourceId() {
 		return getId();
+	}
+	public String getReqResourceMethod() {
+		if(reqResourceMethod == null){
+			return ALL;
+		}
+		return reqResourceMethod;
 	}
 }

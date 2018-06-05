@@ -20,20 +20,8 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class ComSysAccountService extends AbstractResourceService{
 
 	/**
-	 * 保存一条账户信息
-	 * @param account
-	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return
-	 */
-	public String saveComSysAccount(ComSysAccount account, String shortDesc){
-		account.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), account.getLoginPwdKey()));
-		return HibernateUtil.saveObject(account, shortDesc);
-	}
-	
-	/**
 	 * 修改一条账户信息
 	 * @param account
-	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public void updateComSysAccount(ComSysAccount account){
 		account.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), account.getLoginPwdKey()));

@@ -43,33 +43,47 @@ public class RequestBody implements Serializable{
 	 * @throws ResourceException 
 	 */
 	public void analysisRequestResourceType() {
+		String requestMethod = getRequestMethod();
 		ComSysResourceService comSysResourceService = new ComSysResourceService();
 		// 声明父、子资源对象实例
 		ComSysResource requestResource = comSysResourceService.findResourceByResourceName(routeBody.getResourceName());
-		if(requestResource == null){
-			throw new NullPointerException("平台目前不支持处理名为["+routeBody.getResourceName()+"]的资源");
-		}
+		validReqResourceMethod(requestResource, requestMethod);
 		
 		ComSysResource requestParentResource = null;
 		if(StrUtils.notEmpty(routeBody.getParentResourceName())){
 			requestParentResource = comSysResourceService.findResourceByResourceName(routeBody.getParentResourceName());
-			if(requestParentResource == null){
-				throw new NullPointerException("平台目前不支持处理名为["+routeBody.getParentResourceName()+"]的父资源");
-			}
+			validReqResourceMethod(requestResource, requestMethod);
 			
 			if(requestParentResource.getResourceType() != requestResource.getResourceType()){
-				throw new IllegalArgumentException("平台目前不支持同时处理不同类型[sql资源和table资源]的资源");
+				throw new IllegalArgumentException("平台目前不支持同时处理不同类型的资源");
 			}
 			
-			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT
-					&& !requestResource.getResourceName().equals(requestParentResource.getResourceName())){
-				throw new IllegalArgumentException("平台目前不支持处理[sql资源]的主子关系查询");
-			}
+//			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT
+//					&& !requestResource.getResourceName().equals(requestParentResource.getResourceName())){
+//				throw new IllegalArgumentException("平台目前不支持处理[sql资源]的主子关系查询");
+//			}
 		}
 		// 获得资源类型
 		requestResourceType = requestResource.getResourceType();
 	}
 	
+	/**
+	 * 验证资源的请求方式
+	 * @param requestResource
+	 * @param requestMethod
+	 */
+	private void validReqResourceMethod(ComSysResource requestResource, String requestMethod) {
+		if(ISysResource.ALL.equals(requestResource.getReqResourceMethod())){
+			return;
+		}
+		if(ISysResource.NONE.equals(requestResource.getReqResourceMethod())){
+			throw new IllegalArgumentException("请求的资源["+requestResource.getResourceName()+"]不支持[任何]方式的请求，请联系管理员");
+		}
+		if(requestMethod.equals(requestResource.getReqResourceMethod())){
+			throw new IllegalArgumentException("请求的资源["+requestResource.getResourceName()+"]不支持["+requestMethod+"]方式的请求，只支持["+requestResource.getReqResourceMethod()+"]方式的请求");
+		}
+	}
+
 	/**
 	 * httpServletRequest请求对象
 	 */

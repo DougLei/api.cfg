@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.king.tooth.sys.entity.common.ComSysResource" table="COM_SYS_RESOURCE">
+		<id name="id" column="id" type="string">
+			<generator class="assigned" />
+		</id>
+		<property name="createUserId" column="create_user_id" type="string" />
+		<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />
+		<property name="createTime" column="create_time" type="timestamp" />
+		<property name="lastUpdateTime" column="last_update_time" type="timestamp" />
+		
+		<property name="refResourceId" column="ref_resource_id" type="string" />
+		<property name="resourceName" column="resource_name" type="string" />
+		<property name="resourceType" column="resource_type" type="integer" />
+		<property name="reqResourceMethod" column="req_resource_method" type="string" />
+		<property name="isEnabled" column="is_enabled" type="integer" />
+	</class>
+</hibernate-mapping>

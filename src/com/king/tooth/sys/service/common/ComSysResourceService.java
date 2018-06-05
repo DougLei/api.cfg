@@ -1,13 +1,8 @@
 package com.king.tooth.sys.service.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.AbstractResourceService;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -22,14 +17,13 @@ public class ComSysResourceService extends AbstractResourceService{
 	 * @param resource
 	 */
 	public void insertSysResource(ISysResource iresource){
-		String sql = "insert into com_sys_resource values(?,?,?,?,?,?,?,?,?)";
-		List<Object> parameters = new ArrayList<Object>(8);
-		parameters.add(iresource.getResourceId());
-		parameters.add(iresource.getResourceName());
-		parameters.add(iresource.getResourceType());
-		parameters.add(1);// isEnabled
-		parameters.addAll(ResourceHandlerUtil.getBasicPropVals(null));
-		HibernateUtil.executeUpdateBySql(SqlStatementType.INSERT, sql, parameters);
+		ComSysResource resource = new ComSysResource();
+		resource.setRefResourceId(iresource.getResourceId());
+		resource.setResourceName(iresource.getResourceName());
+		resource.setResourceType(iresource.getResourceType());
+		resource.setReqResourceMethod(iresource.getReqResourceMethod());
+		resource.setIsEnabled(1);
+		HibernateUtil.saveObject(resource , "保存资源");
 	}
 	
 	/**
@@ -42,18 +36,13 @@ public class ComSysResourceService extends AbstractResourceService{
 			throw new NullPointerException("请求的资源名不能为空");
 		}
 		
-		String sql = "select resource_type, is_enabled from com_sys_resource where resource_name = ?";
-		Object[] objArr = (Object[]) HibernateUtil.executeUniqueQueryBySqlArr(sql, resourceName);
-		if(objArr == null){
+		ComSysResource resource = (ComSysResource) HibernateUtil.executeUniqueQueryByHqlArr("from ComSysResource where resourceName = ?", resourceName);
+		if(resource == null){
 			throw new IllegalArgumentException("不存在请求的资源：" + resourceName);
 		}
-		if(Integer.valueOf(objArr[1].toString()) == 0){
+		if(resource.getIsEnabled() == 0){
 			throw new IllegalArgumentException("请求的资源被禁用，请联系管理员：" + resourceName);
 		}
-		ComSysResource resource = new ComSysResource();
-		resource.setResourceName(resourceName);
-		resource.setResourceType(Integer.valueOf(objArr[0].toString()));
-		resource.setIsEnabled(Integer.valueOf(objArr[1].toString()));
 		return resource;
 	}
 }

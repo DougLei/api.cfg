@@ -124,6 +124,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 		this.sqlScriptContent = sqlScriptContent;
 		this.dbType = HibernateUtil.getCurrentDatabaseType();
 		this.sqlScriptType = SqlStatementParserUtil.getSqlScriptType(getGsqlParser());
+		setReqResourceMethod();
 		if(SqlStatementType.PROCEDURE.equals(this.sqlScriptType)){
 			SqlStatementParserUtil.processProcedure(this);
 			return;
@@ -289,6 +290,21 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	}
 	public void setIsCreateBuiltinResource(int isCreateBuiltinResource) {
 		this.isCreateBuiltinResource = isCreateBuiltinResource;
+	}
+	public void setReqResourceMethod() {
+		if(SqlStatementType.SELECT.equals(sqlScriptType)){
+			this.reqResourceMethod = GET;
+		}else if(SqlStatementType.UPDATE.equals(sqlScriptType)){
+			this.reqResourceMethod = PUT;
+		}else if(SqlStatementType.INSERT.equals(sqlScriptType)){
+			this.reqResourceMethod = POST;
+		}else if(SqlStatementType.DELETE.equals(sqlScriptType)){
+			this.reqResourceMethod = DELETE;
+		}else if(SqlStatementType.PROCEDURE.equals(sqlScriptType)){
+			this.reqResourceMethod = POST;
+		}else{
+			this.reqResourceMethod = NONE;
+		}
 	}
 	
 	
@@ -480,5 +496,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 	}	
 	public String getResourceId() {
 		return getId();
+	}
+	public String getReqResourceMethod() {
+		if(reqResourceMethod == null){
+			return NONE;
+		}
+		return reqResourceMethod;
 	}
 }

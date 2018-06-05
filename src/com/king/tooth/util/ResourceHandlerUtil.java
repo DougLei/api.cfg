@@ -29,8 +29,6 @@ public class ResourceHandlerUtil {
 	 * @return
 	 */
 	public static boolean isLoginRequest(HttpServletRequest request){
-		System.out.println(request.getRequestURI());
-		System.out.println(request.getRequestURL());
 		if(request.getRequestURI().endsWith("ComSysAccount/login")){
 			return true;
 		}

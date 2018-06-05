@@ -34,7 +34,6 @@ import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.ComVerifyCode;
 import com.king.tooth.sys.entity.common.datalinks.ComDatabaseComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
-import com.king.tooth.sys.service.common.ComSysAccountService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
@@ -121,7 +120,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		DBTableHandler dbHandler = new DBTableHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
 		dbHandler.createTable(tables);
 		
-		tables.remove(0);// 移除资源表
 		return tables;
 	}
 	
@@ -129,15 +127,12 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 插入配置库的基础数据
 	 */
 	private void insertCfgDatabaseOfBasicDatas() {
-		ComSysAccountService comSysAccountService = new ComSysAccountService();
-		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加公司配置平台管理员和对应的用户【不需要角色，这个是超级管理员】
 		ComSysAccount admin = new ComSysAccount();
-		admin.setLoginPwd(SysConfig.getSystemConfig("account.default.pwd"));
 		admin.setLoginName("administrator");
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		String adminAccountId = comSysAccountService.saveComSysAccount(admin, null);
+		String adminAccountId = HibernateUtil.saveObject(admin, null);
 		
 		ComUser adminUser = new ComUser();
 		adminUser.setAccountId(adminAccountId);

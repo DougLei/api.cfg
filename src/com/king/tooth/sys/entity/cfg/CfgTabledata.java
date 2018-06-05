@@ -285,6 +285,9 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 	public void setIsBuiltin(int isBuiltin) {
 		this.isBuiltin = isBuiltin;
 	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
 	
 	public void clear(){
 		if(columns != null && columns.size()>0){
@@ -423,5 +426,11 @@ public class CfgTabledata extends AbstractSysResource implements ITable{
 	}
 	public String getResourceId() {
 		return getId();
+	}
+	public String getReqResourceMethod() {
+		if(reqResourceMethod == null){
+			return ALL;
+		}
+		return reqResourceMethod;
 	}
 }

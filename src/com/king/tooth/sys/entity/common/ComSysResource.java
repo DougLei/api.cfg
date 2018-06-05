@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -29,6 +30,11 @@ public class ComSysResource extends BasicEntity implements ITable{
 	 * 资源类型
 	 */
 	private int resourceType;
+	/**
+	 * 请求资源的方式
+	 * <p>get/put/post/delete/all(包括get/put/post/delete)/none(什么都不支持)</p>
+	 */
+	private String reqResourceMethod;
 	/**
 	 * 是否启用
 	 */
@@ -91,13 +97,20 @@ public class ComSysResource extends BasicEntity implements ITable{
 	public void setIsEnabled(int isEnabled) {
 		this.isEnabled = isEnabled;
 	}
+	public String getReqResourceMethod() {
+		return reqResourceMethod;
+	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
+	
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_RESOURCE");
 		table.setName("[通用的]系统资源对象表");
 		table.setComments("[通用的]系统资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(9);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(10);
 		
 		CfgColumndata refResourceIdColumn = new CfgColumndata("ref_resource_id");
 		refResourceIdColumn.setName("引用的资源主键");
@@ -123,15 +136,24 @@ public class ComSysResource extends BasicEntity implements ITable{
 		resourceTypeColumn.setOrderCode(3);
 		columns.add(resourceTypeColumn);
 		
+		CfgColumndata reqResourceMethodColumn = new CfgColumndata("req_resource_method");
+		reqResourceMethodColumn.setName("请求资源的方式");
+		reqResourceMethodColumn.setComments("请求资源的方式:get/put/post/delete/all(包括get/put/post/delete)/none(什么都不支持)");
+		reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
+		reqResourceMethodColumn.setLength(6);
+		reqResourceMethodColumn.setOrderCode(4);
+		columns.add(reqResourceMethodColumn);
+		
 		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
 		isEnabledColumn.setName("是否启用");
 		isEnabledColumn.setComments("是否启用");
 		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
 		isEnabledColumn.setLength(1);
-		isEnabledColumn.setOrderCode(4);
+		isEnabledColumn.setOrderCode(5);
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
+		table.setReqResourceMethod(ISysResource.NONE);
 		return table;
 	}
 

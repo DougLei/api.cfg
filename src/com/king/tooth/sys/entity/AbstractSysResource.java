@@ -10,4 +10,10 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * 是否部署到正式环境
 	 */
 	protected int isDeploymentRun;
+	
+	/**
+	 * 请求资源的方法
+	 * <p>get/put/post/delete/all/none</p>
+	 */
+	protected String reqResourceMethod;
 }
