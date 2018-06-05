@@ -110,8 +110,13 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		tables.add(new ComDatabaseCfgTabledataLinks().toCreateTable(dbType));
 		tables.add(new ComDatabaseComSqlScriptLinks().toCreateTable(dbType));
 		
-		// 开始创建表
 		DBTableHandler dbHandler = new DBTableHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
+		try {
+			dbHandler.dropTable(tables);
+		} catch (Exception e) {
+			Log4jUtil.debug("表不存在，不需要删除");
+		}
+		// 开始创建表
 		dbHandler.createTable(tables);
 		
 		return tables;

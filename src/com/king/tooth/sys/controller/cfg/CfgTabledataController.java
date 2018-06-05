@@ -48,6 +48,22 @@ public class CfgTabledataController extends AbstractResourceController{
 		return installResponseBody("修改成功", null);
 	}
 	
+
+	/**
+	 * 删除表
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping(value="/delete/{ids}", method = RequestMethod.DELETE)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody deleteTable(@PathVariable String ids){
+		if(StrUtils.isEmpty(ids)){
+			return installResponseBody("要删除的表id不能为空", null);
+		}
+		String[] tableIdArr = ids.split(",");
+		tabledataService.deleteTable(tableIdArr);
+		return installResponseBody("删除成功", null);
+	}
 		
 	//--------------------------------------------------------
 		

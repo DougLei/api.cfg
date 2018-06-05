@@ -111,8 +111,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	
 	public ComSqlScript() {
 	}
-	public ComSqlScript(String sqlScriptResourceName, String sqlScriptContent) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
+	public ComSqlScript(String sqlScriptCaption, String sqlScriptResourceName, String sqlScriptContent) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
 		this();
+		this.sqlScriptCaption = sqlScriptCaption;
 		doSetSqlScriptResourceName(sqlScriptResourceName);
 		doSetSqlScriptContent(sqlScriptContent);
 	}
@@ -485,7 +486,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		columns.add(isCreateBuiltinResourceColumn);
 		
 		table.setColumns(columns);
-		table.setReqResourceMethod(ISysResource.GET+","+ISysResource.DELETE);
+		table.setReqResourceMethod(ISysResource.GET);
 		return table;
 	}
 

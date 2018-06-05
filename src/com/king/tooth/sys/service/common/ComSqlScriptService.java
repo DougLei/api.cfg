@@ -1,6 +1,7 @@
 package com.king.tooth.sys.service.common;
 
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.util.ExceptionUtil;
@@ -22,8 +23,17 @@ public class ComSqlScriptService extends AbstractResourceService {
 	 */
 	public void saveSqlScript(ComSqlScript sqlScript) {
 		try {
-			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptCaption(), sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
+				sql.setIsBuiltin(1);
+				sql.setIsCreateBuiltinResource(1);
+			}
+			sql.setComments(sqlScript.getComments());
 			HibernateUtil.saveObject(sql, null);
+			
+			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
+				createSqlScriptModel(sql);
+			}
 		} catch (Exception e) {
 			Log4jUtil.debug(ExceptionUtil.getErrMsg(e));
 		}
@@ -35,13 +45,52 @@ public class ComSqlScriptService extends AbstractResourceService {
 	 */
 	public void updateSqlScript(ComSqlScript sqlScript) {
 		try {
-			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptCaption(), sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+			sql.setId(sqlScript.getId());
+			
+			sqlScript = findSqlScriptResourceById(sqlScript.getId());
+			sql.setIsBuiltin(sqlScript.getIsBuiltin());
+			sql.setCreateTime(sqlScript.getCreateTime());
+			sql.setCreateUserId(sqlScript.getCreateUserId());
+			sql.setComments(sqlScript.getComments());
+			sql.setIsCreateBuiltinResource(sqlScript.getIsCreateBuiltinResource());
+			sql.setIsDeploymentRun(sqlScript.getIsDeploymentRun());
 			HibernateUtil.updateObject(sql, null);
 		} catch (Exception e) {
 			Log4jUtil.debug(ExceptionUtil.getErrMsg(e));
 		}
 	}
 	
+	/**
+	 * 删除sql脚本
+	 * @param sqlScriptIdArr
+	 */
+	public void deleteSqlScript(Object[] sqlScriptIdArr) {
+		int len = sqlScriptIdArr.length;
+		StringBuilder in = new StringBuilder("");
+		if(len == 1){
+			in.append(" = ?");
+		}else{
+			in.append(" in (");
+			for (int i=0;i<len;i++) {
+				in.append("?").append(",");
+			}
+			in.setLength(in.length()-1);
+			in.append(")");
+		}
+		
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSysResource where refResourceId " + in, sqlScriptIdArr);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "delete ComSqlScript where id " + in, sqlScriptIdArr);
+	}
+	
+	/**
+	 * 创建sql脚本数据模型
+	 * @param sqlScript
+	 */
+	private void createSqlScriptModel(ComSqlScript sqlScript) {
+		comSysResourceService.insertSysResource(sqlScript);// 将sql脚本资源加入到资源表中
+	}
+
 	//--------------------------------------------------------
 	
 	/**
@@ -80,39 +129,6 @@ public class ComSqlScriptService extends AbstractResourceService {
 		return sqlScriptResource;
 	}
 
-	/**
-	 * 创建sql脚本数据模型
-	 * @param sqlScriptIdArr
-	 */
-	public void createSqlScriptModel(String[] sqlScriptIdArr) {
-		ComSqlScript sqlScript = null;
-		for (String sqlScriptId : sqlScriptIdArr) {
-			sqlScript = findSqlScriptResourceById(sqlScriptId);
-			if(sqlScript != null){
-				sqlScript.setIsCreateBuiltinResource(1);
-				HibernateUtil.updateObject(sqlScript, null);
-				comSysResourceService.insertSysResource(sqlScript);// 将sql脚本资源加入到资源表中
-			}
-		}
-	}
-
-	/**
-	 * 删除sql脚本数据模型
-	 * @param sqlScriptIdArr
-	 */
-	public void dropSqlScriptModel(Object[] sqlScriptIdArr) {
-		int len = sqlScriptIdArr.length;
-		StringBuilder in = new StringBuilder(" in (");
-		for (int i=0;i<len;i++) {
-			in.append("?").append(",");
-		}
-		in.setLength(in.length()-1);
-		in.append(")");
-		
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id " + in, sqlScriptIdArr);
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update ComSqlScript set isCreateBuiltinResource=0 where id " + in, sqlScriptIdArr);
-	}
-	
 	//--------------------------------------------------------
 	
 	/**

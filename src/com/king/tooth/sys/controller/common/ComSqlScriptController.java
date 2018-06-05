@@ -50,6 +50,22 @@ public class ComSqlScriptController extends AbstractResourceController{
 		return installResponseBody("修改成功", null);
 	}
 	
+	/**
+	 * 删除sql脚本模型
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping(value="/delete/{ids}", method = RequestMethod.DELETE)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody deleteSqlScript(@PathVariable String ids){
+		if(StrUtils.isEmpty(ids)){
+			return installResponseBody("要删除的sql脚本id不能为空", null);
+		}
+		String[] sqlScriptIdArr = ids.split(",");
+		sqlScriptService.deleteSqlScript(sqlScriptIdArr);
+		return installResponseBody("删除成功", null);
+	}
+	
 	//--------------------------------------------------------
 	
 	/**
@@ -65,40 +81,6 @@ public class ComSqlScriptController extends AbstractResourceController{
 			HibernateUtil.executeUpdateBySql("执行sql语句", sqlScript.getSqlScriptContent(), null);
 		}
 		return installResponseBody("执行成功", null);
-	}
-	
-	//--------------------------------------------------------
-	
-	/**
-	 * 创建sql脚本模型
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	@RequestMapping(value="/create/{ids}", method = RequestMethod.POST)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody createSqlScriptModel(@PathVariable String ids){
-		if(StrUtils.isEmpty(ids)){
-			return installResponseBody("要创建的sql脚本模型id不能为空", null);
-		}
-		String[] sqlScriptIdArr = ids.split(",");
-		sqlScriptService.createSqlScriptModel(sqlScriptIdArr);
-		return installResponseBody("创建成功", null);
-	}
-	
-	/**
-	 * 删除sql脚本模型
-	 * <p>请求方式：DELETE</p>
-	 * @return
-	 */
-	@RequestMapping(value="/drop/{ids}", method = RequestMethod.DELETE)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody dropSqlScriptModel(@PathVariable String ids){
-		if(StrUtils.isEmpty(ids)){
-			return installResponseBody("要删除的sql脚本模型id不能为空", null);
-		}
-		String[] sqlScriptIdArr = ids.split(",");
-		sqlScriptService.dropSqlScriptModel(sqlScriptIdArr);
-		return installResponseBody("删除成功", null);
 	}
 	
 	//--------------------------------------------------------

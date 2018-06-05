@@ -157,7 +157,7 @@ public class ComSysResource extends BasicEntity implements ITable, IEntity{
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
-		table.setReqResourceMethod(ISysResource.NONE);
+		table.setReqResourceMethod(ISysResource.GET);
 		return table;
 	}
 

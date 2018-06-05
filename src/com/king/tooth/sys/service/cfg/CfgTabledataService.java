@@ -2,6 +2,7 @@ package com.king.tooth.sys.service.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.constants.SysDatabaseInstanceConstants;
@@ -13,13 +14,13 @@ import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
-import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * [配置系统]表数据信息资源对象处理器
  * @author DougLei
  */
+@SuppressWarnings("unchecked")
 public class CfgTabledataService extends AbstractResourceService{
 
 	private ComSysResourceService comSysResourceService = new ComSysResourceService();
@@ -43,7 +44,30 @@ public class CfgTabledataService extends AbstractResourceService{
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
 			table.setIsBuiltin(1);
 		}
+		
 		HibernateUtil.updateObject(table, null);
+	}
+	
+	/**
+	 * 删除表
+	 * @param tableIdArr
+	 */
+	public void deleteTable(Object[] tableIdArr) {
+		int len = tableIdArr.length;
+		StringBuilder in = new StringBuilder("");
+		if(len == 1){
+			in.append(" = ?");
+		}else{
+			in.append(" in (");
+			for (int i=0;i<len;i++) {
+				in.append("?").append(",");
+			}
+			in.setLength(in.length()-1);
+			in.append(")");
+		}
+		
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSysResource where refResourceId " + in, tableIdArr);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "delete CfgTabledata where id " + in, tableIdArr);
 	}
 	
 	//--------------------------------------------------------
@@ -104,13 +128,16 @@ public class CfgTabledataService extends AbstractResourceService{
 	 */
 	public void dropTableModel(Object[] tableIdArr) {
 		int len = tableIdArr.length;
+		Map<String, Object> tableInfo = null;
 		List<String> entityNames = new ArrayList<String>(len);
 		StringBuilder in = new StringBuilder(" in (");
 		List<CfgTabledata> tabledatas = new ArrayList<CfgTabledata>(tableIdArr.length);
 		for (int i=0;i<len;i++) {
 			in.append("?").append(",");
-			entityNames.add(HibernateUtil.executeUniqueQueryByHqlArr("select resourceName from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableIdArr[i])+"");
-			tabledatas.add(new CfgTabledata(NamingTurnUtil.classNameTurnTableName(entityNames.get(i))));
+			tableInfo = (Map<String, Object>) HibernateUtil.executeUniqueQueryByHqlArr("select tableName,resourceName from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableIdArr[i]);
+			entityNames.add(tableInfo.get("tableName")+"");
+			tabledatas.add(new CfgTabledata(tableInfo.get("resourceName")+""));
+			tableInfo.clear();
 		}
 		in.setLength(in.length()-1);
 		in.append(")");
