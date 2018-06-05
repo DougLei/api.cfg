@@ -3,10 +3,12 @@ package com.king.tooth.sys.controller.cfg;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.sys.controller.AbstractResourceController;
+import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.service.cfg.CfgTabledataService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -22,6 +24,33 @@ public class CfgTabledataController extends AbstractResourceController{
 	
 	private CfgTabledataService tabledataService = new CfgTabledataService();
 	
+	/**
+	 * 添加表
+	 * @param table
+	 * @return
+	 */
+	@RequestMapping(value="/add", method = RequestMethod.POST)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody addTable(@RequestBody CfgTabledata table){
+		tabledataService.saveTable(table);
+		return installResponseBody("添加成功", null);
+	}
+	
+	/**
+	 * 修改表
+	 * @param table
+	 * @return
+	 */
+	@RequestMapping(value="/update", method = RequestMethod.PUT)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody updateTable(@RequestBody CfgTabledata table){
+		tabledataService.updateTable(table);
+		return installResponseBody("修改成功", null);
+	}
+	
+		
+	//--------------------------------------------------------
+		
 	/**
 	 * 创建表，即建模
 	 * <p>请求方式：POST</p>

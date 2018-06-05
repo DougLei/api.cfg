@@ -47,6 +47,7 @@ public class ComSysAccountService extends AbstractResourceService{
 	
 	/**
 	 * 创建或修改一个账户在线状态对象
+	 * <p>登录用</p>
 	 * @param loginIp
 	 * @param accountName
 	 * @param password

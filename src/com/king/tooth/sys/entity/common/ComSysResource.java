@@ -144,7 +144,7 @@ public class ComSysResource extends BasicEntity implements ITable, IEntity{
 		reqResourceMethodColumn.setName("请求资源的方式");
 		reqResourceMethodColumn.setComments("请求资源的方式:get/put/post/delete/all(包括get/put/post/delete)/none(什么都不支持)");
 		reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
-		reqResourceMethodColumn.setLength(6);
+		reqResourceMethodColumn.setLength(20);
 		reqResourceMethodColumn.setOrderCode(4);
 		columns.add(reqResourceMethodColumn);
 		

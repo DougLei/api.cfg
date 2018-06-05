@@ -94,14 +94,14 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	 * @param columnName
 	 */
 	private void analysisPropName(String columnName) {
-		if(StrUtils.notEmpty(columnName)){
-			this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
-		}
+		this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
 	}
 	
 	public CfgColumndata() {
+		this.isEnabled = 1;
 	}
 	public CfgColumndata(String columnName) {
+		this();
 		doSetColumnName(columnName);
 	}
 	private void doSetColumnName(String columnName) {
@@ -187,6 +187,9 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		this.comments = comments;
 	}
 	public String getPropName() {
+		if(StrUtils.isEmpty(propName)){
+			analysisPropName(columnName);
+		}
 		return propName;
 	}
 	public int getLength() {
@@ -244,6 +247,9 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		this.isEnabled = isEnabled;
 	}
 	public void setColumnName(String columnName) {
+		if(StrUtils.isEmpty(columnName)){
+			throw new NullPointerException("列名不能为空！");
+		}
 		this.columnName = columnName;
 	}
 
@@ -396,10 +402,6 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 
 	public String toDropTable() {
 		return "CFG_COLUMNDATA";
-	}
-
-	public String toJsonString() {
-		return null;
 	}
 
 	public String getEntityName() {

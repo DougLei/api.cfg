@@ -3,6 +3,7 @@ package com.king.tooth.sys.controller.common;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -24,6 +25,32 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 public class ComSqlScriptController extends AbstractResourceController{
 	
 	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
+	
+	/**
+	 * 添加sql脚本
+	 * @param column
+	 * @return
+	 */
+	@RequestMapping(value="/add", method = RequestMethod.POST)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody addSqlScript(@RequestBody ComSqlScript sqlScript){
+		sqlScriptService.saveSqlScript(sqlScript);
+		return installResponseBody("添加成功", null);
+	}
+	
+	/**
+	 * 修改sql脚本
+	 * @param column
+	 * @return
+	 */
+	@RequestMapping(value="/update", method = RequestMethod.PUT)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody updateSqlScript(@RequestBody ComSqlScript sqlScript){
+		sqlScriptService.updateSqlScript(sqlScript);
+		return installResponseBody("修改成功", null);
+	}
+	
+	//--------------------------------------------------------
 	
 	/**
 	 * 执行sql脚本

@@ -65,7 +65,7 @@ public class DBTableHandler {
 	
 	/**
 	 * 删除表
-	 * @param tableNames
+	 * @param tabledatas
 	 */
 	public void dropTable(List<CfgTabledata> tabledatas){
 		String tmpSql = getDropTableSql(tabledatas);

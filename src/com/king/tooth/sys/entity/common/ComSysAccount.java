@@ -53,8 +53,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	 * 		2.客户(企业)：实体帐号(和用户表有对应)
 	 * 		3.普通账户：实体帐号(和用户表有对应)
 	 * 		4.普通虚拟账户：(和用户表没有对应)
-	 * 		
-	 * 只有超级管理员才能修改这个字段的值，其他地方，这个值只能通过系统指定的硬编码去管理
 	 */
 	private int accountType;
 	/**
@@ -250,7 +248,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		
 		CfgColumndata accountTypeColumn = new CfgColumndata("account_type");
 		accountTypeColumn.setName("账户类型");
-		accountTypeColumn.setComments("账户类型:0/null:超级管理员(和用户表有对应)，只有一个，而且只是在配置平台中有、1.游客：虚拟账号(和用户表没有对应)、2.客户(企业)：实体帐号(和用户表有对应)、3.普通账户：(和用户表有对应)、4.普通虚拟账户：(和用户表没有对应)。只有超级管理员才能修改这个字段的值，其他地方，这个值只能通过系统指定的硬编码去管理");
+		accountTypeColumn.setComments("账户类型:0/null:超级管理员(和用户表有对应)，只有一个，而且只是在配置平台中有、1.游客：虚拟账号(和用户表没有对应)、2.客户(企业)：实体帐号(和用户表有对应)、3.普通账户：(和用户表有对应)、4.普通虚拟账户：(和用户表没有对应)");
 		accountTypeColumn.setColumnType(DataTypeConstants.INTEGER);
 		accountTypeColumn.setLength(1);
 		accountTypeColumn.setOrderCode(6);

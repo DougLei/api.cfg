@@ -110,9 +110,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	
 	public ComSqlScript() {
 	}
-	public ComSqlScript(String sqlName, String sqlScriptContent) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
+	public ComSqlScript(String sqlScriptResourceName, String sqlScriptContent) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
 		this();
-		doSetSqlScriptResourceName(sqlName);
+		doSetSqlScriptResourceName(sqlScriptResourceName);
 		doSetSqlScriptContent(sqlScriptContent);
 	}
 
@@ -501,10 +501,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return getId();
 	}
 	public String getReqResourceMethod() {
-		if(reqResourceMethod == null){
-			return NONE;
-		}
-		return reqResourceMethod;
+		return GET+","+DELETE;
 	}
 	
 	public String getEntityName() {

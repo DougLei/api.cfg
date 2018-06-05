@@ -3,6 +3,8 @@ package com.king.tooth.sys.service.common;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.util.ExceptionUtil;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -13,6 +15,34 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class ComSqlScriptService extends AbstractResourceService {
 
 	private ComSysResourceService comSysResourceService = new ComSysResourceService();
+	
+	/**
+	 * 添加sql脚本
+	 * @param sqlScript
+	 */
+	public void saveSqlScript(ComSqlScript sqlScript) {
+		try {
+			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+			HibernateUtil.saveObject(sql, null);
+		} catch (Exception e) {
+			Log4jUtil.debug(ExceptionUtil.getErrMsg(e));
+		}
+	}
+	
+	/**
+	 * 修改sql脚本
+	 * @param sqlScript
+	 */
+	public void updateSqlScript(ComSqlScript sqlScript) {
+		try {
+			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+			HibernateUtil.updateObject(sql, null);
+		} catch (Exception e) {
+			Log4jUtil.debug(ExceptionUtil.getErrMsg(e));
+		}
+	}
+	
+	//--------------------------------------------------------
 	
 	/**
 	 * 根据资源名，查询对应的通用sql脚本资源对象

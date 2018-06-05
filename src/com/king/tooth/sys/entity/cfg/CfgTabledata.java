@@ -79,7 +79,6 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	 * 注释
 	 */
 	private String comments;
-
 	/**
 	 * 是否是关系表，默认是0
 	 */
@@ -99,12 +98,12 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	 * 列集合
 	 */
 	private List<CfgColumndata> columns;
-	
 	/**
 	 * 数据库类型
 	 * 在createTable时用到
 	 */
 	private String dbType;
+	
 	
 	public CfgTabledata() {
 		this.version = 1;
@@ -128,7 +127,9 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		this.isDatalinkTable = isDatalinkTable;
 		doSetTableName(dbType, tableName, 1);
 	}
-	
+	public CfgTabledata(String tableName) {
+		this.tableName = tableName;
+	}
 	private void doSetTableName(String dbType, String tableName, int isDatalinkTable) {
 		this.dbType = dbType;
 		this.tableName = tableName.trim();
@@ -147,9 +148,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	 * @param tableName
 	 */
 	private void analysisResourceName(String tableName) {
-		if(StrUtils.notEmpty(tableName)){
-			this.resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
-		}
+		this.resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
 	}
 	
 	//-------------------------------------------------------------------------
@@ -235,6 +234,9 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		this.comments = comments;
 	}
 	public String getResourceName() {
+		if(StrUtils.isEmpty(resourceName)){
+			analysisResourceName(tableName);
+		}
 		return resourceName;
 	}
 	public String getParentTableName() {
@@ -274,6 +276,9 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		this.isCreateHbm = isCreateHbm;
 	}
 	public void setTableName(String tableName) {
+		if(StrUtils.isEmpty(tableName)){
+			throw new NullPointerException("表名不能为空！");
+		}
 		this.tableName = tableName;
 	}
 	public int getIsDeploymentRun() {
@@ -431,10 +436,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		return getId();
 	}
 	public String getReqResourceMethod() {
-		if(reqResourceMethod == null){
-			return ALL;
-		}
-		return reqResourceMethod;
+		return GET+","+DELETE;
 	}
 	
 	public String getEntityName() {

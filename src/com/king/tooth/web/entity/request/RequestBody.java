@@ -82,7 +82,7 @@ public class RequestBody implements Serializable{
 		
 		String[] supportMethods = requestResource.getReqResourceMethod().split(",");
 		for (String supportMethod : supportMethods) {
-			if(supportMethod.equals(requestMethod)){
+			if(requestMethod.equals(supportMethod.trim())){
 				return;
 			}
 		}
