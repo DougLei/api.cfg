@@ -4,7 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="com.king.tooth.sys.entity.common.ComOperLog" table="COM_OPER_LOG">
+	<class entity-name="ComOperLog" table="COM_OPER_LOG">
 		<id name="id" column="id" type="string">
 			<generator class="assigned" />
 		</id>

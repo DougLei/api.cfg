@@ -12,7 +12,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.RequestUrlParamKeyConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.StrEncodingConstants;
+import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -62,6 +64,10 @@ public class PlatformServlet extends BasicHttpServlet{
 			CloseUtil.closeIO(br);
 			CloseUtil.closeIO(reader);
 		}
+		
+		// 记录请求体
+		ComReqLog reqLog = (ComReqLog) request.getAttribute(ResourceNameConstants.REQ_LOG_KEY);
+		reqLog.setReqBody(formData+"");
 		return formData;
 	}
 

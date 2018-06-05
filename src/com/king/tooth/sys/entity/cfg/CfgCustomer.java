@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.util.JsonUtil;
 
 /**
  * [配置系统]客户资源对象
@@ -14,7 +17,7 @@ import com.king.tooth.sys.entity.ITable;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgCustomer extends BasicEntity implements ITable{
+public class CfgCustomer extends BasicEntity implements ITable, IEntity{
 
 	/**
 	 * 客户名称
@@ -262,5 +265,12 @@ public class CfgCustomer extends BasicEntity implements ITable{
 	
 	public String toDropTable() {
 		return "CFG_CUSTOMER";
+	}
+	
+	public String getEntityName() {
+		return "CfgCustomer";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

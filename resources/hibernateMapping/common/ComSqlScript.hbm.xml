@@ -4,7 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="com.king.tooth.sys.entity.common.ComSqlScript" table="COM_SQL_SCRIPT">
+	<class entity-name="ComSqlScript" table="COM_SQL_SCRIPT">
 		<id name="id" column="id" type="string">
 			<generator class="assigned" />
 		</id>

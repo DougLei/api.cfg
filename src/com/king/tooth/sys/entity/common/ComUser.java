@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.util.JsonUtil;
 
 /**
  * [通用的]人员资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComUser extends BasicEntity implements ITable{
+public class ComUser extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 账户主键
 	 */
@@ -375,5 +378,12 @@ public class ComUser extends BasicEntity implements ITable{
 
 	public String toDropTable() {
 		return "COM_USER";
+	}
+	
+	public String getEntityName() {
+		return "ComUser";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

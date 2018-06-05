@@ -4,7 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="com.king.tooth.sys.entity.common.ComProjectModuleBody" table="COM_PROJECT_MODULE_BODY">
+	<class entity-name="ComProjectModuleBody" table="COM_PROJECT_MODULE_BODY">
 		<id name="id" column="id" type="string">
 			<generator class="assigned" />
 		</id>
@@ -15,7 +15,5 @@
 		
 		<property name="moduleId" column="module_id" type="string" />
 		<property name="moduleBody" column="module_body" type="string" />
-		<property name="isEnabled" column="is_enabled" type="integer" />
-		<property name="version" column="version" type="integer" />
 	</class>
 </hibernate-mapping>	

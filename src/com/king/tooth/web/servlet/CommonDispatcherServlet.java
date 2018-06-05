@@ -6,6 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.IRequestProcesser;
 import com.king.tooth.web.processer.ProcesserConfig;
@@ -22,6 +24,9 @@ public class CommonDispatcherServlet extends PlatformServlet{
 		analysisRequestBody(request);// 解析出请求体、路由规则
 		IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
 		ResponseBody responseBody = process.doRequestProcess();
+		// 记录响应体
+		ComReqLog reqLog = (ComReqLog) request.getAttribute(ResourceNameConstants.REQ_LOG_KEY);
+		reqLog.setReqBody(responseBody.toStrings());
 		printResult(response, responseBody);
 	}
 }

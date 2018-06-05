@@ -4,7 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="com.king.tooth.sys.entity.common.ComDataDictionary" table="COM_DATA_DICTIONARY">
+	<class entity-name="ComDataDictionary" table="COM_DATA_DICTIONARY">
 		<id name="id" column="id" type="string">
 			<generator class="assigned" />
 		</id>

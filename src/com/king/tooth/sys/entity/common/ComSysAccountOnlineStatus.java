@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.util.JsonUtil;
 
 /**
  * [通用的]系统账户在线状态资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysAccountOnlineStatus extends BasicEntity implements ITable{
+public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 关联的账户主键
@@ -249,5 +252,12 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable{
 
 	public String toDropTable() {
 		return "COM_SYS_ACCOUNT_ONLINE_STATUS";
+	}
+	
+	public String getEntityName() {
+		return "ComSysAccountOnlineStatus";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

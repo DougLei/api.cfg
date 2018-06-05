@@ -6,18 +6,21 @@ import java.util.List;
 
 import javax.servlet.ServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.util.JsonUtil;
 
 /**
  * [通用的]请求日志资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComReqLog extends BasicEntity implements ITable{
+public class ComReqLog extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 请求的账户信息主键
 	 * <p>记录是哪个用户请求的，可为空</p>
@@ -271,5 +274,12 @@ public class ComReqLog extends BasicEntity implements ITable{
 
 	public String toDropTable() {
 		return "COM_REQ_LOG";
+	}
+	
+	public String getEntityName() {
+		return "ComReqLog";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

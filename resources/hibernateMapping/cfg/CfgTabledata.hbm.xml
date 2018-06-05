@@ -4,7 +4,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="com.king.tooth.sys.entity.cfg.CfgTabledata" table="CFG_TABLEDATA">
+	<class entity-name="CfgTabledata" table="CFG_TABLEDATA">
 		<id name="id" column="id" type="string">
 			<generator class="assigned" />
 		</id>

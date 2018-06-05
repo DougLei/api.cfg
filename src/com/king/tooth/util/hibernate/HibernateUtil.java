@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
 import com.king.tooth.util.CloseUtil;
@@ -39,6 +40,7 @@ import com.king.tooth.util.StrUtils;
  * hibernate工具类
  * @author DougLei
  */
+@SuppressWarnings("rawtypes")
 public class HibernateUtil {
 	
 	/**
@@ -279,19 +281,19 @@ public class HibernateUtil {
 	
 	/**
 	 * 保存对象
-	 * @param entityName 实体名
-	 * @param data 要保存的对象数据
+	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 * @return id
 	 */
-	public static String saveObject(Object data, String shortDesc){
+	public static String saveObject(IEntity entity, String shortDesc){
+		JSONObject data = entity.toEntity();
 		String id = ResourceHandlerUtil.initBasicPropValsForSave(data, shortDesc);
 		try {
-			getCurrentThreadSession().save(data);
-			Log4jUtil.debug("保存数据成功[{}]", JSONObject.toJSONString(data));
+			getCurrentThreadSession().save(entity.getEntityName(), data);
+			Log4jUtil.debug("保存数据成功[{}]", data);
 			return id;
 		} catch (Exception e) {
-			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", JSONObject.toJSONString(data), ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 		}
 		return null;
 	}
@@ -307,35 +309,36 @@ public class HibernateUtil {
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
 		try {
 			getCurrentThreadSession().save(entityName, data);
-			Log4jUtil.debug("保存数据成功[{}]", JSONObject.toJSONString(data));
+			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data.get(ResourceNameConstants.ID)+"";
 		} catch (Exception e) {
-			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", JSONObject.toJSONString(data), ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 		}
 		return null;
 	}
 	
 	/**
 	 * 修改对象
-	 * @param entityName 实体名
-	 * @param data 要保存的对象数据
+	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
-	public static void updateObject(Object data, String shortDesc){
+	public static void updateObject(IEntity entity, String shortDesc){
+		JSONObject data = entity.toEntity();
 		ResourceHandlerUtil.initBasicPropValsForUpdate(data, shortDesc);
 		try {
-			getCurrentThreadSession().update(data);
-			Log4jUtil.debug("修改数据成功[{}]", JSONObject.toJSONString(data));
+			getCurrentThreadSession().update(entity.getEntityName(), data);
+			Log4jUtil.debug("修改数据成功[{}]", data);
 		} catch (Exception e) {
-			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", JSONObject.toJSONString(data), ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 		}
 	}
 	
+	//------------------------------------------------------------------------------------------------------
 	
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param hqlDes 传入的hql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述，主要用作Log4j日记记录  @see SqlStatementType
+	 * @param hqlDes @see SqlStatementType
 	 * @param modifyHql
 	 * @param parameters
 	 */
@@ -356,7 +359,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param hqlDes 传入的hql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述，主要用作Log4j日记记录  @see SqlStatementType
+	 * @param hqlDes @see SqlStatementType
 	 * @param modifyHql
 	 * @param parameterArr
 	 */
@@ -368,7 +371,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param sqlDes 传入的sql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述，主要用作Log4j日记记录 @see SqlStatementType
+	 * @param sqlDes @see SqlStatementType
 	 * @param modifySql
 	 * @param parameters
 	 */
@@ -389,7 +392,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param sqlDes 传入的sql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述，主要用作Log4j日记记录 @see SqlStatementType
+	 * @param sqlDes @see SqlStatementType
 	 * @param modifySql
 	 * @param parameterArr
 	 */
@@ -398,39 +401,25 @@ public class HibernateUtil {
 		executeUpdateBySql(sqlDes, modifySql, parameters);
 	}
 	
-	private static List<Object> processParameterArr(Object... parameterArr){
-		List<Object> parameters = null;
-		if(parameterArr != null && parameterArr.length > 0){
-			int len = parameterArr.length;
-			parameters = new ArrayList<Object>(len);
-			for(int i=0;i<len;i++){
-				parameters.add(parameterArr[i]);
-			}
-		}
-		return parameters;
-	}
+	//------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * 查询多条数据
+	 * hql查询多条数据
 	 * @param queryHql
 	 * @param parameterArr
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static List executeListQueryByHqlArr(String queryHql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		Query query = getCurrentThreadSession().createQuery(queryHql);
-		setParamters(query, parameters);
-		return query.list();
+		return executeListQueryByHql(queryHql, parameters);
 	}
 	
 	/**
-	 * 查询多条数据
+	 * hql查询多条数据
 	 * @param queryHql
 	 * @param parameters
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static List executeListQueryByHql(String queryHql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createQuery(queryHql);
 		setParamters(query, parameters);
@@ -438,20 +427,18 @@ public class HibernateUtil {
 	}
 	
 	/**
-	 * 查询一条数据
+	 * hql查询一条数据
 	 * @param queryHql
 	 * @param parameterArr
 	 * @return
 	 */
 	public static Object executeUniqueQueryByHqlArr(String queryHql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		Query query = getCurrentThreadSession().createQuery(queryHql);
-		setParamters(query, parameters);
-		return query.uniqueResult();
+		return executeUniqueQueryByHql(queryHql, parameters);
 	}
 	
 	/**
-	 * 查询一条数据
+	 * hql查询一条数据
 	 * @param queryHql
 	 * @param parameters
 	 * @return
@@ -465,26 +452,22 @@ public class HibernateUtil {
 	//------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * 查询多条数据
+	 * sql查询多条数据
 	 * @param querySql
 	 * @param parameterArr
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static List executeListQueryBySqlArr(String querySql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		Query query = getCurrentThreadSession().createSQLQuery(querySql);
-		setParamters(query, parameters);
-		return query.list();
+		return executeListQueryBySql(querySql, parameters);
 	}
 	
 	/**
-	 * 查询多条数据
+	 * sql查询多条数据
 	 * @param querySql
 	 * @param parameters
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public static List executeListQueryBySql(String querySql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createSQLQuery(querySql);
 		setParamters(query, parameters);
@@ -492,20 +475,18 @@ public class HibernateUtil {
 	}
 	
 	/**
-	 * 查询一条数据
+	 * sql查询一条数据
 	 * @param querySql
 	 * @param parameterArr
 	 * @return
 	 */
 	public static Object executeUniqueQueryBySqlArr(String querySql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		Query query = getCurrentThreadSession().createSQLQuery(querySql);
-		setParamters(query, parameters);
-		return query.uniqueResult();
+		return executeUniqueQueryBySql(querySql, parameters);
 	}
 	
 	/**
-	 * 查询一条数据
+	 * sql查询一条数据
 	 * @param querySql
 	 * @param parameters
 	 * @return
@@ -515,6 +496,8 @@ public class HibernateUtil {
 		setParamters(query, parameters);
 		return query.uniqueResult();
 	}
+	
+	//------------------------------------------------------------------------------------------------------
 	
 	/**
 	 * 执行存储过程
@@ -623,5 +606,22 @@ public class HibernateUtil {
 			}
 			parameters.clear();
 		}
+	}
+	
+	/**
+	 * 将数组参数，转换为list参数
+	 * @param parameterArr
+	 * @return
+	 */
+	private static List<Object> processParameterArr(Object... parameterArr){
+		List<Object> parameters = null;
+		if(parameterArr != null && parameterArr.length > 0){
+			int len = parameterArr.length;
+			parameters = new ArrayList<Object>(len);
+			for(int i=0;i<len;i++){
+				parameters.add(parameterArr[i]);
+			}
+		}
+		return parameters;
 	}
 }

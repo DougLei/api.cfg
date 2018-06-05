@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -20,7 +22,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDatabase extends AbstractSysResource implements ITable{
+public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	
 	/**
 	 * 数字库名
@@ -365,5 +367,12 @@ public class ComDatabase extends AbstractSysResource implements ITable{
 			return ALL;
 		}
 		return reqResourceMethod;
+	}
+	
+	public String getEntityName() {
+		return "ComDatabase";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

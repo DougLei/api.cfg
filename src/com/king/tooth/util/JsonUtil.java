@@ -64,4 +64,17 @@ public class JsonUtil {
 		}
 		return JSONArray.parseArray(json, targetClassType);
 	}
+	
+	/**
+	 * 将对象转换为json对象
+	 * @param data
+	 * @return
+	 */
+	public static JSONObject toJsonObject(Object data){
+		String jsonStr = toJsonString(data, false);
+		if(jsonStr == null){
+			throw new NullPointerException("要转换为json对象的data实体对象不能为空");
+		}
+		return JSONObject.parseObject(jsonStr);
+	}
 }

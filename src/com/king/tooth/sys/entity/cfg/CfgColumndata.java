@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -403,8 +404,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "CfgColumndata";
 	}
-
-	public String toEntity() {
-		return JsonUtil.toJsonString(this, false);
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

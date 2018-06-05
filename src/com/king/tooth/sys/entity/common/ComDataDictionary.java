@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.util.JsonUtil;
 
 /**
  * [通用的]数据字典资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDataDictionary extends BasicEntity implements ITable{
+public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 编码
 	 */
@@ -171,5 +174,12 @@ public class ComDataDictionary extends BasicEntity implements ITable{
 
 	public String toDropTable() {
 		return "COM_DATA_DICTIONARY";
+	}
+	
+	public String getEntityName() {
+		return "ComDataDictionary";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

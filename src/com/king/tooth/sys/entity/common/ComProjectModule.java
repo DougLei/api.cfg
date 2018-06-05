@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.util.JsonUtil;
 
 /**
  * [通用的]项目模块信息资源对象
@@ -16,7 +19,7 @@ import com.king.tooth.sys.entity.cfg.CfgTabledata;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProjectModule extends BasicEntity implements ITable{
+public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 父模块编号
@@ -206,5 +209,12 @@ public class ComProjectModule extends BasicEntity implements ITable{
 	}
 	public String toDropTable() {
 		return "COM_PROJECT_MODULE";
+	}
+
+	public String getEntityName() {
+		return "ComProjectModule";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

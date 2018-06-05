@@ -7,12 +7,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.druid.sql.parser.ParserException;
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.exception.gsp.AnalyzeSqlScriptException;
 import com.king.tooth.exception.gsp.EDBVendorIsNullException;
 import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -32,7 +34,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  * @author StoneKing
  */
 @SuppressWarnings("serial")
-public class ComSqlScript extends AbstractSysResource implements ITable{
+public class ComSqlScript extends AbstractSysResource implements ITable, IEntity{
 	/**
 	 * sql脚本的标题
 	 */
@@ -502,5 +504,12 @@ public class ComSqlScript extends AbstractSysResource implements ITable{
 			return NONE;
 		}
 		return reqResourceMethod;
+	}
+	
+	public String getEntityName() {
+		return "ComSqlScript";
+	}
+	public JSONObject toEntity() {
+		return JsonUtil.toJsonObject(this);
 	}
 }

@@ -19,18 +19,15 @@ import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.entity.common.ComOperLog;
-import com.king.tooth.sys.entity.common.ComPermission;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.entity.common.ComProjectModuleBody;
 import com.king.tooth.sys.entity.common.ComReqLog;
-import com.king.tooth.sys.entity.common.ComRole;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
-import com.king.tooth.sys.entity.common.ComVerifyCode;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComDatabaseComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
@@ -89,7 +86,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * @return 
 	 */
 	private List<CfgTabledata> createTables(){
-		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(22);
+		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(19);
 		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
@@ -102,17 +99,14 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		tables.add(new ComDataLinks().toCreateTable(dbType));
 		tables.add(new ComModuleOperation().toCreateTable(dbType));
 		tables.add(new ComOperLog().toCreateTable(dbType));
-		tables.add(new ComPermission().toCreateTable(dbType));
 		tables.add(new ComProject().toCreateTable(dbType));
 		tables.add(new ComProjectModule().toCreateTable(dbType));
 		tables.add(new ComProjectModuleBody().toCreateTable(dbType));
 		tables.add(new ComReqLog().toCreateTable(dbType));
-		tables.add(new ComRole().toCreateTable(dbType));
 		tables.add(new ComSqlScript().toCreateTable(dbType));
 		tables.add(new ComSysAccount().toCreateTable(dbType));
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
 		tables.add(new ComUser().toCreateTable(dbType));
-		tables.add(new ComVerifyCode().toCreateTable(dbType));
 		tables.add(new ComDatabaseCfgTabledataLinks().toCreateTable(dbType));
 		tables.add(new ComDatabaseComSqlScriptLinks().toCreateTable(dbType));
 		
