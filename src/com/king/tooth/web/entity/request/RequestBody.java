@@ -58,10 +58,10 @@ public class RequestBody implements Serializable{
 				throw new IllegalArgumentException("平台目前不支持同时处理不同类型的资源");
 			}
 			
-//			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT
-//					&& !requestResource.getResourceName().equals(requestParentResource.getResourceName())){
-//				throw new IllegalArgumentException("平台目前不支持处理[sql资源]的主子关系查询");
-//			}
+			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT
+					&& !requestResource.getResourceName().equals(requestParentResource.getResourceName())){
+				throw new IllegalArgumentException("平台目前不支持处理[sql资源]的主子关系查询");
+			}
 		}
 		// 获得资源类型
 		requestResourceType = requestResource.getResourceType();
@@ -79,9 +79,14 @@ public class RequestBody implements Serializable{
 		if(ISysResource.NONE.equals(requestResource.getReqResourceMethod())){
 			throw new IllegalArgumentException("请求的资源["+requestResource.getResourceName()+"]不支持[任何]方式的请求，请联系管理员");
 		}
-		if(requestMethod.equals(requestResource.getReqResourceMethod())){
-			throw new IllegalArgumentException("请求的资源["+requestResource.getResourceName()+"]不支持["+requestMethod+"]方式的请求，只支持["+requestResource.getReqResourceMethod()+"]方式的请求");
+		
+		String[] supportMethods = requestResource.getReqResourceMethod().split(",");
+		for (String supportMethod : supportMethods) {
+			if(supportMethod.equals(requestMethod)){
+				return;
+			}
 		}
+		throw new IllegalArgumentException("请求的资源["+requestResource.getResourceName()+"]不支持["+requestMethod+"]方式的请求。其支持以下["+requestResource.getReqResourceMethod()+"]方式的请求");
 	}
 
 	/**
