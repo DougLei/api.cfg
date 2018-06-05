@@ -34,6 +34,18 @@ public class ResourceHandlerUtil {
 	}
 	
 	/**
+	 * 判断是否是注册请求
+	 * @param request
+	 * @return
+	 */
+	public static boolean isRegisterRequest(HttpServletRequest request){
+		if(request.getRequestURI().endsWith("ComSysAccount/register") || request.getRequestURI().endsWith("ComSysAccount/validAccountName")){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * 获取唯一标识id
 	 * @return
 	 */

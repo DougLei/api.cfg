@@ -33,6 +33,7 @@ import com.king.tooth.sys.entity.common.datalinks.ComDatabaseComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
+import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -127,9 +128,11 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	private void insertCfgDatabaseOfBasicDatas() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 添加公司配置平台管理员和对应的用户【不需要角色，这个是超级管理员】
+		// 添加公司配置平台管理员和对应的用户【这个是超级管理员】
 		ComSysAccount admin = new ComSysAccount();
+		admin.setAccountType(0);
 		admin.setLoginName("administrator");
+		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 		String adminAccountId = HibernateUtil.saveObject(admin, null);
 		

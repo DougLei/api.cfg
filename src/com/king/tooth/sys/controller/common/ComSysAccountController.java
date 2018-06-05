@@ -29,7 +29,7 @@ public class ComSysAccountController extends AbstractResourceController{
 	/**
 	 * 登录
 	 * <p>请求方式：POST</p>
-	 * @param accountOnlineStatus
+	 * @param account
 	 * @param request
 	 * @return
 	 */
@@ -46,14 +46,28 @@ public class ComSysAccountController extends AbstractResourceController{
 	/**
 	 * 注册
 	 * <p>请求方式：POST</p>
-	 * @param accountOnlineStatus
+	 * @param account
 	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody register(@RequestBody ComSysAccount account, HttpServletRequest request){
-		accountService.register(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
-		return installResponseBody("注册成功", null);
+		String registerResult = accountService.register(HttpHelperUtil.getClientIp(request), account);
+		return installResponseBody(registerResult, null);
+	}
+	
+	/**
+	 * 判断账户名是否存在接口
+	 * <p>请求方式：POST</p>
+	 * @param account
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/validAccountName", method = RequestMethod.POST)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody validAccountName(@RequestBody ComSysAccount account, HttpServletRequest request){
+		String validResult = accountService.validLoginNameIsExists(account.getLoginName());
+		return installResponseBody(validResult, null);
 	}
 }

@@ -3,6 +3,7 @@ package com.king.tooth.sys.service.common;
 import java.util.Date;
 
 import com.king.tooth.constants.LoginConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
@@ -45,9 +46,11 @@ public class ComSysAccountService extends AbstractResourceService{
 		return account;
 	}
 	
+	//-----------------------------------------------------------
+	
 	/**
 	 * 创建或修改一个账户在线状态对象
-	 * <p>登录用</p>
+	 * <p>登录</p>
 	 * @param loginIp
 	 * @param accountName
 	 * @param password
@@ -149,15 +152,37 @@ public class ComSysAccountService extends AbstractResourceService{
 		return onlineStatus;
 	}
 
+	//-----------------------------------------------------------
+	
 	/**
 	 * 注册用户
-	 * @param clientIp
-	 * @param loginName
-	 * @param loginPwd
+	 * @param ip
+	 * @param account
 	 */
-	public void register(String clientIp, String loginName, String loginPwd) {
+	public String register(String ip, ComSysAccount account) {
+		String validResult = validLoginNameIsExists(account.getLoginName());
+		if(validResult != null){
+			return validResult;
+		}
 		
-		
-		
+		ComSysAccount registerAccount = new ComSysAccount();
+		registerAccount.setAccountType(1);
+		registerAccount.setLoginName(account.getLoginName());
+		registerAccount.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), registerAccount.getLoginPwdKey()));
+		registerAccount.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		HibernateUtil.saveObject(registerAccount, ip +":注册账户");
+		return "注册成功";
+	}
+	
+	/**
+	 * 验证登录名是否存在
+	 * @param loginName
+	 */
+	public String validLoginNameIsExists(String loginName){
+		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName = ? or tel = ? or emails = ?", loginName, loginName, loginName)+"");
+		if(count > 0){
+			return "用户名["+loginName+"]已存在";
+		}
+		return null;
 	}
 }

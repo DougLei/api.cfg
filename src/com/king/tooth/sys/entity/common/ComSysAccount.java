@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -13,7 +12,6 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
-import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -97,9 +95,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		this.loginName = loginName;
 	}
 	public String getLoginPwd() {
-		if(StrUtils.isEmpty(loginPwd)){
-			loginPwd = CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), getLoginPwdKey());
-		}
 		return loginPwd;
 	}
 	public void setLoginPwd(String loginPwd) {
