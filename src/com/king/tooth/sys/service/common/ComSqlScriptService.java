@@ -1,8 +1,5 @@
 package com.king.tooth.sys.service.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractResourceService;
@@ -28,9 +25,7 @@ public class ComSqlScriptService extends AbstractResourceService {
 		}
 		
 		String queryHql = "from ComSqlScript where sqlScriptResourceName = ?";
-		List<Object> parameters = new ArrayList<Object>(1);
-		parameters.add(resourceName);
-		ComSqlScript sqlScriptResource = (ComSqlScript) HibernateUtil.executeUniqueQueryByHql(queryHql, parameters);
+		ComSqlScript sqlScriptResource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSqlScript.class, queryHql, resourceName);
 		if(sqlScriptResource == null){
 			throw new IllegalArgumentException("不存在请求的sql脚本资源：" + resourceName);
 		}
@@ -48,7 +43,7 @@ public class ComSqlScriptService extends AbstractResourceService {
 		}
 		
 		String queryHql = "from ComSqlScript where id = ?";
-		ComSqlScript sqlScriptResource = (ComSqlScript) HibernateUtil.executeUniqueQueryByHqlArr(queryHql, sqlScriptId);
+		ComSqlScript sqlScriptResource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSqlScript.class, queryHql, sqlScriptId);
 		if(sqlScriptResource == null){
 			throw new IllegalArgumentException("不存在请求的sql脚本资源：" + sqlScriptId);
 		}

@@ -15,7 +15,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class ComDatabaseService extends AbstractResourceService{
 	
 	private ComDatabase getDatabaseById(String databaseId){
-		return (ComDatabase) HibernateUtil.executeUniqueQueryByHqlArr("from ComDatabase where id = ?", databaseId);
+		return HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComDatabase.class, "from ComDatabase where id = ?", databaseId);
 	}
 	
 	/**

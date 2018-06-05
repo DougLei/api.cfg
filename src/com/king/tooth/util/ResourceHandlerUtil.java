@@ -79,39 +79,33 @@ public class ResourceHandlerUtil {
 			if(CurrentThreadContext.getCurrentAccount() != null){
 				String currentAccountId = CurrentThreadContext.getCurrentAccount().getId();
 				data.put(ResourceNameConstants.CREATE_USER_ID, currentAccountId);
-				data.put(ResourceNameConstants.SET_LAST_UPDATED_USER_ID,  currentAccountId);
+				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  currentAccountId);
 			}else{
 				data.put(ResourceNameConstants.CREATE_USER_ID, shortDesc);
-				data.put(ResourceNameConstants.SET_LAST_UPDATED_USER_ID,  shortDesc);
+				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  shortDesc);
 			}
 		}
 	}
-
+	
 	/**
-	 * 保存数据时，初始化基本属性值
+	 * 修改数据时，初始化基本属性值
 	 * 包括ID，CreateTime等
-	 * @param json
+	 * @param entityName
+	 * @param data
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return id
 	 */
-	public static String initBasicPropValsForSave(Object data, String shortDesc) {
-		String id = getIdentity();
-		ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_ID, new Class[]{String.class}, new Object[]{id});
-		
-		Date currentDate = new Date();
-		ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_CREATE_TIME, new Class[]{Date.class}, new Object[]{ currentDate });
-		ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_LAST_UPDATE_TIME, new Class[]{Date.class}, new Object[]{ currentDate });
-		
-		// 比如注册操作，肯定没有创建人
-		if(CurrentThreadContext.getCurrentAccount() != null){
-			String currentAccountId = CurrentThreadContext.getCurrentAccount().getId();
-			ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_CREATE_USER_ID, new Class[]{String.class}, new Object[]{ currentAccountId});
-			ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_LAST_UPDATED_USER_ID, new Class[]{String.class}, new Object[]{ currentAccountId});
-		}else{
-			ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_CREATE_USER_ID, new Class[]{String.class}, new Object[]{ shortDesc});
-			ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_LAST_UPDATED_USER_ID, new Class[]{String.class}, new Object[]{ shortDesc});
+	public static void initBasicPropValsForUpdate(String entityName, Map<String, Object> data, String shortDesc) {
+		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
+				&& !entityName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 不是关系表，才要修改这些值
+			data.put(ResourceNameConstants.LAST_UPDATE_TIME,  shortDesc);
+			
+			// 比如注册操作，肯定没有创建人
+			if(CurrentThreadContext.getCurrentAccount() != null){
+				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  CurrentThreadContext.getCurrentAccount().getId());
+			}else{
+				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  shortDesc);
+			}
 		}
-		return id;
 	}
 	
 	/**
@@ -138,23 +132,6 @@ public class ResourceHandlerUtil {
 		return basic;
 	}
 	
-	/**
-	 * 修改数据时，初始化基本属性值
-	 * 包括ID，CreateTime等
-	 * @param json
-	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 */
-	public static void initBasicPropValsForUpdate(Object data, String shortDesc) {
-		ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_LAST_UPDATE_TIME, new Class[]{Date.class}, new Object[]{ new Date() });
-		
-		// 比如注册操作，肯定没有创建人
-		if(CurrentThreadContext.getCurrentAccount() != null){
-			ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_LAST_UPDATED_USER_ID, new Class[]{String.class}, new Object[]{ CurrentThreadContext.getCurrentAccount().getId() });
-		}else{
-			ReflectUtil.invokeMethod(data, ResourceNameConstants.SET_LAST_UPDATED_USER_ID, new Class[]{String.class}, new Object[]{ shortDesc });
-		}
-	}
-
 	/**
 	 * 验证要操作的数据的属性名是否和hbm配置定义的属性名一致
 	 * <p>同时校验一下日期类型，如果是日期类型，则要转换为日期类型</p>

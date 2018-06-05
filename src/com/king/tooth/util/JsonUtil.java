@@ -1,6 +1,7 @@
 package com.king.tooth.util;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -76,5 +77,27 @@ public class JsonUtil {
 			throw new NullPointerException("要转换为json对象的data实体对象不能为空");
 		}
 		return JSONObject.parseObject(jsonStr);
+	}
+
+	/**
+	 * 将map转换成指定的java实体
+	 * @param map
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> T turnMapToJavaEntity(Map<String, Object> map, Class<T> clazz) {
+		String jsonStr = toJsonString(map, false);
+		return JSONObject.parseObject(jsonStr, clazz);
+	}
+	
+	/**
+	 * 将 [list<map>] 转换成指定的java [list<实体>]
+	 * @param map
+	 * @param clazz
+	 * @return
+	 */
+	public static <T> List<T> turnListMapToJavaListEntity(List<Map<String, Object>> maps, Class<T> clazz) {
+		String jsonStr = toJsonString(maps, false);
+		return JSONObject.parseArray(jsonStr, clazz);
 	}
 }

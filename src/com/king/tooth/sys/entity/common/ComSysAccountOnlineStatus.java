@@ -258,6 +258,9 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		return "ComSysAccountOnlineStatus";
 	}
 	public JSONObject toEntity() {
-		return JsonUtil.toJsonObject(this);
+		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("loginDate", loginDate);
+		json.put("tryLoginTimes", tryLoginTimes);
+		return json;
 	}
 }

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.ServletRequest;
-
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -75,8 +73,6 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 	 * 构造函数
 	 * @param req
 	 */
-	public ComReqLog(ServletRequest req) {
-	}
 	public ComReqLog() {
 	}
 
@@ -280,6 +276,9 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		return "ComReqLog";
 	}
 	public JSONObject toEntity() {
-		return JsonUtil.toJsonObject(this);
+		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("reqDate", reqDate);
+		json.put("respDate", reqDate);
+		return json;
 	}
 }

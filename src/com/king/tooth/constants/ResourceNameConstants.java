@@ -21,57 +21,25 @@ public class ResourceNameConstants {
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
-	 * 所属的项目主键的属性名称
-	 */
-	public static final String PROJECT_ID = "projectId";
-	/**
-	 * 设置所属的项目主键的方法
-	 */
-	public static final String SET_PROJECT_ID = "setProjectId";
-	/**
 	 * 主键的属性名称
 	 */
 	public static final String ID = "id";
-	/**
-	 * 设置主键的方法
-	 */
-	public static final String SET_ID = "setId";
-	
 	/**
 	 * 创建时间的属性名称
 	 */
 	public static final String CREATE_TIME = "createTime";
 	/**
-	 * 设置创建时间的方法
-	 */
-	public static final String SET_CREATE_TIME = "setCreateTime";
-	
-	/**
 	 * 创建人主键的属性名称
 	 */
 	public static final String CREATE_USER_ID = "createUserId";
-	/**
-	 * 设置创建人主键的方法
-	 */
-	public static final String SET_CREATE_USER_ID = "setCreateUserId";
-	
 	/**
 	 * 最后修改人主键的属性名称
 	 */
 	public static final String LAST_UPDATED_USER_ID = "lastUpdatedUserId";
 	/**
-	 * 设置最后修改人主键的方法
-	 */
-	public static final String SET_LAST_UPDATED_USER_ID = "setLastUpdatedUserId";
-	
-	/**
 	 * 最后修改时间的属性名称
 	 */
 	public static final String LAST_UPDATE_TIME = "lastUpdateTime";
-	/**
-	 * 设置修改时间的方法
-	 */
-	public static final String SET_LAST_UPDATE_TIME = "setLastUpdateTime";
 	
 	//-----------------------------------------------------------------------------------------------
 	/**

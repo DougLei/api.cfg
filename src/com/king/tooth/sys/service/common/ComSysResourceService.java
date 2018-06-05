@@ -36,7 +36,7 @@ public class ComSysResourceService extends AbstractResourceService{
 			throw new NullPointerException("请求的资源名不能为空");
 		}
 		
-		ComSysResource resource = (ComSysResource) HibernateUtil.executeUniqueQueryByHqlArr("from ComSysResource where resourceName = ?", resourceName);
+		ComSysResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysResource.class, "from ComSysResource where resourceName = ?", resourceName);
 		if(resource == null){
 			throw new IllegalArgumentException("不存在请求的资源：" + resourceName);
 		}

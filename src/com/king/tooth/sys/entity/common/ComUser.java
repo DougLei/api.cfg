@@ -384,6 +384,8 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		return "ComUser";
 	}
 	public JSONObject toEntity() {
-		return JsonUtil.toJsonObject(this);
+		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("employedDate", employedDate);
+		return json;
 	}
 }

@@ -290,6 +290,8 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		return "ComSysAccount";
 	}
 	public JSONObject toEntity() {
-		return JsonUtil.toJsonObject(this);
+		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("validDate", validDate);
+		return json;
 	}
 }

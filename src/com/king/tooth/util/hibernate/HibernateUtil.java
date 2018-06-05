@@ -40,7 +40,7 @@ import com.king.tooth.util.StrUtils;
  * hibernate工具类
  * @author DougLei
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class HibernateUtil {
 	
 	/**
@@ -287,11 +287,11 @@ public class HibernateUtil {
 	 */
 	public static String saveObject(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntity();
-		String id = ResourceHandlerUtil.initBasicPropValsForSave(data, shortDesc);
+		ResourceHandlerUtil.initBasicPropValsForSave(entity.getEntityName(), data, shortDesc);
 		try {
 			getCurrentThreadSession().save(entity.getEntityName(), data);
 			Log4jUtil.debug("保存数据成功[{}]", data);
-			return id;
+			return data.get(ResourceNameConstants.ID)+"";
 		} catch (Exception e) {
 			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 		}
@@ -324,7 +324,7 @@ public class HibernateUtil {
 	 */
 	public static void updateObject(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntity();
-		ResourceHandlerUtil.initBasicPropValsForUpdate(data, shortDesc);
+		ResourceHandlerUtil.initBasicPropValsForUpdate(entity.getEntityName(), data, shortDesc);
 		try {
 			getCurrentThreadSession().update(entity.getEntityName(), data);
 			Log4jUtil.debug("修改数据成功[{}]", data);
@@ -449,7 +449,7 @@ public class HibernateUtil {
 		return query.uniqueResult();
 	}
 	
-	//------------------------------------------------------------------------------------------------------
+	//------------------------------------------------
 	
 	/**
 	 * sql查询多条数据
@@ -623,5 +623,37 @@ public class HibernateUtil {
 			}
 		}
 		return parameters;
+	}
+	
+	//------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * 【扩展】hql查询多条数据
+	 * <p>该方法针对hql查询结果是map的使用</p>
+	 * <p>因为系统现在将例如cfgTabledata这些都转换为了map用hibernate操作，在查询的时候，需要通过这个方法转换为原来的集合对象</p>
+	 * @param clazz
+	 * @param queryHql
+	 * @param parameterArr
+	 * @return
+	 */
+	public static <T> List<T> extendExecuteListQueryByHqlArr(Class<T> clazz, String queryHql, Object... parameterArr){
+		List<Object> parameters = processParameterArr(parameterArr);
+		List<Map<String, Object>> map = executeListQueryByHql(queryHql, parameters);
+		return JsonUtil.turnListMapToJavaListEntity(map, clazz);
+	}
+	
+	/**
+	 * 【扩展】hql查询一条数据
+	 * <p>该方法针对hql查询结果是map的使用</p>
+	 * <p>因为系统现在将例如cfgTabledata这些都转换为了map用hibernate操作，在查询的时候，需要通过这个方法转换为原来的实体对象</p>
+	 * @param clazz
+	 * @param queryHql
+	 * @param parameterArr
+	 * @return
+	 */
+	public static <T> T extendExecuteUniqueQueryByHqlArr(Class<T> clazz, String queryHql, Object... parameterArr){
+		List<Object> parameters = processParameterArr(parameterArr);
+		Map<String, Object> map = (Map<String, Object>) executeUniqueQueryByHql(queryHql, parameters);
+		return JsonUtil.turnMapToJavaEntity(map, clazz);
 	}
 }

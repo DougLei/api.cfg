@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
+import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.service.AbstractResourceService;
@@ -15,7 +16,6 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * [配置系统]表数据信息资源对象处理器
  * @author DougLei
  */
-@SuppressWarnings("unchecked")
 public class CfgTabledataService extends AbstractResourceService{
 
 	private ComSysResourceService comSysResourceService = new ComSysResourceService();
@@ -26,9 +26,9 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * @return
 	 */
 	private CfgTabledata getTableAllByTableId(String tableId){
-		CfgTabledata table = (CfgTabledata) HibernateUtil.executeUniqueQueryByHqlArr("from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
+		CfgTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgTabledata.class, "from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
 		if(table != null){
-			table.setColumns(HibernateUtil.executeListQueryByHqlArr("from CfgColumndata where isEnabled =1 and tableId =?", tableId));
+			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumndata.class, "from CfgColumndata where isEnabled =1 and tableId =?", tableId));
 		}
 		return table;
 	}

@@ -23,7 +23,7 @@ public class ComSysAccountOnlineStatusService extends AbstractResourceService{
 	 */
 	public ComSysAccountOnlineStatus validAccountOfOnLineStatus(HttpServletRequest request, String token){
 		String hql = "from ComSysAccountOnlineStatus where token = ? ";
-		ComSysAccountOnlineStatus onlineStatus = (ComSysAccountOnlineStatus) HibernateUtil.executeUniqueQueryByHqlArr(hql, token);
+		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, hql, token);
 		if(onlineStatus == null){
 			onlineStatus = new ComSysAccountOnlineStatus();
 			onlineStatus.setMessage("请先登录");

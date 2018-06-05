@@ -8,8 +8,8 @@ public class HibernateTest {
 		SpringApplication.getApplicationContext();
 //		CurrentThreadContext.setDatabaseId("1");
 		HibernateUtil.openSessionToCurrentThread();
-		String sql = "create table t( name varchar2(32))";
-		HibernateUtil.executeUpdateBySql("", sql, null);
+		String sql = "select loginName from ComSysAccount";
+		HibernateUtil.executeUniqueQueryByHql(sql, null);
 		
 //		List<ProcedureSqlScriptParameter> pssp = new ArrayList<ProcedureSqlScriptParameter>();
 //		ProcedureSqlScriptParameter p1 = new ProcedureSqlScriptParameter(

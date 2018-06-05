@@ -20,22 +20,13 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class ComSysAccountService extends AbstractResourceService{
 
 	/**
-	 * 修改一条账户信息
-	 * @param account
-	 */
-	public void updateComSysAccount(ComSysAccount account){
-		account.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), account.getLoginPwdKey()));
-		HibernateUtil.updateObject(account, null);
-	}
-	
-	/**
 	 * 验证账户的状态
 	 * @param accountId
 	 */
 	public ComSysAccount validAccountOfStatus(String accountId) {
 		// 再验证帐号状态是否正常
 		String hql = "from ComSysAccount where id = '"+accountId+"'";
-		ComSysAccount account = (ComSysAccount) HibernateUtil.executeUniqueQueryByHql(hql, null);
+		ComSysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, hql);
 		if(account.getAccountStatus() == 2){
 			account.setMessage("您的账号已被禁用(原因:"+account.getAccountStatusDes()+")，请联系管理员");
 			return account;
@@ -96,7 +87,7 @@ public class ComSysAccountService extends AbstractResourceService{
 		}
 		
 		String queryAccountHql = "from ComSysAccount where loginName = ? or tel = ? or emails = ?";
-		ComSysAccount loginAccount = (ComSysAccount) HibernateUtil.executeUniqueQueryByHqlArr(queryAccountHql, accountName, accountName, accountName);
+		ComSysAccount loginAccount = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, queryAccountHql, accountName, accountName, accountName);
 		
 		if(loginAccount == null){
 			accountOnlineStatus.setMessage("账号或密码错误，请重新输入");
@@ -133,7 +124,7 @@ public class ComSysAccountService extends AbstractResourceService{
 	 */
 	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
 		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? or accountName = ?";
-		ComSysAccountOnlineStatus onlineStatus = (ComSysAccountOnlineStatus) HibernateUtil.executeUniqueQueryByHqlArr(queryAccountStatusHql, loginIp, accountName);
+		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName);
 		if(onlineStatus == null){
 			onlineStatus = new ComSysAccountOnlineStatus();
 			onlineStatus.setTryLoginTimes(1);
