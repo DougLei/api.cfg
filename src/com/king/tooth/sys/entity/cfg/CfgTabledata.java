@@ -11,6 +11,7 @@ import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -423,6 +424,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		columns.add(isCreateHbmColumn);
 		
 		table.setColumns(columns);
+		table.setReqResourceMethod(ISysResource.GET+","+ISysResource.DELETE);
 		return table;
 	}
 
@@ -436,7 +438,10 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		return getId();
 	}
 	public String getReqResourceMethod() {
-		return GET+","+DELETE;
+		if(reqResourceMethod == null){
+			return ALL;
+		}
+		return reqResourceMethod;
 	}
 	
 	public String getEntityName() {

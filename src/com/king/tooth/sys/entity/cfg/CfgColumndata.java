@@ -9,6 +9,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -397,6 +398,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
+		table.setReqResourceMethod(ISysResource.GET+","+ISysResource.DELETE);
 		return table;
 	}
 

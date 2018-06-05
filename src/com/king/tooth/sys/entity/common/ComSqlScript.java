@@ -16,6 +16,7 @@ import com.king.tooth.exception.gsp.EDBVendorIsNullException;
 import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -484,6 +485,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		columns.add(isCreateBuiltinResourceColumn);
 		
 		table.setColumns(columns);
+		table.setReqResourceMethod(ISysResource.GET+","+ISysResource.DELETE);
 		return table;
 	}
 
@@ -501,7 +503,10 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return getId();
 	}
 	public String getReqResourceMethod() {
-		return GET+","+DELETE;
+		if(reqResourceMethod == null){
+			return ALL;
+		}
+		return reqResourceMethod;
 	}
 	
 	public String getEntityName() {
