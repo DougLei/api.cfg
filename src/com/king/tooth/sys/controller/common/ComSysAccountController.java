@@ -35,11 +35,25 @@ public class ComSysAccountController extends AbstractResourceController{
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody toLogin(@RequestBody ComSysAccount account, HttpServletRequest request){
+	public ResponseBody login(@RequestBody ComSysAccount account, HttpServletRequest request){
 		ComSysAccountOnlineStatus accountOnlineStatus = accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			return installResponseBody(accountOnlineStatus.getMessage(), null);
 		}
 		return installResponseBody(null, accountOnlineStatus);
+	}
+	
+	/**
+	 * 注册
+	 * <p>请求方式：POST</p>
+	 * @param accountOnlineStatus
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody register(@RequestBody ComSysAccount account, HttpServletRequest request){
+		accountService.register(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
+		return installResponseBody("注册成功", null);
 	}
 }

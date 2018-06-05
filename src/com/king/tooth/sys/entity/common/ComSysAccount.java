@@ -9,7 +9,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgCustomer;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -77,17 +76,13 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	 */
 	private ComUser user;
 	/**
-	 * 对应的客户对象
-	 */
-	private CfgCustomer customer;
-	/**
 	 * 登录和验证登录时，用来传递信息
 	 */
 	private String message;
 	/**
-	 * 所具有的角色集合
+	 * 验证码的值
 	 */
-	private List<ComRole> roles;
+	private String verifyCode;
 	
 	public ComSysAccount() {
 		this.accountStatus = 1;
@@ -132,23 +127,11 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public CfgCustomer getCustomer() {
-		return customer;
-	}
 	public String getAccountStatusDes() {
 		return accountStatusDes;
 	}
-	public List<ComRole> getRoles() {
-		return roles;
-	}
-	public void setRoles(List<ComRole> roles) {
-		this.roles = roles;
-	}
 	public void setAccountStatusDes(String accountStatusDes) {
 		this.accountStatusDes = accountStatusDes;
-	}
-	public void setCustomer(CfgCustomer customer) {
-		this.customer = customer;
 	}
 	public void setTel(String tel) {
 		this.tel = tel;
@@ -207,7 +190,13 @@ public class ComSysAccount extends BasicEntity implements ITable{
 	public void setAccountType(int accountType) {
 		this.accountType = accountType;
 	}
-	
+	public String getVerifyCode() {
+		return verifyCode;
+	}
+	public void setVerifyCode(String verifyCode) {
+		this.verifyCode = verifyCode;
+	}
+
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT");
 		table.setName("[通用的]系统账户资源对象表");

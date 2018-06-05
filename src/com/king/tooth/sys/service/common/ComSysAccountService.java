@@ -153,4 +153,16 @@ public class ComSysAccountService extends AbstractResourceService{
 		onlineStatus.setIsError(1);// 一开始标识为有错误
 		return onlineStatus;
 	}
+
+	/**
+	 * 注册用户
+	 * @param clientIp
+	 * @param loginName
+	 * @param loginPwd
+	 */
+	public void register(String clientIp, String loginName, String loginPwd) {
+		
+		
+		
+	}
 }

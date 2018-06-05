@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.common.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;

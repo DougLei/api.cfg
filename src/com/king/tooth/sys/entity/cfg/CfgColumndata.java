@@ -6,7 +6,9 @@ import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -15,7 +17,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgColumndata extends BasicEntity implements ITable{
+public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 关联的表主键
 	 */
@@ -392,5 +394,17 @@ public class CfgColumndata extends BasicEntity implements ITable{
 
 	public String toDropTable() {
 		return "CFG_COLUMNDATA";
+	}
+
+	public String toJsonString() {
+		return null;
+	}
+
+	public String getEntityName() {
+		return "CfgColumndata";
+	}
+
+	public String toEntity() {
+		return JsonUtil.toJsonString(this, false);
 	}
 }
