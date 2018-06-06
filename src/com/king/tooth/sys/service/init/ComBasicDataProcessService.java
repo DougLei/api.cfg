@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.SysDatabaseInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
@@ -335,11 +334,14 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	//------------------------------------------------------------------------------------
+	
 	/**
 	 * 系统每次启动时，加载hbm的配置信息
 	 * 主要是hbm内容
 	 */
 	public void loadSysBasicDatasBySysStart() {
+		// 先加载CfgHibernateHbm hbm映射文件，方便下面直接使用
+		loadCfgHibernateHbm();
 		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryBySql("select count(1) from CFG_HIBERNATE_HBM", null)+"");
 		if(count == 0){
 			return;
@@ -365,4 +367,30 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			
 		}
 	}
+
+	/**
+	 * 先加载CfgHibernateHbm hbm映射文件，方便下面直接使用
+	 */
+	private void loadCfgHibernateHbm() {
+		
+		
+	}
+//	
+//	public static void main(String[] args) throws Exception {
+//		Class.forName("oracle.jdbc.driver.OracleDriver");
+//		Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:ORCL","SmartOneCfg","1");
+//		
+//		Statement st = conn.createStatement();
+//		ResultSet rs = st.executeQuery("select hbm_content from cfg_hibernate_hbm where id='321c3c1e4fbd42d38e14927a736eb128'");
+//		rs.next();
+//		Reader reader = rs.getCharacterStream(1);
+//		StringBuilder sb = new StringBuilder();
+//		char[] cr = new char[100];
+//		while(reader.read(cr) != -1){
+//			sb.append(cr);
+//			cr = new char[100];
+//		}
+//		System.out.println(sb.toString().trim());
+//		
+//	}
 }

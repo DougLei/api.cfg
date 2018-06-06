@@ -15,11 +15,5 @@
 				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
 			</props>
 		</property>
-		<property name="mappingLocations" >
-			<array>
-				<value>classpath:hibernateMapping/cfg/**/*.hbm.xml</value>
-				<value>classpath:hibernateMapping/common/**/*.hbm.xml</value>
-			</array>
-		</property>
 	</bean>
 </beans>
