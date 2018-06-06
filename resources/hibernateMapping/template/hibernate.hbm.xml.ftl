@@ -9,6 +9,7 @@
 		<id name="id" column="id" type="string">
 			<generator class="assigned" />
 		</id>
+		<property name="projectId" column="project_id" type="string" />
 		
 		<#if table.isDatalinkTable == 0 && table.tableName != "COM_DATA_LINKS">
 			<property name="createUserId" column="create_user_id" type="string" />

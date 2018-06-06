@@ -119,7 +119,7 @@ public class RouteProcesserAdapter implements Serializable {
 		}else if(processResourceType == ISysResource.SQLSCRIPT){
 			return SQL_RESOURCE_PROCESSER_PACKAGE_NAME;
 		}
-		throw new IllegalArgumentException("[processResourceType="+processResourceType+"]，没有匹配到对应的资源类型处理器，请检查[api.platform.processer.properties]配置文件中，key为route.processer.adapter.json的数据中，processResourceType的值是否配置正确");
+		throw new IllegalArgumentException("[processResourceType="+processResourceType+"]，没有匹配到对应的资源类型处理器，请检查[api.platform.processer.properties]配置文件中，key为route.processer.adapter.json的数据中，processResourceTypes的值是否配置正确");
 	}
 
 	public IRequestProcesser getProcesser() {

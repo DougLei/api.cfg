@@ -12,6 +12,7 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
@@ -63,8 +64,8 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	private void initDatabaseInfo() {
 		try {
+			processPorjDatabaseRelation();// 处理本系统和本数据库的关系
 			createTables();
-			processPorjDatabaseRelation();// 处理本系统(就是一个项目)和本数据库(就是本系统的数据库)关系
 			
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
@@ -84,13 +85,16 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
-	 * 处理本系统(就是一个项目)和本数据库(就是本系统的数据库)关系
+	 * 处理本系统和本数据库的关系
 	 */
 	private void processPorjDatabaseRelation() {
 		// 添加本系统和本数据库的映射关系
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
 				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
 				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
+		
+		// 并设置当前操作的项目
+		CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());
 	}
 
 	/**

@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
@@ -109,19 +108,19 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	}
 	public String getDbType() {
 		if(StrUtils.isEmpty(dbType)){
-			dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
+			dbType = SysConfig.getSystemConfig("jdbc.dbType");
 		}
 		return dbType;
 	}
 	public String getDbIp() {
 		if(StrUtils.isEmpty(dbIp)){
-			dbIp = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbIp();
+			dbIp = SysConfig.getSystemConfig("db.default.ip");
 		}
 		return dbIp;
 	}
 	public int getDbPort() {
 		if(dbPort < 1){
-			dbPort = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbPort();
+			dbPort = Integer.valueOf(SysConfig.getSystemConfig("db.default.port"));
 		}
 		return dbPort;
 	}
@@ -264,7 +263,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
-	
 	
 	/**
 	 * 获取数据库的连接url

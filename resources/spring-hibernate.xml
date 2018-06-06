@@ -7,7 +7,7 @@
 	
 	<!-- 装配hibernate的配置，创建sessionFactory实例  -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" scope="singleton">
-		<property name="dataSource" ref="cfgDataSource"></property>
+		<property name="dataSource" ref="dataSource"></property>
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>

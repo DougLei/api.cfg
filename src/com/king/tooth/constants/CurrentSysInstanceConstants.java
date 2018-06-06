@@ -29,6 +29,6 @@ public class CurrentSysInstanceConstants {
 	 */
 	public transient static final ComProject currentSysProjectInstance = new ComProject(); 
 	static{
-		currentSysDatabaseInstance.setId(SysConfig.getSystemConfig("current.sys.project.id"));
+		currentSysProjectInstance.setId(SysConfig.getSystemConfig("current.sys.project.id"));
 	}
 }
