@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.RequestUrlParamKeyConstants;
-import com.king.tooth.constants.StrEncodingConstants;
+import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -48,7 +48,7 @@ public class PlatformServlet extends BasicHttpServlet{
 		Reader reader = null;
 		BufferedReader br = null;
 		try {
-			reader = new InputStreamReader(request.getInputStream(), StrEncodingConstants.UTF_8);
+			reader = new InputStreamReader(request.getInputStream(), EncodingConstants.UTF_8);
 			br = new BufferedReader(reader);
 			String tmp = null;
 			while((tmp = br.readLine()) != null){
@@ -87,7 +87,7 @@ public class PlatformServlet extends BasicHttpServlet{
 					continue;
 				}
 				
-				tmpValue = StrUtils.turnStrEncoding(request.getParameter(tmpKey).trim(), StrEncodingConstants.ISO8859_1, StrEncodingConstants.UTF_8);// 获取value，并转码
+				tmpValue = StrUtils.turnStrEncoding(request.getParameter(tmpKey).trim(), EncodingConstants.ISO8859_1, EncodingConstants.UTF_8);// 获取value，并转码
 				tmpKey = tmpKey.trim().toLowerCase();
 				params.put(tmpKey, tmpValue);
 			}

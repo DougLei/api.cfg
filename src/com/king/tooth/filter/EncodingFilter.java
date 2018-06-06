@@ -8,7 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.king.tooth.constants.StrEncodingConstants;
+import com.king.tooth.constants.EncodingConstants;
 
 /**
  * 编码过滤器
@@ -20,7 +20,7 @@ public class EncodingFilter extends AbstractFilter{
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-		resp.setContentType("application/json;charset=" + StrEncodingConstants.UTF_8);
+		resp.setContentType("application/json;charset=" + EncodingConstants.UTF_8);
 		chain.doFilter(req, resp);
 	}
 

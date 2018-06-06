@@ -21,7 +21,7 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.StrEncodingConstants;
+import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.httpclient.requestentity.HttpMultipartRequestEntity;
 import com.king.tooth.util.httpclient.requestentity.HttpRequestEntity;
@@ -112,7 +112,7 @@ public class HttpClientUtil {
 		// 读取数据的时间限制【请求超时】
 		httpClient.getHttpConnectionManager().getParams().setSoTimeout(Integer.valueOf(SysConfig.getSystemConfig("httpclient_req_timeout")));
 		// 设置默认编码格式
-		httpMethodBase.getParams().setContentCharset(StrEncodingConstants.UTF_8);
+		httpMethodBase.getParams().setContentCharset(EncodingConstants.UTF_8);
 		// 设置请求头中，禁止缓存
 		httpMethodBase.setRequestHeader("Cache-Control", "no-cache");
 	}
@@ -193,7 +193,7 @@ public class HttpClientUtil {
 	public static HttpRequestEntity getHttpStringRequestEntity(String str, String contentType){
 		HttpStringRequestEntity httpStringRequestEntity  = null;
 		try {
-			httpStringRequestEntity = new HttpStringRequestEntity(str, contentType, StrEncodingConstants.UTF_8);
+			httpStringRequestEntity = new HttpStringRequestEntity(str, contentType, EncodingConstants.UTF_8);
 		} catch (UnsupportedEncodingException e) {
 			Log4jUtil.debug("[HttpClientUtil.getHttpStringRequestEntity]方法出现异常：{}", e.getMessage());
 		}

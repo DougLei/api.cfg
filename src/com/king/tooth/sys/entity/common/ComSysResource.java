@@ -134,7 +134,7 @@ public class ComSysResource extends BasicEntity implements ITable, IEntity{
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		resourceNameColumn.setColumnType(DataTypeConstants.STRING);
-		resourceNameColumn.setLength(100);
+		resourceNameColumn.setLength(60);
 		resourceNameColumn.setOrderCode(2);
 		columns.add(resourceNameColumn);
 		

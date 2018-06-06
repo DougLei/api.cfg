@@ -1,10 +1,10 @@
 package com.king.tooth.constants;
 
 /**
- * 字符串编码格式
+ * 编码格式
  * @author DougLei
  */
-public class StrEncodingConstants {
+public class EncodingConstants {
 	
 	/**
 	 * 编码格式

@@ -337,7 +337,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		resourceNameColumn.setColumnType(DataTypeConstants.STRING);
-		resourceNameColumn.setLength(50);
+		resourceNameColumn.setLength(60);
 		resourceNameColumn.setOrderCode(3);
 		columns.add(resourceNameColumn);
 		

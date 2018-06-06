@@ -400,7 +400,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
 		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
 		sqlScriptResourceNameColumn.setColumnType(DataTypeConstants.STRING);
-		sqlScriptResourceNameColumn.setLength(100);
+		sqlScriptResourceNameColumn.setLength(60);
 		sqlScriptResourceNameColumn.setOrderCode(2);
 		columns.add(sqlScriptResourceNameColumn);
 		
