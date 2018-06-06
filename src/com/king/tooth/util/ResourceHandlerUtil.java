@@ -71,12 +71,12 @@ public class ResourceHandlerUtil {
 	
 	/**
 	 * 保存数据时，初始化基本属性值
-	 * 包括ID，CreateTime等
 	 * @param entityName 
 	 * @param json
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void initBasicPropValsForSave(String entityName, Map<String, Object> data, String shortDesc) {
+		data.put(ResourceNameConstants.PROJECT_ID, CurrentThreadContext.getProjectId());
 		data.put(ResourceNameConstants.ID, getIdentity());
 		
 		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 

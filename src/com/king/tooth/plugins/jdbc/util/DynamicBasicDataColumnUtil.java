@@ -21,13 +21,18 @@ public class DynamicBasicDataColumnUtil {
 	
 	/**
 	 * 给动态表对象，添加基础的字段
-	 * <pre>
-	 * 	 目前，数据包括的基础字段有：
-	 * 		id、create_time、last_update_time
-	 * </pre>
 	 * @param table
 	 */
 	public static void initBasicColumnToTable(CfgTabledata table){
+		// projectId
+		CfgColumndata projectIdColumn = new CfgColumndata("project_id");
+		projectIdColumn.setColumnType(DataTypeConstants.STRING);
+		projectIdColumn.setLength(32);
+		projectIdColumn.setComments("关联的项目主键");
+		projectIdColumn.setName("关联的项目主键");
+		projectIdColumn.setOrderCode(9994);
+		table.getColumns().add(projectIdColumn);
+		
 		// id
 		CfgColumndata idColumn = new CfgColumndata("id");
 		idColumn.setIsKey(1);

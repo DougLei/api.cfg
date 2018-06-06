@@ -107,6 +107,12 @@ public class ComSysResource extends BasicEntity implements ITable, IEntity{
 	public void setReqResourceMethod(String reqResourceMethod) {
 		this.reqResourceMethod = reqResourceMethod;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	
 	
 	public CfgTabledata toCreateTable(String dbType) {

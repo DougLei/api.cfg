@@ -81,11 +81,11 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	public void setDescs(String descs) {
 		this.descs = descs;
 	}
-	public int getIsDeploymentApp() {
-		return isDeploymentApp;
+	public int getIsNeedDeploy() {
+		return isNeedDeploy;
 	}
-	public void setIsDeploymentApp(int isDeploymentApp) {
-		this.isDeploymentApp = isDeploymentApp;
+	public void setIsNeedDeploy(int isNeedDeploy) {
+		this.isNeedDeploy = isNeedDeploy;
 	}
 	public int getIsBuiltin() {
 		return isBuiltin;
@@ -110,6 +110,12 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	}
 	public String getReqResourceMethod() {
 		return super.getReqResourceMethod();
+	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
 	}
 
 	
@@ -136,13 +142,13 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		descsColumn.setOrderCode(2);
 		columns.add(descsColumn);
 		
-		CfgColumndata isDeploymentAppColumn = new CfgColumndata("is_deployment_app");
-		isDeploymentAppColumn.setName("是否部署到正式环境");
-		isDeploymentAppColumn.setComments("是否部署到正式环境");
-		isDeploymentAppColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentAppColumn.setLength(1);
-		isDeploymentAppColumn.setOrderCode(3);
-		columns.add(isDeploymentAppColumn);
+		CfgColumndata isNeedDeployColumn = new CfgColumndata("is_need_deploy");
+		isNeedDeployColumn.setName("是否需要发布");
+		isNeedDeployColumn.setComments("是否需要发布");
+		isNeedDeployColumn.setColumnType(DataTypeConstants.INTEGER);
+		isNeedDeployColumn.setLength(1);
+		isNeedDeployColumn.setOrderCode(3);
+		columns.add(isNeedDeployColumn);
 		
 		CfgColumndata reqResourceMethodColumn = new CfgColumndata("req_resource_method");
 		reqResourceMethodColumn.setName("请求资源的方法");
@@ -154,7 +160,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 
 		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
 		isBuiltinColumn.setName("是否内置");
-		isBuiltinColumn.setComments("是否内置:如果不是内置，则需要发布出去；如果是内置，且platformType=2或3，则也需要发布出去；如果是内置，且platformType=1，则不需要发布出去");
+		isBuiltinColumn.setComments("是否内置");
 		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 		isBuiltinColumn.setLength(1);
 		isBuiltinColumn.setOrderCode(5);
@@ -201,7 +207,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put("isDeploymentApp", isDeploymentApp+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("platformType", platformType+"");
 		json.put("isCreatedResource", isCreatedResource+"");

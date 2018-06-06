@@ -178,6 +178,13 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setLastOperDate(Date lastOperDate) {
 		this.lastOperDate = lastOperDate;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+	
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT_ONLINE_STATUS");

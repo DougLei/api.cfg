@@ -16,4 +16,13 @@
 			</props>
 		</property>
 	</bean>
+	
+	<!-- 配置动态sessionFactory持有者对象 -->
+	<bean id="dynamicSessionFactoryHolder" class="com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHolder">
+	</bean>
+	
+	<!-- 配置动态的hibernate sessionFactory操作者对象 -->
+	<bean id="dynamicHibernateSessionFactoryHandler" class="com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler">
+		<property name="sessionFactoryHolder" ref="dynamicSessionFactoryHolder"></property>
+	</bean>
 </beans>

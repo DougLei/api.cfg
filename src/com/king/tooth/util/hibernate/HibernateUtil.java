@@ -23,6 +23,7 @@ import org.hibernate.jdbc.Work;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
@@ -45,11 +46,17 @@ import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
 public class HibernateUtil {
 	
 	/**
+	 * 动态hibernate sessionfactory操作者
+	 */
+	private transient static final DynamicHibernateSessionFactoryHandler dynamicSessionFactoryHandler = 
+			SpringContextHelper.getBean(DynamicHibernateSessionFactoryHandler.class);
+	
+	/**
 	 * 获得对应的sessionFactory对象
 	 * @return
 	 */
 	private static SessionFactoryImpl getSessionFactory(){
-		return (SessionFactoryImpl) SpringContextHelper.getBean("cfgSessionFactory");
+		return dynamicSessionFactoryHandler.getSessionFactory();
 	}
 	
 	/**

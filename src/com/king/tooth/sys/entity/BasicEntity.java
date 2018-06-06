@@ -10,6 +10,10 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public class BasicEntity implements Serializable{
 	/**
+	 * 所属项目主键
+	 */
+	protected String projectId;
+	/**
 	 * 主键
 	 */
 	protected String id;

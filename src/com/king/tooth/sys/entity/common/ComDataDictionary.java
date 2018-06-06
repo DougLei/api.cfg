@@ -114,6 +114,12 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_DICTIONARY");

@@ -114,6 +114,12 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	public void setLastUpdatedUserId(String lastUpdatedUserId) {
 		this.lastUpdatedUserId = lastUpdatedUserId;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_OPER_LOG");

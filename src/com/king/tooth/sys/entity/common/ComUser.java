@@ -229,6 +229,12 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	public void setDescs(String descs) {
 		this.descs = descs;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 
 	
 	public CfgTabledata toCreateTable(String dbType) {

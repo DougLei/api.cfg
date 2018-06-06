@@ -21,6 +21,10 @@ public class ResourceNameConstants {
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
+	 * 关联的项目主键的属性名称
+	 */
+	public static final String PROJECT_ID = "projectId";
+	/**
 	 * 主键的属性名称
 	 */
 	public static final String ID = "id";

@@ -247,6 +247,12 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	public void setIsEnabled(int isEnabled) {
 		this.isEnabled = isEnabled;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	public void setColumnName(String columnName) {
 		if(StrUtils.isEmpty(columnName)){
 			throw new NullPointerException("列名不能为空！");

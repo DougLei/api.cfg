@@ -18,5 +18,14 @@
          <property name="timeBetweenEvictionRunsMillis" value="${druid.datasource.timeBetweenEvictionRunsMillis}" /> 
          <property name="poolPreparedStatements" value="${druid.datasource.poolPreparedStatements}" /> 
          <property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.datasource.maxPoolPreparedStatementPerConnectionSize}" />
-	</bean>  
+	</bean>
+	
+	<!-- 配置动态数据源持有者对象 -->
+	<bean id="dynamicDataSourceHolder" class="com.king.tooth.plugins.datasource.dynamic.DynamicDataSourceHolder" scope="singleton">
+	</bean>
+	
+	<!-- 配置动态的druid数据源操作者对象 -->
+	<bean id="dynamicDruidDataSourceHandler" class="com.king.tooth.plugins.datasource.dynamic.druid.DynamicDruidDataSourceHandler">
+		<property name="dataSourceHolder" ref="dynamicDataSourceHolder"></property>
+	</bean>
 </beans>

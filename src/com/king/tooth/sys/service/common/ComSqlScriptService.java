@@ -54,7 +54,7 @@ public class ComSqlScriptService extends AbstractResourceService {
 			sql.setCreateUserId(sqlScript.getCreateUserId());
 			sql.setComments(sqlScript.getComments());
 //			sql.setIsCreateBuiltinResource(sqlScript.getIsCreateBuiltinResource());
-			sql.setIsDeploymentApp(sqlScript.getIsDeploymentApp());
+//			sql.setIsDeploymentApp(sqlScript.getIsDeploymentApp());
 			HibernateUtil.updateObject(sql, null);
 		} catch (Exception e) {
 			Log4jUtil.debug(ExceptionUtil.getErrMsg(e));

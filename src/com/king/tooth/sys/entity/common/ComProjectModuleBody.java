@@ -77,6 +77,12 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 	public void setModuleBody(String moduleBody) {
 		this.moduleBody = moduleBody;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT_MODULE_BODY");

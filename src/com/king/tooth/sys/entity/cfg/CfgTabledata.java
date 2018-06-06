@@ -254,11 +254,11 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setIsHavaDatalink(int isHavaDatalink) {
 		this.isHavaDatalink = isHavaDatalink;
 	}
-	public int getIsDeploymentApp() {
-		return isDeploymentApp;
+	public int getIsNeedDeploy() {
+		return isNeedDeploy;
 	}
-	public void setIsDeploymentApp(int isDeploymentApp) {
-		this.isDeploymentApp = isDeploymentApp;
+	public void setIsNeedDeploy(int isNeedDeploy) {
+		this.isNeedDeploy = isNeedDeploy;
 	}
 	public int getIsBuiltin() {
 		return isBuiltin;
@@ -295,6 +295,12 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 			throw new NullPointerException("表名不能为空！");
 		}
 		this.tableName = tableName;
+	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
 	}
 	
 	
@@ -399,13 +405,13 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		versionColumn.setOrderCode(11);
 		columns.add(versionColumn);
 		
-		CfgColumndata isDeploymentAppColumn = new CfgColumndata("is_deployment_app");
-		isDeploymentAppColumn.setName("是否部署到正式环境");
-		isDeploymentAppColumn.setComments("是否部署到正式环境");
-		isDeploymentAppColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentAppColumn.setLength(1);
-		isDeploymentAppColumn.setOrderCode(11);
-		columns.add(isDeploymentAppColumn);
+		CfgColumndata isNeedDeployColumn = new CfgColumndata("is_need_deploy");
+		isNeedDeployColumn.setName("是否需要发布");
+		isNeedDeployColumn.setComments("是否需要发布");
+		isNeedDeployColumn.setColumnType(DataTypeConstants.INTEGER);
+		isNeedDeployColumn.setLength(1);
+		isNeedDeployColumn.setOrderCode(11);
+		columns.add(isNeedDeployColumn);
 		
 		CfgColumndata reqResourceMethodColumn = new CfgColumndata("req_resource_method");
 		reqResourceMethodColumn.setName("请求资源的方法");
@@ -417,7 +423,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 
 		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
 		isBuiltinColumn.setName("是否内置");
-		isBuiltinColumn.setComments("是否内置:如果不是内置，则需要发布出去；如果是内置，且platformType=2或3，则也需要发布出去；如果是内置，且platformType=1，则不需要发布出去");
+		isBuiltinColumn.setComments("是否内置");
 		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 		isBuiltinColumn.setLength(1);
 		isBuiltinColumn.setOrderCode(13);
@@ -466,7 +472,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		json.put("isHavaDatalink", isHavaDatalink+"");
 		json.put("version", version+"");
 		json.put("isDatalinkTable", isDatalinkTable+"");
-		json.put("isDeploymentApp", isDeploymentApp+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("platformType", platformType+"");
 		json.put("isCreatedResource", isCreatedResource+"");

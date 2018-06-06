@@ -194,6 +194,12 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public void setVerifyCode(String verifyCode) {
 		this.verifyCode = verifyCode;
 	}
+	public String getProjectId() {
+		return projectId;
+	}
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
 
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT");
