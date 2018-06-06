@@ -33,7 +33,7 @@ public class ComDatabaseService extends AbstractResourceService{
 			DatabaseHandler databaseHandler = new DatabaseHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
 			databaseHandler.createDatabase(database);
 		}
-		database.setIsDeploymentRun(1);
+		database.setIsDeploymentApp(1);
 		HibernateUtil.saveObject(database, null);
 	}
 	
@@ -52,7 +52,7 @@ public class ComDatabaseService extends AbstractResourceService{
 			DatabaseHandler databaseHandler = new DatabaseHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
 			databaseHandler.dropDatabase(database);
 		}
-		database.setIsDeploymentRun(0);
+		database.setIsDeploymentApp(0);
 		HibernateUtil.saveObject(database, null);
 		
 		// ---------hql写法

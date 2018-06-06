@@ -7,9 +7,9 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.TableConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -275,7 +275,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
-		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		return table;
 	}

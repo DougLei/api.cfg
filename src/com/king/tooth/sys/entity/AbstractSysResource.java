@@ -9,10 +9,10 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	/**
 	 * 是否部署到正式环境
 	 */
-	protected int isDeploymentRun;
+	protected int isDeploymentApp;
 	/**
 	 * 请求资源的方法
-	 * <p>get/put/post/delete/all/none</p>
+	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
 	 */
 	protected String reqResourceMethod;
 	/**
@@ -23,13 +23,12 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	protected int isBuiltin;
 	/**
-	 * 所属的平台类型
+	 * 所属于的平台类型
 	 * <p>1:配置平台、2:运行平台、3:公用</p>
 	 */
 	protected int platformType;
 	/**
 	 * 是否已经创建资源
-	 * <p>只有isBuiltin=1，且platformType=1或3的时候，这个值才有效，因为配置平台需要使用</p>
 	 */
 	protected int isCreatedResource;
 	

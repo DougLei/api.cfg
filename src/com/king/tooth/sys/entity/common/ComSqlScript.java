@@ -11,7 +11,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.constants.TableConstants;
 import com.king.tooth.exception.gsp.AnalyzeSqlScriptException;
 import com.king.tooth.exception.gsp.EDBVendorIsNullException;
 import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
@@ -285,11 +284,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			this.reqResourceMethod = NONE;
 		}
 	}
-	public int getIsDeploymentRun() {
-		return isDeploymentRun;
+	public int getIsDeploymentApp() {
+		return isDeploymentApp;
 	}
-	public void setIsDeploymentRun(int isDeploymentRun) {
-		this.isDeploymentRun = isDeploymentRun;
+	public void setIsDeploymentApp(int isDeploymentApp) {
+		this.isDeploymentApp = isDeploymentApp;
 	}
 	public int getIsBuiltin() {
 		return isBuiltin;
@@ -381,7 +380,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setName("[通用的]sql脚本资源对象表");
 		table.setComments("[通用的]sql脚本资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(18);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
 		
 		CfgColumndata sqlScriptCaptionColumn = new CfgColumndata("sql_script_caption");
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
@@ -462,34 +461,50 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		commentsColumn.setOrderCode(10);
 		columns.add(commentsColumn);
 		
-		CfgColumndata isDeploymentRunColumn = new CfgColumndata("is_deployment_run");
-		isDeploymentRunColumn.setName("是否部署到正式环境");
-		isDeploymentRunColumn.setComments("是否部署到正式环境");
-		isDeploymentRunColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDeploymentRunColumn.setLength(1);
-		isDeploymentRunColumn.setOrderCode(11);
-		columns.add(isDeploymentRunColumn);
+		CfgColumndata isDeploymentAppColumn = new CfgColumndata("is_deployment_app");
+		isDeploymentAppColumn.setName("是否部署到正式环境");
+		isDeploymentAppColumn.setComments("是否部署到正式环境");
+		isDeploymentAppColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentAppColumn.setLength(1);
+		isDeploymentAppColumn.setOrderCode(11);
+		columns.add(isDeploymentAppColumn);
 		
+		CfgColumndata reqResourceMethodColumn = new CfgColumndata("req_resource_method");
+		reqResourceMethodColumn.setName("请求资源的方法");
+		reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
+		reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
+		reqResourceMethodColumn.setLength(20);
+		reqResourceMethodColumn.setOrderCode(12);
+		columns.add(reqResourceMethodColumn);
+
 		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
 		isBuiltinColumn.setName("是否内置");
-		isBuiltinColumn.setComments("是否内置");
+		isBuiltinColumn.setComments("是否内置:如果不是内置，则需要发布出去；如果是内置，且platformType=2或3，则也需要发布出去；如果是内置，且platformType=1，则不需要发布出去");
 		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 		isBuiltinColumn.setLength(1);
-		isBuiltinColumn.setOrderCode(12);
+		isBuiltinColumn.setOrderCode(13);
 		columns.add(isBuiltinColumn);
 		
-		CfgColumndata isCreateBuiltinResourceColumn = new CfgColumndata("is_create_builtin_resource");
-		isCreateBuiltinResourceColumn.setName("是否创建内置资源");
-		isCreateBuiltinResourceColumn.setComments("是否创建内置资源：只有isBuiltin=1的时候，这个值才有效");
-		isCreateBuiltinResourceColumn.setColumnType(DataTypeConstants.INTEGER);
-		isCreateBuiltinResourceColumn.setLength(1);
-		isCreateBuiltinResourceColumn.setOrderCode(13);
-		columns.add(isCreateBuiltinResourceColumn);
+		CfgColumndata platformTypeColumn = new CfgColumndata("platform_type");
+		platformTypeColumn.setName("所属于的平台类型");
+		platformTypeColumn.setComments("所属于的平台类型:1:配置平台、2:运行平台、3:公用");
+		platformTypeColumn.setColumnType(DataTypeConstants.INTEGER);
+		platformTypeColumn.setLength(1);
+		platformTypeColumn.setOrderCode(14);
+		columns.add(platformTypeColumn);
+		
+		CfgColumndata isCreatedResourceColumn = new CfgColumndata("is_created_resource");
+		isCreatedResourceColumn.setName("是否已经创建资源");
+		isCreatedResourceColumn.setComments("是否已经创建资源");
+		isCreatedResourceColumn.setColumnType(DataTypeConstants.INTEGER);
+		isCreatedResourceColumn.setLength(1);
+		isCreatedResourceColumn.setOrderCode(15);
+		columns.add(isCreatedResourceColumn);
 		
 		table.setColumns(columns);
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
-		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
+		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		return table;
 	}
@@ -513,8 +528,10 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("isDeploymentApp", isDeploymentApp+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isDeploymentRun", isDeploymentRun+"");
+		json.put("platformType", platformType+"");
+		json.put("isCreatedResource", isCreatedResource+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

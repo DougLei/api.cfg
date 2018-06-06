@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.TableConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
@@ -20,6 +19,7 @@ public class ComDataLinks implements Serializable, ITable {
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_LINKS");
+		table.setResourceName("ComDataLinks");
 		table.setName("[通用的]数据关联关系资源对象表");
 		table.setComments("[通用的]数据关联关系资源对象表");
 		
@@ -68,7 +68,7 @@ public class ComDataLinks implements Serializable, ITable {
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
 		table.setReqResourceMethod(ISysResource.NONE);
-		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		return table;
 	}

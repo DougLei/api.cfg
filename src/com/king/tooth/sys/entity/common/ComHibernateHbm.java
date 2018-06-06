@@ -7,7 +7,6 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.TableConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -16,7 +15,7 @@ import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]hibernate的hbm内容
+ * [通用的]hibernate的hbm内容对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -64,11 +63,11 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-	public int getIsDeploymentRun() {
-		return isDeploymentRun;
+	public int getIsDeploymentApp() {
+		return isDeploymentApp;
 	}
-	public void setIsDeploymentRun(int isDeploymentRun) {
-		this.isDeploymentRun = isDeploymentRun;
+	public void setIsDeploymentApp(int isDeploymentApp) {
+		this.isDeploymentApp = isDeploymentApp;
 	}
 	public int getIsBuiltin() {
 		return isBuiltin;
@@ -98,21 +97,61 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_HIBERNATE_HBM");
-		table.setName("[配置系统]字段数据信息资源对象表");
-		table.setComments("[配置系统]字段数据信息资源对象表");
+		table.setName("[通用的]hibernate的hbm内容对象表");
+		table.setComments("[通用的]hibernate的hbm内容对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(7);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(11);
 		
 		CfgColumndata hbmContentColumn = new CfgColumndata("hbm_content");
-		hbmContentColumn.setName("显示的汉字名称");
-		hbmContentColumn.setComments("显示的汉字名称");
+		hbmContentColumn.setName("hbm内容");
+		hbmContentColumn.setComments("hbm内容");
 		hbmContentColumn.setColumnType(DataTypeConstants.CLOB);
-		hbmContentColumn.setOrderCode(2);
+		hbmContentColumn.setOrderCode(1);
 		columns.add(hbmContentColumn);
+		
+		CfgColumndata isDeploymentAppColumn = new CfgColumndata("is_deployment_app");
+		isDeploymentAppColumn.setName("是否部署到正式环境");
+		isDeploymentAppColumn.setComments("是否部署到正式环境");
+		isDeploymentAppColumn.setColumnType(DataTypeConstants.INTEGER);
+		isDeploymentAppColumn.setLength(1);
+		isDeploymentAppColumn.setOrderCode(2);
+		columns.add(isDeploymentAppColumn);
+		
+		CfgColumndata reqResourceMethodColumn = new CfgColumndata("req_resource_method");
+		reqResourceMethodColumn.setName("请求资源的方法");
+		reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
+		reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
+		reqResourceMethodColumn.setLength(20);
+		reqResourceMethodColumn.setOrderCode(3);
+		columns.add(reqResourceMethodColumn);
+
+		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
+		isBuiltinColumn.setName("是否内置");
+		isBuiltinColumn.setComments("是否内置:如果不是内置，则需要发布出去；如果是内置，且platformType=2或3，则也需要发布出去；如果是内置，且platformType=1，则不需要发布出去");
+		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
+		isBuiltinColumn.setLength(1);
+		isBuiltinColumn.setOrderCode(4);
+		columns.add(isBuiltinColumn);
+		
+		CfgColumndata platformTypeColumn = new CfgColumndata("platform_type");
+		platformTypeColumn.setName("所属于的平台类型");
+		platformTypeColumn.setComments("所属于的平台类型:1:配置平台、2:运行平台、3:公用");
+		platformTypeColumn.setColumnType(DataTypeConstants.INTEGER);
+		platformTypeColumn.setLength(1);
+		platformTypeColumn.setOrderCode(5);
+		columns.add(platformTypeColumn);
+		
+		CfgColumndata isCreatedResourceColumn = new CfgColumndata("is_created_resource");
+		isCreatedResourceColumn.setName("是否已经创建资源");
+		isCreatedResourceColumn.setComments("是否已经创建资源");
+		isCreatedResourceColumn.setColumnType(DataTypeConstants.INTEGER);
+		isCreatedResourceColumn.setLength(1);
+		isCreatedResourceColumn.setOrderCode(6);
+		columns.add(isCreatedResourceColumn);
 		
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
-		table.setPlatformType(TableConstants.IS_CFG_PLATFORM_TYPE);
+		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		return table;
 	}
@@ -126,6 +165,10 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("isDeploymentApp", isDeploymentApp+"");
+		json.put("isBuiltin", isBuiltin+"");
+		json.put("platformType", platformType+"");
+		json.put("isCreatedResource", isCreatedResource+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}
