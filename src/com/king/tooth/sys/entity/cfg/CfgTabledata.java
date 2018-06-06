@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.TableConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
@@ -86,11 +87,19 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	private int isDatalinkTable;
 	/**
 	 * 是否内置
+	 * <p>如果不是内置，则需要发布出去</>
+	 * <p>如果是内置，且platformType=2或3，则也需要发布出去</>
+	 * <p>如果是内置，且platformType=1，则不需要发布出去</>
 	 */
 	private int isBuiltin;
 	/**
+	 * 所属的平台类型
+	 * <p>1:配置平台、2:运行平台、3:公用</p>
+	 */
+	private int platformType;
+	/**
 	 * 是否创建hbm文件
-	 * <p>只有isBuiltin=1的时候，这个值才有效</p>
+	 * <p>只有isBuiltin=1，且platformType=1或3的时候，这个值才有效，因为配置平台需要使用</p>
 	 */
 	private int isCreateHbm;
 	
@@ -111,7 +120,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	public CfgTabledata(String dbType, String tableName) {
 		this();
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && tableName.length() > 30){
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && tableName.length() > 30){// 判断：如果是oracle数据库表名是否过长
 			throw new IllegalAccessError("oracle数据库的表名长度不能超过30个字符");
 		}
 		doSetTableName(dbType, tableName, 0);
@@ -119,6 +128,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	
 	/**
 	 * 目前，只让DynamicDataLinkTableUtil.getDataLinkTabledata()方法使用到这个构造函数
+	 * 和上面的构造函数区分，如果是创建关系表，则不需要判断：如果是oracle数据库表名是否过长
 	 * @param dbType
 	 * @param tableName
 	 * @param isDatalinkTable 标识是关系表，只有这里会将这个属性的值置为1，其他地方都必须是0
@@ -128,16 +138,14 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		this.isDatalinkTable = isDatalinkTable;
 		doSetTableName(dbType, tableName, 1);
 	}
-	public CfgTabledata(String tableName) {
-		this.tableName = tableName;
-	}
+	
 	private void doSetTableName(String dbType, String tableName, int isDatalinkTable) {
 		this.dbType = dbType;
 		this.tableName = tableName.trim();
 		analysisResourceName(this.tableName);
 		
 		if(isDatalinkTable == 1){
-			// oracle的表名长度不能超过30个字符
+			// oracle的表名长度不能超过30个字符，这里对关系表的表名做处理：前缀+后缀
 			if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && this.tableName.length() > 30){
 				this.tableName = ResourceNameConstants.DATALINK_TABLENAME_PREFIX + this.tableName.substring(5, 16) + "_" + new Random().nextInt(100000) + ResourceNameConstants.DATALINK_TABLENAME_SUFFIX;
 			}
@@ -297,6 +305,12 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setReqResourceMethod(String reqResourceMethod) {
 		this.reqResourceMethod = reqResourceMethod;
 	}
+	public int getPlatformType() {
+		return platformType;
+	}
+	public void setPlatformType(int platformType) {
+		this.platformType = platformType;
+	}
 	
 	public void clear(){
 		if(columns != null && columns.size()>0){
@@ -309,7 +323,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setName("[配置系统]表数据信息资源对象表");
 		table.setComments("[配置系统]表数据信息资源对象表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(19);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
 		
 		CfgColumndata nameColumn = new CfgColumndata("name");
 		nameColumn.setName("显示的汉字名称");
@@ -409,23 +423,33 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		
 		CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
 		isBuiltinColumn.setName("是否内置");
-		isBuiltinColumn.setComments("是否内置");
+		isBuiltinColumn.setComments("是否内置：如果不是内置，则需要发布出去；如果是内置，且platformType=2或3，则也需要发布出去；如果是内置，且platformType=1，则不需要发布出去");
 		isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 		isBuiltinColumn.setLength(1);
 		isBuiltinColumn.setOrderCode(13);
 		columns.add(isBuiltinColumn);
 		
+		CfgColumndata platformTypeColumn = new CfgColumndata("platform_type");
+		platformTypeColumn.setName("所属的平台类型");
+		platformTypeColumn.setComments("所属的平台类型：1:配置平台、2:运行平台、3:公用");
+		platformTypeColumn.setColumnType(DataTypeConstants.INTEGER);
+		platformTypeColumn.setLength(1);
+		platformTypeColumn.setOrderCode(14);
+		columns.add(platformTypeColumn);
+		
 		CfgColumndata isCreateHbmColumn = new CfgColumndata("is_create_hbm");
 		isCreateHbmColumn.setName("是否创建hbm文件");
-		isCreateHbmColumn.setComments("是否创建hbm文件:只有isBuiltin=1的时候，这个值才有效");
+		isCreateHbmColumn.setComments("是否创建hbm文件:只有isBuiltin=1，且platformType=1或3的时候，这个值才有效，因为配置平台需要使用");
 		isCreateHbmColumn.setColumnType(DataTypeConstants.INTEGER);
 		isCreateHbmColumn.setLength(1);
-		isCreateHbmColumn.setOrderCode(14);
+		isCreateHbmColumn.setOrderCode(15);
 		columns.add(isCreateHbmColumn);
 		
 		table.setColumns(columns);
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
+		table.setPlatformType(TableConstants.IS_CFG_PLATFORM_TYPE);
+		table.setIsCreateHbm(1);
 		return table;
 	}
 
@@ -455,6 +479,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		json.put("version", version+"");
 		json.put("isDatalinkTable", isDatalinkTable+"");
 		json.put("isBuiltin", isBuiltin+"");
+		json.put("platformType", platformType+"");
 		json.put("isCreateHbm", isCreateHbm+"");
 		json.put("isDeploymentRun", isDeploymentRun+"");
 		if(this.createTime != null){

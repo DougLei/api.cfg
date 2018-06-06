@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.TableConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
@@ -19,6 +20,7 @@ public class ComDatabaseComSqlScriptLinks implements Serializable, ITable {
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_DATABASE_SQLSCRIPT_LINKS");
+		table.setResourceName("ComDatabaseComSqlScriptLinks");
 		table.setName("[配置系统]数据库和sql脚本的关联关系资源对象");
 		table.setComments("[配置系统]数据库和sql脚本的关联关系资源对象");
 		
@@ -51,6 +53,8 @@ public class ComDatabaseComSqlScriptLinks implements Serializable, ITable {
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
 		table.setReqResourceMethod(ISysResource.NONE);
+		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreateHbm(1);
 		return table;
 	}
 

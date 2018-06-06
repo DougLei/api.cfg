@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.constants.TableConstants;
 import com.king.tooth.exception.gsp.AnalyzeSqlScriptException;
 import com.king.tooth.exception.gsp.EDBVendorIsNullException;
 import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
@@ -488,6 +489,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setColumns(columns);
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
+		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreateHbm(1);
 		return table;
 	}
 

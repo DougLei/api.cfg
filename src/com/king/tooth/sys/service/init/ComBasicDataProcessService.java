@@ -10,6 +10,7 @@ import java.util.List;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.SysDatabaseInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
+import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgCustomer;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
@@ -70,7 +71,8 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			
-			insertAllTables();// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
+			insertHbmContents();// 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
+			insertAllTables();// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；
 			insertTableToResources();// 将这些表资源插入到资源表
 			insertCfgDatabaseOfBasicDatas();// 插入配置库的基础数据
 			
@@ -82,7 +84,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			HibernateUtil.closeCurrentThreadSession();
 		}
 	}
-	
 	
 	/**
 	 * 获取要初始化的表集合
@@ -137,7 +138,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		try {
 			dbHandler.dropTable(tables);
 		} catch (Exception e) {
-			Log4jUtil.debug("表不存在，不需要删除");
+			Log4jUtil.debug("*********表不存在，不需要删除");
 		}
 		// 开始创建表
 		dbHandler.createTable(tables);
@@ -172,21 +173,50 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
+	 * 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
+	 */
+	private void insertHbmContents() {
+		List<CfgTabledata> tables = getInitTables();
+		
+		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
+		List<String> hbmContents = new ArrayList<String>(tables.size());
+		for (CfgTabledata table : tables) {
+			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table));// 记录hbm内容
+		}
+		
+		// 将hbmContents加入到hibernate sessionFactory中
+		HibernateUtil.appendNewConfig(hbmContents);
+		
+		hbmContents.clear();
+		clearTables(tables);
+	}
+	
+	/**
 	 * 将表信息插入的cfgTabledata表中
-	 * 同时把列的信息插入到cfgColumndata表中
+	 * <p>同时把列的信息插入到cfgColumndata表中</p>
+	 * <p>再根据表创建hbm文件，并将其加入到CfgHibernateHbm表中</p>
 	 */
 	private void insertAllTables() {
 		List<CfgTabledata> tables = getInitTables();
 		
 		String tableId;
 		List<CfgColumndata> columns = null;
+		CfgHibernateHbm hbm;
+		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (CfgTabledata table : tables) {
+			// 插入表和列信息
 			tableId = HibernateUtil.saveObject(table, "初始化插入内置表");
 			columns = table.getColumns();
 			for (CfgColumndata column : columns) {
 				column.setTableId(tableId);
 				HibernateUtil.saveObject(column, "初始化插入内置表的列");
 			}
+			
+			//创建对应的hbm文件，并保存
+			hbm = new CfgHibernateHbm();
+			hbm.setTableId(tableId);
+			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
+			HibernateUtil.saveObject(hbm, "初始化插入内置hbm");
 		}
 		clearTables(tables);
 	}
@@ -196,7 +226,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	private void insertTableToResources() {
 		List<CfgTabledata> tables = getInitTables();
-		
 		ComSysResourceService comSysResourceService = new ComSysResourceService();
 		for (CfgTabledata table : tables) {
 			comSysResourceService.insertSysResource(table);
@@ -311,9 +340,21 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 主要是hbm内容
 	 */
 	public void loadSysBasicDatasBySysStart() {
-		List<Object> hbmContents = HibernateUtil.executeListQueryByHql("select hbmContent from CfgHibernateHbm", null);
-		if(hbmContents != null && hbmContents.size() > 0){
-			List<String> hcs = new ArrayList<String>(hbmContents.size());
+		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryBySql("select count(1) from CFG_HIBERNATE_HBM", null)+"");
+		if(count == 0){
+			return;
+		}
+		
+		int loopCount = count%100;
+		if(loopCount == 0){
+			loopCount = 1;
+		}
+		
+		List<Object> hbmContents = null;
+		List<String> hcs = null;
+		for(int i=0;i<loopCount;i++){
+			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from CfgHibernateHbm", null);
+			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");
 			}
@@ -321,6 +362,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			HibernateUtil.appendNewConfig(hcs);
 			hcs.clear();
 			hbmContents.clear();
+			
 		}
 	}
 }

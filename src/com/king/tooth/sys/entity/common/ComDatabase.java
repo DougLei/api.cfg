@@ -9,6 +9,7 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.TableConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -348,6 +349,8 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
+		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreateHbm(1);
 		return table;
 	}
 

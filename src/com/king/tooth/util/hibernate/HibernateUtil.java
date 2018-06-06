@@ -35,6 +35,7 @@ import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.SpringContextHelper;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
 
 /**
  * hibernate工具类
@@ -408,24 +409,29 @@ public class HibernateUtil {
 	
 	/**
 	 * hql查询多条数据
+	 * @param rows 一页显示多少行，可为null，为null则不分页
+	 * @param pageNo 显示第几页，可为null，为null则不分页
 	 * @param queryHql
 	 * @param parameterArr
 	 * @return
 	 */
-	public static List executeListQueryByHqlArr(String queryHql, Object... parameterArr){
+	public static List executeListQueryByHqlArr(String rows, String pageNo, String queryHql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		return executeListQueryByHql(queryHql, parameters);
+		return executeListQueryByHql(rows, pageNo, queryHql, parameters);
 	}
 	
 	/**
-	 * hql查询多条数据
+	 * hql分页查询多条数据
+	 * @param rows 一页显示多少行，可为null，为null则不分页
+	 * @param pageNo 显示第几页，可为null，为null则不分页
 	 * @param queryHql
 	 * @param parameters
 	 * @return
 	 */
-	public static List executeListQueryByHql(String queryHql, List<Object> parameters){
+	public static List executeListQueryByHql(String rows, String pageNo, String queryHql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createQuery(queryHql);
 		setParamters(query, parameters);
+		setPageQuery(query, rows, pageNo);
 		return query.list();
 	}
 	
@@ -456,24 +462,29 @@ public class HibernateUtil {
 	
 	/**
 	 * sql查询多条数据
+	 * @param rows 一页显示多少行，可为null，为null则不分页
+	 * @param pageNo 显示第几页，可为null，为null则不分页
 	 * @param querySql
 	 * @param parameterArr
 	 * @return
 	 */
-	public static List executeListQueryBySqlArr(String querySql, Object... parameterArr){
+	public static List executeListQueryBySqlArr(String rows, String pageNo, String querySql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		return executeListQueryBySql(querySql, parameters);
+		return executeListQueryBySql(rows, pageNo, querySql, parameters);
 	}
 	
 	/**
 	 * sql查询多条数据
+	 * @param rows 一页显示多少行，可为null，为null则不分页
+	 * @param pageNo 显示第几页，可为null，为null则不分页
 	 * @param querySql
 	 * @param parameters
 	 * @return
 	 */
-	public static List executeListQueryBySql(String querySql, List<Object> parameters){
+	public static List executeListQueryBySql(String rows, String pageNo, String querySql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createSQLQuery(querySql);
 		setParamters(query, parameters);
+		setPageQuery(query, rows, pageNo);
 		return query.list();
 	}
 	
@@ -628,6 +639,20 @@ public class HibernateUtil {
 		return parameters;
 	}
 	
+	/**
+	 * 设置分页查询
+	 * @param query
+	 * @param rows 一页显示多少行
+	 * @param pageNo 显示第几页
+	 */
+	private static void setPageQuery(Query query, String rows, String pageNo) {
+		if(rows != null && pageNo != null){
+			PageQueryEntity pageQueryEntity = new PageQueryEntity(null, null, rows, pageNo);
+			query.setFirstResult(pageQueryEntity.getFirstResult());
+			query.setMaxResults(pageQueryEntity.getMaxResult());
+		}
+	}
+	
 	//------------------------------------------------------------------------------------------------------
 	
 	/**
@@ -635,13 +660,15 @@ public class HibernateUtil {
 	 * <p>该方法针对hql查询结果是map的使用</p>
 	 * <p>因为系统现在将例如cfgTabledata这些都转换为了map用hibernate操作，在查询的时候，需要通过这个方法转换为原来的集合对象</p>
 	 * @param clazz
+	 * @param rows 一页显示多少行，可为null，为null则不分页
+	 * @param pageNo 显示第几页，可为null，为null则不分页
 	 * @param queryHql
 	 * @param parameterArr
 	 * @return
 	 */
-	public static <T> List<T> extendExecuteListQueryByHqlArr(Class<T> clazz, String queryHql, Object... parameterArr){
+	public static <T> List<T> extendExecuteListQueryByHqlArr(Class<T> clazz, String rows, String pageNo, String queryHql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		List<Map<String, Object>> map = executeListQueryByHql(queryHql, parameters);
+		List<Map<String, Object>> map = executeListQueryByHql(rows, pageNo, queryHql, parameters);
 		return JsonUtil.turnListMapToJavaListEntity(map, clazz);
 	}
 	

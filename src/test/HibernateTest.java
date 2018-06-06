@@ -1,7 +1,5 @@
 package test;
 
-import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 public class HibernateTest {
@@ -15,14 +13,14 @@ public class HibernateTest {
 //		System.out.println(HibernateUtil.executeUniqueQueryByHql(sql, null));;
 		
 		
-		CfgTabledata table = new CfgTabledata("COM_SYS_RESOURCE");
-		JSONObject json = table.toEntity();
+//		CfgTabledata table = new CfgTabledata("COM_SYS_RESOURCE");
+//		JSONObject json = table.toEntity();
 		
 		
-		HibernateUtil.saveObject(table.getEntityName(), json, null);
-		
-		HibernateUtil.commitTransaction();
-		HibernateUtil.closeCurrentThreadSession();
+//		HibernateUtil.saveObject(table.getEntityName(), json, null);
+//		
+//		HibernateUtil.commitTransaction();
+//		HibernateUtil.closeCurrentThreadSession();
 		
 //		List<ProcedureSqlScriptParameter> pssp = new ArrayList<ProcedureSqlScriptParameter>();
 //		ProcedureSqlScriptParameter p1 = new ProcedureSqlScriptParameter(

@@ -7,6 +7,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.TableConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
@@ -400,6 +401,8 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		table.setColumns(columns);
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
+		table.setPlatformType(TableConstants.IS_CFG_PLATFORM_TYPE);
+		table.setIsCreateHbm(1);
 		return table;
 	}
 

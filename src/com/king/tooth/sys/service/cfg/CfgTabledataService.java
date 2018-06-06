@@ -80,7 +80,7 @@ public class CfgTabledataService extends AbstractResourceService{
 	private CfgTabledata getTableAllByTableId(String tableId){
 		CfgTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgTabledata.class, "from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
 		if(table != null){
-			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumndata.class, "from CfgColumndata where isEnabled =1 and tableId =?", tableId));
+			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumndata.class, null, null, "from CfgColumndata where isEnabled =1 and tableId =?", tableId));
 		}
 		return table;
 	}
@@ -128,15 +128,21 @@ public class CfgTabledataService extends AbstractResourceService{
 	 */
 	public void dropTableModel(Object[] tableIdArr) {
 		int len = tableIdArr.length;
-		Map<String, Object> tableInfo = null;
 		List<String> entityNames = new ArrayList<String>(len);
-		StringBuilder in = new StringBuilder(" in (");
 		List<CfgTabledata> tabledatas = new ArrayList<CfgTabledata>(tableIdArr.length);
+		
+		CfgTabledata tmpTable;
+		Map<String, Object> tableInfo = null;
+		StringBuilder in = new StringBuilder(" in (");
 		for (int i=0;i<len;i++) {
 			in.append("?").append(",");
 			tableInfo = (Map<String, Object>) HibernateUtil.executeUniqueQueryByHqlArr("select tableName,resourceName from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableIdArr[i]);
 			entityNames.add(tableInfo.get("tableName")+"");
-			tabledatas.add(new CfgTabledata(tableInfo.get("resourceName")+""));
+			
+			tmpTable = new CfgTabledata();
+			tmpTable.setResourceName(tableInfo.get("resourceName")+"");
+			tabledatas.add(tmpTable);
+			
 			tableInfo.clear();
 		}
 		in.setLength(in.length()-1);
