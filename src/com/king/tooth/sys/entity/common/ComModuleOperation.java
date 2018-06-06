@@ -57,15 +57,8 @@ public class ComModuleOperation extends BasicEntity implements ITable, IEntity{
 	 * 是否启用
 	 */
 	private int isEnabled;
-	/**
-	 * 是否受到权限约束
-	 * <p>例如登录的功能，就不受到权限约束，但是添加的功能，会受到权限约束</p>
-	 * <p>默认会受到约束</p>
-	 */
-	private int isPermissionConstraint;
 	
 	public ComModuleOperation() {
-		this.isPermissionConstraint = 1;
 		this.isEnabled = 1;
 	}
 	
@@ -74,12 +67,6 @@ public class ComModuleOperation extends BasicEntity implements ITable, IEntity{
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public int getIsPermissionConstraint() {
-		return isPermissionConstraint;
-	}
-	public void setIsPermissionConstraint(int isPermissionConstraint) {
-		this.isPermissionConstraint = isPermissionConstraint;
 	}
 	public String getId() {
 		return id;
@@ -159,7 +146,7 @@ public class ComModuleOperation extends BasicEntity implements ITable, IEntity{
 		table.setName("[通用的]模块操作功能资源对象表");
 		table.setComments("[通用的]模块操作功能资源对象表：理解为模块下，可点击操作的按钮(或超链接)");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(14);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(13);
 		
 		CfgColumndata moduleIdColumn = new CfgColumndata("module_id");
 		moduleIdColumn.setName("所属模块主键");
@@ -225,16 +212,8 @@ public class ComModuleOperation extends BasicEntity implements ITable, IEntity{
 		isEnabledColumn.setOrderCode(8);
 		columns.add(isEnabledColumn);
 		
-		CfgColumndata isPermissionConstraintColumn = new CfgColumndata("is_permission_constraint");
-		isPermissionConstraintColumn.setName("是否受到权限约束");
-		isPermissionConstraintColumn.setComments("是否受到权限约束：例如登录的功能，就不受到权限约束，但是添加的功能，会受到权限约束；默认会受到约束");
-		isPermissionConstraintColumn.setColumnType(DataTypeConstants.INTEGER);
-		isPermissionConstraintColumn.setLength(1);
-		isPermissionConstraintColumn.setDefaultValue("1");
-		isPermissionConstraintColumn.setOrderCode(9);
-		columns.add(isPermissionConstraintColumn);
-		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 	public String toDropTable() {

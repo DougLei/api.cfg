@@ -170,6 +170,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		columns.add(commentsColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

@@ -261,6 +261,7 @@ public class CfgCustomer extends BasicEntity implements ITable, IEntity{
 		columns.add(remarkColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 	

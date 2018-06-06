@@ -425,6 +425,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		
 		table.setColumns(columns);
 		table.setReqResourceMethod(ISysResource.GET);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

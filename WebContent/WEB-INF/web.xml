@@ -67,11 +67,11 @@
 		
 		<!-- 配置预处理的过滤器 -->
 		<filter>
-			<filter-name>databaseConnectionFilter</filter-name>
+			<filter-name>prepareFilter</filter-name>
 			<filter-class>com.king.tooth.filter.PrepareFilter</filter-class>
 		</filter>
 		<filter-mapping>
-			<filter-name>databaseConnectionFilter</filter-name>
+			<filter-name>prepareFilter</filter-name>
 			<url-pattern>/common/*</url-pattern>
 		</filter-mapping>
 		
@@ -93,7 +93,7 @@
 		<filter-mapping>
 			<filter-name>varifyReqValidFilter</filter-name>
 			<url-pattern>/common/*</url-pattern>
-		</filter-mapping> 
+		</filter-mapping>
 		
 <!-- ****************************************************************************************************  -->		
 		

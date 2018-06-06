@@ -374,6 +374,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		columns.add(descsColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

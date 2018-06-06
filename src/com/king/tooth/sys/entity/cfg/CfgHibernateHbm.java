@@ -99,6 +99,7 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 		columns.add(hbmContentColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 	

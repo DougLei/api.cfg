@@ -165,6 +165,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		columns.add(isDeploymentRunColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 	public String toDropTable() {

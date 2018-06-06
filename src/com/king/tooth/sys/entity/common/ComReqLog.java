@@ -266,6 +266,7 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		columns.add(reqTokenColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -48,6 +49,8 @@ public class ComDatabaseComSqlScriptLinks implements Serializable, ITable {
 		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
+		table.setReqResourceMethod(ISysResource.NONE);
 		return table;
 	}
 

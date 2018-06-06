@@ -160,6 +160,7 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		columns.add(errorMsgColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

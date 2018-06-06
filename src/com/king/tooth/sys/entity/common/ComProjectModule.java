@@ -206,6 +206,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 	public String toDropTable() {

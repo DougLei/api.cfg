@@ -273,6 +273,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		columns.add(validDateColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

@@ -21,6 +21,5 @@
 		<property name="isHide" column="is_hide" type="integer" />
 		<property name="orderCode" column="order_code" type="integer" />
 		<property name="isEnabled" column="is_enabled" type="integer" />
-		<property name="isPermissionConstraint" column="is_permission_constraint" type="integer" />
 	</class>
 </hibernate-mapping>

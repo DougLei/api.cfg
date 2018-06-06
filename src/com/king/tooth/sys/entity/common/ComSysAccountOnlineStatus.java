@@ -248,6 +248,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		columns.add(lastOperDateColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

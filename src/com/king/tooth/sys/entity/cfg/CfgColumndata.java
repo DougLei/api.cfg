@@ -398,7 +398,8 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
-		table.setReqResourceMethod(ISysResource.GET+","+ISysResource.DELETE);
+		table.setReqResourceMethod(ISysResource.GET);
+		table.setIsBuiltin(1);
 		return table;
 	}
 

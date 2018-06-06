@@ -100,6 +100,7 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		columns.add(moduleBodyColumn);
 		
 		table.setColumns(columns);
+		table.setIsBuiltin(1);
 		return table;
 	}
 	public String toDropTable() {

@@ -26,6 +26,7 @@ public class CfgTabledataController extends AbstractResourceController{
 	
 	/**
 	 * 添加表
+	 * <p>请求方式：POST</p>
 	 * @param table
 	 * @return
 	 */
@@ -38,6 +39,7 @@ public class CfgTabledataController extends AbstractResourceController{
 	
 	/**
 	 * 修改表
+	 * <p>请求方式：PUT</p>
 	 * @param table
 	 * @return
 	 */
