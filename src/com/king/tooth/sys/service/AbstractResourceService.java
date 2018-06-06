@@ -5,5 +5,4 @@ package com.king.tooth.sys.service;
  * @author DougLei
  */
 public abstract class AbstractResourceService {
-
 }

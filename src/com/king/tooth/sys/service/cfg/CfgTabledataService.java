@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.constants.SysDatabaseInstanceConstants;
+import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -117,7 +117,7 @@ public class CfgTabledataService extends AbstractResourceService{
 		HibernateUtil.appendNewConfig(hbmContents);
 		hbmContents.clear();
 		
-		DBTableHandler dbTableHandler = new DBTableHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
+		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 		dbTableHandler.createTable(tabledatas);
 		tabledatas.clear();
 	}
@@ -154,7 +154,7 @@ public class CfgTabledataService extends AbstractResourceService{
 		HibernateUtil.removeConfig(entityNames);
 		entityNames.clear();
 		
-		DBTableHandler dbTableHandler = new DBTableHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
+		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 		dbTableHandler.dropTable(tabledatas);
 		tabledatas.clear();
 	}

@@ -5,8 +5,8 @@
 						http://www.springframework.org/schema/beans/spring-beans.xsd
 						">
 	
-	<!-- 配置平台的数据源 -->
-	<bean id="cfgDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">  
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">  
          <property name="url" value="${jdbc.url}" />  
          <property name="username" value="${jdbc.username}" />  
          <property name="password" value="${jdbc.password}" />  
@@ -22,6 +22,11 @@
 	
 	<!-- 配置动态数据源持有者对象 -->
 	<bean id="dynamicDataSourceHolder" class="com.king.tooth.plugins.datasource.dynamic.DynamicDataSourceHolder" scope="singleton">
+		<property name="dataSources">
+			<map key-type="java.lang.String">
+				<entry key="${current.sys.database.id}" value-ref="dataSource"></entry>
+			</map>
+		</property>
 	</bean>
 	
 	<!-- 配置动态的druid数据源操作者对象 -->

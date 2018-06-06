@@ -5,8 +5,8 @@
 						http://www.springframework.org/schema/beans/spring-beans.xsd
 						">
 	
-	<!-- 装配hibernate的配置，创建配置平台的sessionFactory实例  -->
-	<bean id="cfgSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" scope="singleton">
+	<!-- 装配hibernate的配置，创建sessionFactory实例  -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" scope="singleton">
 		<property name="dataSource" ref="cfgDataSource"></property>
 		<property name="hibernateProperties">
 			<props>
@@ -19,6 +19,11 @@
 	
 	<!-- 配置动态sessionFactory持有者对象 -->
 	<bean id="dynamicSessionFactoryHolder" class="com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHolder">
+		<property name="sessionFactorys">
+			<map key-type="java.lang.String">
+				<entry key="${current.sys.database.id}" value-ref="sessionFactory"></entry>
+			</map>
+		</property>
 	</bean>
 	
 	<!-- 配置动态的hibernate sessionFactory操作者对象 -->

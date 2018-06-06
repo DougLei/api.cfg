@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.SysDatabaseInstanceConstants;
+import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
-import com.king.tooth.sys.entity.cfg.datalinks.ComDatabaseCfgTabledataLinks;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
@@ -28,7 +28,6 @@ import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
-import com.king.tooth.sys.entity.common.datalinks.ComDatabaseComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
@@ -50,7 +49,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	public void loadSysBasicDatasBySysFirstStart() {
 		try {
-			initCfgDatabaseInfo();
+			initDatabaseInfo();
 			updateInitConfig();
 			Log4jUtil.debug("系统初始化完成！");
 		} catch (Exception e) {
@@ -60,11 +59,12 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
-	 * 初始化配置库信息
+	 * 初始化数据库信息
 	 */
-	private void initCfgDatabaseInfo() {
+	private void initDatabaseInfo() {
 		try {
 			createTables();
+			processPorjDatabaseRelation();// 处理本系统(就是一个项目)和本数据库(就是本系统的数据库)关系
 			
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
@@ -72,7 +72,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			insertHbmContents();// 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
 			insertAllTables();// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；
 			insertTableToResources();// 将这些表资源插入到资源表
-			insertCfgDatabaseOfBasicDatas();// 插入配置库的基础数据
+			insertDatabaseOfBasicDatas();// 插入配置库的基础数据
 			
 			HibernateUtil.commitTransaction();
 		} catch (Exception e) {
@@ -84,12 +84,22 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
+	 * 处理本系统(就是一个项目)和本数据库(就是本系统的数据库)关系
+	 */
+	private void processPorjDatabaseRelation() {
+		// 添加本系统和本数据库的映射关系
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
+				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
+				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
+	}
+
+	/**
 	 * 获取要初始化的表集合
 	 * @return
 	 */
 	private List<CfgTabledata> getInitTables(){
-		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(17);
-		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
+		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(16);
+		String dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
 		tables.add(new ComHibernateHbm().toCreateTable(dbType));
@@ -107,8 +117,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		tables.add(new ComSysAccount().toCreateTable(dbType));
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
 		tables.add(new ComUser().toCreateTable(dbType));
-		tables.add(new ComDatabaseCfgTabledataLinks().toCreateTable(dbType));
-		tables.add(new ComDatabaseComSqlScriptLinks().toCreateTable(dbType));
 		
 		return tables;
 	}
@@ -130,7 +138,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	private void createTables(){
 		List<CfgTabledata> tables = getInitTables();
-		DBTableHandler dbHandler = new DBTableHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
+		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 		try {
 			dbHandler.dropTable(tables);
 		} catch (Exception e) {
@@ -142,9 +150,9 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
-	 * 插入配置库的基础数据
+	 * 插入数据库库的基础数据
 	 */
-	private void insertCfgDatabaseOfBasicDatas() {
+	private void insertDatabaseOfBasicDatas() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加公司配置平台管理员和对应的用户【这个是超级管理员】
 		ComSysAccount admin = new ComSysAccount();

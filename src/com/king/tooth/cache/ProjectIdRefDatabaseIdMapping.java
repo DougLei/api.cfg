@@ -22,13 +22,6 @@ public class ProjectIdRefDatabaseIdMapping {
 	}
 	
 	/**
-	 * 初始化配置系统的项目id和数据库id映射
-	 */
-	public static void initBasicProjectIdRefDatabaseIdMapping(){
-		projIdRefDbIdMapping.put(SysConfig.getSystemConfig("cfg.project.id"), SysConfig.getSystemConfig("cfg.database.id"));
-	}
-	
-	/**
 	 * 存储项目id和数据库id的映射关系
 	 * @param projectId
 	 * @param databaseId

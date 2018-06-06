@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
@@ -108,19 +109,19 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	}
 	public String getDbType() {
 		if(StrUtils.isEmpty(dbType)){
-			dbType = SysConfig.getSystemConfig("jdbc.dbType");
+			dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
 		}
 		return dbType;
 	}
 	public String getDbIp() {
 		if(StrUtils.isEmpty(dbIp)){
-			dbIp = SysConfig.getSystemConfig("db.default.ip");
+			dbIp = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbIp();
 		}
 		return dbIp;
 	}
 	public int getDbPort() {
 		if(dbPort < 1){
-			dbPort = Integer.valueOf(SysConfig.getSystemConfig("db.default.port"));
+			dbPort = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbPort();
 		}
 		return dbPort;
 	}
