@@ -85,19 +85,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
-	 * 处理本系统和本数据库的关系
-	 */
-	private void processPorjDatabaseRelation() {
-		// 添加本系统和本数据库的映射关系
-		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
-				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
-				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
-		
-		// 并设置当前操作的项目
-		CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());
-	}
-
-	/**
 	 * 获取要初始化的表集合
 	 * @return
 	 */
@@ -220,9 +207,14 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 				HibernateUtil.saveObject(column, "初始化插入内置表的列");
 			}
 			
-			//创建对应的hbm文件，并保存
+			// 创建对应的hbm文件，并保存
 			hbm = new ComHibernateHbm();
-//			hbm.setTableId(tableId);
+			hbm.setRefTableId(tableId);
+			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
+			hbm.setHbmResourceName(table.getResourceName());
+			hbm.setIsDataLinkTableHbm(table.getIsDatalinkTable());
+			hbm.setIsBuiltin(1);
+			
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
 			HibernateUtil.saveObject(hbm, "初始化插入内置hbm");
 		}
@@ -260,6 +252,19 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 				CloseUtil.closeIO(bw);// 关闭了bw的话，fw也会被关闭，因为bw引用了bw，所以这里只要关闭bw即可，如果再强行关闭fw，会报错，提示流被关闭
 			}
 		}
+	}
+	
+	/**
+	 * 处理本系统和本数据库的关系
+	 */
+	private void processPorjDatabaseRelation() {
+		// 添加本系统和本数据库的映射关系
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
+				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
+				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
+		
+		// 并设置当前操作的项目，已获得对应的sessionFactory
+		CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());
 	}
 	
 	//---------------------------------------------------------------------------------------------------
@@ -349,18 +354,23 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 主要是hbm内容
 	 */
 	public void loadSysBasicDatasBySysStart() {
-		// 先加载CfgHibernateHbm hbm映射文件，方便下面直接使用
-		loadCfgHibernateHbm();
+		processPorjDatabaseRelation();// 处理本系统和本数据库的关系
+		
+		// 先加载当前系统的ComHibernateHbm hbm映射文件，方便下面直接使用，通过hql加载全部的hbm文件
+		loadSysComHibernateHbm();
+		
+		
 		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryBySql("select count(1) from CFG_HIBERNATE_HBM", null)+"");
 		if(count == 0){
 			return;
 		}
 		
+		// 作为运行系统，还要考虑，加载数据库信息，创建动态的数据源和sessionFacoty，将各个库的hbm，加到对应的sessionFactory中去
+		
 		int loopCount = count%100;
 		if(loopCount == 0){
 			loopCount = 1;
 		}
-		
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
@@ -378,10 +388,9 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 
 	/**
-	 * 先加载CfgHibernateHbm hbm映射文件，方便下面直接使用
+	 * 先加载当前系统的ComHibernateHbm hbm映射文件，方便下面直接使用，通过hql加载全部的hbm文件
 	 */
-	private void loadCfgHibernateHbm() {
-		
+	private void loadSysComHibernateHbm() {
 		
 	}
 //	

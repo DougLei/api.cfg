@@ -22,6 +22,11 @@ public class ComDataLinks implements Serializable, ITable {
 		table.setResourceName("ComDataLinks");
 		table.setName("[通用的]数据关联关系资源对象表");
 		table.setComments("[通用的]数据关联关系资源对象表");
+		table.setIsDatalinkTable(1);
+		table.setIsBuiltin(1);
+		table.setReqResourceMethod(ISysResource.NONE);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(6);
 		
@@ -66,10 +71,6 @@ public class ComDataLinks implements Serializable, ITable {
 		columns.add(rightResourceNameColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setReqResourceMethod(ISysResource.NONE);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 
