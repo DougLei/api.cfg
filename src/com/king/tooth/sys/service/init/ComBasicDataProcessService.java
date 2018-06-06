@@ -6,18 +6,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.SysDatabaseInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgCustomer;
-import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComDatabaseCfgTabledataLinks;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.entity.common.ComModuleOperation;
+import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
@@ -89,18 +88,16 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * @return
 	 */
 	private List<CfgTabledata> getInitTables(){
-		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(19);
+		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(17);
 		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
-		tables.add(new CfgHibernateHbm().toCreateTable(dbType));
+		tables.add(new ComHibernateHbm().toCreateTable(dbType));
 		tables.add(new CfgColumndata().toCreateTable(dbType));
-		tables.add(new CfgCustomer().toCreateTable(dbType));
 		tables.add(new CfgTabledata().toCreateTable(dbType));
 		tables.add(new ComDatabase().toCreateTable(dbType));
 		tables.add(new ComDataDictionary().toCreateTable(dbType));
 		tables.add(new ComDataLinks().toCreateTable(dbType));
-		tables.add(new ComModuleOperation().toCreateTable(dbType));
 		tables.add(new ComOperLog().toCreateTable(dbType));
 		tables.add(new ComProject().toCreateTable(dbType));
 		tables.add(new ComProjectModule().toCreateTable(dbType));
@@ -200,7 +197,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		
 		String tableId;
 		List<CfgColumndata> columns = null;
-		CfgHibernateHbm hbm;
+		ComHibernateHbm hbm;
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (CfgTabledata table : tables) {
 			// 插入表和列信息
@@ -212,8 +209,8 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			}
 			
 			//创建对应的hbm文件，并保存
-			hbm = new CfgHibernateHbm();
-			hbm.setTableId(tableId);
+			hbm = new ComHibernateHbm();
+//			hbm.setTableId(tableId);
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
 			HibernateUtil.saveObject(hbm, "初始化插入内置hbm");
 		}
@@ -355,7 +352,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from CfgHibernateHbm", null);
+			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from ComHibernateHbm", null);
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");

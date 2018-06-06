@@ -161,7 +161,7 @@ public class ComSysResource extends BasicEntity implements ITable, IEntity{
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 

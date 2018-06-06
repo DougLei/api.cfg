@@ -402,7 +402,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(TableConstants.IS_CFG_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 

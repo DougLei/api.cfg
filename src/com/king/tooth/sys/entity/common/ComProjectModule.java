@@ -55,10 +55,6 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	private int isEnabled;
 	
 	//-----------------------------------------------
-	/**
-	 * 包含的操作对象集合
-	 */
-	private List<ComModuleOperation> moduleOperations;
 	
 	public ComProjectModule() {
 		this.isEnabled = 1;
@@ -66,12 +62,6 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	
 	public String getParentId() {
 		return parentId;
-	}
-	public List<ComModuleOperation> getModuleOperations() {
-		return moduleOperations;
-	}
-	public void setModuleOperations(List<ComModuleOperation> moduleOperations) {
-		this.moduleOperations = moduleOperations;
 	}
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
@@ -209,7 +199,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
 		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 	public String toDropTable() {

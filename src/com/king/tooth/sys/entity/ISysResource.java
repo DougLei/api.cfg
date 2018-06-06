@@ -11,21 +11,25 @@ public interface ISysResource {
 	 */
 	public static final int TABLE = 1;
 	/**
-	 * 2：sql脚本资源类型
+	 * 2：表映射资源类型
 	 */
-	public static final int SQLSCRIPT = 2;
+	public static final int TABLE_HBM = 2;
 	/**
-	 * 3：代码资源类型
+	 * 3：sql脚本资源类型
 	 */
-	public static final int CODE = 3;
+	public static final int SQLSCRIPT = 3;
 	/**
-	 * 4：数据库资源类型
+	 * 4：代码资源类型
 	 */
-	public static final int DATABASE = 4;
+	public static final int CODE = 4;
 	/**
-	 * 5：项目资源类型
+	 * 5：数据库资源类型
 	 */
-	public static final int PROJECT = 5;
+	public static final int DATABASE = 5;
+	/**
+	 * 6：项目资源类型
+	 */
+	public static final int PROJECT = 6;
 	
 	/**
 	 * GET

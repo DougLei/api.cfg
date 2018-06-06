@@ -198,9 +198,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	public void setDbDisplayName(String dbDisplayName) {
 		this.dbDisplayName = dbDisplayName;
 	}
-	public void setReqResourceMethod(String reqResourceMethod) {
-		this.reqResourceMethod = reqResourceMethod;
-	}
 	public void setDbInstanceName(String dbInstanceName) {
 		// 如果数据库类型是oracle数据库
 		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(getDbType())){
@@ -237,6 +234,31 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	public void setIsDeploymentRun(int isDeploymentRun) {
 		this.isDeploymentRun = isDeploymentRun;
 	}
+	public int getIsBuiltin() {
+		return isBuiltin;
+	}
+	public void setIsBuiltin(int isBuiltin) {
+		this.isBuiltin = isBuiltin;
+	}
+	public int getPlatformType() {
+		return platformType;
+	}
+	public void setPlatformType(int platformType) {
+		this.platformType = platformType;
+	}
+	public int getIsCreatedResource() {
+		return isCreatedResource;
+	}
+	public void setIsCreatedResource(int isCreatedResource) {
+		this.isCreatedResource = isCreatedResource;
+	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
+	public String getReqResourceMethod() {
+		return super.getReqResourceMethod();
+	}
+	
 	
 	/**
 	 * 获取数据库的连接url
@@ -350,7 +372,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
 		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 
@@ -362,16 +384,10 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		return DATABASE;
 	}
 	public String getResourceName() {
-		return getDbDisplayName();
+		return getDbInstanceName();
 	}
 	public String getResourceId() {
 		return getId();
-	}
-	public String getReqResourceMethod() {
-		if(reqResourceMethod == null){
-			return ALL;
-		}
-		return reqResourceMethod;
 	}
 	
 	public String getEntityName() {
@@ -379,6 +395,8 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("dbPort", dbPort+"");
+		json.put("isDeploymentRun", isDeploymentRun+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

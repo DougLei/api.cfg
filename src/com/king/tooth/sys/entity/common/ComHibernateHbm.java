@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.cfg;
+package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,21 +8,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.TableConstants;
-import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.CfgColumndata;
+import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [配置系统]hibernate的hbm内容
+ * [通用的]hibernate的hbm内容
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
-	/**
-	 * 关联的表主键
-	 */
-	private String tableId;
+public class ComHibernateHbm extends AbstractSysResource implements ITable, IEntity{
 	/**
 	 * hbm内容
 	 */
@@ -30,20 +28,11 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 
 	//-------------------------------------------------------------------------
 	
-	public String getTableId() {
-		return tableId;
-	}
-	public void setTableId(String tableId) {
-		this.tableId = tableId;
-	}
 	public String getHbmContent() {
 		return hbmContent;
 	}
 	public void setHbmContent(String hbmContent) {
 		this.hbmContent = hbmContent;
-	}
-	public String toDropTable() {
-		return "CFG_HIBERNATE_HBM";
 	}
 	public String getId() {
 		return id;
@@ -75,22 +64,44 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
+	public int getIsDeploymentRun() {
+		return isDeploymentRun;
+	}
+	public void setIsDeploymentRun(int isDeploymentRun) {
+		this.isDeploymentRun = isDeploymentRun;
+	}
+	public int getIsBuiltin() {
+		return isBuiltin;
+	}
+	public void setIsBuiltin(int isBuiltin) {
+		this.isBuiltin = isBuiltin;
+	}
+	public int getPlatformType() {
+		return platformType;
+	}
+	public void setPlatformType(int platformType) {
+		this.platformType = platformType;
+	}
+	public int getIsCreatedResource() {
+		return isCreatedResource;
+	}
+	public void setIsCreatedResource(int isCreatedResource) {
+		this.isCreatedResource = isCreatedResource;
+	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
+	public String getReqResourceMethod() {
+		return super.getReqResourceMethod();
+	}
 	
-
+	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "CFG_HIBERNATE_HBM");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_HIBERNATE_HBM");
 		table.setName("[配置系统]字段数据信息资源对象表");
 		table.setComments("[配置系统]字段数据信息资源对象表");
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(7);
-		
-		CfgColumndata tableIdColumn = new CfgColumndata("table_id");
-		tableIdColumn.setName("关联的表主键");
-		tableIdColumn.setComments("关联的表主键");
-		tableIdColumn.setColumnType(DataTypeConstants.STRING);
-		tableIdColumn.setLength(32);
-		tableIdColumn.setOrderCode(1);
-		columns.add(tableIdColumn);
 		
 		CfgColumndata hbmContentColumn = new CfgColumndata("hbm_content");
 		hbmContentColumn.setName("显示的汉字名称");
@@ -102,12 +113,16 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 		table.setColumns(columns);
 		table.setIsBuiltin(1);
 		table.setPlatformType(TableConstants.IS_CFG_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 	
+	public String toDropTable() {
+		return "COM_HIBERNATE_HBM";
+	}
+	
 	public String getEntityName() {
-		return "CfgHibernateHbm";
+		return "ComHibernateHbm";
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
@@ -115,5 +130,15 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}
 		return json;
+	}
+	
+	public int getResourceType() {
+		return TABLE_HBM;
+	}
+	public String getResourceName() {
+		return null;
+	}
+	public String getResourceId() {
+		return getId();
 	}
 }

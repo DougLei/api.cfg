@@ -89,15 +89,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * 备注
 	 */
 	private String comments;
-	/**
-	 * 是否内置
-	 */
-	private int isBuiltin;
-	/**
-	 * 是否创建内置资源
-	 * <p>只有isBuiltin=1的时候，这个值才有效</p>
-	 */
-	private int isCreateBuiltinResource;
 	
 	//--------------------------------------------------------
 	/**
@@ -279,24 +270,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public void setFinalSqlScript(FinalSqlScriptStatement finalSqlScript) {
 		this.finalSqlScript = finalSqlScript;
 	}
-	public int getIsDeploymentRun() {
-		return isDeploymentRun;
-	}
-	public void setIsDeploymentRun(int isDeploymentRun) {
-		this.isDeploymentRun = isDeploymentRun;
-	}
-	public int getIsBuiltin() {
-		return isBuiltin;
-	}
-	public void setIsBuiltin(int isBuiltin) {
-		this.isBuiltin = isBuiltin;
-	}
-	public int getIsCreateBuiltinResource() {
-		return isCreateBuiltinResource;
-	}
-	public void setIsCreateBuiltinResource(int isCreateBuiltinResource) {
-		this.isCreateBuiltinResource = isCreateBuiltinResource;
-	}
 	public void setReqResourceMethod() {
 		if(SqlStatementType.SELECT.equals(sqlScriptType)){
 			this.reqResourceMethod = GET;
@@ -311,6 +284,33 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		}else{
 			this.reqResourceMethod = NONE;
 		}
+	}
+	public int getIsDeploymentRun() {
+		return isDeploymentRun;
+	}
+	public void setIsDeploymentRun(int isDeploymentRun) {
+		this.isDeploymentRun = isDeploymentRun;
+	}
+	public int getIsBuiltin() {
+		return isBuiltin;
+	}
+	public void setIsBuiltin(int isBuiltin) {
+		this.isBuiltin = isBuiltin;
+	}
+	public int getPlatformType() {
+		return platformType;
+	}
+	public void setPlatformType(int platformType) {
+		this.platformType = platformType;
+	}
+	public int getIsCreatedResource() {
+		return isCreatedResource;
+	}
+	public void setIsCreatedResource(int isCreatedResource) {
+		this.isCreatedResource = isCreatedResource;
+	}
+	public String getReqResourceMethod() {
+		return super.getReqResourceMethod();
 	}
 	
 	
@@ -490,7 +490,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(TableConstants.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 
@@ -507,12 +507,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public String getResourceId() {
 		return getId();
 	}
-	public String getReqResourceMethod() {
-		if(reqResourceMethod == null){
-			return ALL;
-		}
-		return reqResourceMethod;
-	}
 	
 	public String getEntityName() {
 		return "ComSqlScript";
@@ -520,7 +514,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreateBuiltinResource", isCreateBuiltinResource+"");
 		json.put("isDeploymentRun", isDeploymentRun+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);

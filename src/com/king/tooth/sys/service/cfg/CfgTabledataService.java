@@ -10,8 +10,8 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -92,7 +92,7 @@ public class CfgTabledataService extends AbstractResourceService{
 	public void createTableModel(String[] tableIdArr) {
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		CfgTabledata table = null;
-		CfgHibernateHbm hbm = null;
+		ComHibernateHbm hbm = null;
 		List<CfgTabledata> tabledatas = new ArrayList<CfgTabledata>(tableIdArr.length);
 		List<String> hbmContents = new ArrayList<String>(tableIdArr.length);
 		for (String tableId : tableIdArr) {
@@ -102,14 +102,14 @@ public class CfgTabledataService extends AbstractResourceService{
 			}
 			tabledatas.add(table);
 			
-			hbm = new CfgHibernateHbm();
-			hbm.setTableId(table.getId());
+			hbm = new ComHibernateHbm();
+//			hbm.setTableId(table.getId());
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
 			HibernateUtil.saveObject(hbm, null);
 			hbmContents.add(hbm.getHbmContent());
 			
 			table.clear();
-			table.setIsCreateHbm(1);
+			table.setIsCreatedResource(1);
 			HibernateUtil.updateObject(table, null);
 			
 			comSysResourceService.insertSysResource(table);
@@ -148,7 +148,7 @@ public class CfgTabledataService extends AbstractResourceService{
 		in.setLength(in.length()-1);
 		in.append(")");
 		
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete CfgHibernateHbm where tableId " + in, tableIdArr);
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where tableId " + in, tableIdArr);
 		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id " + in, tableIdArr);
 		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update CfgTabledata set isCreateHbm=0 where id " + in, tableIdArr);
 		HibernateUtil.removeConfig(entityNames);

@@ -26,7 +26,7 @@ public class ComSqlScriptService extends AbstractResourceService {
 			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptCaption(), sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
 				sql.setIsBuiltin(1);
-				sql.setIsCreateBuiltinResource(1);
+				sql.setIsCreatedResource(1);
 			}
 			sql.setComments(sqlScript.getComments());
 			HibernateUtil.saveObject(sql, null);
@@ -53,7 +53,7 @@ public class ComSqlScriptService extends AbstractResourceService {
 			sql.setCreateTime(sqlScript.getCreateTime());
 			sql.setCreateUserId(sqlScript.getCreateUserId());
 			sql.setComments(sqlScript.getComments());
-			sql.setIsCreateBuiltinResource(sqlScript.getIsCreateBuiltinResource());
+//			sql.setIsCreateBuiltinResource(sqlScript.getIsCreateBuiltinResource());
 			sql.setIsDeploymentRun(sqlScript.getIsDeploymentRun());
 			HibernateUtil.updateObject(sql, null);
 		} catch (Exception e) {

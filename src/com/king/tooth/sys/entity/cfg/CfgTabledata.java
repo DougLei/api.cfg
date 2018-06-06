@@ -85,23 +85,6 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	 * 是否是关系表，默认是0
 	 */
 	private int isDatalinkTable;
-	/**
-	 * 是否内置
-	 * <p>如果不是内置，则需要发布出去</>
-	 * <p>如果是内置，且platformType=2或3，则也需要发布出去</>
-	 * <p>如果是内置，且platformType=1，则不需要发布出去</>
-	 */
-	private int isBuiltin;
-	/**
-	 * 所属的平台类型
-	 * <p>1:配置平台、2:运行平台、3:公用</p>
-	 */
-	private int platformType;
-	/**
-	 * 是否创建hbm文件
-	 * <p>只有isBuiltin=1，且platformType=1或3的时候，这个值才有效，因为配置平台需要使用</p>
-	 */
-	private int isCreateHbm;
 	
 	//-----------------------------------------------------------------------
 	/**
@@ -272,24 +255,6 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setIsHavaDatalink(int isHavaDatalink) {
 		this.isHavaDatalink = isHavaDatalink;
 	}
-	public String getSubRefParentColumnName() {
-		return subRefParentColumnName;
-	}
-	public void setSubRefParentColumnName(String subRefParentColumnName) {
-		this.subRefParentColumnName = subRefParentColumnName;
-	}
-	public int getIsCreateHbm() {
-		return isCreateHbm;
-	}
-	public void setIsCreateHbm(int isCreateHbm) {
-		this.isCreateHbm = isCreateHbm;
-	}
-	public void setTableName(String tableName) {
-		if(StrUtils.isEmpty(tableName)){
-			throw new NullPointerException("表名不能为空！");
-		}
-		this.tableName = tableName;
-	}
 	public int getIsDeploymentRun() {
 		return isDeploymentRun;
 	}
@@ -302,15 +267,37 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setIsBuiltin(int isBuiltin) {
 		this.isBuiltin = isBuiltin;
 	}
-	public void setReqResourceMethod(String reqResourceMethod) {
-		this.reqResourceMethod = reqResourceMethod;
-	}
 	public int getPlatformType() {
 		return platformType;
 	}
 	public void setPlatformType(int platformType) {
 		this.platformType = platformType;
 	}
+	public int getIsCreatedResource() {
+		return isCreatedResource;
+	}
+	public void setIsCreatedResource(int isCreatedResource) {
+		this.isCreatedResource = isCreatedResource;
+	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
+	public String getReqResourceMethod() {
+		return super.getReqResourceMethod();
+	}
+	public String getSubRefParentColumnName() {
+		return subRefParentColumnName;
+	}
+	public void setSubRefParentColumnName(String subRefParentColumnName) {
+		this.subRefParentColumnName = subRefParentColumnName;
+	}
+	public void setTableName(String tableName) {
+		if(StrUtils.isEmpty(tableName)){
+			throw new NullPointerException("表名不能为空！");
+		}
+		this.tableName = tableName;
+	}
+	
 	
 	public void clear(){
 		if(columns != null && columns.size()>0){
@@ -449,7 +436,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(TableConstants.IS_CFG_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 
@@ -461,12 +448,6 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	public String getResourceId() {
 		return getId();
-	}
-	public String getReqResourceMethod() {
-		if(reqResourceMethod == null){
-			return ALL;
-		}
-		return reqResourceMethod;
 	}
 	
 	public String getEntityName() {
@@ -480,7 +461,6 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		json.put("isDatalinkTable", isDatalinkTable+"");
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("platformType", platformType+"");
-		json.put("isCreateHbm", isCreateHbm+"");
 		json.put("isDeploymentRun", isDeploymentRun+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);

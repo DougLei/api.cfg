@@ -54,7 +54,7 @@ public class ComDatabaseCfgTabledataLinks implements Serializable, ITable {
 		table.setIsBuiltin(1);
 		table.setReqResourceMethod(ISysResource.NONE);
 		table.setPlatformType(TableConstants.IS_CFG_PLATFORM_TYPE);
-		table.setIsCreateHbm(1);
+		table.setIsCreatedResource(1);
 		return table;
 	}
 
