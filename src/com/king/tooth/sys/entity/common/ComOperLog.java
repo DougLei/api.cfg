@@ -46,7 +46,8 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	 */
 	private String errorMsg;
 	
-
+	// ------------------------------------------------
+	
 	public ComOperLog() {
 	}
 	public void setId(String id) {
@@ -173,6 +174,7 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("operResultIsSuccess", operResultIsSuccess+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

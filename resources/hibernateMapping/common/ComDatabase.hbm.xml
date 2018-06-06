@@ -19,9 +19,9 @@
 		<property name="loginUserName" column="login_user_name" type="string" />
 		<property name="loginPassword" column="login_password" type="string" />
 		<property name="dbIp" column="db_ip" type="string" />
-		<property name="dbPort" column="db_port" type="integer" />
+		<property name="dbPort" column="db_port" type="string" />
 		<property name="cfgMainFileContent" column="cfg_main_file_content" type="string" />
 		<property name="cfgTmplogFileContent" column="cfg_tmplog_file_content" type="string" />
-		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
+		<property name="isDeploymentRun" column="is_deployment_run" type="string" />
 	</class>
 </hibernate-mapping>

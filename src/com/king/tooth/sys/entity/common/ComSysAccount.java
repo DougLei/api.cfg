@@ -287,6 +287,8 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("validDate", validDate);
+		json.put("accountType", accountType+"");
+		json.put("accountStatus", accountStatus+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

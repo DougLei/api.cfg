@@ -23,8 +23,8 @@
 		<property name="procedureName" column="procedure_name" type="string" />
 		<property name="procedureParameters" column="procedure_parameters" type="string" />
 		<property name="comments" column="comments" type="string" />
-		<property name="isDeploymentRun" column="is_deployment_run" type="integer" />
-		<property name="isBuiltin" column="is_builtin" type="integer" />
-		<property name="isCreateBuiltinResource" column="is_create_builtin_resource" type="integer" />
+		<property name="isDeploymentRun" column="is_deployment_run" type="string" />
+		<property name="isBuiltin" column="is_builtin" type="string" />
+		<property name="isCreateBuiltinResource" column="is_create_builtin_resource" type="string" />
 	</class>
 </hibernate-mapping>

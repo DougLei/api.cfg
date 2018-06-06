@@ -516,6 +516,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("isBuiltin", isBuiltin+"");
+		json.put("isCreateBuiltinResource", isCreateBuiltinResource+"");
+		json.put("isDeploymentRun", isDeploymentRun+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

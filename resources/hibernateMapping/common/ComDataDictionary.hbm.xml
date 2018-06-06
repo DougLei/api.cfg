@@ -17,7 +17,7 @@
 		<property name="parentCodeId" column="parent_code_id" type="string" />
 		<property name="codeCaption" column="code_caption" type="string" />
 		<property name="codeValue" column="code_value" type="string" />
-		<property name="orderCode" column="order_code" type="integer" />
+		<property name="orderCode" column="order_code" type="string" />
 		<property name="comments" column="comments" type="string" />
 	</class>
 </hibernate-mapping>

@@ -19,7 +19,7 @@
 		<property name="loginIp" column="login_ip" type="string" />
 		<property name="loginMac" column="login_mac" type="string" />
 		<property name="loginDate" column="login_date" type="timestamp" />
-		<property name="tryLoginTimes" column="try_login_times" type="integer" />
+		<property name="tryLoginTimes" column="try_login_times" type="string" />
 		<property name="lastOperDate" column="last_oper_date" type="timestamp" />
 	</class>
 </hibernate-mapping>

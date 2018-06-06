@@ -64,12 +64,14 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 初始化配置库信息
 	 */
 	private void initCfgDatabaseInfo() {
-		List<CfgTabledata> cfgTables = createTables();
 		try {
+			createTables();
+			
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			
-			insertResources(cfgTables);// 将这些表资源插入到资源表
+			insertAllTables();// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
+			insertTableToResources();// 将这些表资源插入到资源表
 			insertCfgDatabaseOfBasicDatas();// 插入配置库的基础数据
 			
 			HibernateUtil.commitTransaction();
@@ -77,16 +79,16 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			HibernateUtil.rollbackTransaction();
 			throw e;
 		}finally{
-			cfgTables.clear();// 清空表集合
 			HibernateUtil.closeCurrentThreadSession();
 		}
 	}
 	
+	
 	/**
-	 * 创建表
-	 * @return 
+	 * 获取要初始化的表集合
+	 * @return
 	 */
-	private List<CfgTabledata> createTables(){
+	private List<CfgTabledata> getInitTables(){
 		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(19);
 		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
 		
@@ -111,6 +113,26 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		tables.add(new ComDatabaseCfgTabledataLinks().toCreateTable(dbType));
 		tables.add(new ComDatabaseComSqlScriptLinks().toCreateTable(dbType));
 		
+		return tables;
+	}
+	
+	/**
+	 * 清除表信息
+	 * @param tables
+	 */
+	private void clearTables(List<CfgTabledata> tables){
+		for (CfgTabledata table : tables) {
+			table.clear();
+		}
+		tables.clear();
+	}
+	
+	/**
+	 * 创建表
+	 * @return 
+	 */
+	private void createTables(){
+		List<CfgTabledata> tables = getInitTables();
 		DBTableHandler dbHandler = new DBTableHandler(SysDatabaseInstanceConstants.CFG_DATABASE);
 		try {
 			dbHandler.dropTable(tables);
@@ -119,8 +141,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		}
 		// 开始创建表
 		dbHandler.createTable(tables);
-		
-		return tables;
+		clearTables(tables);
 	}
 	
 	/**
@@ -141,6 +162,9 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		adminUser.setNikeName("administrator");
 		adminUser.setRealName("配置平台管理员");
 		HibernateUtil.saveObject(adminUser, null);
+
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典数据
@@ -148,14 +172,36 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
-	 * 将表资源添加到资源表中
-	 * @param tables
+	 * 将表信息插入的cfgTabledata表中
+	 * 同时把列的信息插入到cfgColumndata表中
 	 */
-	private void insertResources(List<CfgTabledata> tables) {
+	private void insertAllTables() {
+		List<CfgTabledata> tables = getInitTables();
+		
+		String tableId;
+		List<CfgColumndata> columns = null;
+		for (CfgTabledata table : tables) {
+			tableId = HibernateUtil.saveObject(table, "初始化插入内置表");
+			columns = table.getColumns();
+			for (CfgColumndata column : columns) {
+				column.setTableId(tableId);
+				HibernateUtil.saveObject(column, "初始化插入内置表的列");
+			}
+		}
+		clearTables(tables);
+	}
+	
+	/**
+	 * 将表资源添加到资源表中
+	 */
+	private void insertTableToResources() {
+		List<CfgTabledata> tables = getInitTables();
+		
 		ComSysResourceService comSysResourceService = new ComSysResourceService();
 		for (CfgTabledata table : tables) {
 			comSysResourceService.insertSysResource(table);
 		}
+		clearTables(tables);
 	}
 	
 	/**

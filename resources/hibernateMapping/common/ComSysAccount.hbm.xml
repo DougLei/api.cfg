@@ -18,8 +18,8 @@
 		<property name="loginPwdKey" column="login_pwd_key" type="string" />
 		<property name="tel" column="tel" type="string" />
 		<property name="emails" column="emails" type="string" />
-		<property name="accountType" column="account_type" type="integer" update="false" />
-		<property name="accountStatus" column="account_status" type="integer" />
+		<property name="accountType" column="account_type" type="string" update="false" />
+		<property name="accountStatus" column="account_status" type="string" />
 		<property name="accountStatusDes" column="account_status_des" type="string" />
 		<property name="validDate" column="valid_date" type="timestamp" />
 	</class>

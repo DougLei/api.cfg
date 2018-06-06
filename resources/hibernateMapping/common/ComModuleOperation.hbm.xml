@@ -18,8 +18,8 @@
 		<property name="code" column="code" type="string" />
 		<property name="url" column="url" type="string" />
 		<property name="icon" column="icon" type="string" />
-		<property name="isHide" column="is_hide" type="integer" />
-		<property name="orderCode" column="order_code" type="integer" />
-		<property name="isEnabled" column="is_enabled" type="integer" />
+		<property name="isHide" column="is_hide" type="string" />
+		<property name="orderCode" column="order_code" type="string" />
+		<property name="isEnabled" column="is_enabled" type="string" />
 	</class>
 </hibernate-mapping>

@@ -193,6 +193,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("isDeploymentRun", isDeploymentRun+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

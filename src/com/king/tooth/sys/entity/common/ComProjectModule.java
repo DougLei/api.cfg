@@ -218,6 +218,8 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("orderCode", orderCode+"");
+		json.put("isEnabled", isEnabled+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

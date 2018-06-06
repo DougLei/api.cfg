@@ -15,8 +15,8 @@
 		
 		<property name="refResourceId" column="ref_resource_id" type="string" />
 		<property name="resourceName" column="resource_name" type="string" />
-		<property name="resourceType" column="resource_type" type="integer" />
+		<property name="resourceType" column="resource_type" type="string" />
 		<property name="reqResourceMethod" column="req_resource_method" type="string" />
-		<property name="isEnabled" column="is_enabled" type="integer" />
+		<property name="isEnabled" column="is_enabled" type="string" />
 	</class>
 </hibernate-mapping>

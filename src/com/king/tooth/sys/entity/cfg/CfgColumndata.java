@@ -76,7 +76,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 数据字典编码
 	 */
-	private int dataDictionaryCode;
+	private String dataDictionaryCode;
 	/**
 	 * 排序
 	 */
@@ -145,10 +145,10 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	public void setIsDataDictionary(int isDataDictionary) {
 		this.isDataDictionary = isDataDictionary;
 	}
-	public int getDataDictionaryCode() {
+	public String getDataDictionaryCode() {
 		return dataDictionaryCode;
 	}
-	public void setDataDictionaryCode(int dataDictionaryCode) {
+	public void setDataDictionaryCode(String dataDictionaryCode) {
 		this.dataDictionaryCode = dataDictionaryCode;
 	}
 	public String getCreateUserId() {
@@ -385,7 +385,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);
-		commentsColumn.setLength(200);
+		commentsColumn.setLength(360);
 		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
 		
@@ -412,6 +412,15 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("length", length+"");
+		json.put("precision", precision+"");
+		json.put("isKey", isKey+"");
+		json.put("isUnique", isUnique+"");
+		json.put("isNullabled", isNullabled+"");
+		json.put("isRequire", isRequire+"");
+		json.put("isDataDictionary", isDataDictionary+"");
+		json.put("orderCode", orderCode+"");
+		json.put("isEnabled", isEnabled+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

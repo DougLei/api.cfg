@@ -388,6 +388,10 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("employedDate", employedDate);
+		json.put("age", age+"");
+		json.put("sex", sex+"");
+		json.put("userStatus", userStatus+"");
+		json.put("secretLevel", secretLevel+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

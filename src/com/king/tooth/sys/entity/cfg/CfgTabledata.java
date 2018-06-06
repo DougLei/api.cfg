@@ -450,6 +450,13 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put("tableType", tableType+"");
+		json.put("isHavaDatalink", isHavaDatalink+"");
+		json.put("version", version+"");
+		json.put("isDatalinkTable", isDatalinkTable+"");
+		json.put("isBuiltin", isBuiltin+"");
+		json.put("isCreateHbm", isCreateHbm+"");
+		json.put("isDeploymentRun", isDeploymentRun+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}

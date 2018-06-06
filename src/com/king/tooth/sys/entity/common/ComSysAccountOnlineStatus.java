@@ -263,6 +263,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("loginDate", loginDate);
 		json.put("lastOperDate", lastOperDate);
+		json.put("tryLoginTimes", tryLoginTimes+"");
 		if(this.createTime != null){
 			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		}
