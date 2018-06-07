@@ -88,6 +88,10 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT_MODULE_BODY");
 		table.setName("[通用的]项目模块内容资源对象");
 		table.setComments("[通用的]项目模块内容资源对象：理解为每个功能模块的json串配置");
+		table.setIsBuiltin(1);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(7);
 		
@@ -107,9 +111,6 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		columns.add(moduleBodyColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 	public String toDropTable() {

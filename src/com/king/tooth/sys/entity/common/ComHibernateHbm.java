@@ -150,6 +150,10 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		CfgTabledata table = new CfgTabledata(dbType, "COM_HIBERNATE_HBM");
 		table.setName("[通用的]hibernate的hbm内容对象表");
 		table.setComments("[通用的]hibernate的hbm内容对象表");
+		table.setIsBuiltin(1);
+		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(15);
 		
@@ -233,9 +237,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		columns.add(isCreatedResourceColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 	
@@ -260,7 +261,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	}
 	
 	public int getResourceType() {
-		return TABLE_HBM;
+		return TABLE;
 	}
 	public String getResourceName() {
 		return getHbmResourceName();

@@ -1,11 +1,21 @@
 package com.king.tooth.sys.entity;
 
+import java.util.Date;
+
 /**
  * 系统资源抽象类
  * @author DougLei
  */
 @SuppressWarnings("serial")
 public abstract class AbstractSysResource extends BasicEntity implements ISysResource{
+	/**
+	 * 是否有效
+	 */
+	protected int isEnabled;
+	/**
+	 * 有效期
+	 */
+	protected Date validDate;
 	/**
 	 * 是否需要发布
 	 */

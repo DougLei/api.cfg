@@ -190,6 +190,10 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT_ONLINE_STATUS");
 		table.setName("[通用的]系统账户在线状态资源对象表");
 		table.setComments("[通用的]系统账户在线状态资源对象表");
+		table.setIsBuiltin(1);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(14);
 		
@@ -256,9 +260,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		columns.add(lastOperDateColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 

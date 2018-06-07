@@ -113,7 +113,8 @@ public class HibernateUtil {
 	public static void closeCurrentThreadSession() {
 		getCurrentThreadSession().flush();
 		getCurrentThreadSession().close();
-		Log4jUtil.debug("[HibernateUtil.closeSessionFromCurrentThread]关闭当前线程的session，并将session从CurrentThreadHbSessionContext中移除");
+		CurrentThreadContext.setCurrentSession(null);
+		Log4jUtil.debug("[HibernateUtil.closeSessionFromCurrentThread]关闭当前线程的session，并将session从CurrentThreadContext中移除");
 	}
 	
 	/**

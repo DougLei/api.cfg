@@ -7,14 +7,6 @@ import com.king.tooth.sys.entity.cfg.CfgTabledata;
 
 /**
  * 动态的基础数据字段的工具类
- * <pre>
- * 	 目前，数据包括的基础字段有：
- * 		id
- * 		create_time
- * 		last_update_time
- * 		create_user_id
- * 		last_updated_user_id
- * </pre>
  * @author DougLei
  */
 public class DynamicBasicDataColumnUtil {

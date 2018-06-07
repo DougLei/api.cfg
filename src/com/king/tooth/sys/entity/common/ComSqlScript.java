@@ -385,6 +385,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		CfgTabledata table = new CfgTabledata(dbType, "COM_SQL_SCRIPT");
 		table.setName("[通用的]sql脚本资源对象表");
 		table.setComments("[通用的]sql脚本资源对象表");
+		table.setReqResourceMethod(ISysResource.GET);
+		table.setIsBuiltin(1);
+		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
 		
@@ -508,10 +513,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		columns.add(isCreatedResourceColumn);
 		
 		table.setColumns(columns);
-		table.setReqResourceMethod(ISysResource.GET);
-		table.setIsBuiltin(1);
-		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 

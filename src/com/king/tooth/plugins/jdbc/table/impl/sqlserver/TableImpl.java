@@ -14,30 +14,22 @@ public class TableImpl extends AbstractTableHandler{
 
 	protected void analysisColumnType(CfgColumndata column) {
 		String columnType = column.getColumnType();
-		switch(columnType){
-			case DataTypeConstants.STRING:
-				createTableSql.append("varchar");
-				break;
-			case DataTypeConstants.BOOLEAN:
-				createTableSql.append("char");
-				break;
-			case DataTypeConstants.INTEGER:
-				createTableSql.append("int");
-				break;
-			case DataTypeConstants.DOUBLE:
-				createTableSql.append("decimal");
-				break;
-			case DataTypeConstants.DATE:
-				createTableSql.append("datetime");
-				break;
-			case DataTypeConstants.CLOB:
-				createTableSql.append("text");
-				break;
-			case DataTypeConstants.BLOB:
-				createTableSql.append("image");
-				break;
-			default:
-				throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成sqlserver对应的数据类型");
+		if(DataTypeConstants.STRING.equals(columnType)){
+			createTableSql.append("varchar");
+		}else if(DataTypeConstants.BOOLEAN.equals(columnType)){
+			createTableSql.append("char");
+		}else if(DataTypeConstants.INTEGER.equals(columnType)){
+			createTableSql.append("int");
+		}else if(DataTypeConstants.DOUBLE.equals(columnType)){
+			createTableSql.append("decimal");
+		}else if(DataTypeConstants.DATE.equals(columnType)){
+			createTableSql.append("datetime");
+		}else if(DataTypeConstants.CLOB.equals(columnType)){
+			createTableSql.append("text");
+		}else if(DataTypeConstants.BLOB.equals(columnType)){
+			createTableSql.append("image");
+		}else{
+			throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成sqlserver对应的数据类型");
 		}
 	}
 

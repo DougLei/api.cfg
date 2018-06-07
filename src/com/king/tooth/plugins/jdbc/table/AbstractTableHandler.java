@@ -75,16 +75,16 @@ public abstract class AbstractTableHandler {
 	 * @param column
 	 */
 	private void analysisColumnProp(CfgColumndata column) {
-		if("1".equals(column.getIsKey())){
+		if(1 == column.getIsKey()){
 			createTableSql.append(" primary key ");
 		}
 		if(StrUtils.notEmpty(column.getDefaultValue())){
 			createTableSql.append(" default(").append(column.getDefaultValue()).append(") ");
 		}
-		if("0".equals(column.getIsNullabled())){
+		if(0 == column.getIsNullabled()){
 			createTableSql.append(" not null ");
 		}
-		if("1".equals(column.getIsUnique())){
+		if(1 == column.getIsUnique()){
 			createTableSql.append(" unique ");
 		}
 	}

@@ -263,6 +263,18 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
+	public int getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(int isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+	public Date getValidDate() {
+		return validDate;
+	}
+	public void setValidDate(Date validDate) {
+		this.validDate = validDate;
+	}
 	
 	/**
 	 * 获取数据库的连接url
@@ -290,6 +302,10 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		CfgTabledata table = new CfgTabledata(dbType, "COM_DATABASE");
 		table.setName("[通用的]数据库数据信息资源对象表");
 		table.setComments("[通用的]数据库数据信息资源对象表");
+		table.setIsBuiltin(1);
+		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
 		
@@ -406,9 +422,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		columns.add(isCreatedResourceColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 

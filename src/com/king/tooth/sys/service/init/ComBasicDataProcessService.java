@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,7 @@ import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -64,13 +68,16 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	private void initDatabaseInfo() {
 		try {
-			processPorjDatabaseRelation();// 处理本系统和本数据库的关系
+			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
+			// 设置当前操作的项目，获得对应的sessionFactory
+			CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());
+			
 			createTables();
 			
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			
-			insertHbmContents();// 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
+			insertHbmContentsToSessionFactory();// 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
 			insertAllTables();// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；
 			insertTableToResources();// 将这些表资源插入到资源表
 			insertDatabaseOfBasicDatas();// 插入配置库的基础数据
@@ -145,9 +152,8 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	private void insertDatabaseOfBasicDatas() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 添加公司配置平台管理员和对应的用户【这个是超级管理员】
+		// 添加配置平台管理员和对应的用户【这个是超级管理员】
 		ComSysAccount admin = new ComSysAccount();
-		admin.setAccountType(0);
 		admin.setLoginName("administrator");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
@@ -168,9 +174,9 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	}
 	
 	/**
-	 * 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
+	 * 根据表创建hbm文件，并将其加入到SessionFactory中
 	 */
-	private void insertHbmContents() {
+	private void insertHbmContentsToSessionFactory() {
 		List<CfgTabledata> tables = getInitTables();
 		
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
@@ -213,7 +219,10 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.setHbmResourceName(table.getResourceName());
 			hbm.setIsDataLinkTableHbm(table.getIsDatalinkTable());
+			hbm.setIsNeedDeploy(table.getIsNeedDeploy());
+			hbm.setReqResourceMethod(table.getReqResourceMethod());
 			hbm.setIsBuiltin(1);
+			hbm.setPlatformType(table.getPlatformType());
 			
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
 			HibernateUtil.saveObject(hbm, "初始化插入内置hbm");
@@ -256,15 +265,13 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	
 	/**
 	 * 处理本系统和本数据库的关系
+	 * 并将
 	 */
-	private void processPorjDatabaseRelation() {
+	private void processCurrentSysOfPorjDatabaseRelation() {
 		// 添加本系统和本数据库的映射关系
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
 				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
 				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
-		
-		// 并设置当前操作的项目，已获得对应的sessionFactory
-		CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());
 	}
 	
 	//---------------------------------------------------------------------------------------------------
@@ -289,6 +296,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		insertDataDictionary(null, "cfgtabledata.tabletype", "单表", "1", 1);
 		insertDataDictionary(null, "cfgtabledata.tabletype", "树表", "2", 2);
 		insertDataDictionary(null, "cfgtabledata.tabletype", "主子表", "3", 3);
+		
 		// CfgTabledata.dbType 数据库类型
 		insertDataDictionary(null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
 		insertDataDictionary(null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
@@ -344,7 +352,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		dataDictionary.setCodeCaption(codeCaption);
 		dataDictionary.setCodeValue(codeValue);
 		dataDictionary.setOrderCode(orderCode);
-		return HibernateUtil.saveObject(dataDictionary, "系统初始化添加内置数据字典");
+		return HibernateUtil.saveObject(dataDictionary, "系统初始化内置数据字典");
 	}
 	
 	//------------------------------------------------------------------------------------
@@ -354,45 +362,90 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 主要是hbm内容
 	 */
 	public void loadSysBasicDatasBySysStart() {
-		processPorjDatabaseRelation();// 处理本系统和本数据库的关系
+		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
+		try {
+			// 先加载当前系统的所有hbm映射文件
+			loadHbmContentsByDatabaseId(SysConfig.getSystemConfig("current.sys.database.id"));
+			
+			
+			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的hbm加载进自己的sessionFactory中
+			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase");
+			HibernateUtil.closeCurrentThreadSession();
+			if(databases != null && databases.size()> 0){
+				String projDatabaseRelationQueryHql = "from ComProject where refDatabaseId";
+				for (ComDatabase database : databases) {
+					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
+					loadHbmContentsByDatabaseId(database.getId());// 加载当前数据库中的hbm到sessionFactory中
+					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());// 加载当前数据库和项目的关联关系映射
+				}
+			}
+		} catch (Exception e) {
+			Log4jUtil.debug("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
+			System.exit(0);
+		}
+	}
+	
+	/**
+	 * 加载项目id和数据库id的关联关系
+	 * @param projDatabaseRelationQueryHql
+	 * @param databaseId
+	 */
+	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, String databaseId) {
+	}
+
+	/**
+	 * 加载指定数据库的hbm映射文件
+	 * @param databaseId 指定数据库的id
+	 * @throws SQLException 
+	 * @throws IOException 
+	 */
+	private void loadHbmContentsByDatabaseId(String databaseId) throws SQLException, IOException {
+		CurrentThreadContext.setDatabaseId(databaseId);
+		// 获取当前系统的ComHibernateHbm映射文件对象
+		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+databaseId+"' and hbm_resource_name = 'ComHibernateHbm'";
+		Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
+		Reader reader = clob.getCharacterStream();
+		StringBuilder hbmContent = new StringBuilder();
+		char[] cr = new char[500];
+		while(reader.read(cr) != -1){
+			hbmContent.append(cr);
+			cr = new char[500];
+		}
+		// 将其加载到当前系统的sessionFactory中
+		HibernateUtil.appendNewConfig(hbmContent.toString().trim());
 		
-		// 先加载当前系统的ComHibernateHbm hbm映射文件，方便下面直接使用，通过hql加载全部的hbm文件
-		loadSysComHibernateHbm();
 		
-		
-		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryBySql("select count(1) from CFG_HIBERNATE_HBM", null)+"");
+		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
+		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryBySql("select count(1) from com_hibernate_hbm where hbm_resource_name != 'ComHibernateHbm' and ref_database_id = '"+databaseId+"'", null)+"");
 		if(count == 0){
 			return;
 		}
-		
-		// 作为运行系统，还要考虑，加载数据库信息，创建动态的数据源和sessionFacoty，将各个库的hbm，加到对应的sessionFactory中去
-		
-		int loopCount = count%100;
+		int loopCount = count/100;
 		if(loopCount == 0){
 			loopCount = 1;
+		}else{
+			loopCount++;
 		}
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from ComHibernateHbm", null);
+			hbmContents = HibernateUtil.executeListQueryByHql(null, null, "select hbmContent from ComHibernateHbm", null);
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");
 			}
-			
 			HibernateUtil.appendNewConfig(hcs);
 			hcs.clear();
 			hbmContents.clear();
-			
 		}
+		// 关闭session
+		HibernateUtil.closeCurrentThreadSession();
 	}
-
-	/**
-	 * 先加载当前系统的ComHibernateHbm hbm映射文件，方便下面直接使用，通过hql加载全部的hbm文件
-	 */
-	private void loadSysComHibernateHbm() {
-		
+	
+	public static void main(String[] args) {
+		System.out.println(102/100);
 	}
+	
 //	
 //	public static void main(String[] args) throws Exception {
 //		Class.forName("oracle.jdbc.driver.OracleDriver");

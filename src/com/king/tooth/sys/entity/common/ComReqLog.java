@@ -186,6 +186,10 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		CfgTabledata table = new CfgTabledata(dbType, "COM_REQ_LOG");
 		table.setName("[通用的]请求日志资源对象表");
 		table.setComments("[通用的]请求日志资源对象表");
+		table.setIsBuiltin(1);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(17);
 		
@@ -274,9 +278,6 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		columns.add(reqTokenColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 

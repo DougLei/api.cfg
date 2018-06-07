@@ -125,6 +125,10 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		CfgTabledata table = new CfgTabledata(dbType, "COM_OPER_LOG");
 		table.setName("[通用的]操作日志资源对象表");
 		table.setComments("[通用的]操作日志资源对象表");
+		table.setIsBuiltin(1);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(10);
 		
@@ -168,9 +172,6 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		columns.add(errorMsgColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 

@@ -26,10 +26,6 @@ public interface ISysResource {
 	 * 5：项目资源类型
 	 */
 	public static final int PROJECT = 5;
-	/**
-	 * 6：表映射资源类型
-	 */
-	public static final int TABLE_HBM = 6;
 	
 	/**
 	 * GET

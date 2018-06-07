@@ -125,6 +125,10 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_DICTIONARY");
 		table.setName("[通用的]数据字典资源对象表");
 		table.setComments("[通用的]数据字典资源对象表");
+		table.setIsBuiltin(1);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(12);
 		
@@ -177,9 +181,6 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		columns.add(commentsColumn);
 		
 		table.setColumns(columns);
-		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 

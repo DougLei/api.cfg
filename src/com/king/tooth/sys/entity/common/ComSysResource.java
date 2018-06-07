@@ -119,6 +119,11 @@ public class ComSysResource extends BasicEntity implements ITable, IEntity{
 		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_RESOURCE");
 		table.setName("[通用的]系统资源对象表");
 		table.setComments("[通用的]系统资源对象表");
+		table.setReqResourceMethod(ISysResource.GET);
+		table.setIsBuiltin(1);
+		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(10);
 		
@@ -163,10 +168,6 @@ public class ComSysResource extends BasicEntity implements ITable, IEntity{
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
-		table.setReqResourceMethod(ISysResource.GET);
-		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 

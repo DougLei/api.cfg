@@ -27,6 +27,7 @@ public class ComDataLinks implements Serializable, ITable {
 		table.setReqResourceMethod(ISysResource.NONE);
 		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(6);
 		
