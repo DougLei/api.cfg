@@ -366,12 +366,8 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			
 			if(databases != null && databases.size()> 0){
 				for (ComDatabase database : databases) {
+					database.analysisResourceProp();
 					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
-					
-					System.out.println(DynamicDBUtil.getAllDynamicDataSources().size());
-					System.out.println(DynamicDBUtil.getAllDynamicSessionFactorys().size());
-					
-					
 					loadHbmContentsByDatabaseId(database);// 加载当前数据库中的hbm到sessionFactory中
 				}
 				
