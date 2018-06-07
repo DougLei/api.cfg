@@ -1,4 +1,4 @@
---oracle 配置平台数据库
+--oracle 配置平台数据库   ------------------------------------------------------------------
 create temporary tablespace TMPLOG_SmartOneCfg 
 	tempfile 'D:\db\cfg\TMPLOG_SmartOneCfg.dbf' 
 	size 50m autoextend 
@@ -14,37 +14,21 @@ create user SmartOneCfg identified by "1"
 	temporary tablespace TMPLOG_SmartOneCfg;
 grant connect,resource,dba to SmartOneCfg;
 
---oracle 测试平台数据库
-create temporary tablespace TMPLOG_SmartOneTest 
-	tempfile 'D:\db\test\TMPLOG_SmartOneTest.dbf' 
+--oracle 运行平台数据库   ------------------------------------------------------------------
+create temporary tablespace TMPLOG_SmartOneApp 
+	tempfile 'D:\db\app\TMPLOG_SmartOneApp.dbf' 
 	size 50m autoextend 
 	on next 50m 
 	extent management local;
-create tablespace MAIN_SmartOneTest 
-	logging datafile 'D:\db\test\MAIN_SmartOneTest.dbf' 
+create tablespace MAIN_SmartOneApp 
+	logging datafile 'D:\db\app\MAIN_SmartOneApp.dbf' 
 	size 50m autoextend 
 	on next 100m 
 	extent management local;
-create user SmartOneTest identified by "1"
-	default tablespace MAIN_SmartOneTest 
-	temporary tablespace TMPLOG_SmartOneTest;
-grant connect,resource,dba to SmartOneTest;
-
---oracle 运行平台数据库
-create temporary tablespace TMPLOG_SmartOneRun 
-	tempfile 'D:\db\run\TMPLOG_SmartOneRun.dbf' 
-	size 50m autoextend 
-	on next 50m 
-	extent management local;
-create tablespace MAIN_SmartOneRun 
-	logging datafile 'D:\db\run\MAIN_SmartOneRun.dbf' 
-	size 50m autoextend 
-	on next 100m 
-	extent management local;
-create user SmartOneRun identified by "1"
-	default tablespace MAIN_SmartOneRun 
-	temporary tablespace TMPLOG_SmartOneRun;
-grant connect,resource,dba to SmartOneRun;
+create user SmartOneApp identified by "1"
+	default tablespace MAIN_SmartOneApp 
+	temporary tablespace TMPLOG_SmartOneApp;
+grant connect,resource,dba to SmartOneApp;
 
 /*
  删除数据库
@@ -52,19 +36,15 @@ drop user SmartOneCfg cascade;
 drop tablespace TMPLOG_SmartOneCfg including contents and datafiles;
 drop tablespace MAIN_SmartOneCfg including contents and datafiles;
 
-drop user SmartOneTest cascade;
-drop tablespace TMPLOG_SmartOneTest including contents and datafiles;
-drop tablespace MAIN_SmartOneTest including contents and datafiles;
-
-drop user SmartOneRun cascade;
-drop tablespace TMPLOG_SmartOneRun including contents and datafiles;
-drop tablespace MAIN_SmartOneRun including contents and datafiles;
+drop user SmartOneApp cascade;
+drop tablespace TMPLOG_SmartOneApp including contents and datafiles;
+drop tablespace MAIN_SmartOneApp including contents and datafiles;
 */
 
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
 
---sqlserver 配置平台数据库
+--sqlserver 配置平台数据库   ------------------------------------------------------------------
 create database SmartOneCfg on primary (
 	name='MAIN_SmartOneCfg',
 	filename='D:\db\cfg\MAIN_SmartOneCfg.mdf',
@@ -85,46 +65,25 @@ go
 exec sp_addrolemember 'db_owner', 'u_SmartOneCfg'
 go
 
---sqlserver 测试平台数据库
-create database SmartOneTest on primary (
-	name='MAIN_SmartOneTest',
-	filename='D:\db\test\MAIN_SmartOneTest.mdf',
+--sqlserver 运行平台数据库   ------------------------------------------------------------------
+create database SmartOneApp on primary (
+	name='MAIN_SmartOneApp',
+	filename='D:\db\app\MAIN_SmartOneApp.mdf',
 	size=50mb,
 	filegrowth=100mb
 )log on ( 
-	name='TMPLOG_SmartOneTest',
-	filename='D:\db\test\TMPLOG_SmartOneTest.ldf',
+	name='TMPLOG_SmartOneApp',
+	filename='D:\db\app\TMPLOG_SmartOneApp.ldf',
 	size=50mb,
 	filegrowth=50mb)
 go
-use SmartOneTest
+use SmartOneApp
 go
-create login SmartOneTest with password='1',default_database=SmartOneTest
+create login SmartOneApp with password='1',default_database=SmartOneApp
 go
-create user u_SmartOneTest for login SmartOneTest with default_schema=dbo
+create user u_SmartOneApp for login SmartOneApp with default_schema=dbo
 go
-exec sp_addrolemember 'db_owner', 'u_SmartOneTest'
-go
-
---sqlserver 测试平台数据库
-create database SmartOneRun on primary (
-	name='MAIN_SmartOneRun',
-	filename='D:\db\run\MAIN_SmartOneRun.mdf',
-	size=50mb,
-	filegrowth=100mb
-)log on ( 
-	name='TMPLOG_SmartOneRun',
-	filename='D:\db\run\TMPLOG_SmartOneRun.ldf',
-	size=50mb,
-	filegrowth=50mb)
-go
-use SmartOneRun
-go
-create login SmartOneRun with password='1',default_database=SmartOneRun
-go
-create user u_SmartOneRun for login SmartOneRun with default_schema=dbo
-go
-exec sp_addrolemember 'db_owner', 'u_SmartOneRun'
+exec sp_addrolemember 'db_owner', 'u_SmartOneApp'
 go
 
 /*
@@ -133,12 +92,8 @@ drop user u_SmartOneCfg;
 drop login SmartOneCfg;
 drop database SmartOneCfg;
 
-drop user u_SmartOneTest;
-drop login SmartOneTest;
-drop database SmartOneTest;
-
-drop user u_SmartOneRun;
-drop login SmartOneRun;
-drop database SmartOneRun;
+drop user u_SmartOneApp;
+drop login SmartOneApp;
+drop database SmartOneApp;
 */
 
