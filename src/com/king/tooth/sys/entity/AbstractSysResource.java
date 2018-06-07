@@ -1,9 +1,8 @@
 package com.king.tooth.sys.entity;
 
 import java.util.Date;
-
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.DateUtil;
 
 /**
  * 系统资源抽象类
@@ -14,7 +13,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	/**
 	 * 资源是否有效
 	 */
-	protected int isEnabled;
+	protected int isEnabled = 1;
 	/**
 	 * 资源有效期
 	 */
@@ -27,11 +26,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * 请求资源的方法
 	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
 	 */
-	protected String reqResourceMethod;
+	protected String reqResourceMethod = ALL;
 	/**
 	 * 是否内置资源
 	 */
-	protected int isBuiltin;
+	protected int isBuiltin = 0;
 	/**
 	 * 资源所属于的平台类型
 	 * <p>1:配置平台、2:运行平台、3:公用</p>
@@ -67,6 +66,9 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		this.isEnabled = isEnabled;
 	}
 	public Date getValidDate() {
+		if(validDate == null && isBuiltin == 1){
+			validDate = DateUtil.parseDate("2099-12-31 23:59:59");
+		}
 		return validDate;
 	}
 	public void setValidDate(Date validDate) {
@@ -100,9 +102,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		this.reqResourceMethod = reqResourceMethod;
 	}
 	public String getReqResourceMethod() {
-		if(StrUtils.isEmpty(reqResourceMethod)){
-			return ALL;
-		}
 		return reqResourceMethod;
 	}
 	

@@ -656,6 +656,8 @@ public class HibernateUtil {
 	private static void setPageQuery(Query query, String rows, String pageNo) {
 		if(rows != null && pageNo != null){
 			PageQueryEntity pageQueryEntity = new PageQueryEntity(null, null, rows, pageNo);
+			pageQueryEntity.execAnalysisPageQueryParams();
+			
 			query.setFirstResult(pageQueryEntity.getFirstResult());
 			query.setMaxResults(pageQueryEntity.getMaxResult());
 		}
