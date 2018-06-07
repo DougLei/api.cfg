@@ -28,7 +28,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	private String accountId;
 	/**
 	 * 账户名
-	 * <p>冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails</p>
+	 * <p>冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails，如果有对应的ComUser，则保存realName</p>
 	 */
 	private String accountName;
 	/**
@@ -172,7 +172,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		
 		CfgColumndata accountNameColumn = new CfgColumndata("account_name");
 		accountNameColumn.setName("账户名");
-		accountNameColumn.setComments("账户名:冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails");
+		accountNameColumn.setComments("账户名:冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails，如果有对应的ComUser，则保存realName");
 		accountNameColumn.setColumnType(DataTypeConstants.STRING);
 		accountNameColumn.setLength(50);
 		accountNameColumn.setOrderCode(2);
