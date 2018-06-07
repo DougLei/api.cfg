@@ -1,5 +1,6 @@
 package com.king.tooth.plugins.orm.hibernate.dynamic.sf;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -10,6 +11,8 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.util.ExceptionUtil;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -33,7 +36,7 @@ public class DynamicHibernateSessionFactoryHandler {
 	 * @param dataSource
 	 * @param hibernateDialect 如果不传值，默认使用平台的方言 @see jdbc.properties
 	 */
-	public void addSessionFactory(String databaseId, DataSource dataSource, String hibernateDialect){
+	public void addSessionFactory(String databaseId, DataSource dataSource, String hibernateDialect) {
 		LocalSessionFactoryBean lsfb = new LocalSessionFactoryBean();
 		lsfb.setDataSource(dataSource);
 		
@@ -45,7 +48,11 @@ public class DynamicHibernateSessionFactoryHandler {
 			hibernateProperties.setProperty("hibernate.dialect", SysConfig.getSystemConfig("hibernate.dialect"));
 		}
 		lsfb.setHibernateProperties(hibernateProperties);
-		
+		try {
+			lsfb.afterPropertiesSet();
+		} catch (IOException e) {
+			Log4jUtil.debug("动态添加sessionFacotry出现异常：{}", ExceptionUtil.getErrMsg(e));
+		}
 		sessionFactoryHolder.addSessionFactory(databaseId, lsfb.getObject());
 	}
 	
