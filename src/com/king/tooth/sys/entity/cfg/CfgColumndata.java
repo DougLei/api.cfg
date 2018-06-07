@@ -8,6 +8,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -19,7 +20,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgColumndata extends BasicEntity implements ITable, IEntity{
+public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的表主键
 	 */
@@ -87,30 +88,17 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 是否有效
 	 */
-	private int isEnabled;
+	private int isEnabled = 1;
 	
-	/**
-	 * 解析出属性名
-	 * @param columnName
-	 */
-	private void analysisPropName(String columnName) {
-		this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
-	}
+	//-------------------------------------------------------------------------
 	
 	public CfgColumndata() {
-		this.isEnabled = 1;
 	}
 	public CfgColumndata(String columnName) {
-		this();
-		doSetColumnName(columnName);
+		this.columnName = columnName;
+		analysisResourceProp();
 	}
-	private void doSetColumnName(String columnName) {
-		this.isEnabled = 1;
-		this.columnName = columnName.trim();
-		analysisPropName(this.columnName);
-	}
-
-	//-------------------------------------------------------------------------
+	
 	public String getName() {
 		if(StrUtils.isEmpty(name)){
 			name = propName;
@@ -157,9 +145,6 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		this.comments = comments;
 	}
 	public String getPropName() {
-		if(StrUtils.isEmpty(propName)){
-			analysisPropName(columnName);
-		}
 		return propName;
 	}
 	public int getLength() {
@@ -217,16 +202,17 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		this.isEnabled = isEnabled;
 	}
 	public void setColumnName(String columnName) {
-		if(StrUtils.isEmpty(columnName)){
-			throw new NullPointerException("列名不能为空！");
-		}
 		this.columnName = columnName;
 	}
 
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "CFG_COLUMNDATA");
+		CfgTabledata table = new CfgTabledata(dbType, "CFG_COLUMNDATA", 0);
 		table.setName("[配置系统]字段数据信息资源对象表");
 		table.setComments("[配置系统]字段数据信息资源对象表");
+		table.setReqResourceMethod(ISysResource.GET);
+		table.setIsBuiltin(1);
+		table.setPlatformType(ISysResource.IS_CFG_PLATFORM_TYPE);
+		table.setIsCreatedResource(1);
 		
 		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(22);
 		
@@ -367,10 +353,6 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
-		table.setReqResourceMethod(ISysResource.GET);
-		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_CFG_PLATFORM_TYPE);
-		table.setIsCreatedResource(1);
 		return table;
 	}
 
@@ -395,5 +377,17 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		json.put("isEnabled", isEnabled+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
+	}
+	
+	public void validNotNullProps() {
+		if(StrUtils.isEmpty(columnName)){
+			throw new NullPointerException("列名不能为空！");
+		}
+	}
+	
+	public void analysisResourceProp() {
+		validNotNullProps();
+		this.columnName = columnName.trim();
+		this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
 	}
 }

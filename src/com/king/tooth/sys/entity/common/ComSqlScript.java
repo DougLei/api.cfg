@@ -10,11 +10,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.exception.gsp.AnalyzeSqlScriptException;
 import com.king.tooth.exception.gsp.EDBVendorIsNullException;
 import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
@@ -25,8 +25,8 @@ import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.sqlparser.SqlParameterParserUtil;
 import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
 
@@ -35,7 +35,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  * @author StoneKing
  */
 @SuppressWarnings("serial")
-public class ComSqlScript extends AbstractSysResource implements ITable, IEntity{
+public class ComSqlScript extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * sql脚本的标题
 	 */
@@ -45,10 +45,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * (调用时用到)
 	 */
 	private String sqlScriptResourceName;
-	/**
-	 * sql脚本属于的数据库类型
-	 */
-	private String dbType;
 	/**
 	 * sql脚本类型
 	 * <p>如果有多个sql脚本，以第一个sql脚本的类型为准</p>
@@ -99,58 +95,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 */
 	private FinalSqlScriptStatement finalSqlScript;
 	
-	public ComSqlScript() {
-	}
-	public ComSqlScript(String sqlScriptCaption, String sqlScriptResourceName, String sqlScriptContent) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
-		this();
-		this.sqlScriptCaption = sqlScriptCaption;
-		doSetSqlScriptResourceName(sqlScriptResourceName);
-		doSetSqlScriptContent(sqlScriptContent);
-	}
-
-	private void doSetSqlScriptResourceName(String sqlScriptResourceName) {
-		this.sqlScriptResourceName = sqlScriptResourceName;
-		this.sqlScriptCaption = sqlScriptResourceName;
-	}
-	private void doSetSqlScriptContent(String sqlScriptContent) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
-		if(StrUtils.isEmpty(sqlScriptContent)){
-			throw new NullPointerException("sql脚本内容不能为空");
-		}
-		this.sqlScriptContent = sqlScriptContent;
-		this.dbType = HibernateUtil.getCurrentDatabaseType();
-		this.sqlScriptType = SqlStatementParserUtil.getSqlScriptType(getGsqlParser());
-		setReqResourceMethod();
-		if(SqlStatementType.PROCEDURE.equals(this.sqlScriptType)){
-			SqlStatementParserUtil.processProcedure(this);
-			return;
-		}
-		
-		// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
-		setSqlScriptParameterList(SqlParameterParserUtil.analysisMultiSqlScriptParam(getSqlScriptArr()));
-		// 【针对select sql语句，处理其参数】读取内容去解析，获取selectsql脚本语句的查询结果的列名集合
-		setSqlQueryResultColumns(SqlStatementParserUtil.getSelectSqlOfResultColumnsAndAnalysisSqlScriptParameters(this));
-		// 将sql脚本的参数处理后，重新赋值给sqlScriptParameters属性，这时，processed=true，isUpdated=true
-		setSqlScriptParameterList(this.sqlScriptParameterList);
-	}
-	/**
-	 * 获取sql脚本的语句数组
-	 * @return
-	 */
-	private String[] getSqlScriptArr() {
-		return SqlStatementParserUtil.getSqlScriptArr(getGsqlParser());
-	}
-	private void setSqlQueryResultColumns(List<SqlQueryResultColumn> queryResultColumns) {
-		if(queryResultColumns != null && queryResultColumns.size() > 0){
-			this.sqlQueryResultColumnList = queryResultColumns;
-			this.sqlQueryResultColumns = JsonUtil.toJsonString(this.sqlQueryResultColumnList, false);
-		}
-	}
-	private void setSqlScriptParameterList(List<SqlScriptParameter> sqlScriptParameterList) {
-		this.sqlScriptParameterList = sqlScriptParameterList;
-		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-			this.sqlScriptParameters = JsonUtil.toJsonString(sqlScriptParameterList, false);
-		}
-	}
 	public void setProcedureParameterList(List<ProcedureSqlScriptParameter> procedureParameterList) {
 		this.procedureParameterList = procedureParameterList;
 		if(procedureParameterList != null && procedureParameterList.size() > 0){
@@ -180,12 +124,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	public void setSqlScriptType(String sqlScriptType) {
 		this.sqlScriptType = sqlScriptType;
-	}
-	public String getDbType() {
-		return dbType;
-	}
-	public void setDbType(String dbType) {
-		this.dbType = dbType;
 	}
 	public String getSqlScriptResourceName() {
 		return sqlScriptResourceName;
@@ -238,36 +176,16 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public void setFinalSqlScript(FinalSqlScriptStatement finalSqlScript) {
 		this.finalSqlScript = finalSqlScript;
 	}
-	public void setReqResourceMethod() {
-		if(SqlStatementType.SELECT.equals(sqlScriptType)){
-			this.reqResourceMethod = GET;
-		}else if(SqlStatementType.UPDATE.equals(sqlScriptType)){
-			this.reqResourceMethod = PUT;
-		}else if(SqlStatementType.INSERT.equals(sqlScriptType)){
-			this.reqResourceMethod = POST;
-		}else if(SqlStatementType.DELETE.equals(sqlScriptType)){
-			this.reqResourceMethod = DELETE;
-		}else if(SqlStatementType.PROCEDURE.equals(sqlScriptType)){
-			this.reqResourceMethod = POST;
-		}else{
-			this.reqResourceMethod = NONE;
-		}
-	}
 	
 	
-	public void setGsqlParser(TGSqlParser gsqlParser) {
-		this.gsqlParser = gsqlParser;
-	}
 	private void setGsqlParser(){
 		if(this.gsqlParser == null){
-			if(StrUtils.notEmpty(this.sqlScriptContent)){
-				try {
-					this.gsqlParser = SqlStatementParserUtil.getGsqlParser(sqlScriptContent);
-				} catch (SqlScriptSyntaxException e) {
-					throw new ParserException(ExceptionUtil.getErrMsg(e));
-				} catch (EDBVendorIsNullException e) {
-					throw new ParserException(ExceptionUtil.getErrMsg(e));
-				}
+			try {
+				this.gsqlParser = SqlStatementParserUtil.getGsqlParser(sqlScriptContent);
+			} catch (SqlScriptSyntaxException e) {
+				throw new ParserException(ExceptionUtil.getErrMsg(e));
+			} catch (EDBVendorIsNullException e) {
+				throw new ParserException(ExceptionUtil.getErrMsg(e));
 			}
 		}
 	}
@@ -318,7 +236,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SQL_SCRIPT");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_SQL_SCRIPT", 0);
 		table.setIsResource(1);
 		table.setName("[通用的]sql脚本资源对象表");
 		table.setComments("[通用的]sql脚本资源对象表");
@@ -328,7 +246,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(19);
 		
 		CfgColumndata sqlScriptCaptionColumn = new CfgColumndata("sql_script_caption");
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
@@ -346,27 +264,19 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptResourceNameColumn.setOrderCode(2);
 		columns.add(sqlScriptResourceNameColumn);
 		
-		CfgColumndata dbTypeColumn = new CfgColumndata("db_type");
-		dbTypeColumn.setName("sql脚本属于的数据库类型");
-		dbTypeColumn.setComments("sql脚本属于的数据库类型");
-		dbTypeColumn.setColumnType(DataTypeConstants.STRING);
-		dbTypeColumn.setLength(10);
-		dbTypeColumn.setOrderCode(3);
-		columns.add(dbTypeColumn);
-		
 		CfgColumndata sqlScriptTypeColumn = new CfgColumndata("sql_script_type");
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
 		sqlScriptTypeColumn.setColumnType(DataTypeConstants.STRING);
 		sqlScriptTypeColumn.setLength(40);
-		sqlScriptTypeColumn.setOrderCode(4);
+		sqlScriptTypeColumn.setOrderCode(3);
 		columns.add(sqlScriptTypeColumn);
 		
 		CfgColumndata sqlScriptContentColumn = new CfgColumndata("sql_script_content");
 		sqlScriptContentColumn.setName("sql脚本内容");
 		sqlScriptContentColumn.setComments("sql脚本内容");
 		sqlScriptContentColumn.setColumnType(DataTypeConstants.CLOB);
-		sqlScriptContentColumn.setOrderCode(5);
+		sqlScriptContentColumn.setOrderCode(4);
 		columns.add(sqlScriptContentColumn);
 		
 		CfgColumndata sqlScriptParametersColumn = new CfgColumndata("sql_script_parameters");
@@ -374,7 +284,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptParametersColumn.setComments("sql脚本的参数(json串)");
 		sqlScriptParametersColumn.setColumnType(DataTypeConstants.STRING);
 		sqlScriptParametersColumn.setLength(2000);
-		sqlScriptParametersColumn.setOrderCode(6);
+		sqlScriptParametersColumn.setOrderCode(5);
 		columns.add(sqlScriptParametersColumn);
 		
 		CfgColumndata sqlQueryResultColumnsColumn = new CfgColumndata("sql_query_result_columns");
@@ -382,7 +292,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlQueryResultColumnsColumn.setComments("sql查询结果的列名对象集合(json串)[该属性针对查询的sql语句]");
 		sqlQueryResultColumnsColumn.setColumnType(DataTypeConstants.STRING);
 		sqlQueryResultColumnsColumn.setLength(1000);
-		sqlQueryResultColumnsColumn.setOrderCode(7);
+		sqlQueryResultColumnsColumn.setOrderCode(6);
 		columns.add(sqlQueryResultColumnsColumn);
 		
 		CfgColumndata procedureNameColumn = new CfgColumndata("procedure_name");
@@ -390,7 +300,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		procedureNameColumn.setComments("存储过程名称");
 		procedureNameColumn.setColumnType(DataTypeConstants.STRING);
 		procedureNameColumn.setLength(80);
-		procedureNameColumn.setOrderCode(8);
+		procedureNameColumn.setOrderCode(7);
 		columns.add(procedureNameColumn);
 		
 		CfgColumndata procedureParametersColumn = new CfgColumndata("procedure_parameters");
@@ -398,7 +308,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		procedureParametersColumn.setComments("存储过程参数对象集合(json串)");
 		procedureParametersColumn.setColumnType(DataTypeConstants.STRING);
 		procedureParametersColumn.setLength(1000);
-		procedureParametersColumn.setOrderCode(9);
+		procedureParametersColumn.setOrderCode(8);
 		columns.add(procedureParametersColumn);
 		
 		CfgColumndata commentsColumn = new CfgColumndata("comments");
@@ -406,7 +316,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		commentsColumn.setComments("备注");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);
 		commentsColumn.setLength(200);
-		commentsColumn.setOrderCode(10);
+		commentsColumn.setOrderCode(9);
 		columns.add(commentsColumn);
 		
 		table.setColumns(columns);
@@ -433,16 +343,81 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return json;
 	}
 	
-	public void analysisResourceData() {
-		if(!isAnalysed){
-			isAnalysed = true;
-			// 进行解析
+	public void validNotNullProps() {
+		if(StrUtils.isEmpty(sqlScriptResourceName)){
+			throw new NullPointerException("sql脚本资源名称不能为空");
+		}
+		if(StrUtils.isEmpty(sqlScriptContent)){
+			throw new NullPointerException("sql脚本内容不能为空");
+		}
+	}
+	
+	public void analysisResourceProp() {
+		validNotNullProps();
+		try {
+			this.sqlScriptType = SqlStatementParserUtil.getSqlScriptType(getGsqlParser());
+			setReqResourceMethod();
 			
+			// 如果是存储过程，则单独处理
+			if(SqlStatementType.PROCEDURE.equals(this.sqlScriptType)){
+				SqlStatementParserUtil.processProcedure(this);
+				return;
+			}
+			
+			// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
+			setSqlScriptParameterList(SqlParameterParserUtil.analysisMultiSqlScriptParam(getSqlScriptArr()));
+			// 【针对select sql语句，处理其参数】读取内容去解析，获取selectsql脚本语句的查询结果的列名集合
+			setSqlQueryResultColumns(SqlStatementParserUtil.getSelectSqlOfResultColumnsAndAnalysisSqlScriptParameters(this));
+			// 将sql脚本的参数处理后，重新赋值给sqlScriptParameters属性，这时，processed=true，isUpdated=true
+			setSqlScriptParameterList(this.sqlScriptParameterList);
+		} catch (Exception e) {
+			Log4jUtil.debug("[ComSqlScript.analysisResourceProp]解析出现异常：{}", ExceptionUtil.getErrMsg(e));
+		}
+	}
+	
+	/**
+	 * 设置请求资源的方式
+	 */
+	private void setReqResourceMethod() {
+		if(SqlStatementType.SELECT.equals(sqlScriptType)){
+			this.reqResourceMethod = GET;
+		}else if(SqlStatementType.UPDATE.equals(sqlScriptType)){
+			this.reqResourceMethod = PUT;
+		}else if(SqlStatementType.INSERT.equals(sqlScriptType)){
+			this.reqResourceMethod = POST;
+		}else if(SqlStatementType.DELETE.equals(sqlScriptType)){
+			this.reqResourceMethod = DELETE;
+		}else if(SqlStatementType.PROCEDURE.equals(sqlScriptType)){
+			this.reqResourceMethod = POST;
+		}else{
+			this.reqResourceMethod = NONE;
+		}
+	}
+	
+	/**
+	 * 获取sql脚本的语句数组
+	 * @return
+	 */
+	private String[] getSqlScriptArr() {
+		return SqlStatementParserUtil.getSqlScriptArr(getGsqlParser());
+	}
+	
+	private void setSqlQueryResultColumns(List<SqlQueryResultColumn> queryResultColumns) {
+		if(queryResultColumns != null && queryResultColumns.size() > 0){
+			this.sqlQueryResultColumnList = queryResultColumns;
+			this.sqlQueryResultColumns = JsonUtil.toJsonString(this.sqlQueryResultColumnList, false);
+		}
+	}
+	
+	private void setSqlScriptParameterList(List<SqlScriptParameter> sqlScriptParameterList) {
+		this.sqlScriptParameterList = sqlScriptParameterList;
+		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
+			this.sqlScriptParameters = JsonUtil.toJsonString(sqlScriptParameterList, false);
 		}
 	}
 	
 	public ComSysResource turnToResource() {
-		analysisResourceData();
+		analysisResourceProp();
 		ComSysResource resource = super.turnToResource();
 		resource.setRefResourceId(id);
 		resource.setResourceType(SQLSCRIPT);

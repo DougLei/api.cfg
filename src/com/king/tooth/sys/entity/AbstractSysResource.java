@@ -104,10 +104,4 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	public String getReqResourceMethod() {
 		return reqResourceMethod;
 	}
-	
-	// -----------------------------------------------------------------
-	/**
-	 * 是否被解析过
-	 */
-	protected boolean isAnalysed;
 }

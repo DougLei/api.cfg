@@ -165,7 +165,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	}
 
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT", 0);
 		table.setName("[通用的]系统账户资源对象表");
 		table.setComments("[通用的]系统账户资源对象表");
 		table.setIsBuiltin(1);

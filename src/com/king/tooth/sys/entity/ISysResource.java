@@ -68,12 +68,6 @@ public interface ISysResource {
 	public static final int IS_COMMON_PLATFORM_TYPE = 3;
 	
 	/**
-	 * 解析资源数据
-	 * <p>例如:解析ComSqlScript，根据传入的sql脚本，获取sql脚本的类型，参数集合等</p>
-	 */
-	public void analysisResourceData();
-	
-	/**
 	 * 转换为资源对象
 	 */
 	public ComSysResource turnToResource();

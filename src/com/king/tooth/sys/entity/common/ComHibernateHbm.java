@@ -81,7 +81,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_HIBERNATE_HBM");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_HIBERNATE_HBM", 0);
 		table.setIsResource(1);
 		table.setName("[通用的]hibernate的hbm内容对象表");
 		table.setComments("[通用的]hibernate的hbm内容对象表");
@@ -156,11 +156,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		return json;
 	}
 	
-	public void analysisResourceData() {
-	}
-	
 	public ComSysResource turnToResource() {
-		analysisResourceData();
 		ComSysResource resource = super.turnToResource();
 		resource.setRefResourceId(id);
 		resource.setResourceType(TABLE);

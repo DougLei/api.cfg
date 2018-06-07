@@ -76,6 +76,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 */
 	private boolean isSave;
 	
+	
 	public String getAccountId() {
 		return accountId;
 	}
@@ -151,7 +152,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT_ONLINE_STATUS");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
 		table.setName("[通用的]系统账户在线状态资源对象表");
 		table.setComments("[通用的]系统账户在线状态资源对象表");
 		table.setIsBuiltin(1);

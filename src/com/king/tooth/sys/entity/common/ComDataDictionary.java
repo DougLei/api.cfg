@@ -85,7 +85,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_DICTIONARY");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_DICTIONARY", 0);
 		table.setName("[通用的]数据字典资源对象表");
 		table.setComments("[通用的]数据字典资源对象表");
 		table.setIsBuiltin(1);

@@ -201,7 +201,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_USER");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_USER", 0);
 		table.setName("[通用的]人员资源对象表");
 		table.setComments("[通用的]人员资源对象表");
 		table.setIsBuiltin(1);

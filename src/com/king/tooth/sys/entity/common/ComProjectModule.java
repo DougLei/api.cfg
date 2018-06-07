@@ -104,7 +104,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT_MODULE");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT_MODULE", 0);
 		table.setName("[通用的]项目模块信息资源对象表");
 		table.setComments("[通用的]项目模块信息资源对象表：理解为菜单");
 		table.setIsBuiltin(1);

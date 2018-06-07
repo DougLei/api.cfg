@@ -18,7 +18,7 @@ import com.king.tooth.sys.entity.cfg.CfgTabledata;
 public class ComDataLinks implements Serializable, ITable {
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_LINKS");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_LINKS", 0);
 		table.setResourceName("ComDataLinks");
 		table.setName("[通用的]数据关联关系资源对象表");
 		table.setComments("[通用的]数据关联关系资源对象表");

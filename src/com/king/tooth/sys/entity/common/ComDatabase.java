@@ -10,6 +10,7 @@ import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
@@ -22,7 +23,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
+public class ComDatabase extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
 	
 	/**
 	 * 数字库名
@@ -66,33 +67,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	
 	//------------------------------------------------------------------------
 	
-	public ComDatabase() {
-	}
-	/**
-	 * 构造函数
-	 * <p>其他参数赋值，可以通过调用setXXX方法赋值[除去构造函数中参数对应的属性不需要调用setXXX方法]</p>
-	 * @param dbDisplayName
-	 * @param dbInstanceName
-	 * @param loginUserName
-	 * @param loginPassword
-	 */
-	public ComDatabase(String dbDisplayName, String dbInstanceName, String loginUserName, String loginPassword) {
-		this();
-		this.dbDisplayName = dbDisplayName;
-		setDbInstanceName(dbInstanceName);
-		this.loginUserName = loginUserName;
-		this.loginPassword = loginPassword;
-		setDBFile();
-	}
-	/**
-	 * 设置数据库的文件的属性
-	 * @param dbInstanceName
-	 */
-	public void setDBFile(){
-		this.mainFile = new DBFile("MAIN_" + getLoginUserName());
-		this.tmpLogFile = new DBFile("TMPLOG_" + getLoginUserName());
-	}
-	
 	public String getCfgMainFileContent() {
 		if(mainFile != null){
 			cfgMainFileContent = mainFile.toJsonString();
@@ -106,27 +80,15 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		return cfgTmplogFileContent;
 	}
 	public String getDbType() {
-		if(StrUtils.isEmpty(dbType)){
-			dbType = SysConfig.getSystemConfig("jdbc.dbType");
-		}
 		return dbType;
 	}
 	public String getDbIp() {
-		if(StrUtils.isEmpty(dbIp)){
-			dbIp = SysConfig.getSystemConfig("db.default.ip");
-		}
 		return dbIp;
 	}
 	public int getDbPort() {
-		if(dbPort < 1){
-			dbPort = Integer.valueOf(SysConfig.getSystemConfig("db.default.port"));
-		}
 		return dbPort;
 	}
 	public String getLoginPassword() {
-		if(StrUtils.isEmpty(loginPassword)){
-			loginPassword = SysConfig.getSystemConfig("db.default.password");
-		}
 		return loginPassword;
 	}
 	
@@ -141,7 +103,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		this.cfgTmplogFileContent = cfgTmplogFileContent;
 		this.tmpLogFile = JsonUtil.parseObject(cfgTmplogFileContent, DBFile.class);
 	}
-	
 	public String getDbDisplayName() {
 		if(StrUtils.isEmpty(dbDisplayName)){
 			dbDisplayName = dbInstanceName;
@@ -167,24 +128,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		this.dbDisplayName = dbDisplayName;
 	}
 	public void setDbInstanceName(String dbInstanceName) {
-		// 如果数据库类型是oracle数据库
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(getDbType())){
-			// 如果和我oracle配置库的ip和端口一样，就说明是使用的我们的库，oracle实例名，要用我们的
-			if(SysConfig.getSystemConfig("db.default.ip").equals(getDbIp()) 
-					&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
-				this.dbInstanceName = SysConfig.getSystemConfig("db.default.instancename");
-			}
-			// 否则，说明是客户自己买的数据库服务器，程序要连接过去，这里直接记录实例名即可
-			else{
-				this.dbInstanceName = dbInstanceName;
-			}
-			return;
-		}
-		
-		// 目前，否则就是sqlserver数据库
-		if(StrUtils.isEmpty(dbInstanceName)){
-			throw new IllegalArgumentException("sqlserver的数据库名不能为空！");
-		}
 		this.dbInstanceName = dbInstanceName;
 	}
 	public void setLoginUserName(String loginUserName) {
@@ -220,7 +163,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_DATABASE");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_DATABASE", 0);
 		table.setIsResource(1);
 		table.setName("[通用的]数据库数据信息资源对象表");
 		table.setComments("[通用的]数据库数据信息资源对象表");
@@ -328,16 +271,46 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity{
 		return json;
 	}
 	
-	public void analysisResourceData() {
-		if(!isAnalysed){
-			isAnalysed = true;
-			// 进行解析
-			
+	public void validNotNullProps() {
+		if(StrUtils.isEmpty(dbType)){
+			throw new NullPointerException("数据库类型不能为空！");
+		}
+		if(StrUtils.isEmpty(dbInstanceName)){
+			throw new NullPointerException("数据库名不能为空！");
+		}
+		if(StrUtils.isEmpty(loginUserName)){
+			throw new NullPointerException("数据库登录名不能为空！");
+		}
+		if(StrUtils.isEmpty(loginPassword)){
+			throw new NullPointerException("数据库登录密码不能为空！");
+		}
+		if(StrUtils.isEmpty(dbIp)){
+			throw new NullPointerException("数据库ip不能为空！");
+		}
+		if(dbPort < 1){
+			throw new NullPointerException("数据库端口不能为空！");
 		}
 	}
 	
+	public void analysisResourceProp() {
+		validNotNullProps();
+		
+		// 验证数据库实例名
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)){
+			// 如果数据库类型是oracle数据库
+			// 如果和jdbc中配置的ip和端口一样，就说明是使用的是当前库，则使用jdbc中配置的oracle数据库实例名
+			if(SysConfig.getSystemConfig("db.default.ip").equals(dbIp) 
+					&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
+				this.dbInstanceName = SysConfig.getSystemConfig("db.default.instancename");
+			}
+		}
+		// 创建数据库文件对象
+		this.mainFile = new DBFile("MAIN_" + loginUserName);
+		this.tmpLogFile = new DBFile("TMPLOG_" + loginUserName);
+	}
+	
 	public ComSysResource turnToResource() {
-		analysisResourceData();
+		analysisResourceProp();
 		ComSysResource resource = super.turnToResource();
 		resource.setRefResourceId(id);
 		resource.setResourceType(DATABASE);

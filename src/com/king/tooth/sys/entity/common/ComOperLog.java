@@ -13,7 +13,6 @@ import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
-import com.king.tooth.util.StrUtils;
 
 /**
  * [通用的]操作日志资源对象
@@ -63,9 +62,6 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		this.operType = operType;
 	}
 	public String getOperData() {
-		if(StrUtils.isEmpty(operData)){
-			return null;
-		}
 		return JsonUtil.toJsonString(operData, false);
 	}
 	public void setOperData(String operData) {
@@ -85,7 +81,7 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_OPER_LOG");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_OPER_LOG", 0);
 		table.setName("[通用的]操作日志资源对象表");
 		table.setComments("[通用的]操作日志资源对象表");
 		table.setIsBuiltin(1);

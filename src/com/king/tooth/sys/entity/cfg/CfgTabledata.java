@@ -10,20 +10,21 @@ import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * [配置系统]表数据信息资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgTabledata extends AbstractSysResource implements ITable, IEntity{
+public class CfgTabledata extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -75,7 +76,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	/**
 	 * 版本
 	 */
-	private int version;
+	private int version = 1;
 	/**
 	 * 注释
 	 */
@@ -92,7 +93,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	private List<CfgColumndata> columns;
 	/**
 	 * 数据库类型
-	 * 在createTable时用到
+	 * 目前主要是判断，如果是oracle数据库时，要判断表名长度不能超过30个字符
 	 */
 	private String dbType;
 	/**
@@ -104,48 +105,12 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	
 	
 	public CfgTabledata() {
-		this.version = 1;
 	}
-	public CfgTabledata(String dbType, String tableName) {
-		this();
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && tableName.length() > 30){// 判断：如果是oracle数据库表名是否过长
-			throw new IllegalAccessError("oracle数据库的表名长度不能超过30个字符");
-		}
-		doSetTableName(dbType, tableName, 0);
-	}
-	
-	/**
-	 * 目前，只让DynamicDataLinkTableUtil.getDataLinkTabledata()方法使用到这个构造函数
-	 * 和上面的构造函数区分，如果是创建关系表，则不需要判断：如果是oracle数据库表名是否过长
-	 * @param dbType
-	 * @param tableName
-	 * @param isDatalinkTable 标识是关系表，只有这里会将这个属性的值置为1，其他地方都必须是0
-	 */
 	public CfgTabledata(String dbType, String tableName, int isDatalinkTable) {
-		this();
-		this.isDatalinkTable = isDatalinkTable;
-		doSetTableName(dbType, tableName, 1);
-	}
-	
-	private void doSetTableName(String dbType, String tableName, int isDatalinkTable) {
 		this.dbType = dbType;
-		this.tableName = tableName.trim();
-		analysisResourceName(this.tableName);
-		
-		if(isDatalinkTable == 1){
-			// oracle的表名长度不能超过30个字符，这里对关系表的表名做处理：前缀+后缀
-			if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && this.tableName.length() > 30){
-				this.tableName = ResourceNameConstants.DATALINK_TABLENAME_PREFIX + this.tableName.substring(5, 16) + "_" + new Random().nextInt(100000) + ResourceNameConstants.DATALINK_TABLENAME_SUFFIX;
-			}
-		}
-	}
-	
-	/**
-	 * 解析出资源名
-	 * @param tableName
-	 */
-	private void analysisResourceName(String tableName) {
-		this.resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
+		this.tableName = tableName;
+		this.isDatalinkTable = isDatalinkTable;
+		analysisResourceProp();
 	}
 	
 	//-------------------------------------------------------------------------
@@ -159,10 +124,10 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		this.name = name;
 	}
 	public String getDbType() {
-		if(StrUtils.isEmpty(dbType)){
-			dbType = HibernateUtil.getCurrentDatabaseType();
-		}
 		return dbType;
+	}
+	public void setDbType(String dbType) {
+		this.dbType = dbType;
 	}
 	public String getTableName() {
 		return tableName;
@@ -201,9 +166,6 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		this.comments = comments;
 	}
 	public String getResourceName() {
-		if(StrUtils.isEmpty(resourceName)){
-			analysisResourceName(tableName);
-		}
 		return resourceName;
 	}
 	public String getParentTableName() {
@@ -237,9 +199,6 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		this.subRefParentColumnName = subRefParentColumnName;
 	}
 	public void setTableName(String tableName) {
-		if(StrUtils.isEmpty(tableName)){
-			throw new NullPointerException("表名不能为空！");
-		}
 		this.tableName = tableName;
 	}
 	public int getIsResource() {
@@ -255,7 +214,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "CFG_TABLEDATA");
+		CfgTabledata table = new CfgTabledata(dbType, "CFG_TABLEDATA", 0);
 		table.setIsResource(1);
 		table.setName("[配置系统]表数据信息资源对象表");
 		table.setComments("[配置系统]表数据信息资源对象表");
@@ -382,16 +341,30 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		return json;
 	}
 	
-	public void analysisResourceData() {
-		if(!isAnalysed){
-			isAnalysed = true;
-			// 进行解析
-			
+	public void validNotNullProps() {
+		if(StrUtils.isEmpty(tableName)){
+			throw new NullPointerException("表名不能为空！");
+		}
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 0 && this.tableName.length() > 30){
+			throw new IllegalArgumentException("oracle数据库的表名长度不能超过30个字符！");
+		}
+	}
+	
+	public void analysisResourceProp() {
+		validNotNullProps();
+		this.tableName = tableName.trim();
+		this.resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
+		
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 1 && this.tableName.length() > 30){
+			// oracle的表名长度不能超过30个字符，所以这里对关系表的表名做处理：前缀+'_'+表名substring(5, 16)+'_'+6为随机数+'_'+后缀
+			Log4jUtil.info("在oracle数据库中，解析关系表[{}]时，因关系表名长度超过30个字符，系统自动处理",  tableName);
+			this.tableName = ResourceNameConstants.DATALINK_TABLENAME_PREFIX + this.tableName.substring(5, 16) + "_" + new Random().nextInt(100000) + ResourceNameConstants.DATALINK_TABLENAME_SUFFIX;
+			Log4jUtil.info("自动处理的新表名为：{}",  tableName);
 		}
 	}
 	
 	public ComSysResource turnToResource() {
-		analysisResourceData();
+		analysisResourceProp();
 		ComSysResource resource = super.turnToResource();
 		resource.setRefResourceId(id);
 		resource.setResourceType(TABLE);

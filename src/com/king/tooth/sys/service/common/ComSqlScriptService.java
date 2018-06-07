@@ -1,7 +1,6 @@
 package com.king.tooth.sys.service.common;
 
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.util.ExceptionUtil;
@@ -15,7 +14,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 public class ComSqlScriptService extends AbstractResourceService {
 
-	private ComSysResourceService comSysResourceService = new ComSysResourceService();
+//	private ComSysResourceService comSysResourceService = new ComSysResourceService();
 	
 	/**
 	 * 添加sql脚本
@@ -23,17 +22,17 @@ public class ComSqlScriptService extends AbstractResourceService {
 	 */
 	public void saveSqlScript(ComSqlScript sqlScript) {
 		try {
-			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptCaption(), sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
-			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
-				sql.setIsBuiltin(1);
-				sql.setIsCreatedResource(1);
-			}
-			sql.setComments(sqlScript.getComments());
-			HibernateUtil.saveObject(sql, null);
-			
-			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
-				createSqlScriptModel(sql);
-			}
+//			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptCaption(), sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+//			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
+//				sql.setIsBuiltin(1);
+//				sql.setIsCreatedResource(1);
+//			}
+//			sql.setComments(sqlScript.getComments());
+//			HibernateUtil.saveObject(sql, null);
+//			
+//			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
+//				createSqlScriptModel(sql);
+//			}
 		} catch (Exception e) {
 			Log4jUtil.debug(ExceptionUtil.getErrMsg(e));
 		}
@@ -45,17 +44,17 @@ public class ComSqlScriptService extends AbstractResourceService {
 	 */
 	public void updateSqlScript(ComSqlScript sqlScript) {
 		try {
-			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptCaption(), sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
-			sql.setId(sqlScript.getId());
-			
-			sqlScript = findSqlScriptResourceById(sqlScript.getId());
-			sql.setIsBuiltin(sqlScript.getIsBuiltin());
-			sql.setCreateTime(sqlScript.getCreateTime());
-			sql.setCreateUserId(sqlScript.getCreateUserId());
-			sql.setComments(sqlScript.getComments());
+//			ComSqlScript sql = new ComSqlScript(sqlScript.getSqlScriptCaption(), sqlScript.getSqlScriptResourceName(), sqlScript.getSqlScriptContent());
+//			sql.setId(sqlScript.getId());
+//			
+//			sqlScript = findSqlScriptResourceById(sqlScript.getId());
+//			sql.setIsBuiltin(sqlScript.getIsBuiltin());
+//			sql.setCreateTime(sqlScript.getCreateTime());
+//			sql.setCreateUserId(sqlScript.getCreateUserId());
+//			sql.setComments(sqlScript.getComments());
 //			sql.setIsCreateBuiltinResource(sqlScript.getIsCreateBuiltinResource());
 //			sql.setIsDeploymentApp(sqlScript.getIsDeploymentApp());
-			HibernateUtil.updateObject(sql, null);
+//			HibernateUtil.updateObject(sql, null);
 		} catch (Exception e) {
 			Log4jUtil.debug(ExceptionUtil.getErrMsg(e));
 		}
@@ -83,13 +82,13 @@ public class ComSqlScriptService extends AbstractResourceService {
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "delete ComSqlScript where id " + in, sqlScriptIdArr);
 	}
 	
-	/**
-	 * 创建sql脚本数据模型
-	 * @param sqlScript
-	 */
-	private void createSqlScriptModel(ComSqlScript sqlScript) {
-		comSysResourceService.insertSysResource(sqlScript);// 将sql脚本资源加入到资源表中
-	}
+//	/**
+//	 * 创建sql脚本数据模型
+//	 * @param sqlScript
+//	 */
+//	private void createSqlScriptModel(ComSqlScript sqlScript) {
+//		comSysResourceService.insertSysResource(sqlScript);// 将sql脚本资源加入到资源表中
+//	}
 
 	//--------------------------------------------------------
 	

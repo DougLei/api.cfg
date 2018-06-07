@@ -48,7 +48,7 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT_MODULE_BODY");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT_MODULE_BODY", 0);
 		table.setName("[通用的]项目模块内容资源对象");
 		table.setComments("[通用的]项目模块内容资源对象：理解为每个功能模块的json串配置");
 		table.setIsBuiltin(1);

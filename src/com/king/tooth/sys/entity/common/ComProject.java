@@ -12,7 +12,6 @@ import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumndata;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
-import com.king.tooth.util.StrUtils;
 
 /**
  * [通用的]项目信息资源对象
@@ -41,9 +40,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	}
 
 	public void setProjName(String projName) {
-		if(StrUtils.isEmpty(projName)){
-			throw new NullPointerException("项目名称不能为空");
-		}
 		this.projName = projName;
 	}
 	public String getProjName() {
@@ -63,7 +59,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	}
 
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT", 0);
 		table.setIsResource(1);
 		table.setName("[通用的]项目信息资源对象表");
 		table.setComments("[通用的]项目信息资源对象表");

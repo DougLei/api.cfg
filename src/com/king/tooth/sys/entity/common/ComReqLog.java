@@ -146,7 +146,7 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_REQ_LOG");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_REQ_LOG", 0);
 		table.setName("[通用的]请求日志资源对象表");
 		table.setComments("[通用的]请求日志资源对象表");
 		table.setIsBuiltin(1);

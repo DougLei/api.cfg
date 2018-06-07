@@ -58,7 +58,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	
 	
 	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_RESOURCE");
+		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_RESOURCE", 0);
 		table.setIsResource(1);
 		table.setName("[通用的]系统资源对象表");
 		table.setComments("[通用的]系统资源对象表");
