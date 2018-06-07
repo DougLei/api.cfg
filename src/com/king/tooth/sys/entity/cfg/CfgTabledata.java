@@ -223,7 +223,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setPlatformType(IS_CFG_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(20);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(25);
 		
 		CfgColumndata nameColumn = new CfgColumndata("name");
 		nameColumn.setName("显示的汉字名称");

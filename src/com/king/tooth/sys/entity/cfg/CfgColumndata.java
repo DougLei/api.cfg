@@ -56,7 +56,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	/**
 	 * 是否主键
 	 */
-	private int isKey;
+	private int isPrimaryKey;
 	/**
 	 * 是否唯一
 	 */
@@ -159,11 +159,11 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public void setPrecision(int precision) {
 		this.precision = precision;
 	}
-	public int getIsKey() {
-		return isKey;
+	public int getIsPrimaryKey() {
+		return isPrimaryKey;
 	}
-	public void setIsKey(int isKey) {
-		this.isKey = isKey;
+	public void setIsPrimaryKey(int isPrimaryKey) {
+		this.isPrimaryKey = isPrimaryKey;
 	}
 	public int getIsUnique() {
 		return isUnique;
@@ -280,13 +280,13 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		defaultValueColumn.setOrderCode(8);
 		columns.add(defaultValueColumn);
 		
-		CfgColumndata isKeyColumn = new CfgColumndata("is_key");
-		isKeyColumn.setName("是否主键");
-		isKeyColumn.setComments("是否主键");
-		isKeyColumn.setColumnType(DataTypeConstants.INTEGER);
-		isKeyColumn.setLength(1);
-		isKeyColumn.setOrderCode(9);
-		columns.add(isKeyColumn);
+		CfgColumndata isPrimaryKeyColumn = new CfgColumndata("is_primary_key");
+		isPrimaryKeyColumn.setName("是否主键");
+		isPrimaryKeyColumn.setComments("是否主键");
+		isPrimaryKeyColumn.setColumnType(DataTypeConstants.INTEGER);
+		isPrimaryKeyColumn.setLength(1);
+		isPrimaryKeyColumn.setOrderCode(9);
+		columns.add(isPrimaryKeyColumn);
 		
 		CfgColumndata isUniqueColumn = new CfgColumndata("is_unique");
 		isUniqueColumn.setName("是否唯一");
@@ -368,7 +368,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("length", length+"");
 		json.put("precision", precision+"");
-		json.put("isKey", isKey+"");
+		json.put("isPrimaryKey", isPrimaryKey+"");
 		json.put("isUnique", isUnique+"");
 		json.put("isNullabled", isNullabled+"");
 		json.put("isRequire", isRequire+"");

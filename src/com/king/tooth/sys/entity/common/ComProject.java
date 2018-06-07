@@ -68,7 +68,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(13);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(16);
 		
 		CfgColumndata refDatabaseIdColumn = new CfgColumndata("ref_database_id");
 		refDatabaseIdColumn.setName("关联的数据库主键");

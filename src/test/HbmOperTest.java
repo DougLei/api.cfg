@@ -32,7 +32,7 @@ public class HbmOperTest {
 //		c1.setColumnName("Id");
 		c1.setColumnType("string");
 		c1.setLength(32);
-		c1.setIsKey(1);
+//		c1.setIsKey(1);
 		
 		CfgColumndata c2 = new CfgColumndata();
 //		c2.setColumnName("age_stu");

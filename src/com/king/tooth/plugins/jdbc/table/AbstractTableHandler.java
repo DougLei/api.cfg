@@ -75,7 +75,7 @@ public abstract class AbstractTableHandler {
 	 * @param column
 	 */
 	private void analysisColumnProp(CfgColumndata column) {
-		if(1 == column.getIsKey()){
+		if(1 == column.getIsPrimaryKey()){
 			createTableSql.append(" primary key ");
 		}
 		if(StrUtils.notEmpty(column.getDefaultValue())){

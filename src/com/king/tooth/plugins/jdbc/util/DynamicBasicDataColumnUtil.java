@@ -18,7 +18,7 @@ public class DynamicBasicDataColumnUtil {
 	public static void initBasicColumnToTable(CfgTabledata table){
 		// id
 		CfgColumndata idColumn = new CfgColumndata("id");
-		idColumn.setIsKey(1);
+		idColumn.setIsPrimaryKey(1);
 		idColumn.setIsNullabled(0);
 		idColumn.setColumnType(DataTypeConstants.STRING);
 		idColumn.setLength(32);

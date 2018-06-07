@@ -246,7 +246,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(19);
+		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(22);
 		
 		CfgColumndata sqlScriptCaptionColumn = new CfgColumndata("sql_script_caption");
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
