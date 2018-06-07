@@ -1,5 +1,7 @@
 package com.king.tooth.sys.entity;
 
+import com.king.tooth.sys.entity.common.ComSysResource;
+
 /**
  * 系统资源接口
  * @author DougLei
@@ -66,24 +68,13 @@ public interface ISysResource {
 	public static final int IS_COMMON_PLATFORM_TYPE = 3;
 	
 	/**
-	 * 获取资源类型
-	 * @return
+	 * 解析资源数据
+	 * <p>例如:解析ComSqlScript，根据传入的sql脚本，获取sql脚本的类型，参数集合等</p>
 	 */
-	public int getResourceType();
-	/**
-	 * 获取资源名
-	 * @return
-	 */
-	public String getResourceName();
-	/**
-	 * 获取资源主键
-	 * @return
-	 */
-	public String getResourceId();
+	public void analysisResourceData();
 	
 	/**
-	 * 请求资源的方式
-	 * @return
+	 * 转换为资源对象
 	 */
-	public String getReqResourceMethod();
+	public ComSysResource turnToResource();
 }

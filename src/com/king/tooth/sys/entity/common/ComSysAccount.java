@@ -103,21 +103,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public String getTel() {
 		return tel;
 	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	public void setLastUpdateTime(Date lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	public void setCreateUserId(String createUserId) {
-		this.createUserId = createUserId;
-	}
-	public void setLastUpdatedUserId(String lastUpdatedUserId) {
-		this.lastUpdatedUserId = lastUpdatedUserId;
-	}
 	public String getMessage() {
 		return message;
 	}
@@ -151,21 +136,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public void setValidDate(Date validDate) {
 		this.validDate = validDate;
 	}
-	public String getId() {
-		return id;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public Date getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-	public String getCreateUserId() {
-		return createUserId;
-	}
-	public String getLastUpdatedUserId() {
-		return lastUpdatedUserId;
-	}
 	public String getEmails() {
 		return emails;
 	}
@@ -192,12 +162,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	}
 	public void setVerifyCode(String verifyCode) {
 		this.verifyCode = verifyCode;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 
 	public CfgTabledata toCreateTable(String dbType) {
@@ -293,14 +257,13 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "ComSysAccount";
 	}
+	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("validDate", validDate);
 		json.put("accountType", accountType+"");
 		json.put("accountStatus", accountStatus+"");
-		if(this.createTime != null){
-			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		}
+		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 }

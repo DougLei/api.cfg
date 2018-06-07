@@ -1,7 +1,6 @@
 package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -35,36 +34,6 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 	
 	//----------------------------------------------------------------
 	
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	public void setLastUpdateTime(Date lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	public void setCreateUserId(String createUserId) {
-		this.createUserId = createUserId;
-	}
-	public String getId() {
-		return id;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public Date getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-	public String getCreateUserId() {
-		return createUserId;
-	}
-	public String getLastUpdatedUserId() {
-		return lastUpdatedUserId;
-	}
-	public void setLastUpdatedUserId(String lastUpdatedUserId) {
-		this.lastUpdatedUserId = lastUpdatedUserId;
-	}
 	public String getModuleId() {
 		return moduleId;
 	}
@@ -76,12 +45,6 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 	}
 	public void setModuleBody(String moduleBody) {
 		this.moduleBody = moduleBody;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
@@ -120,11 +83,10 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 	public String getEntityName() {
 		return "ComProjectModuleBody";
 	}
+
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
-		if(this.createTime != null){
-			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		}
+		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 }

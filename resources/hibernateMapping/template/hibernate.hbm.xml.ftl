@@ -11,6 +11,16 @@
 		</id>
 		<property name="projectId" column="project_id" type="string" />
 		
+		<#if table.isResource == 1>
+			<property name="isEnabled" column="is_enabled" type="string" />
+			<property name="validDate" column="valid_date" type="timestamp" />
+			<property name="isNeedDeploy" column="is_need_deploy" type="string" />
+			<property name="reqResourceMethod" column="req_resource_method" type="string" />
+			<property name="isBuiltin" column="is_builtin" type="string" />
+			<property name="platformType" column="platform_type" type="string" />
+			<property name="isCreatedResource" column="is_created_resource" type="string" />
+		</#if>
+		
 		<#if table.isDatalinkTable == 0 && table.tableName != "COM_DATA_LINKS">
 			<property name="createUserId" column="create_user_id" type="string" />
 			<property name="lastUpdatedUserId" column="last_updated_user_id" type="string" />

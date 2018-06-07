@@ -103,21 +103,6 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	public void setLastUpdateTime(Date lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	public void setCreateUserId(String createUserId) {
-		this.createUserId = createUserId;
-	}
-	public void setLastUpdatedUserId(String lastUpdatedUserId) {
-		this.lastUpdatedUserId = lastUpdatedUserId;
-	}
 	public String getNikeName() {
 		return nikeName;
 	}
@@ -169,21 +154,6 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	public String getOfficePhone() {
 		return officePhone;
 	}
-	public String getId() {
-		return id;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public Date getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-	public String getCreateUserId() {
-		return createUserId;
-	}
-	public String getLastUpdatedUserId() {
-		return lastUpdatedUserId;
-	}
 	public void setOfficePhone(String officePhone) {
 		this.officePhone = officePhone;
 	}
@@ -229,13 +199,6 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	public void setDescs(String descs) {
 		this.descs = descs;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-
 	
 	public CfgTabledata toCreateTable(String dbType) {
 		CfgTabledata table = new CfgTabledata(dbType, "COM_USER");
@@ -402,9 +365,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		json.put("sex", sex+"");
 		json.put("userStatus", userStatus+"");
 		json.put("secretLevel", secretLevel+"");
-		if(this.createTime != null){
-			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		}
+		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 }

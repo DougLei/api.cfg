@@ -1,14 +1,17 @@
 package test;
 
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 public class HibernateTest {
 
 	public static void main(String[] args) {
 		SpringApplication.getApplicationContext();
-//		CurrentThreadContext.setDatabaseId("1");
-		HibernateUtil.openSessionToCurrentThread();
-		HibernateUtil.beginTransaction();
+		CurrentThreadContext.setDatabaseId("447f1ef0272847018f9df0e9edc48d37");
+		HibernateUtil.executeListQueryByHql("100", 1+"", "select hbmContent from ComHibernateHbm where isEnabled = 1", null);
+		
+		
+		
 //		String sql = "select count(id) from CfgTabledata";
 //		System.out.println(HibernateUtil.executeUniqueQueryByHql(sql, null));;
 		

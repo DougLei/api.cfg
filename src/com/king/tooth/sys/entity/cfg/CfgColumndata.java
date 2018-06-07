@@ -1,7 +1,6 @@
 package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -64,7 +63,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 是否可为空
 	 */
-	private int isNullabled;
+	private int isNullabled = 1;
 	/**
 	 * 是否必填
 	 */
@@ -130,15 +129,6 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	public String getColumnType() {
 		return columnType;
 	}
-	public String getId() {
-		return id;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public Date getLastUpdateTime() {
-		return lastUpdateTime;
-	}
 	public int getIsDataDictionary() {
 		return isDataDictionary;
 	}
@@ -151,32 +141,11 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	public void setDataDictionaryCode(String dataDictionaryCode) {
 		this.dataDictionaryCode = dataDictionaryCode;
 	}
-	public String getCreateUserId() {
-		return createUserId;
-	}
-	public String getLastUpdatedUserId() {
-		return lastUpdatedUserId;
-	}
 	public void setColumnType(String columnType) {
 		this.columnType = columnType;
 	}
 	public String getDefaultValue() {
 		return defaultValue;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	public void setLastUpdateTime(Date lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	public void setCreateUserId(String createUserId) {
-		this.createUserId = createUserId;
-	}
-	public void setLastUpdatedUserId(String lastUpdatedUserId) {
-		this.lastUpdatedUserId = lastUpdatedUserId;
 	}
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
@@ -246,12 +215,6 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	}
 	public void setIsEnabled(int isEnabled) {
 		this.isEnabled = isEnabled;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	public void setColumnName(String columnName) {
 		if(StrUtils.isEmpty(columnName)){
@@ -418,6 +381,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "CfgColumndata";
 	}
+	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("length", length+"");
@@ -429,9 +393,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity{
 		json.put("isDataDictionary", isDataDictionary+"");
 		json.put("orderCode", orderCode+"");
 		json.put("isEnabled", isEnabled+"");
-		if(this.createTime != null){
-			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		}
+		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 }

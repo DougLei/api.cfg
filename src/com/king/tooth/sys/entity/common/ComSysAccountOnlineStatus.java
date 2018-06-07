@@ -85,36 +85,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public ComSysAccount getAccount() {
 		return account;
 	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	public void setLastUpdateTime(Date lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	public void setCreateUserId(String createUserId) {
-		this.createUserId = createUserId;
-	}
-	public String getId() {
-		return id;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public Date getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-	public String getCreateUserId() {
-		return createUserId;
-	}
-	public String getLastUpdatedUserId() {
-		return lastUpdatedUserId;
-	}
-	public void setLastUpdatedUserId(String lastUpdatedUserId) {
-		this.lastUpdatedUserId = lastUpdatedUserId;
-	}
 	public void setAccount(ComSysAccount account) {
 		this.account = account;
 	}
@@ -177,12 +147,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	}
 	public void setLastOperDate(Date lastOperDate) {
 		this.lastOperDate = lastOperDate;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	
 	
@@ -270,14 +234,13 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public String getEntityName() {
 		return "ComSysAccountOnlineStatus";
 	}
+
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("loginDate", loginDate);
 		json.put("lastOperDate", lastOperDate);
 		json.put("tryLoginTimes", tryLoginTimes+"");
-		if(this.createTime != null){
-			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		}
+		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 }

@@ -2,6 +2,9 @@ package com.king.tooth.sys.entity;
 
 import java.util.Date;
 
+import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.util.StrUtils;
+
 /**
  * 系统资源抽象类
  * @author DougLei
@@ -9,15 +12,15 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public abstract class AbstractSysResource extends BasicEntity implements ISysResource{
 	/**
-	 * 是否有效
+	 * 资源是否有效
 	 */
 	protected int isEnabled;
 	/**
-	 * 有效期
+	 * 资源有效期
 	 */
 	protected Date validDate;
 	/**
-	 * 是否需要发布
+	 * 资源是否需要发布
 	 */
 	protected int isNeedDeploy;
 	/**
@@ -26,11 +29,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	protected String reqResourceMethod;
 	/**
-	 * 是否内置
+	 * 是否内置资源
 	 */
 	protected int isBuiltin;
 	/**
-	 * 所属于的平台类型
+	 * 资源所属于的平台类型
 	 * <p>1:配置平台、2:运行平台、3:公用</p>
 	 */
 	protected int platformType;
@@ -39,11 +42,73 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	protected int isCreatedResource;
 	
+	// -----------------------------------------------------------------
 	
+	/**
+	 * 转换为资源对象
+	 */
+	public ComSysResource turnToResource(){
+		ComSysResource resource = new ComSysResource();
+		resource.setIsEnabled(isEnabled);
+		resource.setValidDate(validDate);
+		resource.setIsNeedDeploy(isNeedDeploy);
+		resource.setReqResourceMethod(getReqResourceMethod());
+		resource.setIsBuiltin(isBuiltin);
+		resource.setPlatformType(platformType);
+		resource.setIsCreatedResource(isCreatedResource);
+		return resource;
+	}
+	
+	
+	public int getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(int isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+	public Date getValidDate() {
+		return validDate;
+	}
+	public void setValidDate(Date validDate) {
+		this.validDate = validDate;
+	}
+	public int getIsNeedDeploy() {
+		return isNeedDeploy;
+	}
+	public void setIsNeedDeploy(int isNeedDeploy) {
+		this.isNeedDeploy = isNeedDeploy;
+	}
+	public int getIsBuiltin() {
+		return isBuiltin;
+	}
+	public void setIsBuiltin(int isBuiltin) {
+		this.isBuiltin = isBuiltin;
+	}
+	public int getPlatformType() {
+		return platformType;
+	}
+	public void setPlatformType(int platformType) {
+		this.platformType = platformType;
+	}
+	public int getIsCreatedResource() {
+		return isCreatedResource;
+	}
+	public void setIsCreatedResource(int isCreatedResource) {
+		this.isCreatedResource = isCreatedResource;
+	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
+	}
 	public String getReqResourceMethod() {
-		if(reqResourceMethod == null){
+		if(StrUtils.isEmpty(reqResourceMethod)){
 			return ALL;
 		}
 		return reqResourceMethod;
 	}
+	
+	// -----------------------------------------------------------------
+	/**
+	 * 是否被解析过
+	 */
+	protected boolean isAnalysed;
 }

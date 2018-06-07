@@ -3,6 +3,7 @@ package com.king.tooth.plugins.orm.hibernate.hbm;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.StrUtils;
@@ -42,13 +43,14 @@ public class HibernateHbmHandler {
 	
 	/**
 	 * 根据表数据，创建hbm映射文件
-	 * @param tabledata
+	 * @param table
+	 * @param needBasicColumnDatas 是否需要给table中加入基础列信息，比如id字段等
 	 * @return hbm content
 	 */
-	public String createHbmMappingContent(CfgTabledata tabledata){
-		Map<String, Object> dataModel = new HashMap<String, Object>();
-		dataModel.put("table", tabledata);
-		dataModel.put("columns", tabledata.getColumns());
+	public String createHbmMappingContent(CfgTabledata table){
+		Map<String, Object> dataModel = new HashMap<String, Object>(2);
+		dataModel.put("table", table);
+		dataModel.put("columns", table.getColumns());
 		String hbmMappingContent = FreemarkerUtil.process(HBM_FTL_FILE_PATH, dataModel);
 		return hbmMappingContent;
 	}

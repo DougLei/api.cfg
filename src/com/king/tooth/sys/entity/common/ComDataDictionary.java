@@ -1,7 +1,6 @@
 package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -63,41 +62,11 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public String getCodeCaption() {
 		return codeCaption;
 	}
-	public String getId() {
-		return id;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
-	public Date getLastUpdateTime() {
-		return lastUpdateTime;
-	}
-	public String getCreateUserId() {
-		return createUserId;
-	}
-	public String getLastUpdatedUserId() {
-		return lastUpdatedUserId;
-	}
 	public void setCodeCaption(String codeCaption) {
 		this.codeCaption = codeCaption;
 	}
 	public String getCodeValue() {
 		return codeValue;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	public void setLastUpdateTime(Date lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	public void setCreateUserId(String createUserId) {
-		this.createUserId = createUserId;
-	}
-	public void setLastUpdatedUserId(String lastUpdatedUserId) {
-		this.lastUpdatedUserId = lastUpdatedUserId;
 	}
 	public void setCodeValue(String codeValue) {
 		this.codeValue = codeValue;
@@ -113,12 +82,6 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
-	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
 	}
 	
 	public CfgTabledata toCreateTable(String dbType) {
@@ -191,12 +154,11 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "ComDataDictionary";
 	}
+	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("orderCode", orderCode+"");
-		if(this.createTime != null){
-			json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		}
+		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 }

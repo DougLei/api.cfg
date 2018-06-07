@@ -17,12 +17,7 @@ public class ComSysResourceService extends AbstractResourceService{
 	 * @param resource
 	 */
 	public void insertSysResource(ISysResource iresource){
-		ComSysResource resource = new ComSysResource();
-		resource.setRefResourceId(iresource.getResourceId());
-		resource.setResourceName(iresource.getResourceName());
-		resource.setResourceType(iresource.getResourceType());
-		resource.setReqResourceMethod(iresource.getReqResourceMethod());
-		resource.setIsEnabled(1);
+		ComSysResource resource = iresource.turnToResource();
 		HibernateUtil.saveObject(resource , "保存资源");
 	}
 	
