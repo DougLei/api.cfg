@@ -15,11 +15,6 @@
 				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
 			</props>
 		</property>
-		<property name="mappingLocations" >
-			<array>
-				<value>classpath:hibernateMapping/ComHibernateHbm.hbm.xml</value>
-			</array>
-		</property>
 	</bean>
 	
 	<!-- 配置动态sessionFactory持有者对象 -->
