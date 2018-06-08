@@ -17,11 +17,11 @@ public abstract class AbstractResourceController {
 	protected ResponseBody installOperResponseBody(String operResult, String definedMessage){
 		ResponseBody responseBody = new ResponseBody();
 		if(operResult == null){
-			if(definedMessage == null){
-				responseBody.setMessage("操作成功");
-			}else{
+//			if(definedMessage == null){
+//				responseBody.setMessage("操作成功");
+//			}else{
 				responseBody.setMessage(definedMessage);
-			}
+//			}
 		}else{
 			responseBody.setMessage(operResult);
 		}

@@ -77,8 +77,7 @@ public class ComDatabaseService extends AbstractService{
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
-		database.testDbLink();
-		return null;
+		return database.testDbLink();
 	}
 	
 	

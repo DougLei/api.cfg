@@ -37,7 +37,7 @@ public class ComDatabaseController extends AbstractResourceController{
 		if(result == null){
 			result = databaseService.saveDatabase(database);
 		}
-		return installOperResponseBody(result, "添加成功");
+		return installOperResponseBody(result, null);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class ComDatabaseController extends AbstractResourceController{
 		if(result == null){
 			result = databaseService.updateDatabase(database);
 		}
-		return installOperResponseBody(result, "修改成功");
+		return installOperResponseBody(result, null);
 	}
 	
 	/**
@@ -67,10 +67,7 @@ public class ComDatabaseController extends AbstractResourceController{
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("测试连接的数据库id不能为空", null);
 		}
-		
-		long start = System.currentTimeMillis();
 		String result = databaseService.databaseLinkTest(databaseId);
-		int connectSeconds = (int) ((System.currentTimeMillis()-start)/1000);
-		return installOperResponseBody(result, "连接成功，耗时["+connectSeconds+"]秒");
+		return installOperResponseBody(result, null);
 	}
 }

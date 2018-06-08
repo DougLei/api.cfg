@@ -262,14 +262,17 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	/**
 	 * 测试数据库连接
 	 */
-	public void testDbLink(){
+	public String testDbLink(){
 		Connection conn = null;
 		try {
+			long start = System.currentTimeMillis();
 			Class.forName(getDriverClass());
 			DriverManager.setLoginTimeout(2);
 			conn = DriverManager.getConnection(getUrl(), getLoginUserName(), getLoginPassword());
+			int connectSeconds = (int) ((System.currentTimeMillis()-start)/1000);
+			return "连接成功，耗时["+connectSeconds+"]秒";
 		} catch (Exception e) {
-			throw new IllegalArgumentException("测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg(e)+"]");
+			return "测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg(e)+"]";
 		} finally{
 			CloseUtil.closeDBConn(conn);
 		}
