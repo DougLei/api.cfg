@@ -160,7 +160,7 @@ public class ResourceHandlerUtil {
 	 * @return
 	 */
 	public static JSONObject getDataLinksObject(String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
-		JSONObject dataLinks = new JSONObject(4);
+		JSONObject dataLinks = new JSONObject(6);
 		dataLinks.put(ResourceNameConstants.LEFT_ID, leftId);
 		dataLinks.put(ResourceNameConstants.RIGHT_ID, rightId);
 		dataLinks.put(ResourceNameConstants.ORDER_CODE, orderCode);

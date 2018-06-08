@@ -10,6 +10,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
@@ -40,7 +41,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	/**
 	 * 表类型：1:单表、2:树表、3:父子关系表
 	 */
-	private int tableType;
+	private Integer tableType;
 	/**
 	 * 父表id，只有Table_Type=3的时候，才有效
 	 * 主表该字段没有值，子表字段存储的是其父表的id
@@ -60,7 +61,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 * 如果主子表是多对多关系，则需要关系表，值=1
 	 * 子表才会配置该字段的值
 	 */
-	private int isHavaDatalink;
+	private Integer isHavaDatalink;
 	/**
 	 * 子表指向父表的(子表)字段编号
 	 * 存储的是子表的字段编号
@@ -76,7 +77,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	/**
 	 * 版本
 	 */
-	private int version = 1;
+	private Integer version;
 	/**
 	 * 注释
 	 */
@@ -143,13 +144,13 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setColumns(List<ComColumndata> columns) {
 		this.columns = columns;
 	}
-	public int getTableType() {
+	public Integer getTableType() {
 		return tableType;
 	}
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
 	}
-	public void setTableType(int tableType) {
+	public void setTableType(Integer tableType) {
 		this.tableType = tableType;
 	}
 	public String getParentTableId() {
@@ -158,10 +159,10 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setParentTableId(String parentTableId) {
 		this.parentTableId = parentTableId;
 	}
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 	public String getComments() {
@@ -185,7 +186,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setIsDatalinkTable(int isDatalinkTable) {
 		this.isDatalinkTable = isDatalinkTable;
 	}
-	public int getIsHavaDatalink() {
+	public Integer getIsHavaDatalink() {
 		return isHavaDatalink;
 	}
 	public String getSubRefParentColumnId() {
@@ -194,7 +195,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setSubRefParentColumnId(String subRefParentColumnId) {
 		this.subRefParentColumnId = subRefParentColumnId;
 	}
-	public void setIsHavaDatalink(int isHavaDatalink) {
+	public void setIsHavaDatalink(Integer isHavaDatalink) {
 		this.isHavaDatalink = isHavaDatalink;
 	}
 	public String getSubRefParentColumnName() {
@@ -221,6 +222,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_TABLEDATA", 0);
 		table.setIsResource(1);
+		table.setVersion(1);
 		table.setName("表数据信息资源对象表");
 		table.setComments("表数据信息资源对象表");
 		table.setIsBuiltin(1);
@@ -253,6 +255,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		ComColumndata tableTypeColumn = new ComColumndata("table_type", DataTypeConstants.INTEGER, 1);
 		tableTypeColumn.setName("表类型");
 		tableTypeColumn.setComments("表类型：1:单表、2:树表、3:父子关系表");
+		tableTypeColumn.setDefaultValue("1");
 		tableTypeColumn.setOrderCode(4);
 		columns.add(tableTypeColumn);
 		
@@ -315,19 +318,19 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return "ComTabledata";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("tableType", tableType+"");
-		json.put("isHavaDatalink", isHavaDatalink+"");
-		json.put("version", version+"");
-		json.put("isDatalinkTable", isDatalinkTable+"");
-		json.put("isEnabled", isEnabled+"");
-		json.put("isBuiltin", isBuiltin+"");
-		json.put("isNeedDeploy", isNeedDeploy+"");
-		json.put("isDeployed", isDeployed+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("tableType", tableType);
+		entityJson.put("isHavaDatalink", isHavaDatalink);
+		entityJson.put("version", version);
+		entityJson.put("isDatalinkTable", isDatalinkTable);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isDeployed", isDeployed);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 	
 	public String validNotNullProps() {

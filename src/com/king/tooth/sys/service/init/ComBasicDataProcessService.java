@@ -19,6 +19,7 @@ import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
+import com.king.tooth.sys.entity.common.ComDataLinks;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComOperLog;
@@ -31,7 +32,6 @@ import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
-import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
@@ -414,7 +414,7 @@ public class ComBasicDataProcessService extends AbstractService{
 		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";
 		Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
 		if(clob == null){
-			throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
+			throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
 		}
 		
 		Reader reader = clob.getCharacterStream();

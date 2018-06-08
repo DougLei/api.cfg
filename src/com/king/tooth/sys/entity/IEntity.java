@@ -17,8 +17,8 @@ public interface IEntity {
 	public String getEntityName();
 	
 	/**
-	 * 转换为实体(json)对象
+	 * 转换为实体json对象
 	 * @return
 	 */
-	public JSONObject toEntity();
+	public JSONObject toEntityJson();
 }

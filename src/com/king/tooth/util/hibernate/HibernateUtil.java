@@ -297,7 +297,7 @@ public class HibernateUtil {
 	 * @return id
 	 */
 	public static String saveObject(IEntity entity, String shortDesc){
-		return saveObject(entity.getEntityName(), entity.toEntity(), shortDesc);
+		return saveObject(entity.getEntityName(), entity.toEntityJson(), shortDesc);
 	}
 	
 	/**
@@ -327,7 +327,7 @@ public class HibernateUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void updateObject(IEntity entity, String shortDesc){
-		JSONObject data = entity.toEntity();
+		JSONObject data = entity.toEntityJson();
 		if(StrUtils.isEmpty(data.getString(ResourceNameConstants.ID))){
 			throw new NullPointerException("要修改的数据id值不能为空");
 		}
@@ -350,7 +350,7 @@ public class HibernateUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void updateObjectByHql(IEntity entity, String shortDesc){
-		JSONObject data = entity.toEntity();
+		JSONObject data = entity.toEntityJson();
 		String updateId = data.getString(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(updateId)){
 			throw new NullPointerException("要修改的数据id值不能为空");

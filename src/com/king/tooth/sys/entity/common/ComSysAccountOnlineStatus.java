@@ -9,6 +9,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -48,7 +49,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	/**
 	 * 本次尝试登录的次数
 	 */
-	private int tryLoginTimes;
+	private Integer tryLoginTimes;
 	/**
 	 * 最后一次操作的时间
 	 */
@@ -115,7 +116,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setLoginIp(String loginIp) {
 		this.loginIp = loginIp;
 	}
-	public int getTryLoginTimes() {
+	public Integer getTryLoginTimes() {
 		return tryLoginTimes;
 	}
 	public String getLoginMac() {
@@ -124,7 +125,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setLoginMac(String loginMac) {
 		this.loginMac = loginMac;
 	}
-	public void setTryLoginTimes(int tryLoginTimes) {
+	public void setTryLoginTimes(Integer tryLoginTimes) {
 		this.tryLoginTimes = tryLoginTimes;
 	}
 	public int getIsError() {
@@ -157,6 +158,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		ComTabledata table = new ComTabledata(dbType, "COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
 		table.setName("系统账户在线状态资源对象表");
 		table.setComments("系统账户在线状态资源对象表");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
@@ -201,6 +203,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times", DataTypeConstants.INTEGER, 3);
 		tryLoginTimesColumn.setName("本次尝试登录的次数");
 		tryLoginTimesColumn.setComments("本次尝试登录的次数");
+		tryLoginTimesColumn.setDefaultValue("0");
 		tryLoginTimesColumn.setOrderCode(7);
 		columns.add(tryLoginTimesColumn);
 		
@@ -222,13 +225,13 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		return "ComSysAccountOnlineStatus";
 	}
 
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("loginDate", loginDate);
-		json.put("lastOperDate", lastOperDate);
-		json.put("tryLoginTimes", tryLoginTimes+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("loginDate", loginDate);
+		entityJson.put("lastOperDate", lastOperDate);
+		entityJson.put("tryLoginTimes", tryLoginTimes);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 }

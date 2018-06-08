@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -36,7 +37,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 排序值
 	 */
-	private int orderCode;
+	private Integer orderCode;
 	/**
 	 * 备注
 	 */
@@ -68,10 +69,10 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public void setCodeValue(String codeValue) {
 		this.codeValue = codeValue;
 	}
-	public int getOrderCode() {
+	public Integer getOrderCode() {
 		return orderCode;
 	}
-	public void setOrderCode(int orderCode) {
+	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
 	public String getComments() {
@@ -85,6 +86,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(dbType, "COM_DATA_DICTIONARY", 0);
 		table.setName("数据字典资源对象表");
 		table.setComments("数据字典资源对象表");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
@@ -117,6 +119,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
+		orderCodeColumn.setDefaultValue("0");
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
@@ -138,11 +141,11 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		return "ComDataDictionary";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("orderCode", orderCode+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("orderCode", orderCode);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 }

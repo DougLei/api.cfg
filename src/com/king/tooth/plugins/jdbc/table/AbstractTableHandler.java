@@ -76,7 +76,7 @@ public abstract class AbstractTableHandler {
 	 * @param column
 	 */
 	private void analysisColumnProp(ComColumndata column) {
-		if(1 == column.getIsPrimaryKey()){
+		if(column.getIsPrimaryKey() != null && 1 == column.getIsPrimaryKey()){
 			createTableSql.append(" primary key ");
 		}
 		if(StrUtils.notEmpty(column.getDefaultValue())){
@@ -84,15 +84,15 @@ public abstract class AbstractTableHandler {
 				throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
 			}
 			if(DataTypeConstants.STRING.equals(column.getColumnType())){
-				createTableSql.append(" default('").append(column.getDefaultValue()).append("') ");
+				createTableSql.append(" default '").append(column.getDefaultValue()).append("' ");
 			}else{
-				createTableSql.append(" default(").append(column.getDefaultValue()).append(") ");
+				createTableSql.append(" default ").append(column.getDefaultValue()).append(" ");
 			}
 		}
-		if(0 == column.getIsNullabled()){
+		if(column.getIsNullabled() != null && 0 == column.getIsNullabled()){
 			createTableSql.append(" not null ");
 		}
-		if(1 == column.getIsUnique()){
+		if(column.getIsUnique() != null && 1 == column.getIsUnique()){
 			createTableSql.append(" unique ");
 		}
 	}

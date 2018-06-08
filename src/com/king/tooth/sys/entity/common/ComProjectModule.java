@@ -6,7 +6,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -17,7 +18,7 @@ import com.king.tooth.util.JsonUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProjectModule extends BasicEntity implements ITable, IEntity{
+public class ComProjectModule extends AbstractSysResource implements ITable, IEntity{
 	
 	/**
 	 * 父模块编号
@@ -44,17 +45,9 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 排序值
 	 */
-	private int orderCode;
-	/**
-	 * 是否启用
-	 */
-	private int isEnabled;
+	private Integer orderCode;
 	
 	//-----------------------------------------------
-	
-	public ComProjectModule() {
-		this.isEnabled = 1;
-	}
 	
 	public String getParentId() {
 		return parentId;
@@ -86,27 +79,23 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	public void setIcon(String icon) {
 		this.icon = icon;
 	}
-	public int getOrderCode() {
+	public Integer getOrderCode() {
 		return orderCode;
 	}
-	public void setOrderCode(int orderCode) {
+	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
-	}
-	public int getIsEnabled() {
-		return isEnabled;
-	}
-	public void setIsEnabled(int isEnabled) {
-		this.isEnabled = isEnabled;
 	}
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE", 0);
+		table.setIsResource(1);
 		table.setName("项目模块信息资源对象表");
 		table.setComments("项目模块信息资源对象表：理解为菜单");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父模块编号");
@@ -141,14 +130,9 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
+		orderCodeColumn.setDefaultValue("0");
 		orderCodeColumn.setOrderCode(6);
 		columns.add(orderCodeColumn);
-		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
-		isEnabledColumn.setName("是否启用");
-		isEnabledColumn.setComments("是否启用");
-		isEnabledColumn.setOrderCode(7);
-		columns.add(isEnabledColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -161,12 +145,16 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		return "ComProjectModule";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("orderCode", orderCode+"");
-		json.put("isEnabled", isEnabled+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("orderCode", orderCode);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
+	}
+	
+	public ComSysResource turnToResource() {
+		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 }

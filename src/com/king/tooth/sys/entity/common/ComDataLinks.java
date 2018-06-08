@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.datalinks;
+package com.king.tooth.sys.entity.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,8 +7,6 @@ import java.util.List;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
 
 /**
  * 数据关联关系资源对象
@@ -20,6 +18,7 @@ public class ComDataLinks implements Serializable, ITable {
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_DATA_LINKS", 0);
 		table.setResourceName("ComDataLinks");
+		table.setVersion(1);
 		table.setName("数据关联关系资源对象表");
 		table.setComments("数据关联关系资源对象表");
 		table.setIsBuiltin(1);
@@ -43,6 +42,7 @@ public class ComDataLinks implements Serializable, ITable {
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
+		orderCodeColumn.setDefaultValue("0");
 		orderCodeColumn.setOrderCode(3);
 		columns.add(orderCodeColumn);
 		

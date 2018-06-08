@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.king.tooth.sys.controller.AbstractResourceController;
-import com.king.tooth.sys.service.common.ComProjectService;
 
 /**
  * 项目信息资源对象控制器
@@ -16,7 +15,7 @@ import com.king.tooth.sys.service.common.ComProjectService;
 @RequestMapping("/ComProject")
 public class ComProjectController extends AbstractResourceController{
 	
-	private ComProjectService projectService = new ComProjectService();
+//	private ComProjectService projectService = new ComProjectService();
 	
 	
 }

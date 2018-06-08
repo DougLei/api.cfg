@@ -17,7 +17,7 @@ public class HibernateTest {
 		
 		
 //		ComTabledata table = new ComTabledata("COM_SYS_RESOURCE");
-//		JSONObject json = table.toEntity();
+//		JSONObject json = table.toEntityJson();
 		
 		
 //		HibernateUtil.saveObject(table.getEntityName(), json, null);

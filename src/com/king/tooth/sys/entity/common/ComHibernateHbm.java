@@ -8,6 +8,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -38,7 +39,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	/**
 	 * 是否是关系表的hbm
 	 */
-	private int isDataLinkTableHbm;
+	private Integer isDataLinkTableHbm;
 	/**
 	 * hbm内容
 	 */
@@ -70,10 +71,10 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	public void setHbmResourceName(String hbmResourceName) {
 		this.hbmResourceName = hbmResourceName;
 	}
-	public int getIsDataLinkTableHbm() {
+	public Integer getIsDataLinkTableHbm() {
 		return isDataLinkTableHbm;
 	}
-	public void setIsDataLinkTableHbm(int isDataLinkTableHbm) {
+	public void setIsDataLinkTableHbm(Integer isDataLinkTableHbm) {
 		this.isDataLinkTableHbm = isDataLinkTableHbm;
 	}
 	
@@ -92,6 +93,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：如果发布到项目中，这个字段必须有值");
+		table.setVersion(1);
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
@@ -110,6 +112,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		ComColumndata isDataLinkTableHbmColumn = new ComColumndata("is_data_link_table_hbm", DataTypeConstants.INTEGER, 1);
 		isDataLinkTableHbmColumn.setName("是否是关系表的hbm");
 		isDataLinkTableHbmColumn.setComments("是否是关系表的hbm");
+		isDataLinkTableHbmColumn.setDefaultValue("0");
 		isDataLinkTableHbmColumn.setOrderCode(4);
 		columns.add(isDataLinkTableHbmColumn);
 		
@@ -131,16 +134,16 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		return "ComHibernateHbm";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("isDataLinkTableHbm", isDataLinkTableHbm+"");
-		json.put("isEnabled", isEnabled+"");
-		json.put("isBuiltin", isBuiltin+"");
-		json.put("isNeedDeploy", isNeedDeploy+"");
-		json.put("isDeployed", isDeployed+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("isDataLinkTableHbm", isDataLinkTableHbm);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isDeployed", isDeployed);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 	
 	public ComSysResource turnToResource() {

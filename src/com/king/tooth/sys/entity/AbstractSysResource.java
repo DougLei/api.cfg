@@ -11,25 +11,25 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	/**
 	 * 资源是否有效
 	 */
-	protected int isEnabled = 1;
+	protected Integer isEnabled;
 	/**
 	 * 请求资源的方法
 	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
 	 */
-	protected String reqResourceMethod = ALL;
+	protected String reqResourceMethod;
 	/**
 	 * 是否内置资源
 	 * <p>这个字段由开发人员控制，不开放给用户</p>
 	 */
-	protected int isBuiltin = 0;
+	protected Integer isBuiltin;
 	/**
 	 * 资源是否需要发布
 	 */
-	protected int isNeedDeploy = 1;
+	protected Integer isNeedDeploy;
 	/**
 	 * 资源是否发布
 	 */
-	protected int isDeployed;
+	protected Integer isDeployed;
 	
 	// -----------------------------------------------------------------
 	
@@ -47,28 +47,28 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	
 	
-	public int getIsEnabled() {
+	public Integer getIsEnabled() {
 		return isEnabled;
 	}
-	public void setIsEnabled(int isEnabled) {
+	public void setIsEnabled(Integer isEnabled) {
 		this.isEnabled = isEnabled;
 	}
-	public int getIsNeedDeploy() {
+	public Integer getIsNeedDeploy() {
 		return isNeedDeploy;
 	}
-	public void setIsNeedDeploy(int isNeedDeploy) {
+	public void setIsNeedDeploy(Integer isNeedDeploy) {
 		this.isNeedDeploy = isNeedDeploy;
 	}
-	public int getIsBuiltin() {
+	public Integer getIsBuiltin() {
 		return isBuiltin;
 	}
-	public void setIsBuiltin(int isBuiltin) {
+	public void setIsBuiltin(Integer isBuiltin) {
 		this.isBuiltin = isBuiltin;
 	}
-	public int getIsDeployed() {
+	public Integer getIsDeployed() {
 		return isDeployed;
 	}
-	public void setIsDeployed(int isDeployed) {
+	public void setIsDeployed(Integer isDeployed) {
 		this.isDeployed = isDeployed;
 	}
 	public void setReqResourceMethod(String reqResourceMethod) {

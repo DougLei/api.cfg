@@ -12,6 +12,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
@@ -56,7 +57,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	/**
 	 * 数据库端口
 	 */
-	private int dbPort;
+	private Integer dbPort;
 	/**
 	 * 数据库文件配置内容(json串)
 	 */
@@ -90,7 +91,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	public String getDbIp() {
 		return dbIp;
 	}
-	public int getDbPort() {
+	public Integer getDbPort() {
 		return dbPort;
 	}
 	public String getLoginPassword() {
@@ -126,7 +127,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	public void setDbIp(String dbIp) {
 		this.dbIp = dbIp;
 	}
-	public void setDbPort(int dbPort) {
+	public void setDbPort(Integer dbPort) {
 		this.dbPort = dbPort;
 	}
 	public void setDbDisplayName(String dbDisplayName) {
@@ -150,6 +151,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		table.setIsResource(1);
 		table.setName("数据库数据信息资源对象表");
 		table.setComments("数据库数据信息资源对象表");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
@@ -222,16 +224,16 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		return "ComDatabase";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("dbPort", dbPort+"");
-		json.put("isEnabled", isEnabled+"");
-		json.put("isBuiltin", isBuiltin+"");
-		json.put("isNeedDeploy", isNeedDeploy+"");
-		json.put("isDeployed", isDeployed+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("dbPort", dbPort);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isDeployed", isDeployed);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 	
 	/**

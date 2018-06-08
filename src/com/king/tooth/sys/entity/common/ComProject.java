@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -68,6 +69,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		table.setIsResource(1);
 		table.setName("项目信息资源对象表");
 		table.setComments("项目信息资源对象表");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
@@ -109,15 +111,15 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		return "ComProject";
 	}
 
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("isEnabled", isEnabled+"");
-		json.put("isBuiltin", isBuiltin+"");
-		json.put("isNeedDeploy", isNeedDeploy+"");
-		json.put("isDeployed", isDeployed+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isDeployed", isDeployed);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 	
 	public ComSysResource turnToResource() {

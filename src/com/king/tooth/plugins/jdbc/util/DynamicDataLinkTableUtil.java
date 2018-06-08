@@ -23,8 +23,10 @@ public class DynamicDataLinkTableUtil {
 	public static void processParentSubTable(List<ComTabledata> tabledatas) {
 		List<ComTabledata> datalinkTables = new ArrayList<ComTabledata>();
 		for (ComTabledata tabledata : tabledatas) {
-			if(DynamicDataConstants.PARENT_SUB_TABLE == tabledata.getTableType()
+			if(tabledata.getTableType()!=null  
+					&& DynamicDataConstants.PARENT_SUB_TABLE == tabledata.getTableType()
 					&& StrUtils.notEmpty(tabledata.getParentTableName())
+					&& tabledata.getIsHavaDatalink() != null
 					&& tabledata.getIsHavaDatalink() == 1){// 判断标示是需要主子表的
 				datalinkTables.add(getDataLinkTabledata(tabledata.getDbType(), tabledata.getParentTableId(), tabledata.getParentTableName(), tabledata.getTableName()));
 			}
@@ -63,6 +65,7 @@ public class DynamicDataLinkTableUtil {
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setOrderCode(3);
+		orderCodeColumn.setDefaultValue("0");
 		columns.add(orderCodeColumn);
 		
 		dataLinkTable.setColumns(columns);

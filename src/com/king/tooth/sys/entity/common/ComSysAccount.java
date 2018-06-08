@@ -9,6 +9,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -48,13 +49,13 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	 * 		1.平台开发账户
 	 * 		2.一般开发账户
 	 */
-	private int accountType;
+	private Integer accountType;
 	/**
 	 * 账户状态
 	 * 		1.启用
 	 * 		2.禁用
 	 */
-	private int accountStatus;
+	private Integer accountStatus;
 	/**
 	 * 账户有效期限
 	 */
@@ -73,9 +74,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	@JSONField(serialize = false)
 	private String verifyCode;
 	
-	public ComSysAccount() {
-		this.accountStatus = 1;
-	}
 	
 	public String getLoginName() {
 		return loginName;
@@ -101,10 +99,10 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public void setTel(String tel) {
 		this.tel = tel;
 	}
-	public int getAccountStatus() {
+	public Integer getAccountStatus() {
 		return accountStatus;
 	}
-	public void setAccountStatus(int accountStatus) {
+	public void setAccountStatus(Integer accountStatus) {
 		this.accountStatus = accountStatus;
 	}
 	public Date getValidDate() {
@@ -128,10 +126,10 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public void setEmails(String emails) {
 		this.emails = emails;
 	}
-	public int getAccountType() {
+	public Integer getAccountType() {
 		return accountType;
 	}
-	public void setAccountType(int accountType) {
+	public void setAccountType(Integer accountType) {
 		this.accountType = accountType;
 	}
 	public String getVerifyCode() {
@@ -145,6 +143,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(dbType, "COM_SYS_ACCOUNT", 0);
 		table.setName("系统账户资源对象表");
 		table.setComments("系统账户资源对象表");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
@@ -183,12 +182,14 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
 		accountTypeColumn.setName("账户类型");
 		accountTypeColumn.setComments("账户类型:1.平台开发账户、2.一般开发账户");
+		accountTypeColumn.setDefaultValue("2");
 		accountTypeColumn.setOrderCode(6);
 		columns.add(accountTypeColumn);
 		
 		ComColumndata accountStatusColumn = new ComColumndata("account_status", DataTypeConstants.INTEGER, 1);
 		accountStatusColumn.setName("账户状态");
 		accountStatusColumn.setComments("账户状态:1.启用、2.禁用");
+		accountStatusColumn.setDefaultValue("1");
 		accountStatusColumn.setOrderCode(7);
 		columns.add(accountStatusColumn);
 		
@@ -210,13 +211,13 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		return "ComSysAccount";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("accountType", accountType+"");
-		json.put("accountStatus", accountStatus+"");
-		json.put("validDate", validDate);
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("accountType", accountType);
+		entityJson.put("accountStatus", accountStatus);
+		entityJson.put("validDate", validDate);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 }

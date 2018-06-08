@@ -46,7 +46,7 @@ public class TableImpl extends AbstractTableHandler{
 			return;
 		}
 		
-		int length = column.getLength();
+		Integer length = column.getLength();
 		if(DataTypeConstants.STRING.equals(columnType)){
 			if(length < 0 || length > 8000){
 				createTableSql.append("(8000)");
@@ -58,8 +58,8 @@ public class TableImpl extends AbstractTableHandler{
 			createTableSql.append("(");
 			createTableSql.append(length);
 			
-			int precision = column.getPrecision();
-			if(precision > 0){
+			Integer precision = column.getPrecision();
+			if(precision != null && precision > 0){
 				createTableSql.append(",").append(precision);
 			}
 			createTableSql.append(")");

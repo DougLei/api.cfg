@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -36,7 +37,7 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 操作结果是否成功
 	 */
-	private int operResultIsSuccess;
+	private Integer operResultIsSuccess;
 	/**
 	 * 操作失败的异常信息
 	 */
@@ -68,10 +69,10 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	public void setErrorMsg(String errorMsg) {
 		this.errorMsg = errorMsg;
 	}
-	public int getOperResultIsSuccess() {
+	public Integer getOperResultIsSuccess() {
 		return operResultIsSuccess;
 	}
-	public void setOperResultIsSuccess(int operResultIsSuccess) {
+	public void setOperResultIsSuccess(Integer operResultIsSuccess) {
 		this.operResultIsSuccess = operResultIsSuccess;
 	}
 	
@@ -79,6 +80,7 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(dbType, "COM_OPER_LOG", 0);
 		table.setName("操作日志资源对象表");
 		table.setComments("操作日志资源对象表");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
@@ -126,11 +128,11 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		return "ComOperLog";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("operResultIsSuccess", operResultIsSuccess+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("operResultIsSuccess", operResultIsSuccess);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 }

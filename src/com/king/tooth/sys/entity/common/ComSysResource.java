@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -26,7 +27,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	/**
 	 * 资源类型
 	 */
-	private int resourceType;
+	private Integer resourceType;
 	/**
 	 * 资源名
 	 */
@@ -51,10 +52,10 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
 	}
-	public int getResourceType() {
+	public Integer getResourceType() {
 		return resourceType;
 	}
-	public void setResourceType(int resourceType) {
+	public void setResourceType(Integer resourceType) {
 		this.resourceType = resourceType;
 	}
 	public Date getValidDate() {
@@ -68,6 +69,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_SYS_RESOURCE", 0);
 		table.setIsResource(1);
+		table.setVersion(1);
 		table.setName("系统资源对象表");
 		table.setComments("系统资源对象表");
 		table.setIsBuiltin(1);
@@ -112,17 +114,17 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		return "ComSysResource";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("resourceType", resourceType+"");
-		json.put("isEnabled", isEnabled+"");
-		json.put("validDate", validDate);
-		json.put("isBuiltin", isBuiltin+"");
-		json.put("isNeedDeploy", isNeedDeploy+"");
-		json.put("isDeployed", isDeployed+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("resourceType", resourceType);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("validDate", validDate);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isDeployed", isDeployed);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 	
 	public void analysisResourceData() {

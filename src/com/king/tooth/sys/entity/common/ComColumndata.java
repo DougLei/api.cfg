@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
@@ -43,11 +44,11 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	/**
 	 * 字段长度
 	 */
-	private int length;
+	private Integer length;
 	/**
 	 * 数据精度
 	 */
-	private int precision;
+	private Integer precision;
 	/**
 	 * 默认值
 	 */
@@ -55,23 +56,23 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	/**
 	 * 是否主键
 	 */
-	private int isPrimaryKey;
+	private Integer isPrimaryKey;
 	/**
 	 * 是否唯一
 	 */
-	private int isUnique;
+	private Integer isUnique;
 	/**
 	 * 是否可为空
 	 */
-	private int isNullabled = 1;
+	private Integer isNullabled;
 	/**
 	 * 是否必填
 	 */
-	private int isRequire;
+	private Integer isRequire;
 	/**
 	 * 是否数据字典
 	 */
-	private int isDataDictionary;
+	private Integer isDataDictionary;
 	/**
 	 * 数据字典编码
 	 */
@@ -79,7 +80,7 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	/**
 	 * 排序
 	 */
-	private int orderCode;
+	private Integer orderCode;
 	/**
 	 * 注释
 	 */
@@ -89,7 +90,7 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	
 	public ComColumndata() {
 	}
-	public ComColumndata(String columnName, String columnType, int length) {
+	public ComColumndata(String columnName, String columnType, Integer length) {
 		this.columnName = columnName;
 		this.columnType = columnType;
 		this.length = length;
@@ -113,12 +114,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	}
 	public String getColumnType() {
 		return columnType;
-	}
-	public int getIsDataDictionary() {
-		return isDataDictionary;
-	}
-	public void setIsDataDictionary(int isDataDictionary) {
-		this.isDataDictionary = isDataDictionary;
 	}
 	public String getDataDictionaryCode() {
 		return dataDictionaryCode;
@@ -144,48 +139,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	public String getPropName() {
 		return propName;
 	}
-	public int getLength() {
-		return length;
-	}
-	public void setLength(int length) {
-		this.length = length;
-	}
-	public int getPrecision() {
-		return precision;
-	}
-	public void setPrecision(int precision) {
-		this.precision = precision;
-	}
-	public int getIsPrimaryKey() {
-		return isPrimaryKey;
-	}
-	public void setIsPrimaryKey(int isPrimaryKey) {
-		this.isPrimaryKey = isPrimaryKey;
-	}
-	public int getIsUnique() {
-		return isUnique;
-	}
-	public void setIsUnique(int isUnique) {
-		this.isUnique = isUnique;
-	}
-	public int getIsNullabled() {
-		return isNullabled;
-	}
-	public void setIsNullabled(int isNullabled) {
-		this.isNullabled = isNullabled;
-	}
-	public int getIsRequire() {
-		return isRequire;
-	}
-	public void setIsRequire(int isRequire) {
-		this.isRequire = isRequire;
-	}
-	public int getOrderCode() {
-		return orderCode;
-	}
-	public void setOrderCode(int orderCode) {
-		this.orderCode = orderCode;
-	}
 	public String getTableId() {
 		return tableId;
 	}
@@ -195,12 +148,62 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
-
+	public Integer getLength() {
+		return length;
+	}
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+	public Integer getPrecision() {
+		return precision;
+	}
+	public void setPrecision(Integer precision) {
+		this.precision = precision;
+	}
+	public Integer getIsPrimaryKey() {
+		return isPrimaryKey;
+	}
+	public void setIsPrimaryKey(Integer isPrimaryKey) {
+		this.isPrimaryKey = isPrimaryKey;
+	}
+	public Integer getIsUnique() {
+		return isUnique;
+	}
+	public void setIsUnique(Integer isUnique) {
+		this.isUnique = isUnique;
+	}
+	public Integer getIsNullabled() {
+		return isNullabled;
+	}
+	public void setIsNullabled(Integer isNullabled) {
+		this.isNullabled = isNullabled;
+	}
+	public Integer getIsRequire() {
+		return isRequire;
+	}
+	public void setIsRequire(Integer isRequire) {
+		this.isRequire = isRequire;
+	}
+	public Integer getIsDataDictionary() {
+		return isDataDictionary;
+	}
+	public void setIsDataDictionary(Integer isDataDictionary) {
+		this.isDataDictionary = isDataDictionary;
+	}
+	public Integer getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(Integer orderCode) {
+		this.orderCode = orderCode;
+	}
+	
+	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_COLUMNDATA", 0);
 		table.setIsResource(1);
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
@@ -247,6 +250,7 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		ComColumndata precisionColumn = new ComColumndata("precision", DataTypeConstants.INTEGER, 4);
 		precisionColumn.setName("数据精度");
 		precisionColumn.setComments("数据精度");
+		precisionColumn.setDefaultValue("0");
 		precisionColumn.setOrderCode(7);
 		columns.add(precisionColumn);
 		
@@ -259,12 +263,14 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		ComColumndata isPrimaryKeyColumn = new ComColumndata("is_primary_key", DataTypeConstants.INTEGER, 1);
 		isPrimaryKeyColumn.setName("是否主键");
 		isPrimaryKeyColumn.setComments("是否主键");
+		isPrimaryKeyColumn.setDefaultValue("0");
 		isPrimaryKeyColumn.setOrderCode(9);
 		columns.add(isPrimaryKeyColumn);
 		
 		ComColumndata isUniqueColumn = new ComColumndata("is_unique", DataTypeConstants.INTEGER, 1);
 		isUniqueColumn.setName("是否唯一");
 		isUniqueColumn.setComments("是否唯一");
+		isUniqueColumn.setDefaultValue("0");
 		isUniqueColumn.setOrderCode(10);
 		columns.add(isUniqueColumn);
 		
@@ -278,12 +284,14 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		ComColumndata isRequireColumn = new ComColumndata("is_require", DataTypeConstants.INTEGER, 1);
 		isRequireColumn.setName("是否必填");
 		isRequireColumn.setComments("是否必填");
+		isRequireColumn.setDefaultValue("0");
 		isRequireColumn.setOrderCode(12);
 		columns.add(isRequireColumn);
 		
 		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary", DataTypeConstants.INTEGER, 1);
 		isDataDictionaryColumn.setName("是否数据字典");
 		isDataDictionaryColumn.setComments("是否数据字典");
+		isDataDictionaryColumn.setDefaultValue("0");
 		isDataDictionaryColumn.setOrderCode(13);
 		columns.add(isDataDictionaryColumn);
 		
@@ -296,6 +304,7 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
+		orderCodeColumn.setDefaultValue("0");
 		orderCodeColumn.setOrderCode(15);
 		columns.add(orderCodeColumn);
 		
@@ -317,23 +326,23 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		return "ComColumndata";
 	}
 	
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put("length", length+"");
-		json.put("precision", precision+"");
-		json.put("isPrimaryKey", isPrimaryKey+"");
-		json.put("isUnique", isUnique+"");
-		json.put("isNullabled", isNullabled+"");
-		json.put("isRequire", isRequire+"");
-		json.put("isDataDictionary", isDataDictionary+"");
-		json.put("orderCode", orderCode+"");
-		json.put("isEnabled", isEnabled+"");
-		json.put("isBuiltin", isBuiltin+"");
-		json.put("isNeedDeploy", isNeedDeploy+"");
-		json.put("isDeployed", isDeployed+"");
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("length", length);
+		entityJson.put("precision", precision);
+		entityJson.put("isPrimaryKey", isPrimaryKey);
+		entityJson.put("isUnique", isUnique);
+		entityJson.put("isNullabled", isNullabled);
+		entityJson.put("isRequire", isRequire);
+		entityJson.put("isDataDictionary", isDataDictionary);
+		entityJson.put("orderCode", orderCode);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isDeployed", isDeployed);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 	
 	public String validNotNullProps() {

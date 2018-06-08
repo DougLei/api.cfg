@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -48,6 +49,7 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE_BODY", 0);
 		table.setName("项目模块内容资源对象");
 		table.setComments("项目模块内容资源对象：理解为每个功能模块的json串配置");
+		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
@@ -76,10 +78,10 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		return "ComProjectModuleBody";
 	}
 
-	public JSONObject toEntity() {
-		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put(ResourceNameConstants.ID, id);
-		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
-		return json;
+	public JSONObject toEntityJson() {
+		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		return entityJson.getEntityJson();
 	}
 }
