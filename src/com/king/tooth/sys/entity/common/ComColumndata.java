@@ -66,10 +66,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	 */
 	private Integer isNullabled;
 	/**
-	 * 是否必填
-	 */
-	private Integer isRequire;
-	/**
 	 * 是否数据字典
 	 */
 	private Integer isDataDictionary;
@@ -178,12 +174,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	public void setIsNullabled(Integer isNullabled) {
 		this.isNullabled = isNullabled;
 	}
-	public Integer getIsRequire() {
-		return isRequire;
-	}
-	public void setIsRequire(Integer isRequire) {
-		this.isRequire = isRequire;
-	}
 	public Integer getIsDataDictionary() {
 		return isDataDictionary;
 	}
@@ -208,7 +198,7 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -281,37 +271,30 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		isNullabledColumn.setOrderCode(11);
 		columns.add(isNullabledColumn);
 		
-		ComColumndata isRequireColumn = new ComColumndata("is_require", DataTypeConstants.INTEGER, 1);
-		isRequireColumn.setName("是否必填");
-		isRequireColumn.setComments("是否必填");
-		isRequireColumn.setDefaultValue("0");
-		isRequireColumn.setOrderCode(12);
-		columns.add(isRequireColumn);
-		
 		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary", DataTypeConstants.INTEGER, 1);
 		isDataDictionaryColumn.setName("是否数据字典");
 		isDataDictionaryColumn.setComments("是否数据字典");
 		isDataDictionaryColumn.setDefaultValue("0");
-		isDataDictionaryColumn.setOrderCode(13);
+		isDataDictionaryColumn.setOrderCode(12);
 		columns.add(isDataDictionaryColumn);
 		
 		ComColumndata dataDictionaryCodeColumn = new ComColumndata("data_dictionary_code", DataTypeConstants.STRING, 50);
 		dataDictionaryCodeColumn.setName("数据字典编码");
 		dataDictionaryCodeColumn.setComments("数据字典编码");
-		dataDictionaryCodeColumn.setOrderCode(14);
+		dataDictionaryCodeColumn.setOrderCode(13);
 		columns.add(dataDictionaryCodeColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
 		orderCodeColumn.setDefaultValue("0");
-		orderCodeColumn.setOrderCode(15);
+		orderCodeColumn.setOrderCode(14);
 		columns.add(orderCodeColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 400);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
-		commentsColumn.setOrderCode(16);
+		commentsColumn.setOrderCode(15);
 		columns.add(commentsColumn);
 		
 		table.setColumns(columns);
@@ -334,7 +317,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		entityJson.put("isPrimaryKey", isPrimaryKey);
 		entityJson.put("isUnique", isUnique);
 		entityJson.put("isNullabled", isNullabled);
-		entityJson.put("isRequire", isRequire);
 		entityJson.put("isDataDictionary", isDataDictionary);
 		entityJson.put("orderCode", orderCode);
 		entityJson.put("isEnabled", isEnabled);

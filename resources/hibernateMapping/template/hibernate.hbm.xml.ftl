@@ -5,7 +5,7 @@
 
 <!-- ${table.resourceName}.hbm.xml的配置文件版本为：${table.version} -->
 <hibernate-mapping>
-	<class entity-name="${table.resourceName}" table="${table.tableName}">
+	<class entity-name="${table.resourceName}" table="${table.tableName}" dynamic-insert="true">
 		<id name="${id}" column="id" type="string">
 			<generator class="assigned" />
 		</id>
