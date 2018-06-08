@@ -51,11 +51,6 @@ public class ComTabledataService extends AbstractResourceService{
 	 * @param table
 	 */
 	public void saveTable(ComTabledata table) {
-		ComTabledata oldTable = getTableById(table.getId());
-		if(oldTable == null){
-			throw new NullPointerException("没有找到id为["+table.getId()+"]的表对象信息");
-		}
-		table.setIsDeployed(0);// 重置资源是否发布的值
 		HibernateUtil.saveObject(table, null);
 	}
 	
@@ -64,7 +59,11 @@ public class ComTabledataService extends AbstractResourceService{
 	 * @param table
 	 */
 	public void updateTable(ComTabledata table) {
-		
+		ComTabledata oldTable = getTableById(table.getId());
+		if(oldTable == null){
+			throw new NullPointerException("没有找到id为["+table.getId()+"]的表对象信息");
+		}
+		table.setIsDeployed(0);// 重置资源是否发布的值
 		HibernateUtil.updateObjectByHql(table, null);
 	}
 	

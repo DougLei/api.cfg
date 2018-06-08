@@ -73,7 +73,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		table.setName("项目信息资源对象表");
 		table.setComments("项目信息资源对象表");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		

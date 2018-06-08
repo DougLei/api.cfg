@@ -105,7 +105,6 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		table.setName("项目模块信息资源对象表");
 		table.setComments("项目模块信息资源对象表：理解为菜单");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);

@@ -2,6 +2,7 @@ package com.king.tooth.plugins.jdbc.util;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComTabledata;
 
@@ -42,6 +43,7 @@ public class DynamicBasicDataColumnUtil {
 			isEnabledColumn.setComments("资源是否有效");
 			isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
 			isEnabledColumn.setLength(1);
+			isEnabledColumn.setDefaultValue("1");
 			isEnabledColumn.setOrderCode(9903);
 			table.getColumns().add(isEnabledColumn);
 			
@@ -50,14 +52,16 @@ public class DynamicBasicDataColumnUtil {
 			reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 			reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
 			reqResourceMethodColumn.setLength(20);
+			reqResourceMethodColumn.setDefaultValue(ISysResource.ALL);
 			reqResourceMethodColumn.setOrderCode(9904);
 			table.getColumns().add(reqResourceMethodColumn);
 
 			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin");
 			isBuiltinColumn.setName("是否内置资源");
-			isBuiltinColumn.setComments("是否内置资源");
+			isBuiltinColumn.setComments("是否内置资源:这个字段由开发人员控制，不开放给用户");
 			isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 			isBuiltinColumn.setLength(1);
+			isBuiltinColumn.setDefaultValue("0");
 			isBuiltinColumn.setOrderCode(9905);
 			table.getColumns().add(isBuiltinColumn);
 
@@ -66,6 +70,7 @@ public class DynamicBasicDataColumnUtil {
 			isNeedDeployColumn.setComments("资源是否需要发布");
 			isNeedDeployColumn.setColumnType(DataTypeConstants.INTEGER);
 			isNeedDeployColumn.setLength(1);
+			isNeedDeployColumn.setDefaultValue("1");
 			isNeedDeployColumn.setOrderCode(9906);
 			table.getColumns().add(isNeedDeployColumn);
 			
@@ -74,6 +79,7 @@ public class DynamicBasicDataColumnUtil {
 			isDeployedColumn.setComments("资源是否发布");
 			isDeployedColumn.setColumnType(DataTypeConstants.INTEGER);
 			isDeployedColumn.setLength(1);
+			isDeployedColumn.setDefaultValue("0");
 			isDeployedColumn.setOrderCode(9907);
 			table.getColumns().add(isDeployedColumn);
 		}

@@ -2,6 +2,7 @@ package com.king.tooth.plugins.jdbc.table;
 
 import java.util.List;
 
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.util.StrUtils;
@@ -79,6 +80,9 @@ public abstract class AbstractTableHandler {
 			createTableSql.append(" primary key ");
 		}
 		if(StrUtils.notEmpty(column.getDefaultValue())){
+			if(DataTypeConstants.DATE.equals(column.getColumnType())){
+				throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
+			}
 			createTableSql.append(" default(").append(column.getDefaultValue()).append(") ");
 		}
 		if(0 == column.getIsNullabled()){

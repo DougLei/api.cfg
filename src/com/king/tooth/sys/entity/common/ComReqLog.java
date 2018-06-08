@@ -147,7 +147,6 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		table.setName("请求日志资源对象表");
 		table.setComments("请求日志资源对象表");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);

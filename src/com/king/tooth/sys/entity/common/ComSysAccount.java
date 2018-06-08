@@ -154,7 +154,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		table.setName("系统账户资源对象表");
 		table.setComments("系统账户资源对象表");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);

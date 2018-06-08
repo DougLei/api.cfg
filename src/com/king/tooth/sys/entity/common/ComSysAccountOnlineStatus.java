@@ -153,7 +153,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		table.setName("系统账户在线状态资源对象表");
 		table.setComments("系统账户在线状态资源对象表");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);

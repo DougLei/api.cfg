@@ -239,7 +239,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setName("sql脚本资源对象表");
 		table.setComments("sql脚本资源对象表");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		

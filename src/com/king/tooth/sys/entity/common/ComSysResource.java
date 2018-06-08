@@ -71,7 +71,6 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		table.setName("系统资源对象表");
 		table.setComments("系统资源对象表");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		

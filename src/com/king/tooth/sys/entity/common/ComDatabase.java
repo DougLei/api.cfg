@@ -148,7 +148,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		table.setName("数据库数据信息资源对象表");
 		table.setComments("数据库数据信息资源对象表");
 		table.setIsBuiltin(1);
-		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
