@@ -11,14 +11,12 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * [通用的]系统账户资源对象
+ * 系统账户资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -164,18 +162,18 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		this.verifyCode = verifyCode;
 	}
 
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT", 0);
-		table.setName("[通用的]系统账户资源对象表");
-		table.setComments("[通用的]系统账户资源对象表");
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_SYS_ACCOUNT", 0);
+		table.setName("系统账户资源对象表");
+		table.setComments("系统账户资源对象表");
 		table.setIsBuiltin(1);
 		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(15);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
-		CfgColumndata loginNameColumn = new CfgColumndata("login_name");
+		ComColumndata loginNameColumn = new ComColumndata("login_name");
 		loginNameColumn.setName("登录名");
 		loginNameColumn.setComments("登录名");
 		loginNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -183,7 +181,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		loginNameColumn.setOrderCode(1);
 		columns.add(loginNameColumn);
 		
-		CfgColumndata loginPwdColumn = new CfgColumndata("login_pwd");
+		ComColumndata loginPwdColumn = new ComColumndata("login_pwd");
 		loginPwdColumn.setName("登录密码");
 		loginPwdColumn.setComments("登录密码");
 		loginPwdColumn.setColumnType(DataTypeConstants.STRING);
@@ -191,7 +189,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		loginPwdColumn.setOrderCode(2);
 		columns.add(loginPwdColumn);
 		
-		CfgColumndata loginPwdKeyColumn = new CfgColumndata("login_pwd_key");
+		ComColumndata loginPwdKeyColumn = new ComColumndata("login_pwd_key");
 		loginPwdKeyColumn.setName("登录密码的密钥");
 		loginPwdKeyColumn.setComments("登录密码的密钥：和loginPwd结合，得到每个账户独有的密码");
 		loginPwdKeyColumn.setColumnType(DataTypeConstants.STRING);
@@ -199,7 +197,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		loginPwdKeyColumn.setOrderCode(3);
 		columns.add(loginPwdKeyColumn);
 		
-		CfgColumndata telColumn = new CfgColumndata("tel");
+		ComColumndata telColumn = new ComColumndata("tel");
 		telColumn.setName("手机号");
 		telColumn.setComments("手机号");
 		telColumn.setColumnType(DataTypeConstants.STRING);
@@ -207,7 +205,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		telColumn.setOrderCode(4);
 		columns.add(telColumn);
 		
-		CfgColumndata emailsColumn = new CfgColumndata("emails");
+		ComColumndata emailsColumn = new ComColumndata("emails");
 		emailsColumn.setName("邮箱");
 		emailsColumn.setComments("邮箱");
 		emailsColumn.setColumnType(DataTypeConstants.STRING);
@@ -215,7 +213,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		emailsColumn.setOrderCode(5);
 		columns.add(emailsColumn);
 		
-		CfgColumndata accountTypeColumn = new CfgColumndata("account_type");
+		ComColumndata accountTypeColumn = new ComColumndata("account_type");
 		accountTypeColumn.setName("账户类型");
 		accountTypeColumn.setComments("账户类型:1.游客：虚拟账号(和用户表没有对应)、2.客户(企业)：实体帐号(和用户表有对应)、3.普通账户：(和用户表有对应)、4.普通虚拟账户：(和用户表没有对应)");
 		accountTypeColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -223,7 +221,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		accountTypeColumn.setOrderCode(6);
 		columns.add(accountTypeColumn);
 		
-		CfgColumndata accountStatusColumn = new CfgColumndata("account_status");
+		ComColumndata accountStatusColumn = new ComColumndata("account_status");
 		accountStatusColumn.setName("账户状态");
 		accountStatusColumn.setComments("账户状态:1.启用、2.禁用、3.过期");
 		accountStatusColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -231,7 +229,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		accountStatusColumn.setOrderCode(7);
 		columns.add(accountStatusColumn);
 		
-		CfgColumndata accountStatusDesColumn = new CfgColumndata("account_status_des");
+		ComColumndata accountStatusDesColumn = new ComColumndata("account_status_des");
 		accountStatusDesColumn.setName("账户状态的描述");
 		accountStatusDesColumn.setComments("账户状态的描述");
 		accountStatusDesColumn.setColumnType(DataTypeConstants.STRING);
@@ -239,7 +237,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		accountStatusDesColumn.setOrderCode(8);
 		columns.add(accountStatusDesColumn);
 		
-		CfgColumndata validDateColumn = new CfgColumndata("valid_date");
+		ComColumndata validDateColumn = new ComColumndata("valid_date");
 		validDateColumn.setName("账户有效期限");
 		validDateColumn.setComments("账户有效期限");
 		validDateColumn.setColumnType(DataTypeConstants.DATE);

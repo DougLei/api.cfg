@@ -2,8 +2,8 @@ package com.king.tooth.plugins.jdbc.util;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.common.ComTabledata;
 
 /**
  * 动态的基础数据字段的工具类
@@ -15,9 +15,9 @@ public class DynamicBasicDataColumnUtil {
 	 * 给动态表对象，添加基础的字段
 	 * @param table
 	 */
-	public static void initBasicColumnToTable(CfgTabledata table){
+	public static void initBasicColumnToTable(ComTabledata table){
 		// id
-		CfgColumndata idColumn = new CfgColumndata("id");
+		ComColumndata idColumn = new ComColumndata("id");
 		idColumn.setIsPrimaryKey(1);
 		idColumn.setIsNullabled(0);
 		idColumn.setColumnType(DataTypeConstants.STRING);
@@ -28,7 +28,7 @@ public class DynamicBasicDataColumnUtil {
 		table.getColumns().add(idColumn);
 		
 		// projectId
-		CfgColumndata projectIdColumn = new CfgColumndata("project_id");
+		ComColumndata projectIdColumn = new ComColumndata("project_id");
 		projectIdColumn.setColumnType(DataTypeConstants.STRING);
 		projectIdColumn.setLength(32);
 		projectIdColumn.setComments("关联的项目主键");
@@ -37,7 +37,7 @@ public class DynamicBasicDataColumnUtil {
 		table.getColumns().add(projectIdColumn);
 		
 		if(table.getIsResource() == 1){
-			CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
+			ComColumndata isEnabledColumn = new ComColumndata("is_enabled");
 			isEnabledColumn.setName("资源是否有效");
 			isEnabledColumn.setComments("资源是否有效");
 			isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -45,14 +45,14 @@ public class DynamicBasicDataColumnUtil {
 			isEnabledColumn.setOrderCode(9903);
 			table.getColumns().add(isEnabledColumn);
 			
-			CfgColumndata validDateColumn = new CfgColumndata("valid_date");
+			ComColumndata validDateColumn = new ComColumndata("valid_date");
 			validDateColumn.setName("资源有效期");
 			validDateColumn.setComments("资源有效期");
 			validDateColumn.setColumnType(DataTypeConstants.DATE);
 			validDateColumn.setOrderCode(9904);
 			table.getColumns().add(validDateColumn);
 			
-			CfgColumndata isNeedDeployColumn = new CfgColumndata("is_need_deploy");
+			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy");
 			isNeedDeployColumn.setName("资源是否需要发布");
 			isNeedDeployColumn.setComments("资源是否需要发布");
 			isNeedDeployColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -60,7 +60,7 @@ public class DynamicBasicDataColumnUtil {
 			isNeedDeployColumn.setOrderCode(9905);
 			table.getColumns().add(isNeedDeployColumn);
 
-			CfgColumndata reqResourceMethodColumn = new CfgColumndata("req_resource_method");
+			ComColumndata reqResourceMethodColumn = new ComColumndata("req_resource_method");
 			reqResourceMethodColumn.setName("请求资源的方法");
 			reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 			reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
@@ -68,7 +68,7 @@ public class DynamicBasicDataColumnUtil {
 			reqResourceMethodColumn.setOrderCode(9906);
 			table.getColumns().add(reqResourceMethodColumn);
 
-			CfgColumndata isBuiltinColumn = new CfgColumndata("is_builtin");
+			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin");
 			isBuiltinColumn.setName("是否内置资源");
 			isBuiltinColumn.setComments("是否内置资源");
 			isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -76,7 +76,7 @@ public class DynamicBasicDataColumnUtil {
 			isBuiltinColumn.setOrderCode(9907);
 			table.getColumns().add(isBuiltinColumn);
 
-			CfgColumndata platformTypeColumn = new CfgColumndata("platform_type");
+			ComColumndata platformTypeColumn = new ComColumndata("platform_type");
 			platformTypeColumn.setName("资源所属于的平台类型");
 			platformTypeColumn.setComments("资源所属于的平台类型:1:配置平台、2:运行平台、3:公用");
 			platformTypeColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -84,7 +84,7 @@ public class DynamicBasicDataColumnUtil {
 			platformTypeColumn.setOrderCode(9908);
 			table.getColumns().add(platformTypeColumn);
 
-			CfgColumndata isCreatedResourceColumn = new CfgColumndata("is_created_resource");
+			ComColumndata isCreatedResourceColumn = new ComColumndata("is_created_resource");
 			isCreatedResourceColumn.setName("是否已经创建资源");
 			isCreatedResourceColumn.setComments("是否已经创建资源");
 			isCreatedResourceColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -94,21 +94,21 @@ public class DynamicBasicDataColumnUtil {
 		}
 		
 		if(table.getIsDatalinkTable() == 0 && !ResourceNameConstants.COMMON_DATALINK_TABLENAME.equals(table.getTableName())){// 不是关系表，才要这些字段
-			CfgColumndata createTimeColumn = new CfgColumndata("create_time");
+			ComColumndata createTimeColumn = new ComColumndata("create_time");
 			createTimeColumn.setColumnType(DataTypeConstants.DATE);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
 			createTimeColumn.setOrderCode(9910);
 			table.getColumns().add(createTimeColumn);
 			
-			CfgColumndata lastUpdateTimeColumn = new CfgColumndata("last_update_time");
+			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_time");
 			lastUpdateTimeColumn.setColumnType(DataTypeConstants.DATE);
 			lastUpdateTimeColumn.setComments("最后修改时间");
 			lastUpdateTimeColumn.setName("最后修改时间");
 			lastUpdateTimeColumn.setOrderCode(9911);
 			table.getColumns().add(lastUpdateTimeColumn);
 			
-			CfgColumndata createUserIdColumn = new CfgColumndata("create_user_id");
+			ComColumndata createUserIdColumn = new ComColumndata("create_user_id");
 			createUserIdColumn.setColumnType(DataTypeConstants.STRING);
 			createUserIdColumn.setComments("创建人主键");
 			createUserIdColumn.setName("创建人主键");
@@ -116,7 +116,7 @@ public class DynamicBasicDataColumnUtil {
 			createUserIdColumn.setOrderCode(9912);
 			table.getColumns().add(createUserIdColumn);
 			
-			CfgColumndata lastUpdatedUserIdColumn = new CfgColumndata("last_updated_user_id");
+			ComColumndata lastUpdatedUserIdColumn = new ComColumndata("last_updated_user_id");
 			lastUpdatedUserIdColumn.setColumnType(DataTypeConstants.STRING);
 			lastUpdatedUserIdColumn.setComments("最后修改人主键");
 			lastUpdatedUserIdColumn.setName("最后修改人主键");

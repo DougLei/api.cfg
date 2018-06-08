@@ -10,12 +10,10 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]系统资源对象
+ * 系统资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -57,20 +55,20 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	}
 	
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_RESOURCE", 0);
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_SYS_RESOURCE", 0);
 		table.setIsResource(1);
-		table.setName("[通用的]系统资源对象表");
-		table.setComments("[通用的]系统资源对象表");
+		table.setName("系统资源对象表");
+		table.setComments("系统资源对象表");
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
-		CfgColumndata refResourceIdColumn = new CfgColumndata("ref_resource_id");
+		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id");
 		refResourceIdColumn.setName("引用的资源主键");
 		refResourceIdColumn.setComments("引用的资源主键");
 		refResourceIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -78,7 +76,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		refResourceIdColumn.setOrderCode(1);
 		columns.add(refResourceIdColumn);
 		
-		CfgColumndata resourceNameColumn = new CfgColumndata("resource_name");
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name");
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		resourceNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -86,7 +84,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		resourceNameColumn.setOrderCode(2);
 		columns.add(resourceNameColumn);
 		
-		CfgColumndata resourceTypeColumn = new CfgColumndata("resource_type");
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type");
 		resourceTypeColumn.setName("资源类型");
 		resourceTypeColumn.setComments("资源类型");
 		resourceTypeColumn.setColumnType(DataTypeConstants.INTEGER);

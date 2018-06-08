@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.cfg;
+package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,18 +13,17 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * [配置系统]表数据信息资源对象
+ * 表数据信息资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgTabledata extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
+public class ComTabledata extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -90,7 +89,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	/**
 	 * 列集合
 	 */
-	private List<CfgColumndata> columns;
+	private List<ComColumndata> columns;
 	/**
 	 * 数据库类型
 	 * 目前主要是判断，如果是oracle数据库时，要判断表名长度不能超过30个字符
@@ -104,9 +103,9 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	private int isResource;
 	
 	
-	public CfgTabledata() {
+	public ComTabledata() {
 	}
-	public CfgTabledata(String dbType, String tableName, int isDatalinkTable) {
+	public ComTabledata(String dbType, String tableName, int isDatalinkTable) {
 		this.dbType = dbType;
 		this.tableName = tableName;
 		this.isDatalinkTable = isDatalinkTable;
@@ -132,10 +131,10 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	public String getTableName() {
 		return tableName;
 	}
-	public List<CfgColumndata> getColumns() {
+	public List<ComColumndata> getColumns() {
 		return columns;
 	}
-	public void setColumns(List<CfgColumndata> columns) {
+	public void setColumns(List<ComColumndata> columns) {
 		this.columns = columns;
 	}
 	public int getTableType() {
@@ -213,19 +212,19 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		}
 	}
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "CFG_TABLEDATA", 0);
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_TABLEDATA", 0);
 		table.setIsResource(1);
-		table.setName("[配置系统]表数据信息资源对象表");
-		table.setComments("[配置系统]表数据信息资源对象表");
+		table.setName("表数据信息资源对象表");
+		table.setComments("表数据信息资源对象表");
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(IS_CFG_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(25);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(25);
 		
-		CfgColumndata nameColumn = new CfgColumndata("name");
+		ComColumndata nameColumn = new ComColumndata("name");
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
 		nameColumn.setColumnType(DataTypeConstants.STRING);
@@ -233,7 +232,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		nameColumn.setOrderCode(1);
 		columns.add(nameColumn);
 		
-		CfgColumndata tableNameColumn = new CfgColumndata("table_name");
+		ComColumndata tableNameColumn = new ComColumndata("table_name");
 		tableNameColumn.setName("表名");
 		tableNameColumn.setComments("表名");
 		tableNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -241,7 +240,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		tableNameColumn.setOrderCode(2);
 		columns.add(tableNameColumn);
 		
-		CfgColumndata resourceNameColumn = new CfgColumndata("resource_name");
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name");
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		resourceNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -249,7 +248,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		resourceNameColumn.setOrderCode(3);
 		columns.add(resourceNameColumn);
 		
-		CfgColumndata tableTypeColumn = new CfgColumndata("table_type");
+		ComColumndata tableTypeColumn = new ComColumndata("table_type");
 		tableTypeColumn.setName("表类型");
 		tableTypeColumn.setComments("表类型：1:单表、2:树表、3:父子关系表");
 		tableTypeColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -257,7 +256,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		tableTypeColumn.setOrderCode(4);
 		columns.add(tableTypeColumn);
 		
-		CfgColumndata parentTableIdColumn = new CfgColumndata("parent_table_id");
+		ComColumndata parentTableIdColumn = new ComColumndata("parent_table_id");
 		parentTableIdColumn.setName("父表id");
 		parentTableIdColumn.setComments("父表id，只有Table_Type=3的时候，才有效，主表该字段没有值，子表字段存储的是其父表的id，子表才会配置该字段的值");
 		parentTableIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -265,7 +264,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		parentTableIdColumn.setOrderCode(5);
 		columns.add(parentTableIdColumn);
 		
-		CfgColumndata parentTableNameColumn = new CfgColumndata("parent_table_name");
+		ComColumndata parentTableNameColumn = new ComColumndata("parent_table_name");
 		parentTableNameColumn.setName("父表名(冗余字段)");
 		parentTableNameColumn.setComments("父表名，只有Table_Type=3的时候，才有效，冗余字段，在create table的时候，根据这个值，自动创建一张关系表，表名需要用到这个值，关系表的表名规则是：[父表名+\"_\"+子表名+\"_\"+Link]，先提取父子表名第一个\"_\"前的值，如果这个值长度还大于5，则只提取前5个，子表才会配置该字段的值");
 		parentTableNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -273,7 +272,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		parentTableNameColumn.setOrderCode(6);
 		columns.add(parentTableNameColumn);
 		
-		CfgColumndata isHavaDatalinkColumn = new CfgColumndata("is_hava_datalink");
+		ComColumndata isHavaDatalinkColumn = new ComColumndata("is_hava_datalink");
 		isHavaDatalinkColumn.setName("是否是关系表");
 		isHavaDatalinkColumn.setComments("是否是关系表，默认是0");
 		isHavaDatalinkColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -281,7 +280,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		isHavaDatalinkColumn.setOrderCode(7);
 		columns.add(isHavaDatalinkColumn);
 		
-		CfgColumndata subRefParentColumnIdColumn = new CfgColumndata("sub_ref_parent_column_id");
+		ComColumndata subRefParentColumnIdColumn = new ComColumndata("sub_ref_parent_column_id");
 		subRefParentColumnIdColumn.setName("子表指向父表的(子表)字段编号");
 		subRefParentColumnIdColumn.setComments("子表指向父表的(子表)字段编号，存储的是子表的字段编号");
 		subRefParentColumnIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -289,7 +288,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		subRefParentColumnIdColumn.setOrderCode(8);
 		columns.add(subRefParentColumnIdColumn);
 		
-		CfgColumndata subRefParentColumnNameColumn = new CfgColumndata("sub_ref_parent_column_name");
+		ComColumndata subRefParentColumnNameColumn = new ComColumndata("sub_ref_parent_column_name");
 		subRefParentColumnNameColumn.setName("子表指向父表的(子表)字段名(冗余字段)");
 		subRefParentColumnNameColumn.setComments("子表指向父表的(子表)字段名，冗余字段，配置的是子表的字段名，例如parentId，只有Table_Type=3，isHavaDatalink=0的时候，才有效，子表才会配置该字段的值");
 		subRefParentColumnNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -297,7 +296,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		subRefParentColumnNameColumn.setOrderCode(9);
 		columns.add(subRefParentColumnNameColumn);
 		
-		CfgColumndata commentsColumn = new CfgColumndata("comments");
+		ComColumndata commentsColumn = new ComColumndata("comments");
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);
@@ -305,7 +304,7 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 		commentsColumn.setOrderCode(10);
 		columns.add(commentsColumn);
 		
-		CfgColumndata versionColumn = new CfgColumndata("version");
+		ComColumndata versionColumn = new ComColumndata("version");
 		versionColumn.setName("版本");
 		versionColumn.setComments("版本");
 		versionColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -318,11 +317,11 @@ public class CfgTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 
 	public String toDropTable() {
-		return "CFG_TABLEDATA";
+		return "COM_TABLEDATA";
 	}
 	
 	public String getEntityName() {
-		return "CfgTabledata";
+		return "ComTabledata";
 	}
 	
 	public JSONObject toEntity() {

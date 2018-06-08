@@ -6,8 +6,8 @@ import java.util.List;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -20,9 +20,9 @@ public class DynamicDataLinkTableUtil {
 	 * 处理父子表，如果有父子表数据，则要获得对应的关系表tabledata实例，并存储到tabledatas集合中，统一进行创建表/删除表的操作
 	 * @param tabledatas
 	 */
-	public static void processParentSubTable(List<CfgTabledata> tabledatas) {
-		List<CfgTabledata> datalinkTables = new ArrayList<CfgTabledata>();
-		for (CfgTabledata tabledata : tabledatas) {
+	public static void processParentSubTable(List<ComTabledata> tabledatas) {
+		List<ComTabledata> datalinkTables = new ArrayList<ComTabledata>();
+		for (ComTabledata tabledata : tabledatas) {
 			if(DynamicDataConstants.PARENT_SUB_TABLE == tabledata.getTableType()
 					&& StrUtils.notEmpty(tabledata.getParentTableName())
 					&& tabledata.getIsHavaDatalink() == 1){// 判断标示是需要主子表的
@@ -44,28 +44,28 @@ public class DynamicDataLinkTableUtil {
 	 * @param subTableName
 	 * @return
 	 */
-	private static CfgTabledata getDataLinkTabledata(String dbType, String parentId, String parentTableName, String subTableName){
-		CfgTabledata dataLinkTable = new CfgTabledata(dbType, getDataLinkTableName(parentTableName, subTableName), 1);
+	private static ComTabledata getDataLinkTabledata(String dbType, String parentId, String parentTableName, String subTableName){
+		ComTabledata dataLinkTable = new ComTabledata(dbType, getDataLinkTableName(parentTableName, subTableName), 1);
 		dataLinkTable.setId(parentId);// 关系表关联的tableId的值，就是父表的id   这里set到id中，在HibernateHbmHandler.createHbmMappingContent()方法中，从id取hbm文件对应的表主键。关系表对应的表主键，就是父表的id，所以这里这么存储
 		dataLinkTable.setComments("父表" + parentTableName + "和子表" + subTableName + "的关系表");
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(3);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(3);
 		
-		CfgColumndata leftIdColumn = new CfgColumndata("left_id");
+		ComColumndata leftIdColumn = new ComColumndata("left_id");
 		leftIdColumn.setIsNullabled(0);
 		leftIdColumn.setColumnType(DataTypeConstants.STRING);
 		leftIdColumn.setLength(32);
 		leftIdColumn.setOrderCode(1);
 		columns.add(leftIdColumn);
 		
-		CfgColumndata rightIdColumn = new CfgColumndata("right_id");
+		ComColumndata rightIdColumn = new ComColumndata("right_id");
 		rightIdColumn.setIsNullabled(0);
 		rightIdColumn.setColumnType(DataTypeConstants.STRING);
 		rightIdColumn.setLength(32);
 		rightIdColumn.setOrderCode(2);
 		columns.add(rightIdColumn);
 		
-		CfgColumndata orderCodeColumn = new CfgColumndata("order_code");
+		ComColumndata orderCodeColumn = new ComColumndata("order_code");
 		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
 		orderCodeColumn.setLength(4);
 		orderCodeColumn.setOrderCode(3);

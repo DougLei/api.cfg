@@ -11,12 +11,10 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]人员资源对象
+ * 人员资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -200,18 +198,18 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		this.descs = descs;
 	}
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_USER", 0);
-		table.setName("[通用的]人员资源对象表");
-		table.setComments("[通用的]人员资源对象表");
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_USER", 0);
+		table.setName("人员资源对象表");
+		table.setComments("人员资源对象表");
 		table.setIsBuiltin(1);
 		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
 		
-		CfgColumndata accountIdColumn = new CfgColumndata("account_id");
+		ComColumndata accountIdColumn = new ComColumndata("account_id");
 		accountIdColumn.setName("账户主键");
 		accountIdColumn.setComments("账户主键");
 		accountIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -219,7 +217,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		accountIdColumn.setOrderCode(1);
 		columns.add(accountIdColumn);
 		
-		CfgColumndata nikeNameColumn = new CfgColumndata("nike_name");
+		ComColumndata nikeNameColumn = new ComColumndata("nike_name");
 		nikeNameColumn.setName("昵称");
 		nikeNameColumn.setComments("昵称");
 		nikeNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -227,7 +225,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		nikeNameColumn.setOrderCode(2);
 		columns.add(nikeNameColumn);
 		
-		CfgColumndata realNameColumn = new CfgColumndata("real_name");
+		ComColumndata realNameColumn = new ComColumndata("real_name");
 		realNameColumn.setName("真实姓名");
 		realNameColumn.setComments("真实姓名");
 		realNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -235,7 +233,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		realNameColumn.setOrderCode(3);
 		columns.add(realNameColumn);
 		
-		CfgColumndata ageColumn = new CfgColumndata("age");
+		ComColumndata ageColumn = new ComColumndata("age");
 		ageColumn.setName("年龄");
 		ageColumn.setComments("年龄");
 		ageColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -243,7 +241,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		ageColumn.setOrderCode(4);
 		columns.add(ageColumn);
 		
-		CfgColumndata sexColumn = new CfgColumndata("sex");
+		ComColumndata sexColumn = new ComColumndata("sex");
 		sexColumn.setName("性别");
 		sexColumn.setComments("性别");
 		sexColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -251,7 +249,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		sexColumn.setOrderCode(5);
 		columns.add(sexColumn);
 		
-		CfgColumndata officePhoneColumn = new CfgColumndata("office_phone");
+		ComColumndata officePhoneColumn = new ComColumndata("office_phone");
 		officePhoneColumn.setName("办公电话");
 		officePhoneColumn.setComments("办公电话");
 		officePhoneColumn.setColumnType(DataTypeConstants.STRING);
@@ -259,7 +257,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		officePhoneColumn.setOrderCode(6);
 		columns.add(officePhoneColumn);
 		
-		CfgColumndata telColumn = new CfgColumndata("tel");
+		ComColumndata telColumn = new ComColumndata("tel");
 		telColumn.setName("手机号");
 		telColumn.setComments("手机号");
 		telColumn.setColumnType(DataTypeConstants.STRING);
@@ -267,7 +265,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		telColumn.setOrderCode(7);
 		columns.add(telColumn);
 		
-		CfgColumndata userEmailDescColumn = new CfgColumndata("user_email");
+		ComColumndata userEmailDescColumn = new ComColumndata("user_email");
 		userEmailDescColumn.setName("邮箱");
 		userEmailDescColumn.setComments("邮箱");
 		userEmailDescColumn.setColumnType(DataTypeConstants.STRING);
@@ -275,7 +273,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		userEmailDescColumn.setOrderCode(8);
 		columns.add(userEmailDescColumn);
 		
-		CfgColumndata wrokAddrColumn = new CfgColumndata("wrok_addr");
+		ComColumndata wrokAddrColumn = new ComColumndata("wrok_addr");
 		wrokAddrColumn.setName("办公地点");
 		wrokAddrColumn.setComments("办公地点");
 		wrokAddrColumn.setColumnType(DataTypeConstants.STRING);
@@ -283,7 +281,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		wrokAddrColumn.setOrderCode(9);
 		columns.add(wrokAddrColumn);
 		
-		CfgColumndata liveAddrColumn = new CfgColumndata("live_addr");
+		ComColumndata liveAddrColumn = new ComColumndata("live_addr");
 		liveAddrColumn.setName("居住地点");
 		liveAddrColumn.setComments("居住地点");
 		liveAddrColumn.setColumnType(DataTypeConstants.STRING);
@@ -291,7 +289,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		liveAddrColumn.setOrderCode(10);
 		columns.add(liveAddrColumn);
 		
-		CfgColumndata idCardNoColumn = new CfgColumndata("id_card_no");
+		ComColumndata idCardNoColumn = new ComColumndata("id_card_no");
 		idCardNoColumn.setName("身份证号码");
 		idCardNoColumn.setComments("身份证号码");
 		idCardNoColumn.setColumnType(DataTypeConstants.STRING);
@@ -299,14 +297,14 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		idCardNoColumn.setOrderCode(11);
 		columns.add(idCardNoColumn);
 		
-		CfgColumndata employedDateColumn = new CfgColumndata("employed_date");
+		ComColumndata employedDateColumn = new ComColumndata("employed_date");
 		employedDateColumn.setName("入职时间");
 		employedDateColumn.setComments("入职时间");
 		employedDateColumn.setColumnType(DataTypeConstants.DATE);
 		employedDateColumn.setOrderCode(12);
 		columns.add(employedDateColumn);
 		
-		CfgColumndata userStatusColumn = new CfgColumndata("user_status");
+		ComColumndata userStatusColumn = new ComColumndata("user_status");
 		userStatusColumn.setName("人员状态");
 		userStatusColumn.setComments("人员状态:1.在职、2.离职、3.休假");
 		userStatusColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -314,7 +312,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		userStatusColumn.setOrderCode(13);
 		columns.add(userStatusColumn);
 		
-		CfgColumndata monthSalarColumn = new CfgColumndata("month_salar");
+		ComColumndata monthSalarColumn = new ComColumndata("month_salar");
 		monthSalarColumn.setName("月薪");
 		monthSalarColumn.setComments("月薪");
 		monthSalarColumn.setColumnType(DataTypeConstants.DOUBLE);
@@ -323,7 +321,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		monthSalarColumn.setOrderCode(14);
 		columns.add(monthSalarColumn);
 		
-		CfgColumndata workNoColumn = new CfgColumndata("work_no");
+		ComColumndata workNoColumn = new ComColumndata("work_no");
 		workNoColumn.setName("工号");
 		workNoColumn.setComments("工号");
 		workNoColumn.setColumnType(DataTypeConstants.STRING);
@@ -331,7 +329,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		workNoColumn.setOrderCode(15);
 		columns.add(workNoColumn);
 		
-		CfgColumndata secretLevelColumn = new CfgColumndata("secret_level");
+		ComColumndata secretLevelColumn = new ComColumndata("secret_level");
 		secretLevelColumn.setName("密级");
 		secretLevelColumn.setComments("密级");
 		secretLevelColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -339,7 +337,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		secretLevelColumn.setOrderCode(16);
 		columns.add(secretLevelColumn);
 		
-		CfgColumndata descsColumn = new CfgColumndata("descs");
+		ComColumndata descsColumn = new ComColumndata("descs");
 		descsColumn.setName("描述");
 		descsColumn.setComments("描述");
 		descsColumn.setColumnType(DataTypeConstants.STRING);

@@ -9,15 +9,15 @@ import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * [配置系统]表数据信息资源对象处理器
+ * 表数据信息资源对象处理器
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
@@ -29,7 +29,7 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * 添加表
 	 * @param table
 	 */
-	public void saveTable(CfgTabledata table) {
+	public void saveTable(ComTabledata table) {
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
 			table.setIsBuiltin(1);
 		}
@@ -40,7 +40,7 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * 修改表
 	 * @param table
 	 */
-	public void updateTable(CfgTabledata table) {
+	public void updateTable(ComTabledata table) {
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
 			table.setIsBuiltin(1);
 		}
@@ -67,7 +67,7 @@ public class CfgTabledataService extends AbstractResourceService{
 		}
 		
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSysResource where refResourceId " + in, tableIdArr);
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "delete CfgTabledata where id " + in, tableIdArr);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "delete ComTabledata where id " + in, tableIdArr);
 	}
 	
 	//--------------------------------------------------------
@@ -77,10 +77,10 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * @param tableId
 	 * @return
 	 */
-	private CfgTabledata getTableAllByTableId(String tableId){
-		CfgTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgTabledata.class, "from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
+	private ComTabledata getTableAllByTableId(String tableId){
+		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, "from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
 		if(table != null){
-			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumndata.class, null, null, "from CfgColumndata where isEnabled =1 and tableId =?", tableId));
+			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		}
 		return table;
 	}
@@ -91,9 +91,9 @@ public class CfgTabledataService extends AbstractResourceService{
 	 */
 	public void createTableModel(String[] tableIdArr) {
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-		CfgTabledata table = null;
+		ComTabledata table = null;
 		ComHibernateHbm hbm = null;
-		List<CfgTabledata> tabledatas = new ArrayList<CfgTabledata>(tableIdArr.length);
+		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(tableIdArr.length);
 		List<String> hbmContents = new ArrayList<String>(tableIdArr.length);
 		for (String tableId : tableIdArr) {
 			table = getTableAllByTableId(tableId);
@@ -129,17 +129,17 @@ public class CfgTabledataService extends AbstractResourceService{
 	public void dropTableModel(Object[] tableIdArr) {
 		int len = tableIdArr.length;
 		List<String> entityNames = new ArrayList<String>(len);
-		List<CfgTabledata> tabledatas = new ArrayList<CfgTabledata>(tableIdArr.length);
+		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(tableIdArr.length);
 		
-		CfgTabledata tmpTable;
+		ComTabledata tmpTable;
 		Map<String, Object> tableInfo = null;
 		StringBuilder in = new StringBuilder(" in (");
 		for (int i=0;i<len;i++) {
 			in.append("?").append(",");
-			tableInfo = (Map<String, Object>) HibernateUtil.executeUniqueQueryByHqlArr("select tableName,resourceName from CfgTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableIdArr[i]);
+			tableInfo = (Map<String, Object>) HibernateUtil.executeUniqueQueryByHqlArr("select tableName,resourceName from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableIdArr[i]);
 			entityNames.add(tableInfo.get("tableName")+"");
 			
-			tmpTable = new CfgTabledata();
+			tmpTable = new ComTabledata();
 			tmpTable.setResourceName(tableInfo.get("resourceName")+"");
 			tabledatas.add(tmpTable);
 			
@@ -150,7 +150,7 @@ public class CfgTabledataService extends AbstractResourceService{
 		
 		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where tableId " + in, tableIdArr);
 		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id " + in, tableIdArr);
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update CfgTabledata set isCreateHbm=0 where id " + in, tableIdArr);
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update ComTabledata set isCreateHbm=0 where id " + in, tableIdArr);
 		HibernateUtil.removeConfig(entityNames);
 		entityNames.clear();
 		

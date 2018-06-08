@@ -10,7 +10,7 @@ import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * [通用的]系统账户在线状态资源服务处理器
+ * 系统账户在线状态资源服务处理器
  * @author DougLei
  */
 public class ComSysAccountOnlineStatusService extends AbstractResourceService{

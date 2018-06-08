@@ -8,7 +8,7 @@ import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]请求操作日志资源服务处理器
+ * 请求操作日志资源服务处理器
  * @author DougLei
  */
 public class ComReqLogService extends AbstractResourceService{

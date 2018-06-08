@@ -16,7 +16,7 @@ import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * [通用的]系统账户资源对象控制器
+ * 系统账户资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")

@@ -6,8 +6,8 @@ import java.util.List;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.jdbc.util.DynamicDataLinkTableUtil;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.StrUtils;
@@ -55,7 +55,7 @@ public class DBTableHandler {
 	 * 创建表
 	 * @param tabledatas
 	 */
-	public void createTable(List<CfgTabledata> tabledatas){
+	public void createTable(List<ComTabledata> tabledatas){
 		String tmpSql = getCreateTableSql(tabledatas);
 		if(StrUtils.notEmpty(tmpSql)){
 			String[] ddlSqlArr = tmpSql.split(";");
@@ -67,7 +67,7 @@ public class DBTableHandler {
 	 * 删除表
 	 * @param tabledatas
 	 */
-	public void dropTable(List<CfgTabledata> tabledatas){
+	public void dropTable(List<ComTabledata> tabledatas){
 		String tmpSql = getDropTableSql(tabledatas);
 		if(StrUtils.notEmpty(tmpSql)){
 			String[] ddlSqlArr = tmpSql.split(";");
@@ -81,7 +81,7 @@ public class DBTableHandler {
 	 * @param tabledatas
 	 * @return
 	 */
-	public String getCreateTableSql(List<CfgTabledata> tabledatas){
+	public String getCreateTableSql(List<ComTabledata> tabledatas){
 		if(tableOper == null){
 			Log4jUtil.debug("[DBTableHandler.createSql]操作表的对象AbstractTableOper tableOper为null");
 			return null;
@@ -91,7 +91,7 @@ public class DBTableHandler {
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas);
 			
 			StringBuilder createSql = new StringBuilder();
-			for (CfgTabledata tabledata : tabledatas) {
+			for (ComTabledata tabledata : tabledatas) {
 				DynamicBasicDataColumnUtil.initBasicColumnToTable(tabledata);
 				
 				tableOper.installCreateTableSql(tabledata);
@@ -109,14 +109,14 @@ public class DBTableHandler {
 	 * @param tableNames
 	 * @return
 	 */
-	public String getDropTableSql(List<CfgTabledata> tabledatas){
+	public String getDropTableSql(List<ComTabledata> tabledatas){
 		if(tabledatas != null && tabledatas.size() > 0){
 			StringBuilder dropSql = new StringBuilder();
 
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas);
 			
-			for (CfgTabledata tabledata : tabledatas) {
+			for (ComTabledata tabledata : tabledatas) {
 				dropSql.append(" drop table ").append(tabledata.getTableName()).append(";");
 			}
 			dropSql.setLength(dropSql.length() - 1);
@@ -130,7 +130,7 @@ public class DBTableHandler {
 	 * 执行操作数据表的ddlsql语句
 	 * @param ddlSqlArr
 	 */
-	private void executeDDL(String[] ddlSqlArr, List<CfgTabledata> tabledatas){
+	private void executeDDL(String[] ddlSqlArr, List<ComTabledata> tabledatas){
 		String result = dblink.executeDDL(ddlSqlArr);
 		if(result == null){
 			Log4jUtil.debug("[DBTableHandler.executeDDL]操作数据表成功：{}", tabledatas);

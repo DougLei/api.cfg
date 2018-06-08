@@ -12,14 +12,12 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.entity.common.database.DBFile;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * [通用的]数据库数据信息资源对象
+ * 数据库数据信息资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -162,19 +160,19 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		return DynamicDataConstants.getDataBaseDialect(getDbType());
 	}
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_DATABASE", 0);
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_DATABASE", 0);
 		table.setIsResource(1);
-		table.setName("[通用的]数据库数据信息资源对象表");
-		table.setComments("[通用的]数据库数据信息资源对象表");
+		table.setName("数据库数据信息资源对象表");
+		table.setComments("数据库数据信息资源对象表");
 		table.setIsBuiltin(1);
 		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
-		CfgColumndata dbDisplayNameColumn = new CfgColumndata("db_display_name");
+		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name");
 		dbDisplayNameColumn.setName("数字库名");
 		dbDisplayNameColumn.setComments("数字库名");
 		dbDisplayNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -182,7 +180,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		dbDisplayNameColumn.setOrderCode(2);
 		columns.add(dbDisplayNameColumn);
 		
-		CfgColumndata dbTypeColumn = new CfgColumndata("db_type");
+		ComColumndata dbTypeColumn = new ComColumndata("db_type");
 		dbTypeColumn.setName("数据库类型");
 		dbTypeColumn.setComments("数据库类型");
 		dbTypeColumn.setColumnType(DataTypeConstants.STRING);
@@ -190,7 +188,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		dbTypeColumn.setOrderCode(3);
 		columns.add(dbTypeColumn);
 		
-		CfgColumndata dbInstanceNameColumn = new CfgColumndata("db_instance_name");
+		ComColumndata dbInstanceNameColumn = new ComColumndata("db_instance_name");
 		dbInstanceNameColumn.setName("数据库实例名");
 		dbInstanceNameColumn.setComments("数据库实例名：oracle中是实例名、sqlserver中就是数据库名");
 		dbInstanceNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -198,7 +196,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		dbInstanceNameColumn.setOrderCode(4);
 		columns.add(dbInstanceNameColumn);
 		
-		CfgColumndata loginUserNameColumn = new CfgColumndata("login_user_name");
+		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name");
 		loginUserNameColumn.setName("数据库登录名");
 		loginUserNameColumn.setComments("数据库登录名");
 		loginUserNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -206,7 +204,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		loginUserNameColumn.setOrderCode(5);
 		columns.add(loginUserNameColumn);
 		
-		CfgColumndata loginPasswordColumn = new CfgColumndata("login_password");
+		ComColumndata loginPasswordColumn = new ComColumndata("login_password");
 		loginPasswordColumn.setName("数据库登录密码");
 		loginPasswordColumn.setComments("数据库登录密码");
 		loginPasswordColumn.setColumnType(DataTypeConstants.STRING);
@@ -214,7 +212,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		loginPasswordColumn.setOrderCode(6);
 		columns.add(loginPasswordColumn);
 		
-		CfgColumndata dbIpColumn = new CfgColumndata("db_ip");
+		ComColumndata dbIpColumn = new ComColumndata("db_ip");
 		dbIpColumn.setName("数据库ip");
 		dbIpColumn.setComments("数据库ip");
 		dbIpColumn.setColumnType(DataTypeConstants.STRING);
@@ -222,7 +220,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		dbIpColumn.setOrderCode(7);
 		columns.add(dbIpColumn);
 		
-		CfgColumndata dbPortColumn = new CfgColumndata("db_port");
+		ComColumndata dbPortColumn = new ComColumndata("db_port");
 		dbPortColumn.setName("数据库端口");
 		dbPortColumn.setComments("数据库端口");
 		dbPortColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -230,7 +228,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		dbPortColumn.setOrderCode(8);
 		columns.add(dbPortColumn);
 		
-		CfgColumndata cfgMainFileContentColumn = new CfgColumndata("cfg_main_file_content");
+		ComColumndata cfgMainFileContentColumn = new ComColumndata("cfg_main_file_content");
 		cfgMainFileContentColumn.setName("数据库文件配置内容");
 		cfgMainFileContentColumn.setComments("数据库文件配置内容(json串)");
 		cfgMainFileContentColumn.setColumnType(DataTypeConstants.STRING);
@@ -238,7 +236,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		cfgMainFileContentColumn.setOrderCode(9);
 		columns.add(cfgMainFileContentColumn);
 		
-		CfgColumndata cfgTmplogFileContentColumn = new CfgColumndata("cfg_tmplog_file_content");
+		ComColumndata cfgTmplogFileContentColumn = new ComColumndata("cfg_tmplog_file_content");
 		cfgTmplogFileContentColumn.setName("数据库临时/日志文件配置内容");
 		cfgTmplogFileContentColumn.setComments("数据库临时/日志文件配置内容(json串)");
 		cfgTmplogFileContentColumn.setColumnType(DataTypeConstants.STRING);

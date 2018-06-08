@@ -10,12 +10,10 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]hibernate的hbm内容对象
+ * hibernate的hbm内容对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -80,19 +78,19 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	}
 	
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_HIBERNATE_HBM", 0);
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_HIBERNATE_HBM", 0);
 		table.setIsResource(1);
-		table.setName("[通用的]hibernate的hbm内容对象表");
-		table.setComments("[通用的]hibernate的hbm内容对象表");
+		table.setName("hibernate的hbm内容对象表");
+		table.setComments("hibernate的hbm内容对象表");
 		table.setIsBuiltin(1);
 		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
-		CfgColumndata refDatabaseIdColumn = new CfgColumndata("ref_database_id");
+		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：如果发布到项目中，这个字段必须有值");
 		refDatabaseIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -100,7 +98,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
-		CfgColumndata refTableIdColumn = new CfgColumndata("ref_table_id");
+		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id");
 		refTableIdColumn.setName("关联的表主键");
 		refTableIdColumn.setComments("关联的表主键：如果被发布到项目中在，这个字段有无值均可");
 		refTableIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -108,7 +106,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		refTableIdColumn.setOrderCode(2);
 		columns.add(refTableIdColumn);
 		
-		CfgColumndata hbmResourceNameColumn = new CfgColumndata("hbm_resource_name");
+		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name");
 		hbmResourceNameColumn.setName("hbm资源名");
 		hbmResourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
 		hbmResourceNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -116,7 +114,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		hbmResourceNameColumn.setOrderCode(3);
 		columns.add(hbmResourceNameColumn);
 		
-		CfgColumndata isDataLinkTableHbmColumn = new CfgColumndata("is_data_link_table_hbm");
+		ComColumndata isDataLinkTableHbmColumn = new ComColumndata("is_data_link_table_hbm");
 		isDataLinkTableHbmColumn.setName("是否是关系表的hbm");
 		isDataLinkTableHbmColumn.setComments("是否是关系表的hbm");
 		isDataLinkTableHbmColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -124,7 +122,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		isDataLinkTableHbmColumn.setOrderCode(4);
 		columns.add(isDataLinkTableHbmColumn);
 		
-		CfgColumndata hbmContentColumn = new CfgColumndata("hbm_content");
+		ComColumndata hbmContentColumn = new ComColumndata("hbm_content");
 		hbmContentColumn.setName("hbm内容");
 		hbmContentColumn.setComments("hbm内容");
 		hbmContentColumn.setColumnType(DataTypeConstants.CLOB);
@@ -168,7 +166,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	 * 将表信息，转换为对应的hbm信息
 	 * @param table
 	 */
-	public void turnToHbm(CfgTabledata table){
+	public void turnToHbm(ComTabledata table){
 		this.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 		this.setRefTableId(table.getId());
 		this.setHbmResourceName(table.getResourceName());

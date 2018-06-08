@@ -10,12 +10,10 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]项目模块信息资源对象
+ * 项目模块信息资源对象
  * <p>理解为菜单</p>
  * @author DougLei
  */
@@ -103,18 +101,18 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	}
 	
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT_MODULE", 0);
-		table.setName("[通用的]项目模块信息资源对象表");
-		table.setComments("[通用的]项目模块信息资源对象表：理解为菜单");
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE", 0);
+		table.setName("项目模块信息资源对象表");
+		table.setComments("项目模块信息资源对象表：理解为菜单");
 		table.setIsBuiltin(1);
 		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(12);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		CfgColumndata parentIdColumn = new CfgColumndata("parent_id");
+		ComColumndata parentIdColumn = new ComColumndata("parent_id");
 		parentIdColumn.setName("父模块编号");
 		parentIdColumn.setComments("父模块编号，可为空，用于递归");
 		parentIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -122,7 +120,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		parentIdColumn.setOrderCode(1);
 		columns.add(parentIdColumn);
 		
-		CfgColumndata nameColumn = new CfgColumndata("name");
+		ComColumndata nameColumn = new ComColumndata("name");
 		nameColumn.setName("模块名称");
 		nameColumn.setComments("模块名称");
 		nameColumn.setColumnType(DataTypeConstants.STRING);
@@ -130,7 +128,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
-		CfgColumndata codeColumn = new CfgColumndata("code");
+		ComColumndata codeColumn = new ComColumndata("code");
 		codeColumn.setName("模块编码");
 		codeColumn.setComments("模块编码:这个编码的命名，要整个项目唯一");
 		codeColumn.setColumnType(DataTypeConstants.STRING);
@@ -138,7 +136,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		codeColumn.setOrderCode(3);
 		columns.add(codeColumn);
 		
-		CfgColumndata urlColumn = new CfgColumndata("url");
+		ComColumndata urlColumn = new ComColumndata("url");
 		urlColumn.setName("url");
 		urlColumn.setComments("url");
 		urlColumn.setColumnType(DataTypeConstants.STRING);
@@ -146,7 +144,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		urlColumn.setOrderCode(4);
 		columns.add(urlColumn);
 		
-		CfgColumndata iconColumn = new CfgColumndata("icon");
+		ComColumndata iconColumn = new ComColumndata("icon");
 		iconColumn.setName("模块图标");
 		iconColumn.setComments("模块图标");
 		iconColumn.setColumnType(DataTypeConstants.STRING);
@@ -154,7 +152,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		iconColumn.setOrderCode(5);
 		columns.add(iconColumn);
 		
-		CfgColumndata orderCodeColumn = new CfgColumndata("order_code");
+		ComColumndata orderCodeColumn = new ComColumndata("order_code");
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -162,7 +160,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		orderCodeColumn.setOrderCode(6);
 		columns.add(orderCodeColumn);
 		
-		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled");
 		isEnabledColumn.setName("是否启用");
 		isEnabledColumn.setComments("是否启用");
 		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);

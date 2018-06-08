@@ -11,7 +11,7 @@ import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * [通用的]系统资源对象控制器
+ * 系统资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")

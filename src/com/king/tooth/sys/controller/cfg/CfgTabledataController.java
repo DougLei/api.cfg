@@ -8,18 +8,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.sys.controller.AbstractResourceController;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.cfg.CfgTabledataService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * [配置系统]表数据信息资源对象控制器
+ * 表数据信息资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")
 @Controller
-@RequestMapping("/CfgTabledata")
+@RequestMapping("/ComTabledata")
 public class CfgTabledataController extends AbstractResourceController{
 	
 	private CfgTabledataService tabledataService = new CfgTabledataService();
@@ -32,7 +32,7 @@ public class CfgTabledataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody addTable(@RequestBody CfgTabledata table){
+	public ResponseBody addTable(@RequestBody ComTabledata table){
 		tabledataService.saveTable(table);
 		return installResponseBody("添加成功", null);
 	}
@@ -45,7 +45,7 @@ public class CfgTabledataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody updateTable(@RequestBody CfgTabledata table){
+	public ResponseBody updateTable(@RequestBody ComTabledata table){
 		tabledataService.updateTable(table);
 		return installResponseBody("修改成功", null);
 	}

@@ -11,12 +11,10 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]系统账户在线状态资源对象
+ * 系统账户在线状态资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -151,18 +149,18 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	}
 	
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
-		table.setName("[通用的]系统账户在线状态资源对象表");
-		table.setComments("[通用的]系统账户在线状态资源对象表");
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
+		table.setName("系统账户在线状态资源对象表");
+		table.setComments("系统账户在线状态资源对象表");
 		table.setIsBuiltin(1);
 		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(14);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
-		CfgColumndata accountIdColumn = new CfgColumndata("account_id");
+		ComColumndata accountIdColumn = new ComColumndata("account_id");
 		accountIdColumn.setName("关联的账户主键");
 		accountIdColumn.setComments("关联的账户主键");
 		accountIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -170,7 +168,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		accountIdColumn.setOrderCode(1);
 		columns.add(accountIdColumn);
 		
-		CfgColumndata accountNameColumn = new CfgColumndata("account_name");
+		ComColumndata accountNameColumn = new ComColumndata("account_name");
 		accountNameColumn.setName("账户名");
 		accountNameColumn.setComments("账户名:冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails，如果有对应的ComUser，则保存realName");
 		accountNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -178,7 +176,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		accountNameColumn.setOrderCode(2);
 		columns.add(accountNameColumn);
 		
-		CfgColumndata tokenColumn = new CfgColumndata("token");
+		ComColumndata tokenColumn = new ComColumndata("token");
 		tokenColumn.setName("token值");
 		tokenColumn.setComments("token值");
 		tokenColumn.setColumnType(DataTypeConstants.STRING);
@@ -186,7 +184,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		tokenColumn.setOrderCode(3);
 		columns.add(tokenColumn);
 		
-		CfgColumndata loginIpColumn = new CfgColumndata("login_ip");
+		ComColumndata loginIpColumn = new ComColumndata("login_ip");
 		loginIpColumn.setName("登录的客户端ip");
 		loginIpColumn.setComments("登录的客户端ip");
 		loginIpColumn.setColumnType(DataTypeConstants.STRING);
@@ -194,7 +192,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		loginIpColumn.setOrderCode(4);
 		columns.add(loginIpColumn);
 		
-		CfgColumndata loginMacColumn = new CfgColumndata("login_mac");
+		ComColumndata loginMacColumn = new ComColumndata("login_mac");
 		loginMacColumn.setName("登录的客户端mac");
 		loginMacColumn.setComments("登录的客户端mac");
 		loginMacColumn.setColumnType(DataTypeConstants.STRING);
@@ -202,14 +200,14 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		loginMacColumn.setOrderCode(5);
 		columns.add(loginMacColumn);
 		
-		CfgColumndata loginDateColumn = new CfgColumndata("login_date");
+		ComColumndata loginDateColumn = new ComColumndata("login_date");
 		loginDateColumn.setName("登录的时间");
 		loginDateColumn.setComments("登录的时间");
 		loginDateColumn.setColumnType(DataTypeConstants.DATE);
 		loginDateColumn.setOrderCode(6);
 		columns.add(loginDateColumn);
 		
-		CfgColumndata tryLoginTimesColumn = new CfgColumndata("try_login_times");
+		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times");
 		tryLoginTimesColumn.setName("本次尝试登录的次数");
 		tryLoginTimesColumn.setComments("本次尝试登录的次数");
 		tryLoginTimesColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -217,7 +215,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		tryLoginTimesColumn.setOrderCode(7);
 		columns.add(tryLoginTimesColumn);
 		
-		CfgColumndata lastOperDateColumn = new CfgColumndata("last_oper_date");
+		ComColumndata lastOperDateColumn = new ComColumndata("last_oper_date");
 		lastOperDateColumn.setName("最后一次操作的时间");
 		lastOperDateColumn.setComments("最后一次操作的时间");
 		lastOperDateColumn.setColumnType(DataTypeConstants.DATE);

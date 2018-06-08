@@ -12,7 +12,7 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * [通用的]项目信息资源对象控制器
+ * 项目信息资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")

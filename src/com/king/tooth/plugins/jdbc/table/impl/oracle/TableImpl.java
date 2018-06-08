@@ -2,8 +2,8 @@ package com.king.tooth.plugins.jdbc.table.impl.oracle;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.jdbc.table.AbstractTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -12,7 +12,7 @@ import com.king.tooth.util.StrUtils;
  */
 public class TableImpl extends AbstractTableHandler{
 
-	protected void analysisColumnType(CfgColumndata column) {
+	protected void analysisColumnType(ComColumndata column) {
 		String columnType = column.getColumnType();
 		if(DataTypeConstants.STRING.equals(columnType)){
 			createTableSql.append("varchar2");
@@ -33,7 +33,7 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 
-	protected void analysisColumnLength(CfgColumndata column) {
+	protected void analysisColumnLength(ComColumndata column) {
 		// 验证哪些类型，oracle不需要加长度限制
 		String columnType = column.getColumnType();
 		if(DataTypeConstants.DATE.equals(columnType)
@@ -64,7 +64,7 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 	
-	protected void analysisTableComments(CfgTabledata table) {
+	protected void analysisTableComments(ComTabledata table) {
 		if(StrUtils.notEmpty(table.getComments())){
 			createCommentSql.append("comment on table ")
 							.append(table.getTableName())
@@ -74,7 +74,7 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 
-	protected void analysisColumnComments(String tableName, CfgColumndata column) {
+	protected void analysisColumnComments(String tableName, ComColumndata column) {
 		if(StrUtils.notEmpty(column.getComments())){
 			createCommentSql.append("comment on column ")
 							.append(tableName).append(".").append(column.getColumnName())

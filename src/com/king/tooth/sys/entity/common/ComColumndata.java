@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.cfg;
+package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +16,11 @@ import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * [配置系统]字段数据信息资源对象
+ * 字段数据信息资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class ComColumndata extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的表主键
 	 */
@@ -92,9 +92,9 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	
 	//-------------------------------------------------------------------------
 	
-	public CfgColumndata() {
+	public ComColumndata() {
 	}
-	public CfgColumndata(String columnName) {
+	public ComColumndata(String columnName) {
 		this.columnName = columnName;
 		analysisResourceProp();
 	}
@@ -205,18 +205,18 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		this.columnName = columnName;
 	}
 
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "CFG_COLUMNDATA", 0);
-		table.setName("[配置系统]字段数据信息资源对象表");
-		table.setComments("[配置系统]字段数据信息资源对象表");
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_COLUMNDATA", 0);
+		table.setName("字段数据信息资源对象表");
+		table.setComments("字段数据信息资源对象表");
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(ISysResource.IS_CFG_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
-		CfgColumndata tableIdColumn = new CfgColumndata("table_id");
+		ComColumndata tableIdColumn = new ComColumndata("table_id");
 		tableIdColumn.setName("关联的表主键");
 		tableIdColumn.setComments("关联的表主键");
 		tableIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -224,7 +224,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		tableIdColumn.setOrderCode(1);
 		columns.add(tableIdColumn);
 		
-		CfgColumndata nameColumn = new CfgColumndata("name");
+		ComColumndata nameColumn = new ComColumndata("name");
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
 		nameColumn.setColumnType(DataTypeConstants.STRING);
@@ -232,7 +232,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
-		CfgColumndata columnNameColumn = new CfgColumndata("column_name");
+		ComColumndata columnNameColumn = new ComColumndata("column_name");
 		columnNameColumn.setName("列名");
 		columnNameColumn.setComments("列名");
 		columnNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -240,7 +240,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		columnNameColumn.setOrderCode(3);
 		columns.add(columnNameColumn);
 		
-		CfgColumndata propNameColumn = new CfgColumndata("prop_name");
+		ComColumndata propNameColumn = new ComColumndata("prop_name");
 		propNameColumn.setName("属性名");
 		propNameColumn.setComments("属性名");
 		propNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -248,7 +248,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		propNameColumn.setOrderCode(4);
 		columns.add(propNameColumn);
 		
-		CfgColumndata columnTypeColumn = new CfgColumndata("column_type");
+		ComColumndata columnTypeColumn = new ComColumndata("column_type");
 		columnTypeColumn.setName("字段数据类型");
 		columnTypeColumn.setComments("字段数据类型");
 		columnTypeColumn.setColumnType(DataTypeConstants.STRING);
@@ -256,7 +256,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		columnTypeColumn.setOrderCode(5);
 		columns.add(columnTypeColumn);
 		
-		CfgColumndata lengthColumn = new CfgColumndata("length");
+		ComColumndata lengthColumn = new ComColumndata("length");
 		lengthColumn.setName("字段长度");
 		lengthColumn.setComments("字段长度");
 		lengthColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -264,7 +264,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		lengthColumn.setOrderCode(6);
 		columns.add(lengthColumn);
 		
-		CfgColumndata precisionColumn = new CfgColumndata("precision");
+		ComColumndata precisionColumn = new ComColumndata("precision");
 		precisionColumn.setName("数据精度");
 		precisionColumn.setComments("数据精度");
 		precisionColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -272,7 +272,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		precisionColumn.setOrderCode(7);
 		columns.add(precisionColumn);
 		
-		CfgColumndata defaultValueColumn = new CfgColumndata("default_value");
+		ComColumndata defaultValueColumn = new ComColumndata("default_value");
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
 		defaultValueColumn.setColumnType(DataTypeConstants.STRING);
@@ -280,7 +280,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		defaultValueColumn.setOrderCode(8);
 		columns.add(defaultValueColumn);
 		
-		CfgColumndata isPrimaryKeyColumn = new CfgColumndata("is_primary_key");
+		ComColumndata isPrimaryKeyColumn = new ComColumndata("is_primary_key");
 		isPrimaryKeyColumn.setName("是否主键");
 		isPrimaryKeyColumn.setComments("是否主键");
 		isPrimaryKeyColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -288,7 +288,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isPrimaryKeyColumn.setOrderCode(9);
 		columns.add(isPrimaryKeyColumn);
 		
-		CfgColumndata isUniqueColumn = new CfgColumndata("is_unique");
+		ComColumndata isUniqueColumn = new ComColumndata("is_unique");
 		isUniqueColumn.setName("是否唯一");
 		isUniqueColumn.setComments("是否唯一");
 		isUniqueColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -296,7 +296,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isUniqueColumn.setOrderCode(10);
 		columns.add(isUniqueColumn);
 		
-		CfgColumndata isNullabledColumn = new CfgColumndata("is_nullabled");
+		ComColumndata isNullabledColumn = new ComColumndata("is_nullabled");
 		isNullabledColumn.setName("是否可为空");
 		isNullabledColumn.setComments("是否可为空");
 		isNullabledColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -304,7 +304,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isNullabledColumn.setOrderCode(11);
 		columns.add(isNullabledColumn);
 		
-		CfgColumndata isRequireColumn = new CfgColumndata("is_require");
+		ComColumndata isRequireColumn = new ComColumndata("is_require");
 		isRequireColumn.setName("是否必填");
 		isRequireColumn.setComments("是否必填");
 		isRequireColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -312,7 +312,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isRequireColumn.setOrderCode(12);
 		columns.add(isRequireColumn);
 		
-		CfgColumndata isDataDictionaryColumn = new CfgColumndata("is_data_dictionary");
+		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary");
 		isDataDictionaryColumn.setName("是否数据字典");
 		isDataDictionaryColumn.setComments("是否数据字典");
 		isDataDictionaryColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -320,7 +320,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isDataDictionaryColumn.setOrderCode(13);
 		columns.add(isDataDictionaryColumn);
 		
-		CfgColumndata dataDictionaryCodeColumn = new CfgColumndata("data_dictionary_code");
+		ComColumndata dataDictionaryCodeColumn = new ComColumndata("data_dictionary_code");
 		dataDictionaryCodeColumn.setName("数据字典编码");
 		dataDictionaryCodeColumn.setComments("数据字典编码");
 		dataDictionaryCodeColumn.setColumnType(DataTypeConstants.STRING);
@@ -328,7 +328,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		dataDictionaryCodeColumn.setOrderCode(14);
 		columns.add(dataDictionaryCodeColumn);
 		
-		CfgColumndata orderCodeColumn = new CfgColumndata("order_code");
+		ComColumndata orderCodeColumn = new ComColumndata("order_code");
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
 		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -336,7 +336,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		orderCodeColumn.setOrderCode(15);
 		columns.add(orderCodeColumn);
 		
-		CfgColumndata commentsColumn = new CfgColumndata("comments");
+		ComColumndata commentsColumn = new ComColumndata("comments");
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);
@@ -344,7 +344,7 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
 		
-		CfgColumndata isEnabledColumn = new CfgColumndata("is_enabled");
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled");
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效");
 		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -357,11 +357,11 @@ public class CfgColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	}
 
 	public String toDropTable() {
-		return "CFG_COLUMNDATA";
+		return "COM_COLUMNDATA";
 	}
 
 	public String getEntityName() {
-		return "CfgColumndata";
+		return "ComColumndata";
 	}
 	
 	public JSONObject toEntity() {

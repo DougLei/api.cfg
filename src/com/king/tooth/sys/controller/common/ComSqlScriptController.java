@@ -16,7 +16,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * [通用的]sql脚本资源对象控制器
+ * sql脚本资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")

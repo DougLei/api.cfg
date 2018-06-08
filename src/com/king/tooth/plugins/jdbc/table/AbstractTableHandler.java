@@ -2,8 +2,8 @@ package com.king.tooth.plugins.jdbc.table;
 
 import java.util.List;
 
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -28,15 +28,15 @@ public abstract class AbstractTableHandler {
 	 * <p>通过getCreateTableSql()和getCreateCommentSql()方法，获得结果sql语句</p>
 	 * @param tabledata
 	 */
-	public void installCreateTableSql(CfgTabledata tabledata) {
+	public void installCreateTableSql(ComTabledata tabledata) {
 		createTableSql.setLength(0);
 		createCommentSql.setLength(0);
 		
 		analysisTable(tabledata);
 		analysisTableComments(tabledata);// 解析表注释
 		createTableSql.append(" ( ");
-		List<CfgColumndata> columns = tabledata.getColumns();
-		for (CfgColumndata column : columns) {
+		List<ComColumndata> columns = tabledata.getColumns();
+		for (ComColumndata column : columns) {
 			analysisColumn(column);
 			analysisColumnType(column);
 			analysisColumnLength(column);
@@ -52,7 +52,7 @@ public abstract class AbstractTableHandler {
 	 * 解析表
 	 * @param table
 	 */
-	private void analysisTable(CfgTabledata table){
+	private void analysisTable(ComTabledata table){
 		createTableSql.append("create table ").append(table.getTableName());
 	}
 	
@@ -60,7 +60,7 @@ public abstract class AbstractTableHandler {
 	 * 解析字段
 	 * @param column
 	 */
-	private void analysisColumn(CfgColumndata column){
+	private void analysisColumn(ComColumndata column){
 		createTableSql.append(column.getColumnName()).append(" ");
 	}
 	
@@ -74,7 +74,7 @@ public abstract class AbstractTableHandler {
 	 * <p></p>
 	 * @param column
 	 */
-	private void analysisColumnProp(CfgColumndata column) {
+	private void analysisColumnProp(ComColumndata column) {
 		if(1 == column.getIsPrimaryKey()){
 			createTableSql.append(" primary key ");
 		}
@@ -105,26 +105,26 @@ public abstract class AbstractTableHandler {
 	 * </pre>
 	 * @param column
 	 */
-	protected abstract void analysisColumnType(CfgColumndata column);
+	protected abstract void analysisColumnType(ComColumndata column);
 	
 	/**
 	 * 解析字段长度
 	 * @param column
 	 */
-	protected abstract void analysisColumnLength(CfgColumndata column);
+	protected abstract void analysisColumnLength(ComColumndata column);
 	
 	/**
 	 * 解析表的注释
 	 * @param table
 	 */
-	protected abstract void analysisTableComments(CfgTabledata table);
+	protected abstract void analysisTableComments(ComTabledata table);
 	
 	/**
 	 * 解析字段注释
 	 * @param tableName
 	 * @param column
 	 */
-	protected abstract void analysisColumnComments(String tableName, CfgColumndata column);
+	protected abstract void analysisColumnComments(String tableName, ComColumndata column);
 
 	
 	/**

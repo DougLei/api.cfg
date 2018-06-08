@@ -9,7 +9,7 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * [通用的]sql脚本资源服务处理器
+ * sql脚本资源服务处理器
  * @author DougLei
  */
 public class ComSqlScriptService extends AbstractResourceService {

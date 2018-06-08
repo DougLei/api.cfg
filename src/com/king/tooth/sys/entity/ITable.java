@@ -1,6 +1,6 @@
 package com.king.tooth.sys.entity;
 
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComTabledata;
 
 /**
  * 表接口
@@ -14,7 +14,7 @@ public interface ITable {
 	 * @param dbType 数据库类型  <pre>目前主要是判断，如果是oracle数据库时，要判断表名长度不能超过30个字符</pre>
 	 * @return
 	 */
-	CfgTabledata toCreateTable(String dbType);
+	ComTabledata toCreateTable(String dbType);
 	
 	/**
 	 * 删除表

@@ -10,12 +10,10 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]数据字典资源对象
+ * 数据字典资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -84,18 +82,18 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		this.comments = comments;
 	}
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_DATA_DICTIONARY", 0);
-		table.setName("[通用的]数据字典资源对象表");
-		table.setComments("[通用的]数据字典资源对象表");
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_DATA_DICTIONARY", 0);
+		table.setName("数据字典资源对象表");
+		table.setComments("数据字典资源对象表");
 		table.setIsBuiltin(1);
 		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(12);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		CfgColumndata codeColumn = new CfgColumndata("code");
+		ComColumndata codeColumn = new ComColumndata("code");
 		codeColumn.setName("编码");
 		codeColumn.setComments("编码");
 		codeColumn.setColumnType(DataTypeConstants.STRING);
@@ -103,7 +101,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		codeColumn.setOrderCode(1);
 		columns.add(codeColumn);
 		
-		CfgColumndata parentCodeIdColumn = new CfgColumndata("parent_code_id");
+		ComColumndata parentCodeIdColumn = new ComColumndata("parent_code_id");
 		parentCodeIdColumn.setName("父编码编号(可为空)");
 		parentCodeIdColumn.setComments("父编码编号(可为空)");
 		parentCodeIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -111,7 +109,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		parentCodeIdColumn.setOrderCode(2);
 		columns.add(parentCodeIdColumn);
 		
-		CfgColumndata codeCaptionColumn = new CfgColumndata("code_caption");
+		ComColumndata codeCaptionColumn = new ComColumndata("code_caption");
 		codeCaptionColumn.setName("显示的文本");
 		codeCaptionColumn.setComments("显示的文本");
 		codeCaptionColumn.setColumnType(DataTypeConstants.STRING);
@@ -119,7 +117,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		codeCaptionColumn.setOrderCode(3);
 		columns.add(codeCaptionColumn);
 		
-		CfgColumndata codeValueColumn = new CfgColumndata("code_value");
+		ComColumndata codeValueColumn = new ComColumndata("code_value");
 		codeValueColumn.setName("操作的值(value)");
 		codeValueColumn.setComments("操作的值(value)");
 		codeValueColumn.setColumnType(DataTypeConstants.STRING);
@@ -127,7 +125,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		codeValueColumn.setOrderCode(4);
 		columns.add(codeValueColumn);
 		
-		CfgColumndata orderCodeColumn = new CfgColumndata("order_code");
+		ComColumndata orderCodeColumn = new ComColumndata("order_code");
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
@@ -135,7 +133,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
-		CfgColumndata commentsColumn = new CfgColumndata("comments");
+		ComColumndata commentsColumn = new ComColumndata("comments");
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);

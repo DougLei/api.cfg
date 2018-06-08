@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.common.ComTabledata;
 
 import freemarker.template.Template;
 
@@ -29,20 +29,20 @@ public class FreemarkerTest {
 //		t.process(dataModel , new OutputStreamWriter(System.out));
 		
 		Map dataModel = new HashMap();
-		CfgTabledata table = new CfgTabledata();
+		ComTabledata table = new ComTabledata();
 //		table.setTableName("App_User");
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>();
-		CfgColumndata c1 = new CfgColumndata();
+		List<ComColumndata> columns = new ArrayList<ComColumndata>();
+		ComColumndata c1 = new ComColumndata();
 //		c1.setColumnName("User_Type");
-		CfgColumndata c2 = new CfgColumndata();
+		ComColumndata c2 = new ComColumndata();
 //		c2.setColumnName("Login_Status");
-		CfgColumndata c3 = new CfgColumndata();
+		ComColumndata c3 = new ComColumndata();
 //		c3.setColumnName("Name");
 		columns.add(c1);
 		columns.add(c2);
 		columns.add(c3);
 		
-		CfgColumndata c4 = new CfgColumndata();
+		ComColumndata c4 = new ComColumndata();
 //		c4.setColumnName("CreateTime");
 		columns.add(c4);
 		

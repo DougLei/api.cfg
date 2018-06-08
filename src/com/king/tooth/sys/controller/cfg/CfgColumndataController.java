@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.sys.controller.AbstractResourceController;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
+import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.service.cfg.CfgColumndataService;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * [配置系统]字段数据信息资源对象控制器
+ * 字段数据信息资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")
 @Controller
-@RequestMapping("/CfgColumndata")
+@RequestMapping("/ComColumndata")
 public class CfgColumndataController extends AbstractResourceController{
 	
 	private CfgColumndataService columnataService = new CfgColumndataService();
@@ -29,7 +29,7 @@ public class CfgColumndataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody addColumn(@RequestBody CfgColumndata column){
+	public ResponseBody addColumn(@RequestBody ComColumndata column){
 		columnataService.saveColumn(column);
 		return installResponseBody("添加成功", null);
 	}
@@ -41,7 +41,7 @@ public class CfgColumndataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody updateColumn(@RequestBody CfgColumndata column){
+	public ResponseBody updateColumn(@RequestBody ComColumndata column){
 		columnataService.updateColumn(column);
 		return installResponseBody("修改成功", null);
 	}

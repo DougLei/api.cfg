@@ -12,11 +12,11 @@ public class HibernateTest {
 		
 		
 		
-//		String sql = "select count(id) from CfgTabledata";
+//		String sql = "select count(id) from ComTabledata";
 //		System.out.println(HibernateUtil.executeUniqueQueryByHql(sql, null));;
 		
 		
-//		CfgTabledata table = new CfgTabledata("COM_SYS_RESOURCE");
+//		ComTabledata table = new ComTabledata("COM_SYS_RESOURCE");
 //		JSONObject json = table.toEntity();
 		
 		

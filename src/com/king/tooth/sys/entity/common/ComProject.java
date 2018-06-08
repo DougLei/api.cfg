@@ -9,12 +9,10 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * [通用的]项目信息资源对象
+ * 项目信息资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -29,6 +27,10 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	 * 项目名称
 	 */
 	private String projName;
+	/**
+	 * 项目编码
+	 */
+	private String projCode;
 	/**
 	 * 项目描述
 	 */
@@ -57,20 +59,27 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	public void setRefDatabaseId(String refDatabaseId) {
 		this.refDatabaseId = refDatabaseId;
 	}
+	public String getProjCode() {
+		return projCode;
+	}
+	public void setProjCode(String projCode) {
+		this.projCode = projCode;
+	}
+	
 
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_PROJECT", 0);
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT", 0);
 		table.setIsResource(1);
-		table.setName("[通用的]项目信息资源对象表");
-		table.setComments("[通用的]项目信息资源对象表");
+		table.setName("项目信息资源对象表");
+		table.setComments("项目信息资源对象表");
 		table.setIsBuiltin(1);
 		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
-		CfgColumndata refDatabaseIdColumn = new CfgColumndata("ref_database_id");
+		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：目前系统只支持，一个项目对一个数据库");
 		refDatabaseIdColumn.setColumnType(DataTypeConstants.STRING);
@@ -78,7 +87,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
-		CfgColumndata projNameColumn = new CfgColumndata("proj_name");
+		ComColumndata projNameColumn = new ComColumndata("proj_name");
 		projNameColumn.setName("项目名称");
 		projNameColumn.setComments("项目名称");
 		projNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -86,12 +95,20 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		projNameColumn.setOrderCode(2);
 		columns.add(projNameColumn);
 		
-		CfgColumndata descsColumn = new CfgColumndata("descs");
+		ComColumndata projCodeColumn = new ComColumndata("proj_code");
+		projCodeColumn.setName("项目编码");
+		projCodeColumn.setComments("项目编码");
+		projCodeColumn.setColumnType(DataTypeConstants.STRING);
+		projCodeColumn.setLength(100);
+		projCodeColumn.setOrderCode(3);
+		columns.add(projCodeColumn);
+		
+		ComColumndata descsColumn = new ComColumndata("descs");
 		descsColumn.setName("项目描述");
 		descsColumn.setComments("项目描述");
 		descsColumn.setColumnType(DataTypeConstants.STRING);
 		descsColumn.setLength(800);
-		descsColumn.setOrderCode(3);
+		descsColumn.setOrderCode(4);
 		columns.add(descsColumn);
 		
 		table.setColumns(columns);

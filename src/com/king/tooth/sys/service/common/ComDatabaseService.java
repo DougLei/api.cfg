@@ -9,7 +9,7 @@ import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * [通用的]数据库数据信息资源对象处理器
+ * 数据库数据信息资源对象处理器
  * @author DougLei
  */
 public class ComDatabaseService extends AbstractResourceService{
@@ -57,7 +57,7 @@ public class ComDatabaseService extends AbstractResourceService{
 		
 		// ---------hql写法
 		// 修改该库下所有的表的isDeploymentRun=0
-		String hql = "update CfgTabledata set isDeploymentRun=0 where isDeploymentRun=1 and id in (select rightId from ComDatabaseCfgTabledataLinks where leftId = '"+database.getId()+"')";
+		String hql = "update ComTabledata set isDeploymentRun=0 where isDeploymentRun=1 and id in (select rightId from ComDatabaseCfgTabledataLinks where leftId = '"+database.getId()+"')";
 		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
 		
 		// 修改该库下所有的sql脚本的isDeploymentRun=0

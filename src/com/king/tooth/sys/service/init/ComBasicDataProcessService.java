@@ -16,8 +16,7 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
+import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
@@ -30,6 +29,7 @@ import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
@@ -44,7 +44,7 @@ import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * [通用的]基础数据处理器
+ * 基础数据处理器
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
@@ -96,14 +96,14 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 获取要初始化的表集合
 	 * @return
 	 */
-	private List<CfgTabledata> getInitTables(){
-		List<CfgTabledata> tables = new ArrayList<CfgTabledata>(16);
+	private List<ComTabledata> getInitTables(){
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(16);
 		String dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
 		tables.add(new ComHibernateHbm().toCreateTable(dbType));
-		tables.add(new CfgColumndata().toCreateTable(dbType));
-		tables.add(new CfgTabledata().toCreateTable(dbType));
+		tables.add(new ComColumndata().toCreateTable(dbType));
+		tables.add(new ComTabledata().toCreateTable(dbType));
 		tables.add(new ComDatabase().toCreateTable(dbType));
 		tables.add(new ComDataDictionary().toCreateTable(dbType));
 		tables.add(new ComDataLinks().toCreateTable(dbType));
@@ -124,8 +124,8 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 清除表信息
 	 * @param tables
 	 */
-	private void clearTables(List<CfgTabledata> tables){
-		for (CfgTabledata table : tables) {
+	private void clearTables(List<ComTabledata> tables){
+		for (ComTabledata table : tables) {
 			table.clear();
 		}
 		tables.clear();
@@ -136,7 +136,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * @return 
 	 */
 	private void createTables(){
-		List<CfgTabledata> tables = getInitTables();
+		List<ComTabledata> tables = getInitTables();
 		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 		try {
 			dbHandler.dropTable(tables);
@@ -178,11 +178,11 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 根据表创建hbm文件，并将其加入到SessionFactory中
 	 */
 	private void insertHbmContentsToSessionFactory() {
-		List<CfgTabledata> tables = getInitTables();
+		List<ComTabledata> tables = getInitTables();
 		
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
-		for (CfgTabledata table : tables) {
+		for (ComTabledata table : tables) {
 			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table));// 记录hbm内容
 		}
 		
@@ -199,17 +199,17 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * <p>再根据表创建hbm文件，并将其加入到CfgHibernateHbm表中</p>
 	 */
 	private void insertAllTables() {
-		List<CfgTabledata> tables = getInitTables();
+		List<ComTabledata> tables = getInitTables();
 		
 		String tableId;
-		List<CfgColumndata> columns = null;
+		List<ComColumndata> columns = null;
 		ComHibernateHbm hbm;
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-		for (CfgTabledata table : tables) {
+		for (ComTabledata table : tables) {
 			// 插入表和列信息
 			tableId = HibernateUtil.saveObject(table, "初始化插入内置表");
 			columns = table.getColumns();
-			for (CfgColumndata column : columns) {
+			for (ComColumndata column : columns) {
 				column.setTableId(tableId);
 				HibernateUtil.saveObject(column, "初始化插入内置表的列");
 			}
@@ -227,9 +227,9 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 将表资源添加到资源表中
 	 */
 	private void insertTableToResources() {
-		List<CfgTabledata> tables = getInitTables();
+		List<ComTabledata> tables = getInitTables();
 		ComSysResourceService comSysResourceService = new ComSysResourceService();
-		for (CfgTabledata table : tables) {
+		for (ComTabledata table : tables) {
 			comSysResourceService.insertSysResource(table);
 		}
 		clearTables(tables);
@@ -272,7 +272,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * 添加数据字典的基础数据
 	 */
 	private void insertDataDictionary() {
-		// CfgColumndata.columnType 字段数据类型
+		// ComColumndata.columnType 字段数据类型
 		insertDataDictionary(null, "cfgcolumndata.columntype", "字符串", "string", 1);
 		insertDataDictionary(null, "cfgcolumndata.columntype", "布尔值", "boolean", 2);
 		insertDataDictionary(null, "cfgcolumndata.columntype", "整型", "integer", 3);
@@ -285,12 +285,12 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		insertDataDictionary(null, "cfgdatabase.dbtype", "oracle", "oracle", 1);
 		insertDataDictionary(null, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2);
 		
-		// CfgTabledata.tableType 表类型
+		// ComTabledata.tableType 表类型
 		insertDataDictionary(null, "cfgtabledata.tabletype", "单表", "1", 1);
 		insertDataDictionary(null, "cfgtabledata.tabletype", "树表", "2", 2);
 		insertDataDictionary(null, "cfgtabledata.tabletype", "主子表", "3", 3);
 		
-		// CfgTabledata.dbType 数据库类型
+		// ComTabledata.dbType 数据库类型
 		insertDataDictionary(null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
 		insertDataDictionary(null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
 		

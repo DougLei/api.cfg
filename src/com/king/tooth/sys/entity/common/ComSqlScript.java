@@ -17,8 +17,6 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumndata;
-import com.king.tooth.sys.entity.cfg.CfgTabledata;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
@@ -31,7 +29,7 @@ import com.king.tooth.util.sqlparser.SqlParameterParserUtil;
 import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
 
 /**
- * [通用的]sql脚本资源对象
+ * sql脚本资源对象
  * @author StoneKing
  */
 @SuppressWarnings("serial")
@@ -235,20 +233,20 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		}
 	}
 	
-	public CfgTabledata toCreateTable(String dbType) {
-		CfgTabledata table = new CfgTabledata(dbType, "COM_SQL_SCRIPT", 0);
+	public ComTabledata toCreateTable(String dbType) {
+		ComTabledata table = new ComTabledata(dbType, "COM_SQL_SCRIPT", 0);
 		table.setIsResource(1);
-		table.setName("[通用的]sql脚本资源对象表");
-		table.setComments("[通用的]sql脚本资源对象表");
+		table.setName("sql脚本资源对象表");
+		table.setComments("sql脚本资源对象表");
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
 		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		
-		List<CfgColumndata> columns = new ArrayList<CfgColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
-		CfgColumndata sqlScriptCaptionColumn = new CfgColumndata("sql_script_caption");
+		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption");
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
 		sqlScriptCaptionColumn.setComments("sql脚本的标题");
 		sqlScriptCaptionColumn.setColumnType(DataTypeConstants.STRING);
@@ -256,7 +254,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptCaptionColumn.setOrderCode(1);
 		columns.add(sqlScriptCaptionColumn);
 		
-		CfgColumndata sqlScriptResourceNameColumn = new CfgColumndata("sql_script_resource_name");
+		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name");
 		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
 		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
 		sqlScriptResourceNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -264,7 +262,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptResourceNameColumn.setOrderCode(2);
 		columns.add(sqlScriptResourceNameColumn);
 		
-		CfgColumndata sqlScriptTypeColumn = new CfgColumndata("sql_script_type");
+		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type");
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
 		sqlScriptTypeColumn.setColumnType(DataTypeConstants.STRING);
@@ -272,14 +270,14 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptTypeColumn.setOrderCode(3);
 		columns.add(sqlScriptTypeColumn);
 		
-		CfgColumndata sqlScriptContentColumn = new CfgColumndata("sql_script_content");
+		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content");
 		sqlScriptContentColumn.setName("sql脚本内容");
 		sqlScriptContentColumn.setComments("sql脚本内容");
 		sqlScriptContentColumn.setColumnType(DataTypeConstants.CLOB);
 		sqlScriptContentColumn.setOrderCode(4);
 		columns.add(sqlScriptContentColumn);
 		
-		CfgColumndata sqlScriptParametersColumn = new CfgColumndata("sql_script_parameters");
+		ComColumndata sqlScriptParametersColumn = new ComColumndata("sql_script_parameters");
 		sqlScriptParametersColumn.setName("sql脚本的参数对象集合");
 		sqlScriptParametersColumn.setComments("sql脚本的参数(json串)");
 		sqlScriptParametersColumn.setColumnType(DataTypeConstants.STRING);
@@ -287,7 +285,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptParametersColumn.setOrderCode(5);
 		columns.add(sqlScriptParametersColumn);
 		
-		CfgColumndata sqlQueryResultColumnsColumn = new CfgColumndata("sql_query_result_columns");
+		ComColumndata sqlQueryResultColumnsColumn = new ComColumndata("sql_query_result_columns");
 		sqlQueryResultColumnsColumn.setName("sql查询结果的列名对象集合");
 		sqlQueryResultColumnsColumn.setComments("sql查询结果的列名对象集合(json串)[该属性针对查询的sql语句]");
 		sqlQueryResultColumnsColumn.setColumnType(DataTypeConstants.STRING);
@@ -295,7 +293,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlQueryResultColumnsColumn.setOrderCode(6);
 		columns.add(sqlQueryResultColumnsColumn);
 		
-		CfgColumndata procedureNameColumn = new CfgColumndata("procedure_name");
+		ComColumndata procedureNameColumn = new ComColumndata("procedure_name");
 		procedureNameColumn.setName("存储过程名称");
 		procedureNameColumn.setComments("存储过程名称");
 		procedureNameColumn.setColumnType(DataTypeConstants.STRING);
@@ -303,7 +301,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		procedureNameColumn.setOrderCode(7);
 		columns.add(procedureNameColumn);
 		
-		CfgColumndata procedureParametersColumn = new CfgColumndata("procedure_parameters");
+		ComColumndata procedureParametersColumn = new ComColumndata("procedure_parameters");
 		procedureParametersColumn.setName("存储过程参数对象集合");
 		procedureParametersColumn.setComments("存储过程参数对象集合(json串)");
 		procedureParametersColumn.setColumnType(DataTypeConstants.STRING);
@@ -311,7 +309,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		procedureParametersColumn.setOrderCode(8);
 		columns.add(procedureParametersColumn);
 		
-		CfgColumndata commentsColumn = new CfgColumndata("comments");
+		ComColumndata commentsColumn = new ComColumndata("comments");
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		commentsColumn.setColumnType(DataTypeConstants.STRING);
