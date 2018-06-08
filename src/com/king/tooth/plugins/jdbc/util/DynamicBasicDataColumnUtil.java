@@ -70,7 +70,7 @@ public class DynamicBasicDataColumnUtil {
 			table.getColumns().add(isDeployedColumn);
 		}
 		
-		if(table.getIsDatalinkTable() == 0 && !ResourceNameConstants.COMMON_DATALINK_TABLENAME.equals(table.getTableName())){// 不是关系表，才要这些字段
+		if(table.getIsDatalinkTable() == 0 && !table.getTableName().endsWith(ResourceNameConstants.DATALINK_TABLENAME_SUFFIX)){// 不是关系表，才要这些字段
 			ComColumndata createTimeColumn = new ComColumndata("create_time", DataTypeConstants.DATE, 0);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
