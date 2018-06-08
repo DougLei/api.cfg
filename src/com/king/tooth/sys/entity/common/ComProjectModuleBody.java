@@ -53,18 +53,15 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
 		
-		ComColumndata moduleIdColumn = new ComColumndata("module_id");
+		ComColumndata moduleIdColumn = new ComColumndata("module_id", DataTypeConstants.STRING, 32);
 		moduleIdColumn.setName("关联的项目模块编号");
 		moduleIdColumn.setComments("关联的项目模块编号");
-		moduleIdColumn.setColumnType(DataTypeConstants.STRING);
-		moduleIdColumn.setLength(32);
 		moduleIdColumn.setOrderCode(1);
 		columns.add(moduleIdColumn);
 		
-		ComColumndata moduleBodyColumn = new ComColumndata("module_body");
+		ComColumndata moduleBodyColumn = new ComColumndata("module_body", DataTypeConstants.CLOB, 0);
 		moduleBodyColumn.setName("模块的内容");
 		moduleBodyColumn.setComments("模块的内容:json串");
-		moduleBodyColumn.setColumnType(DataTypeConstants.CLOB);
 		moduleBodyColumn.setOrderCode(2);
 		columns.add(moduleBodyColumn);
 		
@@ -81,6 +78,7 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}

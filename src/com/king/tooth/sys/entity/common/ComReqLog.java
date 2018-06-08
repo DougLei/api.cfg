@@ -68,13 +68,6 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 	
 	//-------------------------------------------------------------------------
 	
-	/**
-	 * 构造函数
-	 * @param req
-	 */
-	public ComReqLog() {
-	}
-
 	public String getReqAccountId() {
 		return reqAccountId;
 	}
@@ -151,87 +144,69 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
-		ComColumndata reqAccountIdColumn = new ComColumndata("req_account_id");
+		ComColumndata reqAccountIdColumn = new ComColumndata("req_account_id", DataTypeConstants.STRING, 32);
 		reqAccountIdColumn.setName("请求的账户信息主键");
 		reqAccountIdColumn.setComments("请求的账户信息主键:记录是哪个用户请求的，可为空");
-		reqAccountIdColumn.setColumnType(DataTypeConstants.STRING);
-		reqAccountIdColumn.setLength(32);
 		reqAccountIdColumn.setOrderCode(1);
 		columns.add(reqAccountIdColumn);
 		
-		ComColumndata reqMethodColumn = new ComColumndata("req_method");
+		ComColumndata reqMethodColumn = new ComColumndata("req_method", DataTypeConstants.STRING, 10);
 		reqMethodColumn.setName("请求的方式");
 		reqMethodColumn.setComments("请求的方式");
-		reqMethodColumn.setColumnType(DataTypeConstants.STRING);
-		reqMethodColumn.setLength(8);
 		reqMethodColumn.setOrderCode(2);
 		columns.add(reqMethodColumn);
 		
-		ComColumndata reqIpColumn = new ComColumndata("req_ip");
+		ComColumndata reqIpColumn = new ComColumndata("req_ip", DataTypeConstants.STRING, 20);
 		reqIpColumn.setName("请求的客户端ip");
 		reqIpColumn.setComments("请求的客户端ip");
-		reqIpColumn.setColumnType(DataTypeConstants.STRING);
-		reqIpColumn.setLength(20);
 		reqIpColumn.setOrderCode(3);
 		columns.add(reqIpColumn);
 		
-		ComColumndata reqMacColumn = new ComColumndata("req_mac");
+		ComColumndata reqMacColumn = new ComColumndata("req_mac", DataTypeConstants.STRING, 50);
 		reqMacColumn.setName("请求的客户端mac");
 		reqMacColumn.setComments("请求的客户端mac：可为空");
-		reqMacColumn.setColumnType(DataTypeConstants.STRING);
-		reqMacColumn.setLength(50);
 		reqMacColumn.setOrderCode(4);
 		columns.add(reqMacColumn);
 		
-		ComColumndata reqUrlColumn = new ComColumndata("req_url");
+		ComColumndata reqUrlColumn = new ComColumndata("req_url", DataTypeConstants.STRING, 160);
 		reqUrlColumn.setName("请求的url");
 		reqUrlColumn.setComments("请求的url");
-		reqUrlColumn.setColumnType(DataTypeConstants.STRING);
-		reqUrlColumn.setLength(150);
 		reqUrlColumn.setOrderCode(5);
 		columns.add(reqUrlColumn);
 		
-		ComColumndata reqUrlParamsColumn = new ComColumndata("req_url_params");
+		ComColumndata reqUrlParamsColumn = new ComColumndata("req_url_params", DataTypeConstants.STRING, 1000);
 		reqUrlParamsColumn.setName("请求的url参数");
 		reqUrlParamsColumn.setComments("请求的url参数");
-		reqUrlParamsColumn.setColumnType(DataTypeConstants.STRING);
-		reqUrlParamsColumn.setLength(1000);
 		reqUrlParamsColumn.setOrderCode(6);
 		columns.add(reqUrlParamsColumn);
 		
-		ComColumndata reqBodyColumn = new ComColumndata("req_body");
+		ComColumndata reqBodyColumn = new ComColumndata("req_body", DataTypeConstants.CLOB, 0);
 		reqBodyColumn.setName("请求体");
 		reqBodyColumn.setComments("请求体");
-		reqBodyColumn.setColumnType(DataTypeConstants.CLOB);
 		reqBodyColumn.setOrderCode(7);
 		columns.add(reqBodyColumn);
 		
-		ComColumndata respBodyColumn = new ComColumndata("resp_body");
+		ComColumndata respBodyColumn = new ComColumndata("resp_body", DataTypeConstants.CLOB, 0);
 		respBodyColumn.setName("响应体");
 		respBodyColumn.setComments("响应体");
-		respBodyColumn.setColumnType(DataTypeConstants.CLOB);
 		respBodyColumn.setOrderCode(8);
 		columns.add(respBodyColumn);
 		
-		ComColumndata reqDateColumn = new ComColumndata("req_date");
+		ComColumndata reqDateColumn = new ComColumndata("req_date", DataTypeConstants.DATE, 32);
 		reqDateColumn.setName("发起请求的时间");
 		reqDateColumn.setComments("发起请求的时间");
-		reqDateColumn.setColumnType(DataTypeConstants.DATE);
 		reqDateColumn.setOrderCode(9);
 		columns.add(reqDateColumn);
 		
-		ComColumndata respDateColumn = new ComColumndata("resp_date");
+		ComColumndata respDateColumn = new ComColumndata("resp_date", DataTypeConstants.DATE, 32);
 		respDateColumn.setName("完成响应的时间");
 		respDateColumn.setComments("完成响应的时间");
-		respDateColumn.setColumnType(DataTypeConstants.DATE);
 		respDateColumn.setOrderCode(10);
 		columns.add(respDateColumn);
 		
-		ComColumndata reqTokenColumn = new ComColumndata("req_token");
+		ComColumndata reqTokenColumn = new ComColumndata("req_token", DataTypeConstants.STRING, 32);
 		reqTokenColumn.setName("请求携带的token值");
 		reqTokenColumn.setComments("请求携带的token值：可为空");
-		reqTokenColumn.setColumnType(DataTypeConstants.STRING);
-		reqTokenColumn.setLength(32);
 		reqTokenColumn.setOrderCode(11);
 		columns.add(reqTokenColumn);
 		
@@ -249,6 +224,7 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("reqDate", reqDate);
 		json.put("respDate", reqDate);
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);

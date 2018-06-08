@@ -75,8 +75,13 @@ public class BasicEntity implements Serializable{
 	
 	// --------
 	/**
-	 * 是否验证不能为空的属性
+	 * 是否验证了不能为空的属性
 	 * <p>针对IEntityPropAnalysis接口的实现类</p>
 	 */
 	protected boolean isValidNotNullProps;
+	/**
+	 * 验证不能为空的属性的结果
+	 * <p>针对IEntityPropAnalysis接口的实现类</p>
+	 */
+	protected String validNotNullPropsResult;
 }

@@ -32,7 +32,7 @@ public class ComTabledataController extends AbstractResourceController{
 	public ResponseBody add(@RequestBody ComTabledata table){
 		table.analysisResourceProp();
 		tabledataService.saveTable(table);
-		return installResponseBody("添加成功", null);
+		return installOperResponseBody("添加成功", null);
 	}
 	
 	/**
@@ -45,6 +45,6 @@ public class ComTabledataController extends AbstractResourceController{
 	public ResponseBody update(@RequestBody ComTabledata table){
 		table.analysisResourceProp();
 		tabledataService.updateTable(table);
-		return installResponseBody("添加成功", null);
+		return installOperResponseBody("修改成功", null);
 	}
 }

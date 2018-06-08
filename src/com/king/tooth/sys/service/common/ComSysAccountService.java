@@ -3,13 +3,11 @@ package com.king.tooth.sys.service.common;
 import java.util.Date;
 
 import com.king.tooth.constants.LoginConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CryptographyUtil;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -18,7 +16,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 系统账户资源服务处理器
  * @author DougLei
  */
-public class ComSysAccountService extends AbstractResourceService{
+public class ComSysAccountService extends AbstractService{
 
 	/**
 	 * 验证账户的状态
@@ -29,18 +27,11 @@ public class ComSysAccountService extends AbstractResourceService{
 		String hql = "from ComSysAccount where id = '"+accountId+"'";
 		ComSysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, hql);
 		if(account.getAccountStatus() == 2){
-			account.setMessage("您的账号已被禁用(原因:"+account.getAccountStatusDes()+")，请联系管理员");
-			return account;
-		}
-		if(account.getAccountStatus() == 3){
-			account.setMessage("您的账号已过期(原因:"+account.getAccountStatusDes()+")，请联系管理员");
+			account.setMessage("您的账号已被禁用，请联系管理员");
 			return account;
 		}
 		if((account.getValidDate().getTime() - System.currentTimeMillis()) < 0){
-			account.setAccountStatus(3);
-			account.setAccountStatusDes("超出使用期限["+DateUtil.formatDate(account.getValidDate())+"]");
-			account.setMessage("您的账号已过期(原因:"+account.getAccountStatusDes()+")，请联系管理员");
-			HibernateUtil.updateObject(account, null);
+			account.setMessage("您的账号已过期，请联系管理员");
 			return account;
 		}
 		return account;
@@ -100,11 +91,11 @@ public class ComSysAccountService extends AbstractResourceService{
 		accountOnlineStatus.setAccountId(loginAccount.getId());
 		
 		if(loginAccount.getAccountStatus() == 2){
-			accountOnlineStatus.setMessage("您的账号已被禁用(禁用原因:"+loginAccount.getAccountStatusDes()+")，请联系管理员");
+			accountOnlineStatus.setMessage("您的账号已被禁用，请联系管理员");
 			return accountOnlineStatus;
 		}
-		if(loginAccount.getAccountStatus() == 3){
-			accountOnlineStatus.setMessage("您的账号已过期(过期原因:"+loginAccount.getAccountStatusDes()+")，请联系管理员");
+		if((loginAccount.getValidDate().getTime() - System.currentTimeMillis()) < 0){
+			accountOnlineStatus.setMessage("您的账号已过期，请联系管理员");
 			return accountOnlineStatus;
 		}
 		
@@ -154,35 +145,35 @@ public class ComSysAccountService extends AbstractResourceService{
 
 	//-----------------------------------------------------------
 	
-	/**
-	 * 注册用户
-	 * @param ip
-	 * @param account
-	 */
-	public String register(String ip, ComSysAccount account) {
-		String validResult = validLoginNameIsExists(account.getLoginName());
-		if(validResult != null){
-			return validResult;
-		}
-		
-		ComSysAccount registerAccount = new ComSysAccount();
-		registerAccount.setAccountType(1);
-		registerAccount.setLoginName(account.getLoginName());
-		registerAccount.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), registerAccount.getLoginPwdKey()));
-		registerAccount.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		HibernateUtil.saveObject(registerAccount, ip +":注册账户");
-		return "注册成功";
-	}
-	
-	/**
-	 * 验证登录名是否存在
-	 * @param loginName
-	 */
-	public String validLoginNameIsExists(String loginName){
-		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName = ? or tel = ? or emails = ?", loginName, loginName, loginName)+"");
-		if(count > 0){
-			return "用户名["+loginName+"]已存在";
-		}
-		return null;
-	}
+//	/**
+//	 * 注册用户
+//	 * @param ip
+//	 * @param account
+//	 */
+//	public String register(String ip, ComSysAccount account) {
+//		String validResult = validLoginNameIsExists(account.getLoginName());
+//		if(validResult != null){
+//			return validResult;
+//		}
+//		
+//		ComSysAccount registerAccount = new ComSysAccount();
+//		registerAccount.setAccountType(1);
+//		registerAccount.setLoginName(account.getLoginName());
+//		registerAccount.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), registerAccount.getLoginPwdKey()));
+//		registerAccount.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+//		HibernateUtil.saveObject(registerAccount, ip +":注册账户");
+//		return "注册成功";
+//	}
+//	
+//	/**
+//	 * 验证登录名是否存在
+//	 * @param loginName
+//	 */
+//	public String validLoginNameIsExists(String loginName){
+//		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName = ? or tel = ? or emails = ?", loginName, loginName, loginName)+"");
+//		if(count > 0){
+//			return "用户名["+loginName+"]已存在";
+//		}
+//		return null;
+//	}
 }

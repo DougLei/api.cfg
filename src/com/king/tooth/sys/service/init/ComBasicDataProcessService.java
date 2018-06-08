@@ -32,7 +32,7 @@ import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -48,7 +48,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
-public class ComBasicDataProcessService extends AbstractResourceService{
+public class ComBasicDataProcessService extends AbstractService{
 
 	/**
 	 * 系统首次启动时，初始化系统的基础数据
@@ -152,16 +152,21 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 */
 	private void insertDatabaseOfBasicDatas() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 添加配置平台管理员和对应的用户【这个是超级管理员】
+		// 添加平台开发账户【1.平台开发账户】
 		ComSysAccount admin = new ComSysAccount();
 		admin.setAccountType(1);
-		admin.setLoginName("administrator");
+		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 		HibernateUtil.saveObject(admin, null);
 		
-		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		
+		// 添加一般开发账户【2.一般开发账户】
+		ComSysAccount normal = new ComSysAccount();
+		normal.setAccountType(2);
+		normal.setLoginName("normal");
+		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
+		normal.setValidDate(DateUtil.parseDate("2019-12-31 23:59:59"));
+		HibernateUtil.saveObject(normal, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典数据

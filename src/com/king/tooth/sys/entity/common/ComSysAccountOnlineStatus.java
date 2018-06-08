@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -58,19 +59,23 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	/**
 	 * 关联的帐号对象
 	 */
+	@JSONField(serialize = false)
 	private ComSysAccount account;
 	/**
 	 * 登录或验证登录时，传递的信息
 	 */
+	@JSONField(serialize = false)
 	private String message;
 	/**
 	 * 是否有异常错误
 	 * <p>例如，登录失败，账户密码错误等，该属性的值都为1，如果一切正常，则是0</p>
 	 */
+	@JSONField(serialize = false)
 	private int isError;
 	/**
 	 * 标识这个对象实例，是否要保存，如果不是保存，则是update
 	 */
+	@JSONField(serialize = false)
 	private boolean isSave;
 	
 	
@@ -157,65 +162,51 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
-		ComColumndata accountIdColumn = new ComColumndata("account_id");
+		ComColumndata accountIdColumn = new ComColumndata("account_id", DataTypeConstants.STRING, 32);
 		accountIdColumn.setName("关联的账户主键");
 		accountIdColumn.setComments("关联的账户主键");
-		accountIdColumn.setColumnType(DataTypeConstants.STRING);
-		accountIdColumn.setLength(32);
 		accountIdColumn.setOrderCode(1);
 		columns.add(accountIdColumn);
 		
-		ComColumndata accountNameColumn = new ComColumndata("account_name");
+		ComColumndata accountNameColumn = new ComColumndata("account_name", DataTypeConstants.STRING, 30);
 		accountNameColumn.setName("账户名");
 		accountNameColumn.setComments("账户名:冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails，如果有对应的ComUser，则保存realName");
-		accountNameColumn.setColumnType(DataTypeConstants.STRING);
-		accountNameColumn.setLength(50);
 		accountNameColumn.setOrderCode(2);
 		columns.add(accountNameColumn);
 		
-		ComColumndata tokenColumn = new ComColumndata("token");
+		ComColumndata tokenColumn = new ComColumndata("token", DataTypeConstants.STRING, 32);
 		tokenColumn.setName("token值");
 		tokenColumn.setComments("token值");
-		tokenColumn.setColumnType(DataTypeConstants.STRING);
-		tokenColumn.setLength(32);
 		tokenColumn.setOrderCode(3);
 		columns.add(tokenColumn);
 		
-		ComColumndata loginIpColumn = new ComColumndata("login_ip");
+		ComColumndata loginIpColumn = new ComColumndata("login_ip", DataTypeConstants.STRING, 20);
 		loginIpColumn.setName("登录的客户端ip");
 		loginIpColumn.setComments("登录的客户端ip");
-		loginIpColumn.setColumnType(DataTypeConstants.STRING);
-		loginIpColumn.setLength(20);
 		loginIpColumn.setOrderCode(4);
 		columns.add(loginIpColumn);
 		
-		ComColumndata loginMacColumn = new ComColumndata("login_mac");
+		ComColumndata loginMacColumn = new ComColumndata("login_mac", DataTypeConstants.STRING, 50);
 		loginMacColumn.setName("登录的客户端mac");
 		loginMacColumn.setComments("登录的客户端mac");
-		loginMacColumn.setColumnType(DataTypeConstants.STRING);
-		loginMacColumn.setLength(50);
 		loginMacColumn.setOrderCode(5);
 		columns.add(loginMacColumn);
 		
-		ComColumndata loginDateColumn = new ComColumndata("login_date");
+		ComColumndata loginDateColumn = new ComColumndata("login_date", DataTypeConstants.DATE, 0);
 		loginDateColumn.setName("登录的时间");
 		loginDateColumn.setComments("登录的时间");
-		loginDateColumn.setColumnType(DataTypeConstants.DATE);
 		loginDateColumn.setOrderCode(6);
 		columns.add(loginDateColumn);
 		
-		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times");
+		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times", DataTypeConstants.INTEGER, 3);
 		tryLoginTimesColumn.setName("本次尝试登录的次数");
 		tryLoginTimesColumn.setComments("本次尝试登录的次数");
-		tryLoginTimesColumn.setColumnType(DataTypeConstants.INTEGER);
-		tryLoginTimesColumn.setLength(3);
 		tryLoginTimesColumn.setOrderCode(7);
 		columns.add(tryLoginTimesColumn);
 		
-		ComColumndata lastOperDateColumn = new ComColumndata("last_oper_date");
+		ComColumndata lastOperDateColumn = new ComColumndata("last_oper_date", DataTypeConstants.DATE, 0);
 		lastOperDateColumn.setName("最后一次操作的时间");
 		lastOperDateColumn.setComments("最后一次操作的时间");
-		lastOperDateColumn.setColumnType(DataTypeConstants.DATE);
 		lastOperDateColumn.setOrderCode(8);
 		columns.add(lastOperDateColumn);
 		
@@ -233,6 +224,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("loginDate", loginDate);
 		json.put("lastOperDate", lastOperDate);
 		json.put("tryLoginTimes", tryLoginTimes+"");

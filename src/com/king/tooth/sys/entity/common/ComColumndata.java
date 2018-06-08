@@ -89,8 +89,10 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	
 	public ComColumndata() {
 	}
-	public ComColumndata(String columnName) {
+	public ComColumndata(String columnName, String columnType, int length) {
 		this.columnName = columnName;
+		this.columnType = columnType;
+		this.length = length;
 		analysisResourceProp();
 	}
 	
@@ -205,131 +207,101 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
 		
-		ComColumndata tableIdColumn = new ComColumndata("table_id");
+		ComColumndata tableIdColumn = new ComColumndata("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
 		tableIdColumn.setComments("关联的表主键");
-		tableIdColumn.setColumnType(DataTypeConstants.STRING);
-		tableIdColumn.setLength(32);
 		tableIdColumn.setOrderCode(1);
 		columns.add(tableIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name");
+		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 40);
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
-		nameColumn.setColumnType(DataTypeConstants.STRING);
-		nameColumn.setLength(50);
 		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
-		ComColumndata columnNameColumn = new ComColumndata("column_name");
+		ComColumndata columnNameColumn = new ComColumndata("column_name", DataTypeConstants.STRING, 40);
 		columnNameColumn.setName("列名");
 		columnNameColumn.setComments("列名");
-		columnNameColumn.setColumnType(DataTypeConstants.STRING);
-		columnNameColumn.setLength(50);
 		columnNameColumn.setOrderCode(3);
 		columns.add(columnNameColumn);
 		
-		ComColumndata propNameColumn = new ComColumndata("prop_name");
+		ComColumndata propNameColumn = new ComColumndata("prop_name", DataTypeConstants.STRING, 40);
 		propNameColumn.setName("属性名");
 		propNameColumn.setComments("属性名");
-		propNameColumn.setColumnType(DataTypeConstants.STRING);
-		propNameColumn.setLength(50);
 		propNameColumn.setOrderCode(4);
 		columns.add(propNameColumn);
 		
-		ComColumndata columnTypeColumn = new ComColumndata("column_type");
+		ComColumndata columnTypeColumn = new ComColumndata("column_type", DataTypeConstants.STRING, 10);
 		columnTypeColumn.setName("字段数据类型");
 		columnTypeColumn.setComments("字段数据类型");
-		columnTypeColumn.setColumnType(DataTypeConstants.STRING);
-		columnTypeColumn.setLength(10);
 		columnTypeColumn.setOrderCode(5);
 		columns.add(columnTypeColumn);
 		
-		ComColumndata lengthColumn = new ComColumndata("length");
+		ComColumndata lengthColumn = new ComColumndata("length", DataTypeConstants.INTEGER, 4);
 		lengthColumn.setName("字段长度");
 		lengthColumn.setComments("字段长度");
-		lengthColumn.setColumnType(DataTypeConstants.INTEGER);
-		lengthColumn.setLength(4);
+		lengthColumn.setDefaultValue("32");
 		lengthColumn.setOrderCode(6);
 		columns.add(lengthColumn);
 		
-		ComColumndata precisionColumn = new ComColumndata("precision");
+		ComColumndata precisionColumn = new ComColumndata("precision", DataTypeConstants.INTEGER, 4);
 		precisionColumn.setName("数据精度");
 		precisionColumn.setComments("数据精度");
-		precisionColumn.setColumnType(DataTypeConstants.INTEGER);
-		precisionColumn.setLength(4);
 		precisionColumn.setOrderCode(7);
 		columns.add(precisionColumn);
 		
-		ComColumndata defaultValueColumn = new ComColumndata("default_value");
+		ComColumndata defaultValueColumn = new ComColumndata("default_value", DataTypeConstants.STRING, 50);
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
-		defaultValueColumn.setColumnType(DataTypeConstants.STRING);
-		defaultValueColumn.setLength(50);
 		defaultValueColumn.setOrderCode(8);
 		columns.add(defaultValueColumn);
 		
-		ComColumndata isPrimaryKeyColumn = new ComColumndata("is_primary_key");
+		ComColumndata isPrimaryKeyColumn = new ComColumndata("is_primary_key", DataTypeConstants.INTEGER, 1);
 		isPrimaryKeyColumn.setName("是否主键");
 		isPrimaryKeyColumn.setComments("是否主键");
-		isPrimaryKeyColumn.setColumnType(DataTypeConstants.INTEGER);
-		isPrimaryKeyColumn.setLength(1);
 		isPrimaryKeyColumn.setOrderCode(9);
 		columns.add(isPrimaryKeyColumn);
 		
-		ComColumndata isUniqueColumn = new ComColumndata("is_unique");
+		ComColumndata isUniqueColumn = new ComColumndata("is_unique", DataTypeConstants.INTEGER, 1);
 		isUniqueColumn.setName("是否唯一");
 		isUniqueColumn.setComments("是否唯一");
-		isUniqueColumn.setColumnType(DataTypeConstants.INTEGER);
-		isUniqueColumn.setLength(1);
 		isUniqueColumn.setOrderCode(10);
 		columns.add(isUniqueColumn);
 		
-		ComColumndata isNullabledColumn = new ComColumndata("is_nullabled");
+		ComColumndata isNullabledColumn = new ComColumndata("is_nullabled", DataTypeConstants.INTEGER, 1);
 		isNullabledColumn.setName("是否可为空");
 		isNullabledColumn.setComments("是否可为空");
-		isNullabledColumn.setColumnType(DataTypeConstants.INTEGER);
-		isNullabledColumn.setLength(1);
+		isNullabledColumn.setDefaultValue("1");
 		isNullabledColumn.setOrderCode(11);
 		columns.add(isNullabledColumn);
 		
-		ComColumndata isRequireColumn = new ComColumndata("is_require");
+		ComColumndata isRequireColumn = new ComColumndata("is_require", DataTypeConstants.INTEGER, 1);
 		isRequireColumn.setName("是否必填");
 		isRequireColumn.setComments("是否必填");
-		isRequireColumn.setColumnType(DataTypeConstants.INTEGER);
-		isRequireColumn.setLength(1);
 		isRequireColumn.setOrderCode(12);
 		columns.add(isRequireColumn);
 		
-		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary");
+		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary", DataTypeConstants.INTEGER, 1);
 		isDataDictionaryColumn.setName("是否数据字典");
 		isDataDictionaryColumn.setComments("是否数据字典");
-		isDataDictionaryColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDataDictionaryColumn.setLength(1);
 		isDataDictionaryColumn.setOrderCode(13);
 		columns.add(isDataDictionaryColumn);
 		
-		ComColumndata dataDictionaryCodeColumn = new ComColumndata("data_dictionary_code");
+		ComColumndata dataDictionaryCodeColumn = new ComColumndata("data_dictionary_code", DataTypeConstants.STRING, 50);
 		dataDictionaryCodeColumn.setName("数据字典编码");
 		dataDictionaryCodeColumn.setComments("数据字典编码");
-		dataDictionaryCodeColumn.setColumnType(DataTypeConstants.STRING);
-		dataDictionaryCodeColumn.setLength(70);
 		dataDictionaryCodeColumn.setOrderCode(14);
 		columns.add(dataDictionaryCodeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code");
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
-		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
-		orderCodeColumn.setLength(4);
 		orderCodeColumn.setOrderCode(15);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments");
+		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 400);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
-		commentsColumn.setColumnType(DataTypeConstants.STRING);
-		commentsColumn.setLength(360);
 		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
 		
@@ -347,6 +319,7 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("length", length+"");
 		json.put("precision", precision+"");
 		json.put("isPrimaryKey", isPrimaryKey+"");
@@ -363,28 +336,29 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		return json;
 	}
 	
-	public void validNotNullProps() {
+	public String validNotNullProps() {
 		if(!isValidNotNullProps){
-			if(StrUtils.isEmpty(tableId)){
-				throw new NullPointerException("字段关联的表主键不能为空！");
-			}
 			if(StrUtils.isEmpty(columnName)){
-				throw new NullPointerException("字段名不能为空！");
+				validNotNullPropsResult = "字段名不能为空！";
 			}
 			if(StrUtils.isEmpty(columnType)){
-				throw new NullPointerException("字段类型不能为空！");
+				validNotNullPropsResult = "字段类型不能为空！";
 			}
 			if(DataTypeConstants.STRING.equals(columnType) && length < 1){
-				throw new NullPointerException("字段长度不能为空！");
+				validNotNullPropsResult = "字段长度不能为空！";
 			}
 			isValidNotNullProps = true;
 		}
+		return validNotNullPropsResult;
 	}
 	
-	public void analysisResourceProp() {
-		validNotNullProps();
-		this.columnName = columnName.trim();
-		this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
+	public String analysisResourceProp() {
+		String result = validNotNullProps();
+		if(result == null){
+			this.columnName = columnName.trim();
+			this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
+		}
+		return result;
 	}
 	
 	public ComSysResource turnToResource() {

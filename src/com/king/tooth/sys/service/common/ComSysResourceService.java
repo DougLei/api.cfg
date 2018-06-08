@@ -2,7 +2,7 @@ package com.king.tooth.sys.service.common;
 
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -10,7 +10,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 系统资源服务处理器
  * @author DougLei
  */
-public class ComSysResourceService extends AbstractResourceService{
+public class ComSysResourceService extends AbstractService{
 
 	/**
 	 * 添加一条新资源

@@ -3,7 +3,7 @@ package com.king.tooth.sys.service.common;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.sys.entity.common.ComReqLog;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.JsonUtil;
 
@@ -11,7 +11,7 @@ import com.king.tooth.util.JsonUtil;
  * 请求操作日志资源服务处理器
  * @author DougLei
  */
-public class ComReqLogService extends AbstractResourceService{
+public class ComReqLogService extends AbstractService{
 
 	/**
 	 * 初始化一个请求操作日志资源对象实例

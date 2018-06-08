@@ -90,51 +90,39 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		ComColumndata codeColumn = new ComColumndata("code");
+		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 50);
 		codeColumn.setName("编码");
 		codeColumn.setComments("编码");
-		codeColumn.setColumnType(DataTypeConstants.STRING);
-		codeColumn.setLength(70);
 		codeColumn.setOrderCode(1);
 		columns.add(codeColumn);
 		
-		ComColumndata parentCodeIdColumn = new ComColumndata("parent_code_id");
+		ComColumndata parentCodeIdColumn = new ComColumndata("parent_code_id", DataTypeConstants.STRING, 32);
 		parentCodeIdColumn.setName("父编码编号(可为空)");
 		parentCodeIdColumn.setComments("父编码编号(可为空)");
-		parentCodeIdColumn.setColumnType(DataTypeConstants.STRING);
-		parentCodeIdColumn.setLength(32);
 		parentCodeIdColumn.setOrderCode(2);
 		columns.add(parentCodeIdColumn);
 		
-		ComColumndata codeCaptionColumn = new ComColumndata("code_caption");
+		ComColumndata codeCaptionColumn = new ComColumndata("code_caption", DataTypeConstants.STRING, 50);
 		codeCaptionColumn.setName("显示的文本");
 		codeCaptionColumn.setComments("显示的文本");
-		codeCaptionColumn.setColumnType(DataTypeConstants.STRING);
-		codeCaptionColumn.setLength(50);
 		codeCaptionColumn.setOrderCode(3);
 		columns.add(codeCaptionColumn);
 		
-		ComColumndata codeValueColumn = new ComColumndata("code_value");
+		ComColumndata codeValueColumn = new ComColumndata("code_value", DataTypeConstants.STRING, 30);
 		codeValueColumn.setName("操作的值(value)");
 		codeValueColumn.setComments("操作的值(value)");
-		codeValueColumn.setColumnType(DataTypeConstants.STRING);
-		codeValueColumn.setLength(30);
 		codeValueColumn.setOrderCode(4);
 		columns.add(codeValueColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code");
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
-		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
-		orderCodeColumn.setLength(4);
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments");
+		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 150);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
-		commentsColumn.setColumnType(DataTypeConstants.STRING);
-		commentsColumn.setLength(200);
 		commentsColumn.setOrderCode(6);
 		columns.add(commentsColumn);
 		
@@ -152,6 +140,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("orderCode", orderCode+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;

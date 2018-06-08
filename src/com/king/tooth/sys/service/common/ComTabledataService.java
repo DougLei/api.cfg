@@ -11,7 +11,7 @@ import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComTabledata;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -19,7 +19,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
-public class ComTabledataService extends AbstractResourceService{
+public class ComTabledataService extends AbstractService{
 
 	private ComSysResourceService comSysResourceService = new ComSysResourceService();
 	

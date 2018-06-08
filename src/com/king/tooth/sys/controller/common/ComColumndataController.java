@@ -29,9 +29,10 @@ public class ComColumndataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody addColumn(@RequestBody ComColumndata column){
+	public ResponseBody add(@RequestBody ComColumndata column){
+		column.analysisResourceProp();
 		columnataService.saveColumn(column);
-		return installResponseBody("添加成功", null);
+		return installOperResponseBody("添加成功", null);
 	}
 	
 	/**
@@ -41,8 +42,9 @@ public class ComColumndataController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody updateColumn(@RequestBody ComColumndata column){
+	public ResponseBody update(@RequestBody ComColumndata column){
+		column.analysisResourceProp();
 		columnataService.updateColumn(column);
-		return installResponseBody("修改成功", null);
+		return installOperResponseBody("修改成功", null);
 	}
 }

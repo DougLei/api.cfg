@@ -2,7 +2,7 @@ package com.king.tooth.sys.service.common;
 
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -12,7 +12,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * sql脚本资源服务处理器
  * @author DougLei
  */
-public class ComSqlScriptService extends AbstractResourceService {
+public class ComSqlScriptService extends AbstractService {
 
 //	private ComSysResourceService comSysResourceService = new ComSysResourceService();
 	

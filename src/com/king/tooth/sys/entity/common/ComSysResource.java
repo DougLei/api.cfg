@@ -76,34 +76,27 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
-		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id");
+		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");
 		refResourceIdColumn.setComments("引用的资源主键");
-		refResourceIdColumn.setColumnType(DataTypeConstants.STRING);
-		refResourceIdColumn.setLength(32);
 		refResourceIdColumn.setOrderCode(1);
 		columns.add(refResourceIdColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name");
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
-		resourceNameColumn.setColumnType(DataTypeConstants.STRING);
-		resourceNameColumn.setLength(60);
 		resourceNameColumn.setOrderCode(2);
 		columns.add(resourceNameColumn);
 		
-		ComColumndata resourceTypeColumn = new ComColumndata("resource_type");
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", DataTypeConstants.INTEGER, 1);
 		resourceTypeColumn.setName("资源类型");
 		resourceTypeColumn.setComments("资源类型");
-		resourceTypeColumn.setColumnType(DataTypeConstants.INTEGER);
-		resourceTypeColumn.setLength(1);
 		resourceTypeColumn.setOrderCode(3);
 		columns.add(resourceTypeColumn);
 		
-		ComColumndata validDateColumn = new ComColumndata("valid_date");
+		ComColumndata validDateColumn = new ComColumndata("valid_date", DataTypeConstants.DATE, 0);
 		validDateColumn.setName("资源有效期");
 		validDateColumn.setComments("资源有效期");
-		validDateColumn.setColumnType(DataTypeConstants.DATE);
 		validDateColumn.setOrderCode(4);
 		columns.add(validDateColumn);
 		
@@ -121,6 +114,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("resourceType", resourceType+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);

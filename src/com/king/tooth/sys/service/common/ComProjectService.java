@@ -1,12 +1,12 @@
 package com.king.tooth.sys.service.common;
 
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 
 /**
  * 项目信息资源对象处理器
  * @author DougLei
  */
-public class ComProjectService extends AbstractResourceService{
+public class ComProjectService extends AbstractService{
 	
 	/**
 	 * 发布项目

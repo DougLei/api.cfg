@@ -99,7 +99,6 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		this.isEnabled = isEnabled;
 	}
 	
-	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE", 0);
 		table.setName("项目模块信息资源对象表");
@@ -109,59 +108,45 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		ComColumndata parentIdColumn = new ComColumndata("parent_id");
+		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父模块编号");
 		parentIdColumn.setComments("父模块编号，可为空，用于递归");
-		parentIdColumn.setColumnType(DataTypeConstants.STRING);
-		parentIdColumn.setLength(32);
 		parentIdColumn.setOrderCode(1);
 		columns.add(parentIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name");
+		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 50);
 		nameColumn.setName("模块名称");
 		nameColumn.setComments("模块名称");
-		nameColumn.setColumnType(DataTypeConstants.STRING);
-		nameColumn.setLength(50);
 		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code");
+		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 100);
 		codeColumn.setName("模块编码");
 		codeColumn.setComments("模块编码:这个编码的命名，要整个项目唯一");
-		codeColumn.setColumnType(DataTypeConstants.STRING);
-		codeColumn.setLength(100);
 		codeColumn.setOrderCode(3);
 		columns.add(codeColumn);
 		
-		ComColumndata urlColumn = new ComColumndata("url");
+		ComColumndata urlColumn = new ComColumndata("url", DataTypeConstants.STRING, 60);
 		urlColumn.setName("url");
 		urlColumn.setComments("url");
-		urlColumn.setColumnType(DataTypeConstants.STRING);
-		urlColumn.setLength(50);
 		urlColumn.setOrderCode(4);
 		columns.add(urlColumn);
 		
-		ComColumndata iconColumn = new ComColumndata("icon");
+		ComColumndata iconColumn = new ComColumndata("icon", DataTypeConstants.STRING, 30);
 		iconColumn.setName("模块图标");
 		iconColumn.setComments("模块图标");
-		iconColumn.setColumnType(DataTypeConstants.STRING);
-		iconColumn.setLength(30);
 		iconColumn.setOrderCode(5);
 		columns.add(iconColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code");
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
-		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
-		orderCodeColumn.setLength(4);
 		orderCodeColumn.setOrderCode(6);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled");
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否启用");
 		isEnabledColumn.setComments("是否启用");
-		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
-		isEnabledColumn.setLength(1);
 		isEnabledColumn.setOrderCode(7);
 		columns.add(isEnabledColumn);
 		
@@ -178,6 +163,7 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("orderCode", orderCode+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);

@@ -44,8 +44,6 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	
 	// ------------------------------------------------
 	
-	public ComOperLog() {
-	}
 	public String getReqLogId() {
 		return reqLogId;
 	}
@@ -86,42 +84,33 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
-		ComColumndata reqLogIdColumn = new ComColumndata("req_log_id");
+		ComColumndata reqLogIdColumn = new ComColumndata("req_log_id", DataTypeConstants.STRING, 32);
 		reqLogIdColumn.setName("请求的日志信息主键");
 		reqLogIdColumn.setComments("请求的日志信息主键：一次请求中，可能有多个操作");
-		reqLogIdColumn.setColumnType(DataTypeConstants.STRING);
-		reqLogIdColumn.setLength(32);
 		reqLogIdColumn.setOrderCode(1);
 		columns.add(reqLogIdColumn);
 		
-		ComColumndata operTypeColumn = new ComColumndata("oper_type");
+		ComColumndata operTypeColumn = new ComColumndata("oper_type", DataTypeConstants.STRING, 10);
 		operTypeColumn.setName("操作的类型");
 		operTypeColumn.setComments("操作的类型:目前是针对数据库的[增/删/改/查]");
-		operTypeColumn.setColumnType(DataTypeConstants.STRING);
-		operTypeColumn.setLength(8);
 		operTypeColumn.setOrderCode(2);
 		columns.add(operTypeColumn);
 		
-		ComColumndata operDataColumn = new ComColumndata("oper_data");
+		ComColumndata operDataColumn = new ComColumndata("oper_data", DataTypeConstants.CLOB, 0);
 		operDataColumn.setName("操作的数据");
 		operDataColumn.setComments("操作的数据:json串");
-		operDataColumn.setColumnType(DataTypeConstants.CLOB);
 		operDataColumn.setOrderCode(3);
 		columns.add(operDataColumn);
 		
-		ComColumndata operResultIsSuccessColumn = new ComColumndata("oper_result_is_success");
+		ComColumndata operResultIsSuccessColumn = new ComColumndata("oper_result_is_success", DataTypeConstants.INTEGER, 1);
 		operResultIsSuccessColumn.setName("操作结果是否成功");
 		operResultIsSuccessColumn.setComments("操作结果是否成功");
-		operResultIsSuccessColumn.setColumnType(DataTypeConstants.INTEGER);
-		operResultIsSuccessColumn.setLength(1);
 		operResultIsSuccessColumn.setOrderCode(4);
 		columns.add(operResultIsSuccessColumn);
 		
-		ComColumndata errorMsgColumn = new ComColumndata("error_msg");
+		ComColumndata errorMsgColumn = new ComColumndata("error_msg", DataTypeConstants.STRING, 300);
 		errorMsgColumn.setName("操作失败的异常信息");
 		errorMsgColumn.setComments("操作失败的异常信息");
-		errorMsgColumn.setColumnType(DataTypeConstants.STRING);
-		errorMsgColumn.setLength(300);
 		errorMsgColumn.setOrderCode(5);
 		columns.add(errorMsgColumn);
 		
@@ -139,6 +128,7 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("operResultIsSuccess", operResultIsSuccess+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;

@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -13,7 +13,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 系统账户在线状态资源服务处理器
  * @author DougLei
  */
-public class ComSysAccountOnlineStatusService extends AbstractResourceService{
+public class ComSysAccountOnlineStatusService extends AbstractService{
 	
 	/**
 	 * 根据token值，验证账户的在线状态

@@ -38,9 +38,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	
 	//-----------------------------------------------------------
 	
-	public ComProject() {
-	}
-
 	public void setProjName(String projName) {
 		this.projName = projName;
 	}
@@ -66,7 +63,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		this.projCode = projCode;
 	}
 	
-
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT", 0);
 		table.setIsResource(1);
@@ -78,35 +74,27 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
-		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
+		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：目前系统只支持，一个项目对一个数据库");
-		refDatabaseIdColumn.setColumnType(DataTypeConstants.STRING);
-		refDatabaseIdColumn.setLength(32);
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
-		ComColumndata projNameColumn = new ComColumndata("proj_name");
+		ComColumndata projNameColumn = new ComColumndata("proj_name", DataTypeConstants.STRING, 200);
 		projNameColumn.setName("项目名称");
 		projNameColumn.setComments("项目名称");
-		projNameColumn.setColumnType(DataTypeConstants.STRING);
-		projNameColumn.setLength(200);
 		projNameColumn.setOrderCode(2);
 		columns.add(projNameColumn);
 		
-		ComColumndata projCodeColumn = new ComColumndata("proj_code");
+		ComColumndata projCodeColumn = new ComColumndata("proj_code", DataTypeConstants.STRING, 100);
 		projCodeColumn.setName("项目编码");
 		projCodeColumn.setComments("项目编码");
-		projCodeColumn.setColumnType(DataTypeConstants.STRING);
-		projCodeColumn.setLength(100);
 		projCodeColumn.setOrderCode(3);
 		columns.add(projCodeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs");
+		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 800);
 		descsColumn.setName("项目描述");
 		descsColumn.setComments("项目描述");
-		descsColumn.setColumnType(DataTypeConstants.STRING);
-		descsColumn.setLength(800);
 		descsColumn.setOrderCode(4);
 		columns.add(descsColumn);
 		
@@ -123,15 +111,13 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("isEnabled", isEnabled+"");
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
-	}
-	
-	public void analysisResourceData() {
 	}
 	
 	public ComSysResource turnToResource() {

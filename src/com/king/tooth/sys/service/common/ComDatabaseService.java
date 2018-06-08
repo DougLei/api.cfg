@@ -1,47 +1,85 @@
 package com.king.tooth.sys.service.common;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.service.AbstractResourceService;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 数据库数据信息资源对象处理器
  * @author DougLei
  */
-public class ComDatabaseService extends AbstractResourceService{
+public class ComDatabaseService extends AbstractService{
 	
-	private ComDatabase getDatabaseById(String databaseId){
-		return HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComDatabase.class, "from ComDatabase where id = ?", databaseId);
+	/**
+	 * 验证数据库数据是否存在
+	 * @param database
+	 * @return operResult
+	 */
+	private String validDatabaseDataIsExists(ComDatabase database) {
+		String hql = "select count("+ResourceNameConstants.ID+") from ComDatabase where dbType=? and dbInstanceName=? and loginUserName=? and loginPassword=? and dbIp=? and dbPort=?";
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, database.getDbType(), database.getDbInstanceName(), database.getLoginUserName(), database.getLoginPassword(), database.getDbIp(), database.getDbPort()+"");
+		if(count > 0){
+			return "[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库连接信息已存在";
+		}
+		return null;
 	}
 	
 	/**
 	 * 保存数据库
 	 * @param database
+	 * @return operResult
 	 */
-	public void saveDatabase(ComDatabase database) {
-		HibernateUtil.saveObject(database, null);
+	public String saveDatabase(ComDatabase database) {
+		String operResult = validDatabaseDataIsExists(database);
+		if(operResult == null){
+			HibernateUtil.saveObject(database, null);
+		}
+		return operResult;
 	}
 
 	/**
 	 * 修改数据库
 	 * @param database
+	 * @return operResult
 	 */
-	public void updateDatabase(ComDatabase database) {
-		ComDatabase oldDatabase = getDatabaseById(database.getId());
+	public String updateDatabase(ComDatabase database) {
+		ComDatabase oldDatabase = getObjectById(database.getId(), ComDatabase.class);
 		if(oldDatabase == null){
-			throw new NullPointerException("没有找到id为["+database.getId()+"]的数据库对象信息");
+			return "没有找到id为["+database.getId()+"]的数据库对象信息";
 		}
-		if(oldDatabase.getIsDeployed() == 1 && !oldDatabase.compareLinkInfoIsSame(database)){
-			throw new IllegalArgumentException("【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改连接信息，或取消发布后再修改");
+		
+		boolean databaseLinkInfoIsSame = oldDatabase.compareLinkInfoIsSame(database);
+		if(!databaseLinkInfoIsSame){// 如果修改了连接信息
+			if(oldDatabase.getIsDeployed() == 0){ // 如果没有发布，则要去判断，是否已经存在相同连接信息的数据
+				String operResult = validDatabaseDataIsExists(database);
+				if(operResult != null){
+					return operResult;
+				}
+			}else if(oldDatabase.getIsDeployed() == 1){ // 如果已发布，则发出提示信息
+				return "【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改连接信息，或取消发布后再修改";
+			}
 		}
 		HibernateUtil.updateObjectByHql(database, null);
+		return null;
 	}
 	
-
+	/**
+	 * 测试数据库连接
+	 * @param databaseId
+	 */
+	public String databaseLinkTest(String databaseId) {
+		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		if(database == null){
+			return "没有找到id为["+databaseId+"]的数据库对象信息";
+		}
+		database.testDbLink();
+		return null;
+	}
 	
 	
 	/**
@@ -49,7 +87,7 @@ public class ComDatabaseService extends AbstractResourceService{
 	 * @param databaseId
 	 */
 	public void deployingDatabase(String databaseId) {
-		ComDatabase database = getDatabaseById(databaseId);
+		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
 			return;
 		}
@@ -68,7 +106,7 @@ public class ComDatabaseService extends AbstractResourceService{
 	 * @param databaseId
 	 */
 	public void cancelDeployingDatabase(String databaseId) {
-		ComDatabase database = getDatabaseById(databaseId);
+		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
 			return;
 		}

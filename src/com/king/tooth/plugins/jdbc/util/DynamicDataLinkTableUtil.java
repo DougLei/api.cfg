@@ -51,23 +51,17 @@ public class DynamicDataLinkTableUtil {
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(3);
 		
-		ComColumndata leftIdColumn = new ComColumndata("left_id");
+		ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
 		leftIdColumn.setIsNullabled(0);
-		leftIdColumn.setColumnType(DataTypeConstants.STRING);
-		leftIdColumn.setLength(32);
 		leftIdColumn.setOrderCode(1);
 		columns.add(leftIdColumn);
 		
-		ComColumndata rightIdColumn = new ComColumndata("right_id");
+		ComColumndata rightIdColumn = new ComColumndata("right_id", DataTypeConstants.STRING, 32);
 		rightIdColumn.setIsNullabled(0);
-		rightIdColumn.setColumnType(DataTypeConstants.STRING);
-		rightIdColumn.setLength(32);
 		rightIdColumn.setOrderCode(2);
 		columns.add(rightIdColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code");
-		orderCodeColumn.setColumnType(DataTypeConstants.INTEGER);
-		orderCodeColumn.setLength(4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setOrderCode(3);
 		columns.add(orderCodeColumn);
 		

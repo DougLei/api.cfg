@@ -1,5 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.king.tooth.sys.controller.AbstractResourceController;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.common.ComDatabaseService;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -30,9 +33,11 @@ public class ComDatabaseController extends AbstractResourceController{
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody add(@RequestBody ComDatabase database){
-		database.analysisResourceProp();
-		databaseService.saveDatabase(database);
-		return installResponseBody("添加成功", null);
+		String result = database.analysisResourceProp();
+		if(result == null){
+			result = databaseService.saveDatabase(database);
+		}
+		return installOperResponseBody(result, "添加成功");
 	}
 	
 	/**
@@ -43,9 +48,29 @@ public class ComDatabaseController extends AbstractResourceController{
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody update(@RequestBody ComDatabase database){
-		database.analysisResourceProp();
-		databaseService.updateDatabase(database);
-		return installResponseBody("修改成功", null);
+		String result = database.analysisResourceProp();
+		if(result == null){
+			result = databaseService.updateDatabase(database);
+		}
+		return installOperResponseBody(result, "修改成功");
 	}
 	
+	/**
+	 * 测试数据库连接
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/linkTest", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody linkTest(HttpServletRequest request){
+		String databaseId = request.getParameter("databaseId");
+		if(StrUtils.isEmpty(databaseId)){
+			return installOperResponseBody("测试连接的数据库id不能为空", null);
+		}
+		
+		long start = System.currentTimeMillis();
+		String result = databaseService.databaseLinkTest(databaseId);
+		int connectSeconds = (int) ((System.currentTimeMillis()-start)/1000);
+		return installOperResponseBody(result, "连接成功，耗时["+connectSeconds+"]秒");
+	}
 }

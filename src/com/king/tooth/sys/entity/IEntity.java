@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * 实体接口
@@ -12,6 +13,7 @@ public interface IEntity {
 	 * 获取实体名
 	 * @return
 	 */
+	@JSONField(serialize = false)
 	public String getEntityName();
 	
 	/**

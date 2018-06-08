@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -52,13 +53,8 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	 * 账户状态
 	 * 		1.启用
 	 * 		2.禁用
-	 * 		3.过期
 	 */
 	private int accountStatus;
-	/**
-	 * 账户状态的描述
-	 */
-	private String accountStatusDes;
 	/**
 	 * 账户有效期限
 	 */
@@ -69,10 +65,12 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 登录和验证登录时，用来传递信息
 	 */
+	@JSONField(serialize = false)
 	private String message;
 	/**
 	 * 验证码的值
 	 */
+	@JSONField(serialize = false)
 	private String verifyCode;
 	
 	public ComSysAccount() {
@@ -99,12 +97,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	}
 	public void setMessage(String message) {
 		this.message = message;
-	}
-	public String getAccountStatusDes() {
-		return accountStatusDes;
-	}
-	public void setAccountStatusDes(String accountStatusDes) {
-		this.accountStatusDes = accountStatusDes;
 	}
 	public void setTel(String tel) {
 		this.tel = tel;
@@ -156,77 +148,54 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
-		ComColumndata loginNameColumn = new ComColumndata("login_name");
+		ComColumndata loginNameColumn = new ComColumndata("login_name", DataTypeConstants.STRING, 30);
 		loginNameColumn.setName("登录名");
 		loginNameColumn.setComments("登录名");
-		loginNameColumn.setColumnType(DataTypeConstants.STRING);
-		loginNameColumn.setLength(50);
 		loginNameColumn.setOrderCode(1);
 		columns.add(loginNameColumn);
 		
-		ComColumndata loginPwdColumn = new ComColumndata("login_pwd");
+		ComColumndata loginPwdColumn = new ComColumndata("login_pwd", DataTypeConstants.STRING, 32);
 		loginPwdColumn.setName("登录密码");
 		loginPwdColumn.setComments("登录密码");
-		loginPwdColumn.setColumnType(DataTypeConstants.STRING);
-		loginPwdColumn.setLength(32);
 		loginPwdColumn.setOrderCode(2);
 		columns.add(loginPwdColumn);
 		
-		ComColumndata loginPwdKeyColumn = new ComColumndata("login_pwd_key");
+		ComColumndata loginPwdKeyColumn = new ComColumndata("login_pwd_key", DataTypeConstants.STRING, 32);
 		loginPwdKeyColumn.setName("登录密码的密钥");
 		loginPwdKeyColumn.setComments("登录密码的密钥：和loginPwd结合，得到每个账户独有的密码");
-		loginPwdKeyColumn.setColumnType(DataTypeConstants.STRING);
-		loginPwdKeyColumn.setLength(32);
 		loginPwdKeyColumn.setOrderCode(3);
 		columns.add(loginPwdKeyColumn);
 		
-		ComColumndata telColumn = new ComColumndata("tel");
+		ComColumndata telColumn = new ComColumndata("tel", DataTypeConstants.STRING, 20);
 		telColumn.setName("手机号");
 		telColumn.setComments("手机号");
-		telColumn.setColumnType(DataTypeConstants.STRING);
-		telColumn.setLength(20);
 		telColumn.setOrderCode(4);
 		columns.add(telColumn);
 		
-		ComColumndata emailsColumn = new ComColumndata("emails");
+		ComColumndata emailsColumn = new ComColumndata("emails", DataTypeConstants.STRING, 80);
 		emailsColumn.setName("邮箱");
 		emailsColumn.setComments("邮箱");
-		emailsColumn.setColumnType(DataTypeConstants.STRING);
-		emailsColumn.setLength(80);
 		emailsColumn.setOrderCode(5);
 		columns.add(emailsColumn);
 		
-		ComColumndata accountTypeColumn = new ComColumndata("account_type");
+		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
 		accountTypeColumn.setName("账户类型");
 		accountTypeColumn.setComments("账户类型:1.平台开发账户、2.一般开发账户");
-		accountTypeColumn.setColumnType(DataTypeConstants.INTEGER);
-		accountTypeColumn.setLength(1);
 		accountTypeColumn.setOrderCode(6);
 		columns.add(accountTypeColumn);
 		
-		ComColumndata accountStatusColumn = new ComColumndata("account_status");
+		ComColumndata accountStatusColumn = new ComColumndata("account_status", DataTypeConstants.INTEGER, 1);
 		accountStatusColumn.setName("账户状态");
-		accountStatusColumn.setComments("账户状态:1.启用、2.禁用、3.过期");
-		accountStatusColumn.setColumnType(DataTypeConstants.INTEGER);
-		accountStatusColumn.setLength(1);
+		accountStatusColumn.setComments("账户状态:1.启用、2.禁用");
 		accountStatusColumn.setOrderCode(7);
 		columns.add(accountStatusColumn);
 		
-		ComColumndata accountStatusDesColumn = new ComColumndata("account_status_des");
-		accountStatusDesColumn.setName("账户状态的描述");
-		accountStatusDesColumn.setComments("账户状态的描述");
-		accountStatusDesColumn.setColumnType(DataTypeConstants.STRING);
-		accountStatusDesColumn.setLength(200);
-		accountStatusDesColumn.setOrderCode(8);
-		columns.add(accountStatusDesColumn);
-		
-		ComColumndata validDateColumn = new ComColumndata("valid_date");
+		ComColumndata validDateColumn = new ComColumndata("valid_date", DataTypeConstants.DATE, 0);
 		validDateColumn.setName("账户有效期限");
 		validDateColumn.setComments("账户有效期限");
-		validDateColumn.setColumnType(DataTypeConstants.DATE);
-		validDateColumn.setOrderCode(9);
+		validDateColumn.setOrderCode(8);
 		columns.add(validDateColumn);
 		
 		table.setColumns(columns);
@@ -243,9 +212,10 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
-		json.put("validDate", validDate);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("accountType", accountType+"");
 		json.put("accountStatus", accountStatus+"");
+		json.put("validDate", validDate);
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}

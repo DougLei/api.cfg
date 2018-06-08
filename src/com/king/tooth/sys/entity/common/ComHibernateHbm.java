@@ -26,7 +26,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	private String refDatabaseId;
 	/**
 	 * 关联的表主键
-	 * <p>如果被发布到项目中在，这个字段有无值均可</p>
+	 * <p>如果在被发布到项目中，这个字段有无值均可</p>
 	 */
 	private String refTableId;
 	/**
@@ -89,42 +89,33 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
-		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
+		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：如果发布到项目中，这个字段必须有值");
-		refDatabaseIdColumn.setColumnType(DataTypeConstants.STRING);
-		refDatabaseIdColumn.setLength(32);
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
-		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id");
+		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", DataTypeConstants.STRING, 32);
 		refTableIdColumn.setName("关联的表主键");
-		refTableIdColumn.setComments("关联的表主键：如果被发布到项目中在，这个字段有无值均可");
-		refTableIdColumn.setColumnType(DataTypeConstants.STRING);
-		refTableIdColumn.setLength(32);
+		refTableIdColumn.setComments("关联的表主键：如果在被发布到项目中，这个字段有无值均可");
 		refTableIdColumn.setOrderCode(2);
 		columns.add(refTableIdColumn);
 		
-		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name");
+		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name", DataTypeConstants.STRING, 60);
 		hbmResourceNameColumn.setName("hbm资源名");
 		hbmResourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
-		hbmResourceNameColumn.setColumnType(DataTypeConstants.STRING);
-		hbmResourceNameColumn.setLength(60);
 		hbmResourceNameColumn.setOrderCode(3);
 		columns.add(hbmResourceNameColumn);
 		
-		ComColumndata isDataLinkTableHbmColumn = new ComColumndata("is_data_link_table_hbm");
+		ComColumndata isDataLinkTableHbmColumn = new ComColumndata("is_data_link_table_hbm", DataTypeConstants.INTEGER, 1);
 		isDataLinkTableHbmColumn.setName("是否是关系表的hbm");
 		isDataLinkTableHbmColumn.setComments("是否是关系表的hbm");
-		isDataLinkTableHbmColumn.setColumnType(DataTypeConstants.INTEGER);
-		isDataLinkTableHbmColumn.setLength(1);
 		isDataLinkTableHbmColumn.setOrderCode(4);
 		columns.add(isDataLinkTableHbmColumn);
 		
-		ComColumndata hbmContentColumn = new ComColumndata("hbm_content");
+		ComColumndata hbmContentColumn = new ComColumndata("hbm_content", DataTypeConstants.CLOB, 0);
 		hbmContentColumn.setName("hbm内容");
 		hbmContentColumn.setComments("hbm内容");
-		hbmContentColumn.setColumnType(DataTypeConstants.CLOB);
 		hbmContentColumn.setOrderCode(5);
 		columns.add(hbmContentColumn);
 		
@@ -142,6 +133,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
+		json.put(ResourceNameConstants.ID, id);
 		json.put("isDataLinkTableHbm", isDataLinkTableHbm+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put("isBuiltin", isBuiltin+"");
