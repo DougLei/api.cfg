@@ -365,8 +365,17 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	
 	public void validNotNullProps() {
 		if(!isValidNotNullProps){
+			if(StrUtils.isEmpty(tableId)){
+				throw new NullPointerException("字段关联的表主键不能为空！");
+			}
 			if(StrUtils.isEmpty(columnName)){
-				throw new NullPointerException("列名不能为空！");
+				throw new NullPointerException("字段名不能为空！");
+			}
+			if(StrUtils.isEmpty(columnType)){
+				throw new NullPointerException("字段类型不能为空！");
+			}
+			if(DataTypeConstants.STRING.equals(columnType) && length < 1){
+				throw new NullPointerException("字段长度不能为空！");
 			}
 			isValidNotNullProps = true;
 		}

@@ -80,12 +80,13 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 * 注释
 	 */
 	private String comments;
-	/**
-	 * 是否是关系表，默认是0
-	 */
-	private int isDatalinkTable;
 	
 	//-----------------------------------------------------------------------
+	
+	/**
+	 * 是否是关系表
+	 */
+	private int isDatalinkTable;
 	/**
 	 * 列集合
 	 */
@@ -276,6 +277,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		isHavaDatalinkColumn.setComments("是否是关系表，默认是0");
 		isHavaDatalinkColumn.setColumnType(DataTypeConstants.INTEGER);
 		isHavaDatalinkColumn.setLength(1);
+		isHavaDatalinkColumn.setDefaultValue("0");
 		isHavaDatalinkColumn.setOrderCode(7);
 		columns.add(isHavaDatalinkColumn);
 		
@@ -308,6 +310,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		versionColumn.setComments("版本");
 		versionColumn.setColumnType(DataTypeConstants.INTEGER);
 		versionColumn.setLength(3);
+		versionColumn.setDefaultValue("1");
 		versionColumn.setOrderCode(11);
 		columns.add(versionColumn);
 		
