@@ -12,6 +12,7 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -221,7 +222,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
 		
 		ComColumndata nameColumn = new ComColumndata("name");
 		nameColumn.setName("显示的汉字名称");
@@ -330,7 +331,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		json.put("version", version+"");
 		json.put("isDatalinkTable", isDatalinkTable+"");
 		json.put("isEnabled", isEnabled+"");
-		json.put("validDate", validDate);
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isDeployed", isDeployed+"");
@@ -369,6 +369,9 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		resource.setRefResourceId(id);
 		resource.setResourceType(TABLE);
 		resource.setResourceName(resourceName);
+		if(isBuiltin == 1){
+			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		}
 		return resource;
 	}
 }

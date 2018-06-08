@@ -45,19 +45,12 @@ public class DynamicBasicDataColumnUtil {
 			isEnabledColumn.setOrderCode(9903);
 			table.getColumns().add(isEnabledColumn);
 			
-			ComColumndata validDateColumn = new ComColumndata("valid_date");
-			validDateColumn.setName("资源有效期");
-			validDateColumn.setComments("资源有效期");
-			validDateColumn.setColumnType(DataTypeConstants.DATE);
-			validDateColumn.setOrderCode(9904);
-			table.getColumns().add(validDateColumn);
-			
 			ComColumndata reqResourceMethodColumn = new ComColumndata("req_resource_method");
 			reqResourceMethodColumn.setName("请求资源的方法");
 			reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 			reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
 			reqResourceMethodColumn.setLength(20);
-			reqResourceMethodColumn.setOrderCode(9905);
+			reqResourceMethodColumn.setOrderCode(9904);
 			table.getColumns().add(reqResourceMethodColumn);
 
 			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin");
@@ -65,7 +58,7 @@ public class DynamicBasicDataColumnUtil {
 			isBuiltinColumn.setComments("是否内置资源");
 			isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 			isBuiltinColumn.setLength(1);
-			isBuiltinColumn.setOrderCode(9906);
+			isBuiltinColumn.setOrderCode(9905);
 			table.getColumns().add(isBuiltinColumn);
 
 			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy");
@@ -73,7 +66,7 @@ public class DynamicBasicDataColumnUtil {
 			isNeedDeployColumn.setComments("资源是否需要发布");
 			isNeedDeployColumn.setColumnType(DataTypeConstants.INTEGER);
 			isNeedDeployColumn.setLength(1);
-			isNeedDeployColumn.setOrderCode(9907);
+			isNeedDeployColumn.setOrderCode(9906);
 			table.getColumns().add(isNeedDeployColumn);
 			
 			ComColumndata isDeployedColumn = new ComColumndata("is_deployed");
@@ -81,7 +74,7 @@ public class DynamicBasicDataColumnUtil {
 			isDeployedColumn.setComments("资源是否发布");
 			isDeployedColumn.setColumnType(DataTypeConstants.INTEGER);
 			isDeployedColumn.setLength(1);
-			isDeployedColumn.setOrderCode(9908);
+			isDeployedColumn.setOrderCode(9907);
 			table.getColumns().add(isDeployedColumn);
 		}
 		
@@ -90,14 +83,14 @@ public class DynamicBasicDataColumnUtil {
 			createTimeColumn.setColumnType(DataTypeConstants.DATE);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
-			createTimeColumn.setOrderCode(9909);
+			createTimeColumn.setOrderCode(9908);
 			table.getColumns().add(createTimeColumn);
 			
 			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_time");
 			lastUpdateTimeColumn.setColumnType(DataTypeConstants.DATE);
 			lastUpdateTimeColumn.setComments("最后修改时间");
 			lastUpdateTimeColumn.setName("最后修改时间");
-			lastUpdateTimeColumn.setOrderCode(9910);
+			lastUpdateTimeColumn.setOrderCode(9909);
 			table.getColumns().add(lastUpdateTimeColumn);
 			
 			ComColumndata createUserIdColumn = new ComColumndata("create_user_id");
@@ -105,7 +98,7 @@ public class DynamicBasicDataColumnUtil {
 			createUserIdColumn.setComments("创建人主键");
 			createUserIdColumn.setName("创建人主键");
 			createUserIdColumn.setLength(32);
-			createUserIdColumn.setOrderCode(9911);
+			createUserIdColumn.setOrderCode(9910);
 			table.getColumns().add(createUserIdColumn);
 			
 			ComColumndata lastUpdatedUserIdColumn = new ComColumndata("last_updated_user_id");
@@ -113,7 +106,7 @@ public class DynamicBasicDataColumnUtil {
 			lastUpdatedUserIdColumn.setComments("最后修改人主键");
 			lastUpdatedUserIdColumn.setName("最后修改人主键");
 			lastUpdatedUserIdColumn.setLength(32);
-			lastUpdatedUserIdColumn.setOrderCode(9912);
+			lastUpdatedUserIdColumn.setOrderCode(9911);
 			table.getColumns().add(lastUpdatedUserIdColumn);
 		}
 	}

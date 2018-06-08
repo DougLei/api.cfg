@@ -77,7 +77,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
 		refDatabaseIdColumn.setName("关联的数据库主键");
@@ -125,7 +125,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("isEnabled", isEnabled+"");
-		json.put("validDate", validDate);
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isDeployed", isDeployed+"");

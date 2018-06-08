@@ -152,7 +152,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
 		
 		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name");
 		dbDisplayNameColumn.setName("数字库名");
@@ -242,7 +242,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("dbPort", dbPort+"");
 		json.put("isEnabled", isEnabled+"");
-		json.put("validDate", validDate);
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isDeployed", isDeployed+"");
@@ -331,12 +330,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	}
 	
 	public ComSysResource turnToResource() {
-		analysisResourceProp();
-		ComSysResource resource = super.turnToResource();
-		resource.setRefResourceId(id);
-		resource.setResourceType(DATABASE);
-		resource.setResourceName(dbInstanceName);
-		return resource;
+		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
 	/**

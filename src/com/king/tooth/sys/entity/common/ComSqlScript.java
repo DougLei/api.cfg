@@ -20,6 +20,7 @@ import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -242,7 +243,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
 		
 		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption");
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
@@ -330,7 +331,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public JSONObject toEntity() {
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("isEnabled", isEnabled+"");
-		json.put("validDate", validDate);
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isDeployed", isDeployed+"");
@@ -420,6 +420,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		resource.setRefResourceId(id);
 		resource.setResourceType(SQLSCRIPT);
 		resource.setResourceName(sqlScriptResourceName);
+		if(isBuiltin == 1){
+			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		}
 		return resource;
 	}
 }

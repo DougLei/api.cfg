@@ -24,10 +24,38 @@ public class ComTabledataService extends AbstractResourceService{
 	private ComSysResourceService comSysResourceService = new ComSysResourceService();
 	
 	/**
+	 * 根据表id，获取其表的所有信息，包括列的信息集合
+	 * @param tableId
+	 * @return
+	 */
+	private ComTabledata getTableAllById(String tableId){
+		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, "from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
+		if(table != null){
+			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
+		}
+		return table;
+	}
+	
+	/**
+	 * 根据表id，获取表的信息
+	 * @param tableId
+	 * @return
+	 */
+	private ComTabledata getTableById(String tableId){
+		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, "from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
+		return table;
+	}
+	
+	/**
 	 * 添加表
 	 * @param table
 	 */
 	public void saveTable(ComTabledata table) {
+		ComTabledata oldTable = getTableById(table.getId());
+		if(oldTable == null){
+			throw new NullPointerException("没有找到id为["+table.getId()+"]的表对象信息");
+		}
+		table.setIsDeployed(0);// 重置资源是否发布的值
 		HibernateUtil.saveObject(table, null);
 	}
 	
@@ -36,6 +64,7 @@ public class ComTabledataService extends AbstractResourceService{
 	 * @param table
 	 */
 	public void updateTable(ComTabledata table) {
+		
 		HibernateUtil.updateObjectByHql(table, null);
 	}
 	
@@ -64,18 +93,7 @@ public class ComTabledataService extends AbstractResourceService{
 	
 	//--------------------------------------------------------
 	
-	/**
-	 * 根据表id，获取其表的所有信息，包括列的信息集合
-	 * @param tableId
-	 * @return
-	 */
-	private ComTabledata getTableAllByTableId(String tableId){
-		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, "from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
-		if(table != null){
-			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
-		}
-		return table;
-	}
+	
 	
 	/**
 	 * 创建表数据模型
@@ -88,7 +106,7 @@ public class ComTabledataService extends AbstractResourceService{
 		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(tableIdArr.length);
 		List<String> hbmContents = new ArrayList<String>(tableIdArr.length);
 		for (String tableId : tableIdArr) {
-			table = getTableAllByTableId(tableId);
+			table = getTableAllById(tableId);
 			if(table == null){
 				continue;
 			}

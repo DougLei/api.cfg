@@ -88,7 +88,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
 		refDatabaseIdColumn.setName("关联的数据库主键");
@@ -145,7 +145,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("isDataLinkTableHbm", isDataLinkTableHbm+"");
 		json.put("isEnabled", isEnabled+"");
-		json.put("validDate", validDate);
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isDeployed", isDeployed+"");
@@ -167,9 +166,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		this.setHbmResourceName(table.getResourceName());
 		this.setIsDataLinkTableHbm(table.getIsDatalinkTable());
 		this.setIsEnabled(table.getIsEnabled());
-		this.setValidDate(table.getValidDate());
 		this.setIsNeedDeploy(table.getIsNeedDeploy());
 		this.setReqResourceMethod(table.getReqResourceMethod());
-		this.setIsBuiltin(1);
 	}
 }

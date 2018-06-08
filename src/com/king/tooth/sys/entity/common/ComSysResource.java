@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -30,6 +31,10 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	 * 资源名
 	 */
 	private String resourceName;
+	/**
+	 * 资源有效期
+	 */
+	private Date validDate;
 	
 	//-------------------------------------------------------------------------
 	
@@ -51,6 +56,12 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	}
 	public void setResourceType(int resourceType) {
 		this.resourceType = resourceType;
+	}
+	public Date getValidDate() {
+		return validDate;
+	}
+	public void setValidDate(Date validDate) {
+		this.validDate = validDate;
 	}
 	
 	
@@ -89,6 +100,13 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		resourceTypeColumn.setLength(1);
 		resourceTypeColumn.setOrderCode(3);
 		columns.add(resourceTypeColumn);
+		
+		ComColumndata validDateColumn = new ComColumndata("valid_date");
+		validDateColumn.setName("资源有效期");
+		validDateColumn.setComments("资源有效期");
+		validDateColumn.setColumnType(DataTypeConstants.DATE);
+		validDateColumn.setOrderCode(4);
+		columns.add(validDateColumn);
 		
 		table.setColumns(columns);
 		return table;

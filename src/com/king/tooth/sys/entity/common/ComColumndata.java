@@ -203,7 +203,7 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id");
 		tableIdColumn.setName("关联的表主键");
@@ -356,7 +356,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		json.put("isDataDictionary", isDataDictionary+"");
 		json.put("orderCode", orderCode+"");
 		json.put("isEnabled", isEnabled+"");
-		json.put("validDate", validDate);
 		json.put("isBuiltin", isBuiltin+"");
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isDeployed", isDeployed+"");

@@ -1,8 +1,6 @@
 package com.king.tooth.sys.entity;
 
-import java.util.Date;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.util.DateUtil;
 
 /**
  * 系统资源抽象类
@@ -14,10 +12,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * 资源是否有效
 	 */
 	protected int isEnabled = 1;
-	/**
-	 * 资源有效期
-	 */
-	protected Date validDate;
 	/**
 	 * 请求资源的方法
 	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
@@ -31,7 +25,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	/**
 	 * 资源是否需要发布
 	 */
-	protected int isNeedDeploy;
+	protected int isNeedDeploy = 1;
 	/**
 	 * 资源是否发布
 	 */
@@ -45,7 +39,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	public ComSysResource turnToResource(){
 		ComSysResource resource = new ComSysResource();
 		resource.setIsEnabled(isEnabled);
-		resource.setValidDate(validDate);
 		resource.setReqResourceMethod(getReqResourceMethod());
 		resource.setIsBuiltin(isBuiltin);
 		resource.setIsNeedDeploy(isNeedDeploy);
@@ -59,15 +52,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	public void setIsEnabled(int isEnabled) {
 		this.isEnabled = isEnabled;
-	}
-	public Date getValidDate() {
-		if(validDate == null && isBuiltin == 1){
-			validDate = DateUtil.parseDate("2099-12-31 23:59:59");
-		}
-		return validDate;
-	}
-	public void setValidDate(Date validDate) {
-		this.validDate = validDate;
 	}
 	public int getIsNeedDeploy() {
 		return isNeedDeploy;
