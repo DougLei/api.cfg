@@ -73,11 +73,11 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		table.setName("项目信息资源对象表");
 		table.setComments("项目信息资源对象表");
 		table.setIsBuiltin(1);
-		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
+		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
 		refDatabaseIdColumn.setName("关联的数据库主键");
@@ -128,7 +128,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		json.put("validDate", validDate);
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("platformType", platformType+"");
 		json.put("isCreatedResource", isCreatedResource+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
@@ -138,11 +137,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	}
 	
 	public ComSysResource turnToResource() {
-		analysisResourceData();
-		ComSysResource resource = super.turnToResource();
-		resource.setRefResourceId(id);
-		resource.setResourceType(PROJECT);
-		resource.setResourceName(projName);
-		return resource;
+		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 }

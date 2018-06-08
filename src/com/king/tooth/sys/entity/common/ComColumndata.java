@@ -6,10 +6,9 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -20,7 +19,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComColumndata extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class ComColumndata extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的表主键
 	 */
@@ -85,10 +84,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 * 注释
 	 */
 	private String comments;
-	/**
-	 * 是否有效
-	 */
-	private int isEnabled = 1;
 	
 	//-------------------------------------------------------------------------
 	
@@ -195,26 +190,21 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public void setTableId(String tableId) {
 		this.tableId = tableId;
 	}
-	public int getIsEnabled() {
-		return isEnabled;
-	}
-	public void setIsEnabled(int isEnabled) {
-		this.isEnabled = isEnabled;
-	}
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
 
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_COLUMNDATA", 0);
+		table.setIsResource(1);
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
-		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_CFG_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
+		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id");
 		tableIdColumn.setName("关联的表主键");
@@ -344,14 +334,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled");
-		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("是否有效");
-		isEnabledColumn.setColumnType(DataTypeConstants.INTEGER);
-		isEnabledColumn.setLength(1);
-		isEnabledColumn.setOrderCode(17);
-		columns.add(isEnabledColumn);
-		
 		table.setColumns(columns);
 		return table;
 	}
@@ -375,6 +357,10 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		json.put("isDataDictionary", isDataDictionary+"");
 		json.put("orderCode", orderCode+"");
 		json.put("isEnabled", isEnabled+"");
+		json.put("validDate", validDate);
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isBuiltin", isBuiltin+"");
+		json.put("isCreatedResource", isCreatedResource+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
@@ -389,5 +375,9 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		validNotNullProps();
 		this.columnName = columnName.trim();
 		this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
+	}
+	
+	public ComSysResource turnToResource() {
+		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 }

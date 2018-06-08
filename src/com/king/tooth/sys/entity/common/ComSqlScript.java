@@ -15,7 +15,6 @@ import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
@@ -238,13 +237,12 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setIsResource(1);
 		table.setName("sql脚本资源对象表");
 		table.setComments("sql脚本资源对象表");
-		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
-		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
+		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
 		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption");
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
@@ -335,7 +333,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		json.put("validDate", validDate);
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("platformType", platformType+"");
 		json.put("isCreatedResource", isCreatedResource+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;

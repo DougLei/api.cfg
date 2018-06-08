@@ -10,22 +10,22 @@ import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
  */
 class CurrentThreadData {
 	/**
-	 * 当前线程的项目上下文
+	 * 当前线程的项目id
 	 * <p>记录每个线程请求的项目主键</p>
 	 */
 	private String projectId;
 	/**
-	 * 当前线程的数据库上下文
+	 * 当前线程的数据库id
      * <p>通过不同的数据库id，获取不同的dataSource和sessionFactory对象</p>
 	 */
 	private String databaseId;
 	/**
-	 * 当前线程的hibernate session的上下文
+	 * 当前线程的hibernate session对象
      * <p>方便管理，比如事务</p>
 	 */
 	private Session currentSession;
 	/**
-	 * 当前线程的帐号对象上下文
+	 * 当前线程的帐号对象
 	 */
 	private ComSysAccountOnlineStatus currentAccountOnlineStatus;
 	

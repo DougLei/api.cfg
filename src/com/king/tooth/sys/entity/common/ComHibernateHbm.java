@@ -84,11 +84,11 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		table.setName("hibernate的hbm内容对象表");
 		table.setComments("hibernate的hbm内容对象表");
 		table.setIsBuiltin(1);
-		table.setPlatformType(IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
+		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id");
 		refDatabaseIdColumn.setName("关联的数据库主键");
@@ -148,25 +148,20 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		json.put("validDate", validDate);
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("platformType", platformType+"");
 		json.put("isCreatedResource", isCreatedResource+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 	
 	public ComSysResource turnToResource() {
-		ComSysResource resource = super.turnToResource();
-		resource.setRefResourceId(id);
-		resource.setResourceType(TABLE);
-		resource.setResourceName(hbmResourceName);
-		return resource;
+		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
 	/**
 	 * 将表信息，转换为对应的hbm信息
 	 * @param table
 	 */
-	public void turnToHbm(ComTabledata table){
+	public void tableTurnToHbm(ComTabledata table){
 		this.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 		this.setRefTableId(table.getId());
 		this.setHbmResourceName(table.getResourceName());
@@ -176,7 +171,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		this.setIsNeedDeploy(table.getIsNeedDeploy());
 		this.setReqResourceMethod(table.getReqResourceMethod());
 		this.setIsBuiltin(1);
-		this.setPlatformType(table.getPlatformType());
 		this.setIsCreatedResource(1);
 	}
 }

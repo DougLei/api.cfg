@@ -8,7 +8,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 
@@ -106,7 +105,6 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntity{
 		table.setName("项目模块信息资源对象表");
 		table.setComments("项目模块信息资源对象表：理解为菜单");
 		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		

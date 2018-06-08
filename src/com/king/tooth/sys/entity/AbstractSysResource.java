@@ -32,11 +32,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	protected int isBuiltin = 0;
 	/**
-	 * 资源所属于的平台类型
-	 * <p>1:配置平台、2:运行平台、3:公用</p>
-	 */
-	protected int platformType;
-	/**
 	 * 是否已经创建资源
 	 */
 	protected int isCreatedResource;
@@ -53,7 +48,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		resource.setIsNeedDeploy(isNeedDeploy);
 		resource.setReqResourceMethod(getReqResourceMethod());
 		resource.setIsBuiltin(isBuiltin);
-		resource.setPlatformType(platformType);
 		resource.setIsCreatedResource(isCreatedResource);
 		return resource;
 	}
@@ -85,12 +79,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	public void setIsBuiltin(int isBuiltin) {
 		this.isBuiltin = isBuiltin;
-	}
-	public int getPlatformType() {
-		return platformType;
-	}
-	public void setPlatformType(int platformType) {
-		this.platformType = platformType;
 	}
 	public int getIsCreatedResource() {
 		return isCreatedResource;

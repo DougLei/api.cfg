@@ -30,43 +30,32 @@ public interface ISysResource {
 	public static final int PROJECT = 5;
 	
 	/**
-	 * GET
+	 * 请求资源的方式：GET
 	 */
 	public static final String GET = "get";
 	/**
-	 * POST
+	 * 请求资源的方式：POST
 	 */
 	public static final String POST = "post";
 	/**
-	 * PUT
+	 * 请求资源的方式：PUT
 	 */
 	public static final String PUT = "put";
 	/**
-	 * DELETE
+	 * 请求资源的方式：DELETE
 	 */
 	public static final String DELETE = "delete";
 	/**
-	 * ALL
+	 * 请求资源的方式：ALL
+	 * 支持get/post/put/delete
 	 */
 	public static final String ALL = "all";
 	/**
-	 * NONE
+	 * 请求资源的方式：NONE
+	 * 都不支持
 	 */
 	public static final String NONE = "none";
-	
-	/**
-	 * 1:配置平台
-	 */
-	public static final int IS_CFG_PLATFORM_TYPE = 1;
-	/**
-	 * 2:运行平台
-	 */
-	public static final int IS_APP_PLATFORM_TYPE = 2;
-	/**
-	 * 3:平台通用/公用
-	 */
-	public static final int IS_COMMON_PLATFORM_TYPE = 3;
-	
+
 	/**
 	 * 转换为资源对象
 	 */

@@ -216,7 +216,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 			
 			// 创建对应的hbm文件，并保存
 			hbm = new ComHibernateHbm();
-			hbm.turnToHbm(table);
+			hbm.tableTurnToHbm(table);
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
 			HibernateUtil.saveObject(hbm, "初始化插入内置hbm");
 		}

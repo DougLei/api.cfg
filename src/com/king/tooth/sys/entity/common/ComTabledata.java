@@ -11,7 +11,6 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -217,12 +216,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsResource(1);
 		table.setName("表数据信息资源对象表");
 		table.setComments("表数据信息资源对象表");
-		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsBuiltin(1);
-		table.setPlatformType(IS_CFG_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
+		table.setIsNeedDeploy(1);
+		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(25);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata nameColumn = new ComColumndata("name");
 		nameColumn.setName("显示的汉字名称");
@@ -334,7 +333,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		json.put("validDate", validDate);
 		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("platformType", platformType+"");
 		json.put("isCreatedResource", isCreatedResource+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;

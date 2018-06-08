@@ -76,20 +76,12 @@ public class DynamicBasicDataColumnUtil {
 			isBuiltinColumn.setOrderCode(9907);
 			table.getColumns().add(isBuiltinColumn);
 
-			ComColumndata platformTypeColumn = new ComColumndata("platform_type");
-			platformTypeColumn.setName("资源所属于的平台类型");
-			platformTypeColumn.setComments("资源所属于的平台类型:1:配置平台、2:运行平台、3:公用");
-			platformTypeColumn.setColumnType(DataTypeConstants.INTEGER);
-			platformTypeColumn.setLength(1);
-			platformTypeColumn.setOrderCode(9908);
-			table.getColumns().add(platformTypeColumn);
-
 			ComColumndata isCreatedResourceColumn = new ComColumndata("is_created_resource");
 			isCreatedResourceColumn.setName("是否已经创建资源");
 			isCreatedResourceColumn.setComments("是否已经创建资源");
 			isCreatedResourceColumn.setColumnType(DataTypeConstants.INTEGER);
 			isCreatedResourceColumn.setLength(1);
-			isCreatedResourceColumn.setOrderCode(9909);
+			isCreatedResourceColumn.setOrderCode(9908);
 			table.getColumns().add(isCreatedResourceColumn);
 		}
 		
@@ -98,14 +90,14 @@ public class DynamicBasicDataColumnUtil {
 			createTimeColumn.setColumnType(DataTypeConstants.DATE);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
-			createTimeColumn.setOrderCode(9910);
+			createTimeColumn.setOrderCode(9909);
 			table.getColumns().add(createTimeColumn);
 			
 			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_time");
 			lastUpdateTimeColumn.setColumnType(DataTypeConstants.DATE);
 			lastUpdateTimeColumn.setComments("最后修改时间");
 			lastUpdateTimeColumn.setName("最后修改时间");
-			lastUpdateTimeColumn.setOrderCode(9911);
+			lastUpdateTimeColumn.setOrderCode(9910);
 			table.getColumns().add(lastUpdateTimeColumn);
 			
 			ComColumndata createUserIdColumn = new ComColumndata("create_user_id");
@@ -113,7 +105,7 @@ public class DynamicBasicDataColumnUtil {
 			createUserIdColumn.setComments("创建人主键");
 			createUserIdColumn.setName("创建人主键");
 			createUserIdColumn.setLength(32);
-			createUserIdColumn.setOrderCode(9912);
+			createUserIdColumn.setOrderCode(9911);
 			table.getColumns().add(createUserIdColumn);
 			
 			ComColumndata lastUpdatedUserIdColumn = new ComColumndata("last_updated_user_id");
@@ -121,7 +113,7 @@ public class DynamicBasicDataColumnUtil {
 			lastUpdatedUserIdColumn.setComments("最后修改人主键");
 			lastUpdatedUserIdColumn.setName("最后修改人主键");
 			lastUpdatedUserIdColumn.setLength(32);
-			lastUpdatedUserIdColumn.setOrderCode(9913);
+			lastUpdatedUserIdColumn.setOrderCode(9912);
 			table.getColumns().add(lastUpdatedUserIdColumn);
 		}
 	}

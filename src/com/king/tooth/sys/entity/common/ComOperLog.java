@@ -8,7 +8,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 
@@ -83,7 +82,6 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		table.setName("操作日志资源对象表");
 		table.setComments("操作日志资源对象表");
 		table.setIsBuiltin(1);
-		table.setPlatformType(ISysResource.IS_COMMON_PLATFORM_TYPE);
 		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		

@@ -86,14 +86,14 @@
 		</filter-mapping>
 		
 		<!-- 配置验证请求是否有效的过滤器 -->
-		<filter>
+	<!-- 	<filter>
 			<filter-name>varifyReqValidFilter</filter-name>
 			<filter-class>com.king.tooth.filter.VarifyReqValidFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>varifyReqValidFilter</filter-name>
 			<url-pattern>/common/*</url-pattern>
-		</filter-mapping>
+		</filter-mapping> -->
 		
 <!-- ****************************************************************************************************  -->		
 		
