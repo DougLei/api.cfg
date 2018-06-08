@@ -1,19 +1,17 @@
-package com.king.tooth.sys.service.cfg;
+package com.king.tooth.sys.service.common;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
+import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractResourceService;
-import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -21,7 +19,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
-public class CfgTabledataService extends AbstractResourceService{
+public class ComTabledataService extends AbstractResourceService{
 
 	private ComSysResourceService comSysResourceService = new ComSysResourceService();
 	
@@ -30,9 +28,6 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * @param table
 	 */
 	public void saveTable(ComTabledata table) {
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
-			table.setIsBuiltin(1);
-		}
 		HibernateUtil.saveObject(table, null);
 	}
 	
@@ -41,12 +36,9 @@ public class CfgTabledataService extends AbstractResourceService{
 	 * @param table
 	 */
 	public void updateTable(ComTabledata table) {
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().getAccountType() == 0){
-			table.setIsBuiltin(1);
-		}
-		
-		HibernateUtil.updateObject(table, null);
+		HibernateUtil.updateObjectByHql(table, null);
 	}
+	
 	
 	/**
 	 * 删除表
@@ -109,7 +101,7 @@ public class CfgTabledataService extends AbstractResourceService{
 			hbmContents.add(hbm.getHbmContent());
 			
 			table.clear();
-			table.setIsCreatedResource(1);
+			
 			HibernateUtil.updateObject(table, null);
 			
 			comSysResourceService.insertSysResource(table);

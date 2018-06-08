@@ -165,7 +165,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		if(StrUtils.notEmpty(parentResourceId) && StrUtils.notEmpty(parentResourceName)){
 			
 			Map<String, String> parentResourceQueryCond = null;
-			if(StrUtils.compareUnSame(resourceName, parentResourceName)){// 主资源名和资源名不相同，是主子资源联合查询
+			if(!StrUtils.compareIsSame(resourceName, parentResourceName)){// 主资源名和资源名不相同，是主子资源联合查询
 				parentResourceQueryCond = new HashMap<String, String>();
 				// 解析父资源查询条件参数
 				anlaysisParentResourceQueryCond(parentResourceQueryCond, requestUrlParams);

@@ -60,7 +60,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		table.setName("系统资源对象表");
 		table.setComments("系统资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		
@@ -107,9 +107,9 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		json.put("resourceType", resourceType+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);
-		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreatedResource", isCreatedResource+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}

@@ -1,7 +1,6 @@
 package com.king.tooth.util;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.internal.HbmConfPropMetadata;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -125,19 +125,23 @@ public class ResourceHandlerUtil {
 	 * @param data
 	 * @return
 	 */
-	public static Map<String, Object> validDataProp(String resourceName, Map<String, Object> data) {
+	public static JSONObject validDataProp(String resourceName, JSONObject data) {
 		if(data == null || data.size() == 0){
 			throw new NullPointerException("要进行验证的数据对象为null");
 		}
 		
-		Map<String, Object> resultData = new HashMap<String, Object>(data.size());
+		JSONObject resultData = new JSONObject(data.size());
 		HbmConfPropMetadata[] hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(resourceName);
 		Set<String> reqPropnames = data.keySet();
 		HbmConfPropMetadata propMetadata = null;
 		for (String rpn : reqPropnames) {
 			propMetadata = HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, rpn);
-			if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
-				resultData.put(propMetadata.getPropName(), DateUtil.parseDate(data.get(rpn)+""));
+			if(data.get(rpn) instanceof String){
+				if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
+					resultData.put(propMetadata.getPropName(), DateUtil.parseDate(data.getString(rpn)));
+				}else{
+					resultData.put(propMetadata.getPropName(), data.getString(rpn));
+				}
 			}else{
 				resultData.put(propMetadata.getPropName(), data.get(rpn));
 			}
@@ -147,7 +151,7 @@ public class ResourceHandlerUtil {
 	}
 	
 	/**
-	 * 获取关联关系map对象
+	 * 获取关联关系jsonObject对象
 	 * @param leftId
 	 * @param rightId
 	 * @param orderCode
@@ -155,8 +159,8 @@ public class ResourceHandlerUtil {
 	 * @param rightResourceName
 	 * @return
 	 */
-	public static Map<String, Object> getDataLinksObject(String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
-		Map<String, Object> dataLinks = new HashMap<String, Object>(4);
+	public static JSONObject getDataLinksObject(String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
+		JSONObject dataLinks = new JSONObject(4);
 		dataLinks.put(ResourceNameConstants.LEFT_ID, leftId);
 		dataLinks.put(ResourceNameConstants.RIGHT_ID, rightId);
 		dataLinks.put(ResourceNameConstants.ORDER_CODE, orderCode);

@@ -19,6 +19,32 @@ public class ComDatabaseService extends AbstractResourceService{
 	}
 	
 	/**
+	 * 保存数据库
+	 * @param database
+	 */
+	public void saveDatabase(ComDatabase database) {
+		HibernateUtil.saveObject(database, null);
+	}
+
+	/**
+	 * 修改数据库
+	 * @param database
+	 */
+	public void updateDatabase(ComDatabase database) {
+		ComDatabase oldDatabase = getDatabaseById(database.getId());
+		if(oldDatabase == null){
+			throw new NullPointerException("没有找到id为["+database.getId()+"]的数据库对象信息");
+		}
+		if(oldDatabase.getIsDeployed() == 1 && !oldDatabase.compareLinkInfoIsSame(database)){
+			throw new IllegalArgumentException("【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改连接信息，或取消发布后再修改");
+		}
+		HibernateUtil.updateObjectByHql(database, null);
+	}
+	
+
+	
+	
+	/**
 	 * 发布数据库
 	 * @param databaseId
 	 */

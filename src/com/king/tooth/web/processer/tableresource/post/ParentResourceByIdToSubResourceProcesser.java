@@ -2,7 +2,6 @@ package com.king.tooth.web.processer.tableresource.post;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -28,7 +27,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 	/**
 	 * 存储主子表id关联集合
 	 */
-	private final List<Map<String, Object>> dataLinkList = new ArrayList<Map<String, Object>>();
+	private final List<JSONObject> dataLinkList = new ArrayList<JSONObject>();
 	
 	public String getProcesserName() {
 		return "【Post-TableResource】ParentResourceByIdToSubResourceProcesser";
@@ -67,7 +66,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 			return;
 		}
 		
-		Map<String, Object> datalink = null;
+		JSONObject datalink = null;
 		JSONObject subData = null;
 		for(int j=0; j<subDatas.size(); j++){
 			subData = subDatas.getJSONObject(j);
@@ -95,7 +94,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 			return;
 		}
 		String dataLinkResourceName = HibernateUtil.getDataLinkResourceName(requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
-		for (Map<String, Object> datalink : dataLinkList) {
+		for (JSONObject datalink : dataLinkList) {
 			saveData(dataLinkResourceName, datalink);
 		}
 //		dataLinkList.clear();

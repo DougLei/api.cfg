@@ -1,5 +1,7 @@
 package com.king.tooth.sys.entity.common;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,8 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.database.DBFile;
+import com.king.tooth.util.CloseUtil;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -138,35 +142,13 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		return tmpLogFile;
 	}
 	
-	/**
-	 * 获取数据库的连接url
-	 * @return
-	 */
-	public String getUrl() {
-		return DynamicDataConstants.getDataBaseLinkUrl(getDbType(), getDbIp(), getDbPort(), getDbInstanceName());
-	}
-	/**
-	 * 获取数据库驱动
-	 * @return
-	 */
-	public String getDriverClass() {
-		return DynamicDataConstants.getDataBaseDriver(getDbType());
-	}
-	/**
-	 * 获取数据库连接方言
-	 * @return
-	 */
-	public String getDialect(){
-		return DynamicDataConstants.getDataBaseDialect(getDbType());
-	}
-	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_DATABASE", 0);
 		table.setIsResource(1);
 		table.setName("数据库数据信息资源对象表");
 		table.setComments("数据库数据信息资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
@@ -261,31 +243,71 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		json.put("dbPort", dbPort+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);
-		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreatedResource", isCreatedResource+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 	
+	/**
+	 * 获取数据库的连接url
+	 * @return
+	 */
+	public String getUrl() {
+		return DynamicDataConstants.getDataBaseLinkUrl(getDbType(), getDbIp(), getDbPort(), getDbInstanceName());
+	}
+	/**
+	 * 获取数据库驱动
+	 * @return
+	 */
+	public String getDriverClass() {
+		return DynamicDataConstants.getDataBaseDriver(getDbType());
+	}
+	/**
+	 * 获取数据库连接方言
+	 * @return
+	 */
+	public String getDialect(){
+		return DynamicDataConstants.getDataBaseDialect(getDbType());
+	}
+	
+	/**
+	 * 测试数据库连接
+	 */
+	private void testDbLink(){
+		Connection conn = null;
+		try {
+			Class.forName(getDriverClass());
+			conn = DriverManager.getConnection(getUrl(), getLoginUserName(), getLoginPassword());
+		} catch (Exception e) {
+			throw new IllegalArgumentException("数据库连接失败，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接：["+ExceptionUtil.getErrMsg(e)+"]");
+		} finally{
+			CloseUtil.closeDBConn(conn);
+		}
+	}
+	
 	public void validNotNullProps() {
-		if(StrUtils.isEmpty(dbType)){
-			throw new NullPointerException("数据库类型不能为空！");
-		}
-		if(StrUtils.isEmpty(dbInstanceName)){
-			throw new NullPointerException("数据库名不能为空！");
-		}
-		if(StrUtils.isEmpty(loginUserName)){
-			throw new NullPointerException("数据库登录名不能为空！");
-		}
-		if(StrUtils.isEmpty(loginPassword)){
-			throw new NullPointerException("数据库登录密码不能为空！");
-		}
-		if(StrUtils.isEmpty(dbIp)){
-			throw new NullPointerException("数据库ip不能为空！");
-		}
-		if(dbPort < 1){
-			throw new NullPointerException("数据库端口不能为空！");
+		if(!isValidNotNullProps){
+			if(StrUtils.isEmpty(dbType)){
+				throw new NullPointerException("数据库类型不能为空！");
+			}
+			if(StrUtils.isEmpty(dbInstanceName)){
+				throw new NullPointerException("数据库名不能为空！");
+			}
+			if(StrUtils.isEmpty(loginUserName)){
+				throw new NullPointerException("数据库登录名不能为空！");
+			}
+			if(StrUtils.isEmpty(loginPassword)){
+				throw new NullPointerException("数据库登录密码不能为空！");
+			}
+			if(StrUtils.isEmpty(dbIp)){
+				throw new NullPointerException("数据库ip不能为空！");
+			}
+			if(dbPort < 1){
+				throw new NullPointerException("数据库端口不能为空！");
+			}
+			isValidNotNullProps = true;
 		}
 	}
 	
@@ -293,17 +315,19 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		validNotNullProps();
 		
 		// 验证数据库实例名
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)){
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)
+				&& SysConfig.getSystemConfig("db.default.ip").equals(dbIp)
+				&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
 			// 如果数据库类型是oracle数据库
 			// 如果和jdbc中配置的ip和端口一样，就说明是使用的是当前库，则使用jdbc中配置的oracle数据库实例名
-			if(SysConfig.getSystemConfig("db.default.ip").equals(dbIp) 
-					&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
-				this.dbInstanceName = SysConfig.getSystemConfig("db.default.instancename");
-			}
+			this.dbInstanceName = SysConfig.getSystemConfig("db.default.instancename");
 		}
+		
 		// 创建数据库文件对象
 		this.mainFile = new DBFile("MAIN_" + loginUserName);
 		this.tmpLogFile = new DBFile("TMPLOG_" + loginUserName);
+		
+		testDbLink();
 	}
 	
 	public ComSysResource turnToResource() {
@@ -313,5 +337,21 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		resource.setResourceType(DATABASE);
 		resource.setResourceName(dbInstanceName);
 		return resource;
+	}
+	
+	/**
+	 * 比较数据库的连接信息是否一致
+	 * @param database
+	 * @return
+	 */
+	public boolean compareLinkInfoIsSame(ComDatabase database){
+		if(StrUtils.compareIsSame(dbInstanceName, database.getDbInstanceName())
+				&& StrUtils.compareIsSame(loginUserName, database.getLoginUserName())
+				&& StrUtils.compareIsSame(loginPassword, database.getLoginPassword())
+				&& StrUtils.compareIsSame(dbIp, database.getDbIp())
+				&& dbPort == database.getDbPort()){
+			return true;
+		}
+		return false;
 	}
 }

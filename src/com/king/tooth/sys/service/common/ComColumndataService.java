@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.cfg;
+package com.king.tooth.sys.service.common;
 
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.service.AbstractResourceService;
@@ -8,7 +8,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 字段数据信息资源对象处理器
  * @author DougLei
  */
-public class CfgColumndataService extends AbstractResourceService{
+public class ComColumndataService extends AbstractResourceService{
 
 	/**
 	 * 添加列

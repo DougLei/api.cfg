@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -23,6 +24,7 @@ import org.hibernate.jdbc.Work;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.IEntity;
@@ -295,16 +297,7 @@ public class HibernateUtil {
 	 * @return id
 	 */
 	public static String saveObject(IEntity entity, String shortDesc){
-		JSONObject data = entity.toEntity();
-		ResourceHandlerUtil.initBasicPropValsForSave(entity.getEntityName(), data, shortDesc);
-		try {
-			getCurrentThreadSession().save(entity.getEntityName(), data);
-			Log4jUtil.debug("保存数据成功[{}]", data);
-			return data.get(ResourceNameConstants.ID)+"";
-		} catch (Exception e) {
-			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
-			throw e;
-		}
+		return saveObject(entity.getEntityName(), entity.toEntity(), shortDesc);
 	}
 	
 	/**
@@ -314,7 +307,7 @@ public class HibernateUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 * @return id
 	 */
-	public static String saveObject(String entityName, Map<String, Object> data, String shortDesc){
+	public static String saveObject(String entityName, JSONObject data, String shortDesc){
 		data = ResourceHandlerUtil.validDataProp(entityName, data);
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
 		try {
@@ -329,14 +322,64 @@ public class HibernateUtil {
 	
 	/**
 	 * 修改对象
+	 * 直接通过hibernate的update修改对象
 	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void updateObject(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntity();
+		if(StrUtils.isEmpty(data.getString(ResourceNameConstants.ID))){
+			throw new NullPointerException("要修改的数据id值不能为空");
+		}
+		
 		ResourceHandlerUtil.initBasicPropValsForUpdate(entity.getEntityName(), data, shortDesc);
 		try {
 			getCurrentThreadSession().merge(entity.getEntityName(), data);
+			Log4jUtil.debug("修改数据成功[{}]", data);
+		} catch (Exception e) {
+			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			throw e;
+		}
+	}
+	
+	/**
+	 * 修改对象
+	 * 通过拼接update hql语句修改对象
+	 * <p>目前这个方法，和通用表资源的update不是统一的</p>
+	 * @param entity
+	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
+	 */
+	public static void updateObjectByHql(IEntity entity, String shortDesc){
+		JSONObject data = entity.toEntity();
+		String updateId = data.getString(ResourceNameConstants.ID);
+		if(StrUtils.isEmpty(updateId)){
+			throw new NullPointerException("要修改的数据id值不能为空");
+		}
+		
+		ResourceHandlerUtil.initBasicPropValsForUpdate(entity.getEntityName(), data, shortDesc);
+		try {
+			List<Object> parameters = new ArrayList<Object>(data.size()-1);
+			StringBuilder updateHql = new StringBuilder("update ");
+			updateHql.append(entity.getEntityName()).append(" set ");
+			
+			HbmConfPropMetadata[] hibernateDefineResourceProps = getHibernateDefineResourceProps(entity.getEntityName());
+			HbmConfPropMetadata confPropMetadata = null;
+			Set<String> propNames = data.keySet();
+			for (String pn : propNames) {
+				if(pn.equalsIgnoreCase(ResourceNameConstants.ID)){
+					continue;
+				}
+				confPropMetadata = getDefinePropMetadata(hibernateDefineResourceProps, pn);
+				updateHql.append(confPropMetadata.getPropName());
+				updateHql.append(" = ?").append(",");
+				parameters.add(data.get(pn));
+			}
+			
+			updateHql.setLength(updateHql.length()-1);
+			updateHql.append(" where id = ?");
+			parameters.add(updateId);
+			
+			executeUpdateByHql(SqlStatementType.UPDATE, updateHql.toString(), parameters);
 			Log4jUtil.debug("修改数据成功[{}]", data);
 		} catch (Exception e) {
 			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));

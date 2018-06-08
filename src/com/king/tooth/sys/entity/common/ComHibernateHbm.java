@@ -84,7 +84,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		table.setName("hibernate的hbm内容对象表");
 		table.setComments("hibernate的hbm内容对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
@@ -146,9 +146,9 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		json.put("isDataLinkTableHbm", isDataLinkTableHbm+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);
-		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreatedResource", isCreatedResource+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
@@ -171,6 +171,5 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		this.setIsNeedDeploy(table.getIsNeedDeploy());
 		this.setReqResourceMethod(table.getReqResourceMethod());
 		this.setIsBuiltin(1);
-		this.setIsCreatedResource(1);
 	}
 }

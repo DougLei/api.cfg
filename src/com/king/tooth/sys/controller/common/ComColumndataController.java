@@ -7,45 +7,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.sys.controller.AbstractResourceController;
-import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.service.common.ComDatabaseService;
+import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.service.common.ComColumndataService;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * 数据库数据信息资源对象控制器
+ * 字段数据信息资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")
 @Controller
-@RequestMapping("/ComDatabase")
-public class ComDatabaseController extends AbstractResourceController{
+@RequestMapping("/ComColumndata")
+public class ComColumndataController extends AbstractResourceController{
 	
-	private ComDatabaseService databaseService = new ComDatabaseService();
+	private ComColumndataService columnataService = new ComColumndataService();
 	
 	/**
-	 * 添加数据库
-	 * <p>请求方式：POST</p>
+	 * 添加列
+	 * @param column
 	 * @return
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody add(@RequestBody ComDatabase database){
-		database.analysisResourceProp();
-		databaseService.saveDatabase(database);
+	public ResponseBody addColumn(@RequestBody ComColumndata column){
+		columnataService.saveColumn(column);
 		return installResponseBody("添加成功", null);
 	}
 	
 	/**
-	 * 修改数据库
-	 * <p>请求方式：PUT</p>
+	 * 修改列
+	 * @param column
 	 * @return
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody update(@RequestBody ComDatabase database){
-		database.analysisResourceProp();
-		databaseService.updateDatabase(database);
+	public ResponseBody updateColumn(@RequestBody ComColumndata column){
+		columnataService.updateColumn(column);
 		return installResponseBody("修改成功", null);
 	}
-	
 }

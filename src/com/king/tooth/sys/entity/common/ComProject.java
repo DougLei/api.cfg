@@ -73,7 +73,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		table.setName("项目信息资源对象表");
 		table.setComments("项目信息资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
@@ -126,9 +126,9 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);
-		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreatedResource", isCreatedResource+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}

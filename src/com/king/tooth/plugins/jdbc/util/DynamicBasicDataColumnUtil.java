@@ -52,20 +52,12 @@ public class DynamicBasicDataColumnUtil {
 			validDateColumn.setOrderCode(9904);
 			table.getColumns().add(validDateColumn);
 			
-			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy");
-			isNeedDeployColumn.setName("资源是否需要发布");
-			isNeedDeployColumn.setComments("资源是否需要发布");
-			isNeedDeployColumn.setColumnType(DataTypeConstants.INTEGER);
-			isNeedDeployColumn.setLength(1);
-			isNeedDeployColumn.setOrderCode(9905);
-			table.getColumns().add(isNeedDeployColumn);
-
 			ComColumndata reqResourceMethodColumn = new ComColumndata("req_resource_method");
 			reqResourceMethodColumn.setName("请求资源的方法");
 			reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 			reqResourceMethodColumn.setColumnType(DataTypeConstants.STRING);
 			reqResourceMethodColumn.setLength(20);
-			reqResourceMethodColumn.setOrderCode(9906);
+			reqResourceMethodColumn.setOrderCode(9905);
 			table.getColumns().add(reqResourceMethodColumn);
 
 			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin");
@@ -73,16 +65,24 @@ public class DynamicBasicDataColumnUtil {
 			isBuiltinColumn.setComments("是否内置资源");
 			isBuiltinColumn.setColumnType(DataTypeConstants.INTEGER);
 			isBuiltinColumn.setLength(1);
-			isBuiltinColumn.setOrderCode(9907);
+			isBuiltinColumn.setOrderCode(9906);
 			table.getColumns().add(isBuiltinColumn);
 
-			ComColumndata isCreatedResourceColumn = new ComColumndata("is_created_resource");
-			isCreatedResourceColumn.setName("是否已经创建资源");
-			isCreatedResourceColumn.setComments("是否已经创建资源");
-			isCreatedResourceColumn.setColumnType(DataTypeConstants.INTEGER);
-			isCreatedResourceColumn.setLength(1);
-			isCreatedResourceColumn.setOrderCode(9908);
-			table.getColumns().add(isCreatedResourceColumn);
+			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy");
+			isNeedDeployColumn.setName("资源是否需要发布");
+			isNeedDeployColumn.setComments("资源是否需要发布");
+			isNeedDeployColumn.setColumnType(DataTypeConstants.INTEGER);
+			isNeedDeployColumn.setLength(1);
+			isNeedDeployColumn.setOrderCode(9907);
+			table.getColumns().add(isNeedDeployColumn);
+			
+			ComColumndata isDeployedColumn = new ComColumndata("is_deployed");
+			isDeployedColumn.setName("资源是否发布");
+			isDeployedColumn.setComments("资源是否发布");
+			isDeployedColumn.setColumnType(DataTypeConstants.INTEGER);
+			isDeployedColumn.setLength(1);
+			isDeployedColumn.setOrderCode(9908);
+			table.getColumns().add(isDeployedColumn);
 		}
 		
 		if(table.getIsDatalinkTable() == 0 && !ResourceNameConstants.COMMON_DATALINK_TABLENAME.equals(table.getTableName())){// 不是关系表，才要这些字段

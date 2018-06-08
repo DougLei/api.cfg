@@ -9,6 +9,7 @@ import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
@@ -30,7 +31,6 @@ import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
-import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
 import com.king.tooth.sys.service.AbstractResourceService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
@@ -97,7 +97,7 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 	 * @return
 	 */
 	private List<ComTabledata> getInitTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(16);
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(15);
 		String dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
@@ -115,7 +115,6 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		tables.add(new ComSqlScript().toCreateTable(dbType));
 		tables.add(new ComSysAccount().toCreateTable(dbType));
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
-		tables.add(new ComUser().toCreateTable(dbType));
 		
 		return tables;
 	}
@@ -155,17 +154,12 @@ public class ComBasicDataProcessService extends AbstractResourceService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加配置平台管理员和对应的用户【这个是超级管理员】
 		ComSysAccount admin = new ComSysAccount();
+		admin.setAccountType(1);
 		admin.setLoginName("administrator");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		String adminAccountId = HibernateUtil.saveObject(admin, null);
+		HibernateUtil.saveObject(admin, null);
 		
-		ComUser adminUser = new ComUser();
-		adminUser.setAccountId(adminAccountId);
-		adminUser.setNikeName("administrator");
-		adminUser.setRealName("配置平台管理员");
-		HibernateUtil.saveObject(adminUser, null);
-
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		

@@ -200,7 +200,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
@@ -358,16 +357,19 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		json.put("orderCode", orderCode+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);
-		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreatedResource", isCreatedResource+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 	
 	public void validNotNullProps() {
-		if(StrUtils.isEmpty(columnName)){
-			throw new NullPointerException("列名不能为空！");
+		if(!isValidNotNullProps){
+			if(StrUtils.isEmpty(columnName)){
+				throw new NullPointerException("列名不能为空！");
+			}
+			isValidNotNullProps = true;
 		}
 	}
 	

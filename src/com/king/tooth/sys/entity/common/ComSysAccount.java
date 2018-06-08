@@ -44,10 +44,8 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	private String emails;
 	/**
 	 * 账户类型
-	 * 		1.游客：虚拟账号(和用户表没有对应)
-	 * 		2.客户(企业)：实体帐号(和用户表有对应)
-	 * 		3.普通账户：实体帐号(和用户表有对应)
-	 * 		4.普通虚拟账户：(和用户表没有对应)
+	 * 		1.平台开发账户
+	 * 		2.一般开发账户
 	 */
 	private int accountType;
 	/**
@@ -68,10 +66,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	
 	//-------------------------------------------------------------------------
 	
-	/**
-	 * 对应的用户对象
-	 */
-	private ComUser user;
 	/**
 	 * 登录和验证登录时，用来传递信息
 	 */
@@ -124,12 +118,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public Date getValidDate() {
 		return validDate;
 	}
-	public ComUser getUser() {
-		return user;
-	}
-	public void setUser(ComUser user) {
-		this.user = user;
-	}
 	public void setValidDate(Date validDate) {
 		this.validDate = validDate;
 	}
@@ -166,7 +154,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		table.setName("系统账户资源对象表");
 		table.setComments("系统账户资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
@@ -213,7 +201,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata accountTypeColumn = new ComColumndata("account_type");
 		accountTypeColumn.setName("账户类型");
-		accountTypeColumn.setComments("账户类型:1.游客：虚拟账号(和用户表没有对应)、2.客户(企业)：实体帐号(和用户表有对应)、3.普通账户：(和用户表有对应)、4.普通虚拟账户：(和用户表没有对应)");
+		accountTypeColumn.setComments("账户类型:1.平台开发账户、2.一般开发账户");
 		accountTypeColumn.setColumnType(DataTypeConstants.INTEGER);
 		accountTypeColumn.setLength(1);
 		accountTypeColumn.setOrderCode(6);

@@ -19,22 +19,23 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	protected Date validDate;
 	/**
-	 * 资源是否需要发布
-	 */
-	protected int isNeedDeploy;
-	/**
 	 * 请求资源的方法
 	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
 	 */
 	protected String reqResourceMethod = ALL;
 	/**
 	 * 是否内置资源
+	 * <p>这个字段由开发人员控制，不开放给用户</p>
 	 */
 	protected int isBuiltin = 0;
 	/**
-	 * 是否已经创建资源
+	 * 资源是否需要发布
 	 */
-	protected int isCreatedResource;
+	protected int isNeedDeploy;
+	/**
+	 * 资源是否发布
+	 */
+	protected int isDeployed;
 	
 	// -----------------------------------------------------------------
 	
@@ -45,10 +46,10 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		ComSysResource resource = new ComSysResource();
 		resource.setIsEnabled(isEnabled);
 		resource.setValidDate(validDate);
-		resource.setIsNeedDeploy(isNeedDeploy);
 		resource.setReqResourceMethod(getReqResourceMethod());
 		resource.setIsBuiltin(isBuiltin);
-		resource.setIsCreatedResource(isCreatedResource);
+		resource.setIsNeedDeploy(isNeedDeploy);
+		resource.setIsDeployed(isDeployed);
 		return resource;
 	}
 	
@@ -80,11 +81,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	public void setIsBuiltin(int isBuiltin) {
 		this.isBuiltin = isBuiltin;
 	}
-	public int getIsCreatedResource() {
-		return isCreatedResource;
+	public int getIsDeployed() {
+		return isDeployed;
 	}
-	public void setIsCreatedResource(int isCreatedResource) {
-		this.isCreatedResource = isCreatedResource;
+	public void setIsDeployed(int isDeployed) {
+		this.isDeployed = isDeployed;
 	}
 	public void setReqResourceMethod(String reqResourceMethod) {
 		this.reqResourceMethod = reqResourceMethod;

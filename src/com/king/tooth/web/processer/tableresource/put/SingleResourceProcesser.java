@@ -1,7 +1,6 @@
 package com.king.tooth.web.processer.tableresource.put;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -57,8 +57,9 @@ public final class SingleResourceProcesser extends PutProcesser {
 	}
 
 	protected StringBuilder getUpdateHql(JSONObject updatedJsonObj, List<Object> params, HbmConfPropMetadata[] hibernateDefineResourceProps) {
-		updateHql.setLength(0);
+		ResourceHandlerUtil.initBasicPropValsForUpdate(requestBody.getRouteBody().getResourceName(), updatedJsonObj, null);
 		
+		updateHql.setLength(0);
 		updateHql.append(" update ")
 		   .append(requestBody.getRouteBody().getResourceName())
 		   .append(" set ");
@@ -76,18 +77,21 @@ public final class SingleResourceProcesser extends PutProcesser {
 				idValue = updatedJsonObj.getString(pn);
 				continue;
 			}
+			
 			confPropMetadata = HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, pn);
 			updateHql.append(confPropMetadata.getPropName());
 			updateHql.append(" = ?").append(",");
-			if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(confPropMetadata.getPropDataType())){
-				params.add(DateUtil.parseDate(updatedJsonObj.getString(pn)));
+			
+			if(updatedJsonObj.get(pn) instanceof String){
+				if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(confPropMetadata.getPropDataType())){
+					params.add(DateUtil.parseDate(updatedJsonObj.getString(pn)));
+				}else{
+					params.add(updatedJsonObj.getString(pn));
+				}
 			}else{
-				params.add(updatedJsonObj.getString(pn));
+				params.add(updatedJsonObj.get(pn));
 			}
 		}
-		updateHql.append(ResourceNameConstants.LAST_UPDATE_TIME)
-		         .append("=? ");
-		params.add(DateUtil.formatDate(new Date()));
 		
 		if(whereIdHql != null){
 			params.add(idValue);

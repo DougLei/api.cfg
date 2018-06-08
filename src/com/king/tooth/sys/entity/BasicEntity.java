@@ -71,4 +71,12 @@ public class BasicEntity implements Serializable{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
+	
+	
+	// --------
+	/**
+	 * 是否验证不能为空的属性
+	 * <p>针对IEntityPropAnalysis接口的实现类</p>
+	 */
+	protected boolean isValidNotNullProps;
 }

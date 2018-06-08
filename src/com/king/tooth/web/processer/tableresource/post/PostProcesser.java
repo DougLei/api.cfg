@@ -1,7 +1,6 @@
 package com.king.tooth.web.processer.tableresource.post;
 
-import java.util.Map;
-
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.util.StrUtils;
@@ -62,7 +61,7 @@ public abstract class PostProcesser extends RequestProcesser {
 	 * @param resourceName
 	 * @param data
 	 */
-	protected void saveData(String resourceName, Map<String, Object> data){
+	protected void saveData(String resourceName, JSONObject data){
 		HibernateUtil.saveObject(resourceName, data, null);
 	}
 	

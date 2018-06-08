@@ -96,8 +96,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	private String dbType;
 	/**
 	 * 是否是资源
-	 * 这个是在建表的时候用到，如果是资源，加入资源特有的列
-	 * 这个字段的值由开发人员控制，和数据库没有对应的映射
+	 * <p>这个字段由开发人员控制，不开放给用户</p>
+	 * <p>和数据库没有对应的映射</p>
 	 */
 	private int isResource;
 	
@@ -217,7 +217,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setName("表数据信息资源对象表");
 		table.setComments("表数据信息资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
@@ -331,19 +331,22 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		json.put("isDatalinkTable", isDatalinkTable+"");
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);
-		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreatedResource", isCreatedResource+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 	
 	public void validNotNullProps() {
-		if(StrUtils.isEmpty(tableName)){
-			throw new NullPointerException("表名不能为空！");
-		}
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 0 && this.tableName.length() > 30){
-			throw new IllegalArgumentException("oracle数据库的表名长度不能超过30个字符！");
+		if(!isValidNotNullProps){
+			if(StrUtils.isEmpty(tableName)){
+				throw new NullPointerException("表名不能为空！");
+			}
+			if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 0 && this.tableName.length() > 30){
+				throw new IllegalArgumentException("oracle数据库的表名长度不能超过30个字符！");
+			}
+			isValidNotNullProps = true;
 		}
 	}
 	

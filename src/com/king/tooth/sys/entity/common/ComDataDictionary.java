@@ -86,7 +86,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		table.setName("数据字典资源对象表");
 		table.setComments("数据字典资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);

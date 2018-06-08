@@ -238,7 +238,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setName("sql脚本资源对象表");
 		table.setComments("sql脚本资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsCreatedResource(1);
+		
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET+","+DELETE);
 		
@@ -331,19 +331,22 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		JSONObject json = JsonUtil.toJsonObject(this);
 		json.put("isEnabled", isEnabled+"");
 		json.put("validDate", validDate);
-		json.put("isNeedDeploy", isNeedDeploy+"");
 		json.put("isBuiltin", isBuiltin+"");
-		json.put("isCreatedResource", isCreatedResource+"");
+		json.put("isNeedDeploy", isNeedDeploy+"");
+		json.put("isDeployed", isDeployed+"");
 		json.put(ResourceNameConstants.CREATE_TIME, this.createTime);
 		return json;
 	}
 	
 	public void validNotNullProps() {
-		if(StrUtils.isEmpty(sqlScriptResourceName)){
-			throw new NullPointerException("sql脚本资源名称不能为空");
-		}
-		if(StrUtils.isEmpty(sqlScriptContent)){
-			throw new NullPointerException("sql脚本内容不能为空");
+		if(!isValidNotNullProps){
+			if(StrUtils.isEmpty(sqlScriptResourceName)){
+				throw new NullPointerException("sql脚本资源名称不能为空");
+			}
+			if(StrUtils.isEmpty(sqlScriptContent)){
+				throw new NullPointerException("sql脚本内容不能为空");
+			}
+			isValidNotNullProps = true;
 		}
 	}
 	
