@@ -37,58 +37,33 @@ public class ComTabledataService extends AbstractService{
 	}
 	
 	/**
-	 * 根据表id，获取表的信息
-	 * @param tableId
+	 * 保存表
+	 * @param table
 	 * @return
 	 */
-	private ComTabledata getTableById(String tableId){
-		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, "from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
-		return table;
+	public String saveTable(ComTabledata table) {
+		return null;
 	}
-	
-	/**
-	 * 添加表
-	 * @param table
-	 */
-	public void saveTable(ComTabledata table) {
-		HibernateUtil.saveObject(table, null);
-	}
-	
+
 	/**
 	 * 修改表
 	 * @param table
+	 * @return
 	 */
-	public void updateTable(ComTabledata table) {
-		ComTabledata oldTable = getTableById(table.getId());
-		if(oldTable == null){
-			throw new NullPointerException("没有找到id为["+table.getId()+"]的表对象信息");
-		}
-		table.setIsDeployed(0);// 重置资源是否发布的值
-		HibernateUtil.updateObjectByHql(table, null);
+	public String updateTable(ComTabledata table) {
+		return null;
 	}
-	
-	
+
 	/**
 	 * 删除表
-	 * @param tableIdArr
+	 * @param tableId
+	 * @return
 	 */
-	public void deleteTable(Object[] tableIdArr) {
-		int len = tableIdArr.length;
-		StringBuilder in = new StringBuilder("");
-		if(len == 1){
-			in.append(" = ?");
-		}else{
-			in.append(" in (");
-			for (int i=0;i<len;i++) {
-				in.append("?").append(",");
-			}
-			in.setLength(in.length()-1);
-			in.append(")");
-		}
-		
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSysResource where refResourceId " + in, tableIdArr);
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "delete ComTabledata where id " + in, tableIdArr);
+	public String deleteTable(String tableId) {
+		return null;
 	}
+	
+	
 	
 	//--------------------------------------------------------
 	

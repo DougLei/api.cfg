@@ -14,12 +14,16 @@ import com.king.tooth.util.JsonUtil;
 
 /**
  * 项目模块信息资源对象
- * <p>理解为菜单</p>
+ * <p>即菜单</p>
  * @author DougLei
  */
 @SuppressWarnings("serial")
 public class ComProjectModule extends AbstractSysResource implements ITable, IEntity{
 	
+	/**
+	 * 关联的项目主键
+	 */
+	private String refProjectId;
 	/**
 	 * 父模块主键
 	 * <p>可为空，用于递归</p>
@@ -51,6 +55,12 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	
 	public String getParentId() {
 		return parentId;
+	}
+	public String getRefProjectId() {
+		return refProjectId;
+	}
+	public void setRefProjectId(String refProjectId) {
+		this.refProjectId = refProjectId;
 	}
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
@@ -90,48 +100,54 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE", 0);
 		table.setIsResource(1);
 		table.setName("项目模块信息资源对象表");
-		table.setComments("项目模块信息资源对象表：理解为菜单");
+		table.setComments("项目模块信息资源对象表：即菜单");
 		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		
+		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", DataTypeConstants.STRING, 32);
+		refProjectIdColumn.setName("关联的项目主键");
+		refProjectIdColumn.setComments("关联的项目主键");
+		refProjectIdColumn.setOrderCode(1);
+		columns.add(refProjectIdColumn);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父模块主键");
 		parentIdColumn.setComments("父模块主键，可为空，用于递归");
-		parentIdColumn.setOrderCode(1);
+		parentIdColumn.setOrderCode(2);
 		columns.add(parentIdColumn);
 		
 		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 50);
 		nameColumn.setName("模块名称");
 		nameColumn.setComments("模块名称");
-		nameColumn.setOrderCode(2);
+		nameColumn.setOrderCode(3);
 		columns.add(nameColumn);
 		
 		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 100);
 		codeColumn.setName("模块编码");
 		codeColumn.setComments("模块编码:这个编码的命名，要整个项目唯一");
-		codeColumn.setOrderCode(3);
+		codeColumn.setOrderCode(4);
 		columns.add(codeColumn);
 		
 		ComColumndata urlColumn = new ComColumndata("url", DataTypeConstants.STRING, 60);
 		urlColumn.setName("url");
 		urlColumn.setComments("url");
-		urlColumn.setOrderCode(4);
+		urlColumn.setOrderCode(5);
 		columns.add(urlColumn);
 		
 		ComColumndata iconColumn = new ComColumndata("icon", DataTypeConstants.STRING, 30);
 		iconColumn.setName("模块图标");
 		iconColumn.setComments("模块图标");
-		iconColumn.setOrderCode(5);
+		iconColumn.setOrderCode(6);
 		columns.add(iconColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
-		orderCodeColumn.setOrderCode(6);
+		orderCodeColumn.setOrderCode(7);
 		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);

@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.common;
 
+import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractService;
 
 /**
@@ -9,18 +10,29 @@ import com.king.tooth.sys.service.AbstractService;
 public class ComProjectService extends AbstractService{
 	
 	/**
-	 * 发布项目
-	 * @param projectId
+	 * 保存项目
+	 * @param project
+	 * @return
 	 */
-	public void deployingProject(String projectId) {
-		
+	public String saveProject(ComProject project) {
+		return null;
 	}
-	
+
 	/**
-	 * 取消发布项目
-	 * @param projectId
+	 * 修改项目
+	 * @param project
+	 * @return
 	 */
-	public void cancelDeployingProject(String projectId) {
-		
+	public String updateProject(ComProject project) {
+		return null;
+	}
+
+	/**
+	 * 删除项目
+	 * @param projectId
+	 * @return
+	 */
+	public String deleteProject(String projectId) {
+		return null;
 	}
 }

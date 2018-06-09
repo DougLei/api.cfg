@@ -77,8 +77,10 @@ public class ResourceHandlerUtil {
 	 */
 	public static void initBasicPropValsForSave(String entityName, Map<String, Object> data, String shortDesc) {
 		data.put(ResourceNameConstants.PROJECT_ID, CurrentThreadContext.getProjectId());
-		data.put(ResourceNameConstants.ID, getIdentity());
-		
+		// 当没有id值的时候，再赋予id值
+		if(StrUtils.isEmpty(data.get(ResourceNameConstants.ID))){
+			data.put(ResourceNameConstants.ID, getIdentity());
+		}
 		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
 				&& !entityName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 不是关系表，才要这些值
 			Date currentDate = new Date();

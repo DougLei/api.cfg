@@ -86,7 +86,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		table.setComments("hibernate的hbm内容对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(GET+","+DELETE);
+		table.setReqResourceMethod(NONE);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		

@@ -1,5 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.king.tooth.sys.controller.AbstractResourceController;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.common.ComTabledataService;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -30,9 +33,11 @@ public class ComTabledataController extends AbstractResourceController{
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody add(@RequestBody ComTabledata table){
-		table.analysisResourceProp();
-		tabledataService.saveTable(table);
-		return installOperResponseBody("添加成功", null);
+		String result = table.analysisResourceProp();
+		if(result == null){
+			result = tabledataService.saveTable(table);
+		}
+		return installOperResponseBody(result, null);
 	}
 	
 	/**
@@ -43,8 +48,26 @@ public class ComTabledataController extends AbstractResourceController{
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody update(@RequestBody ComTabledata table){
-		table.analysisResourceProp();
-		tabledataService.updateTable(table);
-		return installOperResponseBody("修改成功", null);
+		String result = table.analysisResourceProp();
+		if(result == null){
+			result = tabledataService.updateTable(table);
+		}
+		return installOperResponseBody(result, null);
+	}
+	
+	/**
+	 * 删除表
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping(value="/delete", method = RequestMethod.DELETE)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody delete(HttpServletRequest request){
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要删除的表id不能为空", null);
+		}
+		String result = tabledataService.deleteTable(tableId);
+		return installOperResponseBody(result, null);
 	}
 }

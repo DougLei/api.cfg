@@ -78,6 +78,9 @@ public class ComDatabaseService extends AbstractService{
 		if(oldDatabase == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
+		if(oldDatabase.getIsDeployed() == 1){
+			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，无法删除，请先取消发布";
+		}
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
