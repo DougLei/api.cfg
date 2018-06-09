@@ -19,7 +19,6 @@ import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
-import com.king.tooth.sys.entity.common.ComDataLinks;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComOperLog;
@@ -32,6 +31,9 @@ import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComProjectComTabledataLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
@@ -97,7 +99,7 @@ public class ComBasicDataProcessService extends AbstractService{
 	 * @return
 	 */
 	private List<ComTabledata> getInitTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(15);
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(17);
 		String dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
@@ -115,6 +117,9 @@ public class ComBasicDataProcessService extends AbstractService{
 		tables.add(new ComSqlScript().toCreateTable(dbType));
 		tables.add(new ComSysAccount().toCreateTable(dbType));
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
+		
+		tables.add(new ComProjectComSqlScriptLinks().toCreateTable(dbType));
+		tables.add(new ComProjectComTabledataLinks().toCreateTable(dbType));
 		
 		return tables;
 	}

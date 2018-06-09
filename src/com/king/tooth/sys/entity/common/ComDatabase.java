@@ -154,7 +154,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(GET+","+DELETE);
+		table.setReqResourceMethod(GET);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
 		

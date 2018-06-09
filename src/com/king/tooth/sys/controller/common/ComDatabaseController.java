@@ -56,6 +56,22 @@ public class ComDatabaseController extends AbstractResourceController{
 	}
 	
 	/**
+	 * 删除数据库
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping(value="/delete", method = RequestMethod.DELETE)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody delete(HttpServletRequest request){
+		String databaseId = request.getParameter("databaseId");
+		if(StrUtils.isEmpty(databaseId)){
+			return installOperResponseBody("要删除的数据库id不能为空", null);
+		}
+		String result = databaseService.deleteDatabase(databaseId);
+		return installOperResponseBody(result, null);
+	}
+	
+	/**
 	 * 测试数据库连接
 	 * <p>请求方式：GET</p>
 	 * @return

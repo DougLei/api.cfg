@@ -21,7 +21,7 @@ import com.king.tooth.util.JsonUtil;
 public class ComProjectModule extends AbstractSysResource implements ITable, IEntity{
 	
 	/**
-	 * 父模块编号
+	 * 父模块主键
 	 * <p>可为空，用于递归</p>
 	 */
 	private String parentId;
@@ -98,8 +98,8 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
-		parentIdColumn.setName("父模块编号");
-		parentIdColumn.setComments("父模块编号，可为空，用于递归");
+		parentIdColumn.setName("父模块主键");
+		parentIdColumn.setComments("父模块主键，可为空，用于递归");
 		parentIdColumn.setOrderCode(1);
 		columns.add(parentIdColumn);
 		

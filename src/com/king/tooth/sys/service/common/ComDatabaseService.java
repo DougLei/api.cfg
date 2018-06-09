@@ -69,6 +69,24 @@ public class ComDatabaseService extends AbstractService{
 	}
 	
 	/**
+	 * 删除数据库
+	 * @param databaseId
+	 * @return
+	 */
+	public String deleteDatabase(String databaseId) {
+		ComDatabase oldDatabase = getObjectById(databaseId, ComDatabase.class);
+		if(oldDatabase == null){
+			return "没有找到id为["+databaseId+"]的数据库对象信息";
+		}
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
+		if(count > 0){
+			return "该数据库下还存在项目，无法删除，请先删除相关项目";
+		}
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComDatabase where id = ?", databaseId);
+		return null;
+	}
+	
+	/**
 	 * 测试数据库连接
 	 * @param databaseId
 	 */
@@ -79,6 +97,8 @@ public class ComDatabaseService extends AbstractService{
 		}
 		return database.testDbLink();
 	}
+	
+	
 	
 	
 	/**
