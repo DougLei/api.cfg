@@ -34,7 +34,7 @@ public class ComProjectModuleService extends AbstractService{
 		String hql = "select count("+ResourceNameConstants.ID+") from ComProjectModule where projCode = ? and refProjectId = ?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), projectModule.getRefProjectId());
 		if(count > 0){
-			return "编码为["+projectModule.getCode()+"]模块信息已存在";
+			return "编码为["+projectModule.getCode()+"]的模块信息已存在";
 		}
 		return null;
 	}

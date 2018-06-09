@@ -79,7 +79,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");

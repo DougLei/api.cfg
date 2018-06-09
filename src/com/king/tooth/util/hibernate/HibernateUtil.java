@@ -191,16 +191,27 @@ public class HibernateUtil {
 	
 	/**
 	 * 【数据流方式】添加新的配置文件
-	 * @param hbmContents
+	 * @param hbmContent
 	 */
-	public static void appendNewConfig(String... hbmContents){
-		if(hbmContents != null && hbmContents.length > 0){
-			List<InputStream> inputs = new ArrayList<InputStream>(hbmContents.length);
-			for(String hbmContent: hbmContents){
-				inputs.add(new ByteArrayInputStream(hbmContent.getBytes()));
+	public static void appendNewConfig(String... hbmContent){
+		if(hbmContent != null && hbmContent.length > 0){
+			List<InputStream> inputs = new ArrayList<InputStream>(hbmContent.length);
+			for(String hc: hbmContent){
+				inputs.add(new ByteArrayInputStream(hc.getBytes()));
 			}
 			getSessionFactory().appendNewHbmConfig(inputs);
 		}
+	}
+	
+	/**
+	 * 删除配置
+	 * @param entityName
+	 */
+	public static void removeConfig(String entityName){
+		List<String> entityNames = new ArrayList<String>(1);
+		entityNames.add(entityName);
+		removeConfig(entityNames);
+		entityNames.clear();
 	}
 	
 	/**

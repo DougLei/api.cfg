@@ -2,6 +2,7 @@ package com.king.tooth.sys.service.common;
 
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
@@ -75,7 +76,15 @@ public class ComColumndataService extends AbstractService{
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
+			operResult = validColumnRefTableIsExists(column);
+		}
+		if(operResult == null){
 			HibernateUtil.updateObjectByHql(column, null);
+			
+			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
+			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+				HibernateUtil.executeUpdateBySql(SqlStatementType.UPDATE, "update com_tabledata set is_created = 0 where id = '"+column.getTableId()+"'", null);
+			}
 		}
 		return operResult;
 	}

@@ -76,7 +76,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");

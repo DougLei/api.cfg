@@ -35,7 +35,6 @@ import com.king.tooth.sys.entity.datalinks.ComDataLinks;
 import com.king.tooth.sys.entity.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.entity.datalinks.ComProjectComTabledataLinks;
 import com.king.tooth.sys.service.AbstractService;
-import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.DateUtil;
@@ -81,8 +80,7 @@ public class ComBasicDataProcessService extends AbstractService{
 			HibernateUtil.beginTransaction();
 			
 			insertHbmContentsToSessionFactory();// 根据表创建hbm文件，并将其加入到SessionFactory中
-			insertAllTables();// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；
-			insertTableToResources();// 将这些表资源插入到资源表
+			
 			insertDatabaseOfBasicDatas();// 插入配置库的基础数据
 			
 			HibernateUtil.commitTransaction();
@@ -163,7 +161,8 @@ public class ComBasicDataProcessService extends AbstractService{
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		HibernateUtil.saveObject(admin, null);
+		String adminAccountId = HibernateUtil.saveObject(admin, null);
+		
 		
 		// 添加一般开发账户【2.一般开发账户】
 		ComSysAccount normal = new ComSysAccount();
@@ -174,8 +173,12 @@ public class ComBasicDataProcessService extends AbstractService{
 		HibernateUtil.saveObject(normal, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		insertAllTables(adminAccountId);// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；创建者是平台开发账户
+		insertTableToResources(adminAccountId);// 将这些表资源插入到资源表；创建者是平台开发账户
+		
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典数据
-		insertDataDictionary();
+		insertDataDictionary(adminAccountId);
 	}
 	
 	/**
@@ -201,8 +204,9 @@ public class ComBasicDataProcessService extends AbstractService{
 	 * 将表信息插入的cfgTabledata表中
 	 * <p>同时把列的信息插入到cfgColumndata表中</p>
 	 * <p>再根据表创建hbm文件，并将其加入到CfgHibernateHbm表中</p>
+	 * @param adminAccountId 
 	 */
-	private void insertAllTables() {
+	private void insertAllTables(String adminAccountId) {
 		List<ComTabledata> tables = getInitTables();
 		
 		String tableId;
@@ -211,30 +215,31 @@ public class ComBasicDataProcessService extends AbstractService{
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : tables) {
 			// 插入表和列信息
-			tableId = HibernateUtil.saveObject(table, "初始化插入内置表");
+			tableId = HibernateUtil.saveObject(table, adminAccountId);
 			columns = table.getColumns();
 			for (ComColumndata column : columns) {
 				column.setTableId(tableId);
-				HibernateUtil.saveObject(column, "初始化插入内置表的列");
+				HibernateUtil.saveObject(column, adminAccountId);
 			}
 			
 			// 创建对应的hbm文件，并保存
 			hbm = new ComHibernateHbm();
 			hbm.tableTurnToHbm(table);
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
-			HibernateUtil.saveObject(hbm, "初始化插入内置hbm");
+			HibernateUtil.saveObject(hbm, adminAccountId);
 		}
 		clearTables(tables);
 	}
 	
 	/**
 	 * 将表资源添加到资源表中
+	 * @param adminAccountId 
 	 */
-	private void insertTableToResources() {
+	private void insertTableToResources(String adminAccountId) {
 		List<ComTabledata> tables = getInitTables();
-		ComSysResourceService comSysResourceService = new ComSysResourceService();
 		for (ComTabledata table : tables) {
-			comSysResourceService.insertSysResource(table);
+			ComSysResource resource = table.turnToResource();
+			HibernateUtil.saveObject(resource, adminAccountId);
 		}
 		clearTables(tables);
 	}
@@ -274,63 +279,64 @@ public class ComBasicDataProcessService extends AbstractService{
 	//---------------------------------------------------------------------------------------------------
 	/**
 	 * 添加数据字典的基础数据
+	 * @param adminAccountId 
 	 */
-	private void insertDataDictionary() {
+	private void insertDataDictionary(String adminAccountId) {
 		// ComColumndata.columnType 字段数据类型
-		insertDataDictionary(null, "cfgcolumndata.columntype", "字符串", "string", 1);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "布尔值", "boolean", 2);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "整型", "integer", 3);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "浮点型", "double", 4);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "日期", "date", 5);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "字符大字段", "clob", 6);
-		insertDataDictionary(null, "cfgcolumndata.columntype", "二进制大字段", "blob", 7);
+		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "字符串", "string", 1);
+		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "布尔值", "boolean", 2);
+		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "整型", "integer", 3);
+		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "浮点型", "double", 4);
+		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "日期", "date", 5);
+		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "字符大字段", "clob", 6);
+		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "二进制大字段", "blob", 7);
 		
 		// ComDatabase.dbType 数据库类型
-		insertDataDictionary(null, "cfgdatabase.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(null, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2);
+		insertDataDictionary(adminAccountId, null, "cfgdatabase.dbtype", "oracle", "oracle", 1);
+		insertDataDictionary(adminAccountId, null, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2);
 		
 		// ComTabledata.tableType 表类型
-		insertDataDictionary(null, "cfgtabledata.tabletype", "单表", "1", 1);
-		insertDataDictionary(null, "cfgtabledata.tabletype", "树表", "2", 2);
-		insertDataDictionary(null, "cfgtabledata.tabletype", "主子表", "3", 3);
+		insertDataDictionary(adminAccountId, null, "cfgtabledata.tabletype", "单表", "1", 1);
+		insertDataDictionary(adminAccountId, null, "cfgtabledata.tabletype", "树表", "2", 2);
+		insertDataDictionary(adminAccountId, null, "cfgtabledata.tabletype", "主子表", "3", 3);
 		
 		// ComTabledata.dbType 数据库类型
-		insertDataDictionary(null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
+		insertDataDictionary(adminAccountId, null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
+		insertDataDictionary(adminAccountId, null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
 		
 		// ComOperLog.operType 操作的类型
-		insertDataDictionary(null, "comoperLog.opertype", "查询", "select", 1);
-		insertDataDictionary(null, "comoperLog.opertype", "增加", "insert", 2);
-		insertDataDictionary(null, "comoperLog.opertype", "修改", "update", 3);
-		insertDataDictionary(null, "comoperLog.opertype", "删除", "delete", 4);
+		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "查询", "select", 1);
+		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "增加", "insert", 2);
+		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "修改", "update", 3);
+		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "删除", "delete", 4);
 		
 		// ComPermission.permissionType 权限的类型
-		insertDataDictionary(null, "compermission.permissiontype", "模块", "1", 1);
-		insertDataDictionary(null, "compermission.permissiontype", "页面操作", "2", 2);
+		insertDataDictionary(adminAccountId, null, "compermission.permissiontype", "模块", "1", 1);
+		insertDataDictionary(adminAccountId, null, "compermission.permissiontype", "页面操作", "2", 2);
 		
 		// ComSysAccount.accountType 账户类型
-		insertDataDictionary(null, "comsysaccount.accounttype", "超级管理员", "0", 0);
-		insertDataDictionary(null, "comsysaccount.accounttype", "游客", "1", 1);
-		insertDataDictionary(null, "comsysaccount.accounttype", "客户", "2", 2);
-		insertDataDictionary(null, "comsysaccount.accounttype", "普通账户", "3", 3);
-		insertDataDictionary(null, "comsysaccount.accounttype", "普通虚拟账户", "4", 4);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "超级管理员", "0", 0);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "游客", "1", 1);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "客户", "2", 2);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "普通账户", "3", 3);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "普通虚拟账户", "4", 4);
 		
 		// ComSysAccount.accountStatus 账户状态
-		insertDataDictionary(null, "comsysaccount.accountstatus", "启用", "1", 1);
-		insertDataDictionary(null, "comsysaccount.accountstatus", "禁用", "2", 2);
-		insertDataDictionary(null, "comsysaccount.accountstatus", "过期", "3", 3);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accountstatus", "启用", "1", 1);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accountstatus", "禁用", "2", 2);
+		insertDataDictionary(adminAccountId, null, "comsysaccount.accountstatus", "过期", "3", 3);
 		
 		// ComSysResource.resourceType 账户状态
-		insertDataDictionary(null, "comsysresource.resourcetype", "表资源", "1", 1);
-		insertDataDictionary(null, "comsysresource.resourcetype", "sql脚本资源", "2", 2);
-		insertDataDictionary(null, "comsysresource.resourcetype", "代码资源", "2", 2);
-		insertDataDictionary(null, "comsysresource.resourcetype", "数据库资源", "2", 2);
-		insertDataDictionary(null, "comsysresource.resourcetype", "项目资源", "2", 2);
+		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "表资源", "1", 1);
+		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "sql脚本资源", "2", 2);
+		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "代码资源", "2", 2);
+		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "数据库资源", "2", 2);
+		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "项目资源", "2", 2);
 		
 		// ComUser.userStatus 账户状态
-		insertDataDictionary(null, "comuser.userstatus", "在职", "1", 1);
-		insertDataDictionary(null, "comuser.userstatus", "离职", "2", 2);
-		insertDataDictionary(null, "comuser.userstatus", "休假", "3", 3);
+		insertDataDictionary(adminAccountId, null, "comuser.userstatus", "在职", "1", 1);
+		insertDataDictionary(adminAccountId, null, "comuser.userstatus", "离职", "2", 2);
+		insertDataDictionary(adminAccountId, null, "comuser.userstatus", "休假", "3", 3);
 	}
 	
 	/**
@@ -342,14 +348,14 @@ public class ComBasicDataProcessService extends AbstractService{
 	 * @param orderCode
 	 * @return
 	 */
-	private String insertDataDictionary(String parentId, String code, String codeCaption, String codeValue, int orderCode){
+	private String insertDataDictionary(String adminAccountId, String parentId, String code, String codeCaption, String codeValue, int orderCode){
 		ComDataDictionary dataDictionary = new ComDataDictionary();
 		dataDictionary.setParentCodeId(parentId);
 		dataDictionary.setCode(code);
 		dataDictionary.setCodeCaption(codeCaption);
 		dataDictionary.setCodeValue(codeValue);
 		dataDictionary.setOrderCode(orderCode);
-		return HibernateUtil.saveObject(dataDictionary, "系统初始化内置数据字典");
+		return HibernateUtil.saveObject(dataDictionary, adminAccountId);
 	}
 	
 	//------------------------------------------------------------------------------------

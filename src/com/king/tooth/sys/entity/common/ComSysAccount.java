@@ -46,7 +46,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	private String emails;
 	/**
 	 * 账户类型
-	 * 		1.平台开发账户
+	 * 		1.平台开发账户(只有一个用户，由系统初始化内置进去)
 	 * 		2.一般开发账户
 	 */
 	private Integer accountType;
@@ -181,7 +181,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
 		accountTypeColumn.setName("账户类型");
-		accountTypeColumn.setComments("账户类型:1.平台开发账户、2.一般开发账户");
+		accountTypeColumn.setComments("账户类型:1.平台开发账户(只有一个用户，由系统初始化内置进去)、2.一般开发账户");
 		accountTypeColumn.setDefaultValue("2");
 		accountTypeColumn.setOrderCode(6);
 		columns.add(accountTypeColumn);
@@ -219,5 +219,17 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		entityJson.put("validDate", validDate);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
+	}
+	
+	/**
+	 * 是否是平台的开发者
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isPlatformDeveloper(){
+		if(accountType == 1){
+			return true;
+		}
+		return false;
 	}
 }

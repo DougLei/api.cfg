@@ -156,7 +156,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
 		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name", DataTypeConstants.STRING, 100);
 		dbDisplayNameColumn.setName("数字库名");

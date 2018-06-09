@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractResourceController;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.common.ComTabledataService;
@@ -68,6 +69,27 @@ public class ComTabledataController extends AbstractResourceController{
 			return installOperResponseBody("要删除的表id不能为空", null);
 		}
 		String result = tabledataService.deleteTable(tableId);
+		return installOperResponseBody(result, null);
+	}
+	
+
+	/**
+	 * 建模
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/buildModel", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody buildModel(HttpServletRequest request){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("建模功能目前值提供给平台开发人员使用", null);
+		}
+		
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要建模的表id不能为空", null);
+		}
+		String result = tabledataService.buildModel(tableId);
 		return installOperResponseBody(result, null);
 	}
 }

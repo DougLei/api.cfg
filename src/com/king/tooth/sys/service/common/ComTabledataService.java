@@ -1,13 +1,11 @@
 package com.king.tooth.sys.service.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.king.tooth.constants.CurrentSysInstanceConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComTabledata;
@@ -18,22 +16,19 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 表数据信息资源对象处理器
  * @author DougLei
  */
-@SuppressWarnings("unchecked")
 public class ComTabledataService extends AbstractService{
 
-	private ComSysResourceService comSysResourceService = new ComSysResourceService();
-	
 	/**
-	 * 根据表id，获取其表的所有信息，包括列的信息集合
-	 * @param tableId
-	 * @return
+	 * 验证表名是否存在
+	 * @param table
+	 * @return operResult
 	 */
-	private ComTabledata getTableAllById(String tableId){
-		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, "from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableId);
-		if(table != null){
-			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
+	private String validTableNameIsExists(ComTabledata table) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+		if(count > 0){
+			return "表名为["+table.getTableName()+"]的表信息已存在";
 		}
-		return table;
+		return null;
 	}
 	
 	/**
@@ -42,7 +37,11 @@ public class ComTabledataService extends AbstractService{
 	 * @return
 	 */
 	public String saveTable(ComTabledata table) {
-		return null;
+		String operResult = validTableNameIsExists(table);
+		if(operResult == null){
+			HibernateUtil.saveObject(table, null);
+		}
+		return operResult;
 	}
 
 	/**
@@ -51,7 +50,27 @@ public class ComTabledataService extends AbstractService{
 	 * @return
 	 */
 	public String updateTable(ComTabledata table) {
-		return null;
+		ComTabledata oldTable = getObjectById(table.getId(), ComTabledata.class);
+		if(oldTable == null){
+			return "没有找到id为["+table.getId()+"]的表对象信息";
+		}
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+		
+		String operResult = null;
+		if(!isPlatformDeveloper && !oldTable.getTableName().equals(table.getTableName())){
+			if(oldTable.getIsDeployed() == 1){
+				return "该表已经发布，不能修改表名，或取消发布后再修改";
+			}
+			operResult = validTableNameIsExists(table);
+		}
+		
+		if(operResult == null){
+			if(isPlatformDeveloper){
+				table.setIsCreated(0);// 只要修改表信息，就要重新建模
+			}
+			HibernateUtil.updateObjectByHql(table, null);
+		}
+		return operResult;
 	}
 
 	/**
@@ -60,104 +79,71 @@ public class ComTabledataService extends AbstractService{
 	 * @return
 	 */
 	public String deleteTable(String tableId) {
+		ComTabledata oldTable = getObjectById(tableId, ComTabledata.class);
+		if(oldTable == null){
+			return "没有找到id为["+tableId+"]的表对象信息";
+		}
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+		
+		if(!isPlatformDeveloper && oldTable.getIsDeployed() == 1){
+			return "该表已经发布，无法删除，请先取消发布";
+		}
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComTabledata where id = '"+tableId+"'");
+		
+		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
+		if(isPlatformDeveloper){
+			// 删除hbm信息
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where refTableId = '"+tableId+"'");
+			
+			// 删除资源
+			new ComSysResourceService().deleteSysResource(tableId);
+			
+			// drop表
+			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			dbTableHandler.dropTable(oldTable);
+			
+			// 从sessionFactory中移除映射
+			HibernateUtil.removeConfig(oldTable.getEntityName());
+		}
 		return null;
 	}
 	
-	
-	
-	//--------------------------------------------------------
-	
-	
-	
 	/**
-	 * 创建表数据模型
-	 * @param tableIdArr
-	 */
-	public void createTableModel(String[] tableIdArr) {
-		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-		ComTabledata table = null;
-		ComHibernateHbm hbm = null;
-		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(tableIdArr.length);
-		List<String> hbmContents = new ArrayList<String>(tableIdArr.length);
-		for (String tableId : tableIdArr) {
-			table = getTableAllById(tableId);
-			if(table == null){
-				continue;
-			}
-			tabledatas.add(table);
-			
-			hbm = new ComHibernateHbm();
-//			hbm.setTableId(table.getId());
-			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
-			HibernateUtil.saveObject(hbm, null);
-			hbmContents.add(hbm.getHbmContent());
-			
-			table.clear();
-			
-			HibernateUtil.updateObject(table, null);
-			
-			comSysResourceService.insertSysResource(table);
-		}
-		HibernateUtil.appendNewConfig(hbmContents);
-		hbmContents.clear();
-		
-		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
-		dbTableHandler.createTable(tabledatas);
-		tabledatas.clear();
-	}
-
-	/**
-	 * 删除表数据模型
-	 * @param tableIdArr
-	 */
-	public void dropTableModel(Object[] tableIdArr) {
-		int len = tableIdArr.length;
-		List<String> entityNames = new ArrayList<String>(len);
-		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(tableIdArr.length);
-		
-		ComTabledata tmpTable;
-		Map<String, Object> tableInfo = null;
-		StringBuilder in = new StringBuilder(" in (");
-		for (int i=0;i<len;i++) {
-			in.append("?").append(",");
-			tableInfo = (Map<String, Object>) HibernateUtil.executeUniqueQueryByHqlArr("select tableName,resourceName from ComTabledata where isBuiltin=1 and isCreateHbm =0 and id =?", tableIdArr[i]);
-			entityNames.add(tableInfo.get("tableName")+"");
-			
-			tmpTable = new ComTabledata();
-			tmpTable.setResourceName(tableInfo.get("resourceName")+"");
-			tabledatas.add(tmpTable);
-			
-			tableInfo.clear();
-		}
-		in.setLength(in.length()-1);
-		in.append(")");
-		
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where tableId " + in, tableIdArr);
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id " + in, tableIdArr);
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update ComTabledata set isCreateHbm=0 where id " + in, tableIdArr);
-		HibernateUtil.removeConfig(entityNames);
-		entityNames.clear();
-		
-		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
-		dbTableHandler.dropTable(tabledatas);
-		tabledatas.clear();
-	}
-
-	//--------------------------------------------------------
-	
-	/**
-	 * 发布表
+	 * 建模
+	 * <p>如果是平台开发者账户，则需要添加资源信息，建表，以及映射文件数据，并添加到当前的sessionFacotry中</p>
+	 * @param tableId
 	 * @return
 	 */
-	public void deployingTable(String[] tableIdArr) {
+	public String buildModel(String tableId){
+		ComTabledata table = getObjectById(tableId, ComTabledata.class);
+		if(table == null){
+			return "没有找到id为["+tableId+"]的表对象信息";
+		}
+		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		
-	}
-
-	/**
-	 * 删除表，即删模
-	 * @return
-	 */
-	public void cancelDeployingTable(String[] tableIdArr) {
+		// 获的hbm内容
+		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
+		String hbmContent = hbmHandler.createHbmMappingContent(table);
 		
+		// 1、建表
+		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+		dbTableHandler.createTable(table);
+		table.clear();
+		
+		// 2、插入hbm
+		ComHibernateHbm hbm = new ComHibernateHbm();
+		hbm.tableTurnToHbm(table);
+		hbm.setHbmContent(hbmContent);
+		HibernateUtil.saveObject(hbm, null);
+		
+		// 3、插入资源数据
+		new ComSysResourceService().saveSysResource(table);
+		
+		// 4、将hbm配置内容，加入到sessionFactory中
+		HibernateUtil.appendNewConfig(hbmContent);
+		
+		// 5、修改表是否创建的状态
+		HibernateUtil.executeUpdateBySql(SqlStatementType.UPDATE, "update com_tabledata set is_created = 1 where id = '"+tableId+"'", null);
+		return null;
 	}
 }

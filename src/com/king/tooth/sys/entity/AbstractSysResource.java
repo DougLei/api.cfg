@@ -30,6 +30,10 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * 资源是否发布
 	 */
 	protected Integer isDeployed;
+	/**
+	 * 资源是否被创建
+	 */
+	protected Integer isCreated;
 	
 	// -----------------------------------------------------------------
 	
@@ -76,5 +80,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	public String getReqResourceMethod() {
 		return reqResourceMethod;
+	}
+	public Integer getIsCreated() {
+		return isCreated;
+	}
+	public void setIsCreated(Integer isCreated) {
+		this.isCreated = isCreated;
 	}
 }

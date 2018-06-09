@@ -88,7 +88,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(NONE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");

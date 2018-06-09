@@ -68,31 +68,38 @@ public class DynamicBasicDataColumnUtil {
 			isDeployedColumn.setDefaultValue("0");
 			isDeployedColumn.setOrderCode(9907);
 			table.getColumns().add(isDeployedColumn);
+			
+			ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
+			isCreatedColumn.setName("资源是否被创建");
+			isCreatedColumn.setComments("资源是否被创建");
+			isCreatedColumn.setDefaultValue("0");
+			isCreatedColumn.setOrderCode(9908);
+			table.getColumns().add(isCreatedColumn);
 		}
 		
 		if(table.getIsDatalinkTable() == 0 && !table.getTableName().endsWith(ResourceNameConstants.DATALINK_TABLENAME_SUFFIX)){// 不是关系表，才要这些字段
 			ComColumndata createTimeColumn = new ComColumndata("create_time", DataTypeConstants.DATE, 0);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
-			createTimeColumn.setOrderCode(9908);
+			createTimeColumn.setOrderCode(9909);
 			table.getColumns().add(createTimeColumn);
 			
 			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_time", DataTypeConstants.DATE, 0);
 			lastUpdateTimeColumn.setComments("最后修改时间");
 			lastUpdateTimeColumn.setName("最后修改时间");
-			lastUpdateTimeColumn.setOrderCode(9909);
+			lastUpdateTimeColumn.setOrderCode(9910);
 			table.getColumns().add(lastUpdateTimeColumn);
 			
 			ComColumndata createUserIdColumn = new ComColumndata("create_user_id", DataTypeConstants.STRING, 32);
 			createUserIdColumn.setComments("创建人主键");
 			createUserIdColumn.setName("创建人主键");
-			createUserIdColumn.setOrderCode(9910);
+			createUserIdColumn.setOrderCode(9911);
 			table.getColumns().add(createUserIdColumn);
 			
 			ComColumndata lastUpdatedUserIdColumn = new ComColumndata("last_updated_user_id", DataTypeConstants.STRING, 32);
 			lastUpdatedUserIdColumn.setComments("最后修改人主键");
 			lastUpdatedUserIdColumn.setName("最后修改人主键");
-			lastUpdatedUserIdColumn.setOrderCode(9911);
+			lastUpdatedUserIdColumn.setOrderCode(9912);
 			table.getColumns().add(lastUpdatedUserIdColumn);
 		}
 	}

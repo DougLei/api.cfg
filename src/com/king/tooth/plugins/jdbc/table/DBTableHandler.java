@@ -1,5 +1,6 @@
 package com.king.tooth.plugins.jdbc.table;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +52,18 @@ public class DBTableHandler {
 	private static final String basePackage = "com.king.tooth.plugins.jdbc.table.impl.";
 	private static final String implClassname = ".TableImpl";
 	
+	
+	/**
+	 * 创建表
+	 * @param tabledata
+	 */
+	public void createTable(ComTabledata tabledata){
+		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(1);
+		tabledatas.add(tabledata);
+		createTable(tabledatas);
+		tabledatas.clear();
+	}
+	
 	/**
 	 * 创建表
 	 * @param tabledatas
@@ -61,6 +74,17 @@ public class DBTableHandler {
 			String[] ddlSqlArr = tmpSql.split(";");
 			executeDDL(ddlSqlArr, tabledatas);
 		}
+	}
+	
+	/**
+	 * 删除表
+	 * @param tabledata
+	 */
+	public void dropTable(ComTabledata tabledata){
+		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(1);
+		tabledatas.add(tabledata);
+		dropTable(tabledatas);
+		tabledatas.clear();
 	}
 	
 	/**

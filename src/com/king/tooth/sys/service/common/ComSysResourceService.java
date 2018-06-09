@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.common;
 
+import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.AbstractService;
@@ -11,14 +12,22 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 public class ComSysResourceService extends AbstractService{
-
+	
 	/**
-	 * 添加一条新资源
+	 * 保存资源信息
 	 * @param resource
 	 */
-	public void insertSysResource(ISysResource iresource){
+	public void saveSysResource(ISysResource iresource){
 		ComSysResource resource = iresource.turnToResource();
-		HibernateUtil.saveObject(resource , "保存资源");
+		HibernateUtil.saveObject(resource , null);
+	}
+
+	/**
+	 * 删除资源信息
+	 * @param resourceId
+	 */
+	public void deleteSysResource(String resourceId){
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id = ?", resourceId);
 	}
 	
 	/**
