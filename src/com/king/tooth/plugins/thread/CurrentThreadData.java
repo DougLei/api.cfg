@@ -2,6 +2,7 @@ package com.king.tooth.plugins.thread;
 
 import org.hibernate.Session;
 
+import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 
 /**
@@ -28,6 +29,10 @@ class CurrentThreadData {
 	 * 当前线程的帐号对象
 	 */
 	private ComSysAccountOnlineStatus currentAccountOnlineStatus;
+	/**
+	 * 当前线程的请求日志对象
+	 */
+	private ComReqLog currentReqLog;
 	
 	
 	public String getProjectId() {
@@ -54,5 +59,11 @@ class CurrentThreadData {
 	public void setCurrentAccountOnlineStatus(
 			ComSysAccountOnlineStatus currentAccountOnlineStatus) {
 		this.currentAccountOnlineStatus = currentAccountOnlineStatus;
+	}
+	public ComReqLog getCurrentReqLog() {
+		return currentReqLog;
+	}
+	public void setCurrentReqLog(ComReqLog currentReqLog) {
+		this.currentReqLog = currentReqLog;
 	}
 }

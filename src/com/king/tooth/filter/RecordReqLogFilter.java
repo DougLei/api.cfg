@@ -10,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.service.common.ComReqLogService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -26,7 +26,7 @@ public class RecordReqLogFilter extends AbstractFilter{
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 		ComReqLogService reqLogService = new ComReqLogService();
 		ComReqLog reqLog = reqLogService.initReqLogInstance((HttpServletRequest)req);
-		req.setAttribute(ResourceNameConstants.REQ_LOG_KEY, reqLog);
+		CurrentThreadContext.setCurrentReqLog(reqLog);
 		chain.doFilter(req, resp);
 		reqLog.setRespDate(new Date());
 		HibernateUtil.saveObject(reqLog, reqLog.getReqIp() + ":日志记录");

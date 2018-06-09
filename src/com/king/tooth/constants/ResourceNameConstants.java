@@ -103,10 +103,4 @@ public class ResourceNameConstants {
 	 * 通用关联关系表名
 	 */
 	public static final String COMMON_DATALINK_TABLENAME = "COM_DATA_LINKS";
-	
-	//-----------------------------------------------------------------------------------------------
-	/**
-	 * 请求日志记录对象实例，在request中存储的key名称
-	 */
-	public static final String REQ_LOG_KEY = "reqLog";
 }
