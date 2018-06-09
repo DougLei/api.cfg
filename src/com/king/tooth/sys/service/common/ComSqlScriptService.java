@@ -38,8 +38,6 @@ public class ComSqlScriptService extends AbstractService {
 		return null;
 	}
 
-	//--------------------------------------------------------
-	
 	/**
 	 * 根据资源名，查询对应的通用sql脚本资源对象
 	 * @param resourceName
@@ -56,41 +54,5 @@ public class ComSqlScriptService extends AbstractService {
 			throw new IllegalArgumentException("不存在请求的sql脚本资源：" + resourceName);
 		}
 		return sqlScriptResource;
-	}
-	
-	/**
-	 * 根据id，查询对应的通用sql脚本资源对象
-	 * @param sqlScriptId
-	 * @return
-	 */
-	public ComSqlScript findSqlScriptResourceById(String sqlScriptId) {
-		if(StrUtils.isEmpty(sqlScriptId)){
-			throw new NullPointerException("请求的资源主键不能为空");
-		}
-		
-		String queryHql = "from ComSqlScript where id = ?";
-		ComSqlScript sqlScriptResource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSqlScript.class, queryHql, sqlScriptId);
-		if(sqlScriptResource == null){
-			throw new IllegalArgumentException("不存在请求的sql脚本资源：" + sqlScriptId);
-		}
-		return sqlScriptResource;
-	}
-
-	//--------------------------------------------------------
-	
-	/**
-	 * 发布sql脚本
-	 * @return
-	 */
-	public void deployingSqlScript(String[] sqlScriptIdArr) {
-		
-	}
-
-	/**
-	 * 删除发布sql脚本
-	 * @return
-	 */
-	public void cancelDeployingSqlScript(String[] sqlScriptIdArr) {
-		
 	}
 }

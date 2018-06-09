@@ -119,6 +119,23 @@ public class ComTabledataService extends AbstractService{
 		if(table == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
+		if(table.getIsCreated() == 1){
+			return "["+table.getTableName()+"]已完成建模";
+		}
+		
+		// 如果之前有数据，则删除之前的数据
+		int count = (int) HibernateUtil.executeUniqueQueryBySql("select count(1) from com_hibernate_hbm where ref_table_id = '"+tableId+"'", null);
+		if(count > 0){
+			// 删除hbm信息
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where refTableId = '"+tableId+"'");
+			// 删除资源
+			new ComSysResourceService().deleteSysResource(tableId);
+			// drop表
+			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			dbTableHandler.dropTable(table);
+			// 从sessionFactory中移除映射
+//			HibernateUtil.removeConfig(table.getEntityName());
+		}
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		
 		// 获的hbm内容

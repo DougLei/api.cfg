@@ -80,7 +80,6 @@ public class ComBasicDataProcessService extends AbstractService{
 			HibernateUtil.beginTransaction();
 			
 			insertHbmContentsToSessionFactory();// 根据表创建hbm文件，并将其加入到SessionFactory中
-			
 			insertDatabaseOfBasicDatas();// 插入配置库的基础数据
 			
 			HibernateUtil.commitTransaction();
@@ -216,6 +215,7 @@ public class ComBasicDataProcessService extends AbstractService{
 		for (ComTabledata table : tables) {
 			// 插入表和列信息
 			tableId = HibernateUtil.saveObject(table, adminAccountId);
+			table.setId(tableId);
 			columns = table.getColumns();
 			for (ComColumndata column : columns) {
 				column.setTableId(tableId);
