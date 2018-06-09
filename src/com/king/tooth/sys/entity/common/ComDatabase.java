@@ -167,36 +167,42 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		ComColumndata dbTypeColumn = new ComColumndata("db_type", DataTypeConstants.STRING, 10);
 		dbTypeColumn.setName("数据库类型");
 		dbTypeColumn.setComments("数据库类型");
+		dbTypeColumn.setIsNullabled(0);
 		dbTypeColumn.setOrderCode(3);
 		columns.add(dbTypeColumn);
 		
 		ComColumndata dbInstanceNameColumn = new ComColumndata("db_instance_name", DataTypeConstants.STRING, 20);
 		dbInstanceNameColumn.setName("数据库实例名");
 		dbInstanceNameColumn.setComments("数据库实例名：oracle中是实例名、sqlserver中就是数据库名");
+		dbInstanceNameColumn.setIsNullabled(0);
 		dbInstanceNameColumn.setOrderCode(4);
 		columns.add(dbInstanceNameColumn);
 		
 		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name", DataTypeConstants.STRING, 20);
 		loginUserNameColumn.setName("数据库登录名");
 		loginUserNameColumn.setComments("数据库登录名");
+		loginUserNameColumn.setIsNullabled(0);
 		loginUserNameColumn.setOrderCode(5);
 		columns.add(loginUserNameColumn);
 		
 		ComColumndata loginPasswordColumn = new ComColumndata("login_password", DataTypeConstants.STRING, 32);
 		loginPasswordColumn.setName("数据库登录密码");
 		loginPasswordColumn.setComments("数据库登录密码");
+		loginPasswordColumn.setIsNullabled(0);
 		loginPasswordColumn.setOrderCode(6);
 		columns.add(loginPasswordColumn);
 		
 		ComColumndata dbIpColumn = new ComColumndata("db_ip", DataTypeConstants.STRING, 20);
 		dbIpColumn.setName("数据库ip");
 		dbIpColumn.setComments("数据库ip");
+		dbIpColumn.setIsNullabled(0);
 		dbIpColumn.setOrderCode(7);
 		columns.add(dbIpColumn);
 		
 		ComColumndata dbPortColumn = new ComColumndata("db_port", DataTypeConstants.INTEGER, 5);
 		dbPortColumn.setName("数据库端口");
 		dbPortColumn.setComments("数据库端口");
+		dbPortColumn.setIsNullabled(0);
 		dbPortColumn.setOrderCode(8);
 		columns.add(dbPortColumn);
 		

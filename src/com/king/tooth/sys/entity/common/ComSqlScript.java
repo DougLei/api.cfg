@@ -261,6 +261,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name", DataTypeConstants.STRING, 60);
 		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
 		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
+		sqlScriptResourceNameColumn.setIsNullabled(0);
 		sqlScriptResourceNameColumn.setOrderCode(2);
 		columns.add(sqlScriptResourceNameColumn);
 		
@@ -273,6 +274,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", DataTypeConstants.CLOB, 0);
 		sqlScriptContentColumn.setName("sql脚本内容");
 		sqlScriptContentColumn.setComments("sql脚本内容");
+		sqlScriptContentColumn.setIsNullabled(0);
 		sqlScriptContentColumn.setOrderCode(4);
 		columns.add(sqlScriptContentColumn);
 		

@@ -84,6 +84,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：目前系统只支持，一个项目对一个数据库");
+		refDatabaseIdColumn.setIsNullabled(0);
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
@@ -96,6 +97,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 		ComColumndata projCodeColumn = new ComColumndata("proj_code", DataTypeConstants.STRING, 100);
 		projCodeColumn.setName("项目编码");
 		projCodeColumn.setComments("项目编码");
+		projCodeColumn.setIsNullabled(0);
 		projCodeColumn.setOrderCode(3);
 		columns.add(projCodeColumn);
 		

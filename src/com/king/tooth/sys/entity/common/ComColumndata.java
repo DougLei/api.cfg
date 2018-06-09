@@ -223,6 +223,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		ComColumndata columnNameColumn = new ComColumndata("column_name", DataTypeConstants.STRING, 40);
 		columnNameColumn.setName("列名");
 		columnNameColumn.setComments("列名");
+		columnNameColumn.setIsNullabled(0);
 		columnNameColumn.setOrderCode(3);
 		columns.add(columnNameColumn);
 		
@@ -235,6 +236,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		ComColumndata columnTypeColumn = new ComColumndata("column_type", DataTypeConstants.STRING, 10);
 		columnTypeColumn.setName("字段数据类型");
 		columnTypeColumn.setComments("字段数据类型");
+		columnTypeColumn.setIsNullabled(0);
 		columnTypeColumn.setOrderCode(5);
 		columns.add(columnTypeColumn);
 		
@@ -242,6 +244,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		lengthColumn.setName("字段长度");
 		lengthColumn.setComments("字段长度");
 		lengthColumn.setDefaultValue("32");
+		lengthColumn.setIsNullabled(0);
 		lengthColumn.setOrderCode(6);
 		columns.add(lengthColumn);
 		

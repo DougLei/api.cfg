@@ -115,6 +115,7 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", DataTypeConstants.STRING, 32);
 		refProjectIdColumn.setName("关联的项目主键");
 		refProjectIdColumn.setComments("关联的项目主键");
+		refProjectIdColumn.setIsNullabled(0);
 		refProjectIdColumn.setOrderCode(1);
 		columns.add(refProjectIdColumn);
 		
@@ -133,6 +134,7 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 100);
 		codeColumn.setName("模块编码");
 		codeColumn.setComments("模块编码:这个编码的命名，要整个项目唯一");
+		codeColumn.setIsNullabled(0);
 		codeColumn.setOrderCode(4);
 		columns.add(codeColumn);
 		

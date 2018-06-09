@@ -241,6 +241,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 			tableNameColumn.setLength(30);
 		}
 		tableNameColumn.setName("表名");
+		tableNameColumn.setIsNullabled(0);
 		tableNameColumn.setComments("表名");
 		tableNameColumn.setOrderCode(2);
 		columns.add(tableNameColumn);
