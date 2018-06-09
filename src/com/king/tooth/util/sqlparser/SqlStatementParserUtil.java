@@ -530,6 +530,7 @@ public class SqlStatementParserUtil {
 			sqlParameterValues.add(queryCondParameters);
 			
 			analysisSelectSqlScript(SqlParameterParserUtil.replaceSqlScriptParams(1, sqlStatement.toString(), sqlScriptParameters), finalSelect);
+			return;
 		}
 		// 如果sql脚本中没有参数，则直接返回sql语句，这个就是最终的查询语句
 		analysisSelectSqlScript(sqlStatement.toString(), finalSelect);

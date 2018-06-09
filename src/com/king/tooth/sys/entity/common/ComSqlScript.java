@@ -367,6 +367,19 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 				result = ExceptionUtil.getErrMsg(e);
 				Log4jUtil.debug("[ComSqlScript.analysisResourceProp]解析出现异常：{}", result);
 			}
+			
+			if(StrUtils.isEmpty(sqlScriptParameters)){
+				sqlScriptParameters = "";
+			}
+			if(StrUtils.isEmpty(sqlQueryResultColumns)){
+				sqlQueryResultColumns = "";
+			}
+			if(StrUtils.isEmpty(procedureName)){
+				procedureName = "";
+			}
+			if(StrUtils.isEmpty(procedureParameters)){
+				procedureParameters = "";
+			}
 		}
 		return result;
 	}

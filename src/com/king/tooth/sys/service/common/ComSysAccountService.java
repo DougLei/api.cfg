@@ -104,6 +104,7 @@ public class ComSysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
+//		accountOnlineStatus.setAccount(loginAccount);
 		accountOnlineStatus.setAccountId(loginAccount.getId());
 		accountOnlineStatus.setAccountName(loginAccount.getLoginName());
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
