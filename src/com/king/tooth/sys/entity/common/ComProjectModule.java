@@ -171,6 +171,10 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("orderCode", orderCode);
 		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isDeployed", isDeployed);
+		entityJson.put("isCreated", isCreated);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

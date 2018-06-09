@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.king.tooth.sys.controller.AbstractResourceController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.common.ComSqlScriptService;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
@@ -32,7 +33,8 @@ public class ComSqlScriptController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody add(@RequestBody ComSqlScript sqlScript){
+	public ResponseBody add(@RequestBody String sqlScriptJson){
+		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
 		String result = sqlScript.validNotNullProps();
 		if(result == null){
 			result = sqlScriptService.saveSqlScript(sqlScript);
@@ -47,7 +49,8 @@ public class ComSqlScriptController extends AbstractResourceController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody update(@RequestBody ComSqlScript sqlScript){
+	public ResponseBody update(@RequestBody String sqlScriptJson){
+		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
 		String result = sqlScript.validNotNullProps();
 		if(result == null){
 			result = sqlScriptService.updateSqlScript(sqlScript);

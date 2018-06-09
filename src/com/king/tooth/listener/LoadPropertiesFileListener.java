@@ -1,5 +1,8 @@
 package com.king.tooth.listener;
 
+import gudusoft.gsqlparser.EDbVendor;
+import gudusoft.gsqlparser.TGSqlParser;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Properties;
@@ -11,6 +14,7 @@ import javax.servlet.ServletContextListener;
 import org.springframework.util.Assert;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.sys.service.init.ComBasicDataProcessService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
@@ -71,6 +75,23 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 			new ComBasicDataProcessService().loadSysBasicDatasBySysFirstStart();
 		}else{
 			new ComBasicDataProcessService().loadSysBasicDatasBySysStart();
+		}
+		
+		// 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
+		initGSqlParser();
+	}
+	
+	/**
+	 * 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
+	 */
+	private void initGSqlParser() {
+		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)){
+			new TGSqlParser(EDbVendor.dbvoracle);
+		}else if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(dbType)){
+			new TGSqlParser(EDbVendor.dbvmssql);
+		}else{
+			throw new IllegalArgumentException("目前系统不支持 ["+dbType+"]类型的数据库sql脚本解析");
 		}
 	}
 

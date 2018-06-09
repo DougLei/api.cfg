@@ -148,6 +148,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		this.sqlQueryResultColumns = sqlQueryResultColumns;
 		this.sqlQueryResultColumnList = JsonUtil.parseArray(sqlQueryResultColumns, SqlQueryResultColumn.class);
 	}
+	
 	public void setSqlScriptParameters(String sqlScriptParameters) {
 		this.sqlScriptParameters = sqlScriptParameters;
 		this.sqlScriptParameterList = JsonUtil.parseArray(sqlScriptParameters, SqlScriptParameter.class);
@@ -182,7 +183,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	
-	private void setGsqlParser(){
+	private void doSetGsqlParser(){
 		if(this.gsqlParser == null){
 			try {
 				this.gsqlParser = SqlStatementParserUtil.getGsqlParser(sqlScriptContent);
@@ -199,7 +200,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * @return
 	 */
 	public TGSqlParser getGsqlParser() {
-		setGsqlParser();
+		doSetGsqlParser();
 		return gsqlParser;
 	}
 	
@@ -275,13 +276,13 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptContentColumn.setOrderCode(4);
 		columns.add(sqlScriptContentColumn);
 		
-		ComColumndata sqlScriptParametersColumn = new ComColumndata("sql_script_parameters", DataTypeConstants.STRING, 3000);
+		ComColumndata sqlScriptParametersColumn = new ComColumndata("sql_script_parameters", DataTypeConstants.STRING, 9999);
 		sqlScriptParametersColumn.setName("sql脚本的参数对象集合");
 		sqlScriptParametersColumn.setComments("sql脚本的参数(json串)");
 		sqlScriptParametersColumn.setOrderCode(5);
 		columns.add(sqlScriptParametersColumn);
 		
-		ComColumndata sqlQueryResultColumnsColumn = new ComColumndata("sql_query_result_columns", DataTypeConstants.STRING, 1000);
+		ComColumndata sqlQueryResultColumnsColumn = new ComColumndata("sql_query_result_columns", DataTypeConstants.STRING, 9999);
 		sqlQueryResultColumnsColumn.setName("sql查询结果的列名对象集合");
 		sqlQueryResultColumnsColumn.setComments("sql查询结果的列名对象集合(json串)[该属性针对查询的sql语句]");
 		sqlQueryResultColumnsColumn.setOrderCode(6);
@@ -293,7 +294,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		procedureNameColumn.setOrderCode(7);
 		columns.add(procedureNameColumn);
 		
-		ComColumndata procedureParametersColumn = new ComColumndata("procedure_parameters", DataTypeConstants.STRING, 1000);
+		ComColumndata procedureParametersColumn = new ComColumndata("procedure_parameters", DataTypeConstants.STRING, 9999);
 		procedureParametersColumn.setName("存储过程参数对象集合");
 		procedureParametersColumn.setComments("存储过程参数对象集合(json串)");
 		procedureParametersColumn.setOrderCode(8);
@@ -324,6 +325,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		entityJson.put("isBuiltin", isBuiltin);
 		entityJson.put("isNeedDeploy", isNeedDeploy);
 		entityJson.put("isDeployed", isDeployed);
+		entityJson.put("isCreated", isCreated);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}
@@ -353,11 +355,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 					SqlStatementParserUtil.processProcedure(this);
 				}else{
 					// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
-					setSqlScriptParameterList(SqlParameterParserUtil.analysisMultiSqlScriptParam(getSqlScriptArr()));
+					doSetSqlScriptParameterList(SqlParameterParserUtil.analysisMultiSqlScriptParam(getSqlScriptArr()));
 					// 【针对select sql语句，处理其参数】读取内容去解析，获取selectsql脚本语句的查询结果的列名集合
-					setSqlQueryResultColumns(SqlStatementParserUtil.getSelectSqlOfResultColumnsAndAnalysisSqlScriptParameters(this));
+					doSetSqlQueryResultColumns(SqlStatementParserUtil.getSelectSqlOfResultColumnsAndAnalysisSqlScriptParameters(this));
 					// 将sql脚本的参数处理后，重新赋值给sqlScriptParameters属性，这时，processed=true，isUpdated=true
-					setSqlScriptParameterList(this.sqlScriptParameterList);
+					doSetSqlScriptParameterList(this.sqlScriptParameterList);
 				}
 			} catch (Exception e) {
 				result = ExceptionUtil.getErrMsg(e);
@@ -395,14 +397,14 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return SqlStatementParserUtil.getSqlScriptArr(getGsqlParser());
 	}
 	
-	private void setSqlQueryResultColumns(List<SqlQueryResultColumn> queryResultColumns) {
+	private void doSetSqlQueryResultColumns(List<SqlQueryResultColumn> queryResultColumns) {
 		if(queryResultColumns != null && queryResultColumns.size() > 0){
 			this.sqlQueryResultColumnList = queryResultColumns;
 			this.sqlQueryResultColumns = JsonUtil.toJsonString(this.sqlQueryResultColumnList, false);
 		}
 	}
 	
-	private void setSqlScriptParameterList(List<SqlScriptParameter> sqlScriptParameterList) {
+	private void doSetSqlScriptParameterList(List<SqlScriptParameter> sqlScriptParameterList) {
 		this.sqlScriptParameterList = sqlScriptParameterList;
 		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 			this.sqlScriptParameters = JsonUtil.toJsonString(sqlScriptParameterList, false);

@@ -35,15 +35,25 @@ public class ComSqlScriptService extends AbstractService {
 	public String saveSqlScript(ComSqlScript sqlScript) {
 		String operResult = validsqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
-			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			
+			if(isPlatformDeveloper){
 				/* 属于直接就建模，不需要用户再进行一次建模的操作(表是因为，添加了表信息后，还要添加列信息，然后才能建模) */
 				// 如果是平台开发者，则要解析出sql脚本内容，再保存
-				sqlScript.analysisResourceProp();
-				sqlScript.setIsCreated(1);
-				// 保存到资源表中
-				new ComSysResourceService().saveSysResource(sqlScript);
+				operResult = sqlScript.analysisResourceProp();
+				if(operResult == null){
+					sqlScript.setIsCreated(1);
+				}
 			}
-			HibernateUtil.saveObject(sqlScript, null);
+			if(operResult == null){
+				String sqlScriptId = HibernateUtil.saveObject(sqlScript, null);
+				
+				if(isPlatformDeveloper){
+					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
+					sqlScript.setId(sqlScriptId);
+					new ComSysResourceService().saveSysResource(sqlScript);
+				}
+			}
 		}
 		return operResult;
 	}
@@ -67,11 +77,17 @@ public class ComSqlScriptService extends AbstractService {
 			}
 			operResult = validsqlScriptResourceNameIsExists(sqlScript);
 		}
-		if(operResult == null){
-			if(isPlatformDeveloper){
-				sqlScript.analysisResourceProp();
-				sqlScript.setIsCreated(1);
+		
+		if(isPlatformDeveloper){
+			operResult = sqlScript.analysisResourceProp();
+			sqlScript.setIsCreated(1);
+			
+			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+				// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
+				new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
+		}
+		if(operResult == null){
 			HibernateUtil.updateObjectByHql(sqlScript, null);
 		}
 		return operResult;
@@ -110,7 +126,7 @@ public class ComSqlScriptService extends AbstractService {
 			throw new NullPointerException("请求的资源名不能为空");
 		}
 		
-		String queryHql = "from ComSqlScript where sqlScriptResourceName = ?";
+		String queryHql = "from ComSqlScript where isEnabled=1 and sqlScriptResourceName = ?";
 		ComSqlScript sqlScriptResource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSqlScript.class, queryHql, resourceName);
 		if(sqlScriptResource == null){
 			throw new IllegalArgumentException("不存在请求的sql脚本资源：" + resourceName);

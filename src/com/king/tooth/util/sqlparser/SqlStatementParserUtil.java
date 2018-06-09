@@ -48,7 +48,7 @@ public class SqlStatementParserUtil {
 		}else if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(dbType)){
 			return EDbVendor.dbvmssql;
 		}
-		throw new EDBVendorIsNullException("根据数据库类型，获取sql解析器的数据库方言时，无法获取 ["+dbType+"] 数据库类型的方言");
+		throw new EDBVendorIsNullException("目前系统不支持 ["+dbType+"]类型的数据库sql脚本解析");
 	}
 	
 	/**

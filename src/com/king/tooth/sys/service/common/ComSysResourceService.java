@@ -15,6 +15,7 @@ public class ComSysResourceService extends AbstractService{
 	
 	/**
 	 * 保存资源信息
+	 * <p>***保存的时候，确保传进来iresource的id有值***</p>
 	 * @param resource
 	 */
 	public void saveSysResource(ISysResource iresource){
@@ -51,5 +52,23 @@ public class ComSysResourceService extends AbstractService{
 			throw new IllegalArgumentException("请求的资源已过期，请联系管理员：" + resourceName);
 		}
 		return resource;
+	}
+
+	/**
+	 * 修改资源名
+	 * @param refResourceId
+	 * @param resourceName
+	 */
+	public void updateResourceName(String refResourceId, String resourceName) {
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set resource_name = ? where ref_resource_id = ?", resourceName, refResourceId);
+	}
+	
+	/**
+	 * 修改资源的访问方式
+	 * @param refResourceId
+	 * @param reqResourceMethod
+	 */
+	public void updateResourceReqResourceMethod(String refResourceId, String reqResourceMethod) {
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set req_resource_method = ? where ref_resource_id = ?", reqResourceMethod, refResourceId);
 	}
 }

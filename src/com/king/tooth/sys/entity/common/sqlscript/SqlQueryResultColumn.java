@@ -37,4 +37,13 @@ public class SqlQueryResultColumn {
 	public String getDataType() {
 		return dataType;
 	}
+	public void setResultColumnName(String resultColumnName) {
+		this.resultColumnName = resultColumnName;
+	}
+	public void setResultPropName(String resultPropName) {
+		this.resultPropName = resultPropName;
+	}
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
 }

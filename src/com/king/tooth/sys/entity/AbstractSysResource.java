@@ -49,9 +49,10 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		resource.setIsBuiltin(isBuiltin);
 		resource.setIsNeedDeploy(isNeedDeploy);
 		resource.setIsDeployed(isDeployed);
-		if(isBuiltin == 1){
-			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		}
+//		if(isBuiltin !=null && isBuiltin == 1){
+//			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+//		}
+		resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 		return resource;
 	}
 	

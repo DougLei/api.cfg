@@ -123,6 +123,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 		entityJson.put("isBuiltin", isBuiltin);
 		entityJson.put("isNeedDeploy", isNeedDeploy);
 		entityJson.put("isDeployed", isDeployed);
+		entityJson.put("isCreated", isCreated);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

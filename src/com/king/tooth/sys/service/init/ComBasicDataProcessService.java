@@ -169,11 +169,10 @@ public class ComBasicDataProcessService extends AbstractService{
 		normal.setLoginName("normal");
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		normal.setValidDate(DateUtil.parseDate("2019-12-31 23:59:59"));
-		HibernateUtil.saveObject(normal, null);
+		HibernateUtil.saveObject(normal, adminAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		insertAllTables(adminAccountId);// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；创建者是平台开发账户
-		insertTableToResources(adminAccountId);// 将这些表资源插入到资源表；创建者是平台开发账户
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典数据
@@ -211,6 +210,7 @@ public class ComBasicDataProcessService extends AbstractService{
 		String tableId;
 		List<ComColumndata> columns = null;
 		ComHibernateHbm hbm;
+		ComSysResource resource;
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : tables) {
 			// 插入表和列信息
@@ -227,18 +227,9 @@ public class ComBasicDataProcessService extends AbstractService{
 			hbm.tableTurnToHbm(table);
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
 			HibernateUtil.saveObject(hbm, adminAccountId);
-		}
-		clearTables(tables);
-	}
-	
-	/**
-	 * 将表资源添加到资源表中
-	 * @param adminAccountId 
-	 */
-	private void insertTableToResources(String adminAccountId) {
-		List<ComTabledata> tables = getInitTables();
-		for (ComTabledata table : tables) {
-			ComSysResource resource = table.turnToResource();
+			
+			// 保存到资源表中
+			resource = table.turnToResource();
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
 		clearTables(tables);
