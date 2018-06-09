@@ -9,8 +9,10 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 项目模块信息资源对象
@@ -18,7 +20,7 @@ import com.king.tooth.util.JsonUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProjectModule extends AbstractSysResource implements ITable, IEntity{
+public class ComProjectModule extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
 	
 	/**
 	 * 关联的项目主键
@@ -66,6 +68,9 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		this.parentId = parentId;
 	}
 	public String getName() {
+		if(StrUtils.isEmpty(name)){
+			name = code;
+		}
 		return name;
 	}
 	public void setName(String name) {
@@ -172,5 +177,22 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	
 	public ComSysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
+	}
+	
+	public String validNotNullProps() {
+		if(!isValidNotNullProps){
+			if(StrUtils.isEmpty(refProjectId)){
+				validNotNullPropsResult = "模块关联的项目id不能为空";
+			}
+			if(StrUtils.isEmpty(code)){
+				validNotNullPropsResult = "模块编码不能为空";
+			}
+			isValidNotNullProps = true;
+		}
+		return validNotNullPropsResult;
+	}
+	
+	public String analysisResourceProp() {
+		return validNotNullProps();
 	}
 }

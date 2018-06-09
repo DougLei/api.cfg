@@ -33,7 +33,10 @@ public class ComProjectModuleController extends AbstractResourceController{
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody add(@RequestBody ComProjectModule projectModule) {
-		String result = projectModuleService.saveProjectModule(projectModule);
+		String result = projectModule.analysisResourceProp();
+		if(result == null){
+			result = projectModuleService.saveProjectModule(projectModule);
+		}
 		return installOperResponseBody(result, null);
 	}
 	
@@ -45,7 +48,10 @@ public class ComProjectModuleController extends AbstractResourceController{
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody update(@RequestBody ComProjectModule projectModule) {
-		String result = projectModuleService.updateProjectModule(projectModule);
+		String result = projectModule.analysisResourceProp();
+		if(result == null){
+			result = projectModuleService.updateProjectModule(projectModule);
+		}
 		return installOperResponseBody(result, null);
 	}
 	

@@ -85,7 +85,7 @@ public class ComDatabaseService extends AbstractService{
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComDatabase where id = ?", databaseId);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComDatabase where id = '"+databaseId+"'");
 		return null;
 	}
 	
