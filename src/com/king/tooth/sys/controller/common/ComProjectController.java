@@ -33,7 +33,10 @@ public class ComProjectController extends AbstractResourceController{
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody add(@RequestBody ComProject project){
-		String result = projectService.saveProject(project);
+		String result = project.analysisResourceProp();
+		if(result == null){
+			result = projectService.saveProject(project);
+		}
 		return installOperResponseBody(result, null);
 	}
 	
@@ -45,7 +48,10 @@ public class ComProjectController extends AbstractResourceController{
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody update(@RequestBody ComProject project){
-		String result = projectService.updateProject(project);
+		String result = project.analysisResourceProp();
+		if(result == null){
+			result = projectService.updateProject(project);
+		}
 		return installOperResponseBody(result, null);
 	}
 	
@@ -64,4 +70,24 @@ public class ComProjectController extends AbstractResourceController{
 		String result = projectService.deleteProject(projectId);
 		return installOperResponseBody(result, null);
 	}
+	
+	/**
+	 * 取消项目和[表/sql脚本]的关联信息
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping(value="/cancelRelation", method = RequestMethod.DELETE)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody cancelRelation(HttpServletRequest request){
+		String projectId = request.getParameter("projectId");
+		if(StrUtils.isEmpty(projectId)){
+			return installOperResponseBody("要取消关联关系的项目id不能为空", null);
+		}
+		String relationType = request.getParameter("relationType");
+		if(StrUtils.isEmpty(relationType)){
+			return installOperResponseBody("relationType不能为空,值目前包括：table、sql、all", null);
+		}
+		String result = projectService.cancelRelation(projectId, relationType);
+		return installOperResponseBody(result, null);
+	} 
 }

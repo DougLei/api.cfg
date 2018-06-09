@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.datalinks;
+package com.king.tooth.sys.entity.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,18 +11,18 @@ import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComTabledata;
 
 /**
- * 项目和表的关系
+ * 项目和sql脚本的关系
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProjectComTabledataLinks implements Serializable, ITable {
+public class ComProjectComSqlScriptLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_TABLE_LINKS", 0);
-		table.setResourceName("ComProjectComTabledataLinks");
+		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_SQLSCRIPT_LINKS", 0);
+		table.setResourceName("ComProjectComSqlScriptLinks");
 		table.setVersion(1);
-		table.setName("项目和表的关系表");
-		table.setComments("项目和表的关系表");
+		table.setName("项目和sql脚本的关系表");
+		table.setComments("项目和sql脚本的关系表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(ISysResource.NONE);
@@ -53,6 +53,6 @@ public class ComProjectComTabledataLinks implements Serializable, ITable {
 	}
 
 	public String toDropTable() {
-		return "COM_PROJECT_TABLE_LINKS";
+		return "COM_PROJECT_SQLSCRIPT_LINKS";
 	}
 }

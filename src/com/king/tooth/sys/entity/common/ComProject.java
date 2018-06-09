@@ -9,15 +9,17 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 项目信息资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProject extends AbstractSysResource implements ITable, IEntity{
+public class ComProject extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
 	
 	/**
 	 * 关联的数据库主键
@@ -43,6 +45,9 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 		this.projName = projName;
 	}
 	public String getProjName() {
+		if(StrUtils.isEmpty(projName)){
+			projName = projCode;
+		}
 		return projName;
 	}
 	public String getDescs() {
@@ -124,5 +129,22 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity{
 	
 	public ComSysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
+	}
+	
+	public String validNotNullProps() {
+		if(!isValidNotNullProps){
+			if(StrUtils.isEmpty(refDatabaseId)){
+				validNotNullPropsResult = "项目关联的数据库id不能为空";
+			}
+			if(StrUtils.isEmpty(projCode)){
+				validNotNullPropsResult = "项目编码不能为空";
+			}
+			isValidNotNullProps = true;
+		}
+		return validNotNullPropsResult;
+	}
+	
+	public String analysisResourceProp() {
+		return validNotNullProps();
 	}
 }
