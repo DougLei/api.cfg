@@ -143,6 +143,7 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		

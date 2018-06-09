@@ -82,7 +82,7 @@ public class ComTabledataController extends AbstractResourceController{
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody buildModel(HttpServletRequest request){
 		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
-			return installOperResponseBody("建模功能目前值提供给平台开发人员使用", null);
+			return installOperResponseBody("建模功能目前只提供给平台开发人员使用", null);
 		}
 		
 		String tableId = request.getParameter("tableId");

@@ -47,11 +47,13 @@ public class HibernateHbmHandler {
 	/**
 	 * 根据表数据，创建hbm映射文件
 	 * @param table
-	 * @param needBasicColumnDatas 是否需要给table中加入基础列信息，比如id字段等
+	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @return hbm content
 	 */
-	public String createHbmMappingContent(ComTabledata table){
-		DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
+	public String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns){
+		if(isNeedInitBasicColumns){
+			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
+		}
 		Map<String, Object> dataModel = new HashMap<String, Object>(3);
 		dataModel.put("table", table);
 		dataModel.put("columns", table.getColumns());

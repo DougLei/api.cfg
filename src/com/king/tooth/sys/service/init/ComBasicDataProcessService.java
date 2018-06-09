@@ -145,7 +145,7 @@ public class ComBasicDataProcessService extends AbstractService{
 			Log4jUtil.debug("*********表不存在，不需要删除");
 		}
 		// 开始创建表
-		dbHandler.createTable(tables);
+		dbHandler.createTable(tables, true);
 		clearTables(tables);
 	}
 	
@@ -188,7 +188,7 @@ public class ComBasicDataProcessService extends AbstractService{
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
 		for (ComTabledata table : tables) {
-			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table));// 记录hbm内容
+			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, true));// 记录hbm内容
 		}
 		
 		// 将hbmContents加入到hibernate sessionFactory中
@@ -225,7 +225,7 @@ public class ComBasicDataProcessService extends AbstractService{
 			// 创建对应的hbm文件，并保存
 			hbm = new ComHibernateHbm();
 			hbm.tableTurnToHbm(table);
-			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table));
+			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, true));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
 			// 保存到资源表中

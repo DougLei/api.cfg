@@ -249,6 +249,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
+		table.setIsCreated(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
@@ -368,6 +369,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 				Log4jUtil.debug("[ComSqlScript.analysisResourceProp]解析出现异常：{}", result);
 			}
 			
+			// 每次解析sql脚本后，如果以下字段为空，则默认用空字符串展示，为了让hibernate在save的时候，更新这些字段的值
 			if(StrUtils.isEmpty(sqlScriptParameters)){
 				sqlScriptParameters = "";
 			}

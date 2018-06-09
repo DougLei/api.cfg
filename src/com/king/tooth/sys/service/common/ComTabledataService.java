@@ -124,7 +124,7 @@ public class ComTabledataService extends AbstractService{
 		}
 		
 		// 如果之前有数据，则删除之前的数据
-		int count = (int) HibernateUtil.executeUniqueQueryBySql("select count(1) from com_hibernate_hbm where ref_table_id = '"+tableId+"'", null);
+		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where refTableId = '"+tableId+"'", null);
 		if(count > 0){
 			// 删除hbm信息
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where refTableId = '"+tableId+"'");
@@ -140,11 +140,11 @@ public class ComTabledataService extends AbstractService{
 		
 		// 获的hbm内容
 		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
-		String hbmContent = hbmHandler.createHbmMappingContent(table);
+		String hbmContent = hbmHandler.createHbmMappingContent(table, true);
 		
 		// 1、建表
 		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
-		dbTableHandler.createTable(table);
+		dbTableHandler.createTable(table, false);
 		table.clear();
 		
 		// 2、插入hbm

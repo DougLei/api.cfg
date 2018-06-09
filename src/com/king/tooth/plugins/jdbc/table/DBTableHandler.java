@@ -56,20 +56,22 @@ public class DBTableHandler {
 	/**
 	 * 创建表
 	 * @param tabledata
+	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 */
-	public void createTable(ComTabledata tabledata){
+	public void createTable(ComTabledata tabledata, boolean isNeedInitBasicColumns){
 		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(1);
 		tabledatas.add(tabledata);
-		createTable(tabledatas);
+		createTable(tabledatas, isNeedInitBasicColumns);
 		tabledatas.clear();
 	}
 	
 	/**
 	 * 创建表
+	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @param tabledatas
 	 */
-	public void createTable(List<ComTabledata> tabledatas){
-		String tmpSql = getCreateTableSql(tabledatas);
+	public void createTable(List<ComTabledata> tabledatas, boolean isNeedInitBasicColumns){
+		String tmpSql = getCreateTableSql(tabledatas, isNeedInitBasicColumns);
 		if(StrUtils.notEmpty(tmpSql)){
 			String[] ddlSqlArr = tmpSql.split(";");
 			executeDDL(ddlSqlArr, tabledatas);
@@ -103,9 +105,10 @@ public class DBTableHandler {
 	/**
 	 * 获得创建表的sql
 	 * @param tabledatas
+	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @return
 	 */
-	public String getCreateTableSql(List<ComTabledata> tabledatas){
+	public String getCreateTableSql(List<ComTabledata> tabledatas, boolean isNeedInitBasicColumns){
 		if(tableOper == null){
 			Log4jUtil.debug("[DBTableHandler.createSql]操作表的对象AbstractTableOper tableOper为null");
 			return null;
@@ -116,7 +119,9 @@ public class DBTableHandler {
 			
 			StringBuilder createSql = new StringBuilder();
 			for (ComTabledata tabledata : tabledatas) {
-				DynamicBasicDataColumnUtil.initBasicColumnToTable(tabledata);
+				if(isNeedInitBasicColumns){
+					DynamicBasicDataColumnUtil.initBasicColumnToTable(tabledata);
+				}
 				
 				tableOper.installCreateTableSql(tabledata);
 				createSql.append(tableOper.getCreateTableSql()).append(";")

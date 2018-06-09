@@ -87,6 +87,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(NONE);
+		table.setIsCreated(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
@@ -163,5 +164,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		this.setIsEnabled(table.getIsEnabled());
 		this.setIsNeedDeploy(table.getIsNeedDeploy());
 		this.setReqResourceMethod(table.getReqResourceMethod());
+		this.setIsCreated(table.getIsCreated());
 	}
 }

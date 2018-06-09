@@ -227,6 +227,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
+		table.setIsCreated(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		

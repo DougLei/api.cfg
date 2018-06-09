@@ -74,6 +74,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
+		table.setIsCreated(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
