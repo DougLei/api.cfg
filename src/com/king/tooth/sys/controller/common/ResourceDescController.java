@@ -94,7 +94,7 @@ public class ResourceDescController extends AbstractResourceController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/tableJson", method = RequestMethod.GET)
+	@RequestMapping(value="/tableJson", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
 	@org.springframework.web.bind.annotation.ResponseBody
 	public String tableJson(HttpServletRequest request){
 		String tableResourceName = request.getParameter("resourceName");
@@ -118,10 +118,20 @@ public class ResourceDescController extends AbstractResourceController{
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableResource.getRefResourceId()));
 		initBasicColumnToTable(table);
 		
+		boolean hc = false;
+		String havaComments = request.getParameter("havaComments");
+		if("true".equals(havaComments)){
+			hc = true;
+		}
+		
 		List<ComColumndata> columns = table.getColumns();
 		Map<Object, Object> json = new HashMap<Object, Object>(columns.size());
 		for (ComColumndata column : columns) {
-			json.put(column.getPropName(), column.getComments());
+			if(hc){
+				json.put(column.getPropName(), column.getComments());
+			}else{
+				json.put(column.getPropName(), "");
+			}
 		}
 		
 		table.clear();
