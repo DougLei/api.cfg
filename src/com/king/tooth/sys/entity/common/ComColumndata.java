@@ -6,7 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -20,7 +20,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComColumndata extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
+public class ComColumndata extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的表主键
 	 */
@@ -190,15 +190,13 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_COLUMNDATA", 0);
-		table.setIsResource(1);
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
 		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(GET+","+DELETE);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -319,10 +317,6 @@ public class ComColumndata extends AbstractSysResource implements ITable, IEntit
 		entityJson.put("isNullabled", isNullabled);
 		entityJson.put("isDataDictionary", isDataDictionary);
 		entityJson.put("orderCode", orderCode);
-		entityJson.put("isEnabled", isEnabled);
-		entityJson.put("isBuiltin", isBuiltin);
-		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isDeployed", isDeployed);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

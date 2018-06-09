@@ -53,18 +53,17 @@ public class ComDatabaseService extends AbstractService{
 			return "没有找到id为["+database.getId()+"]的数据库对象信息";
 		}
 		
+		String operResult = null;
 		boolean databaseLinkInfoIsSame = oldDatabase.compareLinkInfoIsSame(database);
 		if(!databaseLinkInfoIsSame){// 如果修改了连接信息
-			if(oldDatabase.getIsDeployed() == 0){ // 如果没有发布，则要去判断，是否已经存在相同连接信息的数据
-				String operResult = validDatabaseDataIsExists(database);
-				if(operResult != null){
-					return operResult;
-				}
-			}else if(oldDatabase.getIsDeployed() == 1){ // 如果已发布，则发出提示信息
+			if(oldDatabase.getIsDeployed() == 1){ // 如果已发布，则发出提示信息
 				return "【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改连接信息，或取消发布后再修改";
 			}
+			operResult = validDatabaseDataIsExists(database);
 		}
-		HibernateUtil.updateObjectByHql(database, null);
+		if(operResult == null){
+			HibernateUtil.updateObjectByHql(database, null);
+		}
 		return null;
 	}
 	
