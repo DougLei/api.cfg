@@ -39,7 +39,6 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	
 	//-------------------------------------------------------------------------
 	
-	
 	public String getResourceName() {
 		return resourceName;
 	}

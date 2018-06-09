@@ -78,6 +78,10 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 */
 	private Integer orderCode;
 	/**
+	 * 是否有效
+	 */
+	private String isEnabled;
+	/**
 	 * 注释
 	 */
 	private String comments;
@@ -186,6 +190,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
+	public String getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(String isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 	
 	
 	public ComTabledata toCreateTable(String dbType) {
@@ -196,7 +206,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -289,10 +299,17 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		orderCodeColumn.setOrderCode(14);
 		columns.add(orderCodeColumn);
 		
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("是否有效");
+		isEnabledColumn.setDefaultValue("1");
+		isEnabledColumn.setOrderCode(15);
+		columns.add(isEnabledColumn);
+		
 		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 400);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
-		commentsColumn.setOrderCode(15);
+		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
 		
 		table.setColumns(columns);
@@ -316,6 +333,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		entityJson.put("isUnique", isUnique);
 		entityJson.put("isNullabled", isNullabled);
 		entityJson.put("isDataDictionary", isDataDictionary);
+		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("orderCode", orderCode);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();

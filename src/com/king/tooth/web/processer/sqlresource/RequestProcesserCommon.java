@@ -72,7 +72,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	
 	/**
 	 * modify数据后，组装ResponseBody对象
-	 * @param sqlDes 传入的sql语句的描述，例如传入"insert"或"update"或"delete"或"添加"或"修改"或"删除"等简短描述  @see SqlStatementType
+	 * @param sqlDes @see SqlStatementType
 	 * @param modifyRows 删除的数据行数
 	 * @param data
 	 */
