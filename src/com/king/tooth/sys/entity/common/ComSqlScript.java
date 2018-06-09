@@ -22,7 +22,6 @@ import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -411,14 +410,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public ComSysResource turnToResource() {
-		analysisResourceProp();
 		ComSysResource resource = super.turnToResource();
-		resource.setRefResourceId(id);
 		resource.setResourceType(SQLSCRIPT);
 		resource.setResourceName(sqlScriptResourceName);
-		if(isBuiltin == 1){
-			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		}
 		return resource;
 	}
 }

@@ -26,7 +26,7 @@ public class ComTabledataService extends AbstractService{
 	private String validTableNameIsExists(ComTabledata table) {
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 		if(count > 0){
-			return "表名为["+table.getTableName()+"]的表信息已存在";
+			return "表名为["+table.getTableName()+"]的已存在";
 		}
 		return null;
 	}

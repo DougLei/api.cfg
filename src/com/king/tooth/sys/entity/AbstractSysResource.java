@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity;
 
 import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.util.DateUtil;
 
 /**
  * 系统资源抽象类
@@ -42,11 +43,15 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	public ComSysResource turnToResource(){
 		ComSysResource resource = new ComSysResource();
+		resource.setRefResourceId(id);
 		resource.setIsEnabled(isEnabled);
 		resource.setReqResourceMethod(getReqResourceMethod());
 		resource.setIsBuiltin(isBuiltin);
 		resource.setIsNeedDeploy(isNeedDeploy);
 		resource.setIsDeployed(isDeployed);
+		if(isBuiltin == 1){
+			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		}
 		return resource;
 	}
 	

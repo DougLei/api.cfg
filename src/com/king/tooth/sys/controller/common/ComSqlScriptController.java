@@ -33,7 +33,7 @@ public class ComSqlScriptController extends AbstractResourceController{
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody add(@RequestBody ComSqlScript sqlScript){
-		String result = sqlScript.analysisResourceProp();
+		String result = sqlScript.validNotNullProps();
 		if(result == null){
 			result = sqlScriptService.saveSqlScript(sqlScript);
 		}
@@ -48,7 +48,7 @@ public class ComSqlScriptController extends AbstractResourceController{
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody update(@RequestBody ComSqlScript sqlScript){
-		String result = sqlScript.analysisResourceProp();
+		String result = sqlScript.validNotNullProps();
 		if(result == null){
 			result = sqlScriptService.updateSqlScript(sqlScript);
 		}

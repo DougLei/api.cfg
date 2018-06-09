@@ -14,7 +14,6 @@ import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -363,14 +362,9 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public ComSysResource turnToResource() {
-		analysisResourceProp();
 		ComSysResource resource = super.turnToResource();
-		resource.setRefResourceId(id);
 		resource.setResourceType(TABLE);
 		resource.setResourceName(resourceName);
-		if(isBuiltin == 1){
-			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		}
 		return resource;
 	}
 }
