@@ -63,7 +63,7 @@ public class DynamicDataLinkTableUtil {
 		rightIdColumn.setOrderCode(2);
 		columns.add(rightIdColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setOrderCode(3);
 		orderCodeColumn.setDefaultValue("0");
 		columns.add(orderCodeColumn);
