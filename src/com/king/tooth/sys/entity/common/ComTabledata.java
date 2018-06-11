@@ -375,4 +375,15 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public Integer getResourceType() {
 		return TABLE;
 	}
+	
+	public ComPublishInfo turnToPublish() {
+		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishResourceId(id);
+		publish.setPublishResourceName(resourceName);
+		publish.setResourceType(TABLE);
+		this.isBuiltin = 0;
+		this.isNeedDeploy = 0;
+		this.belongPlatformType = APP_PLATFORM;
+		return publish;
+	}
 }

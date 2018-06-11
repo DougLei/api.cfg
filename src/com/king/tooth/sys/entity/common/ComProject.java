@@ -156,4 +156,16 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 	public Integer getResourceType() {
 		return PROJECT;
 	}
+	
+	
+	public ComPublishInfo turnToPublish() {
+		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishResourceId(id);
+		publish.setPublishResourceName(projCode);
+		publish.setResourceType(PROJECT);
+		this.isBuiltin = 0;
+		this.isNeedDeploy = 0;
+		this.belongPlatformType = APP_PLATFORM;
+		return publish;
+	}
 }

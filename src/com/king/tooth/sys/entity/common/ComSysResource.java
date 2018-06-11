@@ -135,4 +135,8 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	public ComSysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
+	
+	public ComPublishInfo turnToPublish() {
+		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
+	}
 }

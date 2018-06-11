@@ -281,9 +281,9 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 			DriverManager.setLoginTimeout(2);
 			conn = DriverManager.getConnection(getUrl(), getLoginUserName(), getLoginPassword());
 			int connectSeconds = (int) ((System.currentTimeMillis()-start)/1000);
-			return "连接成功，耗时["+connectSeconds+"]秒";
+			return "ok:连接成功，耗时["+connectSeconds+"]秒";
 		} catch (Exception e) {
-			return "测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg(e)+"]";
+			return "err:测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg(e)+"]";
 		} finally{
 			CloseUtil.closeDBConn(conn);
 		}
@@ -291,25 +291,35 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	
 	public String validNotNullProps() {
 		if(!isValidNotNullProps){
+			isValidNotNullProps = true;
 			if(StrUtils.isEmpty(dbType)){
 				validNotNullPropsResult = "数据库类型不能为空！";
+				return validNotNullPropsResult;
+			}
+			if(!dbType.equals(DynamicDataConstants.DB_TYPE_ORACLE) && !dbType.equals(DynamicDataConstants.DB_TYPE_SQLSERVER)){
+				validNotNullPropsResult = "系统目前只支持oracle和sqlserver数据库！";
+				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(dbInstanceName)){
 				validNotNullPropsResult = "数据库名不能为空！";
+				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(loginUserName)){
 				validNotNullPropsResult = "数据库登录名不能为空！";
+				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(loginPassword)){
 				validNotNullPropsResult = "数据库登录密码不能为空！";
+				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(dbIp)){
 				validNotNullPropsResult = "数据库ip不能为空！";
+				return validNotNullPropsResult;
 			}
 			if(dbPort < 1){
 				validNotNullPropsResult = "数据库端口不能为空！";
+				return validNotNullPropsResult;
 			}
-			isValidNotNullProps = true;
 		}
 		return validNotNullPropsResult;
 	}
@@ -339,6 +349,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	
 	/**
 	 * 比较数据库的连接信息是否一致
+	 * 用在保存/修改数据库信息的时候，要确保数据库连接信息的唯一性
 	 * @param database
 	 * @return
 	 */
@@ -352,8 +363,40 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		}
 		return false;
 	}
+	
+	/**
+	 * 比较是否是同一个数据库
+	 * 用在创建数据库的时候，如果和本系统的数据库是一个，则可以实现创建数据库的操作
+	 * @param database
+	 * @return
+	 */
+	public boolean compareIsSameDatabase(ComDatabase database){
+		if(database.getDbType().equals(DynamicDataConstants.DB_TYPE_ORACLE)){
+			if(StrUtils.compareIsSame(dbInstanceName, database.getDbInstanceName())
+					&& StrUtils.compareIsSame(dbIp, database.getDbIp())
+					&& dbPort == database.getDbPort()){
+				return true;
+			}
+		}else if(database.getDbType().equals(DynamicDataConstants.DB_TYPE_SQLSERVER)){
+			if(StrUtils.compareIsSame(dbIp, database.getDbIp()) && dbPort == database.getDbPort()){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Integer getResourceType() {
 		return DATABASE;
+	}
+	
+	public ComPublishInfo turnToPublish() {
+		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishDatabaseId(id);
+		publish.setPublishResourceName(dbInstanceName);
+		publish.setResourceType(DATABASE);
+		this.isBuiltin = 0;
+		this.isNeedDeploy = 0;
+		this.belongPlatformType = APP_PLATFORM;
+		return publish;
 	}
 }

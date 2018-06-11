@@ -207,4 +207,15 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	public Integer getResourceType() {
 		return PROJECT_MODULE;
 	}
+	
+	public ComPublishInfo turnToPublish() {
+		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishResourceId(id);
+		publish.setPublishResourceName(code);
+		publish.setResourceType(PROJECT_MODULE);
+		this.isBuiltin = 0;
+		this.isNeedDeploy = 0;
+		this.belongPlatformType = APP_PLATFORM;
+		return publish;
+	}
 }

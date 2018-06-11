@@ -2,6 +2,7 @@ package com.king.tooth.plugins.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Arrays;
 
@@ -62,6 +63,41 @@ public class DBLink {
 			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e) + " ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]");
 		}finally{
 			CloseUtil.closeDBConn(st, connection);
+		}
+		return null;
+	}
+	
+	/**
+	 * 执行update语句
+	 * 即增删改的sql语句
+	 * @param updateSqlArr update-sql语句数组
+	 * @return 
+	 */
+	public String executeUpdate(final String[] updateSqlArr){
+		if(updateSqlArr == null || updateSqlArr.length == 0){
+			Log4jUtil.debug("没有要执行的update-sql语句");
+			return "没有要执行的update-sql语句";
+		}
+		Log4jUtil.debug("执行{}数据库的update-sql语句为：{}", database.getDbType(), Arrays.toString(updateSqlArr));
+		
+		Connection connection = null;
+		PreparedStatement pst = null;
+		StringBuilder errSql = new StringBuilder();
+		try {
+			Class.forName(database.getDriverClass());
+			connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
+			for (String us : updateSqlArr) {
+				if(StrUtils.notEmpty(us)){
+					pst = connection.prepareStatement(us);
+					errSql.setLength(0);
+					errSql.append(us);
+					pst.executeUpdate();
+				}
+			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e) + " ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]");
+		}finally{
+			CloseUtil.closeDBConn(pst, connection);
 		}
 		return null;
 	}

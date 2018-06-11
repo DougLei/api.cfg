@@ -1,12 +1,19 @@
 package com.king.tooth.sys.service.common;
 
-import com.king.tooth.cache.SysConfig;
+import org.hibernate.Session;
+import org.hibernate.internal.SessionFactoryImpl;
+
+import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.util.ExceptionUtil;
+import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -100,57 +107,111 @@ public class ComDatabaseService extends AbstractPublishService {
 		return database.testDbLink();
 	}
 	
-	
-	
-	
+	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布数据库
 	 * @param databaseId
+	 * @return
 	 */
-	public void deployingDatabase(String databaseId) {
+	public String publishDatabase(String databaseId){
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
-			return;
+			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
-		// 如果ip和port和我们的数据库配置一致，判断为使用我们的数据库，则可以进行创建库的操作
-		if(SysConfig.getSystemConfig("db.default.ip").equals(database.getDbIp()) 
-				&& SysConfig.getSystemConfig("db.default.port").equals(database.getDbPort()+"")){
+		if(database.getIsNeedDeploy() == 0){
+			return "id为["+databaseId+"]的数据库不该被发布，请联系管理员";
+		}
+		if(database.getIsEnabled() == 0){
+			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
+		}
+		if(publishInfoService.validResourceIsPublished(databaseId, null, null)){
+			return "id为["+databaseId+"]的数据库已发布，无法再次发布";
+		}
+		
+		// 如果是自己的库，要创建
+		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
 			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 			databaseHandler.createDatabase(database);
 		}
-//		database.setIsDeploymentApp(1);
-		HibernateUtil.saveObject(database, null);
+		// 还要测试库能不能正常连接上
+		String testLinkResult = database.testDbLink();
+		if(testLinkResult.startsWith("err")){
+			return testLinkResult;
+		}
+		Log4jUtil.debug("连接数据库测试[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
+		
+		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
+		if(sessionFactory == null){
+			DynamicDBUtil.addDataSource(database);
+			sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
+			sessionFactory.appendNewHbmConfig(CoreTableResourceConstants.getCoretableresourcemappinginputstreams());
+		}
+		
+		ComPublishInfo publishInfo = database.turnToPublish();
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			session.save(database.getEntityName(), database.toEntityJson());
+			session.getTransaction().commit();
+			publishInfo.setIsSuccess(1);
+		} catch (Exception e) {
+			session.getTransaction().rollback();
+			publishInfo.setIsSuccess(0);
+			publishInfo.setErrMsg(ExceptionUtil.getErrMsg(e));
+		}finally{
+			if(session != null){
+				session.flush();
+				session.close();
+			}
+			// 删除部署失败的数据
+			HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where isSuccess =0 and publishDatabaseId = '"+databaseId+"'", null);
+			// 再添加新的部署的信息数据
+			HibernateUtil.saveObject(publishInfo, null);
+		}
+		return null;
 	}
 	
 	/**
-	 * 取消发布数据库库
+	 * 取消发布数据库
 	 * @param databaseId
+	 * @return
 	 */
-	public void cancelDeployingDatabase(String databaseId) {
+	public String cancelPublishDatabase(String databaseId){
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
-			return;
+			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
-		// 如果ip和port和我们的数据库配置一致，判断为使用我们的数据库，则可以进行删除库的操作
-		if(SysConfig.getSystemConfig("db.default.ip").equals(database.getDbIp()) 
-				&& SysConfig.getSystemConfig("db.default.port").equals(database.getDbPort()+"")){
+		if(database.getIsNeedDeploy() == 0){
+			return "id为["+databaseId+"]的数据库不该被发布，请联系管理员";
+		}
+		if(database.getIsEnabled() == 0){
+			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
+		}
+		if(!publishInfoService.validResourceIsPublished(databaseId, null, null)){
+			return "id为["+databaseId+"]的数据库未发布，无法取消发布";
+		}
+		
+		// 先测试库能不能正常连接上
+		String testLinkResult = database.testDbLink();
+		if(testLinkResult.startsWith("err")){
+			return "取消发布数据库失败:" + testLinkResult;
+		}
+		
+		// 如果是自己的库，要删除
+		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
 			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 			databaseHandler.dropDatabase(database);
 		}
-//		database.setIsDeploymentApp(0);
-		HibernateUtil.saveObject(database, null);
 		
-		// ---------hql写法
-		// 修改该库下所有的表的isDeploymentRun=0
-		String hql = "update ComTabledata set isDeploymentRun=0 where isDeploymentRun=1 and id in (select rightId from ComDatabaseCfgTabledataLinks where leftId = '"+database.getId()+"')";
-		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
+		// 移除数据源和sessionFacotry
+		DynamicDBUtil.removeDataSource(databaseId);
 		
-		// 修改该库下所有的sql脚本的isDeploymentRun=0
-		hql = "update ComSqlScript set isDeploymentRun=0 where isDeploymentRun=1 and id in (select rightId from ComDatabaseComProjectLinks where leftId = '"+database.getId()+"')";
-		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
-		
-		// 修改该库下所有的项目的isDeploymentRun=0
-		hql = "update ComProject set isDeploymentRun=0 where isDeploymentRun=1 and databaseId  = '"+database.getId()+"'";
-		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
+		// 删除部署的数据
+		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
+		return null;
 	}
+	//--------------------------------------------------------------------------------------------------------
+	
+	
 }

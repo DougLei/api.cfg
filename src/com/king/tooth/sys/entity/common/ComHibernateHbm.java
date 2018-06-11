@@ -171,4 +171,8 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	public Integer getResourceType() {
 		return TABLE;
 	}
+	
+	public ComPublishInfo turnToPublish() {
+		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
+	}
 }

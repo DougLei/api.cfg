@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
@@ -23,11 +24,9 @@ import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComProject;
-import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.entity.common.ComProjectModuleBody;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComReqLog;
-import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
@@ -99,19 +98,15 @@ public class InitSystemService extends AbstractService{
 		List<ComTabledata> tables = new ArrayList<ComTabledata>(18);
 		String dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
 		
+		tables.addAll(CoreTableResourceConstants.getCoreTables(dbType));
 		tables.add(new ComSysResource().toCreateTable(dbType));
-		tables.add(new ComHibernateHbm().toCreateTable(dbType));
 		tables.add(new ComColumndata().toCreateTable(dbType));
 		tables.add(new ComTabledata().toCreateTable(dbType));
-		tables.add(new ComDatabase().toCreateTable(dbType));
 		tables.add(new ComDataDictionary().toCreateTable(dbType));
 		tables.add(new ComDataLinks().toCreateTable(dbType));
 		tables.add(new ComOperLog().toCreateTable(dbType));
-		tables.add(new ComProject().toCreateTable(dbType));
-		tables.add(new ComProjectModule().toCreateTable(dbType));
 		tables.add(new ComProjectModuleBody().toCreateTable(dbType));
 		tables.add(new ComReqLog().toCreateTable(dbType));
-		tables.add(new ComSqlScript().toCreateTable(dbType));
 		tables.add(new ComSysAccount().toCreateTable(dbType));
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
 		tables.add(new ComPublishInfo().toCreateTable(dbType));
@@ -182,7 +177,7 @@ public class InitSystemService extends AbstractService{
 		appDatabase.setDbPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
 		appDatabase.analysisResourceProp();
 		appDatabase.setIsBuiltin(1);
-		appDatabase.setIsNeedDeploy(0);
+		appDatabase.setIsNeedDeploy(1);
 		appDatabase.setIsCreated(1);
 		String appDatabaseId = HibernateUtil.saveObject(appDatabase, null);
 		
@@ -393,9 +388,10 @@ public class InitSystemService extends AbstractService{
 				for (ComDatabase database : databases) {
 					database.analysisResourceProp();
 					String testLinkResult = database.testDbLink();
-					if(testLinkResult.startsWith("测试数据库连接失败")){
+					if(testLinkResult.startsWith("err")){
 						throw new Exception(testLinkResult);
 					}
+					Log4jUtil.debug("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
 					
 					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
 					loadHbmContentsByDatabaseId(database);// 加载当前数据库中的hbm到sessionFactory中

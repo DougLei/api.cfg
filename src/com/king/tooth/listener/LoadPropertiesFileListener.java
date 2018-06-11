@@ -14,6 +14,7 @@ import javax.servlet.ServletContextListener;
 import org.springframework.util.Assert;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.sys.service.InitSystemService;
 import com.king.tooth.util.PropertiesUtil;
@@ -70,6 +71,10 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 		RouteBodyAnalysis.initRouteRuleConfig();
 		// 初始化系统内置查询条件函数配置
 		BuiltinQueryCondFuncUtil.initBuiltinQueryCondFuncConfig();
+		if("1".equals(SysConfig.getSystemConfig("current.sys.type"))){
+			// 是配置系统时，初始化核心表资源映射的InputStreams
+			CoreTableResourceConstants.initCoretableresourcemappinginputstreams(SysConfig.getSystemConfig("jdbc.dbType"));
+		}
 		// 系统启动时，初始化配置数据库的表和所有基础数据
 		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
 			new InitSystemService().loadSysBasicDatasBySysFirstStart();

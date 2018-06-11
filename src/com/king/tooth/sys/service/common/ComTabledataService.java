@@ -200,7 +200,7 @@ public class ComTabledataService extends AbstractPublishService {
 			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 			dbTableHandler.dropTable(table);
 			// 从sessionFactory中移除映射
-//			HibernateUtil.removeConfig(table.getEntityName());
+			HibernateUtil.removeConfig(table.getEntityName());
 		}
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		
@@ -251,4 +251,7 @@ public class ComTabledataService extends AbstractPublishService {
 		HibernateUtil.deleteDataLinks(comProjectComTabledataLinkResourceName, projectId, tableId);
 		return null;
 	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	
 }

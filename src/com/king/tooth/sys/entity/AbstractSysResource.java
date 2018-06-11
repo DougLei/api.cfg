@@ -29,7 +29,8 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	protected Integer isNeedDeploy;
 	/**
 	 * 资源是否被创建
-	 * <p>在配置平台使用，如果是内置，且是属于[配置平台/通用的]的资源，这个字段才有效</p>
+	 * <p>在配置平台中，如果是内置，且是属于[配置平台/通用的]的资源，这个字段才有效，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中</p>
+	 * <p>在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中</p>
 	 */
 	protected Integer isCreated;
 	

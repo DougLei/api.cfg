@@ -102,4 +102,14 @@ public class ComProjectModuleService extends AbstractPublishService {
 		return null;
 	}
 	
+	//--------------------------------------------------------------------------------------------------------
+//	public String publishProjectModule(String projectId, String projectModuleId){
+//		
+//	}
+//	
+//	public String cancelPublishProjectModule(String projectId, String projectModuleId){
+//		
+//	}
+	
+	//--------------------------------------------------------------------------------------------------------
 }

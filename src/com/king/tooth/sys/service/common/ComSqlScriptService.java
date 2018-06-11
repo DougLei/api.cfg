@@ -220,4 +220,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		return sqlScriptResource;
 	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	
 }
