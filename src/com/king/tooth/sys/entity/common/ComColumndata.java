@@ -349,16 +349,19 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	
 	public String validNotNullProps() {
 		if(!isValidNotNullProps){
+			isValidNotNullProps = true;
 			if(StrUtils.isEmpty(columnName)){
 				validNotNullPropsResult = "字段名不能为空！";
+				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(columnType)){
 				validNotNullPropsResult = "字段类型不能为空！";
+				return validNotNullPropsResult;
 			}
 			if(DataTypeConstants.STRING.equals(columnType) && length < 1){
 				validNotNullPropsResult = "字段长度不能为空！";
+				return validNotNullPropsResult;
 			}
-			isValidNotNullProps = true;
 		}
 		return validNotNullPropsResult;
 	}

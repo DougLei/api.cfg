@@ -259,6 +259,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishTable(String tableId){
+		// 涉及到一个建表的步骤
 		return null;
 	}
 	

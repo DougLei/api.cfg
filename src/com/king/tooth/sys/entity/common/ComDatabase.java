@@ -242,6 +242,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		entityJson.put("isCreated", isCreated);
 		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
 		return entityJson.getEntityJson();
 	}
 	

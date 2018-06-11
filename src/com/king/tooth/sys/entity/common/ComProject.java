@@ -129,6 +129,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 		entityJson.put("isCreated", isCreated);
 		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
 		return entityJson.getEntityJson();
 	}
 	
@@ -138,13 +139,15 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 	
 	public String validNotNullProps() {
 		if(!isValidNotNullProps){
+			isValidNotNullProps = true;
 			if(StrUtils.isEmpty(refDatabaseId)){
 				validNotNullPropsResult = "项目关联的数据库id不能为空";
+				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(projCode)){
 				validNotNullPropsResult = "项目编码不能为空";
+				return validNotNullPropsResult;
 			}
-			isValidNotNullProps = true;
 		}
 		return validNotNullPropsResult;
 	}

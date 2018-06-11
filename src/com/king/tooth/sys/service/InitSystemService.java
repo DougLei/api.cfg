@@ -92,7 +92,7 @@ public class InitSystemService extends AbstractService{
 		try {
 			dbHandler.dropTable(tables);
 		} catch (Exception e) {
-			Log4jUtil.debug("*********表不存在，不需要删除");
+			Log4jUtil.debug("************************部署数据库，表不存在，不需要删除************************");
 		}
 		// 开始创建表
 		dbHandler.createTable(tables, false);
@@ -131,7 +131,6 @@ public class InitSystemService extends AbstractService{
 		appDatabase.analysisResourceProp();
 		appDatabase.setIsBuiltin(1);
 		appDatabase.setIsNeedDeploy(1);
-		appDatabase.setIsCreated(1);
 		String appDatabaseId = HibernateUtil.saveObject(appDatabase, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -72,7 +72,7 @@ public class DynamicBasicDataColumnUtil {
 			
 			ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
 			isCreatedColumn.setName("资源是否被创建");
-			isCreatedColumn.setComments("资源是否被创建：在配置平台中，如果是内置，且是属于[配置平台/通用的]的资源，这个字段才有效，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中；在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中");
+			isCreatedColumn.setComments("资源是否被创建：在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中；在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中");
 			isCreatedColumn.setDefaultValue("0");
 			isCreatedColumn.setOrderCode(9908);
 			table.getColumns().add(isCreatedColumn);

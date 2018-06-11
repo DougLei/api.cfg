@@ -331,18 +331,21 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		entityJson.put("isCreated", isCreated);
 		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
 		return entityJson.getEntityJson();
 	}
 	
 	public String validNotNullProps() {
 		if(!isValidNotNullProps){
+			isValidNotNullProps = true;
 			if(StrUtils.isEmpty(sqlScriptResourceName)){
 				validNotNullPropsResult = "sql脚本资源名称不能为空";
+				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(sqlScriptContent)){
 				validNotNullPropsResult = "sql脚本内容不能为空";
+				return validNotNullPropsResult;
 			}
-			isValidNotNullProps = true;
 		}
 		return validNotNullPropsResult;
 	}

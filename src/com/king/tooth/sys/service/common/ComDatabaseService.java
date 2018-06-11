@@ -147,6 +147,11 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 创建运行系统基础表
 		DBTableHandler dbTableHandler = new DBTableHandler(database);
 		List<ComTabledata> appSystemCoreTables = CoreTableResourceConstants.getAppsystemcoretables();
+		try {
+			dbTableHandler.dropTable(appSystemCoreTables);
+		} catch (Exception e1) {
+			Log4jUtil.debug("************************部署数据库，表不存在，不需要删除************************");
+		}
 		dbTableHandler.createTable(appSystemCoreTables, false);
 		
 		// 创建dataSource和sessionFactory

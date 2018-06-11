@@ -24,7 +24,7 @@ public class ComPublishInfoService extends AbstractService{
 		String hql = "from ComPublishInfo where";
 		List<Object> params = new ArrayList<Object>(3);
 		if(databaseId != null){
-			hql += " databaseId=?";
+			hql += " publishDatabaseId=?";
 			params.add(databaseId);
 		}
 		if(projectId != null){
@@ -37,8 +37,6 @@ public class ComPublishInfoService extends AbstractService{
 		if(resourceId != null){
 			hql += " and publishResourceId=?";
 			params.add(resourceId);
-		}else{
-			throw new NullPointerException("验证资源是否发布时，传入的resourceId不能为空！");
 		}
 		
 		ComPublishInfo publishInfo = HibernateUtil.extendExecuteUniqueQueryByHql(ComPublishInfo.class, hql, params);

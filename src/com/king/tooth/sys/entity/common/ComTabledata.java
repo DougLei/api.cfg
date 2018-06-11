@@ -333,18 +333,22 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		entityJson.put("isCreated", isCreated);
 		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
+		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
 		return entityJson.getEntityJson();
 	}
 	
 	public String validNotNullProps() {
 		if(!isValidNotNullProps){
+			isValidNotNullProps = true;
 			if(StrUtils.isEmpty(tableName)){
 				validNotNullPropsResult = "表名不能为空！";
+				return validNotNullPropsResult;
 			}
 			if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 0 && this.tableName.length() > 30){
 				validNotNullPropsResult = "oracle数据库的表名长度不能超过30个字符！";
+				return validNotNullPropsResult;
 			}
-			isValidNotNullProps = true;
 		}
 		return validNotNullPropsResult;
 	}
