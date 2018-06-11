@@ -228,6 +228,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishSqlScript(String sqlScriptId){
+		// 最后表要都发布了，他才能发布
 		return null;
 	}
 	

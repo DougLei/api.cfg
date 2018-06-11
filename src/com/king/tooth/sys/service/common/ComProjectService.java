@@ -136,6 +136,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishProject(String projectId){
+		//判断数据库有没有发布
 		return null;
 	}
 	
