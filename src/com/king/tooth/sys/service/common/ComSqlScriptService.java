@@ -222,5 +222,22 @@ public class ComSqlScriptService extends AbstractPublishService {
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 发布sql脚本
+	 * @param sqlScriptId
+	 * @return
+	 */
+	public String publishSqlScript(String sqlScriptId){
+		return null;
+	}
 	
+	/**
+	 * 取消发布sql脚本
+	 * @param sqlScriptId
+	 * @return
+	 */
+	public String cancelPublishSqlScript(String sqlScriptId){
+		return null;
+	}
+	//--------------------------------------------------------------------------------------------------------
 }

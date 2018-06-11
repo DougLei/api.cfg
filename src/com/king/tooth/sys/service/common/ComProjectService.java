@@ -130,4 +130,22 @@ public class ComProjectService extends AbstractPublishService {
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 发布项目
+	 * @param projectId
+	 * @return
+	 */
+	public String publishProject(String projectId){
+		return null;
+	}
+	
+	/**
+	 * 取消发布项目
+	 * @param projectId
+	 * @return
+	 */
+	public String cancelPublishProject(String projectId){
+		return null;
+	}
+	//--------------------------------------------------------------------------------------------------------
 }

@@ -103,13 +103,22 @@ public class ComProjectModuleService extends AbstractPublishService {
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
-//	public String publishProjectModule(String projectId, String projectModuleId){
-//		
-//	}
-//	
-//	public String cancelPublishProjectModule(String projectId, String projectModuleId){
-//		
-//	}
+	/**
+	 * 发布项目模块
+	 * @param projectModuleId
+	 * @return
+	 */
+	public String publishProjectModule(String projectModuleId){
+		return null;
+	}
 	
+	/**
+	 * 取消发布项目模块
+	 * @param projectModuleId
+	 * @return
+	 */
+	public String cancelPublishProjectModule(String projectModuleId){
+		return null;
+	}
 	//--------------------------------------------------------------------------------------------------------
 }
