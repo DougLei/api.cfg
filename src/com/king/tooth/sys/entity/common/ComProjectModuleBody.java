@@ -55,7 +55,7 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
 		ComColumndata moduleIdColumn = new ComColumndata("module_id", DataTypeConstants.STRING, 32);
 		moduleIdColumn.setName("关联的项目模块编号");

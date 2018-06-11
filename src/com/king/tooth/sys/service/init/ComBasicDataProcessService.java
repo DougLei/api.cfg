@@ -25,6 +25,7 @@ import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.entity.common.ComProjectModuleBody;
+import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
@@ -96,7 +97,7 @@ public class ComBasicDataProcessService extends AbstractService{
 	 * @return
 	 */
 	private List<ComTabledata> getInitTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(17);
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(18);
 		String dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
 		
 		tables.add(new ComSysResource().toCreateTable(dbType));
@@ -114,6 +115,7 @@ public class ComBasicDataProcessService extends AbstractService{
 		tables.add(new ComSqlScript().toCreateTable(dbType));
 		tables.add(new ComSysAccount().toCreateTable(dbType));
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
+		tables.add(new ComPublishInfo().toCreateTable(dbType));
 		
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable(dbType));
 		tables.add(new ComProjectComTabledataLinks().toCreateTable(dbType));

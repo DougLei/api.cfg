@@ -39,6 +39,7 @@ public class BasicEntity implements Serializable{
 	 */
 	protected Integer belongPlatformType;
 	
+	
 	public String getProjectId() {
 		return projectId;
 	}
