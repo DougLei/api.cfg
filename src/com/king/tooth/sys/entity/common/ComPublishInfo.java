@@ -38,6 +38,10 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 	 */
 	private String publishResourceName;
 	/**
+	 * 部署的资源类型
+	 */
+	private Integer resourceType;
+	/**
 	 * 是否成功
 	 */
 	private Integer isSuccess;
@@ -84,6 +88,13 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 	public void setErrMsg(String errMsg) {
 		this.errMsg = errMsg;
 	}
+	public Integer getResourceType() {
+		return resourceType;
+	}
+	public void setResourceType(Integer resourceType) {
+		this.resourceType = resourceType;
+	}
+	
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PUBLISH_INFO", 0);
@@ -96,7 +107,7 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata publishDatabaseIdColumn = new ComColumndata("publish_database_id", DataTypeConstants.STRING, 32);
 		publishDatabaseIdColumn.setName("部署的数据库主键");
@@ -122,17 +133,24 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		publishResourceNameColumn.setOrderCode(4);
 		columns.add(publishResourceNameColumn);
 		
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", DataTypeConstants.INTEGER, 1);
+		resourceTypeColumn.setName("部署的资源类型");
+		resourceTypeColumn.setComments("部署的资源类型");
+		resourceTypeColumn.setIsNullabled(0);
+		resourceTypeColumn.setOrderCode(5);
+		columns.add(resourceTypeColumn);
+		
 		ComColumndata isSuccessColumn = new ComColumndata("is_success", DataTypeConstants.INTEGER, 1);
 		isSuccessColumn.setName("是否成功");
 		isSuccessColumn.setComments("是否成功");
 		isSuccessColumn.setDefaultValue("0");
-		isSuccessColumn.setOrderCode(5);
+		isSuccessColumn.setOrderCode(6);
 		columns.add(isSuccessColumn);
 		
 		ComColumndata errMsgColumn = new ComColumndata("err_msg", DataTypeConstants.STRING, 1000);
 		errMsgColumn.setName("错误消息");
 		errMsgColumn.setComments("错误消息");
-		errMsgColumn.setOrderCode(6);
+		errMsgColumn.setOrderCode(7);
 		columns.add(errMsgColumn);
 		
 		table.setColumns(columns);
@@ -151,6 +169,7 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
 		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("belongPlatformType", belongPlatformType);
+		entityJson.put("resourceType", resourceType);
 		entityJson.put("isSuccess", isSuccess);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
