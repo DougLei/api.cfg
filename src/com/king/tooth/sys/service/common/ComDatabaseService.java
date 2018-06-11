@@ -215,10 +215,10 @@ public class ComDatabaseService extends AbstractPublishService {
 			databaseHandler.dropDatabase(database);
 		}
 		
-		// 移除数据源和sessionFacotry
+		// 移除dataSource和sessionFacotry
 		DynamicDBUtil.removeDataSource(databaseId);
 		
-		// 删除部署的数据
+		// 删除发布信息的数据
 		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		return null;
 	}
