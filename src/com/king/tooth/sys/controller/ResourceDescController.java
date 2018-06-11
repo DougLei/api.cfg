@@ -34,7 +34,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @Controller
 @RequestMapping("/ResourceDesc")
 @SuppressWarnings("unchecked")
-public class ResourceDescController extends AbstractResourceController{
+public class ResourceDescController extends AbstractController{
 	
 	/**
 	 * 获取指定表资源的资源描述信息

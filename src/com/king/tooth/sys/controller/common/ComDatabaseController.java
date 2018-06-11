@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.king.tooth.sys.controller.AbstractResourceController;
+import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.common.ComDatabaseService;
 import com.king.tooth.util.StrUtils;
@@ -21,7 +21,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @Scope("prototype")
 @Controller
 @RequestMapping("/ComDatabase")
-public class ComDatabaseController extends AbstractResourceController{
+public class ComDatabaseController extends AbstractPublishController{
 	
 	private ComDatabaseService databaseService = new ComDatabaseService();
 	

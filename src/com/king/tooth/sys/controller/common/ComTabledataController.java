@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.controller.AbstractResourceController;
+import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.common.ComTabledataService;
 import com.king.tooth.util.StrUtils;
@@ -22,7 +22,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @Scope("prototype")
 @Controller
 @RequestMapping("/ComTabledata")
-public class ComTabledataController extends AbstractResourceController{
+public class ComTabledataController extends AbstractPublishController{
 	
 	private ComTabledataService tabledataService = new ComTabledataService();
 	
@@ -68,7 +68,8 @@ public class ComTabledataController extends AbstractResourceController{
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要删除的表id不能为空", null);
 		}
-		String result = tabledataService.deleteTable(tableId);
+		String projectId = request.getParameter("projectId");
+		String result = tabledataService.deleteTable(tableId, projectId);
 		return installOperResponseBody(result, null);
 	}
 	

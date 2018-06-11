@@ -167,4 +167,8 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		this.setReqResourceMethod(table.getReqResourceMethod());
 		this.setIsCreated(table.getIsCreated());
 	}
+
+	public Integer getResourceType() {
+		return TABLE;
+	}
 }

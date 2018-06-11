@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.king.tooth.sys.controller.AbstractResourceController;
+import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.service.common.ComSysAccountService;
@@ -22,7 +22,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @Scope("prototype")
 @Controller
 @RequestMapping("/ComSysAccount")
-public class ComSysAccountController extends AbstractResourceController{
+public class ComSysAccountController extends AbstractController{
 	
 	private ComSysAccountService accountService = new ComSysAccountService();
 	

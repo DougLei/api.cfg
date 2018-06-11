@@ -125,6 +125,7 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		ComColumndata isSuccessColumn = new ComColumndata("is_success", DataTypeConstants.INTEGER, 1);
 		isSuccessColumn.setName("是否成功");
 		isSuccessColumn.setComments("是否成功");
+		isSuccessColumn.setDefaultValue("0");
 		isSuccessColumn.setOrderCode(5);
 		columns.add(isSuccessColumn);
 		

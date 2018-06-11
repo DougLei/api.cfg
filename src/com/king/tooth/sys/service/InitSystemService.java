@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.init;
+package com.king.tooth.sys.service;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,7 +35,6 @@ import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.entity.datalinks.ComDataLinks;
 import com.king.tooth.sys.entity.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.entity.datalinks.ComProjectComTabledataLinks;
-import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.DateUtil;
@@ -46,11 +45,11 @@ import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 基础数据处理器
+ * 初始化系统的服务器
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
-public class ComBasicDataProcessService extends AbstractService{
+public class InitSystemService extends AbstractService{
 
 	/**
 	 * 系统首次启动时，初始化系统的基础数据

@@ -11,23 +11,27 @@ public interface ISysResource {
 	/**
 	 * 1：表资源类型
 	 */
-	public static final int TABLE = 1;
+	public static final Integer TABLE = 1;
 	/**
 	 * 2：sql脚本资源类型
 	 */
-	public static final int SQLSCRIPT = 2;
+	public static final Integer SQLSCRIPT = 2;
 	/**
 	 * 3：代码资源类型
 	 */
-	public static final int CODE = 3;
+	public static final Integer CODE = 3;
 	/**
 	 * 4：数据库资源类型
 	 */
-	public static final int DATABASE = 4;
+	public static final Integer DATABASE = 4;
 	/**
 	 * 5：项目资源类型
 	 */
-	public static final int PROJECT = 5;
+	public static final Integer PROJECT = 5;
+	/**
+	 * 6：项目模块资源类型
+	 */
+	public static final Integer PROJECT_MODULE = 6;
 	
 	/**
 	 * 请求资源的方式：GET
@@ -60,4 +64,10 @@ public interface ISysResource {
 	 * 转换为资源对象
 	 */
 	public ComSysResource turnToResource();
+	
+	/**
+	 * 获取资源类型
+	 * @return
+	 */
+	public Integer getResourceType();
 }

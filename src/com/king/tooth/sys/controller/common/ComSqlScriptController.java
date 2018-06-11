@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.king.tooth.sys.controller.AbstractResourceController;
+import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.util.JsonUtil;
@@ -22,7 +22,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @Scope("prototype")
 @Controller
 @RequestMapping("/ComSqlScript")
-public class ComSqlScriptController extends AbstractResourceController{
+public class ComSqlScriptController extends AbstractPublishController{
 	
 	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
 	
@@ -70,7 +70,8 @@ public class ComSqlScriptController extends AbstractResourceController{
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要删除的sql脚本id不能为空", null);
 		}
-		String result = sqlScriptService.deleteSqlScript(sqlScriptId);
+		String projectId = request.getParameter("projectId");
+		String result = sqlScriptService.deleteSqlScript(sqlScriptId, projectId);
 		return installOperResponseBody(result, null);
 	}
 	

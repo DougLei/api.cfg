@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.king.tooth.sys.controller.AbstractResourceController;
+import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.common.ComProjectService;
 import com.king.tooth.util.StrUtils;
@@ -21,7 +21,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @Scope("prototype")
 @Controller
 @RequestMapping("/ComProject")
-public class ComProjectController extends AbstractResourceController{
+public class ComProjectController extends AbstractPublishController{
 	
 	private ComProjectService projectService = new ComProjectService();
 	

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.king.tooth.sys.controller.AbstractResourceController;
+import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
@@ -17,7 +17,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 @Scope("prototype")
 @Controller
 @RequestMapping("/ComSysResource")
-public class ComSysResourceController extends AbstractResourceController{
+public class ComSysResourceController extends AbstractController{
 	
 	/**
 	 * 修改是否启用状态

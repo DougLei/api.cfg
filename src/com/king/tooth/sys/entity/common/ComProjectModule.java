@@ -203,4 +203,8 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	public String analysisResourceProp() {
 		return validNotNullProps();
 	}
+	
+	public Integer getResourceType() {
+		return PROJECT_MODULE;
+	}
 }

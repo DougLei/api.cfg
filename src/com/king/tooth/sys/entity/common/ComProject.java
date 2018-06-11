@@ -152,4 +152,8 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 	public String analysisResourceProp() {
 		return validNotNullProps();
 	}
+	
+	public Integer getResourceType() {
+		return PROJECT;
+	}
 }

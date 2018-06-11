@@ -802,4 +802,18 @@ public class HibernateUtil {
 		Map<String, Object> map = (Map<String, Object>) executeUniqueQueryByHql(queryHql, parameters);
 		return JsonUtil.turnMapToJavaEntity(map, clazz);
 	}
+	
+	/**
+	 * 【扩展】hql查询一条数据
+	 * <p>该方法针对hql查询结果是map的使用</p>
+	 * <p>因为系统现在将例如cfgTabledata这些都转换为了map用hibernate操作，在查询的时候，需要通过这个方法转换为原来的实体对象</p>
+	 * @param clazz
+	 * @param queryHql
+	 * @param parameterArr
+	 * @return
+	 */
+	public static <T> T extendExecuteUniqueQueryByHql(Class<T> clazz, String queryHql, List<Object> parameters){
+		Map<String, Object> map = (Map<String, Object>) executeUniqueQueryByHql(queryHql, parameters);
+		return JsonUtil.turnMapToJavaEntity(map, clazz);
+	}
 }

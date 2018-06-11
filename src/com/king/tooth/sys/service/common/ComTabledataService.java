@@ -13,7 +13,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComTabledata;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -22,7 +22,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
-public class ComTabledataService extends AbstractService{
+public class ComTabledataService extends AbstractPublishService {
 	// 项目和表的关联关系资源名
 	private static final String comProjectComTabledataLinkResourceName = "ComProjectComTabledataLinks";
 	
@@ -62,6 +62,7 @@ public class ComTabledataService extends AbstractService{
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		
 		String projectId = table.getProjectId();
+		table.setProjectId(null);
 		if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
 			if(StrUtils.isEmpty(projectId)){
 				return "表关联的项目id不能为空！";
@@ -69,7 +70,6 @@ public class ComTabledataService extends AbstractService{
 			operResult = validTableRefProjIsExists(projectId);
 		}
 		if(operResult == null){
-			table.setProjectId(null);
 			String tableId = HibernateUtil.saveObject(table, null);
 			// 保存表和项目的关联关系
 			if(isPlatformDeveloper){
@@ -95,7 +95,13 @@ public class ComTabledataService extends AbstractService{
 		
 		String operResult = null;
 		if(!isPlatformDeveloper && !oldTable.getTableName().equals(table.getTableName())){
-			if(oldTable.getIsDeployed() == 1){
+			if(StrUtils.isEmpty(table.getProjectId())){
+				return "表关联的项目id不能为空！";
+			}
+			String projectId = table.getProjectId();
+			table.setProjectId(null);
+			
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
 				return "该表已经发布，不能修改表名，或取消发布后再修改";
 			}
 			operResult = validTableNameIsExists(table);
@@ -113,17 +119,23 @@ public class ComTabledataService extends AbstractService{
 	/**
 	 * 删除表
 	 * @param tableId
+	 * @param projectId
 	 * @return
 	 */
-	public String deleteTable(String tableId) {
+	public String deleteTable(String tableId, String projectId) {
 		ComTabledata oldTable = getObjectById(tableId, ComTabledata.class);
 		if(oldTable == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		
-		if(!isPlatformDeveloper && oldTable.getIsDeployed() == 1){
-			return "该表已经发布，无法删除，请先取消发布";
+		if(!isPlatformDeveloper){
+			if(StrUtils.isEmpty(projectId)){
+				return "要删除的表，关联的项目id不能为空";
+			}
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
+				return "该表已经发布，无法删除，请先取消发布";
+			}
 		}
 		
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks(comProjectComTabledataLinkResourceName, null, tableId);

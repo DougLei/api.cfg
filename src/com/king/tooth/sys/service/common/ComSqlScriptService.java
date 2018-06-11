@@ -8,7 +8,7 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -17,7 +17,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
-public class ComSqlScriptService extends AbstractService {
+public class ComSqlScriptService extends AbstractPublishService {
 	// 项目和sql脚本的关联关系资源名
 	private static final String comProjectComSqlScriptLinksResourceName = "ComProjectComSqlScriptLinks";
 	
@@ -57,6 +57,7 @@ public class ComSqlScriptService extends AbstractService {
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		
 		String projectId = sqlScript.getProjectId();
+		sqlScript.setProjectId(null);
 		if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
 			if(StrUtils.isEmpty(projectId)){
 				return "sql脚本关联的项目id不能为空！";
@@ -65,7 +66,6 @@ public class ComSqlScriptService extends AbstractService {
 		}
 		
 		if(operResult == null){
-			sqlScript.setProjectId(null);
 			if(isPlatformDeveloper){
 				/* 属于直接就建模，不需要用户再进行一次建模的操作(表是因为，添加了表信息后，还要添加列信息，然后才能建模) */
 				// 如果是平台开发者，则要解析出sql脚本内容，再保存
@@ -108,7 +108,13 @@ public class ComSqlScriptService extends AbstractService {
 		
 		String operResult = null;
 		if(!isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
-			if(oldSqlScript.getIsDeployed() == 1){
+			if(StrUtils.isEmpty(sqlScript.getProjectId())){
+				return "表关联的项目id不能为空！";
+			}
+			String projectId = sqlScript.getProjectId();
+			sqlScript.setProjectId(null);
+			
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
 				return "该sql资源已经发布，不能修改sql资源名，或取消发布后再修改";
 			}
 			operResult = validSqlScriptResourceNameIsExists(sqlScript);
@@ -132,16 +138,22 @@ public class ComSqlScriptService extends AbstractService {
 	/**
 	 * 删除sql脚本
 	 * @param sqlScriptId
+	 * @param projectId
 	 * @return
 	 */
-	public String deleteSqlScript(String sqlScriptId) {
+	public String deleteSqlScript(String sqlScriptId, String projectId) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
 		if(oldSqlScript == null){
 			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
 		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-		if(!isPlatformDeveloper && oldSqlScript.getIsDeployed() == 1){
-			return "该sql脚本已经发布，无法删除，请先取消发布";
+		if(!isPlatformDeveloper){
+			if(StrUtils.isEmpty(projectId)){
+				return "要删除的sql脚本，关联的项目id不能为空";
+			}
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
+				return "该sql脚本已经发布，无法删除，请先取消发布";
+			}
 		}
 		
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks(comProjectComSqlScriptLinksResourceName, null, sqlScriptId);

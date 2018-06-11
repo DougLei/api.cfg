@@ -1,19 +1,19 @@
 package com.king.tooth.sys.service.common;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 数据库数据信息资源对象处理器
  * @author DougLei
  */
-public class ComDatabaseService extends AbstractService{
+public class ComDatabaseService extends AbstractPublishService {
 	
 	/**
 	 * 验证数据库数据是否存在
@@ -56,7 +56,7 @@ public class ComDatabaseService extends AbstractService{
 		String operResult = null;
 		boolean databaseLinkInfoIsSame = oldDatabase.compareLinkInfoIsSame(database);
 		if(!databaseLinkInfoIsSame){// 如果修改了连接信息
-			if(oldDatabase.getIsDeployed() == 1){ // 如果已发布，则发出提示信息
+			if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null)){ // 如果已发布，则发出提示信息
 				return "【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改连接信息，或取消发布后再修改";
 			}
 			operResult = validDatabaseDataIsExists(database);
@@ -77,7 +77,7 @@ public class ComDatabaseService extends AbstractService{
 		if(oldDatabase == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
-		if(oldDatabase.getIsDeployed() == 1){
+		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null)){
 			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，无法删除，请先取消发布";
 		}
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);

@@ -371,4 +371,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		resource.setResourceName(resourceName);
 		return resource;
 	}
+	
+	public Integer getResourceType() {
+		return TABLE;
+	}
 }

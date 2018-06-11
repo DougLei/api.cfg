@@ -6,7 +6,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
  * 控制器的抽象父类
  * @author DougLei
  */
-public abstract class AbstractResourceController {
+public abstract class AbstractController {
 	
 	/**
 	 * 组装操作responseBody对象，主要用于返回操作结果内容

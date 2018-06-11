@@ -352,4 +352,8 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		}
 		return false;
 	}
+
+	public Integer getResourceType() {
+		return DATABASE;
+	}
 }

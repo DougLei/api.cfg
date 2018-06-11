@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.sys.service.init.ComBasicDataProcessService;
+import com.king.tooth.sys.service.InitSystemService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
@@ -72,9 +72,9 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 		BuiltinQueryCondFuncUtil.initBuiltinQueryCondFuncConfig();
 		// 系统启动时，初始化配置数据库的表和所有基础数据
 		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
-			new ComBasicDataProcessService().loadSysBasicDatasBySysFirstStart();
+			new InitSystemService().loadSysBasicDatasBySysFirstStart();
 		}else{
-			new ComBasicDataProcessService().loadSysBasicDatasBySysStart();
+			new InitSystemService().loadSysBasicDatasBySysStart();
 		}
 		
 		// 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载

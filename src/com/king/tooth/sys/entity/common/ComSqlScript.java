@@ -435,4 +435,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		resource.setResourceName(sqlScriptResourceName);
 		return resource;
 	}
+	
+	public Integer getResourceType() {
+		return SQLSCRIPT;
+	}
 }

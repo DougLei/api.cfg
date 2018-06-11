@@ -3,14 +3,14 @@ package com.king.tooth.sys.service.common;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComProject;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 项目信息资源对象处理器
  * @author DougLei
  */
-public class ComProjectService extends AbstractService{
+public class ComProjectService extends AbstractPublishService {
 	
 	/**
 	 * 验证项目关联的数据库是否存在
@@ -68,7 +68,7 @@ public class ComProjectService extends AbstractService{
 		
 		String operResult = null;
 		if(!oldProject.getProjCode().equals(project.getProjCode())){
-			if(oldProject.getIsDeployed() == 1){
+			if(publishInfoService.validResourceIsPublished(oldProject.getRefDatabaseId(), oldProject.getId(), null)){
 				return "该项目已经发布，不能修改项目编码，或取消发布后再修改";
 			}
 			operResult = validProjectCodeIsExists(project);
@@ -93,7 +93,7 @@ public class ComProjectService extends AbstractService{
 		if(oldProject == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
-		if(oldProject.getIsDeployed() == 1){
+		if(publishInfoService.validResourceIsPublished(oldProject.getRefDatabaseId(), oldProject.getId(), null)){
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
 		

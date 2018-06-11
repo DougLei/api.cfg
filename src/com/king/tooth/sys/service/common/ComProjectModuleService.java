@@ -3,14 +3,14 @@ package com.king.tooth.sys.service.common;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComProjectModule;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 项目模块信息资源对象处理器
  * @author DougLei
  */
-public class ComProjectModuleService extends AbstractService{
+public class ComProjectModuleService extends AbstractPublishService {
 
 	/**
 	 * 验证模块关联的项目是否存在
@@ -68,7 +68,7 @@ public class ComProjectModuleService extends AbstractService{
 		
 		String operResult = null;
 		if(!oldProjectModule.getCode().equals(projectModule.getCode())){
-			if(oldProjectModule.getIsDeployed() == 1){
+			if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getProjectId(), oldProjectModule.getId())){
 				return "该模块已经发布，不能修改模块编码，或取消发布后再修改";
 			}
 			operResult = validProjectModuleCodeIsExists(projectModule);
@@ -93,7 +93,7 @@ public class ComProjectModuleService extends AbstractService{
 		if(oldProjectModule == null){
 			return "没有找到id为["+projectModuleId+"]的模块对象信息";
 		}
-		if(oldProjectModule.getIsDeployed() == 1){
+		if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getProjectId(), oldProjectModule.getId())){
 			return "["+oldProjectModule.getName()+"]模块已经发布，无法删除，请先取消发布";
 		}
 		
