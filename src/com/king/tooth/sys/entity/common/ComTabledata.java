@@ -225,9 +225,10 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setName("表数据信息资源对象表");
 		table.setComments("表数据信息资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
+		table.setIsNeedDeploy(0);
 		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
@@ -329,8 +330,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("isBuiltin", isBuiltin);
 		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isDeployed", isDeployed);
 		entityJson.put("isCreated", isCreated);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

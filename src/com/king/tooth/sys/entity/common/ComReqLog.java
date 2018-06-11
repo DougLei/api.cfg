@@ -144,6 +144,7 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
@@ -230,6 +231,7 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("reqDate", reqDate);
 		entityJson.put("respDate", reqDate);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

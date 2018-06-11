@@ -75,6 +75,7 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
@@ -122,8 +123,8 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 		entityJson.put("validDate", validDate);
 		entityJson.put("isBuiltin", isBuiltin);
 		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isDeployed", isDeployed);
 		entityJson.put("isCreated", isCreated);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

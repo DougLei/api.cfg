@@ -80,12 +80,13 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_ROLE", 0);
-		table.setName("[通用的]角色资源对象表");
-		table.setComments("[通用的]角色资源对象表");
+		table.setName("角色资源对象表");
+		table.setComments("角色资源对象表");
 		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
+		table.setIsCreated(0);
+		table.setBelongPlatformType(APP_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
 		
@@ -138,6 +139,7 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("orderCode", orderCode);
 		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

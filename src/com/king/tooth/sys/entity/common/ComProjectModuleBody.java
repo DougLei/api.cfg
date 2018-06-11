@@ -53,6 +53,7 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
 		
@@ -82,6 +83,7 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
 		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

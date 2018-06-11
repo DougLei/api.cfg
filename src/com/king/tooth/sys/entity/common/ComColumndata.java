@@ -10,6 +10,7 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -204,8 +205,10 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setComments("字段数据信息资源对象表");
 		table.setVersion(1);
 		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
+		table.setIsNeedDeploy(0);
+		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
@@ -339,6 +342,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		entityJson.put("isDataDictionary", isDataDictionary);
 		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("orderCode", orderCode);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

@@ -162,6 +162,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
@@ -232,6 +233,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		entityJson.put("loginDate", loginDate);
 		entityJson.put("lastOperDate", lastOperDate);
 		entityJson.put("tryLoginTimes", tryLoginTimes);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

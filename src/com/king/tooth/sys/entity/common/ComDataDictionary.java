@@ -90,6 +90,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
@@ -146,6 +147,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
 		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("orderCode", orderCode);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

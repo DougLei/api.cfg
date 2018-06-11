@@ -110,6 +110,7 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
@@ -176,8 +177,8 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("isBuiltin", isBuiltin);
 		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isDeployed", isDeployed);
 		entityJson.put("isCreated", isCreated);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

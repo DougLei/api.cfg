@@ -399,6 +399,58 @@ public class HibernateUtil {
 	}
 	
 	//------------------------------------------------------------------------------------------------------
+	/**
+	 * 获取关联关系对象信息
+	 * @param entityName 实体名
+	 * @param leftId
+	 * @param rightId
+	 */
+	public static List<JSONObject> queryDataLinks(String entityName, String leftId, String rightId){
+		String hql = "from " + entityName + " where ";
+		if(leftId != null){
+			hql += ResourceNameConstants.LEFT_ID + "=?";
+		}
+		if(rightId != null){
+			if(leftId != null){
+				hql += " and ";
+			}
+			hql += ResourceNameConstants.RIGHT_ID + "=?";
+		}
+		return executeListQueryByHqlArr(null, null, hql, leftId, rightId);
+	}
+	
+	/**
+	 * 保存关联关系对象信息
+	 * @param entityName 实体名
+	 * @param leftId
+	 * @param rightId
+	 */
+	public static void saveDataLinks(String entityName, String leftId, String rightId){
+		JSONObject datalink = ResourceHandlerUtil.getDataLinksObject(leftId, rightId, 1, null, null);
+		HibernateUtil.saveObject(entityName, datalink, null);
+	}
+	
+	/**
+	 * 删除关联关系对象信息
+	 * @param entityName 实体名
+	 * @param leftId
+	 * @param rightId
+	 */
+	public static void deleteDataLinks(String entityName, String leftId, String rightId){
+		String hql = "delete "+entityName+" where ";
+		if(leftId != null){
+			hql += ResourceNameConstants.LEFT_ID + "=?";
+		}
+		if(rightId != null){
+			if(leftId != null){
+				hql += " and ";
+			}
+			hql += ResourceNameConstants.RIGHT_ID + "=?";
+		}
+		executeUpdateByHqlArr(SqlStatementType.DELETE, hql, leftId, rightId);
+	}
+	
+	//------------------------------------------------------------------------------------------------------
 	
 	/**
 	 * 修改数据

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.controller.AbstractResourceController;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComSysResource;
@@ -142,7 +141,7 @@ public class ResourceDescController extends AbstractResourceController{
 	 * 给动态表对象，添加基础的字段
 	 * @param table
 	 */
-	private void initBasicColumnToTable(ComTabledata table){
+	public static void initBasicColumnToTable(ComTabledata table){
 		// projectId
 		ComColumndata projectIdColumn = new ComColumndata("project_id", DataTypeConstants.STRING, 32);
 		projectIdColumn.setComments("关联的项目主键");
@@ -150,41 +149,41 @@ public class ResourceDescController extends AbstractResourceController{
 		projectIdColumn.setOrderCode(9902);
 		table.getColumns().add(projectIdColumn);
 		
+		// belongPlatformType
+		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", DataTypeConstants.INTEGER, 1);
+		belongPlatformTypeColumn.setComments("所属的平台类型");
+		belongPlatformTypeColumn.setName("所属的平台类型:1：配置平台、2：运行平台、3：通用");
+		belongPlatformTypeColumn.setOrderCode(9903);
+		table.getColumns().add(belongPlatformTypeColumn);
+		
 		if(table.getIsResource() == 1){
 			ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 			isEnabledColumn.setName("资源是否有效");
 			isEnabledColumn.setComments("资源是否有效");
 			isEnabledColumn.setDefaultValue("1");
-			isEnabledColumn.setOrderCode(9903);
+			isEnabledColumn.setOrderCode(9904);
 			table.getColumns().add(isEnabledColumn);
 			
 			ComColumndata reqResourceMethodColumn = new ComColumndata("req_resource_method", DataTypeConstants.STRING, 20);
 			reqResourceMethodColumn.setName("请求资源的方法");
 			reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 			reqResourceMethodColumn.setDefaultValue(ISysResource.ALL);
-			reqResourceMethodColumn.setOrderCode(9904);
+			reqResourceMethodColumn.setOrderCode(9905);
 			table.getColumns().add(reqResourceMethodColumn);
 
 			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin", DataTypeConstants.INTEGER, 1);
 			isBuiltinColumn.setName("是否内置资源");
 			isBuiltinColumn.setComments("是否内置资源:这个字段由开发人员控制，不开放给用户");
 			isBuiltinColumn.setDefaultValue("0");
-			isBuiltinColumn.setOrderCode(9905);
+			isBuiltinColumn.setOrderCode(9906);
 			table.getColumns().add(isBuiltinColumn);
 
 			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy", DataTypeConstants.INTEGER, 1);
 			isNeedDeployColumn.setName("资源是否需要发布");
 			isNeedDeployColumn.setComments("资源是否需要发布");
 			isNeedDeployColumn.setDefaultValue("1");
-			isNeedDeployColumn.setOrderCode(9906);
+			isNeedDeployColumn.setOrderCode(9907);
 			table.getColumns().add(isNeedDeployColumn);
-			
-			ComColumndata isDeployedColumn = new ComColumndata("is_deployed", DataTypeConstants.INTEGER, 1);
-			isDeployedColumn.setName("资源是否发布");
-			isDeployedColumn.setComments("资源是否发布");
-			isDeployedColumn.setDefaultValue("0");
-			isDeployedColumn.setOrderCode(9907);
-			table.getColumns().add(isDeployedColumn);
 			
 			ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
 			isCreatedColumn.setName("资源是否被创建");

@@ -80,7 +80,7 @@ public class ComBasicDataProcessService extends AbstractService{
 			HibernateUtil.beginTransaction();
 			
 			insertHbmContentsToSessionFactory();// 根据表创建hbm文件，并将其加入到SessionFactory中
-			insertDatabaseOfBasicDatas();// 插入配置库的基础数据
+			insertBasicDatas();// 插入基础数据
 			
 			HibernateUtil.commitTransaction();
 		} catch (Exception e) {
@@ -150,9 +150,9 @@ public class ComBasicDataProcessService extends AbstractService{
 	}
 	
 	/**
-	 * 插入数据库库的基础数据
+	 * 插入基础数据
 	 */
-	private void insertDatabaseOfBasicDatas() {
+	private void insertBasicDatas() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加平台开发账户【1.平台开发账户】
 		ComSysAccount admin = new ComSysAccount();
@@ -162,7 +162,6 @@ public class ComBasicDataProcessService extends AbstractService{
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 		String adminAccountId = HibernateUtil.saveObject(admin, null);
 		
-		
 		// 添加一般开发账户【2.一般开发账户】
 		ComSysAccount normal = new ComSysAccount();
 		normal.setAccountType(2);
@@ -170,6 +169,30 @@ public class ComBasicDataProcessService extends AbstractService{
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		normal.setValidDate(DateUtil.parseDate("2019-12-31 23:59:59"));
 		HibernateUtil.saveObject(normal, adminAccountId);
+		
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 添加数据库信息【运行平台数据库信息】
+		ComDatabase appDatabase = new ComDatabase();
+		appDatabase.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
+		appDatabase.setDbInstanceName("SmartOneApp");
+		appDatabase.setLoginUserName("SmartOneApp");
+		appDatabase.setLoginPassword("1");
+		appDatabase.setDbIp(SysConfig.getSystemConfig("db.default.ip"));
+		appDatabase.setDbPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
+		appDatabase.analysisResourceProp();
+		appDatabase.setIsBuiltin(1);
+		appDatabase.setIsNeedDeploy(0);
+		appDatabase.setIsCreated(1);
+		String appDatabaseId = HibernateUtil.saveObject(appDatabase, null);
+		
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 添加项目信息【运行平台测试项目】
+		ComProject testProject = new ComProject();
+		testProject.setRefDatabaseId(appDatabaseId);
+		testProject.setProjName("运行系统测试用项目");
+		testProject.setProjCode("appTestProject");
+		testProject.analysisResourceProp();
+		HibernateUtil.saveObject(testProject, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		insertAllTables(adminAccountId);// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；创建者是平台开发账户
@@ -362,12 +385,17 @@ public class ComBasicDataProcessService extends AbstractService{
 			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的hbm加载进自己的sessionFactory中
-			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1");
+			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belong_platform_type = " + SysConfig.getSystemConfig("current.sys.type"));
 			HibernateUtil.closeCurrentThreadSession();
 			
 			if(databases != null && databases.size()> 0){
 				for (ComDatabase database : databases) {
 					database.analysisResourceProp();
+					String testLinkResult = database.testDbLink();
+					if(testLinkResult.startsWith("测试数据库连接失败")){
+						throw new Exception(testLinkResult);
+					}
+					
 					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
 					loadHbmContentsByDatabaseId(database);// 加载当前数据库中的hbm到sessionFactory中
 				}

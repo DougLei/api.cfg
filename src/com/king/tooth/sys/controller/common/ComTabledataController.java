@@ -92,4 +92,44 @@ public class ComTabledataController extends AbstractResourceController{
 		String result = tabledataService.buildModel(tableId);
 		return installOperResponseBody(result, null);
 	}
+	
+	/**
+	 * 建立项目和表的关联关系
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/addProjTableRelation", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody addProjTableRelation(HttpServletRequest request){
+		String projectId = request.getParameter("projectId");
+		if(StrUtils.isEmpty(projectId)){
+			return installOperResponseBody("要操作的项目id不能为空", null);
+		}
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要操作的表id不能为空", null);
+		}
+		String result = tabledataService.addProjTableRelation(projectId, tableId);
+		return installOperResponseBody(result, null);
+	}
+	
+	/**
+	 * 取消项目和表的关联关系
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/cancelProjTableRelation", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody cancelProjTableRelation(HttpServletRequest request){
+		String projectId = request.getParameter("projectId");
+		if(StrUtils.isEmpty(projectId)){
+			return installOperResponseBody("要操作的项目id不能为空", null);
+		}
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要操作的表id不能为空", null);
+		}
+		String result = tabledataService.cancelProjTableRelation(projectId, tableId);
+		return installOperResponseBody(result, null);
+	}
 }

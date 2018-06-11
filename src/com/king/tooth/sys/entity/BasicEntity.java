@@ -33,7 +33,11 @@ public class BasicEntity implements Serializable{
 	 * 最后修改时间
 	 */
 	protected Date lastUpdateTime;
-	
+	/**
+	 * 所属的平台类型
+	 * <p>1：配置平台、2：运行平台、3：通用</p>
+	 */
+	protected Integer belongPlatformType;
 	
 	public String getProjectId() {
 		return projectId;
@@ -71,8 +75,14 @@ public class BasicEntity implements Serializable{
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-	
-	
+	public Integer getBelongPlatformType() {
+		return belongPlatformType;
+	}
+	public void setBelongPlatformType(Integer belongPlatformType) {
+		this.belongPlatformType = belongPlatformType;
+	}
+
+
 	// --------
 	/**
 	 * 是否验证了不能为空的属性

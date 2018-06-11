@@ -8,7 +8,7 @@ import com.king.tooth.util.DateUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public abstract class AbstractSysResource extends BasicEntity implements ISysResource{
+public abstract class AbstractSysResource extends BasicEntity implements ISysResource, IPublish{
 	/**
 	 * 资源是否有效
 	 */
@@ -28,11 +28,8 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	protected Integer isNeedDeploy;
 	/**
-	 * 资源是否发布
-	 */
-	protected Integer isDeployed;
-	/**
 	 * 资源是否被创建
+	 * <p>在配置平台使用，如果是内置，且是属于[配置平台/通用的]的资源，这个字段才有效</p>
 	 */
 	protected Integer isCreated;
 	
@@ -48,7 +45,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		resource.setReqResourceMethod(getReqResourceMethod());
 		resource.setIsBuiltin(isBuiltin);
 		resource.setIsNeedDeploy(isNeedDeploy);
-		resource.setIsDeployed(isDeployed);
 //		if(isBuiltin !=null && isBuiltin == 1){
 //			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 //		}
@@ -74,12 +70,6 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	public void setIsBuiltin(Integer isBuiltin) {
 		this.isBuiltin = isBuiltin;
-	}
-	public Integer getIsDeployed() {
-		return isDeployed;
-	}
-	public void setIsDeployed(Integer isDeployed) {
-		this.isDeployed = isDeployed;
 	}
 	public void setReqResourceMethod(String reqResourceMethod) {
 		this.reqResourceMethod = reqResourceMethod;

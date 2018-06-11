@@ -250,6 +250,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
@@ -327,8 +328,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("isBuiltin", isBuiltin);
 		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isDeployed", isDeployed);
 		entityJson.put("isCreated", isCreated);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}

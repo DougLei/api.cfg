@@ -50,8 +50,23 @@ _projId
 
 **************************************************************
 部署到正式环境后，有几个要改的地方：
-1.log4j.properties的等级
+1.log4j.properties的等级改为INFO
 2.api.platform.basic.properties中的is.develop的值改为false
 3.jdbc.properties中的hibernate.show_sql的值改为false
+	                current.sys.type的值，根据配置系统或运行系统，改为相应的值
+	                current.sys.database.id给每个系统，重新定义的值，放上去
+	                current.sys.project.id给每个系统，重新定义的值，放上去
+	                                                     这些数据库连接信息修改：
+		                jdbc.dbType=oracle
+						jdbc.driverClassName=oracle.jdbc.driver.OracleDriver
+						jdbc.url=jdbc:oracle:thin:@localhost:1521:ORCL
+						jdbc.username=SmartOneCfg
+						jdbc.password=1
+					这些信息，根据数据库连接信息，也进行相应的调整(最上面有注释说明)
+						db.default.ip=localhost
+						db.default.port=1521
+						db.default.password=1  这个可以考虑，要不要改为一个复杂值
+						db.default.instancename=ORCL
+	                
 4.api.platform.basic.properties中的account.default.pwd的值修改为一个复杂值
 5.api.platform.database.properties中的db.default.filepath的值，改为生产服务器上合适的目录

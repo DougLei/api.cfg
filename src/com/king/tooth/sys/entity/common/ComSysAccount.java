@@ -147,6 +147,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
@@ -218,6 +219,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		entityJson.put("accountType", accountType);
 		entityJson.put("accountStatus", accountStatus);
 		entityJson.put("validDate", validDate);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		return entityJson.getEntityJson();
 	}
