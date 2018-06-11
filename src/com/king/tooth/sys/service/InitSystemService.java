@@ -22,18 +22,10 @@ import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
-import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComProject;
-import com.king.tooth.sys.entity.common.ComProjectModuleBody;
-import com.king.tooth.sys.entity.common.ComPublishInfo;
-import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.entity.common.ComSysAccount;
-import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
-import com.king.tooth.sys.entity.datalinks.ComDataLinks;
-import com.king.tooth.sys.entity.datalinks.ComProjectComSqlScriptLinks;
-import com.king.tooth.sys.entity.datalinks.ComProjectComTabledataLinks;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.DateUtil;
@@ -91,49 +83,11 @@ public class InitSystemService extends AbstractService{
 	}
 	
 	/**
-	 * 获取要初始化的表集合
-	 * @return
-	 */
-	private List<ComTabledata> getInitTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(18);
-		String dbType = CurrentSysInstanceConstants.currentSysDatabaseInstance.getDbType();
-		
-		tables.addAll(CoreTableResourceConstants.getCoreTables(dbType));
-		tables.add(new ComSysResource().toCreateTable(dbType));
-		tables.add(new ComColumndata().toCreateTable(dbType));
-		tables.add(new ComTabledata().toCreateTable(dbType));
-		tables.add(new ComDataDictionary().toCreateTable(dbType));
-		tables.add(new ComDataLinks().toCreateTable(dbType));
-		tables.add(new ComOperLog().toCreateTable(dbType));
-		tables.add(new ComProjectModuleBody().toCreateTable(dbType));
-		tables.add(new ComReqLog().toCreateTable(dbType));
-		tables.add(new ComSysAccount().toCreateTable(dbType));
-		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
-		tables.add(new ComPublishInfo().toCreateTable(dbType));
-		
-		tables.add(new ComProjectComSqlScriptLinks().toCreateTable(dbType));
-		tables.add(new ComProjectComTabledataLinks().toCreateTable(dbType));
-		
-		return tables;
-	}
-	
-	/**
-	 * 清除表信息
-	 * @param tables
-	 */
-	private void clearTables(List<ComTabledata> tables){
-		for (ComTabledata table : tables) {
-			table.clear();
-		}
-		tables.clear();
-	}
-	
-	/**
 	 * 创建表
 	 * @return 
 	 */
 	private void createTables(){
-		List<ComTabledata> tables = getInitTables();
+		List<ComTabledata> tables = CoreTableResourceConstants.getConfigsystemcoretables();
 		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 		try {
 			dbHandler.dropTable(tables);
@@ -141,8 +95,7 @@ public class InitSystemService extends AbstractService{
 			Log4jUtil.debug("*********表不存在，不需要删除");
 		}
 		// 开始创建表
-		dbHandler.createTable(tables, true);
-		clearTables(tables);
+		dbHandler.createTable(tables, false);
 	}
 	
 	/**
@@ -202,19 +155,18 @@ public class InitSystemService extends AbstractService{
 	 * 根据表创建hbm文件，并将其加入到SessionFactory中
 	 */
 	private void insertHbmContentsToSessionFactory() {
-		List<ComTabledata> tables = getInitTables();
+		List<ComTabledata> tables = CoreTableResourceConstants.getConfigsystemcoretables();
 		
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
 		for (ComTabledata table : tables) {
-			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, true));// 记录hbm内容
+			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, false));// 记录hbm内容
 		}
 		
 		// 将hbmContents加入到hibernate sessionFactory中
 		HibernateUtil.appendNewConfig(hbmContents);
 		
 		hbmContents.clear();
-		clearTables(tables);
 	}
 	
 	/**
@@ -224,7 +176,7 @@ public class InitSystemService extends AbstractService{
 	 * @param adminAccountId 
 	 */
 	private void insertAllTables(String adminAccountId) {
-		List<ComTabledata> tables = getInitTables();
+		List<ComTabledata> tables = CoreTableResourceConstants.getConfigsystemcoretables();
 		
 		String tableId;
 		List<ComColumndata> columns = null;
@@ -244,14 +196,13 @@ public class InitSystemService extends AbstractService{
 			// 创建对应的hbm文件，并保存
 			hbm = new ComHibernateHbm();
 			hbm.tableTurnToHbm(table);
-			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, true));
+			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, false));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
 			// 保存到资源表中
 			resource = table.turnToResource();
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
-		clearTables(tables);
 	}
 	
 	/**

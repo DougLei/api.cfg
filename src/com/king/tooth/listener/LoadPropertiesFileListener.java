@@ -71,21 +71,40 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 		RouteBodyAnalysis.initRouteRuleConfig();
 		// 初始化系统内置查询条件函数配置
 		BuiltinQueryCondFuncUtil.initBuiltinQueryCondFuncConfig();
-		if("1".equals(SysConfig.getSystemConfig("current.sys.type"))){
-			// 是配置系统时，初始化核心表资源映射的InputStreams
-			CoreTableResourceConstants.initCoretableresourcemappinginputstreams(SysConfig.getSystemConfig("jdbc.dbType"));
-		}
-		// 系统启动时，初始化配置数据库的表和所有基础数据
-		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
-			new InitSystemService().loadSysBasicDatasBySysFirstStart();
-		}else{
-			new InitSystemService().loadSysBasicDatasBySysStart();
-		}
-		
+		// 初始化系统核心表信息
+		initSysCoreTableInfos();
 		// 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
 		initGSqlParser();
 	}
 	
+	/**
+	 * 初始化系统核心表信息
+	 */
+	private void initSysCoreTableInfos() {
+		String dbType = SysConfig.getSystemConfig("jdbc.dbType");// 这里的dbType没有什么效果
+		// 当前系统是配置系统
+		if("1".equals(SysConfig.getSystemConfig("current.sys.type"))){
+			// 是配置系统时
+			// 1.初始化核心表资源映射的InputStreams
+			CoreTableResourceConstants.initCoretableresourcemappinginputstreams(dbType);
+			// 2.初始化运行系统的核心表数据集合
+			CoreTableResourceConstants.initAppSystemCoreTables(dbType);
+			// 3.初始化配置系统的核心表数据集合
+			CoreTableResourceConstants.initConfigSystemCoreTables(dbType);
+			
+			// 系统启动时，初始化配置数据库的表和所有基础数据
+			if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
+				new InitSystemService().loadSysBasicDatasBySysFirstStart();
+			}else{
+				new InitSystemService().loadSysBasicDatasBySysStart();
+			}
+		}
+		// 当前系统是运行系统
+		else if("2".equals(SysConfig.getSystemConfig("current.sys.type"))){
+			new InitSystemService().loadSysBasicDatasBySysStart();
+		}
+	}
+
 	/**
 	 * 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
 	 */

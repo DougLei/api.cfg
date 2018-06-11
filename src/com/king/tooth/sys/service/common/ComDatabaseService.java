@@ -1,5 +1,7 @@
 package com.king.tooth.sys.service.common;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
@@ -8,8 +10,10 @@ import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
+import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
+import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -140,6 +144,12 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		Log4jUtil.debug("连接数据库测试[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
 		
+		// 创建运行系统基础表
+		DBTableHandler dbTableHandler = new DBTableHandler(database);
+		List<ComTabledata> appSystemCoreTables = CoreTableResourceConstants.getAppsystemcoretables();
+		dbTableHandler.createTable(appSystemCoreTables, false);
+		
+		// 创建dataSource和sessionFactory
 		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
 		if(sessionFactory == null){
 			DynamicDBUtil.addDataSource(database);
@@ -147,6 +157,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			sessionFactory.appendNewHbmConfig(CoreTableResourceConstants.getCoretableresourcemappinginputstreams());
 		}
 		
+		// 准备发布数据库数据信息，以及记录发布信息
 		ComPublishInfo publishInfo = database.turnToPublish();
 		Session session = null;
 		try {
@@ -164,7 +175,7 @@ public class ComDatabaseService extends AbstractPublishService {
 				session.flush();
 				session.close();
 			}
-			// 删除部署失败的数据
+			// 删除部署失败的数据【以防万一，如果之前有失败的，这里先删除】
 			HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where isSuccess =0 and publishDatabaseId = '"+databaseId+"'", null);
 			// 再添加新的部署的信息数据
 			HibernateUtil.saveObject(publishInfo, null);
