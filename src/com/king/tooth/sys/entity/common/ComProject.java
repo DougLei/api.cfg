@@ -8,7 +8,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
-import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -19,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProject extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
+public class ComProject extends AbstractSysResource implements ITable, IEntityPropAnalysis{
 	
 	/**
 	 * 关联的数据库主键
@@ -137,6 +136,10 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
+	public ComSysResource turnToPublishResource() {
+		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
+	}
+	
 	public String validNotNullProps() {
 		if(!isValidNotNullProps){
 			isValidNotNullProps = true;
@@ -164,12 +167,11 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 	public ComPublishInfo turnToPublish() {
 		ComPublishInfo publish = new ComPublishInfo();
 		publish.setPublishDatabaseId(refDatabaseId);
+		publish.setPublishProjectId(id);
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(projCode);
 		publish.setResourceType(PROJECT);
-		this.isBuiltin = 0;
-		this.isNeedDeploy = 0;
-		this.belongPlatformType = APP_PLATFORM;
+		super.turnToPublish();
 		return publish;
 	}
 }

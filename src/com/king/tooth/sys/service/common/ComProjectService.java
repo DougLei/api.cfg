@@ -141,6 +141,12 @@ public class ComProjectService extends AbstractPublishService {
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
+		if(project.getIsNeedDeploy() == 0){
+			return "id为["+projectId+"]的项目不该被发布，请联系管理员";
+		}
+		if(project.getIsEnabled() == 0){
+			return "id为["+projectId+"]的项目信息无效，请联系管理员";
+		}
 		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), null, null, null)){
 			return "["+project.getProjName()+"]项目所属的数据库还未发布，请先发布数据库";
 		}
@@ -151,8 +157,8 @@ public class ComProjectService extends AbstractPublishService {
 		// 将项目id和数据库id映射起来
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projectId, project.getRefDatabaseId());
 		
-		publishInfoService.deletePublishedData(projectId);
-		executeRemotePublish(project.getRefDatabaseId(), null, project);
+		publishInfoService.deletePublishedData(null, projectId);
+		executeRemotePublish(project.getRefDatabaseId(), null, project, null);
 		return null;
 	}
 	
@@ -173,7 +179,7 @@ public class ComProjectService extends AbstractPublishService {
 		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
 		
 		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectId+"'");
-		publishInfoService.deletePublishedData(projectId);
+		publishInfoService.deletePublishedData(null, projectId);
 		return null;
 	}
 	//--------------------------------------------------------------------------------------------------------

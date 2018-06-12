@@ -11,7 +11,9 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
+import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.StrUtils;
@@ -47,7 +49,7 @@ public class ComTabledataService extends AbstractPublishService {
 	private String validTableRefProjIsExists(String projectId) {
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where id = ?", projectId);
 		if(count != 1){
-			return "关联的id=["+projectId+"]的项目信息不存在";
+			return "表关联的，id为["+projectId+"]的项目信息不存在";
 		}
 		return null;
 	}
@@ -255,31 +257,51 @@ public class ComTabledataService extends AbstractPublishService {
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布表
-	 * @param tableId
-	 * @return
-	 */
-	public String publishTable(String tableId){
-		// 涉及到一个建表的步骤
-		return null;
-	}
-	
-	/**
-	 * 取消发布表
-	 * @param tableId
-	 * @return
-	 */
-	public String cancelPublishTable(String tableId){
-		return null;
-	}
-	
-	//--------------------------------------------------------------------------------------------------------
-	/**
-	 * 发布表
 	 * @param projectId
 	 * @param tableId
 	 * @return
 	 */
 	public String publishTable(String projectId, String tableId) {
+		ComTabledata table = getObjectById(tableId, ComTabledata.class);
+		if(table == null){
+			return "没有找到id为["+tableId+"]的表对象信息";
+		}
+		if(table.getIsNeedDeploy() == 0){
+			return "id为["+tableId+"]的表不该被发布，请联系管理员";
+		}
+		if(table.getIsEnabled() == 0){
+			return "id为["+tableId+"]的表信息无效，请联系管理员";
+		}
+		if(!publishInfoService.validResourceIsPublished(null, projectId, tableId, null)){
+			return "["+table.getTableName()+"]表所属的项目还未发布，请先发布项目";
+		}
+		if(publishInfoService.validResourceIsPublished(null, projectId, tableId, null)){
+			return "["+table.getTableName()+"]表已经发布，无法再次发布";
+		}
+		ComProject project = getObjectById(projectId, ComProject.class);
+		if(project == null){
+			return "表关联的，id为["+projectId+"]的项目信息不存在";
+		}
+		
+		// 远程过去create表
+		ComDatabase database = getObjectById(projectId, ComDatabase.class);
+		DBTableHandler tableHandler = new DBTableHandler(database);
+		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
+		tableHandler.createTable(table, true);
+		table.clear();
+		
+		// 创建hbm对象
+		ComHibernateHbm hbm = new ComHibernateHbm();
+		hbm.setId(tableId);
+		hbm.setRefDatabaseId(project.getRefDatabaseId());
+		hbm.setHbmResourceName(table.getResourceName());
+		hbm.setIsDataLinkTableHbm(table.getIsDatalinkTable());
+		hbm.setHbmContent(new HibernateHbmHandler().createHbmMappingContent(table, false));
+		hbm.setReqResourceMethod(table.getReqResourceMethod());
+		hbm.setProjectId(projectId);
+		
+		publishInfoService.deletePublishedData(projectId, tableId);
+		executeRemotePublish(null, projectId, hbm, hbm);
 		return null;
 	}
 	
@@ -290,6 +312,27 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelPublishTable(String projectId, String tableId) {
+		ComTabledata table = getObjectById(tableId, ComTabledata.class);
+		if(table == null){
+			return "没有找到id为["+table+"]的表对象信息";
+		}
+		if(!publishInfoService.validResourceIsPublished(null, projectId, tableId, null)){
+			return "["+table.getTableName()+"]表未发布，无法取消发布";
+		}
+		String result = validTableRefProjIsExists(projectId);
+		if(result != null){
+			return result;
+		}
+		
+		// 远程过去drop表
+		ComDatabase database = getObjectById(projectId, ComDatabase.class);
+		DBTableHandler tableHandler = new DBTableHandler(database);
+		tableHandler.dropTable(table);
+		
+		executeRemoteUpdate(null, projectId, 
+				"delete " + new ComHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "='"+tableId+"'",
+				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+tableId+"'");
+		publishInfoService.deletePublishedData(projectId, tableId);
 		return null;
 	}
 }

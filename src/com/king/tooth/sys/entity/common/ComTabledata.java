@@ -2,7 +2,6 @@ package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -11,7 +10,6 @@ import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
-import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
@@ -24,7 +22,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComTabledata extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
+public class ComTabledata extends AbstractSysResource implements ITable, IEntityPropAnalysis{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -107,7 +105,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 */
 	@JSONField(serialize = false)
 	private int isResource;
-	
+
 	
 	public ComTabledata() {
 	}
@@ -217,6 +215,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 			columns.clear();
 		}
 	}
+	
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_TABLEDATA", 0);
@@ -360,9 +359,9 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 			this.resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
 			
 			if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 1 && this.tableName.length() > 30){
-				// oracle的表名长度不能超过30个字符，所以这里对关系表的表名做处理：前缀+'_'+表名substring(5, 16)+'_'+6为随机数+'_'+后缀
+				// oracle的表名长度不能超过30个字符，所以这里对关系表的表名做处理：前缀+'_'+表名substring(5, 16)+'_'+后缀
 				Log4jUtil.info("在oracle数据库中，解析关系表[{}]时，因关系表名长度超过30个字符，系统自动处理",  tableName);
-				this.tableName = ResourceNameConstants.DATALINK_TABLENAME_PREFIX + this.tableName.substring(5, 16) + "_" + new Random().nextInt(100000) + ResourceNameConstants.DATALINK_TABLENAME_SUFFIX;
+				this.tableName = ResourceNameConstants.DATALINK_TABLENAME_PREFIX + this.tableName.substring(5, 16) + ResourceNameConstants.DATALINK_TABLENAME_SUFFIX;
 				Log4jUtil.info("自动处理的新表名为：{}",  tableName);
 			}
 		}
@@ -376,18 +375,15 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return resource;
 	}
 	
+	public ComSysResource turnToPublishResource() {
+		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
+	}
+	
 	public Integer getResourceType() {
 		return TABLE;
 	}
 	
 	public ComPublishInfo turnToPublish() {
-		ComPublishInfo publish = new ComPublishInfo();
-		publish.setPublishResourceId(id);
-		publish.setPublishResourceName(resourceName);
-		publish.setResourceType(TABLE);
-		this.isBuiltin = 0;
-		this.isNeedDeploy = 0;
-		this.belongPlatformType = APP_PLATFORM;
-		return publish;
+		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
 	}
 }

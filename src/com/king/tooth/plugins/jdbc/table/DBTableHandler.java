@@ -57,12 +57,13 @@ public class DBTableHandler {
 	 * 创建表
 	 * @param tabledata
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
+	 * @return
 	 */
-	public void createTable(ComTabledata tabledata, boolean isNeedInitBasicColumns){
+	public List<ComTabledata> createTable(ComTabledata tabledata, boolean isNeedInitBasicColumns){
 		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(1);
 		tabledatas.add(tabledata);
 		createTable(tabledatas, isNeedInitBasicColumns);
-		tabledatas.clear();
+		return tabledatas;
 	}
 	
 	/**

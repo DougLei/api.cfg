@@ -9,7 +9,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
-import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 
@@ -18,7 +17,7 @@ import com.king.tooth.util.JsonUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysResource extends AbstractSysResource implements ITable, IEntity{
+public class ComSysResource extends AbstractSysResource implements ITable{
 	
 	/**
 	 * 引用的资源主键
@@ -134,6 +133,10 @@ public class ComSysResource extends AbstractSysResource implements ITable, IEnti
 	
 	public ComSysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
+	}
+	
+	public ComSysResource turnToPublishResource() {
+		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	
 	public ComPublishInfo turnToPublish() {

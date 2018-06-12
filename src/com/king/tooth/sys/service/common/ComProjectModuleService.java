@@ -15,13 +15,13 @@ public class ComProjectModuleService extends AbstractPublishService {
 
 	/**
 	 * 验证模块关联的项目是否存在
-	 * @param projectModule
+	 * @param projectId
 	 * @return operResult
 	 */
-	private String validProjectModuleRefProjectIsExists(ComProjectModule projectModule) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where id = ?", projectModule.getRefProjectId());
+	private String validProjectModuleRefProjectIsExists(String projectId) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where id = ?", projectId);
 		if(count != 1){
-			return "关联的id=["+projectModule.getRefProjectId()+"]的项目信息不存在";
+			return "模块关联的，id为["+projectId+"]的项目信息不存在";
 		}
 		return null;
 	}
@@ -46,7 +46,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return
 	 */
 	public String saveProjectModule(ComProjectModule projectModule) {
-		String operResult = validProjectModuleRefProjectIsExists(projectModule);
+		String operResult = validProjectModuleRefProjectIsExists(projectModule.getRefProjectId());
 		if(operResult == null){
 			operResult = validProjectModuleCodeIsExists(projectModule);
 		}
@@ -76,7 +76,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			operResult = validProjectModuleRefProjectIsExists(projectModule);
+			operResult = validProjectModuleRefProjectIsExists(projectModule.getRefProjectId());
 		}
 		if(operResult == null){
 			HibernateUtil.updateObjectByHql(projectModule, null);
@@ -114,20 +114,27 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(projectModule == null){
 			return "没有找到id为["+projectModuleId+"]的模块对象信息";
 		}
+		if(projectModule.getIsNeedDeploy() == 0){
+			return "id为["+projectModuleId+"]的模块不该被发布，请联系管理员";
+		}
+		if(projectModule.getIsEnabled() == 0){
+			return "id为["+projectModuleId+"]的模块信息无效，请联系管理员";
+		}
 		if(!publishInfoService.validResourceIsPublished(null, projectModule.getRefProjectId(), null, null)){
 			return "["+projectModule.getName()+"]模块所属的项目还未发布，请先发布项目";
 		}
 		if(publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
 			return "["+projectModule.getName()+"]模块已经发布，无法再次发布";
 		}
-		
-		publishInfoService.deletePublishedData(projectModuleId);
-		
 		ComProject project = getObjectById(projectModule.getRefProjectId(), ComProject.class);
-		projectModule.setRefDatabaseId(project.getRefDatabaseId());
-		executeRemotePublish(null, projectModule.getProjectId(), projectModule);
+		if(project == null){
+			return "模块关联的，id为["+projectModule.getRefProjectId()+"]的项目信息不存在";
+		}
 		
-		// 后续还要加入发布功能，放到这里
+		publishInfoService.deletePublishedData(null, projectModuleId);
+		projectModule.setRefDatabaseId(project.getRefDatabaseId());
+		projectModule.setProjectId(projectModule.getRefProjectId());
+		executeRemotePublish(null, projectModule.getProjectId(), projectModule, null);
 		return null;
 	}
 	
@@ -144,9 +151,13 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(!publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
 			return "["+projectModule.getName()+"]模块未发布，无法取消发布";
 		}
+		String result = validProjectModuleRefProjectIsExists(projectModule.getRefProjectId());
+		if(result != null){
+			return result;
+		}
 		
-		executeRemoteUpdate(null, projectModule.getRefProjectId(), "");
-		publishInfoService.deletePublishedData(projectModuleId);
+		executeRemoteUpdate(null, projectModule.getRefProjectId(), "delete " + projectModule.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectModuleId+"'");
+		publishInfoService.deletePublishedData(null, projectModuleId);
 		return null;
 	}
 }

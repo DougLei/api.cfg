@@ -15,7 +15,6 @@ import com.king.tooth.exception.gsp.EDBVendorIsNullException;
 import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
-import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
@@ -25,6 +24,7 @@ import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.sqlparser.SqlParameterParserUtil;
 import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
@@ -34,7 +34,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  * @author StoneKing
  */
 @SuppressWarnings("serial")
-public class ComSqlScript extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
+public class ComSqlScript extends AbstractSysResource implements ITable, IEntityPropAnalysis{
 	/**
 	 * sql脚本的标题
 	 */
@@ -92,6 +92,13 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 */
 	@JSONField(serialize = false)
 	private TGSqlParser gsqlParser;
+	/**
+	 * 关联的数据库id
+	 * 该字段在发布的时候用到
+	 * @see turnToPublish()
+	 */
+	@JSONField(serialize = false)
+	private String refDatabaseId;
 	
 	/**
 	 * 在调用sql资源时，保存被处理过的，可以执行的最终查询的sql脚本语句对象
@@ -180,6 +187,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	public void setFinalSqlScript(FinalSqlScriptStatement finalSqlScript) {
 		this.finalSqlScript = finalSqlScript;
+	}
+	public void setRefDatabaseId(String refDatabaseId) {
+		this.refDatabaseId = refDatabaseId;
 	}
 	
 	
@@ -439,18 +449,25 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return resource;
 	}
 	
+	public ComSysResource turnToPublishResource() {
+		ComSysResource resource = turnToResource();
+		resource.setId(ResourceHandlerUtil.getIdentity());
+		resource.setProjectId(projectId);
+		return resource;
+	}
+	
 	public Integer getResourceType() {
 		return SQLSCRIPT;
 	}
 	
 	public ComPublishInfo turnToPublish() {
 		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishDatabaseId(refDatabaseId);
+		publish.setPublishProjectId(projectId);
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(sqlScriptResourceName);
 		publish.setResourceType(SQLSCRIPT);
-		this.isBuiltin = 0;
-		this.isNeedDeploy = 0;
-		this.belongPlatformType = APP_PLATFORM;
+		super.turnToPublish();
 		return publish;
 	}
 }

@@ -13,7 +13,6 @@ import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
-import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.database.DBFile;
@@ -27,7 +26,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDatabase extends AbstractSysResource implements ITable, IEntity, IEntityPropAnalysis{
+public class ComDatabase extends AbstractSysResource implements ITable, IEntityPropAnalysis{
 	
 	/**
 	 * 数字库名
@@ -348,6 +347,10 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
+	public ComSysResource turnToPublishResource() {
+		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
+	}
+	
 	/**
 	 * 比较数据库的连接信息是否一致
 	 * 用在保存/修改数据库信息的时候，要确保数据库连接信息的唯一性
@@ -396,9 +399,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(dbInstanceName);
 		publish.setResourceType(DATABASE);
-		this.isBuiltin = 0;
-		this.isNeedDeploy = 0;
-		this.belongPlatformType = APP_PLATFORM;
+		super.turnToPublish();
 		return publish;
 	}
 }

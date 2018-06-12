@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.StrUtils;
@@ -42,7 +43,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	private String validSqlScriptRefProjIsExists(String projectId) {
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where id = ?", projectId);
 		if(count != 1){
-			return "关联的id=["+projectId+"]的项目信息不存在";
+			return "sql脚本关联的，id为["+projectId+"]的项目信息不存在";
 		}
 		return null;
 	}
@@ -248,6 +249,31 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishSqlScript(String projectId, String sqlScriptId) {
+		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
+		if(sqlScript == null){
+			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
+		}
+		if(sqlScript.getIsNeedDeploy() == 0){
+			return "id为["+sqlScriptId+"]的sql脚本不该被发布，请联系管理员";
+		}
+		if(sqlScript.getIsEnabled() == 0){
+			return "id为["+sqlScriptId+"]的sql脚本信息无效，请联系管理员";
+		}
+		if(!publishInfoService.validResourceIsPublished(null, projectId, sqlScriptId, null)){
+			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本所属的项目还未发布，请先发布项目";
+		}
+		if(publishInfoService.validResourceIsPublished(null, projectId, sqlScriptId, null)){
+			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无法再次发布";
+		}
+		ComProject project = getObjectById(projectId, ComProject.class);
+		if(project == null){
+			return "sql脚本关联的，id为["+projectId+"]的项目信息不存在";
+		}
+		
+		publishInfoService.deletePublishedData(projectId, sqlScriptId);
+		sqlScript.setRefDatabaseId(project.getRefDatabaseId());
+		sqlScript.setProjectId(projectId);
+		executeRemotePublish(null, projectId, sqlScript, sqlScript);
 		return null;
 	}
 	
@@ -258,6 +284,22 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelPublishSqlScript(String projectId, String sqlScriptId) {
+		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
+		if(sqlScript == null){
+			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
+		}
+		if(!publishInfoService.validResourceIsPublished(null, projectId, sqlScriptId, null)){
+			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本未发布，无法取消发布";
+		}
+		String result = validSqlScriptRefProjIsExists(projectId);
+		if(result != null){
+			return result;
+		}
+		
+		executeRemoteUpdate(null, projectId, 
+				"delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "='"+sqlScriptId+"'",
+				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+sqlScriptId+"'");
+		publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		return null;
 	}
 }

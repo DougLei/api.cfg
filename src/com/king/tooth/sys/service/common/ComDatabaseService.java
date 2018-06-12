@@ -165,8 +165,8 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
-		publishInfoService.deletePublishedData(databaseId);
-		executeRemotePublish(databaseId, null, database);
+		publishInfoService.deletePublishedData(null, databaseId);
+		executeRemotePublish(databaseId, null, database, null);
 		return null;
 	}
 	

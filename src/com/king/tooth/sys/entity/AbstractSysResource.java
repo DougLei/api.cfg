@@ -1,5 +1,9 @@
 package com.king.tooth.sys.entity;
 
+import java.util.Date;
+
+import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.DateUtil;
 
@@ -43,17 +47,30 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		ComSysResource resource = new ComSysResource();
 		resource.setRefResourceId(id);
 		resource.setIsEnabled(isEnabled);
-		resource.setReqResourceMethod(getReqResourceMethod());
+		resource.setReqResourceMethod(reqResourceMethod);
 		resource.setIsBuiltin(isBuiltin);
 		resource.setIsNeedDeploy(isNeedDeploy);
-//		if(isBuiltin !=null && isBuiltin == 1){
-//			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-//		}
-		resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		if(isBuiltin !=null && isBuiltin == 1){
+			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		}else{
+			resource.setValidDate(DateUtil.parseDate("2019-12-31 23:59:59"));
+		}
 		return resource;
 	}
 	
-	
+	public ComPublishInfo turnToPublish() {
+		// 这些字段值，是发布到远程数据库表中的数据
+		this.isBuiltin = 0;
+		this.isNeedDeploy = 0;
+		Date publishDate = new Date();
+		this.createTime = publishDate;
+		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+		this.createUserId = userId;
+		this.lastUpdateTime = publishDate;
+		this.lastUpdatedUserId = userId;
+		return null;
+	}
+
 	public Integer getIsEnabled() {
 		return isEnabled;
 	}

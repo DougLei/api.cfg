@@ -6,7 +6,9 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.sys.entity.IPublish;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
+import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.common.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
@@ -24,12 +26,12 @@ public abstract class AbstractPublishService extends AbstractService{
 	
 	/**
 	 * 执行远程发布操作
-	 * 数据库id和项目id，这两个参数只要有一个值不为null即可
+	 * <p>数据库id和项目id，这两个参数只要有一个值不为null即可</p>
 	 * @param databaseId 
 	 * @param projectId  
 	 * @param publish
 	 */
-	protected void executeRemotePublish(String databaseId, String projectId, IPublish publish){
+	protected void executeRemotePublish(String databaseId, String projectId, IPublish publish, ISysResource resource){
 		if(databaseId == null){
 			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
 		}
@@ -44,6 +46,10 @@ public abstract class AbstractPublishService extends AbstractService{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			session.save(publish.getEntityName(), publish.toEntityJson());
+			if(resource != null){ // 如果资源对象不为空，同时发布资源
+				ComSysResource csr = resource.turnToPublishResource();
+				session.save(csr.getEntityName(), csr.toEntityJson());
+			}
 			session.getTransaction().commit();
 			publishInfo.setIsSuccess(1);
 		} catch (HibernateException e) {
@@ -62,12 +68,12 @@ public abstract class AbstractPublishService extends AbstractService{
 	
 	/**
 	 * 执行远程修改操作
-	 * 数据库id和项目id，这两个参数只要有一个值不为null即可
+	 * <p>数据库id和项目id，这两个参数只要有一个值不为null即可</p>
 	 * @param databaseId 
 	 * @param projectId  
-	 * @param hql
+	 * @param hqls
 	 */
-	protected void executeRemoteUpdate(String databaseId, String projectId, String hql){
+	protected void executeRemoteUpdate(String databaseId, String projectId, String... hqls){
 		if(databaseId == null){
 			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
 		}
@@ -78,7 +84,9 @@ public abstract class AbstractPublishService extends AbstractService{
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			session.createQuery(hql).executeUpdate();
+			for (String hql : hqls) {
+				session.createQuery(hql).executeUpdate();
+			}
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();

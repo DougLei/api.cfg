@@ -2,23 +2,22 @@ package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
-import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
  * hibernate的hbm内容对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComHibernateHbm extends AbstractSysResource implements ITable, IEntity{
+public class ComHibernateHbm extends AbstractSysResource implements ITable{
 	
 	/**
 	 * 关联的数据库主键
@@ -154,6 +153,15 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
+	public ComSysResource turnToPublishResource() {
+		ComSysResource resource = super.turnToResource();
+		resource.setId(ResourceHandlerUtil.getIdentity());
+		resource.setResourceType(TABLE);
+		resource.setResourceName(hbmResourceName);
+		resource.setProjectId(projectId);
+		return resource;
+	}
+	
 	/**
 	 * 将表信息，转换为对应的hbm信息
 	 * @param table
@@ -174,6 +182,13 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IEnt
 	}
 	
 	public ComPublishInfo turnToPublish() {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
+		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishDatabaseId(refDatabaseId);
+		publish.setPublishProjectId(projectId);
+		publish.setPublishResourceId(id);
+		publish.setPublishResourceName(hbmResourceName);
+		publish.setResourceType(TABLE);
+		super.turnToPublish();
+		return publish;
 	}
 }

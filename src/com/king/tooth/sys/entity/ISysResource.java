@@ -64,6 +64,10 @@ public interface ISysResource {
 	 * 转换为资源对象
 	 */
 	public ComSysResource turnToResource();
+	/**
+	 * 转换为要发布的资源对象
+	 */
+	public ComSysResource turnToPublishResource();
 	
 	/**
 	 * 获取资源类型

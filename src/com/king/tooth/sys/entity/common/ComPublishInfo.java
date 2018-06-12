@@ -21,24 +21,24 @@ import com.king.tooth.util.JsonUtil;
 public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 	
 	/**
-	 * 部署的数据库主键
+	 * 发布的数据库主键
 	 */
 	private String publishDatabaseId;
 	/**
-	 * 部署的项目主键
+	 * 发布的项目主键
 	 */
 	private String publishProjectId;
 	/**
-	 * 部署的资源主键
+	 * 发布的资源主键
 	 */
 	private String publishResourceId;
 	/**
-	 * 部署的资源名
+	 * 发布的资源名
 	 * <p>冗余字段</p>
 	 */
 	private String publishResourceName;
 	/**
-	 * 部署的资源类型
+	 * 发布的资源类型
 	 */
 	private Integer resourceType;
 	/**
@@ -110,32 +110,32 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata publishDatabaseIdColumn = new ComColumndata("publish_database_id", DataTypeConstants.STRING, 32);
-		publishDatabaseIdColumn.setName("部署的数据库主键");
-		publishDatabaseIdColumn.setComments("部署的数据库主键");
+		publishDatabaseIdColumn.setName("发布的数据库主键");
+		publishDatabaseIdColumn.setComments("发布的数据库主键");
 		publishDatabaseIdColumn.setOrderCode(1);
 		columns.add(publishDatabaseIdColumn);
 		
 		ComColumndata publishProjectIdColumn = new ComColumndata("publish_project_id", DataTypeConstants.STRING, 32);
-		publishProjectIdColumn.setName("部署的项目主键");
-		publishProjectIdColumn.setComments("部署的项目主键");
+		publishProjectIdColumn.setName("发布的项目主键");
+		publishProjectIdColumn.setComments("发布的项目主键");
 		publishProjectIdColumn.setOrderCode(2);
 		columns.add(publishProjectIdColumn);
 		
 		ComColumndata publishResourceIdColumn = new ComColumndata("publish_resource_id", DataTypeConstants.STRING, 32);
-		publishResourceIdColumn.setName("部署的资源主键");
-		publishResourceIdColumn.setComments("部署的资源主键");
+		publishResourceIdColumn.setName("发布的资源主键");
+		publishResourceIdColumn.setComments("发布的资源主键");
 		publishResourceIdColumn.setOrderCode(3);
 		columns.add(publishResourceIdColumn);
 		
 		ComColumndata publishResourceNameColumn = new ComColumndata("publish_resource_name", DataTypeConstants.STRING, 60);
-		publishResourceNameColumn.setName("部署的资源名");
-		publishResourceNameColumn.setComments("部署的资源名:冗余字段");
+		publishResourceNameColumn.setName("发布的资源名");
+		publishResourceNameColumn.setComments("发布的资源名:冗余字段");
 		publishResourceNameColumn.setOrderCode(4);
 		columns.add(publishResourceNameColumn);
 		
 		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", DataTypeConstants.INTEGER, 1);
-		resourceTypeColumn.setName("部署的资源类型");
-		resourceTypeColumn.setComments("部署的资源类型");
+		resourceTypeColumn.setName("发布的资源类型");
+		resourceTypeColumn.setComments("发布的资源类型");
 		resourceTypeColumn.setIsNullabled(0);
 		resourceTypeColumn.setOrderCode(5);
 		columns.add(resourceTypeColumn);
