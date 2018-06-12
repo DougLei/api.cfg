@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.king.tooth.cache.SysConfig;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
+import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.common.ComDatabaseService;
 import com.king.tooth.util.StrUtils;
@@ -106,6 +108,9 @@ public class ComDatabaseController extends AbstractPublishController{
 			return installOperResponseBody("要发布的数据库id不能为空", null);
 		}
 		String result = databaseService.publishDatabase(databaseId);
+		if(result == null){
+			// 调用接口，石磊
+		}
 		return installOperResponseBody(result, null);
 	}
 	
@@ -126,6 +131,48 @@ public class ComDatabaseController extends AbstractPublishController{
 			return installOperResponseBody("要取消发布的数据库id不能为空", null);
 		}
 		String result = databaseService.cancelPublishDatabase(databaseId);
+		if(result == null){
+			// 调用接口，石磊
+		}
 		return installOperResponseBody(result, null);
+	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 加载数据库
+	 * <p>运行系统使用的方法，当配置系统，发布过来数据库信息的时候</p>
+	 * @param databaseId
+	 */
+	@RequestMapping(value="/loadDatabase", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody loadDatabase(HttpServletRequest request){
+		if(SysConfig.getSystemConfig("current.sys.type").equals(ITable.CONFIG_PLATFORM+"")){
+			return installOperResponseBody("加载数据库的功能，目前只提供给运行系统使用", null);
+		}
+		String databaseId = request.getParameter("databaseId");
+		if(StrUtils.isEmpty(databaseId)){
+			return installOperResponseBody("要加载的数据库id不能为空", null);
+		}
+		databaseService.loadPublishedDatabase(databaseId);
+		return null;
+	}
+	
+	/**
+	 * 卸载数据库
+	 * <p>运行系统使用的方法，当配置系统，取消发布数据库信息的时候</p>
+	 * @param databaseId
+	 */
+	@RequestMapping(value="/unloadDatabase", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody unloadDatabase(HttpServletRequest request){
+		if(SysConfig.getSystemConfig("current.sys.type").equals(ITable.CONFIG_PLATFORM+"")){
+			return installOperResponseBody("卸载数据库的功能，目前只提供给运行系统使用", null);
+		}
+		String databaseId = request.getParameter("databaseId");
+		if(StrUtils.isEmpty(databaseId)){
+			return installOperResponseBody("要卸载的数据库id不能为空", null);
+		}
+		databaseService.unloadPublishedDatabase(databaseId);
+		return null;
 	}
 }

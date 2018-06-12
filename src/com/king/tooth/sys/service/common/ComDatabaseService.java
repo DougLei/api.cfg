@@ -236,8 +236,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param databaseId
 	 */
 	public String unloadPublishedDatabase(String databaseId){
-		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
-		if(database == null){
+		if(DynamicDBUtil.getDataSource(databaseId) == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
 		DynamicDBUtil.removeDataSource(databaseId);

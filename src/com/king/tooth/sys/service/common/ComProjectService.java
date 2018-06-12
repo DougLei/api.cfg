@@ -182,5 +182,25 @@ public class ComProjectService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(null, projectId);
 		return null;
 	}
+	
 	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * (All)发布项目
+	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
+	 * @param projectId
+	 * @return
+	 */
+	public String publishProjectAll(String projectId) {
+		return null;
+	}
+
+	/**
+	 * (All)取消发布项目
+	 * <p>【取消发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
+	 * @param projectId
+	 * @return
+	 */
+	public String cancelPublishProjectAll(String projectId) {
+		return null;
+	}
 }

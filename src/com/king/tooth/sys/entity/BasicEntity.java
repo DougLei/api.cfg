@@ -36,6 +36,7 @@ public class BasicEntity implements Serializable{
 	/**
 	 * 所属的平台类型
 	 * <p>1：配置平台、2：运行平台、3：通用</p>
+	 * <p>@see ITable</p>
 	 */
 	protected Integer belongPlatformType;
 	
