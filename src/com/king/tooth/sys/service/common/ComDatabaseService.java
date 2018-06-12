@@ -211,23 +211,25 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "id为["+databaseId+"]的数据库未发布，无法取消发布";
 		}
 		
-		// 先测试库能不能正常连接上
-		String testLinkResult = database.testDbLink();
-		if(testLinkResult.startsWith("err")){
-			return "取消发布数据库失败:" + testLinkResult;
+		try {
+			// 先测试库能不能正常连接上
+			String testLinkResult = database.testDbLink();
+			if(testLinkResult.startsWith("err")){
+				return "取消发布数据库失败:" + testLinkResult;
+			}
+			
+			// 移除dataSource和sessionFacotry
+			DynamicDBUtil.removeDataSource(databaseId);
+			
+			// 如果是自己的库，要删除
+			if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
+				DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+				databaseHandler.dropDatabase(database);
+			}
+		} finally{
+			// 删除发布信息的数据
+			HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		}
-		
-		// 移除dataSource和sessionFacotry
-		DynamicDBUtil.removeDataSource(databaseId);
-		
-		// 如果是自己的库，要删除
-		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
-			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
-			databaseHandler.dropDatabase(database);
-		}
-		
-		// 删除发布信息的数据
-		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		return null;
 	}
 	//--------------------------------------------------------------------------------------------------------

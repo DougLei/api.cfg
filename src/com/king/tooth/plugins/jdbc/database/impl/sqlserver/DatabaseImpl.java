@@ -55,11 +55,12 @@ public class DatabaseImpl extends AbstractDatabaseHandler{
 
 	public String installDropDatabaseSql(ComDatabase database) {
 		// 删除用户
-		operDatabaseSql.append("drop user ").append("u_").append(database.getLoginUserName()).append(";");
-		// 删除登录账户
+//		operDatabaseSql.append("drop user ").append("u_").append(database.getLoginUserName()).append(";");
+		operDatabaseSql.append("use master;");
+		// 删除登录账户：在master数据库下，删除了登录账户和数据库，用户也就被删除了，因为用户是被绑定到数据库中的
 		operDatabaseSql.append("drop login ").append(database.getLoginUserName()).append(";");
 		// 删除数据库
-		operDatabaseSql.append("drop database").append(database.getDbInstanceName());
+		operDatabaseSql.append("drop database ").append(database.getDbInstanceName());
 		return operDatabaseSql.toString();
 	}
 }

@@ -47,20 +47,22 @@ public class DBLink {
 		
 		Connection connection = null;
 		Statement st = null;
-		StringBuilder errSql = new StringBuilder();
 		try {
 			Class.forName(database.getDriverClass());
 			connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
 			st = connection.createStatement();
 			for (String ds : ddlSqlArr) {
 				if(StrUtils.notEmpty(ds)){
-					errSql.setLength(0);
-					errSql.append(ds);
-					st.executeUpdate(ds);
+					try {
+						// 执行建库建表语句错误，也要继续下去
+						st.executeUpdate(ds);
+					} catch (Exception e) {
+						Log4jUtil.info("[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]");
+					}
 				}
 			}
 		} catch (Exception e) {
-			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e) + " ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]");
+			Log4jUtil.debug("[DBLink.executeDDL]" + ExceptionUtil.getErrMsg(e));
 		}finally{
 			CloseUtil.closeDBConn(st, connection);
 		}
