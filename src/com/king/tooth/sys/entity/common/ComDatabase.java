@@ -393,6 +393,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 	public ComPublishInfo turnToPublish() {
 		ComPublishInfo publish = new ComPublishInfo();
 		publish.setPublishDatabaseId(id);
+		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(dbInstanceName);
 		publish.setResourceType(DATABASE);
 		this.isBuiltin = 0;

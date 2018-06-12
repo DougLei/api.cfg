@@ -2,9 +2,9 @@ package com.king.tooth.sys.service.common;
 
 import java.util.List;
 
-import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
+import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
@@ -15,7 +15,6 @@ import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
-import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -129,7 +128,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database.getIsEnabled() == 0){
 			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
 		}
-		Object ref = null;
+		ComPublishInfo ref = null;
 		if(publishInfoService.validResourceIsPublished(databaseId, null, null, ref)){
 			return "id为["+databaseId+"]的数据库已发布，无法再次发布";
 		}
@@ -165,29 +164,9 @@ public class ComDatabaseService extends AbstractPublishService {
 			sessionFactory.appendNewHbmConfig(CoreTableResourceConstants.getCoretableresourcemappinginputstreams());
 		}
 		
-		// 准备发布数据库数据信息，以及记录发布信息
-		ComPublishInfo publishInfo = database.turnToPublish();
-		Session session = null;
-		try {
-			session = sessionFactory.openSession();
-			session.beginTransaction();
-			session.save(database.getEntityName(), database.toEntityJson());
-			session.getTransaction().commit();
-			publishInfo.setIsSuccess(1);
-		} catch (Exception e) {
-			session.getTransaction().rollback();
-			publishInfo.setIsSuccess(0);
-			publishInfo.setErrMsg(ExceptionUtil.getErrMsg(e));
-		}finally{
-			if(session != null){
-				session.flush();
-				session.close();
-			}
-			// 删除部署失败的数据【以防万一，如果之前有失败的，这里先删除】
-			HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where isSuccess =0 and publishDatabaseId = '"+databaseId+"'", null);
-			// 再添加新的部署的信息数据
-			HibernateUtil.saveObject(publishInfo, null);
-		}
+		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
+		publishInfoService.deletePublishedData(databaseId);
+		executeRemotePublish(databaseId, null, database);
 		return null;
 	}
 	
@@ -211,6 +190,9 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "id为["+databaseId+"]的数据库未发布，无法取消发布";
 		}
 		
+		// 清除该数据库下，所有和项目id的映射信息
+		ProjectIdRefDatabaseIdMapping.clearMapping(databaseId);
+		
 		try {
 			// 先测试库能不能正常连接上
 			String testLinkResult = database.testDbLink();
@@ -227,7 +209,7 @@ public class ComDatabaseService extends AbstractPublishService {
 				databaseHandler.dropDatabase(database);
 			}
 		} finally{
-			// 删除发布信息的数据
+			// 删除该库下，所有发布的信息
 			HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		}
 		return null;

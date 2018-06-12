@@ -44,7 +44,7 @@ public class ProjectIdRefDatabaseIdMapping {
 	 */
 	public static String getDbId(String projectId){
 		if(StrUtils.isEmpty(projectId)){
-			return null;
+			throw new NullPointerException("projectId为空，无法获取对应的databaseId");
 		}
 		return projIdRefDbIdMapping.get(projectId);
 	}
@@ -54,6 +54,9 @@ public class ProjectIdRefDatabaseIdMapping {
 	 * @param databaseId
 	 */
 	public static void clearMapping(String databaseId) {
+		if(SysConfig.getSystemConfig("current.sys.database.id").equals(databaseId)){
+			throw new IllegalArgumentException("不能移除系统内置的项目/数据库映射");
+		}
 		if(projIdRefDbIdMapping.size() > 0){
 			List<String> tmpKeys = new ArrayList<String>();
 			Set<Entry<String, String>> sets = projIdRefDbIdMapping.entrySet();
@@ -70,5 +73,16 @@ public class ProjectIdRefDatabaseIdMapping {
 				tmpKeys.clear();
 			}
 		}
+	}
+	
+	/**
+	 * 移除映射
+	 * @param projectId
+	 */
+	public static void removeMapping(String projectId){
+		if(SysConfig.getSystemConfig("current.sys.project.id").equals(projectId)){
+			throw new IllegalArgumentException("不能移除系统内置的项目/数据库映射");
+		}
+		projIdRefDbIdMapping.remove(projectId);
 	}
 }

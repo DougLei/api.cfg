@@ -3,6 +3,7 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -21,7 +22,7 @@ public class ComPublishInfoService extends AbstractService{
 	 * @param ref
 	 * @return
 	 */
-	public boolean validResourceIsPublished(String databaseId, String projectId, String resourceId, Object ref){
+	public boolean validResourceIsPublished(String databaseId, String projectId, String resourceId, ComPublishInfo ref){
 		String hql = "from ComPublishInfo where";
 		List<Object> params = new ArrayList<Object>(3);
 		if(databaseId != null){
@@ -50,6 +51,14 @@ public class ComPublishInfoService extends AbstractService{
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * 删除发布的数据
+	 * @param publishResourceId 
+	 */
+	public void deletePublishedData(String publishResourceId) {
+		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishResourceId = '"+publishResourceId+"'", null);
 	}
 	
 	//--------------------------------------------------------------------------------------------------------

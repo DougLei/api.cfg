@@ -6,7 +6,7 @@ import com.king.tooth.sys.entity.common.ComPublishInfo;
  * 发布接口
  * @author DougLei
  */
-public interface IPublish {
+public interface IPublish extends IEntity{
 	
 	/**
 	 * 转换为发布信息对象

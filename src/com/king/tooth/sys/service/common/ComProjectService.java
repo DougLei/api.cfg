@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.common;
 
+import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComProject;
@@ -136,7 +137,22 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishProject(String projectId){
-		//判断数据库有没有发布
+		ComProject project = getObjectById(projectId, ComProject.class);
+		if(project == null){
+			return "没有找到id为["+projectId+"]的项目对象信息";
+		}
+		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), null, null, null)){
+			return "["+project.getProjName()+"]项目所属的数据库还未发布，请先发布数据库";
+		}
+		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), project.getId(), null, null)){
+			return "["+project.getProjName()+"]项目已经发布，无法再次发布";
+		}
+		
+		// 将项目id和数据库id映射起来
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projectId, project.getRefDatabaseId());
+		
+		publishInfoService.deletePublishedData(projectId);
+		executeRemotePublish(project.getRefDatabaseId(), null, project);
 		return null;
 	}
 	
@@ -146,6 +162,19 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelPublishProject(String projectId){
+		ComProject project = getObjectById(projectId, ComProject.class);
+		if(project == null){
+			return "没有找到id为["+projectId+"]的项目对象信息";
+		}
+		if(!publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), project.getId(), null, null)){
+			return "["+project.getProjName()+"]项目未发布，无法取消发布";
+		}
+		// 将项目id和数据库id取消映射
+		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
+		
+		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectId+"'");
+		// 删除发布信息的数据
+		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishResourceId = '"+projectId+"'", null);
 		return null;
 	}
 	//--------------------------------------------------------------------------------------------------------

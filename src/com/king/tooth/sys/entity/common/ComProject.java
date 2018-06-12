@@ -163,6 +163,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntity, 
 	
 	public ComPublishInfo turnToPublish() {
 		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishDatabaseId(refDatabaseId);
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(projCode);
 		publish.setResourceType(PROJECT);
