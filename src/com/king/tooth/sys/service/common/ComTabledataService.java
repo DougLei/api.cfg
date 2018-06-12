@@ -271,5 +271,25 @@ public class ComTabledataService extends AbstractPublishService {
 	public String cancelPublishTable(String tableId){
 		return null;
 	}
+	
 	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 发布表
+	 * @param projectId
+	 * @param tableId
+	 * @return
+	 */
+	public String publishTable(String projectId, String tableId) {
+		return null;
+	}
+	
+	/**
+	 * 取消发布表
+	 * @param projectId
+	 * @param tableId
+	 * @return
+	 */
+	public String cancelPublishTable(String projectId, String tableId) {
+		return null;
+	}
 }

@@ -133,4 +133,53 @@ public class ComTabledataController extends AbstractPublishController{
 		String result = tabledataService.cancelProjTableRelation(projectId, tableId);
 		return installOperResponseBody(result, null);
 	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 发布表
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/publish", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody publish(HttpServletRequest request){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+		}
+		
+		String projectId = request.getParameter("projectId");
+		if(StrUtils.isEmpty(projectId)){
+			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
+		}
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要发布的表id不能为空", null);
+		}
+		String result = tabledataService.publishTable(projectId, tableId);
+		return installOperResponseBody(result, null);
+	}
+	
+	/**
+	 * 取消发布表
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/cancelPublish", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody cancelPublish(HttpServletRequest request){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+		}
+		
+		String projectId = request.getParameter("projectId");
+		if(StrUtils.isEmpty(projectId)){
+			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
+		}
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要取消发布的表id不能为空", null);
+		}
+		String result = tabledataService.cancelPublishTable(projectId, tableId);
+		return installOperResponseBody(result, null);
+	}
 }

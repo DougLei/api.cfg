@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.common.ComDatabaseService;
@@ -96,6 +97,10 @@ public class ComDatabaseController extends AbstractPublishController{
 	@RequestMapping(value="/publish", method = RequestMethod.GET)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody publish(HttpServletRequest request){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+		}
+		
 		String databaseId = request.getParameter("databaseId");
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("要发布的数据库id不能为空", null);
@@ -112,6 +117,10 @@ public class ComDatabaseController extends AbstractPublishController{
 	@RequestMapping(value="/cancelPublish", method = RequestMethod.GET)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody cancelPublish(HttpServletRequest request){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+		}
+		
 		String databaseId = request.getParameter("databaseId");
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("要取消发布的数据库id不能为空", null);

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.common.ComSqlScriptService;
@@ -112,6 +113,55 @@ public class ComSqlScriptController extends AbstractPublishController{
 			return installOperResponseBody("要操作的sql脚本id不能为空", null);
 		}
 		String result = sqlScriptService.cancelProjSqlScriptRelation(projectId, sqlScriptId);
+		return installOperResponseBody(result, null);
+	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 发布sql脚本
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/publish", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody publish(HttpServletRequest request){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+		}
+		
+		String projectId = request.getParameter("projectId");
+		if(StrUtils.isEmpty(projectId)){
+			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
+		}
+		String sqlScriptId = request.getParameter("sqlScriptId");
+		if(StrUtils.isEmpty(sqlScriptId)){
+			return installOperResponseBody("要发布的sql脚本id不能为空", null);
+		}
+		String result = sqlScriptService.publishSqlScript(projectId, sqlScriptId);
+		return installOperResponseBody(result, null);
+	}
+	
+	/**
+	 * 取消发布sql脚本
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/cancelPublish", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody cancelPublish(HttpServletRequest request){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+		}
+		
+		String projectId = request.getParameter("projectId");
+		if(StrUtils.isEmpty(projectId)){
+			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
+		}
+		String sqlScriptId = request.getParameter("sqlScriptId");
+		if(StrUtils.isEmpty(sqlScriptId)){
+			return installOperResponseBody("要取消发布的sql脚本id不能为空", null);
+		}
+		String result = sqlScriptService.cancelPublishSqlScript(projectId, sqlScriptId);
 		return installOperResponseBody(result, null);
 	}
 }
