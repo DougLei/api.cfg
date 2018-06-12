@@ -60,7 +60,7 @@ public class DBTableHandler {
 	 * @return
 	 */
 	public List<ComTabledata> createTable(ComTabledata tabledata, boolean isNeedInitBasicColumns){
-		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(1);
+		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(2);
 		tabledatas.add(tabledata);
 		createTable(tabledatas, isNeedInitBasicColumns);
 		return tabledatas;
@@ -84,7 +84,7 @@ public class DBTableHandler {
 	 * @param tabledata
 	 */
 	public void dropTable(ComTabledata tabledata){
-		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(1);
+		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(2);
 		tabledatas.add(tabledata);
 		dropTable(tabledatas);
 		tabledatas.clear();
@@ -117,13 +117,11 @@ public class DBTableHandler {
 		if(tabledatas != null && tabledatas.size() > 0){
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas);
-			
 			StringBuilder createSql = new StringBuilder();
 			for (ComTabledata tabledata : tabledatas) {
 				if(isNeedInitBasicColumns){
 					DynamicBasicDataColumnUtil.initBasicColumnToTable(tabledata);
 				}
-				
 				tableOper.installCreateTableSql(tabledata);
 				createSql.append(tableOper.getCreateTableSql()).append(";")
 						 .append(tableOper.getCreateCommentSql()).append(";");
@@ -142,10 +140,8 @@ public class DBTableHandler {
 	public String getDropTableSql(List<ComTabledata> tabledatas){
 		if(tabledatas != null && tabledatas.size() > 0){
 			StringBuilder dropSql = new StringBuilder();
-
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas);
-			
 			for (ComTabledata tabledata : tabledatas) {
 				dropSql.append(" drop table ").append(tabledata.getTableName()).append(";");
 			}

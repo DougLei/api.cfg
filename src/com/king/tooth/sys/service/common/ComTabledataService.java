@@ -3,7 +3,12 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.internal.SessionFactoryImpl;
+
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
@@ -14,9 +19,14 @@ import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.sys.entity.common.ComPublishInfo;
+import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.util.ExceptionUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -287,22 +297,77 @@ public class ComTabledataService extends AbstractPublishService {
 		ComDatabase database = getObjectById(projectId, ComDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
-		tableHandler.createTable(table, true);
-		table.clear();
+		List<ComTabledata> tables = tableHandler.createTable(table, true);
 		
-		// 创建hbm对象
-		ComHibernateHbm hbm = new ComHibernateHbm();
-		hbm.setId(tableId);
-		hbm.setRefDatabaseId(project.getRefDatabaseId());
-		hbm.setHbmResourceName(table.getResourceName());
-		hbm.setIsDataLinkTableHbm(table.getIsDatalinkTable());
-		hbm.setHbmContent(new HibernateHbmHandler().createHbmMappingContent(table, false));
-		hbm.setReqResourceMethod(table.getReqResourceMethod());
-		hbm.setProjectId(projectId);
+		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(tables.size());
+		ComHibernateHbm hbm = null;
+		for (ComTabledata tb : tables) {
+			hbm = new ComHibernateHbm();
+			if(tb.getIsDatalinkTable() == 0){
+				hbm.setId(tableId);
+			}else{
+				hbm.setId(ResourceHandlerUtil.getIdentity());
+				hbm.setRefTableId(tableId);
+			}
+			hbm.setHbmResourceName(tb.getResourceName());
+			hbm.setIsDataLinkTableHbm(tb.getIsDatalinkTable());
+			hbm.setHbmContent(new HibernateHbmHandler().createHbmMappingContent(tb, false));
+			hbm.setReqResourceMethod(tb.getReqResourceMethod());
+			hbm.setProjectId(projectId);
+			hbm.setRefDatabaseId(project.getRefDatabaseId());
+			hbms.add(hbm);
+			tb.clear();
+		}
+		tables.clear();
 		
 		publishInfoService.deletePublishedData(projectId, tableId);
-		executeRemotePublish(null, projectId, hbm, hbm);
+		executeRemotePublish(projectId, hbms);
+		hbms.clear();
 		return null;
+	}
+	
+	/**
+	 * 执行远程发布操作
+	 * @param projectId  
+	 * @param hbms
+	 */
+	private void executeRemotePublish(String projectId, List<ComHibernateHbm> hbms){
+		String remotePublishErrMsg = null;
+		// 获取远程sessionFactory
+		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(ProjectIdRefDatabaseIdMapping.getDbId(projectId));
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			for (ComHibernateHbm hbm : hbms) {
+				session.save(hbm.getEntityName(), hbm.toEntityJson());
+				
+				ComSysResource csr = hbm.turnToPublishResource();
+				session.save(csr.getEntityName(), csr.toEntityJson());
+			}
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+			remotePublishErrMsg = ExceptionUtil.getErrMsg(e);
+		}finally{
+			if(session != null){
+				session.flush();
+				session.close();
+			}
+		}
+		
+		// 再添加新的发布信息数据
+		ComPublishInfo publishInfo;
+		for (ComHibernateHbm hbm : hbms) {
+			publishInfo = hbm.turnToPublish();
+			if(remotePublishErrMsg == null){
+				publishInfo.setIsSuccess(1);
+			}else{
+				publishInfo.setIsSuccess(0);
+				publishInfo.setErrMsg(remotePublishErrMsg);
+			}
+			HibernateUtil.saveObject(publishInfo, null);
+		}
 	}
 	
 	/**
@@ -330,7 +395,7 @@ public class ComTabledataService extends AbstractPublishService {
 		tableHandler.dropTable(table);
 		
 		executeRemoteUpdate(null, projectId, 
-				"delete " + new ComHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "='"+tableId+"'",
+				"delete " + new ComHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and (" + ResourceNameConstants.ID + "='"+tableId+"' or refTableId = '"+tableId+"')",
 				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);
 		return null;

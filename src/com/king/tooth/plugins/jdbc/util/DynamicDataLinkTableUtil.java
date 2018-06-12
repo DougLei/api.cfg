@@ -6,6 +6,7 @@ import java.util.List;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.util.StrUtils;
@@ -48,8 +49,9 @@ public class DynamicDataLinkTableUtil {
 	 */
 	private static ComTabledata getDataLinkTabledata(String dbType, String parentId, String parentTableName, String subTableName){
 		ComTabledata dataLinkTable = new ComTabledata(dbType, getDataLinkTableName(parentTableName, subTableName), 1);
-		dataLinkTable.setId(parentId);// 关系表关联的tableId的值，就是父表的id   这里set到id中，在HibernateHbmHandler.createHbmMappingContent()方法中，从id取hbm文件对应的表主键。关系表对应的表主键，就是父表的id，所以这里这么存储
+		dataLinkTable.setParentTableId(parentId);
 		dataLinkTable.setComments("父表" + parentTableName + "和子表" + subTableName + "的关系表");
+		dataLinkTable.setReqResourceMethod(ISysResource.NONE);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(3);
 		

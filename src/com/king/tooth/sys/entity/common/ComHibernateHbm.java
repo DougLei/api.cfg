@@ -159,6 +159,11 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 		resource.setResourceType(TABLE);
 		resource.setResourceName(hbmResourceName);
 		resource.setProjectId(projectId);
+		if(isDataLinkTableHbm != null && isDataLinkTableHbm == 1){
+			resource.setRefResourceId(refTableId);
+		}else{
+			resource.setRefResourceId(id);
+		}
 		return resource;
 	}
 	
@@ -185,7 +190,11 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 		ComPublishInfo publish = new ComPublishInfo();
 		publish.setPublishDatabaseId(refDatabaseId);
 		publish.setPublishProjectId(projectId);
-		publish.setPublishResourceId(id);
+		if(isDataLinkTableHbm != null && isDataLinkTableHbm == 1){
+			publish.setPublishResourceId(refTableId);
+		}else{
+			publish.setPublishResourceId(id);
+		}
 		publish.setPublishResourceName(hbmResourceName);
 		publish.setResourceType(TABLE);
 		super.turnToPublish();
