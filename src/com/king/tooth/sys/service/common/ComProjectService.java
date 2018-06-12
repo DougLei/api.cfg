@@ -144,7 +144,7 @@ public class ComProjectService extends AbstractPublishService {
 		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), null, null, null)){
 			return "["+project.getProjName()+"]项目所属的数据库还未发布，请先发布数据库";
 		}
-		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), project.getId(), null, null)){
+		if(publishInfoService.validResourceIsPublished(null, project.getId(), null, null)){
 			return "["+project.getProjName()+"]项目已经发布，无法再次发布";
 		}
 		
@@ -166,15 +166,14 @@ public class ComProjectService extends AbstractPublishService {
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
-		if(!publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), project.getId(), null, null)){
+		if(!publishInfoService.validResourceIsPublished(null, project.getId(), null, null)){
 			return "["+project.getProjName()+"]项目未发布，无法取消发布";
 		}
 		// 将项目id和数据库id取消映射
 		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
 		
 		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectId+"'");
-		// 删除发布信息的数据
-		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishResourceId = '"+projectId+"'", null);
+		publishInfoService.deletePublishedData(projectId);
 		return null;
 	}
 	//--------------------------------------------------------------------------------------------------------

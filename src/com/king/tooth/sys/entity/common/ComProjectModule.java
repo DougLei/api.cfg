@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
@@ -54,6 +55,13 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	private Integer orderCode;
 	
 	//-----------------------------------------------
+	/**
+	 * 关联的数据库id
+	 * 该字段在发布的时候用到
+	 * @see turnToPublish()
+	 */
+	@JSONField(serialize = false)
+	private String refDatabaseId;
 	
 	public String getParentId() {
 		return parentId;
@@ -100,6 +108,10 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
+	public void setRefDatabaseId(String refDatabaseId) {
+		this.refDatabaseId = refDatabaseId;
+	}
+	
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE", 0);
@@ -213,6 +225,8 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	
 	public ComPublishInfo turnToPublish() {
 		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishDatabaseId(refDatabaseId);
+		publish.setPublishProjectId(refProjectId);
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(code);
 		publish.setResourceType(PROJECT_MODULE);

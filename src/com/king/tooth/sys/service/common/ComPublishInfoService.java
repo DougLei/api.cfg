@@ -37,7 +37,10 @@ public class ComPublishInfoService extends AbstractService{
 			params.add(projectId);
 		}
 		if(resourceId != null){
-			hql += " and publishResourceId=?";
+			if(databaseId != null || projectId != null){
+				hql += " and";
+			}
+			hql += " publishResourceId=?";
 			params.add(resourceId);
 		}
 		

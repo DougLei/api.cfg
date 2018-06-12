@@ -2,6 +2,7 @@ package com.king.tooth.sys.service.common;
 
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -109,6 +110,24 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishProjectModule(String projectModuleId){
+		ComProjectModule projectModule = getObjectById(projectModuleId, ComProjectModule.class);
+		if(projectModule == null){
+			return "没有找到id为["+projectModuleId+"]的模块对象信息";
+		}
+		if(!publishInfoService.validResourceIsPublished(null, projectModule.getRefProjectId(), null, null)){
+			return "["+projectModule.getName()+"]模块所属的项目还未发布，请先发布项目";
+		}
+		if(publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
+			return "["+projectModule.getName()+"]模块已经发布，无法再次发布";
+		}
+		
+		publishInfoService.deletePublishedData(projectModuleId);
+		
+		ComProject project = getObjectById(projectModule.getRefProjectId(), ComProject.class);
+		projectModule.setRefDatabaseId(project.getRefDatabaseId());
+		executeRemotePublish(null, projectModule.getProjectId(), projectModule);
+		
+		// 后续还要加入发布功能，放到这里
 		return null;
 	}
 	
@@ -118,6 +137,16 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelPublishProjectModule(String projectModuleId){
+		ComProjectModule projectModule = getObjectById(projectModuleId, ComProjectModule.class);
+		if(projectModule == null){
+			return "没有找到id为["+projectModuleId+"]的模块对象信息";
+		}
+		if(!publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
+			return "["+projectModule.getName()+"]模块未发布，无法取消发布";
+		}
+		
+		executeRemoteUpdate(null, projectModule.getRefProjectId(), "");
+		publishInfoService.deletePublishedData(projectModuleId);
 		return null;
 	}
 }
