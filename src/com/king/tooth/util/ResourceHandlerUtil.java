@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.internal.HbmConfPropMetadata;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -20,30 +21,6 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 public class ResourceHandlerUtil {
-	
-	/**
-	 * 判断是否是登录请求
-	 * @param request
-	 * @return
-	 */
-	public static boolean isLoginRequest(HttpServletRequest request){
-		if(request.getRequestURI().endsWith("ComSysAccount/login")){
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * 判断是否是注册请求
-	 * @param request
-	 * @return
-	 */
-	public static boolean isRegisterRequest(HttpServletRequest request){
-		if(request.getRequestURI().endsWith("ComSysAccount/register") || request.getRequestURI().endsWith("ComSysAccount/validAccountName")){
-			return true;
-		}
-		return false;
-	}
 	
 	/**
 	 * 获取唯一标识id
@@ -173,5 +150,26 @@ public class ResourceHandlerUtil {
 			dataLinks.put(ResourceNameConstants.RIGHT_RESOURCE_NAME, rightResourceName);
 		}
 		return dataLinks;
+	}
+
+	/**
+	 * 可以忽略登录验证的请求url集合
+	 */
+	private static final String[] ignoreLoginValidRequrl;
+	static{
+		ignoreLoginValidRequrl = SysConfig.getSystemConfig("ignore.loginvalid.requrl").split(",");
+	}
+	/**
+	 * 是否需要忽略登录验证
+	 * @param request
+	 * @return
+	 */
+	public static boolean isIgnoreLoginValid(HttpServletRequest request) {
+		for (String ignore : ignoreLoginValidRequrl) {
+			if(request.getRequestURI().endsWith(ignore)){
+				return true;
+			}
+		}
+		return false;
 	}
 }

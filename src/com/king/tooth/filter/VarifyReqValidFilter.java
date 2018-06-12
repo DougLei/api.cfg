@@ -50,7 +50,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 	 * @throws IOException
 	 */
 	private String varifyRequestIsValid(HttpServletRequest request) throws IOException{
-		if(ResourceHandlerUtil.isLoginRequest(request) || ResourceHandlerUtil.isRegisterRequest(request)){
+		if(ResourceHandlerUtil.isIgnoreLoginValid(request)){
 			return null;
 		}
 		
