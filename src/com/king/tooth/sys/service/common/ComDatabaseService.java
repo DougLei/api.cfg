@@ -215,4 +215,32 @@ public class ComDatabaseService extends AbstractPublishService {
 		return null;
 	}
 	//--------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * 加载数据库
+	 * <p>运行系统使用的方法，当配置系统，发布过来数据库信息的时候</p>
+	 * @param databaseId
+	 */
+	public String loadPublishedDatabase(String databaseId){
+		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		if(database == null){
+			return "没有找到id为["+databaseId+"]的数据库对象信息";
+		}
+		DynamicDBUtil.addDataSource(database);
+		return null;
+	}
+	
+	/**
+	 * 卸载数据库
+	 * <p>运行系统使用的方法，当配置系统，取消发布数据库信息的时候</p>
+	 * @param databaseId
+	 */
+	public String unloadPublishedDatabase(String databaseId){
+		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		if(database == null){
+			return "没有找到id为["+databaseId+"]的数据库对象信息";
+		}
+		DynamicDBUtil.removeDataSource(databaseId);
+		return null;
+	}
 }

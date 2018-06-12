@@ -81,6 +81,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_HIBERNATE_HBM", 0);
 		table.setIsResource(1);
+		table.setVersion(1);
 		table.setName("hibernate的hbm内容对象表");
 		table.setComments("hibernate的hbm内容对象表");
 		table.setIsBuiltin(1);
@@ -94,7 +95,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：如果发布到项目中，这个字段必须有值");
-		table.setVersion(1);
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		

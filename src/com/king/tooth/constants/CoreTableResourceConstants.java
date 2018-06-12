@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
+import com.king.tooth.sys.entity.common.ComCode;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -39,12 +40,13 @@ public class CoreTableResourceConstants {
 	 * @return
 	 */
 	private static List<ComTabledata> getCoreTables(String dbType){
-		List<ComTabledata> coreTables = new ArrayList<ComTabledata>(5);
+		List<ComTabledata> coreTables = new ArrayList<ComTabledata>(6);
 		coreTables.add(new ComDatabase().toCreateTable(dbType));
 		coreTables.add(new ComProject().toCreateTable(dbType));
 		coreTables.add(new ComProjectModule().toCreateTable(dbType));
 		coreTables.add(new ComHibernateHbm().toCreateTable(dbType));
 		coreTables.add(new ComSqlScript().toCreateTable(dbType));
+		coreTables.add(new ComCode().toCreateTable(dbType));
 		return coreTables;
 	}
 	
@@ -55,7 +57,7 @@ public class CoreTableResourceConstants {
 	 * @param dbType
 	 * @return
 	 */
-	private transient static final List<ComTabledata> configSystemCoreTables = new ArrayList<ComTabledata>(18);
+	private transient static final List<ComTabledata> configSystemCoreTables = new ArrayList<ComTabledata>(19);
 	/**
 	 * 初始化配置系统的核心表资源对象集合
 	 * @param dbType
@@ -100,7 +102,7 @@ public class CoreTableResourceConstants {
 	 * @param dbType
 	 * @return
 	 */
-	private transient static final List<ComTabledata> appSystemCoreTables = new ArrayList<ComTabledata>(14);
+	private transient static final List<ComTabledata> appSystemCoreTables = new ArrayList<ComTabledata>(15);
 	/**
 	 * 初始化运行系统的核心表资源对象集合
 	 * @param dbType
@@ -143,7 +145,7 @@ public class CoreTableResourceConstants {
 	 * 	例如：ComDatabase,ComSqlScript，当发布资源时，连接远程的数据库，并为其在本系统创建dataSource和sessionFactory，将这些资源的映射加入到sessionFactory中，方便数据交互
 	 * </p>
 	 */
-	private transient static final List<InputStream> coreTableResourceMappingInputStreams = new ArrayList<InputStream>(5);
+	private transient static final List<InputStream> coreTableResourceMappingInputStreams = new ArrayList<InputStream>(6);
 	/**
 	 * 获得核心表资源映射的InputStreams
 	 * @return
