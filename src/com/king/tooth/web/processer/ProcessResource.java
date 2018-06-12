@@ -14,6 +14,7 @@ public class ProcessResource {
 	 * 处理资源的类型
 	 * 	1：表资源类型
 	 * 	2：sql脚本资源类型
+	 * 	3：代码资源类型
 	 */
 	private int[] processResourceTypes;
 	

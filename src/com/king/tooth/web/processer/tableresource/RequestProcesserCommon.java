@@ -10,7 +10,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.tableresource.BuiltinTableResourceBMProcesser;
 import com.king.tooth.web.builtin.method.tableresource.parentsub.BuiltinParentsubQueryMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.querycond.BuiltinQueryCondMethodProcesser;
-import com.king.tooth.web.processer.common.CommonProcesser;
+import com.king.tooth.web.processer.CommonProcesser;
 
 /**
  * 通用的请求处理器类

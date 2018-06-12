@@ -2,8 +2,8 @@ package com.king.tooth.web.processer.coderesource;
 
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
+import com.king.tooth.web.processer.CommonProcesser;
 import com.king.tooth.web.processer.IRequestProcesser;
-import com.king.tooth.web.processer.common.CommonProcesser;
 
 /**
  * 请求处理器

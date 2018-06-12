@@ -13,7 +13,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.sqlresource.BuiltinSqlResourceBMProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sqlscript.BuiltinSqlScriptMethodProcesser;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
-import com.king.tooth.web.processer.common.CommonProcesser;
+import com.king.tooth.web.processer.CommonProcesser;
 
 /**
  * 通用的请求处理器类

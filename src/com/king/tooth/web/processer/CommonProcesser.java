@@ -1,4 +1,4 @@
-package com.king.tooth.web.processer.common;
+package com.king.tooth.web.processer;
 
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
