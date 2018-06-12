@@ -49,4 +49,9 @@ public class SysConfig implements Serializable{
 	public static void setSystemConfig(String key, String value){
 		SYSTEM_PROPERTIES.put(key, value);
 	}
+	
+	/**
+	 * 运行web系统的访问路径
+	 */
+	public transient static String APP_WEB_SYSTEM_LOCATION = SysConfig.getSystemConfig("app.web.sys.location");
 }
