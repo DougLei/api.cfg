@@ -67,7 +67,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		String operResult = null;
 		boolean databaseLinkInfoIsSame = oldDatabase.compareLinkInfoIsSame(database);
 		if(!databaseLinkInfoIsSame){// 如果修改了连接信息
-			if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null)){ // 如果已发布，则发出提示信息
+			if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){ // 如果已发布，则发出提示信息
 				return "【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改连接信息，或取消发布后再修改";
 			}
 			operResult = validDatabaseDataIsExists(database);
@@ -88,7 +88,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(oldDatabase == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
-		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null)){
+		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){
 			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，无法删除，请先取消发布";
 		}
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
@@ -117,6 +117,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param databaseId
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	public String publishDatabase(String databaseId){
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
@@ -128,13 +129,17 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database.getIsEnabled() == 0){
 			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
 		}
-		if(publishInfoService.validResourceIsPublished(databaseId, null, null)){
+		Object ref = null;
+		if(publishInfoService.validResourceIsPublished(databaseId, null, null, ref)){
 			return "id为["+databaseId+"]的数据库已发布，无法再次发布";
 		}
 		
 		// 如果是自己的库，要创建
 		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
 			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			if(ref != null){
+				databaseHandler.dropDatabase(database);
+			}
 			databaseHandler.createDatabase(database);
 		}
 		// 还要测试库能不能正常连接上
@@ -147,10 +152,8 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 创建运行系统基础表
 		DBTableHandler dbTableHandler = new DBTableHandler(database);
 		List<ComTabledata> appSystemCoreTables = CoreTableResourceConstants.getAppsystemcoretables();
-		try {
+		if(ref != null){
 			dbTableHandler.dropTable(appSystemCoreTables);
-		} catch (Exception e1) {
-			Log4jUtil.debug("************************部署数据库，表不存在，不需要删除************************");
 		}
 		dbTableHandler.createTable(appSystemCoreTables, false);
 		
@@ -204,7 +207,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database.getIsEnabled() == 0){
 			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
 		}
-		if(!publishInfoService.validResourceIsPublished(databaseId, null, null)){
+		if(!publishInfoService.validResourceIsPublished(databaseId, null, null, null)){
 			return "id为["+databaseId+"]的数据库未发布，无法取消发布";
 		}
 		
@@ -214,20 +217,18 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "取消发布数据库失败:" + testLinkResult;
 		}
 		
+		// 移除dataSource和sessionFacotry
+		DynamicDBUtil.removeDataSource(databaseId);
+		
 		// 如果是自己的库，要删除
 		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
 			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 			databaseHandler.dropDatabase(database);
 		}
 		
-		// 移除dataSource和sessionFacotry
-		DynamicDBUtil.removeDataSource(databaseId);
-		
 		// 删除发布信息的数据
 		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		return null;
 	}
 	//--------------------------------------------------------------------------------------------------------
-	
-	
 }

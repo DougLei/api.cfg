@@ -62,8 +62,7 @@ public class DynamicHibernateSessionFactoryHandler {
 	 * @return
 	 */
 	public SessionFactoryImpl removeSessionFactory(String databaseId){
-		if(SysConfig.getSystemConfig("cfg.database.id").equals(databaseId)
-				|| SysConfig.getSystemConfig("test.database.id").equals(databaseId)){
+		if(SysConfig.getSystemConfig("current.sys.database.id").equals(databaseId)){
 			throw new IllegalArgumentException("不能删除系统内置的sessionFactory");
 		}
 		return (SessionFactoryImpl) sessionFactoryHolder.removeSessionFactory(databaseId);

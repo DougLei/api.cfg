@@ -18,9 +18,10 @@ public class ComPublishInfoService extends AbstractService{
 	 * @param databaseId
 	 * @param projectId
 	 * @param resourceId
+	 * @param ref
 	 * @return
 	 */
-	public boolean validResourceIsPublished(String databaseId, String projectId, String resourceId){
+	public boolean validResourceIsPublished(String databaseId, String projectId, String resourceId, Object ref){
 		String hql = "from ComPublishInfo where";
 		List<Object> params = new ArrayList<Object>(3);
 		if(databaseId != null){
@@ -40,6 +41,7 @@ public class ComPublishInfoService extends AbstractService{
 		}
 		
 		ComPublishInfo publishInfo = HibernateUtil.extendExecuteUniqueQueryByHql(ComPublishInfo.class, hql, params);
+		ref = publishInfo;
 		params.clear();
 		if(publishInfo == null){
 			return false;

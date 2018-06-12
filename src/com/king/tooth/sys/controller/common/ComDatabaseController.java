@@ -87,6 +87,7 @@ public class ComDatabaseController extends AbstractPublishController{
 		return installOperResponseBody(result, null);
 	}
 	
+	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布数据库
 	 * <p>请求方式：GET</p>
@@ -100,6 +101,22 @@ public class ComDatabaseController extends AbstractPublishController{
 			return installOperResponseBody("要发布的数据库id不能为空", null);
 		}
 		String result = databaseService.publishDatabase(databaseId);
+		return installOperResponseBody(result, null);
+	}
+	
+	/**
+	 * 取消发布数据库
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/cancelPublish", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody cancelPublish(HttpServletRequest request){
+		String databaseId = request.getParameter("databaseId");
+		if(StrUtils.isEmpty(databaseId)){
+			return installOperResponseBody("要取消发布的数据库id不能为空", null);
+		}
+		String result = databaseService.cancelPublishDatabase(databaseId);
 		return installOperResponseBody(result, null);
 	}
 }

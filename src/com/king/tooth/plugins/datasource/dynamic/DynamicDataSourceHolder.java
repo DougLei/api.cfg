@@ -68,11 +68,12 @@ public class DynamicDataSourceHolder extends AbstractRoutingDataSource{
 	 * 删除数据源
 	 * @param databaseId
 	 */
-	public synchronized void removeDataSource(String databaseId){
+	public synchronized DataSource removeDataSource(String databaseId){
 		if(!dataSourceIsExists(databaseId)){
-			throw new NullPointerException("databaseId值为 [{"+databaseId+"}] 的数据源，不存在于this.dataSources集合中，删除数据源失败！");
+			Log4jUtil.debug("databaseId值为 [{"+databaseId+"}] 的数据源，不存在于this.dataSources集合中，删除数据源失败！");
+			return null;
 		}
-		dataSources.remove(databaseId);
+		return dataSources.remove(databaseId);
 	}
 	
 	/**

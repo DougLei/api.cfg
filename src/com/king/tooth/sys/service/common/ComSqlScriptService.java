@@ -114,7 +114,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			String projectId = sqlScript.getProjectId();
 			sqlScript.setProjectId(null);
 			
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId(), null)){
 				return "该sql资源已经发布，不能修改sql资源名，或取消发布后再修改";
 			}
 			operResult = validSqlScriptResourceNameIsExists(sqlScript);
@@ -151,7 +151,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			if(StrUtils.isEmpty(projectId)){
 				return "要删除的sql脚本，关联的项目id不能为空";
 			}
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId(), null)){
 				return "该sql脚本已经发布，无法删除，请先取消发布";
 			}
 		}

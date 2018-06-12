@@ -96,4 +96,3 @@ drop user u_SmartOneApp;
 drop login SmartOneApp;
 drop database SmartOneApp;
 */
-

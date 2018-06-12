@@ -28,7 +28,7 @@ public interface IDynamicDataSourceHandler {
 	 * 动态删除数据源
 	 * @param databaseId
 	 */
-	public void removeDataSource(String databaseId);
+	public DataSource removeDataSource(String databaseId);
 	
 	/**
 	 * 动态获取数据源

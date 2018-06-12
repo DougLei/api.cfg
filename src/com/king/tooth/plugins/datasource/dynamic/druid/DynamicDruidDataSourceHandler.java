@@ -74,12 +74,11 @@ public class DynamicDruidDataSourceHandler implements IDynamicDataSourceHandler 
 		return dataSource;
 	}
 
-	public void removeDataSource(String databaseId) {
-		if(SysConfig.getSystemConfig("cfg.database.id").equals(databaseId)
-				|| SysConfig.getSystemConfig("test.database.id").equals(databaseId)){
+	public DataSource removeDataSource(String databaseId) {
+		if(SysConfig.getSystemConfig("current.sys.database.id").equals(databaseId)){
 			throw new IllegalArgumentException("不能删除系统内置的数据源");
 		}
-		dataSourceHolder.removeDataSource(databaseId);
+		return dataSourceHolder.removeDataSource(databaseId);
 	}
 
 	public DataSource getDataSource() {

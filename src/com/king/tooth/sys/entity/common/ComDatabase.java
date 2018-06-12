@@ -375,11 +375,11 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntity,
 		if(database.getDbType().equals(DynamicDataConstants.DB_TYPE_ORACLE)){
 			if(StrUtils.compareIsSame(dbInstanceName, database.getDbInstanceName())
 					&& StrUtils.compareIsSame(dbIp, database.getDbIp())
-					&& dbPort == database.getDbPort()){
+					&& dbPort.equals(database.getDbPort())){
 				return true;
 			}
 		}else if(database.getDbType().equals(DynamicDataConstants.DB_TYPE_SQLSERVER)){
-			if(StrUtils.compareIsSame(dbIp, database.getDbIp()) && dbPort == database.getDbPort()){
+			if(StrUtils.compareIsSame(dbIp, database.getDbIp()) && dbPort.equals(database.getDbPort())){
 				return true;
 			}
 		}

@@ -51,7 +51,8 @@ public class DynamicHibernateSessionFactoryHolder {
 	 */
 	synchronized SessionFactory removeSessionFactory(String databaseId){
 		if(!sessionFactoryIsExists(databaseId)){
-			throw new NullPointerException("不存在databaseId值为 [{"+databaseId+"}]的sessionFactory！删除失败！");
+			Log4jUtil.info("不存在databaseId值为 [{"+databaseId+"}]的sessionFactory！删除失败！");
+			return null;
 		}
 		return sessionFactorys.remove(databaseId);
 	}

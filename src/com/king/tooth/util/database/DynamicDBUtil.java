@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.king.tooth.plugins.datasource.dynamic.druid.DynamicDruidDataSourceHandler;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -60,9 +61,13 @@ public class DynamicDBUtil {
 			throw new NullPointerException("删除数据源和对应sessionFactory时，databaseId值不能为空!");
 		}
 		SessionFactoryImpl sfi = dynamicSessionFactoryHandler.removeSessionFactory(databaseId);
-		sfi.close();
-		
-		dynamicDruidDataSourceHandler.removeDataSource(databaseId);
+		if(sfi != null){
+			sfi.close();
+		}
+		DruidDataSource dataSource = (DruidDataSource) dynamicDruidDataSourceHandler.removeDataSource(databaseId);
+		if(dataSource != null){
+			dataSource.close();
+		}
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------

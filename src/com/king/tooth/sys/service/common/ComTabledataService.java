@@ -101,7 +101,7 @@ public class ComTabledataService extends AbstractPublishService {
 			String projectId = table.getProjectId();
 			table.setProjectId(null);
 			
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId(), null)){
 				return "该表已经发布，不能修改表名，或取消发布后再修改";
 			}
 			operResult = validTableNameIsExists(table);
@@ -133,7 +133,7 @@ public class ComTabledataService extends AbstractPublishService {
 			if(StrUtils.isEmpty(projectId)){
 				return "要删除的表，关联的项目id不能为空";
 			}
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
+			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId(), null)){
 				return "该表已经发布，无法删除，请先取消发布";
 			}
 		}
