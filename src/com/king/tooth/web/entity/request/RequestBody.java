@@ -114,7 +114,8 @@ public class RequestBody implements Serializable{
 	 * 请求的资源类型
 	 * 1：表资源类型
 	 * 2：sql脚本资源类型
-	 * <p>@see ISysResource.XXX_RESOURCE_TYPE</p>
+	 * 3：代码资源类型
+	 * <p>@see ISysResource</p>
 	 */
 	private int requestResourceType;
 	

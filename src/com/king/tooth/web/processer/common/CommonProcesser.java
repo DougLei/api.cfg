@@ -6,6 +6,8 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 /**
  * 抽象的公用处理器
  * <p>目的在于提取公共的属性、方法</p>
+ * <p>主要就是请求体和响应体</p>
+ * <p>**任何新的处理器类型，都必须继承这个类**</p>
  * @author DougLei
  */
 public abstract class CommonProcesser {
