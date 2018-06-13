@@ -20,7 +20,6 @@ public class ComProjectComCodeLinks implements Serializable, ITable {
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_CODE_LINKS", 0);
 		table.setResourceName("ComProjectComCodeLinks");
-		table.setVersion(1);
 		table.setName("项目和代码的关系表");
 		table.setComments("项目和代码的关系表");
 		table.setIsBuiltin(1);
@@ -28,6 +27,7 @@ public class ComProjectComCodeLinks implements Serializable, ITable {
 		table.setReqResourceMethod(ISysResource.NONE);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(4);
 		

@@ -73,13 +73,14 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 */
 	private String subRefParentColumnName;
 	/**
-	 * 版本
-	 */
-	private Integer version;
-	/**
 	 * 注释
 	 */
 	private String comments;
+	/**
+	 * 是否是核心表
+	 * <p>这个由后端开发人员控制，在发布时会用到</p>
+	 */
+	private Integer isCore;
 	
 	//-----------------------------------------------------------------------
 	
@@ -164,12 +165,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setParentTableId(String parentTableId) {
 		this.parentTableId = parentTableId;
 	}
-	public Integer getVersion() {
-		return version;
-	}
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
 	public String getComments() {
 		return comments;
 	}
@@ -226,13 +221,19 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setRefDatabaseId(String refDatabaseId) {
 		this.refDatabaseId = refDatabaseId;
 	}
+	public Integer getIsCore() {
+		return isCore;
+	}
+	public void setIsCore(Integer isCore) {
+		this.isCore = isCore;
+	}
+	
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_TABLEDATA", 0);
-		table.setIsResource(1);
-		table.setVersion(1);
 		table.setName("表数据信息资源对象表");
 		table.setComments("表数据信息资源对象表");
+		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
 		table.setReqResourceMethod(GET);
@@ -310,12 +311,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		commentsColumn.setOrderCode(10);
 		columns.add(commentsColumn);
 		
-		ComColumndata versionColumn = new ComColumndata("version", DataTypeConstants.INTEGER, 3);
-		versionColumn.setName("版本");
-		versionColumn.setComments("版本");
-		versionColumn.setDefaultValue("1");
-		versionColumn.setOrderCode(11);
-		columns.add(versionColumn);
+		ComColumndata isCoreColumn = new ComColumndata("is_core", DataTypeConstants.INTEGER, 1);
+		isCoreColumn.setName("是否是核心表");
+		isCoreColumn.setComments("是否是核心表:这个由后端开发人员控制，在发布时会用到");
+		isCoreColumn.setDefaultValue("0");
+		isCoreColumn.setOrderCode(11);
+		columns.add(isCoreColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -333,8 +334,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
 		entityJson.put("tableType", tableType);
 		entityJson.put("isHavaDatalink", isHavaDatalink);
-		entityJson.put("version", version);
-		entityJson.put("isDatalinkTable", isDatalinkTable);
+		entityJson.put("isCore", isCore);
 		super.processSysResourceProps(entityJson);
 		return entityJson.getEntityJson();
 	}

@@ -57,7 +57,7 @@ public class DBLink {
 						// 执行建库建表语句错误，也要继续下去
 						st.executeUpdate(ds);
 					} catch (Exception e) {
-						Log4jUtil.info("[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]");
+						Log4jUtil.info("[DBLink.executeDDL]发生错误的ddl-sql语句为:[{}]，错误信息为：{}", ds, ExceptionUtil.getErrMsg(e));
 					}
 				}
 			}

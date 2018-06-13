@@ -20,7 +20,6 @@ public class ComProjectComSqlScriptLinks implements Serializable, ITable {
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_SQLSCRIPT_LINKS", 0);
 		table.setResourceName("ComProjectComSqlScriptLinks");
-		table.setVersion(1);
 		table.setName("项目和sql脚本的关系表");
 		table.setComments("项目和sql脚本的关系表");
 		table.setIsBuiltin(1);
@@ -28,6 +27,7 @@ public class ComProjectComSqlScriptLinks implements Serializable, ITable {
 		table.setReqResourceMethod(ISysResource.NONE);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(4);
 		

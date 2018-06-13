@@ -20,7 +20,6 @@ public class ComProjectComTabledataLinks implements Serializable, ITable {
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_TABLE_LINKS", 0);
 		table.setResourceName("ComProjectComHibernateHbmLinks");
-		table.setVersion(1);
 		table.setName("项目和表的关系表");
 		table.setComments("项目和表的关系表");
 		table.setIsBuiltin(1);

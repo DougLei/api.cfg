@@ -20,7 +20,6 @@ public class ComDataLinks implements Serializable, ITable {
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_DATA_LINKS", 0);
 		table.setResourceName("ComDataLinks");
-		table.setVersion(1);
 		table.setName("数据关联关系资源对象表");
 		table.setComments("数据关联关系资源对象表");
 		table.setIsBuiltin(1);

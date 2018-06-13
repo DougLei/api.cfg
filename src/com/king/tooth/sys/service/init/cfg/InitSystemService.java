@@ -14,18 +14,33 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.coredata.CoreTableResource;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
+import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.app.ComRole;
+import com.king.tooth.sys.entity.app.datalinks.ComProjectComHibernateHbmLinks;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
+import com.king.tooth.sys.entity.common.ComCode;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
+import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.sys.entity.common.ComProjectModule;
+import com.king.tooth.sys.entity.common.ComProjectModuleBody;
+import com.king.tooth.sys.entity.common.ComReqLog;
+import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
+import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComProjectComCodeLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -44,16 +59,80 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class InitSystemService extends AbstractService{
 
 	/**
+	 * 处理本系统和本数据库的关系
+	 */
+	private void processCurrentSysOfPorjDatabaseRelation() {
+		// 添加本系统和本数据库的映射关系
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
+				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
+				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
+	}
+	
+	private List<ComTabledata> tables = new ArrayList<ComTabledata>(22);
+	/**
+	 * 初始化系统涉及到的所有表
+	 * <p>包括每个表中的基础列</p>
+	 * @return
+	 */
+	private void initAllTables(){
+		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
+		// 核心表
+		tables.add(new ComDatabase().toCreateTable(dbType));
+		tables.add(new ComProject().toCreateTable(dbType));
+		tables.add(new ComProjectModule().toCreateTable(dbType));
+		tables.add(new ComHibernateHbm().toCreateTable(dbType));
+		tables.add(new ComSqlScript().toCreateTable(dbType));
+		tables.add(new ComCode().toCreateTable(dbType));
+		tables.add(new ComProjectComSqlScriptLinks().toCreateTable(dbType));
+		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable(dbType));
+		tables.add(new ComProjectComCodeLinks().toCreateTable(dbType));
+		// 通用表
+		tables.add(new ComSysResource().toCreateTable(dbType));
+		tables.add(new ComDataDictionary().toCreateTable(dbType));
+		tables.add(new ComDataLinks().toCreateTable(dbType));
+		tables.add(new ComOperLog().toCreateTable(dbType));
+		tables.add(new ComProjectModuleBody().toCreateTable(dbType));
+		tables.add(new ComReqLog().toCreateTable(dbType));
+		tables.add(new ComSysAccount().toCreateTable(dbType));
+		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
+		// 配置系统表
+		tables.add(new ComColumndata().toCreateTable(dbType));
+		tables.add(new ComTabledata().toCreateTable(dbType));
+		tables.add(new ComPublishInfo().toCreateTable(dbType));
+		tables.add(new ComProjectComTabledataLinks().toCreateTable(dbType));
+		// 运行系统表
+		tables.add(new ComRole().toCreateTable(dbType));
+		// 初始化基础列
+		for (ComTabledata table : tables) {
+			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
+		}
+	}
+	/**
+	 * 清除表信息
+	 * @param tables
+	 */
+	private void clearTables(List<ComTabledata> tables){
+		for (ComTabledata table : tables) {
+			table.clear();
+		}
+		tables.clear();
+	}
+	
+	/**
 	 * 系统首次启动时，初始化系统的基础数据
 	 */
 	public void loadSysBasicDatasBySysFirstStart() {
 		try {
-			initDatabaseInfo();
+			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
+			initAllTables();// 初始化系统涉及到的所有表
+			initDatabaseInfo();// 初始化数据库信息
 			updateInitConfig();
 			Log4jUtil.debug("系统初始化完成！");
 		} catch (Exception e) {
 			Log4jUtil.debug("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
+		}finally{
+			clearTables(tables);
 		}
 	}
 	
@@ -62,18 +141,13 @@ public class InitSystemService extends AbstractService{
 	 */
 	private void initDatabaseInfo() {
 		try {
-			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 			// 设置当前操作的项目，获得对应的sessionFactory
 			CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());
-			
 			createTables();
-			
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
-			
 			insertHbmContentsToSessionFactory();// 根据表创建hbm文件，并将其加入到SessionFactory中
 			insertBasicDatas();// 插入基础数据
-			
 			HibernateUtil.commitTransaction();
 		} catch (Exception e) {
 			HibernateUtil.rollbackTransaction();
@@ -88,15 +162,34 @@ public class InitSystemService extends AbstractService{
 	 * @return 
 	 */
 	private void createTables(){
-		List<ComTabledata> tables = CoreTableResource.getConfigsystemcoretables();
+		List<ComTabledata> tmpTables = new ArrayList<ComTabledata>();
 		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
-		try {
-			dbHandler.dropTable(tables);
-		} catch (Exception e) {
-			Log4jUtil.debug("************************部署数据库，表不存在，不需要删除************************");
+		for (ComTabledata table : tables) {
+			if(table.getBelongPlatformType() == ITable.APP_PLATFORM){
+				continue;
+			}
+			tmpTables.add(table);
 		}
-		// 开始创建表
-		dbHandler.createTable(tables, false);
+		dbHandler.dropTable(tmpTables);// 尝试先删除表
+		dbHandler.createTable(tmpTables, false);// 开始创建表
+		clearTables(tmpTables);
+	}
+	
+	/**
+	 * 根据表创建hbm文件，并将其加入到SessionFactory中
+	 */
+	private void insertHbmContentsToSessionFactory() {
+		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
+		List<String> hbmContents = new ArrayList<String>(tables.size());
+		for (ComTabledata table : tables) {
+			if(table.getBelongPlatformType() == ITable.APP_PLATFORM){
+				continue;
+			}
+			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, false));// 记录hbm内容
+		}
+		// 将hbmContents加入到hibernate sessionFactory中
+		HibernateUtil.appendNewConfig(hbmContents);
+		hbmContents.clear();
 	}
 	
 	/**
@@ -104,20 +197,22 @@ public class InitSystemService extends AbstractService{
 	 */
 	private void insertBasicDatas() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 添加平台开发账户【1.平台开发账户】
+		// 添加管理账户【1.管理账户】
 		ComSysAccount admin = new ComSysAccount();
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		admin.setBelongPlatformType(ITable.CONFIG_PLATFORM);
 		String adminAccountId = HibernateUtil.saveObject(admin, null);
-		
-		// 添加一般开发账户【2.一般开发账户】
+	
+		// 添加普通账户【2.普通账户】
 		ComSysAccount normal = new ComSysAccount();
 		normal.setAccountType(2);
 		normal.setLoginName("normal");
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
-		normal.setValidDate(DateUtil.parseDate("2019-12-31 23:59:59"));
+		normal.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		normal.setBelongPlatformType(ITable.CONFIG_PLATFORM);
 		HibernateUtil.saveObject(normal, adminAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -144,29 +239,11 @@ public class InitSystemService extends AbstractService{
 		HibernateUtil.saveObject(testProject, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		insertAllTables(adminAccountId);// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中；创建者是平台开发账户
+		insertAllTables(adminAccountId);// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 添加数据字典数据
-		insertDataDictionary(adminAccountId);
-	}
-	
-	/**
-	 * 根据表创建hbm文件，并将其加入到SessionFactory中
-	 */
-	private void insertHbmContentsToSessionFactory() {
-		List<ComTabledata> tables = CoreTableResource.getConfigsystemcoretables();
-		
-		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-		List<String> hbmContents = new ArrayList<String>(tables.size());
-		for (ComTabledata table : tables) {
-			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, false));// 记录hbm内容
-		}
-		
-		// 将hbmContents加入到hibernate sessionFactory中
-		HibernateUtil.appendNewConfig(hbmContents);
-		
-		hbmContents.clear();
+		// 添加数据字典基础数据
+		insertBasicDataDictionary(adminAccountId);
 	}
 	
 	/**
@@ -176,8 +253,6 @@ public class InitSystemService extends AbstractService{
 	 * @param adminAccountId 
 	 */
 	private void insertAllTables(String adminAccountId) {
-		List<ComTabledata> tables = CoreTableResource.getConfigsystemcoretables();
-		
 		String tableId;
 		List<ComColumndata> columns = null;
 		ComHibernateHbm hbm;
@@ -193,8 +268,12 @@ public class InitSystemService extends AbstractService{
 				HibernateUtil.saveObject(column, adminAccountId);
 			}
 			
+			if(table.getBelongPlatformType() == ITable.APP_PLATFORM){
+				continue;
+			}
 			// 创建对应的hbm文件，并保存
 			hbm = new ComHibernateHbm();
+			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.tableTurnToHbm(table);
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, false));
 			HibernateUtil.saveObject(hbm, adminAccountId);
@@ -203,6 +282,74 @@ public class InitSystemService extends AbstractService{
 			resource = table.turnToResource();
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
+	}
+	
+	/**
+	 * 添加数据字典的基础数据
+	 * @param adminAccountId 
+	 */
+	private void insertBasicDataDictionary(String adminAccountId) {
+		// ComColumndata.columnType 字段数据类型
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符串", "string", 1, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "布尔值", "boolean", 2, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "整型", "integer", 3, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "浮点型", "double", 4, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "日期", "date", 5, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符大字段", "clob", 6, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "二进制大字段", "blob", 7, ITable.CONFIG_PLATFORM);
+		
+		// ComDatabase.dbType 数据库类型
+		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "oracle", "oracle", 1, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2, ITable.CONFIG_PLATFORM);
+		
+		// ComTabledata.tableType 表类型
+		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "单表", "1", 1, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "树表", "2", 2, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "主子表", "3", 3, ITable.CONFIG_PLATFORM);
+		
+		// ComTabledata.dbType 数据库类型
+		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "oracle", "oracle", 1, ITable.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2, ITable.CONFIG_PLATFORM);
+		
+		// ComOperLog.operType 操作的类型
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "查询", "select", 1, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "增加", "insert", 2, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "修改", "update", 3, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "删除", "delete", 4, ITable.COMMON_PLATFORM);
+		
+		// ComSysAccount.accountType 账户类型
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "0", 0, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "1", 1, ITable.COMMON_PLATFORM);
+		
+		// ComSysAccount.accountStatus 账户状态
+		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "启用", "1", 1, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "禁用", "2", 2, ITable.COMMON_PLATFORM);
+		
+		// ComSysResource.resourceType 资源类型
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "表资源", "1", 1, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "sql脚本资源", "2", 2, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "代码资源", "3", 3, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "数据库资源", "4", 4, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目资源", "5", 5, ITable.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目模块资源", "6", 6, ITable.COMMON_PLATFORM);
+	}
+	/**
+	 * 添加数据字典
+	 * @param code
+	 * @param codeCaption
+	 * @param codeValue
+	 * @param orderCode
+	 * @return
+	 */
+	private String insertDataDictionary(String adminAccountId, String code, String codeCaption, String codeValue, int orderCode, int belongPlatformType){
+		ComDataDictionary dataDictionary = new ComDataDictionary();
+		dataDictionary.setCode(code);
+		dataDictionary.setCodeCaption(codeCaption);
+		dataDictionary.setCodeValue(codeValue);
+		dataDictionary.setOrderCode(orderCode);
+		dataDictionary.setIsCore(1);
+		dataDictionary.setBelongPlatformType(belongPlatformType);
+		return HibernateUtil.saveObject(dataDictionary, adminAccountId);
 	}
 	
 	/**
@@ -226,115 +373,42 @@ public class InitSystemService extends AbstractService{
 		}
 	}
 	
-	/**
-	 * 处理本系统和本数据库的关系
-	 */
-	private void processCurrentSysOfPorjDatabaseRelation() {
-		// 添加本系统和本数据库的映射关系
-		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
-				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
-				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
-	}
-	
-	//---------------------------------------------------------------------------------------------------
-	/**
-	 * 添加数据字典的基础数据
-	 * @param adminAccountId 
-	 */
-	private void insertDataDictionary(String adminAccountId) {
-		// ComColumndata.columnType 字段数据类型
-		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "字符串", "string", 1);
-		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "布尔值", "boolean", 2);
-		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "整型", "integer", 3);
-		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "浮点型", "double", 4);
-		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "日期", "date", 5);
-		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "字符大字段", "clob", 6);
-		insertDataDictionary(adminAccountId, null, "cfgcolumndata.columntype", "二进制大字段", "blob", 7);
-		
-		// ComDatabase.dbType 数据库类型
-		insertDataDictionary(adminAccountId, null, "cfgdatabase.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(adminAccountId, null, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2);
-		
-		// ComTabledata.tableType 表类型
-		insertDataDictionary(adminAccountId, null, "cfgtabledata.tabletype", "单表", "1", 1);
-		insertDataDictionary(adminAccountId, null, "cfgtabledata.tabletype", "树表", "2", 2);
-		insertDataDictionary(adminAccountId, null, "cfgtabledata.tabletype", "主子表", "3", 3);
-		
-		// ComTabledata.dbType 数据库类型
-		insertDataDictionary(adminAccountId, null, "cfgtabledata.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(adminAccountId, null, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
-		
-		// ComOperLog.operType 操作的类型
-		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "查询", "select", 1);
-		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "增加", "insert", 2);
-		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "修改", "update", 3);
-		insertDataDictionary(adminAccountId, null, "comoperLog.opertype", "删除", "delete", 4);
-		
-		// ComPermission.permissionType 权限的类型
-		insertDataDictionary(adminAccountId, null, "compermission.permissiontype", "模块", "1", 1);
-		insertDataDictionary(adminAccountId, null, "compermission.permissiontype", "页面操作", "2", 2);
-		
-		// ComSysAccount.accountType 账户类型
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "超级管理员", "0", 0);
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "游客", "1", 1);
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "客户", "2", 2);
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "普通账户", "3", 3);
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accounttype", "普通虚拟账户", "4", 4);
-		
-		// ComSysAccount.accountStatus 账户状态
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accountstatus", "启用", "1", 1);
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accountstatus", "禁用", "2", 2);
-		insertDataDictionary(adminAccountId, null, "comsysaccount.accountstatus", "过期", "3", 3);
-		
-		// ComSysResource.resourceType 账户状态
-		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "表资源", "1", 1);
-		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "sql脚本资源", "2", 2);
-		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "代码资源", "2", 2);
-		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "数据库资源", "2", 2);
-		insertDataDictionary(adminAccountId, null, "comsysresource.resourcetype", "项目资源", "2", 2);
-		
-		// ComUser.userStatus 账户状态
-		insertDataDictionary(adminAccountId, null, "comuser.userstatus", "在职", "1", 1);
-		insertDataDictionary(adminAccountId, null, "comuser.userstatus", "离职", "2", 2);
-		insertDataDictionary(adminAccountId, null, "comuser.userstatus", "休假", "3", 3);
-	}
-	
-	/**
-	 * 初始化添加数据字典
-	 * @param parentId
-	 * @param code
-	 * @param codeCaption
-	 * @param codeValue
-	 * @param orderCode
-	 * @return
-	 */
-	private String insertDataDictionary(String adminAccountId, String parentId, String code, String codeCaption, String codeValue, int orderCode){
-		ComDataDictionary dataDictionary = new ComDataDictionary();
-		dataDictionary.setParentCodeId(parentId);
-		dataDictionary.setCode(code);
-		dataDictionary.setCodeCaption(codeCaption);
-		dataDictionary.setCodeValue(codeValue);
-		dataDictionary.setOrderCode(orderCode);
-		return HibernateUtil.saveObject(dataDictionary, adminAccountId);
-	}
-	
 	//------------------------------------------------------------------------------------
 	
 	/**
 	 * 系统每次启动时，加载hbm的配置信息
 	 * 主要是hbm内容
 	 */
-	public void loadSysBasicDatasBySysStart() {
+	public void loadSysBasicDatasByStart() {
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统的所有hbm映射文件
 			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 			
-			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的hbm加载进自己的sessionFactory中
-			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belong_platform_type = " + SysConfig.getSystemConfig("current.sys.type"));
-			HibernateUtil.closeCurrentThreadSession();
+			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的核心hbm加载进对应的sessionFactory中
+			// 同时建立数据库和项目的关联关系，为之后的发布操作做准备
+			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = 2 and isCreated =1");
 			
 			if(databases != null && databases.size()> 0){
+				// 查询获取核心表资源名都有哪些
+				List<Object> coreTableResourceNames = HibernateUtil.executeListQueryByHql(null, null, 
+						"select resourceName from ComTabledata where isCore=1 and isEnabled=1", null);
+				HibernateUtil.closeCurrentThreadSession();
+				if(coreTableResourceNames == null || coreTableResourceNames.size() == 0){
+					throw new NullPointerException("没有查询到核心的表资源名称，请检查配置系统数据库中的数据是否正确");
+				}
+				StringBuilder sp = new StringBuilder("(");
+				for (Object object : coreTableResourceNames) {
+					if("ComHibernateHbm".equals(object.toString())){
+						continue;
+					}
+					sp.append("?,");
+				}
+				sp.setLength(sp.length()-1);
+				sp.append(")");
+				String placholders = sp.toString();
+				sp.setLength(0);
+				
 				for (ComDatabase database : databases) {
 					database.analysisResourceProp();
 					String testLinkResult = database.testDbLink();
@@ -344,15 +418,19 @@ public class InitSystemService extends AbstractService{
 					Log4jUtil.debug("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
 					
 					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
-					loadHbmContentsByDatabaseId(database);// 加载当前数据库中的hbm到sessionFactory中
+					loadCoreHbmContentsByDatabaseId(database, coreTableResourceNames, placholders);// 加载当前数据库中的hbm到sessionFactory中
 				}
 				
+				coreTableResourceNames.clear();
+				
 				// 加载数据库和项目的关联关系映射
-				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory
-				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled = 1 and refDatabaseId = ?";
+				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
+				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled = 1 and isCreated =1 and refDatabaseId = ?";
 				for (ComDatabase database : databases) {
 					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
 				}
+				HibernateUtil.closeCurrentThreadSession();
+			}else{
 				HibernateUtil.closeCurrentThreadSession();
 			}
 		} catch (Exception e) {
@@ -386,6 +464,63 @@ public class InitSystemService extends AbstractService{
 	 * @throws IOException 
 	 */
 	private void loadHbmContentsByDatabaseId(ComDatabase database) throws SQLException, IOException {
+		loadComHibernateHbmContent(database);
+		
+		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
+		int count = (int) HibernateUtil.executeUniqueQueryBySql("select count(1) from com_hibernate_hbm where is_enabled = 1 and hbm_resource_name != 'ComHibernateHbm' and ref_database_id = '"+database.getId()+"'", null);
+		if(count == 0){
+			return;
+		}
+		int loopCount = count/100 + 1;
+		List<Object> hbmContents = null;
+		List<String> hcs = null;
+		for(int i=0;i<loopCount;i++){
+			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from ComHibernateHbm where isEnabled = 1 and hbmResourceName !='ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
+			hcs = new ArrayList<String>(hbmContents.size());
+			for (Object obj : hbmContents) {
+				hcs.add(obj+"");
+			}
+			HibernateUtil.appendNewConfig(hcs);
+			hcs.clear();
+			hbmContents.clear();
+		}
+		// 关闭session
+		HibernateUtil.closeCurrentThreadSession();
+	}
+	
+	/**
+	 * 加载指定数据库的核心hbm映射文件
+	 * @param database 指定数据库的id
+	 * @param coreTableResourceNames
+	 * @param placholders
+	 * @throws SQLException 
+	 * @throws IOException 
+	 */
+	private void loadCoreHbmContentsByDatabaseId(ComDatabase database, List<Object> coreTableResourceNames, String placholders) throws SQLException, IOException {
+		loadComHibernateHbmContent(database);
+		
+		List<Object> coreHbmContents = HibernateUtil.executeListQueryByHql(null, null, 
+				"select hbmContent from ComHibernateHbm where isEnabled = 1 and refDatabaseId = '"+database.getId()+"' and hbmResourceName in " + placholders, coreTableResourceNames);
+		List<String> hcs = new ArrayList<String>(coreHbmContents.size());
+		for (Object obj : coreHbmContents) {
+			hcs.add(obj+"");
+		}
+		HibernateUtil.appendNewConfig(hcs);
+		
+		hcs.clear();
+		coreHbmContents.clear();
+		
+		// 关闭session
+		HibernateUtil.closeCurrentThreadSession();
+	}
+	
+	/**
+	 * 加载指定数据库中的ComHibernateHbm内容
+	 * @param database
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	private void loadComHibernateHbmContent(ComDatabase database) throws SQLException, IOException{
 		CurrentThreadContext.setDatabaseId(database.getId());
 		// 获取当前系统的ComHibernateHbm映射文件对象
 		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";
@@ -403,26 +538,6 @@ public class InitSystemService extends AbstractService{
 		}
 		// 将其加载到当前系统的sessionFactory中
 		HibernateUtil.appendNewConfig(hbmContent.toString().trim());
-		
-		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
-		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryBySql("select count(1) from com_hibernate_hbm where is_enabled = 1 and hbm_resource_name != 'ComHibernateHbm' and ref_database_id = '"+database.getId()+"'", null)+"");
-		if(count == 0){
-			return;
-		}
-		int loopCount = count/100 + 1;
-		List<Object> hbmContents = null;
-		List<String> hcs = null;
-		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from ComHibernateHbm where isEnabled = 1", null);
-			hcs = new ArrayList<String>(hbmContents.size());
-			for (Object obj : hbmContents) {
-				hcs.add(obj+"");
-			}
-			HibernateUtil.appendNewConfig(hcs);
-			hcs.clear();
-			hbmContents.clear();
-		}
-		// 关闭session
-		HibernateUtil.closeCurrentThreadSession();
+		hbmContent.setLength(0);
 	}
 }

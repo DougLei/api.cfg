@@ -81,7 +81,6 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(dbType, "COM_OPER_LOG", 0);
 		table.setName("操作日志资源对象表");
 		table.setComments("操作日志资源对象表");
-		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);

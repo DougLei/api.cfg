@@ -41,6 +41,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * 资源是否被创建
 	 * <p>在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中</p>
 	 * <p>在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中</p>
+	 * <p>针对说明：数据库/项目，在配置平台为0，发布后，值改为1，取消发布后，值改回0</p>
 	 */
 	protected Integer isCreated;
 	

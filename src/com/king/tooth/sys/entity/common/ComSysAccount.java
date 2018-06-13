@@ -47,8 +47,8 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	private String emails;
 	/**
 	 * 账户类型
-	 * 		1.平台开发账户(只有一个用户，由系统初始化内置进去)
-	 * 		2.一般开发账户
+	 * 		1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)
+	 * 		2.普通账户
 	 */
 	private Integer accountType;
 	/**
@@ -144,7 +144,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(dbType, "COM_SYS_ACCOUNT", 0);
 		table.setName("系统账户资源对象表");
 		table.setComments("系统账户资源对象表");
-		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -181,10 +180,10 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		emailsColumn.setComments("邮箱");
 		emailsColumn.setOrderCode(5);
 		columns.add(emailsColumn);
-		
+
 		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
 		accountTypeColumn.setName("账户类型");
-		accountTypeColumn.setComments("账户类型:1.平台开发账户(只有一个用户，由系统初始化内置进去)、2.一般开发账户");
+		accountTypeColumn.setComments("账户类型:1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)、2.普通账户");
 		accountTypeColumn.setDefaultValue("2");
 		accountTypeColumn.setOrderCode(6);
 		columns.add(accountTypeColumn);

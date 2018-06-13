@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.ITable;
@@ -83,15 +82,15 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_HIBERNATE_HBM", 0);
-		table.setIsResource(1);
-		table.setVersion(1);
 		table.setName("hibernate的hbm内容对象表");
 		table.setComments("hibernate的hbm内容对象表");
+		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(NONE);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
@@ -168,7 +167,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 	 * @param table
 	 */
 	public void tableTurnToHbm(ComTabledata table){
-		this.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 		this.setRefTableId(table.getId());
 		this.setHbmResourceName(table.getResourceName());
 		this.setIsDataLinkTableHbm(table.getIsDatalinkTable());

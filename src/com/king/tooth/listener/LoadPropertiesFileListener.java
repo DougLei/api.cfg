@@ -15,7 +15,6 @@ import org.springframework.util.Assert;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.coredata.CoreTableResource;
 import com.king.tooth.sys.service.init.app.InitAppSystemService;
 import com.king.tooth.sys.service.init.cfg.InitSystemService;
 import com.king.tooth.util.PropertiesUtil;
@@ -83,19 +82,10 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	 */
 	private void initSysCoreTableInfos() {
 		if("1".equals(SysConfig.getSystemConfig("current.sys.type"))){// 是配置系统
-			String dbType = SysConfig.getSystemConfig("jdbc.dbType");// 这里的dbType没有什么效果
-			// 1.初始化核心表资源映射的InputStreams
-			CoreTableResource.initCoretableresourcemappinginputstreams(dbType);
-			// 2.初始化运行系统的核心表数据集合
-			CoreTableResource.initAppSystemCoreTables(dbType);
-			// 3.初始化配置系统的核心表数据集合
-			CoreTableResource.initConfigSystemCoreTables(dbType);
-			
-			// 系统启动时，初始化配置数据库的表和所有基础数据
 			if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
 				new InitSystemService().loadSysBasicDatasBySysFirstStart();
 			}else{
-				new InitSystemService().loadSysBasicDatasBySysStart();
+				new InitSystemService().loadSysBasicDatasByStart();
 			}
 		}else if("2".equals(SysConfig.getSystemConfig("current.sys.type"))){// 是运行系统
 			// 系统启动时，初始化配置数据库的表和所有基础数据

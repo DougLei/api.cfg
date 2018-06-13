@@ -50,7 +50,6 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE_BODY", 0);
 		table.setName("项目模块内容资源对象");
 		table.setComments("项目模块内容资源对象：理解为每个功能模块的json串配置");
-		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);

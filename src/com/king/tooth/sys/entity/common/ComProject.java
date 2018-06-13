@@ -72,15 +72,15 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT", 0);
-		table.setIsResource(1);
 		table.setName("项目信息资源对象表");
 		table.setComments("项目信息资源对象表");
-		table.setVersion(1);
+		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		

@@ -43,9 +43,15 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	 * 备注
 	 */
 	private String comments;
+	/**
+	 * 是否是核心数据
+	 * <p>这个由后端开发人员控制，在发布时会用到</p>
+	 */
+	private Integer isCore;
 	
 	//-------------------------------------------------------------------------
-	
+	public ComDataDictionary() {
+	}
 	public String getCode() {
 		return code;
 	}
@@ -82,18 +88,23 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
+	public Integer getIsCore() {
+		return isCore;
+	}
+	public void setIsCore(Integer isCore) {
+		this.isCore = isCore;
+	}
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_DATA_DICTIONARY", 0);
 		table.setName("数据字典资源对象表");
 		table.setComments("数据字典资源对象表");
-		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
 		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 50);
 		codeColumn.setName("编码");
@@ -132,6 +143,13 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		commentsColumn.setOrderCode(6);
 		columns.add(commentsColumn);
 		
+		ComColumndata isCoreColumn = new ComColumndata("is_core", DataTypeConstants.INTEGER, 1);
+		isCoreColumn.setName("是否是核心数据");
+		isCoreColumn.setComments("是否是核心数据:这个由后端开发人员控制，在发布时会用到");
+		isCoreColumn.setDefaultValue("0");
+		isCoreColumn.setOrderCode(7);
+		columns.add(isCoreColumn);
+		
 		table.setColumns(columns);
 		return table;
 	}
@@ -147,6 +165,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
 		entityJson.put("orderCode", orderCode);
+		entityJson.put("isCore", isCore);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
 	}

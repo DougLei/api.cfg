@@ -141,7 +141,6 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(dbType, "COM_REQ_LOG", 0);
 		table.setName("请求日志资源对象表");
 		table.setComments("请求日志资源对象表");
-		table.setVersion(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
