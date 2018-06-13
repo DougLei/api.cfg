@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service;
+package com.king.tooth.sys.service.init.app;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,6 +26,7 @@ import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.DateUtil;

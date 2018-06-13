@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.sys.service.InitSystemService;
+import com.king.tooth.sys.service.init.cfg.InitSystemService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;

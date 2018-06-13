@@ -97,7 +97,7 @@
 		
 <!-- ****************************************************************************************************  -->		
 		
-		<!-- 名为common的servlet总控制器 -->
+		<!-- 名为common的servlet通用控制器 -->
 		<servlet>
 			<servlet-name>commonDispatcherServlet</servlet-name>
 			<servlet-class>com.king.tooth.web.servlet.CommonDispatcherServlet</servlet-class>
@@ -105,6 +105,17 @@
 		<servlet-mapping>
 			<servlet-name>commonDispatcherServlet</servlet-name>
 			<url-pattern>/common/*</url-pattern>
+		</servlet-mapping>
+		
+		<!-- 名为monitoringDataPublish的servlet控制器 -->
+		<!-- 这个是在运行系统配置的servlet -->
+		<servlet>
+			<servlet-name>monitoringDataPublish</servlet-name>
+			<servlet-class>com.king.tooth.web.servlet.app.MonitoringDataPublishServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>monitoringDataPublish</servlet-name>
+			<url-pattern>/monitoring/data/publish</url-pattern>
 		</servlet-mapping>
 		
 		<!-- 配置springmvc控制器 -->

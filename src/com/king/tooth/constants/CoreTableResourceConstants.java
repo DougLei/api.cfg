@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
+import com.king.tooth.sys.entity.app.ComRole;
 import com.king.tooth.sys.entity.common.ComCode;
 import com.king.tooth.sys.entity.common.ComColumndata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
@@ -18,7 +19,6 @@ import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.entity.common.ComProjectModuleBody;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComReqLog;
-import com.king.tooth.sys.entity.common.ComRole;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
