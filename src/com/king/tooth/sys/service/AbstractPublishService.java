@@ -14,6 +14,7 @@ import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.common.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -89,7 +90,9 @@ public abstract class AbstractPublishService extends AbstractService{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			for (String hql : hqls) {
-				session.createQuery(hql).executeUpdate();
+				if(StrUtils.notEmpty(hql)){
+					session.createQuery(hql).executeUpdate();
+				}
 			}
 			session.getTransaction().commit();
 		} catch (HibernateException e) {

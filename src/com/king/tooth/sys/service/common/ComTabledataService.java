@@ -20,6 +20,7 @@ import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
+import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
@@ -277,7 +278,7 @@ public class ComTabledataService extends AbstractPublishService {
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
 		if(table.getIsNeedDeploy() == 0){
-			return "id为["+tableId+"]的表不该被发布，请联系管理员";
+			return "id为["+tableId+"]的表不该被发布，如需发布，请联系管理员";
 		}
 		if(table.getIsEnabled() == 0){
 			return "id为["+tableId+"]的表信息无效，请联系管理员";
@@ -406,10 +407,34 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param databaseId
 	 * @param projectId
 	 * @param tableIds
-	 * @return
 	 */
-	public String batchPublishTable(String databaseId, String projectId, List<Object> tableIds) {
-		return null;
+	public void batchPublishTable(String databaseId, String projectId, List<Object> tableIds) {
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size());
+		ComTabledata table;
+		for (Object tableId : tableIds) {
+			table = getObjectById(tableId.toString(), ComTabledata.class);
+			
+			if(sqlScript.getIsNeedDeploy() == 0){
+				sqlScript.setBatchPublishMsg("id为["+sqlScriptId+"]的sql脚本不该被发布，如需发布，请联系管理员");
+			}else if(sqlScript.getIsEnabled() == 0){
+				sqlScript.setBatchPublishMsg("id为["+sqlScriptId+"]的sql脚本信息无效，请联系管理员");
+			}else if(publishInfoService.validResourceIsPublished(null, projectId, sqlScript.getId(), null)){
+				sqlScript.setBatchPublishMsg("["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无需再次发布，或取消发布后重新发布");
+			}
+			
+			table.setRefDatabaseId(databaseId);
+			table.setProjectId(projectId);
+			tables.add(table);
+		}
+		
+		// 远程过去create表
+		ComDatabase database = getObjectById(projectId, ComDatabase.class);
+		DBTableHandler tableHandler = new DBTableHandler(database);
+		tableHandler.createTable(tables, true);
+		
+		publishInfoService.batchDeletePublishedData(null, tableIds);
+		executeRemoteBatchPublish(databaseId, null, sqlScripts, null);
+		sqlScripts.clear();
 	}
 	
 	/**
@@ -417,9 +442,36 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param databaseId
 	 * @param projectId
 	 * @param tableIds
-	 * @return
 	 */
-	public String batchCancelPublishTable(String databaseId, String projectId, List<Object> tableIds) {
-		return null;
+	public void batchCancelPublishTable(String databaseId, String projectId, List<Object> tableIds) {
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size());
+		ComTabledata table;
+		StringBuilder deleteDataHql = new StringBuilder();
+		StringBuilder deleteResourceHql = new StringBuilder("delete ComSysResource where projectId='"+projectId+"' and refResourceId in (");
+		
+		for (Object tableId : tableIds) {
+			table = getObjectById(tableId.toString(), ComTabledata.class);
+			if(!publishInfoService.validResourceIsPublished(null, projectId, table.getId(), null)){
+//				table.setBatchPublishMsg("["+table.getTableName()+"]表未发布，无法取消发布");
+				continue;
+			}
+			tables.add(table);
+			
+			deleteDataHql.append("delete " + table.getEntityName() + " where projectId='"+projectId+"' and (" + ResourceNameConstants.ID + "='"+tableId+"' or refTableId = '"+tableId+"');");
+			deleteResourceHql.append("'").append(tableId).append("',");
+		}
+		deleteResourceHql.setLength(deleteResourceHql.length()-1);
+		deleteResourceHql.append(")");
+		deleteDataHql.append(deleteResourceHql);
+		deleteResourceHql.setLength(0);
+		
+		// 远程过去drop表
+		ComDatabase database = getObjectById(projectId, ComDatabase.class);
+		DBTableHandler tableHandler = new DBTableHandler(database);
+		tableHandler.dropTable(tables);
+		
+		executeRemoteUpdate(databaseId, null, deleteDataHql.toString().split(";"));
+		publishInfoService.batchDeletePublishedData(null, tableIds);
+		tables.clear();
 	}
 }

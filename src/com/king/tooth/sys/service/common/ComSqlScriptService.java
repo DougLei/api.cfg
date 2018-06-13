@@ -235,7 +235,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
 		}
 		if(sqlScript.getIsNeedDeploy() == 0){
-			return "id为["+sqlScriptId+"]的sql脚本不该被发布，请联系管理员";
+			return "id为["+sqlScriptId+"]的sql脚本不该被发布，如需发布，请联系管理员";
 		}
 		if(sqlScript.getIsEnabled() == 0){
 			return "id为["+sqlScriptId+"]的sql脚本信息无效，请联系管理员";
@@ -289,10 +289,29 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param databaseId
 	 * @param projectId
 	 * @param sqlScriptIds
-	 * @return
 	 */
-	public String batchPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
-		return null;
+	public void batchPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
+		List<ComSqlScript> sqlScripts = new ArrayList<ComSqlScript>(sqlScriptIds.size());
+		ComSqlScript sqlScript;
+		for (Object sqlScriptId : sqlScriptIds) {
+			sqlScript = getObjectById(sqlScriptId.toString(), ComSqlScript.class);
+			
+			if(sqlScript.getIsNeedDeploy() == 0){
+				sqlScript.setBatchPublishMsg("id为["+sqlScriptId+"]的sql脚本不该被发布，如需发布，请联系管理员");
+			}else if(sqlScript.getIsEnabled() == 0){
+				sqlScript.setBatchPublishMsg("id为["+sqlScriptId+"]的sql脚本信息无效，请联系管理员");
+			}else if(publishInfoService.validResourceIsPublished(null, projectId, sqlScript.getId(), null)){
+				sqlScript.setBatchPublishMsg("["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无需再次发布，或取消发布后重新发布");
+			}
+			
+			sqlScript.setRefDatabaseId(databaseId);
+			sqlScript.setProjectId(projectId);
+			sqlScripts.add(sqlScript);
+		}
+		
+		publishInfoService.batchDeletePublishedData(null, sqlScriptIds);
+		executeRemoteBatchPublish(databaseId, null, sqlScripts, null);
+		sqlScripts.clear();
 	}
 	
 	/**
@@ -302,7 +321,28 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param sqlScriptIds
 	 * @return
 	 */
-	public String batchCancelPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
-		return null;
+	public void batchCancelPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
+		ComSqlScript sqlScript = new ComSqlScript();
+		StringBuilder deleteDataHql = new StringBuilder("delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "in (");
+		StringBuilder deleteResourceHql = new StringBuilder("delete ComSysResource where projectId='"+projectId+"' and refResourceId in (");
+		
+		for (Object sqlScriptId : sqlScriptIds) {
+			sqlScript = getObjectById(sqlScriptId.toString(), ComSqlScript.class);
+			if(!publishInfoService.validResourceIsPublished(null, projectId, sqlScript.getId(), null)){
+//				sqlScript.setBatchPublishMsg("["+sqlScript.getSqlScriptResourceName()+"]sql脚本未发布，无法取消发布");
+				continue;
+			}
+			deleteDataHql.append("'").append(sqlScriptId).append("',");
+			deleteResourceHql.append("'").append(sqlScriptId).append("',");
+		}
+		deleteDataHql.setLength(deleteDataHql.length()-1);
+		deleteDataHql.append(")");
+		deleteResourceHql.setLength(deleteResourceHql.length()-1);
+		deleteResourceHql.append(")");
+		deleteDataHql.append(";").append(deleteResourceHql);
+		deleteResourceHql.setLength(0);
+		
+		executeRemoteUpdate(databaseId, null, deleteDataHql.toString().split(";"));
+		publishInfoService.batchDeletePublishedData(null, sqlScriptIds);
 	}
 }

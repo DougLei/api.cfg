@@ -123,7 +123,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
 		if(database.getIsNeedDeploy() == 0){
-			return "id为["+databaseId+"]的数据库不该被发布，请联系管理员";
+			return "id为["+databaseId+"]的数据库不该被发布，如需发布，请联系管理员";
 		}
 		if(database.getIsEnabled() == 0){
 			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
@@ -181,7 +181,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
 		if(database.getIsNeedDeploy() == 0){
-			return "id为["+databaseId+"]的数据库不该被发布，请联系管理员";
+			return "id为["+databaseId+"]的数据库不该被发布，如需发布，请联系管理员";
 		}
 		if(database.getIsEnabled() == 0){
 			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";

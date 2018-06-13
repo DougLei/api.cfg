@@ -145,7 +145,7 @@ public class ComProjectService extends AbstractPublishService {
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
 		if(project.getIsNeedDeploy() == 0){
-			return "id为["+projectId+"]的项目不该被发布，请联系管理员";
+			return "id为["+projectId+"]的项目不该被发布，如需发布，请联系管理员";
 		}
 		if(project.getIsEnabled() == 0){
 			return "id为["+projectId+"]的项目信息无效，请联系管理员";
@@ -232,7 +232,36 @@ public class ComProjectService extends AbstractPublishService {
 	 * @param projectId
 	 */
 	public String cancelPublishProjectAll(String projectId) {
-		cancelPublishProject(projectId);
+		// 取消发布项目
+		String result = cancelPublishProject(projectId);
+		if(result == null){
+			ComProject project = getObjectById(projectId, ComProject.class);
+			// 记录要发布的数据id集合
+			List<Object> publishDataIds;
+			// 取消发布项目模块
+			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+					"select "+ResourceNameConstants.ID+" from ComProjectModule where refProjectId = '"+projectId+"'");
+			if(publishDataIds != null && publishDataIds.size() > 0){
+				new ComProjectModuleService().batchCancelPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
+				publishDataIds.clear();
+			}
+			
+			// 取消发布表
+			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+			if(publishDataIds != null && publishDataIds.size() > 0){
+				new ComTabledataService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
+				publishDataIds.clear();
+			}
+			
+			// 取消发布sql脚本
+			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+			if(publishDataIds != null && publishDataIds.size() > 0){
+				new ComSqlScriptService().batchCancelPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
+				publishDataIds.clear();
+			}
+		}
 		return null;
 	}
 }
