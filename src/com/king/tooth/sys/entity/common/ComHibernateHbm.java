@@ -80,8 +80,8 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_HIBERNATE_HBM", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_HIBERNATE_HBM", 0);
 		table.setName("hibernate的hbm内容对象表");
 		table.setComments("hibernate的hbm内容对象表");
 		table.setIsResource(1);

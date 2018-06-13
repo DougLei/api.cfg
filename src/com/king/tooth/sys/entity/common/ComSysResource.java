@@ -66,8 +66,8 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_SYS_RESOURCE", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_SYS_RESOURCE", 0);
 		table.setName("系统资源对象表");
 		table.setComments("系统资源对象表");
 		table.setIsResource(1);

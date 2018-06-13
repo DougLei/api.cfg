@@ -114,8 +114,8 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_MODULE", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_PROJECT_MODULE", 0);
 		table.setName("项目模块信息资源对象表");
 		table.setComments("项目模块信息资源对象表：即菜单");
 		table.setIsResource(1);

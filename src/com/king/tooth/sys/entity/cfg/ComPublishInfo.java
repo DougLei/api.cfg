@@ -95,8 +95,8 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_PUBLISH_INFO", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_PUBLISH_INFO", 0);
 		table.setName("系统发布信息资源对象");
 		table.setComments("系统发布信息资源对象");
 		table.setIsBuiltin(1);

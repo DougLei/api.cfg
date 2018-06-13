@@ -79,8 +79,8 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_ROLE", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_ROLE", 0);
 		table.setName("角色资源对象表");
 		table.setComments("角色资源对象表");
 		table.setIsBuiltin(1);

@@ -17,8 +17,8 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 @SuppressWarnings("serial")
 public class ComDataLinks implements Serializable, ITable {
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_DATA_LINKS", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_DATA_LINKS", 0);
 		table.setResourceName("ComDataLinks");
 		table.setName("数据关联关系资源对象表");
 		table.setComments("数据关联关系资源对象表");

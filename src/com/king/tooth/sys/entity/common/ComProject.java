@@ -70,8 +70,8 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		this.projCode = projCode;
 	}
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_PROJECT", 0);
 		table.setName("项目信息资源对象表");
 		table.setComments("项目信息资源对象表");
 		table.setIsResource(1);

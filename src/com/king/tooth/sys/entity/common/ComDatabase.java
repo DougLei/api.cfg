@@ -147,8 +147,8 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		return tmpLogFile;
 	}
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_DATABASE", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_DATABASE", 0);
 		table.setName("数据库数据信息资源对象表");
 		table.setComments("数据库数据信息资源对象表");
 		table.setIsResource(1);

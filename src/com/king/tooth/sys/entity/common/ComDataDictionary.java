@@ -95,8 +95,8 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		this.isCore = isCore;
 	}
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_DATA_DICTIONARY", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_DATA_DICTIONARY", 0);
 		table.setName("数据字典资源对象表");
 		table.setComments("数据字典资源对象表");
 		table.setIsBuiltin(1);

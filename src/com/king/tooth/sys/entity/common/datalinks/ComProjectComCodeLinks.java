@@ -17,8 +17,8 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 @SuppressWarnings("serial")
 public class ComProjectComCodeLinks implements Serializable, ITable {
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_CODE_LINKS", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_PROJECT_CODE_LINKS", 0);
 		table.setResourceName("ComProjectComCodeLinks");
 		table.setName("项目和代码的关系表");
 		table.setComments("项目和代码的关系表");

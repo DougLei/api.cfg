@@ -199,12 +199,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_COLUMNDATA", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_COLUMNDATA", 0);
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
 		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0);
+		table.setIsNeedDeploy(0); 
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(CONFIG_PLATFORM);

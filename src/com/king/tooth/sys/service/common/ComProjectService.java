@@ -162,6 +162,9 @@ public class ComProjectService extends AbstractPublishService {
 		
 		publishInfoService.deletePublishedData(null, projectId);
 		executeRemotePublish(project.getRefDatabaseId(), null, project, null);
+		
+		project.setIsCreated(1);
+		HibernateUtil.updateObject(project, null);
 		return null;
 	}
 	
@@ -183,6 +186,9 @@ public class ComProjectService extends AbstractPublishService {
 		
 		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectId+"'");
 		publishInfoService.deletePublishedData(null, projectId);
+		
+		project.setIsCreated(0);
+		HibernateUtil.updateObject(project, null);
 		return null;
 	}
 	

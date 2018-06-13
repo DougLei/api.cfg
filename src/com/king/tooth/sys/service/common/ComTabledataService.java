@@ -178,7 +178,7 @@ public class ComTabledataService extends AbstractPublishService {
 			new ComSysResourceService().deleteSysResource(tableId);
 			
 			// drop表
-			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 			dbTableHandler.dropTable(oldTable);
 			
 			// 从sessionFactory中移除映射
@@ -210,7 +210,7 @@ public class ComTabledataService extends AbstractPublishService {
 			// 删除资源
 			new ComSysResourceService().deleteSysResource(tableId);
 			// drop表
-			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 			dbTableHandler.dropTable(table);
 			// 从sessionFactory中移除映射
 			HibernateUtil.removeConfig(table.getEntityName());
@@ -222,7 +222,7 @@ public class ComTabledataService extends AbstractPublishService {
 		String hbmContent = hbmHandler.createHbmMappingContent(table, true);
 		
 		// 1、建表
-		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 		dbTableHandler.createTable(table, false);
 		table.clear();
 		

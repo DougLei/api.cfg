@@ -75,8 +75,8 @@ public class ComCode extends AbstractSysResource implements ITable{
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_CODE", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_CODE", 0);
 		table.setName("代码资源对象表");
 		table.setComments("代码资源对象表:由开发人员维护，不开放给用户");
 		table.setIsResource(1);

@@ -48,7 +48,7 @@ public class DynamicDataLinkTableUtil {
 	 * @return
 	 */
 	private static ComTabledata getDataLinkTabledata(String dbType, String parentId, String parentTableName, String subTableName){
-		ComTabledata dataLinkTable = new ComTabledata(dbType, getDataLinkTableName(parentTableName, subTableName), 1);
+		ComTabledata dataLinkTable = new ComTabledata(getDataLinkTableName(parentTableName, subTableName), 1);
 		dataLinkTable.setParentTableId(parentId);
 		dataLinkTable.setComments("父表" + parentTableName + "和子表" + subTableName + "的关系表");
 		dataLinkTable.setReqResourceMethod(ISysResource.NONE);

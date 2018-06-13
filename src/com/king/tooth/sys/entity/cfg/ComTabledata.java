@@ -118,8 +118,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	
 	public ComTabledata() {
 	}
-	public ComTabledata(String dbType, String tableName, int isDatalinkTable) {
-		this.dbType = dbType;
+	public ComTabledata(String tableName, int isDatalinkTable) {
 		this.tableName = tableName;
 		this.isDatalinkTable = isDatalinkTable;
 		analysisResourceProp();
@@ -229,8 +228,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_TABLEDATA", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_TABLEDATA", 0);
 		table.setName("表数据信息资源对象表");
 		table.setComments("表数据信息资源对象表");
 		table.setIsResource(1);

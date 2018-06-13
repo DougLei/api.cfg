@@ -11,6 +11,7 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.ExceptionUtil;
@@ -32,8 +33,8 @@ public class InitAppSystemService extends AbstractService{
 	private void processCurrentSysOfPorjDatabaseRelation() {
 		// 添加本系统和本数据库的映射关系
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
-				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
-				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
+				CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId(), 
+				CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());
 	}
 	
 	/**
@@ -44,10 +45,10 @@ public class InitAppSystemService extends AbstractService{
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统的所有hbm映射文件
-			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的hbm加载进自己的sessionFactory中
-			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = 2");
+			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = "+ITable.APP_PLATFORM);
 			HibernateUtil.closeCurrentThreadSession();
 			
 			if(databases != null && databases.size()> 0){
@@ -64,7 +65,7 @@ public class InitAppSystemService extends AbstractService{
 				}
 				
 				// 加载数据库和项目的关联关系映射
-				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory
+				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory
 				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled = 1 and refDatabaseId = ?";
 				for (ComDatabase database : databases) {
 					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());

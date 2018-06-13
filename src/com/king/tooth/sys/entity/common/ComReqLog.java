@@ -137,8 +137,8 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		this.reqToken = reqToken;
 	}
 	
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_REQ_LOG", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_REQ_LOG", 0);
 		table.setName("请求日志资源对象表");
 		table.setComments("请求日志资源对象表");
 		table.setIsBuiltin(1);

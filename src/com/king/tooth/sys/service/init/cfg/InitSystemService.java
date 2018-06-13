@@ -64,8 +64,8 @@ public class InitSystemService extends AbstractService{
 	private void processCurrentSysOfPorjDatabaseRelation() {
 		// 添加本系统和本数据库的映射关系
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
-				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
-				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
+				CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId(), 
+				CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());
 	}
 	
 	private List<ComTabledata> tables = new ArrayList<ComTabledata>(22);
@@ -75,33 +75,32 @@ public class InitSystemService extends AbstractService{
 	 * @return
 	 */
 	private void initAllTables(){
-		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
 		// 核心表
-		tables.add(new ComDatabase().toCreateTable(dbType));
-		tables.add(new ComProject().toCreateTable(dbType));
-		tables.add(new ComProjectModule().toCreateTable(dbType));
-		tables.add(new ComHibernateHbm().toCreateTable(dbType));
-		tables.add(new ComSqlScript().toCreateTable(dbType));
-		tables.add(new ComCode().toCreateTable(dbType));
-		tables.add(new ComProjectComSqlScriptLinks().toCreateTable(dbType));
-		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable(dbType));
-		tables.add(new ComProjectComCodeLinks().toCreateTable(dbType));
+		tables.add(new ComDatabase().toCreateTable());
+		tables.add(new ComProject().toCreateTable());
+		tables.add(new ComProjectModule().toCreateTable());
+		tables.add(new ComHibernateHbm().toCreateTable());
+		tables.add(new ComSqlScript().toCreateTable());
+		tables.add(new ComCode().toCreateTable());
+		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
+		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
+		tables.add(new ComProjectComCodeLinks().toCreateTable());
 		// 通用表
-		tables.add(new ComSysResource().toCreateTable(dbType));
-		tables.add(new ComDataDictionary().toCreateTable(dbType));
-		tables.add(new ComDataLinks().toCreateTable(dbType));
-		tables.add(new ComOperLog().toCreateTable(dbType));
-		tables.add(new ComProjectModuleBody().toCreateTable(dbType));
-		tables.add(new ComReqLog().toCreateTable(dbType));
-		tables.add(new ComSysAccount().toCreateTable(dbType));
-		tables.add(new ComSysAccountOnlineStatus().toCreateTable(dbType));
+		tables.add(new ComSysResource().toCreateTable());
+		tables.add(new ComDataDictionary().toCreateTable());
+		tables.add(new ComDataLinks().toCreateTable());
+		tables.add(new ComOperLog().toCreateTable());
+		tables.add(new ComProjectModuleBody().toCreateTable());
+		tables.add(new ComReqLog().toCreateTable());
+		tables.add(new ComSysAccount().toCreateTable());
+		tables.add(new ComSysAccountOnlineStatus().toCreateTable());
 		// 配置系统表
-		tables.add(new ComColumndata().toCreateTable(dbType));
-		tables.add(new ComTabledata().toCreateTable(dbType));
-		tables.add(new ComPublishInfo().toCreateTable(dbType));
-		tables.add(new ComProjectComTabledataLinks().toCreateTable(dbType));
+		tables.add(new ComColumndata().toCreateTable());
+		tables.add(new ComTabledata().toCreateTable());
+		tables.add(new ComPublishInfo().toCreateTable());
+		tables.add(new ComProjectComTabledataLinks().toCreateTable());
 		// 运行系统表
-		tables.add(new ComRole().toCreateTable(dbType));
+		tables.add(new ComRole().toCreateTable());
 		// 初始化基础列
 		for (ComTabledata table : tables) {
 			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
@@ -142,7 +141,7 @@ public class InitSystemService extends AbstractService{
 	private void initDatabaseInfo() {
 		try {
 			// 设置当前操作的项目，获得对应的sessionFactory
-			CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());
+			CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
 			createTables();
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
@@ -163,7 +162,7 @@ public class InitSystemService extends AbstractService{
 	 */
 	private void createTables(){
 		List<ComTabledata> tmpTables = new ArrayList<ComTabledata>();
-		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 		for (ComTabledata table : tables) {
 			if(table.getBelongPlatformType() == ITable.APP_PLATFORM){
 				continue;
@@ -383,7 +382,7 @@ public class InitSystemService extends AbstractService{
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统的所有hbm映射文件
-			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的核心hbm加载进对应的sessionFactory中
 			// 同时建立数据库和项目的关联关系，为之后的发布操作做准备
@@ -424,7 +423,7 @@ public class InitSystemService extends AbstractService{
 				coreTableResourceNames.clear();
 				
 				// 加载数据库和项目的关联关系映射
-				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
+				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
 				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled = 1 and isCreated =1 and refDatabaseId = ?";
 				for (ComDatabase database : databases) {
 					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());

@@ -1,5 +1,8 @@
 package com.king.tooth.sys.service.common;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.internal.SessionFactoryImpl;
@@ -8,9 +11,12 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.coredata.CoreTableResource;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
+import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
+import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
+import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -111,6 +117,42 @@ public class ComDatabaseService extends AbstractPublishService {
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
+	private int coreTableCount = 0;
+	/**
+	 * 获取系统内置的运行系统基础表集合
+	 * <p>包括列集合</p>
+	 * @return
+	 */
+	private List<ComTabledata> getBuiltinAppBasicTables(){
+		List<ComTabledata> builtinAppBasicTables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
+				"from ComTabledata where isEnabled =1 and isBuiltin=1 and isNeedDeploy=1 and belongPlatformType!="+ITable.CONFIG_PLATFORM);
+		for (ComTabledata table : builtinAppBasicTables) {
+			if(table.getIsCore() == 1){
+				coreTableCount++;
+			}
+			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId ='"+table.getId()+"'"));
+			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
+		}
+		return builtinAppBasicTables;
+	}
+	/**
+	 * 获取核心表的hbm InputStream流
+	 * @param appSystemCoreTables
+	 * @return
+	 */
+	private List<InputStream> getCoreTableOfHbmInputstreams(List<ComTabledata> appSystemCoreTables) {
+		List<InputStream> coreTableOfHbmInputstreams = new ArrayList<InputStream>(coreTableCount);
+		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
+		String hbmContent;
+		for (ComTabledata table : appSystemCoreTables) {
+			if(table.getIsCore() == 1){
+				hbmContent = hibernateHbmHandler.createHbmMappingContent(table, false);
+				coreTableOfHbmInputstreams.add(new ByteArrayInputStream(hbmContent.getBytes()));
+			}
+		}
+		return coreTableOfHbmInputstreams;
+	}
+	
 	/**
 	 * 发布数据库
 	 * @param databaseId
@@ -134,8 +176,8 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		
 		// 如果是自己的库，要创建
-		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
-			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance)){
+			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 			if(ref != null){
 				databaseHandler.dropDatabase(database);
 			}
@@ -148,9 +190,9 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		Log4jUtil.debug("连接数据库测试[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
 		
-		// 创建运行系统基础表
+		// 创建运行系统所有需要的基础表
 		DBTableHandler dbTableHandler = new DBTableHandler(database);
-		List<ComTabledata> appSystemCoreTables = CoreTableResource.getAppsystemcoretables();
+		List<ComTabledata> appSystemCoreTables = getBuiltinAppBasicTables();
 		if(ref != null){
 			dbTableHandler.dropTable(appSystemCoreTables);
 		}
@@ -161,12 +203,15 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(sessionFactory == null){
 			DynamicDBUtil.addDataSource(database);
 			sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
-			sessionFactory.appendNewHbmConfig(CoreTableResource.getCoretableresourcemappinginputstreams());
+			sessionFactory.appendNewHbmConfig(getCoreTableOfHbmInputstreams(appSystemCoreTables));
 		}
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
 		publishInfoService.deletePublishedData(null, databaseId);
 		executeRemotePublish(databaseId, null, database, null);
+		
+		database.setIsCreated(1);
+		HibernateUtil.updateObject(database, null);
 		return null;
 	}
 	
@@ -204,13 +249,16 @@ public class ComDatabaseService extends AbstractPublishService {
 			DynamicDBUtil.removeDataSource(databaseId);
 			
 			// 如果是自己的库，要删除
-			if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysDatabaseInstance)){
-				DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
+			if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance)){
+				DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 				databaseHandler.dropDatabase(database);
 			}
 		} finally{
 			// 删除该库下，所有发布的信息
 			HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
+			
+			database.setIsCreated(0);
+			HibernateUtil.updateObject(database, null);
 		}
 		return null;
 	}

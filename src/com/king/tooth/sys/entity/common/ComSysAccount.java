@@ -140,8 +140,8 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		this.verifyCode = verifyCode;
 	}
 
-	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_SYS_ACCOUNT", 0);
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_SYS_ACCOUNT", 0);
 		table.setName("系统账户资源对象表");
 		table.setComments("系统账户资源对象表");
 		table.setIsBuiltin(1);
