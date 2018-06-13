@@ -15,13 +15,13 @@ import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComProject;
-import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -37,7 +37,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 @SuppressWarnings("unchecked")
 public class ComTabledataService extends AbstractPublishService {
 	// 项目和表的关联关系资源名
-	private static final String comProjectComTabledataLinkResourceName = "ComProjectComTabledataLinks";
+	private static final String comProjectComTabledataLinkResourceName = "ComProjectComHibernateHbmLinks";
 	
 	/**
 	 * 验证表名是否存在

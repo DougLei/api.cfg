@@ -6,10 +6,12 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
@@ -76,7 +78,7 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");
@@ -116,15 +118,9 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("resourceType", resourceType);
-		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("validDate", validDate);
-		entityJson.put("isBuiltin", isBuiltin);
-		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isCreated", isCreated);
-		entityJson.put("belongPlatformType", belongPlatformType);
-		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		super.processSysResourceProps(entityJson);
 		return entityJson.getEntityJson();
 	}
 	

@@ -1,6 +1,6 @@
 package com.king.tooth.sys.entity;
 
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
  * 表接口

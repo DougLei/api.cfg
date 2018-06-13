@@ -2,13 +2,16 @@ package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 
@@ -90,7 +93,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
@@ -137,15 +140,8 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable{
 	
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("isDataLinkTableHbm", isDataLinkTableHbm);
-		entityJson.put("isEnabled", isEnabled);
-		entityJson.put("isBuiltin", isBuiltin);
-		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isCreated", isCreated);
-		entityJson.put("belongPlatformType", belongPlatformType);
-		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
-		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
+		super.processSysResourceProps(entityJson);
 		return entityJson.getEntityJson();
 	}
 	

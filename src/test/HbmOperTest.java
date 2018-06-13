@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 public class HbmOperTest {
 	public static void main(String[] args) {

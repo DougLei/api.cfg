@@ -7,8 +7,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**

@@ -10,11 +10,13 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.database.DBFile;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -157,7 +159,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
 		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name", DataTypeConstants.STRING, 100);
 		dbDisplayNameColumn.setName("数字库名");
@@ -233,15 +235,8 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("dbPort", dbPort);
-		entityJson.put("isEnabled", isEnabled);
-		entityJson.put("isBuiltin", isBuiltin);
-		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isCreated", isCreated);
-		entityJson.put("belongPlatformType", belongPlatformType);
-		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
-		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
+		super.processSysResourceProps(entityJson);
 		return entityJson.getEntityJson();
 	}
 	

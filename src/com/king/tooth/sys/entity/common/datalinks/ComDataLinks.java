@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.datalinks;
+package com.king.tooth.sys.entity.common.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.List;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
  * 数据关联关系资源对象

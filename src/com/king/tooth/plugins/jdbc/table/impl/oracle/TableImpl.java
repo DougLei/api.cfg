@@ -2,8 +2,8 @@ package com.king.tooth.plugins.jdbc.table.impl.oracle;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.jdbc.table.AbstractTableHandler;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**

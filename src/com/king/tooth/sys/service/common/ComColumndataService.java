@@ -3,7 +3,7 @@ package com.king.tooth.sys.service.common;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;

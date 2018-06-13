@@ -14,8 +14,9 @@ import javax.servlet.ServletContextListener;
 import org.springframework.util.Assert;
 
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.coredata.CoreTableResource;
+import com.king.tooth.sys.service.init.app.InitAppSystemService;
 import com.king.tooth.sys.service.init.cfg.InitSystemService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
@@ -81,16 +82,14 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	 * 初始化系统核心表信息
 	 */
 	private void initSysCoreTableInfos() {
-		String dbType = SysConfig.getSystemConfig("jdbc.dbType");// 这里的dbType没有什么效果
-		// 当前系统是配置系统
-		if("1".equals(SysConfig.getSystemConfig("current.sys.type"))){
-			// 是配置系统时
+		if("1".equals(SysConfig.getSystemConfig("current.sys.type"))){// 是配置系统
+			String dbType = SysConfig.getSystemConfig("jdbc.dbType");// 这里的dbType没有什么效果
 			// 1.初始化核心表资源映射的InputStreams
-			CoreTableResourceConstants.initCoretableresourcemappinginputstreams(dbType);
+			CoreTableResource.initCoretableresourcemappinginputstreams(dbType);
 			// 2.初始化运行系统的核心表数据集合
-			CoreTableResourceConstants.initAppSystemCoreTables(dbType);
+			CoreTableResource.initAppSystemCoreTables(dbType);
 			// 3.初始化配置系统的核心表数据集合
-			CoreTableResourceConstants.initConfigSystemCoreTables(dbType);
+			CoreTableResource.initConfigSystemCoreTables(dbType);
 			
 			// 系统启动时，初始化配置数据库的表和所有基础数据
 			if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
@@ -98,10 +97,9 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 			}else{
 				new InitSystemService().loadSysBasicDatasBySysStart();
 			}
-		}
-		// 当前系统是运行系统
-		else if("2".equals(SysConfig.getSystemConfig("current.sys.type"))){
-			new InitSystemService().loadSysBasicDatasBySysStart();
+		}else if("2".equals(SysConfig.getSystemConfig("current.sys.type"))){// 是运行系统
+			// 系统启动时，初始化配置数据库的表和所有基础数据
+			new InitAppSystemService().loadSysBasicDatasBySysStart();
 		}
 	}
 

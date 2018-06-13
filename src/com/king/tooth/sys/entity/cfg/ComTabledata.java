@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,7 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -238,7 +239,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsCreated(1);
 		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(25);
 		
 		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
@@ -330,19 +331,11 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("tableType", tableType);
 		entityJson.put("isHavaDatalink", isHavaDatalink);
 		entityJson.put("version", version);
 		entityJson.put("isDatalinkTable", isDatalinkTable);
-		entityJson.put("isEnabled", isEnabled);
-		entityJson.put("isBuiltin", isBuiltin);
-		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isCreated", isCreated);
-		entityJson.put("belongPlatformType", belongPlatformType);
-		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
-		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
-		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
+		super.processSysResourceProps(entityJson);
 		return entityJson.getEntityJson();
 	}
 	

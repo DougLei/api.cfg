@@ -7,7 +7,7 @@ import java.util.Map;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.freemarker.FreemarkerUtil;
 

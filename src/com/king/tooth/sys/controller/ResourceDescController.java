@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.entity.desc.resource.ResourceDescEntity;
 import com.king.tooth.sys.entity.desc.resource.table.ColumnResource;
 import com.king.tooth.sys.entity.desc.resource.table.TableResource;
@@ -144,15 +144,16 @@ public class ResourceDescController extends AbstractController{
 	public static void initBasicColumnToTable(ComTabledata table){
 		// projectId
 		ComColumndata projectIdColumn = new ComColumndata("project_id", DataTypeConstants.STRING, 32);
-		projectIdColumn.setComments("关联的项目主键");
 		projectIdColumn.setName("关联的项目主键");
+		projectIdColumn.setComments("关联的项目主键");
 		projectIdColumn.setOrderCode(9902);
 		table.getColumns().add(projectIdColumn);
 		
 		// belongPlatformType
 		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", DataTypeConstants.INTEGER, 1);
-		belongPlatformTypeColumn.setComments("所属的平台类型");
-		belongPlatformTypeColumn.setName("所属的平台类型:1：配置平台、2：运行平台、3：通用");
+		belongPlatformTypeColumn.setName("所属的平台类型");
+		belongPlatformTypeColumn.setComments("所属的平台类型:1：配置平台、2：运行平台、3：通用(这个类型由后端开发者控制)");
+		belongPlatformTypeColumn.setDefaultValue("2");
 		belongPlatformTypeColumn.setOrderCode(9903);
 		table.getColumns().add(belongPlatformTypeColumn);
 		
@@ -185,11 +186,18 @@ public class ResourceDescController extends AbstractController{
 			isNeedDeployColumn.setOrderCode(9907);
 			table.getColumns().add(isNeedDeployColumn);
 			
+			ComColumndata isNeedRedeployColumn = new ComColumndata("is_need_redeploy", DataTypeConstants.INTEGER, 1);
+			isNeedRedeployColumn.setName("资源是否需要补发布");
+			isNeedRedeployColumn.setComments("资源是否需要补发布:例如，当配置平台开发出来一个新的运行平台通用功能时，将这个字段值改为1，去给所有已经发布的项目，补发增加新的功能");
+			isNeedRedeployColumn.setDefaultValue("0");
+			isNeedRedeployColumn.setOrderCode(9908);
+			table.getColumns().add(isNeedRedeployColumn);
+			
 			ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
 			isCreatedColumn.setName("资源是否被创建");
-			isCreatedColumn.setComments("资源是否被创建");
+			isCreatedColumn.setComments("资源是否被创建：在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中；在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中");
 			isCreatedColumn.setDefaultValue("0");
-			isCreatedColumn.setOrderCode(9908);
+			isCreatedColumn.setOrderCode(9909);
 			table.getColumns().add(isCreatedColumn);
 		}
 	}

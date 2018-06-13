@@ -5,15 +5,15 @@ import java.util.List;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.coredata.CoreTableResource;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.entity.common.ComPublishInfo;
-import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
@@ -150,7 +150,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		
 		// 创建运行系统基础表
 		DBTableHandler dbTableHandler = new DBTableHandler(database);
-		List<ComTabledata> appSystemCoreTables = CoreTableResourceConstants.getAppsystemcoretables();
+		List<ComTabledata> appSystemCoreTables = CoreTableResource.getAppsystemcoretables();
 		if(ref != null){
 			dbTableHandler.dropTable(appSystemCoreTables);
 		}
@@ -161,7 +161,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(sessionFactory == null){
 			DynamicDBUtil.addDataSource(database);
 			sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
-			sessionFactory.appendNewHbmConfig(CoreTableResourceConstants.getCoretableresourcemappinginputstreams());
+			sessionFactory.appendNewHbmConfig(CoreTableResource.getCoretableresourcemappinginputstreams());
 		}
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】

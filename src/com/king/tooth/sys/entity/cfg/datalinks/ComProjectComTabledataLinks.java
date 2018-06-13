@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.datalinks;
+package com.king.tooth.sys.entity.cfg.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.List;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
  * 项目和表的关系
@@ -19,7 +19,7 @@ public class ComProjectComTabledataLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_TABLE_LINKS", 0);
-		table.setResourceName("ComProjectComTabledataLinks");
+		table.setResourceName("ComProjectComHibernateHbmLinks");
 		table.setVersion(1);
 		table.setName("项目和表的关系表");
 		table.setComments("项目和表的关系表");

@@ -12,20 +12,20 @@ import java.util.List;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.CoreTableResourceConstants;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.coredata.CoreTableResource;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.common.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -37,7 +37,7 @@ import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 初始化系统的服务器
+ * 初始化配置系统的服务器
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
@@ -88,7 +88,7 @@ public class InitSystemService extends AbstractService{
 	 * @return 
 	 */
 	private void createTables(){
-		List<ComTabledata> tables = CoreTableResourceConstants.getConfigsystemcoretables();
+		List<ComTabledata> tables = CoreTableResource.getConfigsystemcoretables();
 		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 		try {
 			dbHandler.dropTable(tables);
@@ -155,7 +155,7 @@ public class InitSystemService extends AbstractService{
 	 * 根据表创建hbm文件，并将其加入到SessionFactory中
 	 */
 	private void insertHbmContentsToSessionFactory() {
-		List<ComTabledata> tables = CoreTableResourceConstants.getConfigsystemcoretables();
+		List<ComTabledata> tables = CoreTableResource.getConfigsystemcoretables();
 		
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
@@ -176,7 +176,7 @@ public class InitSystemService extends AbstractService{
 	 * @param adminAccountId 
 	 */
 	private void insertAllTables(String adminAccountId) {
-		List<ComTabledata> tables = CoreTableResourceConstants.getConfigsystemcoretables();
+		List<ComTabledata> tables = CoreTableResource.getConfigsystemcoretables();
 		
 		String tableId;
 		List<ComColumndata> columns = null;
@@ -228,7 +228,6 @@ public class InitSystemService extends AbstractService{
 	
 	/**
 	 * 处理本系统和本数据库的关系
-	 * 并将
 	 */
 	private void processCurrentSysOfPorjDatabaseRelation() {
 		// 添加本系统和本数据库的映射关系

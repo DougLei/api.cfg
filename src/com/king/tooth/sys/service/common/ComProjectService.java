@@ -101,7 +101,7 @@ public class ComProjectService extends AbstractPublishService {
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComTabledataLinks where leftId = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComHibernateHbmLinks where leftId = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[表信息]，无法删除，请先取消他们的关联信息";
 		}
@@ -121,10 +121,10 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	public String cancelRelation(String projectId, String relationType) {
 		if("all".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComHibernateHbmLinks where leftId = ?", projectId);
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
 		}else if("table".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComHibernateHbmLinks where leftId = ?", projectId);
 		}else if("sql".equals(relationType)){
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
 		}else{
@@ -209,7 +209,7 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComHibernateHbmLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -248,7 +248,7 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComHibernateHbmLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();

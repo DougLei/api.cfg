@@ -1,6 +1,6 @@
 package com.king.tooth.sys.entity;
 
-import com.king.tooth.sys.entity.common.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 
 /**
  * 发布接口

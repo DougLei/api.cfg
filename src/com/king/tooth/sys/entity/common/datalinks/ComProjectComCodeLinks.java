@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.datalinks;
+package com.king.tooth.sys.entity.common.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,22 +7,22 @@ import java.util.List;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 项目和sql脚本的关系
+ * 项目和代码的关系
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProjectComSqlScriptLinks implements Serializable, ITable {
+public class ComProjectComCodeLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable(String dbType) {
-		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_SQLSCRIPT_LINKS", 0);
-		table.setResourceName("ComProjectComSqlScriptLinks");
+		ComTabledata table = new ComTabledata(dbType, "COM_PROJECT_CODE_LINKS", 0);
+		table.setResourceName("ComProjectComCodeLinks");
 		table.setVersion(1);
-		table.setName("项目和sql脚本的关系表");
-		table.setComments("项目和sql脚本的关系表");
+		table.setName("项目和代码的关系表");
+		table.setComments("项目和代码的关系表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(ISysResource.NONE);
@@ -55,6 +55,6 @@ public class ComProjectComSqlScriptLinks implements Serializable, ITable {
 	}
 
 	public String toDropTable() {
-		return "COM_PROJECT_SQLSCRIPT_LINKS";
+		return "COM_PROJECT_CODE_LINKS";
 	}
 }

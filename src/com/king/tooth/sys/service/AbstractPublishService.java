@@ -10,7 +10,7 @@ import org.hibernate.internal.SessionFactoryImpl;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.common.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.common.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;

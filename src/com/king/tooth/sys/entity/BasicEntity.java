@@ -3,6 +3,8 @@ package com.king.tooth.sys.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.king.tooth.constants.ResourceNameConstants;
+
 /**
  * 基础实体类资源对象
  * @author DougLei
@@ -39,6 +41,17 @@ public class BasicEntity implements Serializable{
 	 * <p>@see ITable</p>
 	 */
 	protected Integer belongPlatformType;
+	
+	/**
+	 * 处理基础资源对象的属性
+	 * @param entityJson
+	 */
+	public void processBasicEntityProps(EntityJson entityJson){
+		entityJson.put(ResourceNameConstants.ID, id);
+		entityJson.put("belongPlatformType", belongPlatformType);
+		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
+		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
+	}
 	
 	
 	public String getProjectId() {

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.common.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.DateUtil;
 
@@ -32,6 +32,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * 资源是否需要发布
 	 */
 	protected Integer isNeedDeploy;
+	/**
+	 * 资源是否需要补发布
+	 * <p>例如，当配置平台开发出来一个新的运行平台通用功能时，将这个字段值改为1，去给所有已经发布的项目，补发增加新的功能</p>
+	 */
+	protected Integer isNeedRedeploy;
 	/**
 	 * 资源是否被创建
 	 * <p>在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中</p>
@@ -78,6 +83,19 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		this.lastUpdatedUserId = userId;
 		return null;
 	}
+	
+	/**
+	 * 处理资源对象的属性
+	 * @param entityJson
+	 */
+	public void processSysResourceProps(EntityJson entityJson){
+		super.processBasicEntityProps(entityJson);
+		entityJson.put("isEnabled", isEnabled);
+		entityJson.put("isBuiltin", isBuiltin);
+		entityJson.put("isNeedDeploy", isNeedDeploy);
+		entityJson.put("isNeedRedeploy", isNeedRedeploy);
+		entityJson.put("isCreated", isCreated);
+	}
 
 	public Integer getIsEnabled() {
 		return isEnabled;
@@ -114,5 +132,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	public void setBatchPublishMsg(String batchPublishMsg) {
 		this.batchPublishMsg = batchPublishMsg;
+	}
+	public Integer getIsNeedRedeploy() {
+		return isNeedRedeploy;
+	}
+	public void setIsNeedRedeploy(Integer isNeedRedeploy) {
+		this.isNeedRedeploy = isNeedRedeploy;
 	}
 }

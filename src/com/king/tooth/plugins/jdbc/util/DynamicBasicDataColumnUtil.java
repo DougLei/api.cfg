@@ -3,8 +3,8 @@ package com.king.tooth.plugins.jdbc.util;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.common.ComColumndata;
-import com.king.tooth.sys.entity.common.ComTabledata;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
  * 动态的基础数据字段的工具类
@@ -70,11 +70,18 @@ public class DynamicBasicDataColumnUtil {
 			isNeedDeployColumn.setOrderCode(9907);
 			table.getColumns().add(isNeedDeployColumn);
 			
+			ComColumndata isNeedRedeployColumn = new ComColumndata("is_need_redeploy", DataTypeConstants.INTEGER, 1);
+			isNeedRedeployColumn.setName("资源是否需要补发布");
+			isNeedRedeployColumn.setComments("资源是否需要补发布:例如，当配置平台开发出来一个新的运行平台通用功能时，将这个字段值改为1，去给所有已经发布的项目，补发增加新的功能");
+			isNeedRedeployColumn.setDefaultValue("0");
+			isNeedRedeployColumn.setOrderCode(9908);
+			table.getColumns().add(isNeedRedeployColumn);
+			
 			ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
 			isCreatedColumn.setName("资源是否被创建");
 			isCreatedColumn.setComments("资源是否被创建：在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中；在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中");
 			isCreatedColumn.setDefaultValue("0");
-			isCreatedColumn.setOrderCode(9908);
+			isCreatedColumn.setOrderCode(9909);
 			table.getColumns().add(isCreatedColumn);
 		}
 		
@@ -82,25 +89,25 @@ public class DynamicBasicDataColumnUtil {
 			ComColumndata createTimeColumn = new ComColumndata("create_time", DataTypeConstants.DATE, 0);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
-			createTimeColumn.setOrderCode(9909);
+			createTimeColumn.setOrderCode(9910);
 			table.getColumns().add(createTimeColumn);
 			
 			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_time", DataTypeConstants.DATE, 0);
 			lastUpdateTimeColumn.setComments("最后修改时间");
 			lastUpdateTimeColumn.setName("最后修改时间");
-			lastUpdateTimeColumn.setOrderCode(9910);
+			lastUpdateTimeColumn.setOrderCode(9911);
 			table.getColumns().add(lastUpdateTimeColumn);
 			
 			ComColumndata createUserIdColumn = new ComColumndata("create_user_id", DataTypeConstants.STRING, 32);
 			createUserIdColumn.setComments("创建人主键");
 			createUserIdColumn.setName("创建人主键");
-			createUserIdColumn.setOrderCode(9911);
+			createUserIdColumn.setOrderCode(9912);
 			table.getColumns().add(createUserIdColumn);
 			
 			ComColumndata lastUpdatedUserIdColumn = new ComColumndata("last_updated_user_id", DataTypeConstants.STRING, 32);
 			lastUpdatedUserIdColumn.setComments("最后修改人主键");
 			lastUpdatedUserIdColumn.setName("最后修改人主键");
-			lastUpdatedUserIdColumn.setOrderCode(9912);
+			lastUpdatedUserIdColumn.setOrderCode(9913);
 			table.getColumns().add(lastUpdatedUserIdColumn);
 		}
 	}
