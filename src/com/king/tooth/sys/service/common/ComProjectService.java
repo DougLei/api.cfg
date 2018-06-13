@@ -1,5 +1,7 @@
 package com.king.tooth.sys.service.common;
 
+import java.util.List;
+
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
@@ -11,6 +13,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 项目信息资源对象处理器
  * @author DougLei
  */
+@SuppressWarnings("unchecked")
 public class ComProjectService extends AbstractPublishService {
 	
 	/**
@@ -151,7 +154,7 @@ public class ComProjectService extends AbstractPublishService {
 			return "["+project.getProjName()+"]项目所属的数据库还未发布，请先发布数据库";
 		}
 		if(publishInfoService.validResourceIsPublished(null, project.getId(), null, null)){
-			return "["+project.getProjName()+"]项目已经发布，无法再次发布";
+			return "["+project.getProjName()+"]项目已经发布，无需再次发布，或取消发布后重新发布";
 		}
 		
 		// 将项目id和数据库id映射起来
@@ -188,19 +191,48 @@ public class ComProjectService extends AbstractPublishService {
 	 * (All)发布项目
 	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
 	 * @param projectId
-	 * @return
 	 */
 	public String publishProjectAll(String projectId) {
-		return null;
+		// 发布项目
+		String result = publishProject(projectId);
+		if(result == null){
+			ComProject project = getObjectById(projectId, ComProject.class);
+			// 记录要发布的数据id集合
+			List<Object> publishDataIds;
+			// 发布项目模块
+			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+					"select "+ResourceNameConstants.ID+" from ComProjectModule where refProjectId = '"+projectId+"'");
+			if(publishDataIds != null && publishDataIds.size() > 0){
+				new ComProjectModuleService().batchPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
+				publishDataIds.clear();
+			}
+			
+			// 发布表
+			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+			if(publishDataIds != null && publishDataIds.size() > 0){
+				new ComTabledataService().batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
+				publishDataIds.clear();
+			}
+			
+			// 发布sql脚本
+			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+			if(publishDataIds != null && publishDataIds.size() > 0){
+				new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
+				publishDataIds.clear();
+			}
+		}
+		return result;
 	}
 
 	/**
 	 * (All)取消发布项目
 	 * <p>【取消发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
 	 * @param projectId
-	 * @return
 	 */
 	public String cancelPublishProjectAll(String projectId) {
+		cancelPublishProject(projectId);
 		return null;
 	}
 }

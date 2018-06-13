@@ -77,4 +77,31 @@ public class ComPublishInfoService extends AbstractService{
 		}
 		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, hql, params);
 	}
+	
+	/**
+	 * 批量删除发布的数据
+	 * @param publishResourceId 
+	 * @param publishResourceIds 如果是操作表、sql脚本的时候，这个字段绝对不能为空，因为表、sql脚本和项目的关系是多对多的关系
+	 */
+	public void batchDeletePublishedData(String publishProjectId, List<Object> publishResourceIds) {
+		StringBuilder hql = new StringBuilder("delete ComPublishInfo where");
+		List<Object> params = new ArrayList<Object>(2);
+		if(publishProjectId != null){
+			hql.append(" publishProjectId = ?");
+			params.add(publishProjectId);
+		}
+		if(publishResourceIds != null && publishResourceIds.size() > 0){
+			if(publishProjectId != null){
+				hql.append(" and ");
+			}
+			hql.append("publishResourceId in(");
+			for (Object resourceId : publishResourceIds) {
+				hql.append("?,");
+				params.add(resourceId);
+			}
+			hql.setLength(hql.length()-1);
+			hql.append(")");
+		}
+		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, hql.toString(), params);
+	}
 }

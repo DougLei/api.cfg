@@ -2,6 +2,7 @@ package com.king.tooth.sys.entity;
 
 import java.util.Date;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
@@ -39,6 +40,13 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	protected Integer isCreated;
 	
 	// -----------------------------------------------------------------
+	
+	/**
+	 * 批量发布时的信息记录
+	 * 该字段在批量发布的时候用到，存储发布每个数据的发布结果，例如是否已经发布？，是否无效而不能发布等信息
+	 */
+	@JSONField(serialize = false)
+	private String batchPublishMsg;
 	
 	/**
 	 * 转换为资源对象
@@ -100,5 +108,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	public void setIsCreated(Integer isCreated) {
 		this.isCreated = isCreated;
+	}
+	public String getBatchPublishMsg() {
+		return batchPublishMsg;
+	}
+	public void setBatchPublishMsg(String batchPublishMsg) {
+		this.batchPublishMsg = batchPublishMsg;
 	}
 }

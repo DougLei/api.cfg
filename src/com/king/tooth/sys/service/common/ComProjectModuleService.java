@@ -1,5 +1,8 @@
 package com.king.tooth.sys.service.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComProject;
@@ -124,7 +127,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			return "["+projectModule.getName()+"]模块所属的项目还未发布，请先发布项目";
 		}
 		if(publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
-			return "["+projectModule.getName()+"]模块已经发布，无法再次发布";
+			return "["+projectModule.getName()+"]模块已经发布，无需再次发布，或取消发布后重新发布";
 		}
 		ComProject project = getObjectById(projectModule.getRefProjectId(), ComProject.class);
 		if(project == null){
@@ -159,5 +162,60 @@ public class ComProjectModuleService extends AbstractPublishService {
 		executeRemoteUpdate(null, projectModule.getRefProjectId(), "delete " + projectModule.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectModuleId+"'");
 		publishInfoService.deletePublishedData(null, projectModuleId);
 		return null;
+	}
+	
+	/**
+	 * 批量发布项目模块
+	 * @param databaseId
+	 * @param projectId
+	 * @param projectModuleIds
+	 * @return
+	 */
+	public void batchPublishProjectModule(String databaseId, String projectId, List<Object> projectModuleIds) {
+		List<ComProjectModule> projectModules = new ArrayList<ComProjectModule>(projectModuleIds.size());
+		ComProjectModule projectModule;
+		for (Object projectModuleId : projectModuleIds) {
+			projectModule = getObjectById(projectModuleId.toString(), ComProjectModule.class);
+			
+			if(projectModule.getIsNeedDeploy() == 0){
+				projectModule.setBatchPublishMsg("id为["+projectModuleId+"]的模块不该被发布，请联系管理员");
+			}else if(projectModule.getIsEnabled() == 0){
+				projectModule.setBatchPublishMsg("id为["+projectModuleId+"]的模块信息无效，请联系管理员");
+			}else if(publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
+				projectModule.setBatchPublishMsg("["+projectModule.getName()+"]模块已经发布，无需再次发布，或取消发布后重新发布");
+			}
+			projectModule.setRefDatabaseId(databaseId);
+			projectModule.setProjectId(projectModule.getRefProjectId());
+			projectModules.add(projectModule);
+		}
+		
+		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
+		executeRemoteBatchPublish(databaseId, null, projectModules, null);
+		projectModules.clear();
+	}
+
+	/**
+	 * 批量取消发布项目模块
+	 * @param databaseId
+	 * @param projectId
+	 * @param projectModuleIds
+	 */
+	public void batchCancelPublishProjectModule(String databaseId, String projectId, List<Object> projectModuleIds) {
+		List<ComProjectModule> projectModules = new ArrayList<ComProjectModule>(projectModuleIds.size());
+		ComProjectModule projectModule;
+		StringBuilder hql = new StringBuilder();
+		for (Object projectModuleId : projectModuleIds) {
+			projectModule = getObjectById(projectModuleId.toString(), ComProjectModule.class);
+			if(!publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
+//				projectModule.setBatchPublishMsg("["+projectModule.getName()+"]模块未发布，无法取消发布");
+				continue;
+			}
+			projectModules.add(projectModule);
+			hql.append("delete " + projectModule.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectModuleId+"'").append(";");
+		}
+		
+		executeRemoteUpdate(databaseId, null, hql.toString().split(";"));
+		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
+		projectModules.clear();
 	}
 }

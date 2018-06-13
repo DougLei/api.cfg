@@ -130,7 +130,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		ComPublishInfo ref = null;
 		if(publishInfoService.validResourceIsPublished(databaseId, null, null, ref)){
-			return "id为["+databaseId+"]的数据库已发布，无法再次发布";
+			return "id为["+databaseId+"]的数据库已发布，无需再次发布，或取消发布后重新发布";
 		}
 		
 		// 如果是自己的库，要创建
@@ -222,6 +222,10 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param databaseId
 	 */
 	public String loadPublishedDatabase(String databaseId){
+//		if(SysConfig.getSystemConfig("current.sys.type").equals(ITable.CONFIG_PLATFORM+"")){
+//			return installOperResponseBody("卸载数据库的功能，目前只提供给运行系统使用", null);
+//		}
+		
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";

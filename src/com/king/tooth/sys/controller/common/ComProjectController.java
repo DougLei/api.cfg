@@ -153,8 +153,8 @@ public class ComProjectController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要发布的项目id不能为空", null);
 		}
-		String result = projectService.publishProjectAll(projectId);
-		return installOperResponseBody(result, null);
+		projectService.publishProjectAll(projectId);
+		return installOperResponseBody(null, "发布完成");
 	}
 	
 	/**
@@ -174,7 +174,7 @@ public class ComProjectController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要取消发布的项目id不能为空", null);
 		}
-		String result = projectService.cancelPublishProjectAll(projectId);
-		return installOperResponseBody(result, null);
+		projectService.cancelPublishProjectAll(projectId);
+		return installOperResponseBody(null, "取消发布完成");
 	}
 }

@@ -133,7 +133,7 @@ public class HttpClientUtil {
 			getMethod = new GetMethod(reqUrl);
 			setConfig(httpClient, getMethod);// 设置相关的配置信息
 			int status = httpClient.executeMethod(getMethod);// 执行
-			Log4jUtil.debug("[HttpClientUtil.doGet]方法调用接口“{}”的结果为“{}”", reqUrl, status);
+			Log4jUtil.debug("[HttpClientUtil.doGet]方法调用接口\"{}\"的结果为\"{}\"", reqUrl, status);
 			return getMethod.getResponseBodyAsString();
 		} catch (HttpException e) {
 			Log4jUtil.debug("[HttpClientUtil.doGet]方法出现异常：{}", e.getMessage());
@@ -167,7 +167,7 @@ public class HttpClientUtil {
 			setConfig(httpClient, postMethod);// 设置相关的配置信息，要在dealRequestEntity()方法后调用
 			
 			int status = httpClient.executeMethod(postMethod);// 执行
-			Log4jUtil.debug("[HttpClientUtil.doPost]方法调用接口“{}”的结果为“{}”", reqUrl, status);
+			Log4jUtil.debug("[HttpClientUtil.doPost]方法调用接口\"{}\"的结果为\"{}\"", reqUrl, status);
 			return postMethod.getResponseBodyAsString();
 		} catch (HttpException e) {
 			Log4jUtil.debug("[HttpClientUtil.doPost]方法出现异常：{}", e.getMessage());

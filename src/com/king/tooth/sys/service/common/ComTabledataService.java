@@ -286,7 +286,7 @@ public class ComTabledataService extends AbstractPublishService {
 			return "["+table.getTableName()+"]表所属的项目还未发布，请先发布项目";
 		}
 		if(publishInfoService.validResourceIsPublished(null, projectId, tableId, null)){
-			return "["+table.getTableName()+"]表已经发布，无法再次发布";
+			return "["+table.getTableName()+"]表已经发布，无需再次发布，或取消发布后重新发布";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
@@ -398,6 +398,28 @@ public class ComTabledataService extends AbstractPublishService {
 				"delete " + new ComHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and (" + ResourceNameConstants.ID + "='"+tableId+"' or refTableId = '"+tableId+"')",
 				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);
+		return null;
+	}
+
+	/**
+	 * 批量发布表
+	 * @param databaseId
+	 * @param projectId
+	 * @param tableIds
+	 * @return
+	 */
+	public String batchPublishTable(String databaseId, String projectId, List<Object> tableIds) {
+		return null;
+	}
+	
+	/**
+	 * 批量取消发布表
+	 * @param databaseId
+	 * @param projectId
+	 * @param tableIds
+	 * @return
+	 */
+	public String batchCancelPublishTable(String databaseId, String projectId, List<Object> tableIds) {
 		return null;
 	}
 }

@@ -1,5 +1,8 @@
 package com.king.tooth.sys.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
@@ -30,6 +33,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param databaseId 
 	 * @param projectId  
 	 * @param publish
+	 * @param resource
 	 */
 	protected void executeRemotePublish(String databaseId, String projectId, IPublish publish, ISysResource resource){
 		if(databaseId == null){
@@ -62,7 +66,7 @@ public abstract class AbstractPublishService extends AbstractService{
 				session.close();
 			}
 		}
-		// 再添加新的发布信息数据
+		// 添加新的发布信息数据
 		HibernateUtil.saveObject(publishInfo, null);
 	}
 	
@@ -96,5 +100,71 @@ public abstract class AbstractPublishService extends AbstractService{
 				session.close();
 			}
 		}
+	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 执行远程批量发布操作
+	 * <p>数据库id和项目id，这两个参数只要有一个值不为null即可</p>
+	 * @param databaseId 
+	 * @param projectId  
+	 * @param publishs
+	 * @param resources
+	 */
+	protected void executeRemoteBatchPublish(String databaseId, String projectId, List<? extends IPublish> publishs, List<? extends ISysResource> resources){
+		// 记录发布时的错误信息
+		String errMsg = null;
+		// 获取发布信息对象
+		List<ComPublishInfo> publishInfos = new ArrayList<ComPublishInfo>(publishs.size());
+		
+		// 获取远程sessionFactory
+		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			
+			ComPublishInfo publishInfo;
+			for (IPublish entity : publishs) {
+				publishInfo = entity.turnToPublish();
+				if(entity.getBatchPublishMsg() != null){
+					publishInfo.setErrMsg(entity.getBatchPublishMsg());
+				}
+				publishInfos.add(publishInfo);
+				
+				session.save(entity.getEntityName(), entity.toEntityJson());
+			}
+			
+			// 如果资源对象不为空，同时发布资源
+			if(resources != null && resources.size() > 0){ 
+				ComSysResource csr;
+				for (ISysResource entity : resources) {
+					csr = entity.turnToPublishResource();
+					session.save(csr.getEntityName(), csr.toEntityJson());
+				}
+			}
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+			errMsg = ExceptionUtil.getErrMsg(e);
+		}finally{
+			if(session != null){
+				session.flush();
+				session.close();
+			}
+		}
+		
+		// 添加新的发布信息数据
+		for (ComPublishInfo publishInfo : publishInfos) {
+			if(errMsg == null){
+				publishInfo.setIsSuccess(1);
+			}else{
+				if(publishInfo.getErrMsg() == null){
+					publishInfo.setErrMsg(errMsg);
+				}
+			}
+			HibernateUtil.saveObject(publishInfo, null);
+		}
+		publishInfos.clear();
 	}
 }

@@ -225,25 +225,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布sql脚本
-	 * @param sqlScriptId
-	 * @return
-	 */
-	public String publishSqlScript(String sqlScriptId){
-		// 最后表要都发布了，他才能发布
-		return null;
-	}
-	
-	/**
-	 * 取消发布sql脚本
-	 * @param sqlScriptId
-	 * @return
-	 */
-	public String cancelPublishSqlScript(String sqlScriptId){
-		return null;
-	}
-	//--------------------------------------------------------------------------------------------------------
-	/**
-	 * 发布sql脚本
 	 * @param projectId
 	 * @param sqlScriptId
 	 * @return
@@ -263,7 +244,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本所属的项目还未发布，请先发布项目";
 		}
 		if(publishInfoService.validResourceIsPublished(null, projectId, sqlScriptId, null)){
-			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无法再次发布";
+			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无需再次发布，或取消发布后重新发布";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
@@ -300,6 +281,28 @@ public class ComSqlScriptService extends AbstractPublishService {
 				"delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "='"+sqlScriptId+"'",
 				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+sqlScriptId+"'");
 		publishInfoService.deletePublishedData(projectId, sqlScriptId);
+		return null;
+	}
+
+	/**
+	 * 批量发布sql脚本
+	 * @param databaseId
+	 * @param projectId
+	 * @param sqlScriptIds
+	 * @return
+	 */
+	public String batchPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
+		return null;
+	}
+	
+	/**
+	 * 批量取消发布sql脚本
+	 * @param databaseId
+	 * @param projectId
+	 * @param sqlScriptIds
+	 * @return
+	 */
+	public String batchCancelPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
 		return null;
 	}
 }
