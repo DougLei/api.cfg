@@ -130,11 +130,11 @@ public abstract class AbstractPublishService extends AbstractService{
 			ComPublishInfo publishInfo;
 			for (IPublish entity : publishs) {
 				publishInfo = entity.turnToPublish();
+				publishInfos.add(publishInfo);
 				if(entity.getBatchPublishMsg() != null){
 					publishInfo.setErrMsg(entity.getBatchPublishMsg());
+					continue;
 				}
-				publishInfos.add(publishInfo);
-				
 				session.save(entity.getEntityName(), entity.toEntityJson());
 			}
 			
@@ -142,6 +142,9 @@ public abstract class AbstractPublishService extends AbstractService{
 			if(resources != null && resources.size() > 0){ 
 				ComSysResource csr;
 				for (ISysResource entity : resources) {
+					if(entity.getBatchPublishMsg() != null){
+						continue;
+					}
 					csr = entity.turnToPublishResource();
 					session.save(csr.getEntityName(), csr.toEntityJson());
 				}

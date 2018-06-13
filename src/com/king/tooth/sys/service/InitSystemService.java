@@ -409,12 +409,7 @@ public class InitSystemService extends AbstractService{
 		if(count == 0){
 			return;
 		}
-		int loopCount = count/100;
-		if(loopCount == 0){
-			loopCount = 1;
-		}else{
-			loopCount++;
-		}
+		int loopCount = count/100 + 1;
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){

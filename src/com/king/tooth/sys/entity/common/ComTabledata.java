@@ -105,6 +105,13 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 */
 	@JSONField(serialize = false)
 	private int isResource;
+	/**
+	 * 关联的数据库id
+	 * 该字段在发布的时候用到
+	 * @see turnToPublish()
+	 */
+	@JSONField(serialize = false)
+	private String refDatabaseId;
 
 	
 	public ComTabledata() {
@@ -215,7 +222,9 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 			columns.clear();
 		}
 	}
-	
+	public void setRefDatabaseId(String refDatabaseId) {
+		this.refDatabaseId = refDatabaseId;
+	}
 	
 	public ComTabledata toCreateTable(String dbType) {
 		ComTabledata table = new ComTabledata(dbType, "COM_TABLEDATA", 0);
@@ -383,7 +392,17 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return TABLE;
 	}
 	
+	/**
+	 * 目前只在ComTabledataService类的batchPublishTable()中用到
+	 */
 	public ComPublishInfo turnToPublish() {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
+		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishDatabaseId(refDatabaseId);
+		publish.setPublishProjectId(projectId);
+		publish.setPublishResourceId(id);
+		publish.setPublishResourceName(resourceName);
+		publish.setResourceType(TABLE);
+		super.turnToPublish();
+		return publish;
 	}
 }

@@ -20,11 +20,11 @@ import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComPublishInfo;
-import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComTabledata;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.ExceptionUtil;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
@@ -322,25 +322,33 @@ public class ComTabledataService extends AbstractPublishService {
 		tables.clear();
 		
 		publishInfoService.deletePublishedData(projectId, tableId);
-		executeRemotePublish(projectId, hbms);
+		executeRemotePublishTable(null, projectId, hbms);
 		hbms.clear();
 		return null;
 	}
 	
 	/**
 	 * 执行远程发布操作
+	 * @param databaseId  
 	 * @param projectId  
 	 * @param hbms
 	 */
-	private void executeRemotePublish(String projectId, List<ComHibernateHbm> hbms){
-		String remotePublishErrMsg = null;
+	private void executeRemotePublishTable(String databaseId, String projectId, List<ComHibernateHbm> hbms){
+		if(databaseId == null){
+			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
+		}
+		
+		String errMsg = null;
 		// 获取远程sessionFactory
-		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(ProjectIdRefDatabaseIdMapping.getDbId(projectId));
+		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
 		Session session = null;
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			for (ComHibernateHbm hbm : hbms) {
+				if(hbm == null){
+					break;
+				}
 				session.save(hbm.getEntityName(), hbm.toEntityJson());
 				
 				ComSysResource csr = hbm.turnToPublishResource();
@@ -349,7 +357,7 @@ public class ComTabledataService extends AbstractPublishService {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			remotePublishErrMsg = ExceptionUtil.getErrMsg(e);
+			errMsg = ExceptionUtil.getErrMsg(e);
 		}finally{
 			if(session != null){
 				session.flush();
@@ -357,15 +365,15 @@ public class ComTabledataService extends AbstractPublishService {
 			}
 		}
 		
-		// 再添加新的发布信息数据
+		// 添加新的发布信息数据
 		ComPublishInfo publishInfo;
 		for (ComHibernateHbm hbm : hbms) {
 			publishInfo = hbm.turnToPublish();
-			if(remotePublishErrMsg == null){
+			if(errMsg == null){
 				publishInfo.setIsSuccess(1);
 			}else{
 				publishInfo.setIsSuccess(0);
-				publishInfo.setErrMsg(remotePublishErrMsg);
+				publishInfo.setErrMsg(errMsg);
 			}
 			HibernateUtil.saveObject(publishInfo, null);
 		}
@@ -409,32 +417,91 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param tableIds
 	 */
 	public void batchPublishTable(String databaseId, String projectId, List<Object> tableIds) {
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size());
+		// 记录不需要发布的表，即发布验证时，存储了batchPublishMsg信息的表
+		List<ComTabledata> unPublishTables = new ArrayList<ComTabledata>(tableIds.size());
+		// 反之
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size()*2);
 		ComTabledata table;
 		for (Object tableId : tableIds) {
 			table = getObjectById(tableId.toString(), ComTabledata.class);
-			
-			if(sqlScript.getIsNeedDeploy() == 0){
-				sqlScript.setBatchPublishMsg("id为["+sqlScriptId+"]的sql脚本不该被发布，如需发布，请联系管理员");
-			}else if(sqlScript.getIsEnabled() == 0){
-				sqlScript.setBatchPublishMsg("id为["+sqlScriptId+"]的sql脚本信息无效，请联系管理员");
-			}else if(publishInfoService.validResourceIsPublished(null, projectId, sqlScript.getId(), null)){
-				sqlScript.setBatchPublishMsg("["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无需再次发布，或取消发布后重新发布");
-			}
-			
 			table.setRefDatabaseId(databaseId);
-			table.setProjectId(projectId);
-			tables.add(table);
+			if(table.getIsNeedDeploy() == 0){
+				table.setBatchPublishMsg("id为["+tableId+"]的表不该被发布，如需发布，请联系管理员");
+			}else if(table.getIsEnabled() == 0){
+				table.setBatchPublishMsg("id为["+tableId+"]的表信息无效，请联系管理员");
+			}else if(publishInfoService.validResourceIsPublished(null, projectId, table.getId(), null)){
+				table.setBatchPublishMsg("["+table.getTableName()+"]表已经发布，无需再次发布，或取消发布后重新发布");
+			}
+			if(table.getBatchPublishMsg() == null){
+				tables.add(table);
+			}else{
+				unPublishTables.add(table);
+			}
 		}
 		
-		// 远程过去create表
+		if(tables.size() == 0){
+			Log4jUtil.info("projectId为[{}]的项目，没有要发布的表数据", projectId);
+			return;
+		}
+		publishInfoService.batchDeletePublishedData(null, tableIds);
+		
+		if(unPublishTables.size() > 0){
+			// 添加发布信息数据
+			ComPublishInfo publishInfo;
+			for (ComTabledata utb : unPublishTables) {
+				publishInfo = utb.turnToPublish();
+				publishInfo.setIsSuccess(0);
+				publishInfo.setErrMsg(utb.getBatchPublishMsg());
+				HibernateUtil.saveObject(publishInfo, null);
+			}
+			unPublishTables.clear();
+		}
+		
+		int limitSize = 20;
+		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(limitSize);// 记录表对应的hbm内容，要发布的是这个
+		// 准备远程过去create表
 		ComDatabase database = getObjectById(projectId, ComDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
-		tableHandler.createTable(tables, true);
 		
-		publishInfoService.batchDeletePublishedData(null, tableIds);
-		executeRemoteBatchPublish(databaseId, null, sqlScripts, null);
-		sqlScripts.clear();
+		List<ComTabledata> tmpTables;// 在创建表的时候，记录每次创建表的数据
+		ComHibernateHbm hbm = null;
+		for(ComTabledata tb : tables){
+			if(tb == null){
+				break;
+			}
+			tb.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId ='"+tb.getId()+"'"));
+			tmpTables = tableHandler.createTable(tb, true);
+			
+			for(ComTabledata ttb : tmpTables) {
+				hbm = new ComHibernateHbm();
+				if(ttb.getIsDatalinkTable() == 0){
+					hbm.setId(tb.getId());
+				}else{
+					hbm.setId(ResourceHandlerUtil.getIdentity());
+					hbm.setRefTableId(tb.getId());
+				}
+				hbm.setHbmResourceName(ttb.getResourceName());
+				hbm.setIsDataLinkTableHbm(ttb.getIsDatalinkTable());
+				hbm.setHbmContent(new HibernateHbmHandler().createHbmMappingContent(ttb, false));
+				hbm.setReqResourceMethod(ttb.getReqResourceMethod());
+				hbm.setProjectId(projectId);
+				hbm.setRefDatabaseId(databaseId);
+				hbms.add(hbm);
+				ttb.clear();
+			}
+			tmpTables.clear();
+			tb.clear();
+			
+			if(hbms.get((limitSize-1)) != null){
+				executeRemotePublishTable(databaseId, null, hbms);
+				hbms.clear();
+			}
+		}
+		if(hbms.get(0) != null){
+			executeRemotePublishTable(databaseId, null, hbms);
+			hbms.clear();
+		}
+		tables.clear();
 	}
 	
 	/**
@@ -460,6 +527,12 @@ public class ComTabledataService extends AbstractPublishService {
 			deleteDataHql.append("delete " + table.getEntityName() + " where projectId='"+projectId+"' and (" + ResourceNameConstants.ID + "='"+tableId+"' or refTableId = '"+tableId+"');");
 			deleteResourceHql.append("'").append(tableId).append("',");
 		}
+		
+		if(tables.size() == 0){
+			Log4jUtil.info("projectId为[{}]的项目，没有可以进行取消发布操作的表数据", projectId);
+			return;
+		}
+		
 		deleteResourceHql.setLength(deleteResourceHql.length()-1);
 		deleteResourceHql.append(")");
 		deleteDataHql.append(deleteResourceHql);

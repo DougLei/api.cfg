@@ -74,4 +74,10 @@ public interface ISysResource {
 	 * @return
 	 */
 	public Integer getResourceType();
+	
+	/**
+	 * 获的批量发布时的消息
+	 * @return
+	 */
+	public String getBatchPublishMsg();
 }
