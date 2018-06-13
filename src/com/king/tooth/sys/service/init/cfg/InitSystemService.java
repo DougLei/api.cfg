@@ -171,7 +171,7 @@ public class InitSystemService extends AbstractService{
 		}
 		dbHandler.dropTable(tmpTables);// 尝试先删除表
 		dbHandler.createTable(tmpTables, false);// 开始创建表
-		clearTables(tmpTables);
+		tmpTables.clear();
 	}
 	
 	/**

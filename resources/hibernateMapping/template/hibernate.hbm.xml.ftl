@@ -3,7 +3,7 @@
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<!-- ${table.resourceName}.hbm.xml的配置文件版本为：${table.version} -->
+<!-- ${table.resourceName}.hbm.xml的配置文件 -->
 <hibernate-mapping>
 	<class entity-name="${table.resourceName}" table="${table.tableName}" dynamic-insert="true">
 		<id name="${id}" column="id" type="string">
