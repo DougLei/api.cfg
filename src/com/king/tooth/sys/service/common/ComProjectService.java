@@ -2,12 +2,18 @@ package com.king.tooth.sys.service.common;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.internal.SessionFactoryImpl;
+
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.entity.IPublishBasicData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -165,7 +171,7 @@ public class ComProjectService extends AbstractPublishService {
 		executeRemotePublish(project.getRefDatabaseId(), null, project, null, null);
 		
 		// 给远程系统的内置表中插入基础数据
-		
+//		executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId, publishBasicDatas);
 		
 		
 		project.setIsCreated(1);
@@ -281,5 +287,44 @@ public class ComProjectService extends AbstractPublishService {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * 执行远程保存基础数据操作
+	 * <p>数据库id和项目id，这两个参数只要有一个值不为null即可</p>
+	 * @param databaseId 
+	 * @param projectId  
+	 * @param publishBasicDatas
+	 */
+	private void executeRemoteSaveBasicData(String databaseId, String projectId, List<IPublishBasicData> publishBasicDatas){
+		if(databaseId == null){
+			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
+		}
+		
+		// 获取发布信息对象，对项目信息进行发布
+		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			for (IPublishBasicData pbd : publishBasicDatas) {
+				session.save(pbd.getBasicDataResourceName(), pbd.toJsonData());
+			}
+			
+//			List<String> deletePublishBasicDataResourceName = null;
+//			StringBuilder hql = new StringBuilder();
+//			for (String pbd : deletePublishBasicDataResourceName) {
+//				hql.append("delete ").append(deletePublishBasicDataResourceName).append(" where projectId = '"+projectId+"'");
+//			}
+			
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+		}finally{
+			if(session != null){
+				session.flush();
+				session.close();
+			}
+		}
 	}
 }
