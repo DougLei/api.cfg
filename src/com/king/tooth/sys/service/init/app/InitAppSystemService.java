@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -28,16 +27,27 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class InitAppSystemService extends AbstractService{
 
 	/**
+	 * 处理本系统和本数据库的关系
+	 */
+	private void processCurrentSysOfPorjDatabaseRelation() {
+		// 添加本系统和本数据库的映射关系
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
+				CurrentSysInstanceConstants.currentSysProjectInstance.getId(), 
+				CurrentSysInstanceConstants.currentSysDatabaseInstance.getId());
+	}
+	
+	/**
 	 * 系统每次启动时，加载hbm的配置信息
 	 * 主要是hbm内容
 	 */
 	public void loadSysBasicDatasBySysStart() {
+		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统的所有hbm映射文件
 			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysDatabaseInstance);
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的hbm加载进自己的sessionFactory中
-			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belong_platform_type = " + SysConfig.getSystemConfig("current.sys.type"));
+			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = 2");
 			HibernateUtil.closeCurrentThreadSession();
 			
 			if(databases != null && databases.size()> 0){
@@ -119,7 +129,7 @@ public class InitAppSystemService extends AbstractService{
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from ComHibernateHbm where isEnabled = 1", null);
+			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from ComHibernateHbm where isEnabled = 1 and hbmResourceName !='ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");
