@@ -137,7 +137,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(null, projectModuleId);
 		projectModule.setRefDatabaseId(project.getRefDatabaseId());
 		projectModule.setProjectId(projectModule.getRefProjectId());
-		executeRemotePublish(null, projectModule.getProjectId(), projectModule, null);
+		executeRemotePublish(null, projectModule.getProjectId(), projectModule, null, null);
 		return null;
 	}
 	
@@ -190,7 +190,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		}
 		
 		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
-		executeRemoteBatchPublish(databaseId, null, projectModules, null);
+		executeRemoteBatchPublish(databaseId, null, projectModules, null, null);
 		projectModules.clear();
 	}
 

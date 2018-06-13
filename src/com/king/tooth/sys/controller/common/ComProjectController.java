@@ -95,7 +95,7 @@ public class ComProjectController extends AbstractPublishController{
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布项目
-	 * <p>请求方式：GET</p>
+	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
 	 * <p>【单独发布项目信息】</p>
 	 * @return
 	 */
@@ -110,13 +110,13 @@ public class ComProjectController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要发布的项目id不能为空", null);
 		}
-		String result = projectService.publishProject(projectId);
+		String result = projectService.publishProjectAll(projectId);
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
 	 * 取消发布项目
-	 * <p>【单独取消发布项目信息】</p>
+	 * <p>【取消发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
@@ -131,50 +131,7 @@ public class ComProjectController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要取消发布的项目id不能为空", null);
 		}
-		String result = projectService.cancelPublishProject(projectId);
+		String result = projectService.cancelPublishProjectAll(projectId);
 		return installOperResponseBody(result, null);
-	}
-	
-	//--------------------------------------------------------------------------------------------------------
-	/**
-	 * (All)发布项目
-	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
-	 * <p>请求方式：GET</p>
-	 * @return
-	 */
-	@RequestMapping(value="/publishAll", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody publishAll(HttpServletRequest request){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
-			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
-		}
-		
-		String projectId = request.getParameter("projectId");
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要发布的项目id不能为空", null);
-		}
-		projectService.publishProjectAll(projectId);
-		return installOperResponseBody(null, "发布完成");
-	}
-	
-	/**
-	 * (All)取消发布项目
-	 * <p>【取消发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
-	 * <p>请求方式：GET</p>
-	 * @return
-	 */
-	@RequestMapping(value="/cancelPublishAll", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody cancelPublishAll(HttpServletRequest request){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
-			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
-		}
-		
-		String projectId = request.getParameter("projectId");
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的项目id不能为空", null);
-		}
-		projectService.cancelPublishProjectAll(projectId);
-		return installOperResponseBody(null, "取消发布完成");
 	}
 }

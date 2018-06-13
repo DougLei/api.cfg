@@ -8,6 +8,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -53,9 +54,9 @@ public class ComProjectModuleBody extends BasicEntity implements ITable, IEntity
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(8);
 		
 		ComColumndata moduleIdColumn = new ComColumndata("module_id", DataTypeConstants.STRING, 32);
 		moduleIdColumn.setName("关联的项目模块编号");

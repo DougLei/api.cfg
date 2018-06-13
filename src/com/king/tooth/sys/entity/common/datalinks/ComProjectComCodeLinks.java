@@ -26,7 +26,7 @@ public class ComProjectComCodeLinks implements Serializable, ITable {
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(ISysResource.NONE);
 		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(4);

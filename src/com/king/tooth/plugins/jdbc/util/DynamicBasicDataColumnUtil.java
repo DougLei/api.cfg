@@ -33,55 +33,47 @@ public class DynamicBasicDataColumnUtil {
 		projectIdColumn.setOrderCode(9902);
 		table.getColumns().add(projectIdColumn);
 		
-		// belongPlatformType
-		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", DataTypeConstants.INTEGER, 1);
-		belongPlatformTypeColumn.setName("所属的平台类型");
-		belongPlatformTypeColumn.setComments("所属的平台类型:1：配置平台、2：运行平台、3：通用(这个类型由后端开发者控制)");
-		belongPlatformTypeColumn.setDefaultValue("2");
-		belongPlatformTypeColumn.setOrderCode(9903);
-		table.getColumns().add(belongPlatformTypeColumn);
-		
 		if(table.getIsResource() == 1){
 			ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 			isEnabledColumn.setName("资源是否有效");
 			isEnabledColumn.setComments("资源是否有效");
 			isEnabledColumn.setDefaultValue("1");
-			isEnabledColumn.setOrderCode(9904);
+			isEnabledColumn.setOrderCode(9903);
 			table.getColumns().add(isEnabledColumn);
 			
 			ComColumndata reqResourceMethodColumn = new ComColumndata("req_resource_method", DataTypeConstants.STRING, 20);
 			reqResourceMethodColumn.setName("请求资源的方法");
 			reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 			reqResourceMethodColumn.setDefaultValue(ISysResource.ALL);
-			reqResourceMethodColumn.setOrderCode(9905);
+			reqResourceMethodColumn.setOrderCode(9904);
 			table.getColumns().add(reqResourceMethodColumn);
 
 			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin", DataTypeConstants.INTEGER, 1);
 			isBuiltinColumn.setName("是否内置资源");
-			isBuiltinColumn.setComments("是否内置资源:这个字段由开发人员控制，不开放给用户");
+			isBuiltinColumn.setComments("是否内置资源:这个字段由后端开发人员控制，不开放给用户和前端开发");
 			isBuiltinColumn.setDefaultValue("0");
-			isBuiltinColumn.setOrderCode(9906);
+			isBuiltinColumn.setOrderCode(9905);
 			table.getColumns().add(isBuiltinColumn);
 
 			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy", DataTypeConstants.INTEGER, 1);
 			isNeedDeployColumn.setName("资源是否需要发布");
 			isNeedDeployColumn.setComments("资源是否需要发布");
 			isNeedDeployColumn.setDefaultValue("1");
-			isNeedDeployColumn.setOrderCode(9907);
+			isNeedDeployColumn.setOrderCode(9906);
 			table.getColumns().add(isNeedDeployColumn);
 			
-			ComColumndata isNeedRedeployColumn = new ComColumndata("is_need_redeploy", DataTypeConstants.INTEGER, 1);
-			isNeedRedeployColumn.setName("资源是否需要补发布");
-			isNeedRedeployColumn.setComments("资源是否需要补发布:例如，当配置平台开发出来一个新的运行平台通用功能时，将这个字段值改为1，去给所有已经发布的项目，补发增加新的功能");
-			isNeedRedeployColumn.setDefaultValue("0");
-			isNeedRedeployColumn.setOrderCode(9908);
-			table.getColumns().add(isNeedRedeployColumn);
+			ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", DataTypeConstants.INTEGER, 1);
+			belongPlatformTypeColumn.setName("资源所属的平台类型");
+			belongPlatformTypeColumn.setComments("资源所属的平台类型:1：配置平台、2：运行平台、3：通用(这个类型由开发者控制)；后期开发的功能，如果是每个项目都需要的(基础功能)，则用这个字段控制是否要发布；和isBuiltin有类似的作用，开放给前端开发使用，但还是不开放给用户；isBuiltin控制的是系统内置的资源，belongPlatformType控制的是系统外置的资源");
+			belongPlatformTypeColumn.setDefaultValue("2");
+			belongPlatformTypeColumn.setOrderCode(9907);
+			table.getColumns().add(belongPlatformTypeColumn);
 			
 			ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
 			isCreatedColumn.setName("资源是否被创建");
 			isCreatedColumn.setComments("资源是否被创建：在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中；在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中；针对说明：数据库/项目，在配置平台为0，发布后，值改为1，取消发布后，值改回0");
 			isCreatedColumn.setDefaultValue("0");
-			isCreatedColumn.setOrderCode(9909);
+			isCreatedColumn.setOrderCode(9908);
 			table.getColumns().add(isCreatedColumn);
 		}
 		
@@ -89,25 +81,25 @@ public class DynamicBasicDataColumnUtil {
 			ComColumndata createTimeColumn = new ComColumndata("create_time", DataTypeConstants.DATE, 0);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
-			createTimeColumn.setOrderCode(9910);
+			createTimeColumn.setOrderCode(9909);
 			table.getColumns().add(createTimeColumn);
 			
 			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_time", DataTypeConstants.DATE, 0);
 			lastUpdateTimeColumn.setComments("最后修改时间");
 			lastUpdateTimeColumn.setName("最后修改时间");
-			lastUpdateTimeColumn.setOrderCode(9911);
+			lastUpdateTimeColumn.setOrderCode(9910);
 			table.getColumns().add(lastUpdateTimeColumn);
 			
 			ComColumndata createUserIdColumn = new ComColumndata("create_user_id", DataTypeConstants.STRING, 32);
 			createUserIdColumn.setComments("创建人主键");
 			createUserIdColumn.setName("创建人主键");
-			createUserIdColumn.setOrderCode(9912);
+			createUserIdColumn.setOrderCode(9911);
 			table.getColumns().add(createUserIdColumn);
 			
 			ComColumndata lastUpdatedUserIdColumn = new ComColumndata("last_updated_user_id", DataTypeConstants.STRING, 32);
 			lastUpdatedUserIdColumn.setComments("最后修改人主键");
 			lastUpdatedUserIdColumn.setName("最后修改人主键");
-			lastUpdatedUserIdColumn.setOrderCode(9913);
+			lastUpdatedUserIdColumn.setOrderCode(9912);
 			table.getColumns().add(lastUpdatedUserIdColumn);
 		}
 	}

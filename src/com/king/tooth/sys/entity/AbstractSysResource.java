@@ -25,7 +25,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	protected String reqResourceMethod;
 	/**
 	 * 是否内置资源
-	 * <p>这个字段由开发人员控制，不开放给用户</p>
+	 * <p>这个字段由后端开发人员控制，不开放给用户和前端开发</p>
 	 */
 	protected Integer isBuiltin;
 	/**
@@ -33,10 +33,14 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 */
 	protected Integer isNeedDeploy;
 	/**
-	 * 资源是否需要补发布
-	 * <p>例如，当配置平台开发出来一个新的运行平台通用功能时，将这个字段值改为1，去给所有已经发布的项目，补发增加新的功能</p>
+	 * 资源所属的平台类型
+	 * <p>1：配置平台、2：运行平台、3：通用</p>
+	 * <p>后期开发的功能，如果是每个项目都需要的(基础功能)，则用这个字段控制是否要发布</p>
+	 * <p>和isBuiltin有类似的作用，开放给前端开发使用，但还是不开放给用户</p>
+	 * <p>isBuiltin控制的是系统内置的资源，belongPlatformType控制的是系统外置的资源</p>
+	 * <p>@see ISysResource</p>
 	 */
-	protected Integer isNeedRedeploy;
+	protected Integer belongPlatformType;
 	/**
 	 * 资源是否被创建
 	 * <p>在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中</p>
@@ -49,7 +53,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	
 	/**
 	 * 批量发布时的信息记录
-	 * 该字段在批量发布的时候用到，存储发布每个数据的发布结果，例如是否已经发布？，是否无效而不能发布等信息
+	 * 该字段在批量发布的时候用到，存储发布每个数据的发布结果，例如是否已经发布？，是否无效而不能发布等(错误/异常)信息
 	 */
 	@JSONField(serialize = false)
 	private String batchPublishMsg;
@@ -94,7 +98,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("isBuiltin", isBuiltin);
 		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("isNeedRedeploy", isNeedRedeploy);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put("isCreated", isCreated);
 	}
 
@@ -134,10 +138,10 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	public void setBatchPublishMsg(String batchPublishMsg) {
 		this.batchPublishMsg = batchPublishMsg;
 	}
-	public Integer getIsNeedRedeploy() {
-		return isNeedRedeploy;
+	public Integer getBelongPlatformType() {
+		return belongPlatformType;
 	}
-	public void setIsNeedRedeploy(Integer isNeedRedeploy) {
-		this.isNeedRedeploy = isNeedRedeploy;
+	public void setBelongPlatformType(Integer belongPlatformType) {
+		this.belongPlatformType = belongPlatformType;
 	}
 }

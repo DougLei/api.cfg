@@ -15,7 +15,7 @@ import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
-import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -125,7 +125,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	private List<ComTabledata> getBuiltinAppBasicTables(){
 		List<ComTabledata> builtinAppBasicTables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
-				"from ComTabledata where isEnabled =1 and isBuiltin=1 and isNeedDeploy=1 and belongPlatformType!="+ITable.CONFIG_PLATFORM);
+				"from ComTabledata where isEnabled =1 and isBuiltin=1 and isNeedDeploy=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
 		for (ComTabledata table : builtinAppBasicTables) {
 			if(table.getIsCore() == 1){
 				coreTableCount++;
@@ -208,7 +208,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
 		publishInfoService.deletePublishedData(null, databaseId);
-		executeRemotePublish(databaseId, null, database, null);
+		executeRemotePublish(databaseId, null, database, null, null);
 		
 		database.setIsCreated(1);
 		HibernateUtil.updateObject(database, null);

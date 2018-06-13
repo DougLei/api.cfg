@@ -254,7 +254,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		sqlScript.setRefDatabaseId(project.getRefDatabaseId());
 		sqlScript.setProjectId(projectId);
-		executeRemotePublish(null, projectId, sqlScript, sqlScript);
+		executeRemotePublish(null, projectId, sqlScript, sqlScript, comProjectComSqlScriptLinksResourceName);
 		return null;
 	}
 	
@@ -279,7 +279,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 		
 		executeRemoteUpdate(null, projectId, 
 				"delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "='"+sqlScriptId+"'",
-				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+sqlScriptId+"'");
+				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+sqlScriptId+"'",
+				"delete " + comProjectComSqlScriptLinksResourceName + " where "+ResourceNameConstants.LEFT_ID+"='"+projectId+"' and " + ResourceNameConstants.RIGHT_ID + "='"+sqlScriptId+"'");
 		publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		return null;
 	}
@@ -310,7 +311,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		publishInfoService.batchDeletePublishedData(null, sqlScriptIds);
-		executeRemoteBatchPublish(databaseId, null, sqlScripts, null);
+		executeRemoteBatchPublish(databaseId, null, sqlScripts, null, comProjectComSqlScriptLinksResourceName);
 		sqlScripts.clear();
 	}
 	
@@ -325,6 +326,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		ComSqlScript sqlScript = new ComSqlScript();
 		StringBuilder deleteDataHql = new StringBuilder("delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "in (");
 		StringBuilder deleteResourceHql = new StringBuilder("delete ComSysResource where projectId='"+projectId+"' and refResourceId in (");
+		StringBuilder deleteDatalinkHql = new StringBuilder("delete " + comProjectComSqlScriptLinksResourceName + " where "+ResourceNameConstants.LEFT_ID+"='"+projectId+"' and " + ResourceNameConstants.RIGHT_ID + " in (");
 		
 		for (Object sqlScriptId : sqlScriptIds) {
 			sqlScript = getObjectById(sqlScriptId.toString(), ComSqlScript.class);
@@ -334,13 +336,17 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 			deleteDataHql.append("'").append(sqlScriptId).append("',");
 			deleteResourceHql.append("'").append(sqlScriptId).append("',");
+			deleteDatalinkHql.append("'").append(sqlScriptId).append("',");
 		}
 		deleteDataHql.setLength(deleteDataHql.length()-1);
 		deleteDataHql.append(")");
 		deleteResourceHql.setLength(deleteResourceHql.length()-1);
 		deleteResourceHql.append(")");
-		deleteDataHql.append(";").append(deleteResourceHql);
+		deleteDatalinkHql.setLength(deleteResourceHql.length()-1);
+		deleteDatalinkHql.append(")");
+		deleteDataHql.append(";").append(deleteResourceHql).append(";").append(deleteDatalinkHql);
 		deleteResourceHql.setLength(0);
+		deleteDatalinkHql.setLength(0);
 		
 		executeRemoteUpdate(databaseId, null, deleteDataHql.toString().split(";"));
 		publishInfoService.batchDeletePublishedData(null, sqlScriptIds);

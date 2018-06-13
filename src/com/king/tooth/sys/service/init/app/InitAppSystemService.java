@@ -11,7 +11,7 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.ExceptionUtil;
@@ -48,7 +48,7 @@ public class InitAppSystemService extends AbstractService{
 			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的hbm加载进自己的sessionFactory中
-			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = "+ITable.APP_PLATFORM);
+			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = "+ISysResource.APP_PLATFORM);
 			HibernateUtil.closeCurrentThreadSession();
 			
 			if(databases != null && databases.size()> 0){

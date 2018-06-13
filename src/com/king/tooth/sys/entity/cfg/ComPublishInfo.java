@@ -103,9 +103,9 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		table.setIsNeedDeploy(0);
 		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsCreated(1);
-		table.setBelongPlatformType(CONFIG_PLATFORM);
+		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
 		ComColumndata publishDatabaseIdColumn = new ComColumndata("publish_database_id", DataTypeConstants.STRING, 32);
 		publishDatabaseIdColumn.setName("发布的数据库主键");

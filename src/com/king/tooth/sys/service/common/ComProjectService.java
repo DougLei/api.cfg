@@ -5,6 +5,7 @@ import java.util.List;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -101,11 +102,11 @@ public class ComProjectService extends AbstractPublishService {
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComHibernateHbmLinks where leftId = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[表信息]，无法删除，请先取消他们的关联信息";
 		}
-		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComSqlScriptLinks where leftId = ?", projectId);
+		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
@@ -121,12 +122,12 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	public String cancelRelation(String projectId, String relationType) {
 		if("all".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComHibernateHbmLinks where leftId = ?", projectId);
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
 		}else if("table".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComHibernateHbmLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
 		}else if("sql".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
 		}else{
 			return "请传入正确的realtionType";
 		}
@@ -139,7 +140,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @param projectId
 	 * @return
 	 */
-	public String publishProject(String projectId){
+	private String publishProject(String projectId){
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
@@ -161,38 +162,16 @@ public class ComProjectService extends AbstractPublishService {
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projectId, project.getRefDatabaseId());
 		
 		publishInfoService.deletePublishedData(null, projectId);
-		executeRemotePublish(project.getRefDatabaseId(), null, project, null);
+		executeRemotePublish(project.getRefDatabaseId(), null, project, null, null);
+		
+		// 给远程系统的内置表中插入基础数据
+		
+		
 		
 		project.setIsCreated(1);
 		HibernateUtil.updateObject(project, null);
 		return null;
 	}
-	
-	/**
-	 * 取消发布项目
-	 * @param projectId
-	 * @return
-	 */
-	public String cancelPublishProject(String projectId){
-		ComProject project = getObjectById(projectId, ComProject.class);
-		if(project == null){
-			return "没有找到id为["+projectId+"]的项目对象信息";
-		}
-		if(!publishInfoService.validResourceIsPublished(null, project.getId(), null, null)){
-			return "["+project.getProjName()+"]项目未发布，无法取消发布";
-		}
-		// 将项目id和数据库id取消映射
-		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
-		
-		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectId+"'");
-		publishInfoService.deletePublishedData(null, projectId);
-		
-		project.setIsCreated(0);
-		HibernateUtil.updateObject(project, null);
-		return null;
-	}
-	
-	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * (All)发布项目
 	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
@@ -215,7 +194,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComHibernateHbmLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt."+ResourceNameConstants.RIGHT_ID+" = table.id)" +
+							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
+							" and (pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or table.belongPlatformType="+ISysResource.COMMON_PLATFORM );
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -223,7 +204,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps."+ResourceNameConstants.RIGHT_ID+" = sqlScript.id)" +
+							"where sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
+							" and (ps."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -232,6 +215,31 @@ public class ComProjectService extends AbstractPublishService {
 		return result;
 	}
 
+	/**
+	 * 取消发布项目
+	 * @param projectId
+	 * @return
+	 */
+	private String cancelPublishProject(String projectId){
+		ComProject project = getObjectById(projectId, ComProject.class);
+		if(project == null){
+			return "没有找到id为["+projectId+"]的项目对象信息";
+		}
+		if(!publishInfoService.validResourceIsPublished(null, project.getId(), null, null)){
+			return "["+project.getProjName()+"]项目未发布，无法取消发布";
+		}
+		// 将项目id和数据库id取消映射
+		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
+		
+		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectId+"'");
+		publishInfoService.deletePublishedData(null, projectId);
+		
+		// 删除远程系统内置表中的基础数据
+		
+		project.setIsCreated(0);
+		HibernateUtil.updateObject(project, null);
+		return null;
+	}
 	/**
 	 * (All)取消发布项目
 	 * <p>【取消发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
@@ -254,7 +262,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComHibernateHbmLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt."+ResourceNameConstants.RIGHT_ID+" = table.id)" +
+							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
+							" and (pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or table.belongPlatformType="+ISysResource.COMMON_PLATFORM );
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -262,7 +272,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.RIGHT_ID+" from ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = '"+projectId+"'");
+					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps."+ResourceNameConstants.RIGHT_ID+" = sqlScript.id)" +
+							"where sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
+							" and (ps."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComSqlScriptService().batchCancelPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();

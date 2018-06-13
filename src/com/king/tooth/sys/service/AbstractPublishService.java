@@ -7,13 +7,16 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.common.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -35,8 +38,9 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param projectId  
 	 * @param publish
 	 * @param resource
+	 * @param datalinkResourceName
 	 */
-	protected void executeRemotePublish(String databaseId, String projectId, IPublish publish, ISysResource resource){
+	protected void executeRemotePublish(String databaseId, String projectId, IPublish publish, ISysResource resource, String datalinkResourceName){
 		if(databaseId == null){
 			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
 		}
@@ -51,6 +55,13 @@ public abstract class AbstractPublishService extends AbstractService{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			session.save(publish.getEntityName(), publish.toEntityJson());
+			
+			if(datalinkResourceName != null){
+				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publish.getId(), 1, null, null);
+				dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+				session.save(datalinkResourceName, dataLink);
+			}
+			
 			if(resource != null){ // 如果资源对象不为空，同时发布资源
 				ComSysResource csr = resource.turnToPublishResource();
 				session.save(csr.getEntityName(), csr.toEntityJson());
@@ -113,8 +124,9 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param projectId  
 	 * @param publishs
 	 * @param resources
+	 * @param datalinkResourceName
 	 */
-	protected void executeRemoteBatchPublish(String databaseId, String projectId, List<? extends IPublish> publishs, List<? extends ISysResource> resources){
+	protected void executeRemoteBatchPublish(String databaseId, String projectId, List<? extends IPublish> publishs, List<? extends ISysResource> resources, String datalinkResourceName){
 		// 记录发布时的错误信息
 		String errMsg = null;
 		// 获取发布信息对象
@@ -128,6 +140,7 @@ public abstract class AbstractPublishService extends AbstractService{
 			session.beginTransaction();
 			
 			ComPublishInfo publishInfo;
+			JSONObject dataLink;
 			for (IPublish entity : publishs) {
 				publishInfo = entity.turnToPublish();
 				publishInfos.add(publishInfo);
@@ -136,6 +149,12 @@ public abstract class AbstractPublishService extends AbstractService{
 					continue;
 				}
 				session.save(entity.getEntityName(), entity.toEntityJson());
+				
+				if(datalinkResourceName != null){
+					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, entity.getId(), 1, null, null);
+					dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+					session.save(datalinkResourceName, dataLink);
+				}
 			}
 			
 			// 如果资源对象不为空，同时发布资源

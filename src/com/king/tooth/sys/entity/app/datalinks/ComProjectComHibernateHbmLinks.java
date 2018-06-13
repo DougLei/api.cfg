@@ -25,7 +25,7 @@ public class ComProjectComHibernateHbmLinks implements Serializable, ITable {
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setReqResourceMethod(ISysResource.NONE);
-		table.setBelongPlatformType(APP_PLATFORM);
+		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(4);

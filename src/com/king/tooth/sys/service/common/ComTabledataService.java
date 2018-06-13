@@ -37,7 +37,9 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 @SuppressWarnings("unchecked")
 public class ComTabledataService extends AbstractPublishService {
 	// 项目和表的关联关系资源名
-	private static final String comProjectComTabledataLinkResourceName = "ComProjectComHibernateHbmLinks";
+	private static final String comProjectComTabledataLinkResourceName = "ComProjectComTabledataLinks";
+	// 项目和hbm的关联关系资源名
+	private static final String comProjectComHibernateHbmLinkResourceName = "ComProjectComHibernateHbmLinks";
 	
 	/**
 	 * 验证表名是否存在
@@ -308,8 +310,8 @@ public class ComTabledataService extends AbstractPublishService {
 				hbm.setId(tableId);
 			}else{
 				hbm.setId(ResourceHandlerUtil.getIdentity());
-				hbm.setRefTableId(tableId);
 			}
+			hbm.setRefTableId(tableId);
 			hbm.setHbmResourceName(tb.getResourceName());
 			hbm.setIsDataLinkTableHbm(tb.getIsDatalinkTable());
 			hbm.setHbmContent(new HibernateHbmHandler().createHbmMappingContent(tb, false));
@@ -322,7 +324,7 @@ public class ComTabledataService extends AbstractPublishService {
 		tables.clear();
 		
 		publishInfoService.deletePublishedData(projectId, tableId);
-		executeRemotePublishTable(null, projectId, hbms);
+		executeRemotePublishTable(null, projectId, hbms, comProjectComHibernateHbmLinkResourceName);
 		hbms.clear();
 		return null;
 	}
@@ -332,8 +334,9 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param databaseId  
 	 * @param projectId  
 	 * @param hbms
+	 * @param comProjectComHibernateHbmLinkResourceName
 	 */
-	private void executeRemotePublishTable(String databaseId, String projectId, List<ComHibernateHbm> hbms){
+	private void executeRemotePublishTable(String databaseId, String projectId, List<ComHibernateHbm> hbms, String comProjectComHibernateHbmLinkResourceName){
 		if(databaseId == null){
 			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
 		}
@@ -345,11 +348,17 @@ public class ComTabledataService extends AbstractPublishService {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
+			int orderCode = 1;
+			JSONObject datalink;
 			for (ComHibernateHbm hbm : hbms) {
 				if(hbm == null){
 					break;
 				}
 				session.save(hbm.getEntityName(), hbm.toEntityJson());
+				
+				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, hbm.getRefTableId(), orderCode++, null, null);
+				datalink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+				session.save(comProjectComHibernateHbmLinkResourceName, datalink);
 				
 				ComSysResource csr = hbm.turnToPublishResource();
 				session.save(csr.getEntityName(), csr.toEntityJson());
@@ -405,7 +414,8 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		executeRemoteUpdate(null, projectId, 
 				"delete " + new ComHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and (" + ResourceNameConstants.ID + "='"+tableId+"' or refTableId = '"+tableId+"')",
-				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+tableId+"'");
+				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+tableId+"'",
+				"delete " + comProjectComHibernateHbmLinkResourceName + " where "+ResourceNameConstants.LEFT_ID+"='"+projectId+"' and " + ResourceNameConstants.RIGHT_ID + "='"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);
 		return null;
 	}
@@ -457,7 +467,7 @@ public class ComTabledataService extends AbstractPublishService {
 			unPublishTables.clear();
 		}
 		
-		int limitSize = 20;
+		int limitSize = 30;
 		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(limitSize);// 记录表对应的hbm内容，要发布的是这个
 		// 准备远程过去create表
 		ComDatabase database = getObjectById(projectId, ComDatabase.class);
@@ -478,8 +488,8 @@ public class ComTabledataService extends AbstractPublishService {
 					hbm.setId(tb.getId());
 				}else{
 					hbm.setId(ResourceHandlerUtil.getIdentity());
-					hbm.setRefTableId(tb.getId());
 				}
+				hbm.setRefTableId(tb.getId());
 				hbm.setHbmResourceName(ttb.getResourceName());
 				hbm.setIsDataLinkTableHbm(ttb.getIsDatalinkTable());
 				hbm.setHbmContent(new HibernateHbmHandler().createHbmMappingContent(ttb, false));
@@ -493,12 +503,12 @@ public class ComTabledataService extends AbstractPublishService {
 			tb.clear();
 			
 			if(hbms.get((limitSize-1)) != null){
-				executeRemotePublishTable(databaseId, null, hbms);
+				executeRemotePublishTable(databaseId, projectId, hbms, comProjectComHibernateHbmLinkResourceName);
 				hbms.clear();
 			}
 		}
 		if(hbms.get(0) != null){
-			executeRemotePublishTable(databaseId, null, hbms);
+			executeRemotePublishTable(databaseId, projectId, hbms, comProjectComHibernateHbmLinkResourceName);
 			hbms.clear();
 		}
 		tables.clear();
@@ -515,6 +525,7 @@ public class ComTabledataService extends AbstractPublishService {
 		ComTabledata table;
 		StringBuilder deleteDataHql = new StringBuilder();
 		StringBuilder deleteResourceHql = new StringBuilder("delete ComSysResource where projectId='"+projectId+"' and refResourceId in (");
+		StringBuilder deleteDatalinkHql = new StringBuilder("delete " + comProjectComHibernateHbmLinkResourceName + " where "+ResourceNameConstants.LEFT_ID+"='"+projectId+"' and " + ResourceNameConstants.RIGHT_ID + " in (");
 		
 		for (Object tableId : tableIds) {
 			table = getObjectById(tableId.toString(), ComTabledata.class);
@@ -526,6 +537,7 @@ public class ComTabledataService extends AbstractPublishService {
 			
 			deleteDataHql.append("delete " + table.getEntityName() + " where projectId='"+projectId+"' and (" + ResourceNameConstants.ID + "='"+tableId+"' or refTableId = '"+tableId+"');");
 			deleteResourceHql.append("'").append(tableId).append("',");
+			deleteDatalinkHql.append("'").append(tableId).append("',");
 		}
 		
 		if(tables.size() == 0){
@@ -535,8 +547,11 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		deleteResourceHql.setLength(deleteResourceHql.length()-1);
 		deleteResourceHql.append(")");
-		deleteDataHql.append(deleteResourceHql);
+		deleteDatalinkHql.setLength(deleteResourceHql.length()-1);
+		deleteDatalinkHql.append(")");
+		deleteDataHql.append(deleteResourceHql).append(";").append(deleteDatalinkHql);
 		deleteResourceHql.setLength(0);
+		deleteDatalinkHql.setLength(0);
 		
 		// 远程过去drop表
 		ComDatabase database = getObjectById(projectId, ComDatabase.class);

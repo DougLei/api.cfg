@@ -35,12 +35,6 @@ public class BasicEntity implements Serializable{
 	 * 最后修改时间
 	 */
 	protected Date lastUpdateTime;
-	/**
-	 * 所属的平台类型
-	 * <p>1：配置平台、2：运行平台、3：通用</p>
-	 * <p>@see ITable</p>
-	 */
-	protected Integer belongPlatformType;
 	
 	/**
 	 * 处理基础资源对象的属性
@@ -48,11 +42,9 @@ public class BasicEntity implements Serializable{
 	 */
 	public void processBasicEntityProps(EntityJson entityJson){
 		entityJson.put(ResourceNameConstants.ID, id);
-		entityJson.put("belongPlatformType", belongPlatformType);
 		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
 		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
 	}
-	
 	
 	public String getProjectId() {
 		return projectId;
@@ -89,12 +81,6 @@ public class BasicEntity implements Serializable{
 	}
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
-	}
-	public Integer getBelongPlatformType() {
-		return belongPlatformType;
-	}
-	public void setBelongPlatformType(Integer belongPlatformType) {
-		this.belongPlatformType = belongPlatformType;
 	}
 
 

@@ -9,6 +9,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -144,9 +145,9 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata reqAccountIdColumn = new ComColumndata("req_account_id", DataTypeConstants.STRING, 32);
 		reqAccountIdColumn.setName("请求的账户信息主键");

@@ -239,7 +239,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsCreated(1);
 		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(25);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
 		nameColumn.setName("显示的汉字名称");

@@ -3,7 +3,7 @@ package com.king.tooth.sys.entity;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 
 /**
- * 发布接口
+ * 发布信息接口
  * @author DougLei
  */
 public interface IPublish extends IEntity{
@@ -18,4 +18,10 @@ public interface IPublish extends IEntity{
 	 * @return
 	 */
 	public String getBatchPublishMsg();
+
+	/**
+	 * 获取id
+	 * @return
+	 */
+	public String getId();
 }

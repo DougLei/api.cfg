@@ -8,6 +8,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -85,9 +86,9 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 		table.setComments("角色资源对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setBelongPlatformType(APP_PLATFORM);
+		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
 		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 30);
 		nameColumn.setName("角色名称");

@@ -21,21 +21,4 @@ public interface ITable {
 	 * @return
 	 */
 	String toDropTable();
-	
-	
-	/**
-	 * 所属的平台类型
-	 * <p>1：配置平台</p>
-	 */
-	public static final int CONFIG_PLATFORM = 1;
-	/**
-	 * 所属的平台类型
-	 * <p>2：运行平台</p>
-	 */
-	public static final int APP_PLATFORM = 2;
-	/**
-	 * 所属的平台类型
-	 * <p>3：通用(这个类型由后端开发者控制)</p>
-	 */
-	public static final int COMMON_PLATFORM = 3;
 }
