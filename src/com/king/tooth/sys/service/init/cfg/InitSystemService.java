@@ -346,13 +346,15 @@ public class InitSystemService extends AbstractService{
 		dataDictionary.setIsCore(1);
 		HibernateUtil.saveObject(dataDictionary, adminAccountId);
 		
-		// 同时添加要发布的基础的数据字典数据
-		ComPublishBasicData publishBasicData = new ComPublishBasicData();
-		publishBasicData.setBasicDataResourceName(dataDictionary.getEntityName());
-		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(dataDictionary));
-		publishBasicData.setIsBuiltin(1);
-		publishBasicData.setBelongPlatformType(belongPlatformType);
-		HibernateUtil.saveObject(publishBasicData, adminAccountId);
+		// 同时，不是配置系统的数据，则添加要发布的基础的数据字典数据
+		if(belongPlatformType != ISysResource.CONFIG_PLATFORM){
+			ComPublishBasicData publishBasicData = new ComPublishBasicData();
+			publishBasicData.setBasicDataResourceName(dataDictionary.getEntityName());
+			publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(dataDictionary));
+			publishBasicData.setIsBuiltin(1);
+			publishBasicData.setBelongPlatformType(belongPlatformType);
+			HibernateUtil.saveObject(publishBasicData, adminAccountId);
+		}
 	}
 	
 	/**
@@ -361,17 +363,17 @@ public class InitSystemService extends AbstractService{
 	 */
 	private void insertPublishBasicData(String adminAccountId) {
 		// 添加一条要发布的管理员账户信息
-		ComPublishBasicData publishBasicData = new ComPublishBasicData();
-		
 		ComSysAccount admin = new ComSysAccount();
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+
+		ComPublishBasicData publishBasicData = new ComPublishBasicData();
 		publishBasicData.setBasicDataResourceName(admin.getEntityName());
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(admin));
 		publishBasicData.setIsBuiltin(1);
-		publishBasicData.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		publishBasicData.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		HibernateUtil.saveObject(publishBasicData, adminAccountId);
 	}
 	
