@@ -126,9 +126,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	private List<ComTabledata> getBuiltinAppBasicTables(){
 		List<ComTabledata> builtinAppBasicTables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
-				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
-		builtinAppBasicTables.addAll(HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
-				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=0 and belongPlatformType="+ISysResource.COMMON_PLATFORM));
+				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
 		for (ComTabledata table : builtinAppBasicTables) {
 			if(table.getIsCore() == 1){
 				coreTableCount++;

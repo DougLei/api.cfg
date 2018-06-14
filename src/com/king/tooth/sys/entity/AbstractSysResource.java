@@ -16,20 +16,24 @@ import com.king.tooth.util.DateUtil;
 public abstract class AbstractSysResource extends BasicEntity implements ISysResource, IPublish{
 	/**
 	 * 资源是否有效
+	 * <p>默认值：1</p>
 	 */
 	protected Integer isEnabled;
 	/**
 	 * 请求资源的方法
 	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
+	 * <p>默认值：all</p>
 	 */
 	protected String reqResourceMethod;
 	/**
 	 * 是否内置资源
 	 * <p>这个字段由后端开发人员控制，不开放给用户和前端开发</p>
+	 * <p>默认值：0</p>
 	 */
 	protected Integer isBuiltin;
 	/**
 	 * 资源是否需要发布
+	 * <p>默认值：1</p>
 	 */
 	protected Integer isNeedDeploy;
 	/**
@@ -39,6 +43,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * <p>和isBuiltin有类似的作用，开放给前端开发使用，但还是不开放给用户</p>
 	 * <p>isBuiltin控制的是系统内置的资源，belongPlatformType控制的是系统外置的资源</p>
 	 * <p>@see ISysResource</p>
+	 * <p>默认值：2</p>
 	 */
 	protected Integer belongPlatformType;
 	/**
@@ -46,6 +51,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * <p>在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中</p>
 	 * <p>在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中</p>
 	 * <p>针对说明：数据库/项目，在配置平台为0，发布后，值改为1，取消发布后，值改回0</p>
+	 * <p>默认值：0</p>
 	 */
 	protected Integer isCreated;
 	

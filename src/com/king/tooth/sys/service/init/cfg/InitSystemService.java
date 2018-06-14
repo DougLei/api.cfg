@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
@@ -234,6 +235,9 @@ public class InitSystemService extends AbstractService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据字典基础数据
 		insertBasicDataDictionary(adminAccountId);
+		
+		// 添加要发布的基础数据
+		insertPublishBasicData(adminAccountId);
 	}
 	
 	/**
@@ -280,49 +284,49 @@ public class InitSystemService extends AbstractService{
 	 */
 	private void insertBasicDataDictionary(String adminAccountId) {
 		// ComColumndata.columnType 字段数据类型
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符串", "string", 1);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "布尔值", "boolean", 2);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "整型", "integer", 3);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "浮点型", "double", 4);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "日期", "date", 5);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符大字段", "clob", 6);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "二进制大字段", "blob", 7);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符串", "string", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "布尔值", "boolean", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "整型", "integer", 3, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "浮点型", "double", 4, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "日期", "date", 5, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符大字段", "clob", 6, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "二进制大字段", "blob", 7, ISysResource.CONFIG_PLATFORM);
 		
 		// ComDatabase.dbType 数据库类型
-		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2);
+		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
 		// ComTabledata.tableType 表类型
-		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "单表", "1", 1);
-		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "树表", "2", 2);
-		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "主子表", "3", 3);
+		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "单表", "1", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "树表", "2", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "主子表", "3", 3, ISysResource.CONFIG_PLATFORM);
 		
 		// ComTabledata.dbType 数据库类型
-		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "oracle", "oracle", 1);
-		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2);
+		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
 		// ComOperLog.operType 操作的类型
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "查询", "select", 1);
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "增加", "insert", 2);
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "修改", "update", 3);
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "删除", "delete", 4);
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "查询", "select", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "增加", "insert", 2, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "修改", "update", 3, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperLog.opertype", "删除", "delete", 4, ISysResource.COMMON_PLATFORM);
 		
 		// ComSysAccount.accountType 账户类型
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "0", 0);
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "1", 1);
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "0", 0, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "1", 1, ISysResource.COMMON_PLATFORM);
 		
 		// ComSysAccount.accountStatus 账户状态
-		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "启用", "1", 1);
-		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "禁用", "2", 2);
+		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "启用", "1", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "禁用", "2", 2, ISysResource.COMMON_PLATFORM);
 		
 		// ComSysResource.resourceType 资源类型
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "表资源", "1", 1);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "sql脚本资源", "2", 2);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "代码资源", "3", 3);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "数据库资源", "4", 4);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目资源", "5", 5);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目模块资源", "6", 6);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "基础数据资源", "7", 7);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "表资源", "1", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "sql脚本资源", "2", 2, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "代码资源", "3", 3, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "数据库资源", "4", 4, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目资源", "5", 5, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目模块资源", "6", 6, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "基础数据资源", "7", 7, ISysResource.COMMON_PLATFORM);
 	}
 	/**
 	 * 添加数据字典
@@ -330,16 +334,45 @@ public class InitSystemService extends AbstractService{
 	 * @param codeCaption
 	 * @param codeValue
 	 * @param orderCode
+	 * @param belongPlatformType
 	 * @return
 	 */
-	private String insertDataDictionary(String adminAccountId, String code, String codeCaption, String codeValue, int orderCode){
+	private void insertDataDictionary(String adminAccountId, String code, String codeCaption, String codeValue, int orderCode, int belongPlatformType){
 		ComDataDictionary dataDictionary = new ComDataDictionary();
 		dataDictionary.setCode(code);
 		dataDictionary.setCodeCaption(codeCaption);
 		dataDictionary.setCodeValue(codeValue);
 		dataDictionary.setOrderCode(orderCode);
 		dataDictionary.setIsCore(1);
-		return HibernateUtil.saveObject(dataDictionary, adminAccountId);
+		HibernateUtil.saveObject(dataDictionary, adminAccountId);
+		
+		// 同时添加要发布的基础的数据字典数据
+		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+		publishBasicData.setBasicDataResourceName(dataDictionary.getEntityName());
+		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(dataDictionary));
+		publishBasicData.setIsBuiltin(1);
+		publishBasicData.setBelongPlatformType(belongPlatformType);
+		HibernateUtil.saveObject(publishBasicData, adminAccountId);
+	}
+	
+	/**
+	 * 添加要发布的基础数据
+	 * @param adminAccountId
+	 */
+	private void insertPublishBasicData(String adminAccountId) {
+		// 添加一条要发布的管理员账户信息
+		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+		
+		ComSysAccount admin = new ComSysAccount();
+		admin.setAccountType(1);
+		admin.setLoginName("admin");
+		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
+		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		publishBasicData.setBasicDataResourceName(admin.getEntityName());
+		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(admin));
+		publishBasicData.setIsBuiltin(1);
+		publishBasicData.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		HibernateUtil.saveObject(publishBasicData, adminAccountId);
 	}
 	
 	/**

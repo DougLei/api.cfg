@@ -50,6 +50,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	 * 账户类型
 	 * 		1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)
 	 * 		2.普通账户
+	 * <p>默认值是：2</p>
 	 */
 	private Integer accountType;
 	/**
