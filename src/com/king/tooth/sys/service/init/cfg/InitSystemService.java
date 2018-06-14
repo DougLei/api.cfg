@@ -91,14 +91,15 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
 		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
 		tables.add(new ComProjectComCodeLinks().toCreateTable());
+		tables.add(new ComSysAccount().toCreateTable());
+		tables.add(new ComDataDictionary().toCreateTable());
+		
 		// 通用表
 		tables.add(new ComSysResource().toCreateTable());
-		tables.add(new ComDataDictionary().toCreateTable());
 		tables.add(new ComDataLinks().toCreateTable());
 		tables.add(new ComOperLog().toCreateTable());
 		tables.add(new ComProjectModuleBody().toCreateTable());
 		tables.add(new ComReqLog().toCreateTable());
-		tables.add(new ComSysAccount().toCreateTable());
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable());
 		// 配置系统表
 		tables.add(new ComColumndata().toCreateTable());
@@ -366,6 +367,8 @@ public class InitSystemService extends AbstractService{
 	 * @param adminAccountId
 	 */
 	private void insertPublishBasicData(String adminAccountId) {
+		ComPublishBasicData publishBasicData;
+		
 		// 添加一条要发布的管理员账户信息
 		ComSysAccount admin = new ComSysAccount();
 		admin.setAccountType(1);
@@ -373,7 +376,7 @@ public class InitSystemService extends AbstractService{
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 
-		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+		publishBasicData = new ComPublishBasicData();
 		publishBasicData.setBasicDataResourceName(admin.getEntityName());
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(admin));
 		publishBasicData.setIsBuiltin(1);

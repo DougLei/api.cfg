@@ -40,6 +40,7 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 	private Integer orderCode;
 	/**
 	 * 是否启用
+	 * <p>默认值：1</p>
 	 */
 	private Integer isEnabled;
 

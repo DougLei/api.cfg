@@ -91,6 +91,7 @@ public interface ISysResource {
 	public ComSysResource turnToResource();
 	/**
 	 * 转换为要发布的资源对象
+	 * <p>主要是针对hbm和sql脚本资源</p>
 	 */
 	public ComSysResource turnToPublishResource();
 	
