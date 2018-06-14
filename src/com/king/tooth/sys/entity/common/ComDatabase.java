@@ -13,6 +13,7 @@ import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
@@ -28,7 +29,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDatabase extends AbstractSysResource implements ITable, IEntityPropAnalysis{
+public class ComDatabase extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
 	
 	/**
 	 * 数字库名

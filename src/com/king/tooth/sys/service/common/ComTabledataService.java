@@ -356,7 +356,7 @@ public class ComTabledataService extends AbstractPublishService {
 				if(hbm == null){
 					break;
 				}
-				session.save(hbm.getEntityName(), hbm.toEntityJson());
+				session.save(hbm.getEntityName(), hbm.toPublishEntityJson());
 				
 				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, hbm.getRefTableId(), orderCode++, null, null);
 				datalink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());

@@ -9,6 +9,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
@@ -22,7 +23,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComModuleOperation extends AbstractSysResource implements ITable, IEntityPropAnalysis{
+public class ComModuleOperation extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
 	
 	/**
 	 * 所属模块主键

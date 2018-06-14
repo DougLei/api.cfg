@@ -54,7 +54,7 @@ public abstract class AbstractPublishService extends AbstractService{
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			session.save(publish.getEntityName(), publish.toEntityJson());
+			session.save(publish.getEntityName(), publish.toPublishEntityJson());
 			
 			if(datalinkResourceName != null){
 				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publish.getId(), 1, null, null);
@@ -148,7 +148,7 @@ public abstract class AbstractPublishService extends AbstractService{
 					publishInfo.setErrMsg(entity.getBatchPublishMsg());
 					continue;
 				}
-				session.save(entity.getEntityName(), entity.toEntityJson());
+				session.save(entity.getEntityName(), entity.toPublishEntityJson());
 				
 				if(datalinkResourceName != null){
 					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, entity.getId(), 1, null, null);

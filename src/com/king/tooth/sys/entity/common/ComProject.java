@@ -8,6 +8,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
@@ -20,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProject extends AbstractSysResource implements ITable, IEntityPropAnalysis{
+public class ComProject extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
 	
 	/**
 	 * 关联的数据库主键

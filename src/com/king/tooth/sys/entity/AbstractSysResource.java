@@ -2,18 +2,21 @@ package com.king.tooth.sys.entity;
 
 import java.util.Date;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
  * 系统资源抽象类
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public abstract class AbstractSysResource extends BasicEntity implements ISysResource, IPublish{
+public abstract class AbstractSysResource extends BasicEntity implements ISysResource, IEntity{
 	/**
 	 * 资源是否有效
 	 * <p>默认值：1</p>
@@ -98,6 +101,13 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		this.lastUpdateDate = publishDate;
 		this.lastUpdatedUserId = userId;
 		return null;
+	}
+	
+	public JSONObject toPublishEntityJson() {
+		JSONObject json = toEntityJson();
+		json.put("refDataId", json.getString(ResourceNameConstants.ID));
+		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+		return json;
 	}
 	
 	/**

@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
+import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
@@ -19,7 +20,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComHibernateHbm extends AbstractSysResource implements ITable{
+public class ComHibernateHbm extends AbstractSysResource implements ITable, IPublish{
 	
 	/**
 	 * 关联的数据库主键
