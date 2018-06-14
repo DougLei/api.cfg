@@ -13,6 +13,7 @@ import javax.servlet.ServletContextListener;
 
 import org.springframework.util.Assert;
 
+import com.king.tooth.cache.CodeResourceCache;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.sys.service.init.app.InitAppSystemService;
@@ -71,26 +72,28 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 		RouteBodyAnalysis.initRouteRuleConfig();
 		// 初始化系统内置查询条件函数配置
 		BuiltinQueryCondFuncUtil.initBuiltinQueryCondFuncConfig();
-		// 初始化系统核心表信息
-		initSysCoreTableInfos();
+		// 初始化系统核心数据信息
+		initSysCoreDataInfos();
 		// 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
 		initGSqlParser();
 	}
 	
 	/**
-	 * 初始化系统核心表信息
+	 * 初始化系统核心数据信息
 	 */
-	private void initSysCoreTableInfos() {
-		if("1".equals(SysConfig.getSystemConfig("current.sys.type"))){// 是配置系统
+	private void initSysCoreDataInfos() {
+		String currentSysType = SysConfig.getSystemConfig("current.sys.type");
+		if("1".equals(currentSysType)){// 是配置系统
 			if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
 				new InitSystemService().loadSysBasicDatasBySysFirstStart();
 			}else{
 				new InitSystemService().loadSysBasicDatasByStart();
 			}
-		}else if("2".equals(SysConfig.getSystemConfig("current.sys.type"))){// 是运行系统
+		}else if("2".equals(currentSysType)){// 是运行系统
 			// 系统启动时，初始化配置数据库的表和所有基础数据
 			new InitAppSystemService().loadSysBasicDatasBySysStart();
 		}
+		CodeResourceCache.initCodeResourceMappings(currentSysType);
 	}
 
 	/**

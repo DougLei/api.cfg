@@ -523,21 +523,14 @@ public class ComTabledataService extends AbstractPublishService {
 	public void batchCancelPublishTable(String databaseId, String projectId, List<Object> tableIds) {
 		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size());
 		ComTabledata table;
-		StringBuilder deleteDataHql = new StringBuilder();
-		StringBuilder deleteResourceHql = new StringBuilder("delete ComSysResource where projectId='"+projectId+"' and refResourceId in (");
-		StringBuilder deleteDatalinkHql = new StringBuilder("delete " + comProjectComHibernateHbmLinkResourceName + " where "+ResourceNameConstants.LEFT_ID+"='"+projectId+"' and " + ResourceNameConstants.RIGHT_ID + " in (");
 		
 		for (Object tableId : tableIds) {
-			table = getObjectById(tableId.toString(), ComTabledata.class);
-			if(!publishInfoService.validResourceIsPublished(null, projectId, table.getId(), null)){
+			if(!publishInfoService.validResourceIsPublished(null, projectId, tableId.toString(), null)){
 //				table.setBatchPublishMsg("["+table.getTableName()+"]表未发布，无法取消发布");
 				continue;
 			}
+			table = getObjectById(tableId.toString(), ComTabledata.class);
 			tables.add(table);
-			
-			deleteDataHql.append("delete " + table.getEntityName() + " where projectId='"+projectId+"' and (" + ResourceNameConstants.ID + "='"+tableId+"' or refTableId = '"+tableId+"');");
-			deleteResourceHql.append("'").append(tableId).append("',");
-			deleteDatalinkHql.append("'").append(tableId).append("',");
 		}
 		
 		if(tables.size() == 0){
@@ -545,21 +538,12 @@ public class ComTabledataService extends AbstractPublishService {
 			return;
 		}
 		
-		deleteResourceHql.setLength(deleteResourceHql.length()-1);
-		deleteResourceHql.append(")");
-		deleteDatalinkHql.setLength(deleteResourceHql.length()-1);
-		deleteDatalinkHql.append(")");
-		deleteDataHql.append(deleteResourceHql).append(";").append(deleteDatalinkHql);
-		deleteResourceHql.setLength(0);
-		deleteDatalinkHql.setLength(0);
-		
 		// 远程过去drop表
 		ComDatabase database = getObjectById(projectId, ComDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		tableHandler.dropTable(tables);
-		
-		executeRemoteUpdate(databaseId, null, deleteDataHql.toString().split(";"));
-		publishInfoService.batchDeletePublishedData(null, tableIds);
 		tables.clear();
+		
+		publishInfoService.batchDeletePublishedData(projectId, tableIds);
 	}
 }

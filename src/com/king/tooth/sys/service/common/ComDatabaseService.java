@@ -22,6 +22,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -125,7 +126,9 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	private List<ComTabledata> getBuiltinAppBasicTables(){
 		List<ComTabledata> builtinAppBasicTables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
-				"from ComTabledata where isEnabled =1 and isBuiltin=1 and isNeedDeploy=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
+				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
+		builtinAppBasicTables.addAll(HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
+				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=0 and belongPlatformType="+ISysResource.COMMON_PLATFORM));
 		for (ComTabledata table : builtinAppBasicTables) {
 			if(table.getIsCore() == 1){
 				coreTableCount++;
@@ -199,12 +202,16 @@ public class ComDatabaseService extends AbstractPublishService {
 		dbTableHandler.createTable(appSystemCoreTables, false);
 		
 		// 创建dataSource和sessionFactory
+		List<InputStream> coreTableOfHbmInputstreams = null;
 		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
 		if(sessionFactory == null){
 			DynamicDBUtil.addDataSource(database);
 			sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
-			sessionFactory.appendNewHbmConfig(getCoreTableOfHbmInputstreams(appSystemCoreTables));
+			coreTableOfHbmInputstreams = getCoreTableOfHbmInputstreams(appSystemCoreTables);
+			sessionFactory.appendNewHbmConfig(coreTableOfHbmInputstreams);
+			coreTableOfHbmInputstreams.clear();
 		}
+		ResourceHandlerUtil.clearTables(appSystemCoreTables);
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
 		publishInfoService.deletePublishedData(null, databaseId);

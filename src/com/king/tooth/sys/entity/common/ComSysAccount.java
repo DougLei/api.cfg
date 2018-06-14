@@ -10,7 +10,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.IPublishBasicData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -24,7 +23,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysAccount extends BasicEntity implements ITable, IEntity, IPublishBasicData{
+public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 
 	/**
 	 * 登录名
@@ -150,6 +149,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity, IPubl
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
@@ -234,13 +234,5 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity, IPubl
 			return true;
 		}
 		return false;
-	}
-	
-	public String getBasicDataResourceName() {
-		return getEntityName();
-	}
-	
-	public JSONObject toJsonData() {
-		return toEntityJson();
 	}
 }

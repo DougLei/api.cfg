@@ -29,7 +29,7 @@ public class ComProjectComCodeLinks implements Serializable, ITable {
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(4);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(5);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
 		leftIdColumn.setName("左资源id");

@@ -30,11 +30,11 @@ public class BasicEntity implements Serializable{
 	/**
 	 * 创建时间
 	 */
-	protected Date createTime;
+	protected Date createDate;
 	/**
 	 * 最后修改时间
 	 */
-	protected Date lastUpdateTime;
+	protected Date lastUpdateDate;
 	
 	/**
 	 * 处理基础资源对象的属性
@@ -42,8 +42,8 @@ public class BasicEntity implements Serializable{
 	 */
 	public void processBasicEntityProps(EntityJson entityJson){
 		entityJson.put(ResourceNameConstants.ID, id);
-		entityJson.put(ResourceNameConstants.CREATE_TIME, createTime);
-		entityJson.put(ResourceNameConstants.LAST_UPDATE_TIME, lastUpdateTime);
+		entityJson.put(ResourceNameConstants.CREATE_DATE, createDate);
+		entityJson.put(ResourceNameConstants.LAST_UPDATE_DATE, lastUpdateDate);
 	}
 	
 	public String getProjectId() {
@@ -70,17 +70,17 @@ public class BasicEntity implements Serializable{
 	public void setLastUpdatedUserId(String lastUpdatedUserId) {
 		this.lastUpdatedUserId = lastUpdatedUserId;
 	}
-	public Date getCreateTime() {
-		return createTime;
+	public Date getCreateDate() {
+		return createDate;
 	}
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
-	public Date getLastUpdateTime() {
-		return lastUpdateTime;
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
 	}
-	public void setLastUpdateTime(Date lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
 	}
 
 

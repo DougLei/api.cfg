@@ -201,20 +201,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @param projectModuleIds
 	 */
 	public void batchCancelPublishProjectModule(String databaseId, String projectId, List<Object> projectModuleIds) {
-		ComProjectModule projectModule = new ComProjectModule();
-		StringBuilder hql = new StringBuilder("delete " + projectModule.getEntityName() + " where " + ResourceNameConstants.ID + "in (");
-		for (Object projectModuleId : projectModuleIds) {
-			projectModule = getObjectById(projectModuleId.toString(), ComProjectModule.class);
-			if(!publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
-//				projectModule.setBatchPublishMsg("["+projectModule.getName()+"]模块未发布，无法取消发布");
-				continue;
-			}
-			hql.append("'").append(projectModuleId).append("',");
-		}
-		hql.setLength(hql.length()-1);
-		hql.append(")");
-		
-		executeRemoteUpdate(databaseId, null, hql.toString());
-		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
+		publishInfoService.batchDeletePublishedData(projectId, projectModuleIds);
 	}
 }

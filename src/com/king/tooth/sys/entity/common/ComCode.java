@@ -95,7 +95,7 @@ public class ComCode extends AbstractSysResource implements ITable{
 		codeResourceNameColumn.setOrderCode(1);
 		columns.add(codeResourceNameColumn);
 		
-		ComColumndata classPathColumn = new ComColumndata("class_path", DataTypeConstants.STRING, 150);
+		ComColumndata classPathColumn = new ComColumndata("class_path", DataTypeConstants.STRING, 120);
 		classPathColumn.setName("类的全路径");
 		classPathColumn.setComments("类的全路径");
 		classPathColumn.setOrderCode(2);

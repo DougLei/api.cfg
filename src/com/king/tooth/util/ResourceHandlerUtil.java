@@ -1,6 +1,7 @@
 package com.king.tooth.util;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -61,8 +63,8 @@ public class ResourceHandlerUtil {
 		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
 				&& !entityName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 不是关系表，才要这些值
 			Date currentDate = new Date();
-			data.put(ResourceNameConstants.CREATE_TIME, currentDate);
-			data.put(ResourceNameConstants.LAST_UPDATE_TIME, currentDate);
+			data.put(ResourceNameConstants.CREATE_DATE, currentDate);
+			data.put(ResourceNameConstants.LAST_UPDATE_DATE, currentDate);
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
@@ -86,7 +88,7 @@ public class ResourceHandlerUtil {
 	public static void initBasicPropValsForUpdate(String entityName, Map<String, Object> data, String shortDesc) {
 		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
 				&& !entityName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 不是关系表，才要修改这些值
-			data.put(ResourceNameConstants.LAST_UPDATE_TIME,  new Date());
+			data.put(ResourceNameConstants.LAST_UPDATE_DATE,  new Date());
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
@@ -171,5 +173,16 @@ public class ResourceHandlerUtil {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * 清除表信息
+	 * @param tables
+	 */
+	public static void clearTables(List<ComTabledata> tables){
+		for (ComTabledata table : tables) {
+			table.clear();
+		}
+		tables.clear();
 	}
 }

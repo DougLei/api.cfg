@@ -22,6 +22,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.app.ComRole;
 import com.king.tooth.sys.entity.app.datalinks.ComProjectComHibernateHbmLinks;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
@@ -47,6 +48,7 @@ import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -98,6 +100,7 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComColumndata().toCreateTable());
 		tables.add(new ComTabledata().toCreateTable());
 		tables.add(new ComPublishInfo().toCreateTable());
+		tables.add(new ComPublishBasicData().toCreateTable());
 		tables.add(new ComProjectComTabledataLinks().toCreateTable());
 		// 运行系统表
 		tables.add(new ComRole().toCreateTable());
@@ -105,16 +108,6 @@ public class InitSystemService extends AbstractService{
 		for (ComTabledata table : tables) {
 			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
 		}
-	}
-	/**
-	 * 清除表信息
-	 * @param tables
-	 */
-	private void clearTables(List<ComTabledata> tables){
-		for (ComTabledata table : tables) {
-			table.clear();
-		}
-		tables.clear();
 	}
 	
 	/**
@@ -131,7 +124,7 @@ public class InitSystemService extends AbstractService{
 			Log4jUtil.debug("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
 		}finally{
-			clearTables(tables);
+			ResourceHandlerUtil.clearTables(tables);
 		}
 	}
 	
@@ -329,6 +322,7 @@ public class InitSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "数据库资源", "4", 4);
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目资源", "5", 5);
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目模块资源", "6", 6);
+		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "基础数据资源", "7", 7);
 	}
 	/**
 	 * 添加数据字典

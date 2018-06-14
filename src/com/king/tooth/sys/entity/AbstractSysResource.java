@@ -81,10 +81,10 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		this.isBuiltin = 0;
 		this.isNeedDeploy = 0;
 		Date publishDate = new Date();
-		this.createTime = publishDate;
+		this.createDate = publishDate;
 		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		this.createUserId = userId;
-		this.lastUpdateTime = publishDate;
+		this.lastUpdateDate = publishDate;
 		this.lastUpdatedUserId = userId;
 		return null;
 	}

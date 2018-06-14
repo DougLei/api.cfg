@@ -8,7 +8,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.IPublishBasicData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -20,7 +19,7 @@ import com.king.tooth.util.JsonUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDataDictionary extends BasicEntity implements ITable, IEntity, IPublishBasicData{
+public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 编码
 	 */
@@ -105,6 +104,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity, I
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
@@ -170,13 +170,5 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity, I
 		entityJson.put("isCore", isCore);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
-	}
-
-	public String getBasicDataResourceName() {
-		return getEntityName();
-	}
-
-	public JSONObject toJsonData() {
-		return toEntityJson();
 	}
 }

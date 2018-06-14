@@ -31,7 +31,11 @@ public class ResourceNameConstants {
 	/**
 	 * 创建时间的属性名称
 	 */
-	public static final String CREATE_TIME = "createTime";
+	public static final String CREATE_DATE = "createDate";
+	/**
+	 * 最后修改时间的属性名称
+	 */
+	public static final String LAST_UPDATE_DATE = "lastUpdateDate";
 	/**
 	 * 创建人主键的属性名称
 	 */
@@ -40,10 +44,6 @@ public class ResourceNameConstants {
 	 * 最后修改人主键的属性名称
 	 */
 	public static final String LAST_UPDATED_USER_ID = "lastUpdatedUserId";
-	/**
-	 * 最后修改时间的属性名称
-	 */
-	public static final String LAST_UPDATE_TIME = "lastUpdateTime";
 	
 	//-----------------------------------------------------------------------------------------------
 	/**

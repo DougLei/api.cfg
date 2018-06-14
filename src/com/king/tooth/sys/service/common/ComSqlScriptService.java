@@ -323,32 +323,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public void batchCancelPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
-		ComSqlScript sqlScript = new ComSqlScript();
-		StringBuilder deleteDataHql = new StringBuilder("delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "in (");
-		StringBuilder deleteResourceHql = new StringBuilder("delete ComSysResource where projectId='"+projectId+"' and refResourceId in (");
-		StringBuilder deleteDatalinkHql = new StringBuilder("delete " + comProjectComSqlScriptLinksResourceName + " where "+ResourceNameConstants.LEFT_ID+"='"+projectId+"' and " + ResourceNameConstants.RIGHT_ID + " in (");
-		
-		for (Object sqlScriptId : sqlScriptIds) {
-			sqlScript = getObjectById(sqlScriptId.toString(), ComSqlScript.class);
-			if(!publishInfoService.validResourceIsPublished(null, projectId, sqlScript.getId(), null)){
-//				sqlScript.setBatchPublishMsg("["+sqlScript.getSqlScriptResourceName()+"]sql脚本未发布，无法取消发布");
-				continue;
-			}
-			deleteDataHql.append("'").append(sqlScriptId).append("',");
-			deleteResourceHql.append("'").append(sqlScriptId).append("',");
-			deleteDatalinkHql.append("'").append(sqlScriptId).append("',");
-		}
-		deleteDataHql.setLength(deleteDataHql.length()-1);
-		deleteDataHql.append(")");
-		deleteResourceHql.setLength(deleteResourceHql.length()-1);
-		deleteResourceHql.append(")");
-		deleteDatalinkHql.setLength(deleteResourceHql.length()-1);
-		deleteDatalinkHql.append(")");
-		deleteDataHql.append(";").append(deleteResourceHql).append(";").append(deleteDatalinkHql);
-		deleteResourceHql.setLength(0);
-		deleteDatalinkHql.setLength(0);
-		
-		executeRemoteUpdate(databaseId, null, deleteDataHql.toString().split(";"));
-		publishInfoService.batchDeletePublishedData(null, sqlScriptIds);
+		publishInfoService.batchDeletePublishedData(projectId, sqlScriptIds);
 	}
 }

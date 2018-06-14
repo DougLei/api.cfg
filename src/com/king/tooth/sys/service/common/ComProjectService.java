@@ -9,8 +9,8 @@ import org.hibernate.internal.SessionFactoryImpl;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.sys.entity.IPublishBasicData;
 import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.database.DynamicDBUtil;
@@ -171,8 +171,7 @@ public class ComProjectService extends AbstractPublishService {
 		executeRemotePublish(project.getRefDatabaseId(), null, project, null, null);
 		
 		// 给远程系统的内置表中插入基础数据
-//		executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId, publishBasicDatas);
-		
+		executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
 		
 		project.setIsCreated(1);
 		HibernateUtil.updateObject(project, null);
@@ -202,7 +201,7 @@ public class ComProjectService extends AbstractPublishService {
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
 					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt."+ResourceNameConstants.RIGHT_ID+" = table.id)" +
 							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
-							" and (pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or table.belongPlatformType="+ISysResource.COMMON_PLATFORM );
+							" and pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -241,6 +240,7 @@ public class ComProjectService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(null, projectId);
 		
 		// 删除远程系统内置表中的基础数据
+		executeRemoteDeleteBasicData(project.getRefDatabaseId(), projectId);
 		
 		project.setIsCreated(0);
 		HibernateUtil.updateObject(project, null);
@@ -270,7 +270,7 @@ public class ComProjectService extends AbstractPublishService {
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
 					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt."+ResourceNameConstants.RIGHT_ID+" = table.id)" +
 							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
-							" and (pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or table.belongPlatformType="+ISysResource.COMMON_PLATFORM );
+							" and pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -291,32 +291,28 @@ public class ComProjectService extends AbstractPublishService {
 	
 	/**
 	 * 执行远程保存基础数据操作
-	 * <p>数据库id和项目id，这两个参数只要有一个值不为null即可</p>
 	 * @param databaseId 
 	 * @param projectId  
-	 * @param publishBasicDatas
 	 */
-	private void executeRemoteSaveBasicData(String databaseId, String projectId, List<IPublishBasicData> publishBasicDatas){
-		if(databaseId == null){
-			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
-		}
-		
-		// 获取发布信息对象，对项目信息进行发布
+	private void executeRemoteSaveBasicData(String databaseId, String projectId){
 		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
 		Session session = null;
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			for (IPublishBasicData pbd : publishBasicDatas) {
-				session.save(pbd.getBasicDataResourceName(), pbd.toJsonData());
+			// 最后可以根据实际开发的结果，决定这里到底需不需要分页
+			int count = (int) HibernateUtil.executeUniqueQueryBySql(
+					"select count(1) from com_publish_basic_data where is_enabled = 1 and belong_platform_type!="+ISysResource.CONFIG_PLATFORM, null);
+			int loopCount = count/50 + 1;
+			List<ComPublishBasicData> basicDatas;// 获取要发布的基础信息集合
+			for(int i=0;i<loopCount;i++){
+				basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, "50", i+"", 
+						"from ComPublishBasicData where belongPlatformType != "+ISysResource.CONFIG_PLATFORM);
+				for (ComPublishBasicData basicData : basicDatas) {
+					session.save(basicData.getBasicDataResourceName(), basicData.getBasicDataJsonObject(projectId));
+				}
+				basicDatas.clear();
 			}
-			
-//			List<String> deletePublishBasicDataResourceName = null;
-//			StringBuilder hql = new StringBuilder();
-//			for (String pbd : deletePublishBasicDataResourceName) {
-//				hql.append("delete ").append(deletePublishBasicDataResourceName).append(" where projectId = '"+projectId+"'");
-//			}
-			
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
@@ -325,6 +321,40 @@ public class ComProjectService extends AbstractPublishService {
 				session.flush();
 				session.close();
 			}
+		}
+	}
+	
+	/**
+	 * 执行远程删除基础数据操作
+	 * @param databaseId 
+	 * @param projectId  
+	 */
+	private void executeRemoteDeleteBasicData(String databaseId, String projectId){
+		List<Object> builtinTableTableNames = HibernateUtil.executeListQueryByHqlArr(null, null, 
+				"select tableName from ComTabledata where isEnabled =1 and isNeedDeploy=1  and isBuiltin=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
+		builtinTableTableNames.addAll(HibernateUtil.executeListQueryByHqlArr(null, null, 
+				"select tableName from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=0 and belongPlatformType="+ISysResource.COMMON_PLATFORM));
+		StringBuilder hql = new StringBuilder();
+		for (Object builtinTableTableName : builtinTableTableNames) {
+			hql.append("delete ").append(builtinTableTableName).append(" where project_id = '"+projectId+"'");
+		}
+		builtinTableTableNames.clear();
+		
+		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			session.createSQLQuery(hql.toString()).executeUpdate();
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+		}finally{
+			if(session != null){
+				session.flush();
+				session.close();
+			}
+			hql.setLength(0);
 		}
 	}
 }
