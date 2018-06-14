@@ -108,7 +108,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		
 		String operResult = null;
-		if(!isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+		if(!isPlatformDeveloper){
 			if(StrUtils.isEmpty(sqlScript.getProjectId())){
 				return "表关联的项目id不能为空！";
 			}
@@ -116,9 +116,11 @@ public class ComSqlScriptService extends AbstractPublishService {
 			sqlScript.setProjectId(null);
 			
 			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId(), null)){
-				return "该sql资源已经发布，不能修改sql资源名，或取消发布后再修改";
+				return "该sql脚本已经发布，不能修改sql脚本信息，或取消发布后再修改";
 			}
-			operResult = validSqlScriptResourceNameIsExists(sqlScript);
+			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+				operResult = validSqlScriptResourceNameIsExists(sqlScript);
+			}
 		}
 		
 		if(isPlatformDeveloper){

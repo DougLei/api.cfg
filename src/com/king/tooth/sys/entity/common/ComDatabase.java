@@ -159,7 +159,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
 		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name", DataTypeConstants.STRING, 100);
 		dbDisplayNameColumn.setName("数字库名");

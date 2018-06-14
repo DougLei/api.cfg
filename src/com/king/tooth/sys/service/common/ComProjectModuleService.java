@@ -71,12 +71,12 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(oldProjectModule == null){
 			return "没有找到id为["+projectModule.getId()+"]的模块对象信息";
 		}
+		if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getRefProjectId(), oldProjectModule.getId(), null)){
+			return "该模块已经发布，不能修改模块信息，或取消发布后再修改";
+		}
 		
 		String operResult = null;
 		if(!oldProjectModule.getCode().equals(projectModule.getCode())){
-			if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getRefProjectId(), oldProjectModule.getId(), null)){
-				return "该模块已经发布，不能修改模块编码，或取消发布后再修改";
-			}
 			operResult = validProjectModuleCodeIsExists(projectModule);
 		}
 		

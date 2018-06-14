@@ -81,7 +81,7 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 		table.setIsCreated(1);
 		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
 		ComColumndata basicDataResourceNameColumn = new ComColumndata("basic_data_resource_name", DataTypeConstants.STRING, 60);
 		basicDataResourceNameColumn.setName("基础数据所对应的资源名");

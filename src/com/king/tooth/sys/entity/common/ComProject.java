@@ -82,7 +82,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");

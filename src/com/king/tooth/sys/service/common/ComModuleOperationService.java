@@ -72,12 +72,16 @@ public class ComModuleOperationService extends AbstractPublishService {
 			return "没有找到id为["+moduleOperation.getId()+"]的功能对象信息";
 		}
 		
+		ComProjectModule projectModule = getObjectById(oldModuleOperation.getModuleId(), ComProjectModule.class);
+		if(projectModule == null){
+			return "功能关联的，id为["+moduleOperation.getModuleId()+"]的模块信息不存在";
+		}
+		if(publishInfoService.validResourceIsPublished(null, projectModule.getRefProjectId(), oldModuleOperation.getId(), null)){
+			return "该功能已经发布，不能修改功能信息，或取消发布后再修改";
+		}
+		
 		String operResult = null;
 		if(!oldModuleOperation.getCode().equals(moduleOperation.getCode())){
-			ComProjectModule projectModule = getObjectById(oldModuleOperation.getModuleId(), ComProjectModule.class);
-			if(publishInfoService.validResourceIsPublished(null, projectModule.getRefProjectId(), oldModuleOperation.getId(), null)){
-				return "该功能已经发布，不能修改功能编码，或取消发布后再修改";
-			}
 			operResult = validModuleOperationCodeIsExists(projectModule.getRefProjectId(), moduleOperation);
 		}
 		

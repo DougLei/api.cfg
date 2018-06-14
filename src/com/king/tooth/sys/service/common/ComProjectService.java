@@ -76,12 +76,12 @@ public class ComProjectService extends AbstractPublishService {
 		if(oldProject == null){
 			return "没有找到id为["+project.getId()+"]的项目对象信息";
 		}
+		if(publishInfoService.validResourceIsPublished(oldProject.getRefDatabaseId(), oldProject.getId(), null, null)){
+			return "该项目已经发布，不能修改项目信息，或取消发布后再修改";
+		}
 		
 		String operResult = null;
 		if(!oldProject.getProjCode().equals(project.getProjCode())){
-			if(publishInfoService.validResourceIsPublished(oldProject.getRefDatabaseId(), oldProject.getId(), null, null)){
-				return "该项目已经发布，不能修改项目编码，或取消发布后再修改";
-			}
 			operResult = validProjectCodeIsExists(project);
 		}
 		

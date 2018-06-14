@@ -87,7 +87,7 @@ public class ComCode extends AbstractSysResource implements ITable{
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
 		ComColumndata codeResourceNameColumn = new ComColumndata("code_resource_name", DataTypeConstants.STRING, 60);
 		codeResourceNameColumn.setName("代码资源名");

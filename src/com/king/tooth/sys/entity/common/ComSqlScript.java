@@ -264,7 +264,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
 		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption", DataTypeConstants.STRING, 50);
 		sqlScriptCaptionColumn.setName("sql脚本的标题");

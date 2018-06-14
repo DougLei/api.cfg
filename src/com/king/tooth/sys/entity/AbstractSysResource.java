@@ -54,6 +54,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * <p>默认值：0</p>
 	 */
 	protected Integer isCreated;
+	/**
+	 * 引用的数据主键
+	 * <p>发布数据到运行平台时，将发布的数据id(在配置平台中的)保存到这个字段中，然后在运行平台重新创建一个新的id去保存数据</p>
+	 */
+	protected String refDataId;
 	
 	// -----------------------------------------------------------------
 	
@@ -149,5 +154,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	}
 	public void setBelongPlatformType(Integer belongPlatformType) {
 		this.belongPlatformType = belongPlatformType;
+	}
+	public String getRefDataId() {
+		return refDataId;
+	}
+	public void setRefDataId(String refDataId) {
+		this.refDataId = refDataId;
 	}
 }

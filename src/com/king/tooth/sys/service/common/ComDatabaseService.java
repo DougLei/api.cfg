@@ -69,13 +69,13 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(oldDatabase == null){
 			return "没有找到id为["+database.getId()+"]的数据库对象信息";
 		}
+		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){ // 如果已发布，则发出提示信息
+			return "【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改数据库信息，或取消发布后再修改";
+		}
 		
 		String operResult = null;
 		boolean databaseLinkInfoIsSame = oldDatabase.compareLinkInfoIsSame(database);
 		if(!databaseLinkInfoIsSame){// 如果修改了连接信息
-			if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){ // 如果已发布，则发出提示信息
-				return "【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改连接信息，或取消发布后再修改";
-			}
 			operResult = validDatabaseDataIsExists(database);
 		}
 		if(operResult == null){

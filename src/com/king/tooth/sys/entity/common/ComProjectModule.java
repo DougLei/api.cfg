@@ -125,7 +125,7 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", DataTypeConstants.STRING, 32);
 		refProjectIdColumn.setName("关联的项目主键");

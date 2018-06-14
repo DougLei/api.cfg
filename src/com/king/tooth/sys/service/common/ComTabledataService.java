@@ -106,10 +106,10 @@ public class ComTabledataService extends AbstractPublishService {
 		if(oldTable == null){
 			return "没有找到id为["+table.getId()+"]的表对象信息";
 		}
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		String operResult = null;
-		if(!isPlatformDeveloper && !oldTable.getTableName().equals(table.getTableName())){
+		if(!isPlatformDeveloper){
 			if(StrUtils.isEmpty(table.getProjectId())){
 				return "表关联的项目id不能为空！";
 			}
@@ -117,9 +117,11 @@ public class ComTabledataService extends AbstractPublishService {
 			table.setProjectId(null);
 			
 			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId(), null)){
-				return "该表已经发布，不能修改表名，或取消发布后再修改";
+				return "该表已经发布，不能修改表信息，或取消发布后再修改";
 			}
-			operResult = validTableNameIsExists(table);
+			if(!oldTable.getTableName().equals(table.getTableName())){
+				operResult = validTableNameIsExists(table);
+			}
 		}
 		
 		if(operResult == null){
