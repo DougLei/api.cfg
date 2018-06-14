@@ -20,6 +20,7 @@ import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.app.ComAttachment;
 import com.king.tooth.sys.entity.app.ComRole;
 import com.king.tooth.sys.entity.app.datalinks.ComProjectComHibernateHbmLinks;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -31,6 +32,7 @@ import com.king.tooth.sys.entity.common.ComCode;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
+import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
@@ -71,7 +73,7 @@ public class InitSystemService extends AbstractService{
 				CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());
 	}
 	
-	private List<ComTabledata> tables = new ArrayList<ComTabledata>(22);
+	private List<ComTabledata> tables = new ArrayList<ComTabledata>(24);
 	/**
 	 * 初始化系统涉及到的所有表
 	 * <p>包括每个表中的基础列</p>
@@ -82,6 +84,7 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
 		tables.add(new ComProjectModule().toCreateTable());
+		tables.add(new ComModuleOperation().toCreateTable());
 		tables.add(new ComHibernateHbm().toCreateTable());
 		tables.add(new ComSqlScript().toCreateTable());
 		tables.add(new ComCode().toCreateTable());
@@ -105,6 +108,7 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComProjectComTabledataLinks().toCreateTable());
 		// 运行系统表
 		tables.add(new ComRole().toCreateTable());
+		tables.add(new ComAttachment().toCreateTable());
 		// 初始化基础列
 		for (ComTabledata table : tables) {
 			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);

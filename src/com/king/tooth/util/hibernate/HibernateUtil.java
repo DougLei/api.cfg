@@ -183,6 +183,9 @@ public class HibernateUtil {
 		if(hbmContents != null && hbmContents.size() > 0){
 			List<InputStream> inputs = new ArrayList<InputStream>(hbmContents.size());
 			for(String hbmContent: hbmContents){
+				if(StrUtils.isEmpty(hbmContent)){
+					break;
+				}
 				inputs.add(new ByteArrayInputStream(hbmContent.getBytes()));
 			}
 			getSessionFactory().appendNewHbmConfig(inputs);
@@ -197,6 +200,9 @@ public class HibernateUtil {
 		if(hbmContent != null && hbmContent.length > 0){
 			List<InputStream> inputs = new ArrayList<InputStream>(hbmContent.length);
 			for(String hc: hbmContent){
+				if(StrUtils.isEmpty(hc)){
+					break;
+				}
 				inputs.add(new ByteArrayInputStream(hc.getBytes()));
 			}
 			getSessionFactory().appendNewHbmConfig(inputs);

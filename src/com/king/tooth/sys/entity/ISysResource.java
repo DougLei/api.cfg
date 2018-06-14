@@ -33,9 +33,13 @@ public interface ISysResource {
 	 */
 	public static final Integer PROJECT_MODULE = 6;
 	/**
-	 * 7：基础数据资源类型
+	 * 7：项目模块操作资源类型
 	 */
-	public static final Integer BASIC_DATA = 7;
+	public static final Integer PROJECT_MODULE_OPERATION = 7;
+	/**
+	 * 8：基础数据资源类型
+	 */
+	public static final Integer BASIC_DATA = 8;
 	
 	/**
 	 * 请求资源的方式：GET

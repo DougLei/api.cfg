@@ -2104,11 +2104,18 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 			return;
 		}
 		Configuration cfg = new Configuration();
+		int count = 0;
 		for (InputStream in : input) {
+			if(in == null){
+				break;
+			}
+			count++;
 			cfg.addInputStream(in);
 		}
-		Map<String, ClassMetadata> newMappingConfClassMetadata = appendNewHbmConfig(cfg);
-		appendToHibernateDefineResourcePropNameMap(newMappingConfClassMetadata, true);
+		if(count > 0){
+			Map<String, ClassMetadata> newMappingConfClassMetadata = appendNewHbmConfig(cfg);
+			appendToHibernateDefineResourcePropNameMap(newMappingConfClassMetadata, true);
+		}
 	}
 	
 	/**
