@@ -213,7 +213,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
 		publishInfoService.deletePublishedData(null, databaseId);
-		executeRemotePublish(databaseId, null, database, null, null);
+		executeRemotePublish(databaseId, null, database, 0, null);
 		
 		database.setIsCreated(1);
 		HibernateUtil.updateObject(database, null);
@@ -240,15 +240,15 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "id为["+databaseId+"]的数据库未发布，无法取消发布";
 		}
 		
-		// 清除该数据库下，所有和项目id的映射信息
-		ProjectIdRefDatabaseIdMapping.clearMapping(databaseId);
-		
 		try {
 			// 先测试库能不能正常连接上
 			String testLinkResult = database.testDbLink();
 			if(testLinkResult.startsWith("err")){
 				return "取消发布数据库失败:" + testLinkResult;
 			}
+			
+			// 清除该数据库下，所有和项目id的映射信息
+			ProjectIdRefDatabaseIdMapping.clearMapping(databaseId);
 			
 			// 移除dataSource和sessionFacotry
 			DynamicDBUtil.removeDataSource(databaseId);

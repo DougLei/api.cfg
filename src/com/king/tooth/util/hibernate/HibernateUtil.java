@@ -427,33 +427,40 @@ public class HibernateUtil {
 	
 	/**
 	 * 保存关联关系对象信息
+	 * @param projectId
 	 * @param entityName 实体名
 	 * @param leftId
 	 * @param rightId
 	 */
-	public static void saveDataLinks(String entityName, String leftId, String rightId){
-		JSONObject datalink = ResourceHandlerUtil.getDataLinksObject(leftId, rightId, 1, null, null);
+	public static void saveDataLinks(String projectId, String entityName, String leftId, String rightId){
+		JSONObject datalink = ResourceHandlerUtil.getDataLinksObject(projectId, leftId, rightId, 1, null, null);
 		HibernateUtil.saveObject(entityName, datalink, null);
 	}
 	
 	/**
 	 * 删除关联关系对象信息
+	 * @param projectId
 	 * @param entityName 实体名
 	 * @param leftId
 	 * @param rightId
 	 */
-	public static void deleteDataLinks(String entityName, String leftId, String rightId){
-		String hql = "delete "+entityName+" where ";
+	public static void deleteDataLinks(String projectId, String entityName, String leftId, String rightId){
+		List<Object> params = new ArrayList<Object>(3);
+		String hql = "delete "+entityName+" where projectId = ?";
+		params.add(projectId);
+		
 		if(leftId != null){
 			hql += ResourceNameConstants.LEFT_ID + "=?";
+			params.add(leftId);
 		}
 		if(rightId != null){
 			if(leftId != null){
 				hql += " and ";
 			}
 			hql += ResourceNameConstants.RIGHT_ID + "=?";
+			params.add(rightId);
 		}
-		executeUpdateByHqlArr(SqlStatementType.DELETE, hql, leftId, rightId);
+		executeUpdateByHql(SqlStatementType.DELETE, hql, params);
 	}
 	
 	//------------------------------------------------------------------------------------------------------

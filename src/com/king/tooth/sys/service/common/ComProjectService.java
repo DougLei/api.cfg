@@ -168,7 +168,7 @@ public class ComProjectService extends AbstractPublishService {
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projectId, project.getRefDatabaseId());
 		
 		publishInfoService.deletePublishedData(null, projectId);
-		executeRemotePublish(project.getRefDatabaseId(), null, project, null, null);
+		executeRemotePublish(project.getRefDatabaseId(), project.getId(), project, 0, null);
 		
 		// 给远程系统的内置表中插入基础数据
 		executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
@@ -236,10 +236,10 @@ public class ComProjectService extends AbstractPublishService {
 		// 将项目id和数据库id取消映射
 		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
 		
-		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectId+"'");
+		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where refDataId='"+projectId+"'");
 		publishInfoService.deletePublishedData(null, projectId);
 		
-		// 删除远程系统内置表中的基础数据
+		// 删除远程系统内置表中的所有和项目相关的数据，即projectId=project.getId()的所有数据
 		executeRemoteDeleteBasicData(project.getRefDatabaseId(), projectId);
 		
 		project.setIsCreated(0);

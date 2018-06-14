@@ -10,6 +10,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -343,7 +344,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
-	public ComSysResource turnToPublishResource() {
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	
@@ -397,5 +398,11 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		publish.setResourceType(DATABASE);
 		super.turnToPublish();
 		return publish;
+	}
+	
+	public JSONObject toPublishEntityJson(String projectId) {
+		JSONObject json = toEntityJson();
+		json.put("refDataId", json.getString(ResourceNameConstants.ID));
+		return json;
 	}
 }

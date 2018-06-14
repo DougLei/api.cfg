@@ -376,7 +376,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return resource;
 	}
 	
-	public ComSysResource turnToPublishResource() {
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	

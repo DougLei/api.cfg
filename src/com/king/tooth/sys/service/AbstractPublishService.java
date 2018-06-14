@@ -33,14 +33,13 @@ public abstract class AbstractPublishService extends AbstractService{
 	
 	/**
 	 * 执行远程发布操作
-	 * <p>数据库id和项目id，这两个参数只要有一个值不为null即可</p>
-	 * @param databaseId 
-	 * @param projectId  
+	 * @param databaseId 可以为null
+	 * @param projectId 必须有值
 	 * @param publish
-	 * @param resource
+	 * @param processSysResource
 	 * @param datalinkResourceName
 	 */
-	protected void executeRemotePublish(String databaseId, String projectId, IPublish publish, ISysResource resource, String datalinkResourceName){
+	protected void executeRemotePublish(String databaseId, String projectId, IPublish publish, int processSysResource, String datalinkResourceName){
 		if(databaseId == null){
 			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
 		}
@@ -54,16 +53,17 @@ public abstract class AbstractPublishService extends AbstractService{
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			session.save(publish.getEntityName(), publish.toPublishEntityJson());
+			JSONObject publishEntityJson = publish.toPublishEntityJson(projectId);
+			session.save(publish.getEntityName(), publishEntityJson);
 			
 			if(datalinkResourceName != null){
-				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publish.getId(), 1, null, null);
+				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, projectId, publishEntityJson.getString(ResourceNameConstants.ID), 1, null, null);
 				dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(datalinkResourceName, dataLink);
 			}
 			
-			if(resource != null){ // 如果资源对象不为空，同时发布资源
-				ComSysResource csr = resource.turnToPublishResource();
+			if(processSysResource == 1){ // 标识需要处理资源
+				ComSysResource csr = ((ISysResource)publish).turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
 				session.save(csr.getEntityName(), csr.toEntityJson());
 			}
 			session.getTransaction().commit();
@@ -119,14 +119,17 @@ public abstract class AbstractPublishService extends AbstractService{
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 执行远程批量发布操作
-	 * <p>数据库id和项目id，这两个参数只要有一个值不为null即可</p>
-	 * @param databaseId 
-	 * @param projectId  
+	 * @param databaseId 可以为null
+	 * @param projectId 必须有值
 	 * @param publishs
-	 * @param resources
+	 * @param processSysResource 
 	 * @param datalinkResourceName
 	 */
-	protected void executeRemoteBatchPublish(String databaseId, String projectId, List<? extends IPublish> publishs, List<? extends ISysResource> resources, String datalinkResourceName){
+	protected void executeRemoteBatchPublish(String databaseId, String projectId, List<? extends IPublish> publishs, int processSysResource, String datalinkResourceName){
+		if(databaseId == null){
+			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
+		}
+		
 		// 记录发布时的错误信息
 		String errMsg = null;
 		// 获取发布信息对象
@@ -141,6 +144,10 @@ public abstract class AbstractPublishService extends AbstractService{
 			
 			ComPublishInfo publishInfo;
 			JSONObject dataLink;
+			JSONObject publishEntityJson;
+			ComSysResource csr;
+			ISysResource sysResource;
+			int orderCode = 1;
 			for (IPublish entity : publishs) {
 				publishInfo = entity.turnToPublish();
 				publishInfos.add(publishInfo);
@@ -148,23 +155,21 @@ public abstract class AbstractPublishService extends AbstractService{
 					publishInfo.setErrMsg(entity.getBatchPublishMsg());
 					continue;
 				}
-				session.save(entity.getEntityName(), entity.toPublishEntityJson());
+				publishEntityJson = entity.toPublishEntityJson(projectId);
+				session.save(entity.getEntityName(), publishEntityJson);
 				
 				if(datalinkResourceName != null){
-					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, entity.getId(), 1, null, null);
+					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, projectId, publishEntityJson.getString(ResourceNameConstants.ID), orderCode++, null, null);
 					dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 					session.save(datalinkResourceName, dataLink);
 				}
-			}
-			
-			// 如果资源对象不为空，同时发布资源
-			if(resources != null && resources.size() > 0){ 
-				ComSysResource csr;
-				for (ISysResource entity : resources) {
-					if(entity.getBatchPublishMsg() != null){
+				
+				if(processSysResource == 1){
+					sysResource = (ISysResource) entity;
+					if(sysResource.getBatchPublishMsg() != null){
 						continue;
 					}
-					csr = entity.turnToPublishResource();
+					csr = sysResource.turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
 					session.save(csr.getEntityName(), csr.toEntityJson());
 				}
 			}

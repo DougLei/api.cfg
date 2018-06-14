@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IPublish;
@@ -149,20 +150,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
-	public ComSysResource turnToPublishResource() {
-		ComSysResource resource = super.turnToResource();
-		resource.setId(ResourceHandlerUtil.getIdentity());
-		resource.setResourceType(TABLE);
-		resource.setResourceName(hbmResourceName);
-		resource.setProjectId(projectId);
-		if(isDataLinkTableHbm != null && isDataLinkTableHbm == 1){
-			resource.setRefResourceId(refTableId);
-		}else{
-			resource.setRefResourceId(id);
-		}
-		return resource;
-	}
-	
 	/**
 	 * 将表信息，转换为对应的hbm信息
 	 * @param table
@@ -194,5 +181,24 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 		publish.setResourceType(TABLE);
 		super.turnToPublish();
 		return publish;
+	}
+	
+	public JSONObject toPublishEntityJson(String projectId) {
+		JSONObject json = toEntityJson();
+		json.put("refDataId", refTableId);
+		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+		json.put(ResourceNameConstants.PROJECT_ID, projectId);
+		return json;
+	}
+	
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
+		ComSysResource resource = super.turnToResource();
+		resource.setRefDataId(refTableId);
+		resource.setId(ResourceHandlerUtil.getIdentity());
+		resource.setResourceType(TABLE);
+		resource.setResourceName(hbmResourceName);
+		resource.setProjectId(projectId);
+		resource.setRefResourceId(refResourceId);
+		return resource;
 	}
 }

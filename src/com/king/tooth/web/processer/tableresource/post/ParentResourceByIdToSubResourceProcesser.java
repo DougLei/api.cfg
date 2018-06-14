@@ -6,6 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -76,7 +77,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 			saveData(requestBody.getRouteBody().getResourceName(), subData);
 			
 			if(!builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
-				datalink = ResourceHandlerUtil.getDataLinksObject(parentId, subData.getString(ResourceNameConstants.ID), 
+				datalink = ResourceHandlerUtil.getDataLinksObject(CurrentThreadContext.getProjectId(), parentId, subData.getString(ResourceNameConstants.ID), 
 						(j+1), requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
 				dataLinkList.add(datalink);
 			}

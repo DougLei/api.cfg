@@ -139,7 +139,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(null, projectModuleId);
 		projectModule.setRefDatabaseId(project.getRefDatabaseId());
 		projectModule.setProjectId(projectModule.getRefProjectId());
-		executeRemotePublish(null, projectModule.getProjectId(), projectModule, null, null);
+		executeRemotePublish(project.getRefDatabaseId(), projectModule.getProjectId(), projectModule, 0, null);
 		return null;
 	}
 	
@@ -161,7 +161,8 @@ public class ComProjectModuleService extends AbstractPublishService {
 			return result;
 		}
 		
-		executeRemoteUpdate(null, projectModule.getRefProjectId(), "delete " + projectModule.getEntityName() + " where " + ResourceNameConstants.ID + "='"+projectModuleId+"'");
+		executeRemoteUpdate(null, projectModule.getRefProjectId(), 
+				"delete " + projectModule.getEntityName() + " where refDataId='"+projectModuleId+"' and " + ResourceNameConstants.PROJECT_ID+"='"+projectModule.getRefProjectId()+"'");
 		publishInfoService.deletePublishedData(null, projectModuleId);
 		return null;
 	}
@@ -192,7 +193,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		}
 		
 		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
-		executeRemoteBatchPublish(databaseId, null, projectModules, null, null);
+		executeRemoteBatchPublish(databaseId, projectId, projectModules, 0, null);
 		projectModules.clear();
 		
 		// 发布模块功能

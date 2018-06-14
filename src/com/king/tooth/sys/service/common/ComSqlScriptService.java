@@ -19,8 +19,6 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("unchecked")
 public class ComSqlScriptService extends AbstractPublishService {
-	// 项目和sql脚本的关联关系资源名
-	private static final String comProjectComSqlScriptLinksResourceName = "ComProjectComSqlScriptLinks";
 	
 	/**
 	 * 验证sql脚本资源名是否存在
@@ -86,9 +84,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 				
 				// 保存sql脚本和项目的关联关系
 				if(isPlatformDeveloper){
-					HibernateUtil.saveDataLinks(comProjectComSqlScriptLinksResourceName, CurrentThreadContext.getProjectId(), sqlScriptId);
+					HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
 				}else{
-					HibernateUtil.saveDataLinks(comProjectComSqlScriptLinksResourceName, projectId, sqlScriptId);
+					HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 				}
 			}
 		}
@@ -159,7 +157,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 		}
 		
-		List<JSONObject> datalinks = HibernateUtil.queryDataLinks(comProjectComSqlScriptLinksResourceName, null, sqlScriptId);
+		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("ComProjectComSqlScriptLinks", null, sqlScriptId);
 		if(datalinks.size() > 1){
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
 			StringBuilder hql = new StringBuilder("select projName from ComProject where id in (");
@@ -175,7 +173,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScript where id = '"+sqlScriptId+"'");
-		HibernateUtil.deleteDataLinks(comProjectComSqlScriptLinksResourceName, null, sqlScriptId);
+		HibernateUtil.deleteDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", null, sqlScriptId);
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		if(isPlatformDeveloper){
@@ -191,7 +189,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String addProjSqlScriptRelation(String projectId, String sqlScriptId) {
-		HibernateUtil.saveDataLinks(comProjectComSqlScriptLinksResourceName, projectId, sqlScriptId);
+		HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 		return null;
 	}
 	
@@ -202,7 +200,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelProjSqlScriptRelation(String projectId, String sqlScriptId) {
-		HibernateUtil.deleteDataLinks(comProjectComSqlScriptLinksResourceName, projectId, sqlScriptId);
+		HibernateUtil.deleteDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 		return null;
 	}
 	
@@ -256,7 +254,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		sqlScript.setRefDatabaseId(project.getRefDatabaseId());
 		sqlScript.setProjectId(projectId);
-		executeRemotePublish(null, projectId, sqlScript, sqlScript, comProjectComSqlScriptLinksResourceName);
+		executeRemotePublish(project.getRefDatabaseId(), projectId, sqlScript, 1, "ComProjectComSqlScriptLinks");
 		return null;
 	}
 	
@@ -280,9 +278,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		executeRemoteUpdate(null, projectId, 
-				"delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and " + ResourceNameConstants.ID + "='"+sqlScriptId+"'",
-				"delete ComSysResource where projectId='"+projectId+"' and refResourceId = '"+sqlScriptId+"'",
-				"delete " + comProjectComSqlScriptLinksResourceName + " where "+ResourceNameConstants.LEFT_ID+"='"+projectId+"' and " + ResourceNameConstants.RIGHT_ID + "='"+sqlScriptId+"'");
+				"delete ComProjectComSqlScriptLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+sqlScript.getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"')",
+				"delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and refDataId='"+sqlScriptId+"'",
+				"delete ComSysResource where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"'");
 		publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		return null;
 	}
@@ -313,7 +311,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		publishInfoService.batchDeletePublishedData(null, sqlScriptIds);
-		executeRemoteBatchPublish(databaseId, null, sqlScripts, null, comProjectComSqlScriptLinksResourceName);
+		executeRemoteBatchPublish(databaseId, projectId, sqlScripts, 1, "ComProjectComSqlScriptLinks");
 		sqlScripts.clear();
 	}
 	

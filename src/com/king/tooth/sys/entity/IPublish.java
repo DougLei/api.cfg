@@ -23,9 +23,10 @@ public interface IPublish extends IEntity{
 	/**
 	 * 转换为发布出去的实体json对象
 	 * <p>和toEntityJson方法相同，只是在发布的时候，需要将实际的id值存到资源对象的refDataId字段中</p>
+	 * @param projectId
 	 * @return
 	 */
-	public JSONObject toPublishEntityJson();
+	public JSONObject toPublishEntityJson(String projectId);
 
 	/**
 	 * 获取id

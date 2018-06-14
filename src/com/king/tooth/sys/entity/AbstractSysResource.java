@@ -54,6 +54,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	 * <p>在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中</p>
 	 * <p>在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中</p>
 	 * <p>针对说明：数据库/项目，在配置平台为0，发布后，值改为1，取消发布后，值改回0</p>
+	 * <p>即在系统启动的时候用来判断该资源是否需要加载</p>
 	 * <p>默认值：0</p>
 	 */
 	protected Integer isCreated;
@@ -82,11 +83,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		resource.setReqResourceMethod(reqResourceMethod);
 		resource.setIsBuiltin(isBuiltin);
 		resource.setIsNeedDeploy(isNeedDeploy);
-		if(isBuiltin !=null && isBuiltin == 1){
-			resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		}else{
-			resource.setValidDate(DateUtil.parseDate("2019-12-31 23:59:59"));
-		}
+		resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
 		return resource;
 	}
 	
@@ -103,10 +100,11 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		return null;
 	}
 	
-	public JSONObject toPublishEntityJson() {
+	public JSONObject toPublishEntityJson(String projectId) {
 		JSONObject json = toEntityJson();
 		json.put("refDataId", json.getString(ResourceNameConstants.ID));
 		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+		json.put(ResourceNameConstants.PROJECT_ID, projectId);
 		return json;
 	}
 	

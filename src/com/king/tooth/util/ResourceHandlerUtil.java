@@ -133,6 +133,7 @@ public class ResourceHandlerUtil {
 	
 	/**
 	 * 获取关联关系jsonObject对象
+	 * @param projectId
 	 * @param leftId
 	 * @param rightId
 	 * @param orderCode
@@ -140,8 +141,9 @@ public class ResourceHandlerUtil {
 	 * @param rightResourceName
 	 * @return
 	 */
-	public static JSONObject getDataLinksObject(String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
+	public static JSONObject getDataLinksObject(String projectId, String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
 		JSONObject dataLinks = new JSONObject(6);
+		dataLinks.put(ResourceNameConstants.PROJECT_ID, projectId);
 		dataLinks.put(ResourceNameConstants.LEFT_ID, leftId);
 		dataLinks.put(ResourceNameConstants.RIGHT_ID, rightId);
 		dataLinks.put(ResourceNameConstants.ORDER_CODE, orderCode);

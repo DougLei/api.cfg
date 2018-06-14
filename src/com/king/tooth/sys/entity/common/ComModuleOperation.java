@@ -195,7 +195,7 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 		return "COM_MODULE_OPERATION";
 	}
 	
-	public ComSysResource turnToPublishResource() {
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	

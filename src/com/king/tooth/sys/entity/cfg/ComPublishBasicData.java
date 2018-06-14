@@ -117,7 +117,7 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 		return BASIC_DATA;
 	}
 	
-	public ComSysResource turnToPublishResource() {
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 

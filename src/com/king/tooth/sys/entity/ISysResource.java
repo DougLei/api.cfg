@@ -92,8 +92,10 @@ public interface ISysResource {
 	/**
 	 * 转换为要发布的资源对象
 	 * <p>主要是针对hbm和sql脚本资源</p>
+	 * @param projectId
+	 * @param refResourceId
 	 */
-	public ComSysResource turnToPublishResource();
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId);
 	
 	/**
 	 * 获取资源类型

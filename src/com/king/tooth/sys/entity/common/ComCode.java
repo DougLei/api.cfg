@@ -145,7 +145,7 @@ public class ComCode extends AbstractSysResource implements ITable{
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
-	public ComSysResource turnToPublishResource() {
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		ComSysResource resource = super.turnToResource();
 		return resource;
 	}

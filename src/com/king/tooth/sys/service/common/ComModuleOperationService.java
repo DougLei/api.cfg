@@ -145,7 +145,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(null, moduleOperationId);
 		moduleOperation.setRefDatabaseId(project.getRefDatabaseId());
 		moduleOperation.setRefProjectId(project.getId());
-		executeRemotePublish(project.getRefDatabaseId(), null, moduleOperation, null, null);
+		executeRemotePublish(project.getRefDatabaseId(), project.getId(), moduleOperation, 0, null);
 		return null;
 	}
 
@@ -166,7 +166,8 @@ public class ComModuleOperationService extends AbstractPublishService {
 			return "功能关联的，id为["+moduleOperation.getModuleId()+"]的模块信息不存在";
 		}
 		
-		executeRemoteUpdate(null, projectModule.getRefProjectId(), "delete " + moduleOperation.getEntityName() + " where " + ResourceNameConstants.ID + "='"+moduleOperationId+"'");
+		executeRemoteUpdate(null, projectModule.getRefProjectId(), 
+				"delete " + moduleOperation.getEntityName() + " where refDataId='"+moduleOperationId+"' and "+ ResourceNameConstants.PROJECT_ID+"='"+projectModule.getRefProjectId()+"'");
 		publishInfoService.deletePublishedData(projectModule.getRefProjectId(), moduleOperationId);
 		return null;
 	}
@@ -196,7 +197,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 		}
 		
 		publishInfoService.batchDeletePublishedData(null, publishDataIds);
-		executeRemoteBatchPublish(databaseId, null, comModuleOperations, null, null);
+		executeRemoteBatchPublish(databaseId, projectId, comModuleOperations, 0, null);
 		comModuleOperations.clear();
 	}
 	
