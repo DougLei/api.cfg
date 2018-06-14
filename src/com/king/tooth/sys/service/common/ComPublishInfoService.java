@@ -85,7 +85,7 @@ public class ComPublishInfoService extends AbstractService{
 	 */
 	public void batchDeletePublishedData(String publishProjectId, List<Object> publishResourceIds) {
 		StringBuilder hql = new StringBuilder("delete ComPublishInfo where");
-		List<Object> params = new ArrayList<Object>(2);
+		List<Object> params = new ArrayList<Object>(publishResourceIds.size()+1);
 		if(publishProjectId != null){
 			hql.append(" publishProjectId = ?");
 			params.add(publishProjectId);

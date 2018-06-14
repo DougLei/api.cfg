@@ -181,7 +181,7 @@ public abstract class AbstractPublishService extends AbstractService{
 		
 		// 添加新的发布信息数据
 		for (ComPublishInfo publishInfo : publishInfos) {
-			if(errMsg == null){
+			if(publishInfo.getErrMsg() == null && errMsg == null){
 				publishInfo.setIsSuccess(1);
 			}else{
 				if(publishInfo.getErrMsg() == null){

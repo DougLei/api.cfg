@@ -14,6 +14,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 项目模块信息资源对象处理器
  * @author DougLei
  */
+@SuppressWarnings("unchecked")
 public class ComProjectModuleService extends AbstractPublishService {
 
 	/**
@@ -31,6 +32,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	
 	/**
 	 * 验证模块编码是否存在
+	 * <p>项目唯一</p>
 	 * @param projectModule
 	 * @return operResult
 	 */
@@ -54,7 +56,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			operResult = validProjectModuleCodeIsExists(projectModule);
 		}
 		if(operResult == null){
-			HibernateUtil.saveObject(projectModule, operResult);
+			HibernateUtil.saveObject(projectModule, null);
 		}
 		return null;
 	}
@@ -72,7 +74,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		
 		String operResult = null;
 		if(!oldProjectModule.getCode().equals(projectModule.getCode())){
-			if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getProjectId(), oldProjectModule.getId(), null)){
+			if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getRefProjectId(), oldProjectModule.getId(), null)){
 				return "该模块已经发布，不能修改模块编码，或取消发布后再修改";
 			}
 			operResult = validProjectModuleCodeIsExists(projectModule);
@@ -97,7 +99,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(oldProjectModule == null){
 			return "没有找到id为["+projectModuleId+"]的模块对象信息";
 		}
-		if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getProjectId(), oldProjectModule.getId(), null)){
+		if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getRefProjectId(), oldProjectModule.getId(), null)){
 			return "["+oldProjectModule.getName()+"]模块已经发布，无法删除，请先取消发布";
 		}
 		
@@ -192,6 +194,28 @@ public class ComProjectModuleService extends AbstractPublishService {
 		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
 		executeRemoteBatchPublish(databaseId, null, projectModules, null, null);
 		projectModules.clear();
+		
+		// 发布模块功能
+		StringBuilder tmpHql = new StringBuilder(" from ComModuleOperation where isEnabled =1 and isNeedDeploy=1 and moduleId in (");
+		int len = projectModuleIds.size();
+		for (int i=0;i<len;i++) {
+			tmpHql.append("?,");
+		}
+		tmpHql.setLength(tmpHql.length()-1);
+		tmpHql.append(")");
+		String hql = tmpHql.toString();
+		tmpHql.setLength(0);
+		
+		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") "+hql, projectModuleIds);
+		long loopCount = count/200 + 1;
+		hql = "select "+ResourceNameConstants.ID + hql;
+		for(int i=0;i<loopCount;i++){
+			List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr("200", (i+1)+"", hql, projectModuleIds);
+			if(publishDataIds != null && publishDataIds.size() > 0){
+				new ComModuleOperationService().batchPublishModuleOperation(databaseId, projectId, publishDataIds);
+				publishDataIds.clear();
+			}
+		}
 	}
 
 	/**
@@ -202,5 +226,19 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 */
 	public void batchCancelPublishProjectModule(String databaseId, String projectId, List<Object> projectModuleIds) {
 		publishInfoService.batchDeletePublishedData(projectId, projectModuleIds);
+		
+		// 取消发布模块功能
+		StringBuilder hql = new StringBuilder("select "+ResourceNameConstants.ID+" from ComModuleOperation where isEnabled =1 and isNeedDeploy=1 and moduleId in (");
+		int len = projectModuleIds.size();
+		for (int i=0;i<len;i++) {
+			hql.append("?,");
+		}
+		hql.setLength(hql.length()-1);
+		hql.append(")");
+		List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, hql.toString(), projectModuleIds);
+		if(publishDataIds != null && publishDataIds.size() > 0){
+			new ComModuleOperationService().batchCancelPublishModuleOperation(databaseId, projectId, publishDataIds);
+			publishDataIds.clear();
+		}
 	}
 }

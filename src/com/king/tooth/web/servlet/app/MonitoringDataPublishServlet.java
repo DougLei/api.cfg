@@ -25,7 +25,7 @@ public class MonitoringDataPublishServlet extends HttpServlet implements Seriali
 	 * 调用这个接口时的token验证值
 	 * 只有一致了，才能成功调用
 	 */
-	private static String token;
+	private static String publishDataToken;
 	
 	/**
 	 * 进行接口处理
@@ -35,12 +35,12 @@ public class MonitoringDataPublishServlet extends HttpServlet implements Seriali
 			Log4jUtil.info("ip为[{}]的客户端，通过{}方式，请求MonitoringDataPublishServlet接口", HttpHelperUtil.getClientIp(request), request.getMethod());
 			return;
 		}
-		String _token = request.getParameter("_token");
-		if(StrUtils.isEmpty(token)){
-			token = _token;
+		String token = request.getParameter("_token");
+		if(StrUtils.isEmpty(publishDataToken)){
+			publishDataToken = token;
 		}
-		if(!_token.equals(token)){
-			Log4jUtil.info("ip为[{}]的客户端，通过{}方式，请求MonitoringDataPublishServlet接口，发送了错误的token值[{}]，调用接口失败！", HttpHelperUtil.getClientIp(request), request.getMethod(), _token);
+		if(!token.equals(publishDataToken)){
+			Log4jUtil.info("ip为[{}]的客户端，通过{}方式，请求MonitoringDataPublishServlet接口，发送了错误的token值[{}]，调用接口失败！", HttpHelperUtil.getClientIp(request), request.getMethod(), token);
 			return;
 		}
 		

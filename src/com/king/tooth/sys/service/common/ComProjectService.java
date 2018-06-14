@@ -191,7 +191,7 @@ public class ComProjectService extends AbstractPublishService {
 			List<Object> publishDataIds;
 			// 发布项目模块
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.ID+" from ComProjectModule where refProjectId = '"+projectId+"'");
+					"select "+ResourceNameConstants.ID+" from ComProjectModule where isEnabled =1 and isNeedDeploy=1 and refProjectId = '"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComProjectModuleService().batchPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -306,7 +306,7 @@ public class ComProjectService extends AbstractPublishService {
 			int loopCount = count/50 + 1;
 			List<ComPublishBasicData> basicDatas;// 获取要发布的基础信息集合
 			for(int i=0;i<loopCount;i++){
-				basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, "50", i+"", 
+				basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, "50", (i+1)+"", 
 						"from ComPublishBasicData where isEnabled=1 and isNeedDeploy=1 and belongPlatformType != "+ISysResource.CONFIG_PLATFORM);
 				for (ComPublishBasicData basicData : basicDatas) {
 					session.save(basicData.getBasicDataResourceName(), basicData.getBasicDataJsonObject(projectId));

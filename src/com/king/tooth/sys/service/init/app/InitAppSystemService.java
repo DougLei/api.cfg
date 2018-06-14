@@ -130,7 +130,7 @@ public class InitAppSystemService extends AbstractService{
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", i+"", "select hbmContent from ComHibernateHbm where isEnabled = 1 and hbmResourceName !='ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
+			hbmContents = HibernateUtil.executeListQueryByHql("100", (i+1)+"", "select hbmContent from ComHibernateHbm where isEnabled = 1 and hbmResourceName !='ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");

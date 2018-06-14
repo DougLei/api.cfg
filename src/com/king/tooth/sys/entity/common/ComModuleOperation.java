@@ -4,18 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 模块操作功能资源对象
+ * 模块功能资源对象
  * <p>理解为模块下，可点击操作的按钮(或超链接)</p>
  * @author DougLei
  */
@@ -56,6 +58,21 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 	private Integer orderCode;
 	
 	//---------------------------------------------------------------------------
+	
+	/**
+	 * 关联的数据库id
+	 * 该字段在发布的时候用到
+	 * @see turnToPublish()
+	 */
+	@JSONField(serialize = false)
+	private String refDatabaseId;
+	/**
+	 * 关联的项目主键
+	 * 该字段在发布的时候用到
+	 * @see turnToPublish()
+	 */
+	@JSONField(serialize = false)
+	private String refProjectId;
 	
 	public String getModuleId() {
 		return moduleId;
@@ -99,11 +116,24 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
+	public String getRefDatabaseId() {
+		return refDatabaseId;
+	}
+	public void setRefDatabaseId(String refDatabaseId) {
+		this.refDatabaseId = refDatabaseId;
+	}
+	public String getRefProjectId() {
+		return refProjectId;
+	}
+	public void setRefProjectId(String refProjectId) {
+		this.refProjectId = refProjectId;
+	}
+	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_MODULE_OPERATION", 0);
-		table.setName("模块操作功能资源对象表");
-		table.setComments("模块操作功能资源对象表：理解为模块下，可点击操作的按钮(或超链接)");
+		table.setName("模块功能资源对象表");
+		table.setComments("模块功能资源对象表：理解为模块下，可点击操作的按钮(或超链接)");
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
@@ -209,5 +239,15 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 	
 	public String analysisResourceProp() {
 		return validNotNullProps();
+	}
+	
+	public ComPublishInfo turnToPublish() {
+		ComPublishInfo publish = new ComPublishInfo();
+		publish.setPublishDatabaseId(refDatabaseId);
+		publish.setPublishResourceId(refProjectId);
+		publish.setPublishResourceName(name);
+		publish.setResourceType(PROJECT_MODULE_OPERATION);
+		super.turnToPublish();
+		return publish;
 	}
 }
