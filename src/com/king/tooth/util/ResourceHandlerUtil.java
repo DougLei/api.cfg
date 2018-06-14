@@ -55,25 +55,25 @@ public class ResourceHandlerUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void initBasicPropValsForSave(String entityName, Map<String, Object> data, String shortDesc) {
-		data.put(ResourceNameConstants.PROJECT_ID, CurrentThreadContext.getProjectId());
+		data.put("projectId", CurrentThreadContext.getProjectId());
 		// 当没有id值的时候，再赋予id值
 		if(StrUtils.isEmpty(data.get(ResourceNameConstants.ID))){
 			data.put(ResourceNameConstants.ID, getIdentity());
 		}
-		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
-				&& !entityName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 不是关系表，才要这些值
+		if(!"ComDataLinks".equals(entityName) 
+				&& !entityName.endsWith("Links")){// 不是关系表，才要这些值
 			Date currentDate = new Date();
-			data.put(ResourceNameConstants.CREATE_DATE, currentDate);
-			data.put(ResourceNameConstants.LAST_UPDATE_DATE, currentDate);
+			data.put("createDate", currentDate);
+			data.put("lastUpdateDate", currentDate);
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
 				String currentAccountId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
-				data.put(ResourceNameConstants.CREATE_USER_ID, currentAccountId);
-				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  currentAccountId);
+				data.put("createUserId", currentAccountId);
+				data.put("lastUpdatedUserId",  currentAccountId);
 			}else{
-				data.put(ResourceNameConstants.CREATE_USER_ID, shortDesc);
-				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  shortDesc);
+				data.put("createUserId", shortDesc);
+				data.put("lastUpdatedUserId",  shortDesc);
 			}
 		}
 	}
@@ -86,15 +86,15 @@ public class ResourceHandlerUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void initBasicPropValsForUpdate(String entityName, Map<String, Object> data, String shortDesc) {
-		if(!ResourceNameConstants.COMMON_DATALINK_RESOURCENAME.equals(entityName) 
-				&& !entityName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 不是关系表，才要修改这些值
-			data.put(ResourceNameConstants.LAST_UPDATE_DATE,  new Date());
+		if(!"ComDataLinks".equals(entityName) 
+				&& !entityName.endsWith("Links")){// 不是关系表，才要修改这些值
+			data.put("lastUpdateDate",  new Date());
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
-				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+				data.put("lastUpdatedUserId",  CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 			}else{
-				data.put(ResourceNameConstants.LAST_UPDATED_USER_ID,  shortDesc);
+				data.put("lastUpdatedUserId",  shortDesc);
 			}
 		}
 	}
@@ -143,15 +143,15 @@ public class ResourceHandlerUtil {
 	 */
 	public static JSONObject getDataLinksObject(String projectId, String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
 		JSONObject dataLinks = new JSONObject(6);
-		dataLinks.put(ResourceNameConstants.PROJECT_ID, projectId);
-		dataLinks.put(ResourceNameConstants.LEFT_ID, leftId);
-		dataLinks.put(ResourceNameConstants.RIGHT_ID, rightId);
-		dataLinks.put(ResourceNameConstants.ORDER_CODE, orderCode);
+		dataLinks.put("projectId", projectId);
+		dataLinks.put("leftId", leftId);
+		dataLinks.put("rightId", rightId);
+		dataLinks.put("orderCode", orderCode);
 		if(StrUtils.notEmpty(leftResourceName)){
-			dataLinks.put(ResourceNameConstants.LEFT_RESOURCE_NAME, leftResourceName);
+			dataLinks.put("leftResourceName", leftResourceName);
 		}
 		if(StrUtils.notEmpty(rightResourceName)){
-			dataLinks.put(ResourceNameConstants.RIGHT_RESOURCE_NAME, rightResourceName);
+			dataLinks.put("rightResourceName", rightResourceName);
 		}
 		return dataLinks;
 	}

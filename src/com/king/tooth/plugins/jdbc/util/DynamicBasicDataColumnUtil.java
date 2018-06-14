@@ -1,7 +1,6 @@
 package com.king.tooth.plugins.jdbc.util;
 
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -83,7 +82,7 @@ public class DynamicBasicDataColumnUtil {
 			table.getColumns().add(refDataIdColumn);
 		}
 		
-		if(table.getIsDatalinkTable() == 0 && !table.getTableName().endsWith(ResourceNameConstants.DATALINK_TABLENAME_SUFFIX)){// 不是关系表，才要这些字段
+		if(table.getIsDatalinkTable() == 0 && !table.getTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
 			ComColumndata createTimeColumn = new ComColumndata("create_time", DataTypeConstants.DATE, 0);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");

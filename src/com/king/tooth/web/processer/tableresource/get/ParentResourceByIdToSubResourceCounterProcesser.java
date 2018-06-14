@@ -30,9 +30,9 @@ public final class ParentResourceByIdToSubResourceCounterProcesser extends GetPr
 		StringBuilder hql = new StringBuilder(" select count(").append(ResourceNameConstants.ID).append(") ");
 		hql.append(" from ")
 		   .append(requestBody.getRouteBody().getResourceName())
-		   .append(" ").append(ResourceNameConstants.ALIAS_RESOURCE)
+		   .append(" s_")
 		   .append(builtinParentsubQueryMethodProcesser.getHql())
-		   .append(builtinQueryCondMethodProcesser.getHqlStartbyAnd(ResourceNameConstants.ALIAS_RESOURCE));
+		   .append(builtinQueryCondMethodProcesser.getHqlStartbyAnd("s_"));
 		return hql;
 	}
 }

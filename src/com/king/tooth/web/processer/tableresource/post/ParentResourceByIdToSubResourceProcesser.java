@@ -44,7 +44,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 				parentData = json.get(i);
 				saveData(requestBody.getRouteBody().getParentResourceName(), parentData);
 				
-				subDatas = parentData.getJSONArray(ResourceNameConstants.CHILDREN);
+				subDatas = parentData.getJSONArray("children");
 				saveSubData(parentData.getString(ResourceNameConstants.ID), subDatas);
 			}
 		}else{ // 否则，标识提交的数据只有子资源数据，父资源的id通过路由传递过来

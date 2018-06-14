@@ -108,11 +108,11 @@ public class ComProjectService extends AbstractPublishService {
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComTabledataLinks where leftId = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[表信息]，无法删除，请先取消他们的关联信息";
 		}
-		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
+		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComSqlScriptLinks where leftId = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
@@ -128,12 +128,12 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	public String cancelRelation(String projectId, String relationType) {
 		if("all".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
 		}else if("table".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
 		}else if("sql".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where "+ResourceNameConstants.LEFT_ID+" = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
 		}else{
 			return "请传入正确的realtionType";
 		}
@@ -199,9 +199,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt."+ResourceNameConstants.RIGHT_ID+" = table.id)" +
+					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt.rightId = table.id)" +
 							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
-							" and pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"'");
+							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -209,9 +209,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps."+ResourceNameConstants.RIGHT_ID+" = sqlScript.id)" +
+					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps.rightId = sqlScript.id)" +
 							"where sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
-							" and (ps."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
+							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -268,9 +268,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt."+ResourceNameConstants.RIGHT_ID+" = table.id)" +
+					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt.rightId = table.id)" +
 							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
-							" and pt."+ResourceNameConstants.LEFT_ID+"='"+projectId+"'");
+							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -278,9 +278,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps."+ResourceNameConstants.RIGHT_ID+" = sqlScript.id)" +
+					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps.rightId = sqlScript.id)" +
 							"where sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
-							" and (ps."+ResourceNameConstants.LEFT_ID+"='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
+							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComSqlScriptService().batchCancelPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();

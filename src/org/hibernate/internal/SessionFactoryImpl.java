@@ -132,7 +132,6 @@ import org.hibernate.type.TypeResolver;
 import org.jboss.logging.Logger;
 
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -2130,7 +2129,7 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 			HbmConfPropMetadata[] hbmConfClassMetadatas = null;
 			Set<String> keys = mappingConfClassMetadata.keySet();
 			for (String resourceName : keys) {
-				if(resourceName.endsWith(ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX)){// 如果是关系资源，则要加入到hibernateDataLinkResourceNameList缓存中
+				if(resourceName.endsWith("Links")){// 如果是关系资源，则要加入到hibernateDataLinkResourceNameList缓存中
 					hibernateDataLinkResourceNameList.add(resourceName);
 					continue;
 				}

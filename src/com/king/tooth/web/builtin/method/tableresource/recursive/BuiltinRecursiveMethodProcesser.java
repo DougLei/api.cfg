@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -52,7 +51,7 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 	}
 	
 	protected void execAnalysisParam() {
-		hql.append(" where ").append(ResourceNameConstants.PARENT_ID);
+		hql.append(" where parentId");
 		
 		if(StrUtils.isNullStr(parentResourceId)){
 			hql.append(" is null ");

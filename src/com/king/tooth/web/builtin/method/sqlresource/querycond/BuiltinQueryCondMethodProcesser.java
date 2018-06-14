@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
@@ -29,7 +28,7 @@ public class BuiltinQueryCondMethodProcesser extends AbstractSqlResourceBuiltinM
 		super.isUsed = true;
 		this.sql.append(" where ");
 		this.queryCondParams = queryCondParams;
-		this.alias = ResourceNameConstants.ALIAS_RESOURCE;
+		this.alias = "s_";
 	}
 	public BuiltinQueryCondMethodProcesser() {
 		Log4jUtil.debug("此次请求，没有使用到BuiltinQueryCondMethodProcesser内置方法处理器");

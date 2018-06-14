@@ -64,25 +64,17 @@ public final class ParentResourceByIdToSubResourceProcesser extends DeleteProces
 			hql.append(" delete ").append(requestBody.getRouteBody().getResourceName())
 			   .append(" where ")
 			   .append(builtinParentsubQueryMethodProcesser.getRefParentSubPropName())
-			   .append(" in (select ")
-			   .append(ResourceNameConstants.ALIAS_PARENT_RESOURCE).append(".").append(ResourceNameConstants.ID)
+			   .append(" in (select p_.").append(ResourceNameConstants.ID)
 			   .append(" from ")
-			   .append(requestBody.getRouteBody().getParentResourceName()).append(" ").append(ResourceNameConstants.ALIAS_PARENT_RESOURCE)
-			   .append(" where ")
+			   .append(requestBody.getRouteBody().getParentResourceName()).append(" p_ where ")
 			   .append(deleteQueryCondHql);
 		}else{
 			hql.append(" delete ").append(requestBody.getRouteBody().getResourceName())
 			   .append(" where ").append(ResourceNameConstants.ID)
-			   .append(" in ( ")
-			   .append(" select ")
-			   .append(ResourceNameConstants.ALIAS_DATA_LINK_RESOURCE).append(".").append(ResourceNameConstants.RIGHT_ID)
-			   .append(" from ")
-			   .append(dataLinkResourceName).append(" ").append(ResourceNameConstants.ALIAS_DATA_LINK_RESOURCE).append(",")
-			   .append(requestBody.getRouteBody().getParentResourceName()).append(" ").append(ResourceNameConstants.ALIAS_PARENT_RESOURCE)
-			   .append(" where ")
-			   .append(ResourceNameConstants.ALIAS_PARENT_RESOURCE).append(".").append(ResourceNameConstants.ID)
-			   .append("=").append(ResourceNameConstants.ALIAS_DATA_LINK_RESOURCE).append(".").append(ResourceNameConstants.LEFT_ID)
-			   .append(" and ")
+			   .append(" in ( select d_.rightId from ")
+			   .append(dataLinkResourceName).append(" d_,")
+			   .append(requestBody.getRouteBody().getParentResourceName()).append(" p_ where p_.").append(ResourceNameConstants.ID)
+			   .append("=d_.leftId and ")
 			   .append(deleteQueryCondHql)
 			   .append(")");
 		}
@@ -97,16 +89,11 @@ public final class ParentResourceByIdToSubResourceProcesser extends DeleteProces
 	 */
 	private StringBuilder getDeleteDatalinkHql(String deleteQueryCondHql, String dataLinkResourceName){
 		StringBuilder hql = new StringBuilder();
-		hql.append(" delete ")
-		   .append(" from ").append(dataLinkResourceName)
-		   .append(" where ").append(ResourceNameConstants.LEFT_ID)
-		   .append(" in (")
-		   .append(" select ")
-		   .append(ResourceNameConstants.ALIAS_PARENT_RESOURCE).append(".").append(ResourceNameConstants.ID)
+		hql.append(" delete from ").append(dataLinkResourceName)
+		   .append(" where leftId in ( select p_.").append(ResourceNameConstants.ID)
 		   .append(" from ")
 		   .append(requestBody.getRouteBody().getParentResourceName())
-		   .append(" ").append(ResourceNameConstants.ALIAS_PARENT_RESOURCE)
-		   .append(" where ")
+		   .append(" p_ where ")
 		   .append(deleteQueryCondHql)
 		   .append(")");
 		return hql;
@@ -121,13 +108,12 @@ public final class ParentResourceByIdToSubResourceProcesser extends DeleteProces
 		StringBuilder hql = new StringBuilder();
 		hql.append("delete from ")
 		   .append(requestBody.getRouteBody().getParentResourceName())
-		   .append(" ").append(ResourceNameConstants.ALIAS_PARENT_RESOURCE)
-		   .append(" where ")
+		   .append(" p_ where ")
 		   .append(deleteQueryCondHql);
 		return hql;
 	}
 	
 	protected StringBuilder getDeleteHql() {
-		return builtinParentsubQueryMethodProcesser.getQueryParentResourceCondHql(requestBody.getRouteBody().getParentId(), ResourceNameConstants.ALIAS_PARENT_RESOURCE);
+		return builtinParentsubQueryMethodProcesser.getQueryParentResourceCondHql(requestBody.getRouteBody().getParentId(), "p_");
 	}
 }

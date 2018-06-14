@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -81,6 +80,6 @@ public class DynamicDataLinkTableUtil {
 	 * @return
 	 */
 	private static String getDataLinkTableName(String parentTableName, String subTableName){
-		return parentTableName + "_" + subTableName + ResourceNameConstants.DATALINK_TABLENAME_SUFFIX;
+		return parentTableName + "_" + subTableName + "_LINKS";
 	}
 }

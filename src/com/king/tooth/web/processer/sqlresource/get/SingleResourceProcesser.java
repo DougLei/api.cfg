@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -44,7 +43,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 		StringBuilder sql = new StringBuilder();
 		sql.append(" from ( ")
 		   .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalSelectSqlScript())
-		   .append(" ) ").append(ResourceNameConstants.ALIAS_RESOURCE).append(" ")
+		   .append(" ) s_ ")
 		   .append(builtinQueryCondMethodProcesser.getSql());
 		return sql;
 	}

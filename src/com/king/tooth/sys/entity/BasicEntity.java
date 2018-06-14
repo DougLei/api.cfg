@@ -42,8 +42,8 @@ public class BasicEntity implements Serializable{
 	 */
 	public void processBasicEntityProps(EntityJson entityJson){
 		entityJson.put(ResourceNameConstants.ID, id);
-		entityJson.put(ResourceNameConstants.CREATE_DATE, createDate);
-		entityJson.put(ResourceNameConstants.LAST_UPDATE_DATE, lastUpdateDate);
+		entityJson.put("createDate", createDate);
+		entityJson.put("lastUpdateDate", lastUpdateDate);
 	}
 	
 	public String getProjectId() {

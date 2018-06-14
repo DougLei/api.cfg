@@ -298,11 +298,11 @@ public class HibernateUtil {
 	 * @return
 	 */
 	public static String getDataLinkResourceName(String parentResourceName, String resourceName){
-		String datalinkResourceName = parentResourceName + resourceName + ResourceNameConstants.DATALINK_RESOURCENAME_SUFFIX;
+		String datalinkResourceName = parentResourceName + resourceName + "Links";
 		if(getSessionFactory().isExistsInHibernateDataLinkResourceNameList(datalinkResourceName)){
 			return datalinkResourceName;
 		}
-		return ResourceNameConstants.COMMON_DATALINK_RESOURCENAME;
+		return "ComDataLinks";
 	}
 	
 	//------------------------------------------------------------------------------------------------------
@@ -414,13 +414,13 @@ public class HibernateUtil {
 	public static List<JSONObject> queryDataLinks(String entityName, String leftId, String rightId){
 		String hql = "from " + entityName + " where ";
 		if(leftId != null){
-			hql += ResourceNameConstants.LEFT_ID + "=?";
+			hql += "leftId=?";
 		}
 		if(rightId != null){
 			if(leftId != null){
 				hql += " and ";
 			}
-			hql += ResourceNameConstants.RIGHT_ID + "=?";
+			hql += "rightId=?";
 		}
 		return executeListQueryByHqlArr(null, null, hql, leftId, rightId);
 	}
@@ -450,14 +450,14 @@ public class HibernateUtil {
 		params.add(projectId);
 		
 		if(leftId != null){
-			hql += ResourceNameConstants.LEFT_ID + "=?";
+			hql += "leftId=?";
 			params.add(leftId);
 		}
 		if(rightId != null){
 			if(leftId != null){
 				hql += " and ";
 			}
-			hql += ResourceNameConstants.RIGHT_ID + "=?";
+			hql += "rightId=?";
 			params.add(rightId);
 		}
 		executeUpdateByHql(SqlStatementType.DELETE, hql, params);

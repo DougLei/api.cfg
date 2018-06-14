@@ -104,7 +104,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		JSONObject json = toEntityJson();
 		json.put("refDataId", json.getString(ResourceNameConstants.ID));
 		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
-		json.put(ResourceNameConstants.PROJECT_ID, projectId);
+		json.put("projectId", projectId);
 		return json;
 	}
 	

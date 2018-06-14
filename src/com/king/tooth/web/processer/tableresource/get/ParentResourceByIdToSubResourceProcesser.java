@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**
@@ -39,9 +38,9 @@ public final class ParentResourceByIdToSubResourceProcesser extends GetProcesser
 		StringBuilder hql = new StringBuilder();
 		hql.append(" from ")
 		   .append(requestBody.getRouteBody().getResourceName())
-		   .append(" ").append(ResourceNameConstants.ALIAS_RESOURCE)
+		   .append(" s_ ")
 		   .append(builtinParentsubQueryMethodProcesser.getHql())
-		   .append(builtinQueryCondMethodProcesser.getHqlStartbyAnd(ResourceNameConstants.ALIAS_RESOURCE));
+		   .append(builtinQueryCondMethodProcesser.getHqlStartbyAnd("s_"));
 		return hql;
 	}
 }

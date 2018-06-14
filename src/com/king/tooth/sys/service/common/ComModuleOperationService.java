@@ -167,7 +167,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 		}
 		
 		executeRemoteUpdate(null, projectModule.getRefProjectId(), 
-				"delete " + moduleOperation.getEntityName() + " where refDataId='"+moduleOperationId+"' and "+ ResourceNameConstants.PROJECT_ID+"='"+projectModule.getRefProjectId()+"'");
+				"delete " + moduleOperation.getEntityName() + " where refDataId='"+moduleOperationId+"' and projectId='"+projectModule.getRefProjectId()+"'");
 		publishInfoService.deletePublishedData(projectModule.getRefProjectId(), moduleOperationId);
 		return null;
 	}

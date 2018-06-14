@@ -40,7 +40,7 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 				recursiveQueryDataList = recursiveQuery.list();
 				
 				// 将查询的子结果集合存储起来
-				map.put(ResourceNameConstants.CHILDREN, recursiveQueryDataList);
+				map.put("children", recursiveQueryDataList);
 				
 				// 再进行递归查询
 				recursiveQuery(recursiveQueryDataList, recursiveQueryHql, deepLevel);

@@ -67,7 +67,7 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 		}
 		tmpJson.clear();
 		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
-		json.put(ResourceNameConstants.PROJECT_ID, projectId);
+		json.put("projectId", projectId);
 		return json;
 	}
 	

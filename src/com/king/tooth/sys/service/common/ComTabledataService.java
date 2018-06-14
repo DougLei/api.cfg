@@ -158,7 +158,7 @@ public class ComTabledataService extends AbstractPublishService {
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
 			StringBuilder hql = new StringBuilder("select projName from ComProject where id in (");
 			for (JSONObject json : datalinks) {
-				projectIds.add(json.getString(ResourceNameConstants.LEFT_ID));
+				projectIds.add(json.getString("leftId"));
 				hql.append("?,");
 			}
 			hql.setLength(hql.length() - 1);

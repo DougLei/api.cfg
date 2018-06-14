@@ -47,7 +47,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		this.isSimpleParentSubQueryModel = Boolean.valueOf(isSimpleParentSubQueryModel);
 		
 		if(StrUtils.isEmpty(refParentSubPropName)){
-			refParentSubPropName = ResourceNameConstants.PARENT_ID;
+			refParentSubPropName = "parentId";
 		}else{
 			refParentSubPropName = HibernateUtil.getDefinePropName(resourceName, refParentSubPropName);
 		}
@@ -65,15 +65,12 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 
 	protected void execAnalysisParam() {
 		if(isSimpleParentSubQueryModel){
-			hql.append(" where ")
-			   .append(ResourceNameConstants.ALIAS_RESOURCE).append(".").append(refParentSubPropName);
+			hql.append(" where s_.").append(refParentSubPropName);
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
-				hql.append(" in( select ")
-				   .append(ResourceNameConstants.ALIAS_PARENT_RESOURCE).append(".").append(ResourceNameConstants.ID)
-				   .append(" from ").append(parentResourceName).append(" ").append(ResourceNameConstants.ALIAS_PARENT_RESOURCE)
-				   .append(" where ");
+				hql.append(" in( select p_.").append(ResourceNameConstants.ID)
+				   .append(" from ").append(parentResourceName).append(" p_ where ");
 				Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, ResourceNameConstants.ALIAS_PARENT_RESOURCE);
+				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
 				hql.append(" ) ");
 			}else{
 				hql.append(" =? ");
@@ -81,22 +78,16 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 			}
 		}else{
 			String dataLinkResourceName = HibernateUtil.getDataLinkResourceName(parentResourceName, resourceName);
-			hql.append(" where ")
-			   .append(ResourceNameConstants.ALIAS_RESOURCE).append(".").append(ResourceNameConstants.ID).append(" in ( ")
-			   .append(" select ")
-			   .append(ResourceNameConstants.ALIAS_DATA_LINK_RESOURCE).append(".").append(ResourceNameConstants.RIGHT_ID).append(" from ")
-			   .append(dataLinkResourceName).append(" ").append(ResourceNameConstants.ALIAS_DATA_LINK_RESOURCE).append(",")
-			   .append(parentResourceName).append(" ").append(ResourceNameConstants.ALIAS_PARENT_RESOURCE)
-			   .append(" where ")
-			   .append(ResourceNameConstants.ALIAS_PARENT_RESOURCE).append(".").append(ResourceNameConstants.ID)
-			   .append("=").append(ResourceNameConstants.ALIAS_DATA_LINK_RESOURCE).append(".").append(ResourceNameConstants.LEFT_ID)
-			   .append(" and ");
+			hql.append(" where s_.").append(ResourceNameConstants.ID).append(" in ( select d_.rightId from ")
+			   .append(dataLinkResourceName).append(" d_,")
+			   .append(parentResourceName).append(" p_ where p_.").append(ResourceNameConstants.ID)
+			   .append("=d_.leftId and ");
 			
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
 				Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, ResourceNameConstants.ALIAS_PARENT_RESOURCE);
+				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
 			}else{ // 否则就直接查询
-				hql.append(ResourceNameConstants.ALIAS_PARENT_RESOURCE).append(".")
+				hql.append("p_.")
 				   .append(ResourceNameConstants.ID)
 				   .append(" =?");
 				hqlParameterValues.add(parentResourceId);

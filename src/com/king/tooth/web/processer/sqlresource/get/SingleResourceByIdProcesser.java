@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
-
 /**
  * 处理这种请求路径格式的处理器：/{resourceType}/{resourceId}
  * @author DougLei
@@ -34,7 +32,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" from ( ")
 		   .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalSelectSqlScript())
-		   .append(" ) ").append(ResourceNameConstants.ALIAS_RESOURCE).append(" ")
+		   .append(" ) s_ ")
 		   .append(builtinQueryCondMethodProcesser.getSql());
 		return sql;
 	}
