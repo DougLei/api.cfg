@@ -70,3 +70,5 @@ _projId
 	                
 4.api.platform.basic.properties中的account.default.pwd的值修改为一个复杂值
 5.api.platform.database.properties中的db.default.filepath的值，改为生产服务器上合适的目录
+6.api.platform.sys.properties中app.web.sys.location的值，改成实际运行系统的访问地址（这个值是给配置系统配置的，用来在发布后，调用运行系统的接口）
+  			                  cfg.web.sys.ip的值，改成实际配置系统的ip地址（这个值是给运行系统配置的，用来在被调用接口的时候，验证是否是运行系统发过来的）

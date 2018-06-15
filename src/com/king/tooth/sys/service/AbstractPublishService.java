@@ -20,6 +20,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 发布服务器的抽象类
@@ -197,4 +198,35 @@ public abstract class AbstractPublishService extends AbstractService{
 		}
 		publishInfos.clear();
 	}
+	
+	/**
+	 * 处理运行系统发布数据的加载/卸载
+	 * @param publishDataId 发布的数据主键
+	 * @param publishType 发布的类型:1：发布、-1：取消发布
+	 * @return
+	 */
+	public ResponseBody processAppPublishData(String publishDataId, String publishType){
+		if("1".equals(publishType)){
+			return loadPublishData(publishDataId);
+		}else if("-1".equals(publishType)){
+			return unloadPublishData(publishDataId);
+		}
+		return new ResponseBody("请传入正确的发布类型：[publishType = 1：发布/-1：取消发布]", null);
+	}
+	
+	/**
+	 * 加载发布的数据
+	 * <p>属于运行系统的功能</p>
+	 * @param publishDataId 发布的数据主键
+	 * @return
+	 */
+	protected abstract ResponseBody loadPublishData(String publishDataId);
+	
+	/**
+	 * 卸载发布的数据
+	 * <p>属于运行系统的功能</p>
+	 * @param publishDataId 发布的数据主键
+	 * @return
+	 */
+	protected abstract ResponseBody unloadPublishData(String publishDataId);
 }

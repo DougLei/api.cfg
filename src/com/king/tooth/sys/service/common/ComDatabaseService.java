@@ -25,6 +25,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 数据库数据信息资源对象处理器
@@ -297,6 +298,15 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
 		DynamicDBUtil.removeDataSource(databaseId);
+		return null;
+	}
+
+	//--------------------------------------------------------------------------------------------------------
+	protected ResponseBody loadPublishData(String publishDataId) {
+		return null;
+	}
+
+	protected ResponseBody unloadPublishData(String publishDataId) {
 		return null;
 	}
 }

@@ -29,6 +29,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 表数据信息资源对象处理器
@@ -546,5 +547,14 @@ public class ComTabledataService extends AbstractPublishService {
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		tableHandler.dropTable(tables);
 		tables.clear();
+	}
+
+	//--------------------------------------------------------------------------------------------------------
+	protected ResponseBody loadPublishData(String publishDataId) {
+		return null;
+	}
+
+	protected ResponseBody unloadPublishData(String publishDataId) {
+		return null;
 	}
 }

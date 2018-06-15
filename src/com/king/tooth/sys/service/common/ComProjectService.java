@@ -15,6 +15,7 @@ import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 项目信息资源对象处理器
@@ -354,5 +355,14 @@ public class ComProjectService extends AbstractPublishService {
 			}
 			hql.setLength(0);
 		}
+	}
+
+	//--------------------------------------------------------------------------------------------------------
+	protected ResponseBody loadPublishData(String publishDataId) {
+		return null;
+	}
+
+	protected ResponseBody unloadPublishData(String publishDataId) {
+		return null;
 	}
 }

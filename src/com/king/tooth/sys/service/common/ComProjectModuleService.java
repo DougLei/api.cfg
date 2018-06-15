@@ -9,6 +9,7 @@ import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 项目模块信息资源对象处理器
@@ -241,5 +242,14 @@ public class ComProjectModuleService extends AbstractPublishService {
 			new ComModuleOperationService().batchCancelPublishModuleOperation(databaseId, projectId, publishDataIds);
 			publishDataIds.clear();
 		}
+	}
+
+	//--------------------------------------------------------------------------------------------------------
+	protected ResponseBody loadPublishData(String publishDataId) {
+		return null;
+	}
+
+	protected ResponseBody unloadPublishData(String publishDataId) {
+		return null;
 	}
 }

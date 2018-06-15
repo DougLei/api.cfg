@@ -12,6 +12,7 @@ import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * sql脚本资源服务处理器
@@ -324,5 +325,14 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public void batchCancelPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
 		publishInfoService.batchDeletePublishedData(projectId, sqlScriptIds);
+	}
+
+	//--------------------------------------------------------------------------------------------------------
+	protected ResponseBody loadPublishData(String publishDataId) {
+		return null;
+	}
+
+	protected ResponseBody unloadPublishData(String publishDataId) {
+		return null;
 	}
 }
