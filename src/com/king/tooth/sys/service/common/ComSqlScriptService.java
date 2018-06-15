@@ -12,7 +12,6 @@ import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * sql脚本资源服务处理器
@@ -29,7 +28,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	private String validSqlScriptResourceNameIsExists(ComSqlScript sqlScript) {
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 		if(count > 0){
-			return "sql脚本资源名为["+sqlScript.getSqlScriptResourceName()+"]的已存在";
+			return "您已经创建过相同sql脚本资源名["+sqlScript.getSqlScriptResourceName()+"]的数据";
 		}
 		return null;
 	}
@@ -85,9 +84,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 				
 				// 保存sql脚本和项目的关联关系
 				if(isPlatformDeveloper){
-					HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
+					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
 				}else{
-					HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", projectId, sqlScriptId);
+					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 				}
 			}
 		}
@@ -174,7 +173,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScript where id = '"+sqlScriptId+"'");
-		HibernateUtil.deleteDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", null, sqlScriptId);
+		HibernateUtil.deleteDataLinks("ComProjectComSqlScriptLinks", null, sqlScriptId);
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		if(isPlatformDeveloper){
@@ -190,7 +189,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String addProjSqlScriptRelation(String projectId, String sqlScriptId) {
-		HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", projectId, sqlScriptId);
+		HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 		return null;
 	}
 	
@@ -201,7 +200,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelProjSqlScriptRelation(String projectId, String sqlScriptId) {
-		HibernateUtil.deleteDataLinks(CurrentThreadContext.getProjectId(), "ComProjectComSqlScriptLinks", projectId, sqlScriptId);
+		HibernateUtil.deleteDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 		return null;
 	}
 	
@@ -328,11 +327,11 @@ public class ComSqlScriptService extends AbstractPublishService {
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected ResponseBody loadPublishData(String publishDataId) {
+	protected String loadPublishData(String porjectId, String publishDataId) {
 		return null;
 	}
 
-	protected ResponseBody unloadPublishData(String publishDataId) {
+	protected String unloadPublishData(String projectId, String publishDataId) {
 		return null;
 	}
 }

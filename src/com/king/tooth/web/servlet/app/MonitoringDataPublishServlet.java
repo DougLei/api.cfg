@@ -66,23 +66,37 @@ public class MonitoringDataPublishServlet extends BasicHttpServlet {
 		if(StrUtils.isEmpty(publishDataId)){
 			responseBody = new ResponseBody("被发布的数据id不能为空", null);
 		}else{
-			String publishDataType = request.getParameter("publishDataType");
-			String publishType = request.getParameter("publishType");
-			
-			if("db".equals(publishDataType)){
-				responseBody = new ComDatabaseService().processAppPublishData(publishDataId, publishType);
-			}else if("project".equals(publishDataType)){
-				responseBody = new ComProjectService().processAppPublishData(publishDataId, publishType);
-			}else if("module".equals(publishDataType)){
-				responseBody = new ComProjectModuleService().processAppPublishData(publishDataId, publishType);
-			}else if("oper".equals(publishDataType)){
-				responseBody = new ComModuleOperationService().processAppPublishData(publishDataId, publishType);
-			}else if("table".equals(publishDataType)){
-				responseBody = new ComTabledataService().processAppPublishData(publishDataId, publishType);
-			}else if("sql".equals(publishDataType)){
-				responseBody = new ComSqlScriptService().processAppPublishData(publishDataId, publishType);
+			String projectId = request.getParameter("projectId");
+			if(StrUtils.isEmpty(projectId)){
+				responseBody = new ResponseBody("发布数据所属的projectId不能为空", null);
 			}else{
-				responseBody = new ResponseBody("请传入正确的发布数据类型：[publishDataType = 1:发布数据库 /2：发布项目/3：发布模块/4：发布功能/5：发布表/6：发布sql脚本]", null);
+				String publishDataType = request.getParameter("publishDataType");
+				String publishType = request.getParameter("publishType");
+				
+				String str;
+				if("db".equals(publishDataType)){
+					str = new ComDatabaseService().processAppPublishData(projectId, publishDataId, publishType);
+				}else if("project".equals(publishDataType)){
+					str = new ComProjectService().processAppPublishData(projectId, publishDataId, publishType);
+				}else if("module".equals(publishDataType)){
+					str = new ComProjectModuleService().processAppPublishData(projectId, publishDataId, publishType);
+				}else if("oper".equals(publishDataType)){
+					str = new ComModuleOperationService().processAppPublishData(projectId, publishDataId, publishType);
+				}else if("table".equals(publishDataType)){
+					str = new ComTabledataService().processAppPublishData(projectId, publishDataId, publishType);
+				}else if("sql".equals(publishDataType)){
+					str = new ComSqlScriptService().processAppPublishData(projectId, publishDataId, publishType);
+				}else{
+					str = "请传入正确的发布数据类型：[publishDataType = db、project、module、oper、table、sql]";
+				}
+				
+				String processResultMsg;
+				if("success".equals(str)){
+					processResultMsg = str;
+				}else{
+					processResultMsg = "error";
+				}
+				responseBody = new ResponseBody(processResultMsg, str);
 			}
 		}
 		printResult(response, responseBody);

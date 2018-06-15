@@ -213,11 +213,11 @@ public class ComModuleOperationService extends AbstractPublishService {
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected ResponseBody loadPublishData(String publishDataId) {
+	protected String loadPublishData(String porjectId, String publishDataId) {
 		return null;
 	}
 
-	protected ResponseBody unloadPublishData(String publishDataId) {
+	protected String unloadPublishData(String projectId, String publishDataId) {
 		return null;
 	}
 }

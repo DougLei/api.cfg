@@ -15,7 +15,6 @@ import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 项目信息资源对象处理器
@@ -169,7 +168,7 @@ public class ComProjectService extends AbstractPublishService {
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projectId, project.getRefDatabaseId());
 		
 		publishInfoService.deletePublishedData(null, projectId);
-		executeRemotePublish(project.getRefDatabaseId(), project.getId(), project, 0, null);
+		executeRemotePublish(getAppSysDatabaseId(null), project.getId(), project, 0, null);
 		
 		// 给远程系统的内置表中插入基础数据
 		executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
@@ -237,7 +236,8 @@ public class ComProjectService extends AbstractPublishService {
 		// 将项目id和数据库id取消映射
 		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
 		
-		executeRemoteUpdate(project.getRefDatabaseId(), null, "delete " + project.getEntityName() + " where refDataId='"+projectId+"'");
+		// 远程删除运行系统中的数据库信息
+		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete " + project.getEntityName() + " where id = '"+projectId+"'");
 		publishInfoService.deletePublishedData(null, projectId);
 		
 		// 删除远程系统内置表中的所有和项目相关的数据，即projectId=project.getId()的所有数据
@@ -358,11 +358,11 @@ public class ComProjectService extends AbstractPublishService {
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected ResponseBody loadPublishData(String publishDataId) {
+	protected String loadPublishData(String porjectId, String publishDataId) {
 		return null;
 	}
 
-	protected ResponseBody unloadPublishData(String publishDataId) {
+	protected String unloadPublishData(String projectId, String publishDataId) {
 		return null;
 	}
 }

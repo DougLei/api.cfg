@@ -25,7 +25,6 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 数据库数据信息资源对象处理器
@@ -214,10 +213,13 @@ public class ComDatabaseService extends AbstractPublishService {
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
 		publishInfoService.deletePublishedData(null, databaseId);
-		executeRemotePublish(databaseId, null, database, 0, null);
+		executeRemotePublish(getAppSysDatabaseId(database), null, database, 0, null);
 		
 		database.setIsCreated(1);
 		HibernateUtil.updateObject(database, null);
+		
+//		Map<String, String> urlParams = new HashMap<String, String>();
+//		HttpClientUtil.doGetBasic(SysConfig.getSystemConfig(""), urlParams);
 		return null;
 	}
 	
@@ -231,6 +233,9 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
+		if(database.getIsBuiltin() == 1){
+			return "id为["+databaseId+"]的内置数据库不能被删除！";
+		}
 		if(database.getIsNeedDeploy() == 0){
 			return "id为["+databaseId+"]的数据库不该被发布，如需发布，请联系管理员";
 		}
@@ -241,72 +246,41 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "id为["+databaseId+"]的数据库未发布，无法取消发布";
 		}
 		
-		try {
-			// 先测试库能不能正常连接上
-			String testLinkResult = database.testDbLink();
-			if(testLinkResult.startsWith("err")){
-				return "取消发布数据库失败:" + testLinkResult;
-			}
-			
-			// 清除该数据库下，所有和项目id的映射信息
-			ProjectIdRefDatabaseIdMapping.clearMapping(databaseId);
-			
-			// 移除dataSource和sessionFacotry
-			DynamicDBUtil.removeDataSource(databaseId);
-			
-			// 如果是自己的库，要删除
-			if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance)){
-				DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
-				databaseHandler.dropDatabase(database);
-			}
-		} finally{
-			// 删除该库下，所有发布的信息
-			HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
-			
-			database.setIsCreated(0);
-			HibernateUtil.updateObject(database, null);
+		// 先测试库能不能正常连接上
+		String testLinkResult = database.testDbLink();
+		if(testLinkResult.startsWith("err")){
+			return "取消发布数据库失败:" + testLinkResult;
 		}
-		return null;
-	}
-	//--------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * 加载数据库
-	 * <p>运行系统使用的方法，当配置系统，发布过来数据库信息的时候</p>
-	 * @param databaseId
-	 */
-	public String loadPublishedDatabase(String databaseId){
-//		if(SysConfig.getSystemConfig("current.sys.type").equals(ITable.CONFIG_PLATFORM+"")){
-//			return installOperResponseBody("卸载数据库的功能，目前只提供给运行系统使用", null);
-//		}
 		
-		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
-		if(database == null){
-			return "没有找到id为["+databaseId+"]的数据库对象信息";
-		}
-		DynamicDBUtil.addDataSource(database);
-		return null;
-	}
-	
-	/**
-	 * 卸载数据库
-	 * <p>运行系统使用的方法，当配置系统，取消发布数据库信息的时候</p>
-	 * @param databaseId
-	 */
-	public String unloadPublishedDatabase(String databaseId){
-		if(DynamicDBUtil.getDataSource(databaseId) == null){
-			return "没有找到id为["+databaseId+"]的数据库对象信息";
-		}
+		// 清除该数据库下，所有和项目id的映射信息
+		ProjectIdRefDatabaseIdMapping.clearMapping(databaseId);
+		
+		// 移除dataSource和sessionFacotry
 		DynamicDBUtil.removeDataSource(databaseId);
+		
+		// 如果是自己的库，要删除
+		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance)){
+			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
+			databaseHandler.dropDatabase(database);
+		}
+		
+		// 删除该库下，所有发布的信息
+		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
+		// 远程删除运行系统中的数据库信息
+		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where id = '"+database.getId()+"'");
+		
+		database.setIsCreated(0);
+		HibernateUtil.updateObject(database, null);
 		return null;
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected ResponseBody loadPublishData(String publishDataId) {
+	protected String loadPublishData(String porjectId, String publishDataId) {
+		CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId();
 		return null;
 	}
 
-	protected ResponseBody unloadPublishData(String publishDataId) {
+	protected String unloadPublishData(String projectId, String publishDataId) {
 		return null;
 	}
 }

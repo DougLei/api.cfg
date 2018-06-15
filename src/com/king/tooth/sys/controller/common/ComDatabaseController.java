@@ -106,9 +106,6 @@ public class ComDatabaseController extends AbstractPublishController{
 			return installOperResponseBody("要发布的数据库id不能为空", null);
 		}
 		String result = databaseService.publishDatabase(databaseId);
-		if(result == null){
-			// 调用接口，石磊
-		}
 		return installOperResponseBody(result, null);
 	}
 	
@@ -129,9 +126,6 @@ public class ComDatabaseController extends AbstractPublishController{
 			return installOperResponseBody("要取消发布的数据库id不能为空", null);
 		}
 		String result = databaseService.cancelPublishDatabase(databaseId);
-		if(result == null){
-			// 调用接口，石磊
-		}
 		return installOperResponseBody(result, null);
 	}
 }

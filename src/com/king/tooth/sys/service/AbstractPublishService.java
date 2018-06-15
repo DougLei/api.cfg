@@ -1,7 +1,9 @@
 package com.king.tooth.sys.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -9,10 +11,12 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
+import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.common.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
@@ -20,7 +24,6 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 发布服务器的抽象类
@@ -31,6 +34,18 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * 发布信息的服务层
 	 */
 	protected ComPublishInfoService publishInfoService = new ComPublishInfoService();
+	
+	/**
+	 * 获得运行系统的数据库id
+	 * @param database
+	 * @return
+	 */
+	protected String getAppSysDatabaseId(ComDatabase database){
+		if(database != null && database.getIsBuiltin() == 1){
+			return database.getId();
+		}
+		return (String) HibernateUtil.executeUniqueQueryByHql("select "+ResourceNameConstants.ID+" from ComDatabase where isBuiltin=1", null);
+	}
 	
 	/**
 	 * 执行远程发布操作
@@ -58,7 +73,8 @@ public abstract class AbstractPublishService extends AbstractService{
 			session.save(publish.getEntityName(), publishEntityJson);
 			
 			if(datalinkResourceName != null){
-				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, projectId, publishEntityJson.getString(ResourceNameConstants.ID), 1, null, null);
+				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), 1, null, null);
+				dataLink.put("projectId", projectId);
 				dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(datalinkResourceName, dataLink);
 			}
@@ -160,7 +176,8 @@ public abstract class AbstractPublishService extends AbstractService{
 				session.save(entity.getEntityName(), publishEntityJson);
 				
 				if(datalinkResourceName != null){
-					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, projectId, publishEntityJson.getString(ResourceNameConstants.ID), orderCode++, null, null);
+					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), orderCode++, null, null);
+					dataLink.put("projectId", projectId);
 					dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 					session.save(datalinkResourceName, dataLink);
 				}
@@ -200,33 +217,58 @@ public abstract class AbstractPublishService extends AbstractService{
 	}
 	
 	/**
-	 * 处理运行系统发布数据的加载/卸载
-	 * @param publishDataId 发布的数据主键
-	 * @param publishType 发布的类型:1：发布、-1：取消发布
+	 * 运行系统处理加载/卸载数据的api路径
+	 */
+	protected static final String appWebSysProcessPublishDataApiPath = SysConfig.getSystemConfig("app.web.sys.location") + "/monitoring/data/publish";
+	
+	/**
+	 * 获取调用加载/卸载数据的api的参数map集合
+	 * @param publishDataId 发布的数据id
+	 * @param projectId 发布数据所属的projectId
+	 * @param publishDataType 发布数据类型：[publishDataType = db、project、module、oper、table、sql]
+	 * @param publishType 发布类型：[publishType = 1：发布/-1：取消发布]
 	 * @return
 	 */
-	public ResponseBody processAppPublishData(String publishDataId, String publishType){
+	protected Map<String, String> getInvokePublishDataApiParamMaps(String publishDataId, String projectId, String publishDataType, String publishType){
+		Map<String, String> urlParams = new HashMap<String, String>(4);
+		urlParams.put("publishDataId", publishDataId);
+		urlParams.put("projectId", projectId);
+		urlParams.put("publishDataType", publishDataType);
+		urlParams.put("publishType", publishType);
+		return urlParams;
+	}
+	
+	/**
+	 * 处理运行系统发布数据的加载/卸载
+	 * @param porjectId
+	 * @param publishDataId 发布的数据主键
+	 * @param publishType 发布的类型:1：发布、-1：取消发布
+	 * @return success/其他错误描述信息
+	 */
+	public String processAppPublishData(String porjectId, String publishDataId, String publishType){
 		if("1".equals(publishType)){
-			return loadPublishData(publishDataId);
+			return loadPublishData(porjectId, publishDataId);
 		}else if("-1".equals(publishType)){
-			return unloadPublishData(publishDataId);
+			return unloadPublishData(porjectId, publishDataId);
 		}
-		return new ResponseBody("请传入正确的发布类型：[publishType = 1：发布/-1：取消发布]", null);
+		return "请传入正确的发布类型：[publishType = 1：发布/-1：取消发布]";
 	}
 	
 	/**
 	 * 加载发布的数据
 	 * <p>属于运行系统的功能</p>
+	 * @param porjectId
 	 * @param publishDataId 发布的数据主键
-	 * @return
+	 * @return success/其他错误描述信息
 	 */
-	protected abstract ResponseBody loadPublishData(String publishDataId);
+	protected abstract String loadPublishData(String porjectId, String publishDataId);
 	
 	/**
 	 * 卸载发布的数据
 	 * <p>属于运行系统的功能</p>
+	 * @param porjectId
 	 * @param publishDataId 发布的数据主键
-	 * @return
+	 * @return success/其他错误描述信息
 	 */
-	protected abstract ResponseBody unloadPublishData(String publishDataId);
+	protected abstract String unloadPublishData(String porjectId, String publishDataId);
 }

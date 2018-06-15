@@ -214,6 +214,7 @@ public class InitSystemService extends AbstractService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据库信息【运行平台数据库信息】
 		ComDatabase appDatabase = new ComDatabase();
+		appDatabase.setDbDisplayName("运行系统通用数据库(内置)");
 		appDatabase.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
 		appDatabase.setDbInstanceName("SmartOneApp");
 		appDatabase.setLoginUserName("SmartOneApp");

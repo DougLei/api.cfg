@@ -29,7 +29,6 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 表数据信息资源对象处理器
@@ -37,8 +36,6 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
  */
 @SuppressWarnings("unchecked")
 public class ComTabledataService extends AbstractPublishService {
-	// 项目和表的关联关系资源名
-	private static final String comProjectComTabledataLinkResourceName = "ComProjectComTabledataLinks";
 	
 	/**
 	 * 验证表名是否存在
@@ -48,7 +45,7 @@ public class ComTabledataService extends AbstractPublishService {
 	private String validTableNameIsExists(ComTabledata table) {
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 		if(count > 0){
-			return "表名为["+table.getTableName()+"]的已存在";
+			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
 		return null;
 	}
@@ -62,6 +59,22 @@ public class ComTabledataService extends AbstractPublishService {
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where id = ?", projectId);
 		if(count != 1){
 			return "表关联的，id为["+projectId+"]的项目信息不存在";
+		}
+		return null;
+	}
+	
+	/**
+	 * 验证数据库中是否存在相同表名
+	 * @param table
+	 * @return
+	 */
+	private String validTableIsExistsInDatabase(String projectId, ComTabledata table) {
+		String hql = "select count("+ResourceNameConstants.ID+") from " +
+				"ComTabledata tb, ComProjectComTabledataLinks pt, ComProject p, ComDatabase d " +
+				"where tb.id=pt.rightId and p.id=pt.leftId and p.refDatabaseId=d.id and tb.tableName='"+table.getTableName()+"'";
+		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
+		if(count > 1){
+			return "项目关联的数据库中已经存在表名为["+table.getTableName()+"]的数据";
 		}
 		return null;
 	}
@@ -82,14 +95,17 @@ public class ComTabledataService extends AbstractPublishService {
 				return "表关联的项目id不能为空！";
 			}
 			operResult = validTableRefProjIsExists(projectId);
+			if(operResult == null){
+				operResult = validTableIsExistsInDatabase(projectId, table);
+			}
 		}
 		if(operResult == null){
 			String tableId = HibernateUtil.saveObject(table, null);
 			// 保存表和项目的关联关系
 			if(isPlatformDeveloper){
-				HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), comProjectComTabledataLinkResourceName, CurrentThreadContext.getProjectId(), tableId);
+				HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
 			}else{
-				HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), comProjectComTabledataLinkResourceName, projectId, tableId);
+				HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
 			}
 		}
 		return operResult;
@@ -154,7 +170,7 @@ public class ComTabledataService extends AbstractPublishService {
 			}
 		}
 		
-		List<JSONObject> datalinks = HibernateUtil.queryDataLinks(comProjectComTabledataLinkResourceName, null, tableId);
+		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("ComProjectComTabledataLinks", null, tableId);
 		if(datalinks.size() > 1){
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
 			StringBuilder hql = new StringBuilder("select projName from ComProject where id in (");
@@ -170,7 +186,7 @@ public class ComTabledataService extends AbstractPublishService {
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComTabledata where id = '"+tableId+"'");
-		HibernateUtil.deleteDataLinks(CurrentThreadContext.getProjectId(), comProjectComTabledataLinkResourceName, null, tableId);
+		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
 		
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
 		if(isPlatformDeveloper){
@@ -253,8 +269,12 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return
 	 */
 	public String addProjTableRelation(String projectId, String tableId) {
-		HibernateUtil.saveDataLinks(CurrentThreadContext.getProjectId(), comProjectComTabledataLinkResourceName, projectId, tableId);
-		return null;
+		ComTabledata table = getObjectById(tableId, ComTabledata.class);
+		String operResult = validTableIsExistsInDatabase(projectId, table);
+		if(operResult == null){
+			HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
+		}
+		return operResult;
 	}
 	
 	/**
@@ -264,7 +284,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelProjTableRelation(String projectId, String tableId) {
-		HibernateUtil.deleteDataLinks(CurrentThreadContext.getProjectId(), comProjectComTabledataLinkResourceName, projectId, tableId);
+		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", projectId, tableId);
 		return null;
 	}
 	
@@ -299,6 +319,12 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		// 远程过去create表
 		ComDatabase database = getObjectById(project.getRefDatabaseId(), ComDatabase.class);
+		table.setDbType(database.getDbType());
+		String validResult = table.analysisResourceProp();
+		if(validResult != null){
+			return validResult;
+		}
+		
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		List<ComTabledata> tables = tableHandler.createTable(table, true);
@@ -359,7 +385,8 @@ public class ComTabledataService extends AbstractPublishService {
 				publishEntityJson = hbm.toPublishEntityJson(projectId);
 				session.save(hbm.getEntityName(), publishEntityJson);
 				
-				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, projectId, publishEntityJson.getString(ResourceNameConstants.ID), orderCode++, null, null);
+				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), orderCode++, null, null);
+				datalink.put("projectId", projectId);
 				datalink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(comProjectComHibernateHbmLinkResourceName, datalink);
 				
@@ -434,7 +461,9 @@ public class ComTabledataService extends AbstractPublishService {
 		List<ComTabledata> unPublishTables = new ArrayList<ComTabledata>(tableIds.size());
 		// 反之
 		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size()*2);
+		ComDatabase database = getObjectById(projectId, ComDatabase.class);
 		ComTabledata table;
+		String validResult;
 		for (Object tableId : tableIds) {
 			table = getObjectById(tableId.toString(), ComTabledata.class);
 			table.setRefDatabaseId(databaseId);
@@ -444,6 +473,12 @@ public class ComTabledataService extends AbstractPublishService {
 				table.setBatchPublishMsg("id为["+tableId+"]的表信息无效，请联系管理员");
 			}else if(publishInfoService.validResourceIsPublished(null, projectId, table.getId(), null)){
 				table.setBatchPublishMsg("["+table.getTableName()+"]表已经发布，无需再次发布，或取消发布后重新发布");
+			}
+			
+			table.setDbType(database.getDbType());
+			validResult = table.analysisResourceProp();
+			if(validResult != null){
+				table.setBatchPublishMsg(validResult);
 			}
 			if(table.getBatchPublishMsg() == null){
 				tables.add(table);
@@ -472,8 +507,8 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		int limitSize = 30;
 		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(limitSize);// 记录表对应的hbm内容，要发布的是这个
+		
 		// 准备远程过去create表
-		ComDatabase database = getObjectById(projectId, ComDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		
 		List<ComTabledata> tmpTables;// 在创建表的时候，记录每次创建表的数据
@@ -550,11 +585,11 @@ public class ComTabledataService extends AbstractPublishService {
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected ResponseBody loadPublishData(String publishDataId) {
+	protected String loadPublishData(String porjectId, String publishDataId) {
 		return null;
 	}
 
-	protected ResponseBody unloadPublishData(String publishDataId) {
+	protected String unloadPublishData(String projectId, String publishDataId) {
 		return null;
 	}
 }
