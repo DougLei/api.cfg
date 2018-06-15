@@ -16,7 +16,6 @@ import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.util.httpclient.HttpClientUtil;
 
 /**
  * 项目信息资源对象处理器
@@ -223,9 +222,8 @@ public class ComProjectService extends AbstractPublishService {
 				publishDataIds.clear();
 			}
 			
-			result = HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-					getInvokePublishDataApiParamMaps(projectId, projectId, "project", "1"),
-					getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
+			result = useLoadPublishApi(projectId, projectId, "project", "1", 
+					CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
 		}
 		return result;
 	}
@@ -298,9 +296,8 @@ public class ComProjectService extends AbstractPublishService {
 				publishDataIds.clear();
 			}
 			
-			result = HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-					getInvokePublishDataApiParamMaps(projectId, projectId, "project", "-1"),
-					getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
+			result = useLoadPublishApi(projectId, projectId, "project", "-1", 
+					CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
 		}
 		return result;
 	}
@@ -373,12 +370,12 @@ public class ComProjectService extends AbstractPublishService {
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String porjectId, String publishDataId) {
-		ComProject project = getObjectById(porjectId, ComProject.class);
+	protected String loadPublishData(String projectId, String publishDataId) {
+		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
-			return "没有找到id为["+porjectId+"]的项目对象信息，运行系统无法加载";
+			return "没有找到id为["+projectId+"]的项目对象信息，运行系统无法加载";
 		}
-		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(porjectId, project.getRefDatabaseId());
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projectId, project.getRefDatabaseId());
 		return "success";
 	}
 

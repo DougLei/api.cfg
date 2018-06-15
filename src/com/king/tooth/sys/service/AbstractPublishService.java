@@ -24,6 +24,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.httpclient.HttpClientUtil;
 
 /**
  * 发布服务器的抽象类
@@ -216,29 +217,58 @@ public abstract class AbstractPublishService extends AbstractService{
 		publishInfos.clear();
 	}
 	
+	// --------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * 加载发布的数据
+	 * <p>属于运行系统的功能</p>
+	 * @param projectId
+	 * @param publishDataId 发布的数据主键
+	 * @return success/其他错误描述信息
+	 */
+	protected abstract String loadPublishData(String projectId, String publishDataId);
+	
+	/**
+	 * 卸载发布的数据
+	 * <p>属于运行系统的功能</p>
+	 * @param projectId
+	 * @param publishDataId 发布的数据主键
+	 * @return success/其他错误描述信息
+	 */
+	protected abstract String unloadPublishData(String projectId, String publishDataId);
+	
 	/**
 	 * 运行系统处理加载/卸载数据的api路径
 	 */
-	protected static final String appWebSysProcessPublishDataApiPath = SysConfig.getSystemConfig("app.web.sys.location") + "/monitoring/data/publish";
+	private static final String appWebSysProcessPublishDataApiPath = SysConfig.getSystemConfig("app.web.sys.location") + "/monitoring/data/publish";
+	private static final String token = ResourceHandlerUtil.getIdentity();
 	
 	/**
 	 * 获取调用加载/卸载数据的api的参数map集合
-	 * @param publishDataId 发布的数据id
 	 * @param projectId 发布数据所属的projectId
 	 * @param publishDataType 发布数据类型：[publishDataType = db、project、module、oper、table、sql]
 	 * @param publishType 发布类型：[publishType = 1：发布/-1：取消发布]
 	 * @return
 	 */
-	protected Map<String, String> getInvokePublishDataApiParamMaps(String publishDataId, String projectId, String publishDataType, String publishType){
+	private Map<String, String> getUrlParams(String projectId, String publishDataType, String publishType){
 		Map<String, String> urlParams = new HashMap<String, String>(4);
-		urlParams.put("publishDataId", publishDataId);
 		urlParams.put("projectId", projectId);
 		urlParams.put("publishDataType", publishDataType);
 		urlParams.put("publishType", publishType);
 		urlParams.put("_token", token);
 		return urlParams;
 	}
-	private static final String token = ResourceHandlerUtil.getIdentity();
+	
+	/**
+	 * 获取实际传递值的值
+	 * @param publishDataId 发布的数据主键
+	 * @return
+	 */
+	private Map<String, String> getFormParams(String publishDataId) {
+		Map<String, String> formParams = new HashMap<String, String>(1);
+		formParams.put("publishDataId", publishDataId);
+		return formParams;
+	}
 	
 	/**
 	 * 获取调用加载/卸载数据的api的headerMap集合
@@ -246,43 +276,41 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param projectId 
 	 * @return
 	 */
-	protected Map<String, String> getInvokePublishDataApiHeaderMaps(String projectId) {
+	private Map<String, String> getHeaders(String projectId) {
 		Map<String, String> header = new HashMap<String, String>(1);
 		header.put("_projId", projectId);
 		return header;
 	}
 	
 	/**
+	 * 调用加载/卸载资源的api
+	 * @param publishDataId
+	 * @param projectId
+	 * @param publishDataType
+	 * @param publishType
+	 * @param headerProjectId
+	 * @return
+	 */
+	protected String useLoadPublishApi(String publishDataId, String projectId, String publishDataType, String publishType, String headerProjectId){
+		return HttpClientUtil.doPostBasic(appWebSysProcessPublishDataApiPath, 
+				getUrlParams(headerProjectId, publishDataType, publishType), 
+				getFormParams(publishDataId), 
+				getHeaders(headerProjectId), null);
+	}
+	
+	/**
 	 * 处理运行系统发布数据的加载/卸载
-	 * @param porjectId
+	 * @param projectId
 	 * @param publishDataId 发布的数据主键
 	 * @param publishType 发布的类型:1：发布、-1：取消发布
 	 * @return success/其他错误描述信息
 	 */
-	public String processAppPublishData(String porjectId, String publishDataId, String publishType){
+	public String processAppPublishData(String projectId, String publishDataId, String publishType){
 		if("1".equals(publishType)){
-			return loadPublishData(porjectId, publishDataId);
+			return loadPublishData(projectId, publishDataId);
 		}else if("-1".equals(publishType)){
-			return unloadPublishData(porjectId, publishDataId);
+			return unloadPublishData(projectId, publishDataId);
 		}
 		return "请传入正确的发布类型：[publishType = 1：发布/-1：取消发布]";
 	}
-	
-	/**
-	 * 加载发布的数据
-	 * <p>属于运行系统的功能</p>
-	 * @param porjectId
-	 * @param publishDataId 发布的数据主键
-	 * @return success/其他错误描述信息
-	 */
-	protected abstract String loadPublishData(String porjectId, String publishDataId);
-	
-	/**
-	 * 卸载发布的数据
-	 * <p>属于运行系统的功能</p>
-	 * @param porjectId
-	 * @param publishDataId 发布的数据主键
-	 * @return success/其他错误描述信息
-	 */
-	protected abstract String unloadPublishData(String porjectId, String publishDataId);
 }

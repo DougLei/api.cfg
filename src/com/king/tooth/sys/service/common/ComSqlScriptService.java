@@ -12,7 +12,6 @@ import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.util.httpclient.HttpClientUtil;
 
 /**
  * sql脚本资源服务处理器
@@ -257,9 +256,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		sqlScript.setProjectId(projectId);
 		executeRemotePublish(project.getRefDatabaseId(), projectId, sqlScript, 1, "ComProjectComSqlScriptLinks");
 		
-		return HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(sqlScriptId, projectId, "sql", "1"),
-				getInvokePublishDataApiHeaderMaps(projectId));
+		return useLoadPublishApi(sqlScriptId, projectId, "sql", "1", projectId);
 	}
 	
 	/**
@@ -325,9 +322,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		sqlScriptIds.clear();
 		
 		sqlScriptIdStr.setLength(sqlScriptIdStr.length()-1);
-		HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(sqlScriptIdStr.toString(), projectId, "sql", "1"),
-				getInvokePublishDataApiHeaderMaps(projectId));
+		useLoadPublishApi(sqlScriptIdStr.toString(), projectId, "sql", "1", projectId);
 		sqlScriptIdStr.setLength(0);
 	}
 	
@@ -343,13 +338,14 @@ public class ComSqlScriptService extends AbstractPublishService {
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String porjectId, String publishDataId) {
+	protected String loadPublishData(String projectId, String publishDataId) {
 		String[] sqlScriptIds = publishDataId.split(",");
 		ComSqlScript sqlScript;
-		String hql = "from ComSqlScript where refDataId = ? and projectId='"+porjectId+"'";
+		String hql = "from ComSqlScript where isCreated=0 and refDataId = ? and projectId='"+projectId+"'";
 		for (String sqlScriptId : sqlScriptIds) {
 			sqlScript = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSqlScript.class, hql, sqlScriptId.trim());
 			sqlScript.analysisResourceProp();
+			sqlScript.setIsCreated(1);
 			HibernateUtil.updateObjectByHql(sqlScript, null);
 		}
 		return "success";

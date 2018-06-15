@@ -29,7 +29,6 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.util.httpclient.HttpClientUtil;
 
 /**
  * 表数据信息资源对象处理器
@@ -355,9 +354,8 @@ public class ComTabledataService extends AbstractPublishService {
 		executeRemotePublishTable(project.getRefDatabaseId(), projectId, hbms, "ComProjectComHibernateHbmLinks");
 		hbms.clear();
 		
-		return HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(tableId, projectId, "table", "1"),
-				getInvokePublishDataApiHeaderMaps(projectId));
+		
+		return useLoadPublishApi(tableId, projectId, "table", "1", projectId);
 	}
 	
 	/**
@@ -452,9 +450,7 @@ public class ComTabledataService extends AbstractPublishService {
 				"delete ComSysResource where projectId='"+projectId+"' and refDataId = '"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);
 		
-		return HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(deleteTableResourceNames, projectId, "table", "-1"),
-				getInvokePublishDataApiHeaderMaps(projectId));
+		return useLoadPublishApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
 	}
 
 	/**
@@ -562,9 +558,7 @@ public class ComTabledataService extends AbstractPublishService {
 		tables.clear();
 		tableIdStr.setLength(tableIdStr.length()-1);
 		
-		HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(tableIdStr.toString(), projectId, "table", "1"),
-				getInvokePublishDataApiHeaderMaps(projectId));
+		useLoadPublishApi(tableIdStr.toString(), projectId, "table", "1", projectId);
 	}
 	
 	/**
@@ -598,32 +592,40 @@ public class ComTabledataService extends AbstractPublishService {
 		String deleteTableResourceNames = tableHandler.dropTable(tables);
 		tables.clear();
 		
-		HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(deleteTableResourceNames, projectId, "table", "-1"),
-				getInvokePublishDataApiHeaderMaps(projectId));
+		useLoadPublishApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String porjectId, String publishDataId) {
-		String[] tableIds = publishDataId.split(",");
+	protected String loadPublishData(String projectId, String publishDataId) {
+		Object[] tableIds = publishDataId.split(",");
 		List<String> hbmContents = new ArrayList<String>(tableIds.length*2);
-		String hql = "select hbmContent from ComHibernateHbm where refDataId = ? and projectId='"+porjectId+"'";
-		for (String tableId : tableIds) {
-			hbmContents.add(HibernateUtil.executeListQueryByHqlArr(null, null, hql, tableId.trim())+"");
+		String hql = "select hbmContent from ComHibernateHbm where isCreated=0 and refDataId = ? and projectId='"+projectId+"'";
+		for (Object tableId : tableIds) {
+			hbmContents.add(HibernateUtil.executeListQueryByHqlArr(null, null, hql, tableId)+"");
 		}
 		HibernateUtil.appendNewConfig(hbmContents);
 		hbmContents.clear();
+		
+		StringBuilder hb = new StringBuilder("update ComHibernateHbm set isCreated=1 where projectId = '"+projectId+"' and refDataId in(");
+		int len = tableIds.length;
+		for (int i = 0;i<len ;i++) {
+			hb.append("?,");
+		}
+		hb.setLength(hb.length()-1);
+		hb.append(")");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, hb.toString(), tableIds);
+		hb.setLength(0);
 		return "success";
 	}
 
-	protected String unloadPublishData(String projectId, String publishDataId) {
-		String[] entityNameArr = publishDataId.split(",");
-		List<String> entityNames = new ArrayList<String>(entityNameArr.length);
-		for (String en : entityNameArr) {
-			entityNames.add(en.trim());
+	protected String unloadPublishData(String projectId, String tableResourceNames) {
+		String[] tableResourceNameArr = tableResourceNames.split(",");
+		List<String> tableResourceNameList = new ArrayList<String>(tableResourceNameArr.length);
+		for (String en : tableResourceNameArr) {
+			tableResourceNameList.add(en.trim());
 		}
-		HibernateUtil.removeConfig(entityNames);
-		entityNames.clear();
+		HibernateUtil.removeConfig(tableResourceNameList);
+		tableResourceNameList.clear();
 		return "success";
 	}
 }

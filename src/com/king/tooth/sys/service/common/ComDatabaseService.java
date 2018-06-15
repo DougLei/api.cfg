@@ -25,7 +25,6 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.util.httpclient.HttpClientUtil;
 
 /**
  * 数据库数据信息资源对象处理器
@@ -225,9 +224,9 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database.getIsBuiltin() == 1){
 			return "内置数据库发布成功";
 		}
-		return HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(database.getId(), "null", "db", "1"),
-				getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
+		
+		return useLoadPublishApi(database.getId(), "null", "db", "1", 
+				CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
 	}
 	
 	/**
@@ -282,13 +281,12 @@ public class ComDatabaseService extends AbstractPublishService {
 		database.setIsCreated(0);
 		HibernateUtil.updateObject(database, null);
 		
-		return HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
-				getInvokePublishDataApiParamMaps(database.getId(), "null", "db", "-1"),
-				getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
+		return useLoadPublishApi(database.getId(), "null", "db", "-1", 
+				CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
 	}
 
 	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String porjectId, String publishDataId) {
+	protected String loadPublishData(String projectId, String publishDataId) {
 		ComDatabase database = getObjectById(publishDataId, ComDatabase.class);
 		if(database == null){
 			return "没有找到id为["+publishDataId+"]的数据库对象信息，运行系统加载失败";

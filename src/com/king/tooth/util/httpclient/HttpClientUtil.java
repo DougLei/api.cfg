@@ -169,16 +169,18 @@ public class HttpClientUtil {
 	 * @param reqUrl
 	 * @param urlParams 跟在url后的参数，可为空
 	 * @param formParams 提交的参数，可为空
+	 * @param headers 头请求
 	 * @param httpRequestEntity 【解释：post请求时无参数名称的数据对象，例如只提交一个json串，只有值，没有key。这里根据实际情况使用RequestEntity的各个实现类。】
 	 * @return
 	 */
-	public static String doPostBasic(String reqUrl, Map<String, String> urlParams, Map<String, String> formParams, HttpRequestEntity httpRequestEntity){
+	public static String doPostBasic(String reqUrl, Map<String, String> urlParams, Map<String, String> formParams, Map<String, String> headers, HttpRequestEntity httpRequestEntity){
 		reqUrl = dealRequestUrl(reqUrl, urlParams);// 处理请求的url 若有参数，拼装参数到url后
 		HttpClient httpClient = null;
 		PostMethod postMethod = null;
 		try {
 			httpClient = new HttpClient();
 			postMethod = new PostMethod(reqUrl);
+			processHeader(postMethod, headers);
 			dealRequestBody(postMethod, formParams);// 处理请求的form表单数据，并添加到postMethod中
 			dealRequestEntity(postMethod, httpRequestEntity);// 处理上传文件、或提交单一json串(只有value，没有key)等
 			setConfig(httpClient, postMethod);// 设置相关的配置信息，要在dealRequestEntity()方法后调用
