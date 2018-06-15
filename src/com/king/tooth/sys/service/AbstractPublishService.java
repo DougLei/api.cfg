@@ -260,17 +260,6 @@ public abstract class AbstractPublishService extends AbstractService{
 	}
 	
 	/**
-	 * 获取实际传递值的值
-	 * @param publishDataId 发布的数据主键
-	 * @return
-	 */
-	private Map<String, String> getFormParams(String publishDataId) {
-		Map<String, String> formParams = new HashMap<String, String>(1);
-		formParams.put("publishDataId", publishDataId);
-		return formParams;
-	}
-	
-	/**
 	 * 获取调用加载/卸载数据的api的headerMap集合
 	 * <p>主要给header中设置_projId的值  @see PrepareFilter</p>
 	 * @param projectId 
@@ -294,8 +283,8 @@ public abstract class AbstractPublishService extends AbstractService{
 	protected String useLoadPublishApi(String publishDataId, String projectId, String publishDataType, String publishType, String headerProjectId){
 		return HttpClientUtil.doPostBasic(appWebSysProcessPublishDataApiPath, 
 				getUrlParams(headerProjectId, publishDataType, publishType), 
-				getFormParams(publishDataId), 
-				getHeaders(headerProjectId), null);
+				null, getHeaders(headerProjectId), 
+				HttpClientUtil.getHttpStringRequestEntity(publishDataId, "text/json"));
 	}
 	
 	/**

@@ -123,9 +123,9 @@ public class HttpClientUtil {
 	 */
 	private static void setConfig(HttpClient httpClient, HttpMethodBase httpMethodBase) {
 		// 通过网络与服务器建立连接的时间限制【连接超时】
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(Integer.valueOf(SysConfig.getSystemConfig("httpclient_conn_timeout")));
+		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(Integer.valueOf(SysConfig.getSystemConfig("httpclient.conn.timeout")));
 		// 读取数据的时间限制【请求超时】
-		httpClient.getHttpConnectionManager().getParams().setSoTimeout(Integer.valueOf(SysConfig.getSystemConfig("httpclient_req_timeout")));
+		httpClient.getHttpConnectionManager().getParams().setSoTimeout(Integer.valueOf(SysConfig.getSystemConfig("httpclient.req.timeout")));
 		// 设置默认编码格式
 		httpMethodBase.getParams().setContentCharset(EncodingConstants.UTF_8);
 		// 设置请求头中，禁止缓存
