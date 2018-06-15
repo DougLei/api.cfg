@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
+import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.ISysResource;
@@ -15,6 +16,7 @@ import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.httpclient.HttpClientUtil;
 
 /**
  * 项目信息资源对象处理器
@@ -151,6 +153,9 @@ public class ComProjectService extends AbstractPublishService {
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
+		if(project.getIsCreated() == 1){
+			return "id为["+projectId+"]的项目已经被发布，不能重复发布";
+		}
 		if(project.getIsNeedDeploy() == 0){
 			return "id为["+projectId+"]的项目不该被发布，如需发布，请联系管理员";
 		}
@@ -169,12 +174,6 @@ public class ComProjectService extends AbstractPublishService {
 		
 		publishInfoService.deletePublishedData(null, projectId);
 		executeRemotePublish(getAppSysDatabaseId(null), project.getId(), project, 0, null);
-		
-		// 给远程系统的内置表中插入基础数据
-		executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
-		
-		project.setIsCreated(1);
-		HibernateUtil.updateObject(project, null);
 		return null;
 	}
 	/**
@@ -187,6 +186,13 @@ public class ComProjectService extends AbstractPublishService {
 		String result = publishProject(projectId);
 		if(result == null){
 			ComProject project = getObjectById(projectId, ComProject.class);
+			
+			project.setIsCreated(1);
+			HibernateUtil.updateObject(project, null);
+			
+			// 给远程系统的内置表中插入基础数据
+			executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
+			
 			// 记录要发布的数据id集合
 			List<Object> publishDataIds;
 			// 发布项目模块
@@ -216,6 +222,10 @@ public class ComProjectService extends AbstractPublishService {
 				new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
 			}
+			
+			result = HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
+					getInvokePublishDataApiParamMaps(projectId, projectId, "project", "1"),
+					getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
 		}
 		return result;
 	}
@@ -230,7 +240,7 @@ public class ComProjectService extends AbstractPublishService {
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
-		if(!publishInfoService.validResourceIsPublished(null, project.getId(), null, null)){
+		if(project.getIsCreated() == 1){
 			return "["+project.getProjName()+"]项目未发布，无法取消发布";
 		}
 		// 将项目id和数据库id取消映射
@@ -239,12 +249,6 @@ public class ComProjectService extends AbstractPublishService {
 		// 远程删除运行系统中的数据库信息
 		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete " + project.getEntityName() + " where id = '"+projectId+"'");
 		publishInfoService.deletePublishedData(null, projectId);
-		
-		// 删除远程系统内置表中的所有和项目相关的数据，即projectId=project.getId()的所有数据
-		executeRemoteDeleteBasicData(project.getRefDatabaseId(), projectId);
-		
-		project.setIsCreated(0);
-		HibernateUtil.updateObject(project, null);
 		return null;
 	}
 	/**
@@ -257,6 +261,13 @@ public class ComProjectService extends AbstractPublishService {
 		String result = cancelPublishProject(projectId);
 		if(result == null){
 			ComProject project = getObjectById(projectId, ComProject.class);
+			
+			project.setIsCreated(0);
+			HibernateUtil.updateObject(project, null);
+			
+			// 删除远程系统内置表中的所有和项目相关的数据，即projectId=project.getId()的所有数据
+			executeRemoteDeleteBasicData(project.getRefDatabaseId(), projectId);
+			
 			// 记录要发布的数据id集合
 			List<Object> publishDataIds;
 			// 取消发布项目模块
@@ -286,8 +297,12 @@ public class ComProjectService extends AbstractPublishService {
 				new ComSqlScriptService().batchCancelPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
 			}
+			
+			result = HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
+					getInvokePublishDataApiParamMaps(projectId, projectId, "project", "-1"),
+					getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
 		}
-		return null;
+		return result;
 	}
 	
 	/**
@@ -359,10 +374,16 @@ public class ComProjectService extends AbstractPublishService {
 
 	//--------------------------------------------------------------------------------------------------------
 	protected String loadPublishData(String porjectId, String publishDataId) {
-		return null;
+		ComProject project = getObjectById(porjectId, ComProject.class);
+		if(project == null){
+			return "没有找到id为["+porjectId+"]的项目对象信息，运行系统无法加载";
+		}
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(porjectId, project.getRefDatabaseId());
+		return "success";
 	}
 
 	protected String unloadPublishData(String projectId, String publishDataId) {
-		return null;
+		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
+		return "success";
 	}
 }

@@ -2274,6 +2274,9 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 */
 	public void removeHbmConfig(List<String> entityNames) {
 		for (String resourceName : entityNames) {
+			if(resourceName == null){
+				break;
+			}
 			classMetadata.remove(resourceName);
 			hibernateDefineResourcePropNameMap.remove(resourceName);
 			hibernateDataLinkResourceNameList.remove(resourceName);

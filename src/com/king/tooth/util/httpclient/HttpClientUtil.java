@@ -54,11 +54,26 @@ public class HttpClientUtil {
 			for (Entry<String, String> entry : se) {
 				url.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
 			}
+			params.clear();
 			url.setLength(url.length()-1);
 			
 			reqUrl = url.toString();
 		}
 		return reqUrl;
+	}
+	
+	/**
+	 * 处理header
+	 * @param method
+	 * @param headers
+	 */
+	private static void processHeader(HttpMethodBase method, Map<String, String> headers) {
+		if(headers != null && headers.size() >0){
+			Set<Entry<String, String>> se = headers.entrySet();
+			for (Entry<String, String> entry : se) {
+				method.setRequestHeader(entry.getKey(), entry.getValue());
+			}
+		}
 	}
 	
 	/**
@@ -122,15 +137,17 @@ public class HttpClientUtil {
 	 * 基础的get请求
 	 * @param reqUrl
 	 * @param params
+	 * @param headers
 	 * @return
 	 */
-	public static String doGetBasic(String reqUrl, Map<String, String> urlParams){
+	public static String doGetBasic(String reqUrl, Map<String, String> urlParams, Map<String, String> headers){
 		reqUrl = dealRequestUrl(reqUrl, urlParams);// 处理请求的url 若有参数，拼装参数到url后
 		HttpClient httpClient = null;
 		GetMethod getMethod = null;
 		try {
 			httpClient = new HttpClient();
 			getMethod = new GetMethod(reqUrl);
+			processHeader(getMethod, headers);
 			setConfig(httpClient, getMethod);// 设置相关的配置信息
 			int status = httpClient.executeMethod(getMethod);// 执行
 			Log4jUtil.debug("[HttpClientUtil.doGet]方法调用接口\"{}\"的结果为\"{}\"", reqUrl, status);

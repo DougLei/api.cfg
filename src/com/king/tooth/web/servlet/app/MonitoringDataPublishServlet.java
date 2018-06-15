@@ -1,8 +1,10 @@
 package com.king.tooth.web.servlet.app;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,11 +15,10 @@ import com.king.tooth.sys.service.common.ComProjectModuleService;
 import com.king.tooth.sys.service.common.ComProjectService;
 import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.sys.service.common.ComTabledataService;
+import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
-import com.king.tooth.web.servlet.BasicHttpServlet;
 
 /**
  * 监听数据发布的servlet
@@ -26,7 +27,7 @@ import com.king.tooth.web.servlet.BasicHttpServlet;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class MonitoringDataPublishServlet extends BasicHttpServlet {
+public class MonitoringDataPublishServlet extends HttpServlet {
 
 	/**
 	 * 调用这个接口时的token验证值
@@ -37,7 +38,6 @@ public class MonitoringDataPublishServlet extends BasicHttpServlet {
 	 * 配置系统的ip地址
 	 */
 	private static final String cfgWebSysIp = SysConfig.getSystemConfig("cfg.web.sys.ip");
-	private ResponseBody responseBody;
 	
 	/**
 	 * 进行接口处理
@@ -62,47 +62,52 @@ public class MonitoringDataPublishServlet extends BasicHttpServlet {
 			return;
 		}
 		
+		String processResultMsg;
 		String publishDataId = request.getParameter("publishDataId");
 		if(StrUtils.isEmpty(publishDataId)){
-			responseBody = new ResponseBody("被发布的数据id不能为空", null);
+			processResultMsg = "被发布的数据id不能为空";
 		}else{
 			String projectId = request.getParameter("projectId");
 			if(StrUtils.isEmpty(projectId)){
-				responseBody = new ResponseBody("发布数据所属的projectId不能为空", null);
+				processResultMsg = "发布数据所属的projectId不能为空";
 			}else{
 				String publishDataType = request.getParameter("publishDataType");
 				String publishType = request.getParameter("publishType");
-				
-				String str;
 				if("db".equals(publishDataType)){
-					str = new ComDatabaseService().processAppPublishData(projectId, publishDataId, publishType);
+					processResultMsg = new ComDatabaseService().processAppPublishData(projectId, publishDataId, publishType);
 				}else if("project".equals(publishDataType)){
-					str = new ComProjectService().processAppPublishData(projectId, publishDataId, publishType);
+					processResultMsg = new ComProjectService().processAppPublishData(projectId, publishDataId, publishType);
 				}else if("module".equals(publishDataType)){
-					str = new ComProjectModuleService().processAppPublishData(projectId, publishDataId, publishType);
+					processResultMsg = new ComProjectModuleService().processAppPublishData(projectId, publishDataId, publishType);
 				}else if("oper".equals(publishDataType)){
-					str = new ComModuleOperationService().processAppPublishData(projectId, publishDataId, publishType);
+					processResultMsg = new ComModuleOperationService().processAppPublishData(projectId, publishDataId, publishType);
 				}else if("table".equals(publishDataType)){
-					str = new ComTabledataService().processAppPublishData(projectId, publishDataId, publishType);
+					processResultMsg = new ComTabledataService().processAppPublishData(projectId, publishDataId, publishType);
 				}else if("sql".equals(publishDataType)){
-					str = new ComSqlScriptService().processAppPublishData(projectId, publishDataId, publishType);
+					processResultMsg = new ComSqlScriptService().processAppPublishData(projectId, publishDataId, publishType);
 				}else{
-					str = "请传入正确的发布数据类型：[publishDataType = db、project、module、oper、table、sql]";
+					processResultMsg = "请传入正确的发布数据类型：[publishDataType = db、project、module、oper、table、sql]";
 				}
-				
-				String processResultMsg;
-				if("success".equals(str)){
-					processResultMsg = str;
-				}else{
-					processResultMsg = "error";
-				}
-				responseBody = new ResponseBody(processResultMsg, str);
 			}
 		}
-		printResult(response, responseBody);
+		printResult(response, processResultMsg);
 	}
 
-	protected void analysisRequestBody(HttpServletRequest request) {
-		throw new IllegalArgumentException("该servlet目前不支持analysisRequestBody功能");
+	/**
+	 * 将响应结果打印并返回给客户端
+	 * @param request 
+	 * @param response
+	 * @param responseBody
+	 */
+	protected void printResult(HttpServletResponse response, String result){
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			out.print(result);
+		} catch (IOException e) {
+			Log4jUtil.debug("[MonitoringDataPublishServlet.printResult]方法出现异常信息:{}", e.getMessage());
+		}finally{
+			CloseUtil.closeIO(out);
+		}
 	}
 }

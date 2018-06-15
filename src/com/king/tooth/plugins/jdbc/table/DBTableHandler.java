@@ -82,24 +82,34 @@ public class DBTableHandler {
 	/**
 	 * 删除表
 	 * @param tabledata
+	 * @return 返回被删除表的资源名，多个用,分割
 	 */
-	public void dropTable(ComTabledata tabledata){
+	public String dropTable(ComTabledata tabledata){
 		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(2);
 		tabledatas.add(tabledata);
-		dropTable(tabledatas);
+		String deleteTableName = dropTable(tabledatas);
 		tabledatas.clear();
+		return deleteTableName;
 	}
 	
 	/**
 	 * 删除表
 	 * @param tabledatas
+	 * @return 返回被删除表的资源名，多个用,分割
 	 */
-	public void dropTable(List<ComTabledata> tabledatas){
+	public String dropTable(List<ComTabledata> tabledatas){
 		String tmpSql = getDropTableSql(tabledatas);
 		if(StrUtils.notEmpty(tmpSql)){
 			String[] ddlSqlArr = tmpSql.split(";");
 			executeDDL(ddlSqlArr, tabledatas);
 		}
+		
+		StringBuilder deleteTableName = new StringBuilder();
+		for (ComTabledata table : tabledatas) {
+			deleteTableName.append(table.getResourceName()).append(",");
+		}
+		deleteTableName.setLength(deleteTableName.length()-1);
+		return deleteTableName.toString();
 	}
 	
 	
@@ -116,7 +126,7 @@ public class DBTableHandler {
 		}
 		if(tabledatas != null && tabledatas.size() > 0){
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
-			DynamicDataLinkTableUtil.processParentSubTable(tabledatas);
+			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, true);
 			StringBuilder createSql = new StringBuilder();
 			for (ComTabledata tabledata : tabledatas) {
 				if(isNeedInitBasicColumns){
@@ -141,7 +151,7 @@ public class DBTableHandler {
 		if(tabledatas != null && tabledatas.size() > 0){
 			StringBuilder dropSql = new StringBuilder();
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
-			DynamicDataLinkTableUtil.processParentSubTable(tabledatas);
+			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, false);
 			for (ComTabledata tabledata : tabledatas) {
 				dropSql.append(" drop table ").append(tabledata.getTableName()).append(";");
 			}

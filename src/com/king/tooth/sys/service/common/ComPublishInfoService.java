@@ -58,8 +58,8 @@ public class ComPublishInfoService extends AbstractService{
 
 	/**
 	 * 删除发布的数据
-	 * @param publishResourceId 
 	 * @param publishProjectId 如果是操作表、sql脚本的时候，这个字段绝对不能为空，因为表、sql脚本和项目的关系是多对多的关系
+	 * @param publishResourceId 
 	 */
 	public void deletePublishedData(String publishProjectId, String publishResourceId) {
 		String hql = "delete ComPublishInfo where";
@@ -80,8 +80,8 @@ public class ComPublishInfoService extends AbstractService{
 	
 	/**
 	 * 批量删除发布的数据
-	 * @param publishResourceId 
-	 * @param publishResourceIds 如果是操作表、sql脚本的时候，这个字段绝对不能为空，因为表、sql脚本和项目的关系是多对多的关系
+	 * @param publishProjectId 如果是操作表、sql脚本的时候，这个字段绝对不能为空，因为表、sql脚本和项目的关系是多对多的关系
+	 * @param publishResourceIds 
 	 */
 	public void batchDeletePublishedData(String publishProjectId, List<Object> publishResourceIds) {
 		StringBuilder hql = new StringBuilder("delete ComPublishInfo where");

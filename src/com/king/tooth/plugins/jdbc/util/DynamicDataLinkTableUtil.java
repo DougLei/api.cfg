@@ -19,8 +19,9 @@ public class DynamicDataLinkTableUtil {
 	/**
 	 * 处理父子表，如果有父子表数据，则要获得对应的关系表tabledata实例，并存储到tabledatas集合中，统一进行创建表/删除表的操作
 	 * @param tabledatas
+	 * @param isNeedColumns 是否需要列集合，比如添加的时候需要，但是删除的时候不需要
 	 */
-	public static void processParentSubTable(List<ComTabledata> tabledatas) {
+	public static void processParentSubTable(List<ComTabledata> tabledatas, boolean isNeedColumns) {
 		List<ComTabledata> datalinkTables = new ArrayList<ComTabledata>();
 		for (ComTabledata tabledata : tabledatas) {
 			if(tabledata.getTableType()!=null  
@@ -28,7 +29,7 @@ public class DynamicDataLinkTableUtil {
 					&& StrUtils.notEmpty(tabledata.getParentTableName())
 					&& tabledata.getIsHavaDatalink() != null
 					&& tabledata.getIsHavaDatalink() == 1){// 判断标示是需要主子表的
-				datalinkTables.add(getDataLinkTabledata(tabledata.getDbType(), tabledata.getParentTableId(), tabledata.getParentTableName(), tabledata.getTableName()));
+				datalinkTables.add(getDataLinkTabledata(tabledata.getDbType(), tabledata.getParentTableId(), tabledata.getParentTableName(), tabledata.getTableName(), isNeedColumns));
 			}
 		}
 		
@@ -44,32 +45,40 @@ public class DynamicDataLinkTableUtil {
 	 * @param parentId
 	 * @param parentTableName
 	 * @param subTableName
+	 * @param isNeedColumns
 	 * @return
 	 */
-	private static ComTabledata getDataLinkTabledata(String dbType, String parentId, String parentTableName, String subTableName){
+	private static ComTabledata getDataLinkTabledata(String dbType, String parentId, String parentTableName, String subTableName, boolean isNeedColumns){
 		ComTabledata dataLinkTable = new ComTabledata(getDataLinkTableName(parentTableName, subTableName), 1);
+		dataLinkTable.setDbType(dbType);
 		dataLinkTable.setParentTableId(parentId);
 		dataLinkTable.setComments("父表" + parentTableName + "和子表" + subTableName + "的关系表");
 		dataLinkTable.setReqResourceMethod(ISysResource.NONE);
+		String result = dataLinkTable.analysisResourceProp();
+		if(result != null){
+			throw new IllegalArgumentException(result);
+		}
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(3);
-		
-		ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
-		leftIdColumn.setIsNullabled(0);
-		leftIdColumn.setOrderCode(1);
-		columns.add(leftIdColumn);
-		
-		ComColumndata rightIdColumn = new ComColumndata("right_id", DataTypeConstants.STRING, 32);
-		rightIdColumn.setIsNullabled(0);
-		rightIdColumn.setOrderCode(2);
-		columns.add(rightIdColumn);
-		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
-		orderCodeColumn.setOrderCode(3);
-		orderCodeColumn.setDefaultValue("0");
-		columns.add(orderCodeColumn);
-		
-		dataLinkTable.setColumns(columns);
+		if(isNeedColumns){
+			List<ComColumndata> columns = new ArrayList<ComColumndata>(3);
+			
+			ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
+			leftIdColumn.setIsNullabled(0);
+			leftIdColumn.setOrderCode(1);
+			columns.add(leftIdColumn);
+			
+			ComColumndata rightIdColumn = new ComColumndata("right_id", DataTypeConstants.STRING, 32);
+			rightIdColumn.setIsNullabled(0);
+			rightIdColumn.setOrderCode(2);
+			columns.add(rightIdColumn);
+			
+			ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+			orderCodeColumn.setOrderCode(3);
+			orderCodeColumn.setDefaultValue("0");
+			columns.add(orderCodeColumn);
+			
+			dataLinkTable.setColumns(columns);
+		}
 		return dataLinkTable;
 	}
 	

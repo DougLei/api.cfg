@@ -235,7 +235,21 @@ public abstract class AbstractPublishService extends AbstractService{
 		urlParams.put("projectId", projectId);
 		urlParams.put("publishDataType", publishDataType);
 		urlParams.put("publishType", publishType);
+		urlParams.put("_token", token);
 		return urlParams;
+	}
+	private static final String token = ResourceHandlerUtil.getIdentity();
+	
+	/**
+	 * 获取调用加载/卸载数据的api的headerMap集合
+	 * <p>主要给header中设置_projId的值  @see PrepareFilter</p>
+	 * @param projectId 
+	 * @return
+	 */
+	protected Map<String, String> getInvokePublishDataApiHeaderMaps(String projectId) {
+		Map<String, String> header = new HashMap<String, String>(1);
+		header.put("_projId", projectId);
+		return header;
 	}
 	
 	/**

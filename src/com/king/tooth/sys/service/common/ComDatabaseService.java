@@ -25,6 +25,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.httpclient.HttpClientUtil;
 
 /**
  * 数据库数据信息资源对象处理器
@@ -165,6 +166,9 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
+		if(database.getIsCreated() == 1){
+			return "id为["+databaseId+"]的数据库已经被发布，不能重复发布";
+		}
 		if(database.getIsNeedDeploy() == 0){
 			return "id为["+databaseId+"]的数据库不该被发布，如需发布，请联系管理员";
 		}
@@ -218,9 +222,12 @@ public class ComDatabaseService extends AbstractPublishService {
 		database.setIsCreated(1);
 		HibernateUtil.updateObject(database, null);
 		
-//		Map<String, String> urlParams = new HashMap<String, String>();
-//		HttpClientUtil.doGetBasic(SysConfig.getSystemConfig(""), urlParams);
-		return null;
+		if(database.getIsBuiltin() == 1){
+			return "内置数据库发布成功";
+		}
+		return HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
+				getInvokePublishDataApiParamMaps(database.getId(), "null", "db", "1"),
+				getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
 	}
 	
 	/**
@@ -232,6 +239,9 @@ public class ComDatabaseService extends AbstractPublishService {
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
+		}
+		if(database.getIsCreated() == 0){
+			return "id为["+databaseId+"]的数据库还未发布，不能取消发布";
 		}
 		if(database.getIsBuiltin() == 1){
 			return "id为["+databaseId+"]的内置数据库不能被删除！";
@@ -271,16 +281,24 @@ public class ComDatabaseService extends AbstractPublishService {
 		
 		database.setIsCreated(0);
 		HibernateUtil.updateObject(database, null);
-		return null;
+		
+		return HttpClientUtil.doGetBasic(appWebSysProcessPublishDataApiPath, 
+				getInvokePublishDataApiParamMaps(database.getId(), "null", "db", "-1"),
+				getInvokePublishDataApiHeaderMaps(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId()));
 	}
 
 	//--------------------------------------------------------------------------------------------------------
 	protected String loadPublishData(String porjectId, String publishDataId) {
-		CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId();
-		return null;
+		ComDatabase database = getObjectById(publishDataId, ComDatabase.class);
+		if(database == null){
+			return "没有找到id为["+publishDataId+"]的数据库对象信息，运行系统加载失败";
+		}
+		DynamicDBUtil.addDataSource(database);
+		return "success";
 	}
 
 	protected String unloadPublishData(String projectId, String publishDataId) {
-		return null;
+		DynamicDBUtil.removeDataSource(publishDataId);
+		return "success";
 	}
 }

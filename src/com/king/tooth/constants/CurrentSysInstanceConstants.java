@@ -26,7 +26,6 @@ public class CurrentSysInstanceConstants {
 	
 	/**
 	 * 当前系统项目对象实例
-	 * <p>在系统初始化的时候用到</p>
 	 */
 	public transient static final ComProject currentSysBuiltinProjectInstance = new ComProject(); 
 	static{
