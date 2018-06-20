@@ -1,6 +1,7 @@
 package com.king.tooth.sys.service.common;
 
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.AbstractService;
@@ -28,7 +29,7 @@ public class ComSysResourceService extends AbstractService{
 	 * @param resourceId
 	 */
 	public void deleteSysResource(String resourceId){
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id = ?", resourceId);
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id = ? and project_id = ?", resourceId, CurrentThreadContext.getProjectId());
 	}
 	
 	/**
@@ -41,7 +42,7 @@ public class ComSysResourceService extends AbstractService{
 			throw new NullPointerException("请求的资源名不能为空");
 		}
 		
-		ComSysResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysResource.class, "from ComSysResource where resourceName = ?", resourceName);
+		ComSysResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysResource.class, "from ComSysResource where resourceName = ? and projectId = ?", resourceName, CurrentThreadContext.getProjectId());
 		if(resource == null){
 			throw new IllegalArgumentException("不存在请求的资源：" + resourceName);
 		}
@@ -60,7 +61,7 @@ public class ComSysResourceService extends AbstractService{
 	 * @param resourceName
 	 */
 	public void updateResourceName(String refResourceId, String resourceName) {
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set resource_name = ? where ref_resource_id = ?", resourceName, refResourceId);
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set resource_name = ? where ref_resource_id = ? and project_id = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
 	}
 	
 	/**
@@ -69,6 +70,6 @@ public class ComSysResourceService extends AbstractService{
 	 * @param reqResourceMethod
 	 */
 	public void updateResourceReqResourceMethod(String refResourceId, String reqResourceMethod) {
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set req_resource_method = ? where ref_resource_id = ?", reqResourceMethod, refResourceId);
+		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set req_resource_method = ? where ref_resource_id = ? and project_id = ?", reqResourceMethod, refResourceId, CurrentThreadContext.getProjectId());
 	}
 }
