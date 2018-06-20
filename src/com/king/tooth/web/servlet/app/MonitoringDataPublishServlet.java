@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.EncodingConstants;
-import com.king.tooth.sys.service.com.ComDatabaseService;
-import com.king.tooth.sys.service.com.ComModuleOperationService;
-import com.king.tooth.sys.service.com.ComProjectModuleService;
-import com.king.tooth.sys.service.com.ComProjectService;
-import com.king.tooth.sys.service.com.ComSqlScriptService;
-import com.king.tooth.sys.service.com.ComTabledataService;
+import com.king.tooth.sys.service.cfg.ComTabledataService;
+import com.king.tooth.sys.service.common.ComDatabaseService;
+import com.king.tooth.sys.service.common.ComModuleOperationService;
+import com.king.tooth.sys.service.common.ComProjectModuleService;
+import com.king.tooth.sys.service.common.ComProjectService;
+import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.Log4jUtil;

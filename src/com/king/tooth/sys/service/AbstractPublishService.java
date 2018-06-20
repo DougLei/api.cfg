@@ -18,7 +18,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.sys.service.com.ComPublishInfoService;
+import com.king.tooth.sys.service.cfg.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;

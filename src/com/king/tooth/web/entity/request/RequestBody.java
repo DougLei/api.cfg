@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.sys.service.com.ComSysResourceService;
+import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
 

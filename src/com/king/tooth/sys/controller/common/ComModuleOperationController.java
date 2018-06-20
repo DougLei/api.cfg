@@ -1,7 +1,6 @@
-package com.king.tooth.sys.controller.com;
+package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,86 +10,70 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
-import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.service.com.ComDatabaseService;
+import com.king.tooth.sys.entity.common.ComModuleOperation;
+import com.king.tooth.sys.service.common.ComModuleOperationService;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 数据库数据信息资源对象控制器
+ * 模块功能资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")
 @Controller
-@RequestMapping("/ComDatabase")
-public class ComDatabaseController extends AbstractPublishController{
+@RequestMapping("/ComModuleOperation")
+public class ComModuleOperationController extends AbstractPublishController{
 	
-	private ComDatabaseService databaseService = new ComDatabaseService();
+	private ComModuleOperationService moduleOperationService = new ComModuleOperationService();
 	
 	/**
-	 * 添加数据库
+	 * 添加模块功能
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String add(@RequestBody ComDatabase database){
-		String result = database.analysisResourceProp();
+	public String add(@RequestBody ComModuleOperation moduleOperation) {
+		String result = moduleOperation.analysisResourceProp();
 		if(result == null){
-			result = databaseService.saveDatabase(database);
+			result = moduleOperationService.saveModuleOperation(moduleOperation);
 		}
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 修改数据库
+	 * 修改模块功能
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String update(@RequestBody ComDatabase database){
-		String result = database.analysisResourceProp();
+	public String update(@RequestBody ComModuleOperation moduleOperation) {
+		String result = moduleOperation.analysisResourceProp();
 		if(result == null){
-			result = databaseService.updateDatabase(database);
+			result = moduleOperationService.updateModuleOperation(moduleOperation);
 		}
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 删除数据库
+	 * 删除模块功能
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
 	@RequestMapping(value="/delete", method = RequestMethod.DELETE, produces = "application/json;charset=utf-8")
 	@ResponseBody
 	public String delete(HttpServletRequest request){
-		String databaseId = request.getParameter("databaseId");
-		if(StrUtils.isEmpty(databaseId)){
-			return installOperResponseBody("要删除的数据库id不能为空", null);
+		String moduleOperationId = request.getParameter("moduleOperationId");
+		if(StrUtils.isEmpty(moduleOperationId)){
+			return installOperResponseBody("要删除的功能id不能为空", null);
 		}
-		String result = databaseService.deleteDatabase(databaseId);
-		return installOperResponseBody(result, null);
-	}
-	
-	/**
-	 * 测试数据库连接
-	 * <p>请求方式：GET</p>
-	 * @return
-	 */
-	@RequestMapping(value="/linkTest", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String linkTest(HttpServletRequest request){
-		String databaseId = request.getParameter("databaseId");
-		if(StrUtils.isEmpty(databaseId)){
-			return installOperResponseBody("测试连接的数据库id不能为空", null);
-		}
-		String result = databaseService.databaseLinkTest(databaseId);
+		String result = moduleOperationService.deleteModuleOperation(moduleOperationId);
 		return installOperResponseBody(result, null);
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
-	 * 发布数据库
+	 * 发布模块功能
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
@@ -101,16 +84,16 @@ public class ComDatabaseController extends AbstractPublishController{
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String databaseId = request.getParameter("databaseId");
-		if(StrUtils.isEmpty(databaseId)){
-			return installOperResponseBody("要发布的数据库id不能为空", null);
+		String moduleOperationId = request.getParameter("moduleOperationId");
+		if(StrUtils.isEmpty(moduleOperationId)){
+			return installOperResponseBody("要发布的功能id不能为空", null);
 		}
-		String result = databaseService.publishDatabase(databaseId);
+		String result = moduleOperationService.publishModuleOperation(moduleOperationId);
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 取消发布数据库
+	 * 取消发布模块功能
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
@@ -121,11 +104,11 @@ public class ComDatabaseController extends AbstractPublishController{
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String databaseId = request.getParameter("databaseId");
-		if(StrUtils.isEmpty(databaseId)){
-			return installOperResponseBody("要取消发布的数据库id不能为空", null);
+		String moduleOperationId = request.getParameter("moduleOperationId");
+		if(StrUtils.isEmpty(moduleOperationId)){
+			return installOperResponseBody("要取消发布的功能id不能为空", null);
 		}
-		String result = databaseService.cancelPublishDatabase(databaseId);
+		String result = moduleOperationService.cancelPublishModuleOperation(moduleOperationId);
 		return installOperResponseBody(result, null);
 	}
 }

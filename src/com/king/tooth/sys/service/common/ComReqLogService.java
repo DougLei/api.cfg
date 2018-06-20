@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.com;
+package com.king.tooth.sys.service.common;
 
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.com;
+package com.king.tooth.sys.controller.cfg;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.service.com.ComColumndataService;
+import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.util.StrUtils;
 
 /**

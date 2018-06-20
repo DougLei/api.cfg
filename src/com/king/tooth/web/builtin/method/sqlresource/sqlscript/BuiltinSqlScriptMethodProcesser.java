@@ -14,7 +14,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
-import com.king.tooth.sys.service.com.ComSqlScriptService;
+import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;

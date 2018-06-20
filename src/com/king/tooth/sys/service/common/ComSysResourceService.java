@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.com;
+package com.king.tooth.sys.service.common;
 
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.ISysResource;

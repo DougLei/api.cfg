@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComReqLog;
-import com.king.tooth.sys.service.com.ComReqLogService;
+import com.king.tooth.sys.service.common.ComReqLogService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**

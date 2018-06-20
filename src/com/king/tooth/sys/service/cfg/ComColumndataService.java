@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.com;
+package com.king.tooth.sys.service.cfg;
 
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
