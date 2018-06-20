@@ -6,7 +6,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.common.ComCode;
 import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.service.common.ComCodeService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
@@ -48,9 +50,14 @@ public class RequestBody implements Serializable{
 		// 声明父、子资源对象实例
 		ComSysResource requestResource = comSysResourceService.findResourceByResourceName(routeBody.getResourceName());
 		validReqResourceMethod(requestResource, requestMethod);
+		analysisCodeResource(requestResource);
 		
 		ComSysResource requestParentResource = null;
 		if(StrUtils.notEmpty(routeBody.getParentResourceName())){
+			if(requestResource.getResourceType() == ISysResource.CODE){
+				throw new IllegalArgumentException("平台目前不支持处理主子代码资源");
+			}
+			
 			requestParentResource = comSysResourceService.findResourceByResourceName(routeBody.getParentResourceName());
 			validReqResourceMethod(requestResource, requestMethod);
 			
@@ -90,6 +97,16 @@ public class RequestBody implements Serializable{
 	}
 
 	/**
+	 * 解析代码资源对象实例
+	 * @param resource
+	 */
+	private void analysisCodeResource(ComSysResource resource) {
+		if(resource.getResourceType() == ISysResource.CODE){
+			reqCodeResource = new ComCodeService().getComCodeById(resource.getRefResourceId());
+		}
+	}
+	
+	/**
 	 * httpServletRequest请求对象
 	 */
 	private HttpServletRequest request;
@@ -118,6 +135,11 @@ public class RequestBody implements Serializable{
 	 * <p>@see ISysResource</p>
 	 */
 	private int requestResourceType;
+	
+	/**
+	 * 请求的代码资源
+	 */
+	private ComCode reqCodeResource;
 	
 	public Map<String, String> getRequestUrlParams() {
 		return requestUrlParams;
@@ -148,5 +170,8 @@ public class RequestBody implements Serializable{
 	}
 	public int getRequestResourceType() {
 		return requestResourceType;
+	}
+	public ComCode getReqCodeResource() {
+		return reqCodeResource;
 	}
 }

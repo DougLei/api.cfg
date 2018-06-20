@@ -2,7 +2,9 @@ package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
@@ -11,13 +13,14 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.ReflectUtil;
 
 /**
  * 代码资源对象
  * <p>由开发人员维护，不开放给用户</p>
  * @author DougLei
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial"})
 public class ComCode extends AbstractSysResource implements ITable{
 	/**
 	 * 代码资源名
@@ -43,6 +46,14 @@ public class ComCode extends AbstractSysResource implements ITable{
 	
 	//-------------------------------------------------------------------------
 
+	/**
+	 * 获取代码类的实例
+	 */
+	@JSONField(serialize = false)
+	public Object getCodeClassInstance(){
+		return ReflectUtil.newInstance(classPath);
+	}
+	
 	public String getCodeResourceName() {
 		return codeResourceName;
 	}

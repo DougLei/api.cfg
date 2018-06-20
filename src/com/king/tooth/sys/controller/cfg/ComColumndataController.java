@@ -2,26 +2,19 @@ package com.king.tooth.sys.controller.cfg;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 字段数据信息资源对象控制器
  * @author DougLei
  */
-@Scope("prototype")
-@Controller
-@RequestMapping("/ComColumndata")
 public class ComColumndataController extends AbstractController{
 	
 	private ComColumndataService columnataService = new ComColumndataService();
@@ -31,9 +24,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String add(@RequestBody String columnJson){
+	public ResponseBody add(@RequestBody String columnJson){
 		ComColumndata column = JsonUtil.parseObject(columnJson, ComColumndata.class);
 		String result = column.analysisResourceProp();
 		if(result == null){
@@ -47,9 +38,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String update(@RequestBody String columnJson){
+	public ResponseBody update(@RequestBody String columnJson){
 		ComColumndata column = JsonUtil.parseObject(columnJson, ComColumndata.class);
 		String result = column.analysisResourceProp();
 		if(result == null){
@@ -63,9 +52,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	@RequestMapping(value="/delete", method = RequestMethod.DELETE, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request){
 		String columnId = request.getParameter("columnId");
 		if(StrUtils.isEmpty(columnId)){
 			return installOperResponseBody("要删除的列id不能为空", null);

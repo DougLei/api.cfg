@@ -168,7 +168,7 @@ public class ResourceHandlerUtil {
 	 */
 	public static boolean isIgnoreLoginValid(HttpServletRequest request) {
 		for (String ignore : ignoreLoginValidRequrl) {
-			if(request.getRequestURI().endsWith(ignore)){
+			if(request.getRequestURI().equals(ignore)){
 				return true;
 			}
 		}

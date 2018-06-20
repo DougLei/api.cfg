@@ -13,7 +13,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 	}
 
 	protected boolean doProcess() {
-		
-		return false;
+		invokeMethod();
+		return true;
 	}
 }

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.RequestUrlParamKeyConstants;
 import com.king.tooth.constants.EncodingConstants;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -74,8 +75,10 @@ public class PlatformServlet extends BasicHttpServlet{
 	 * @return
 	 */
 	private Map<String, String> analysisUrlParams(HttpServletRequest request) {
+		if(requestBody.getRequestResourceType() == ISysResource.CODE){// 如果请求的是代码资源，则不需要解析请求的参数
+			return null;
+		}
 		Map<String, String> params = new HashMap<String, String>();
-		
 		Enumeration<String> parameterNames = request.getParameterNames();
 		if(parameterNames != null && parameterNames.hasMoreElements()){
 			String tmpKey = null;

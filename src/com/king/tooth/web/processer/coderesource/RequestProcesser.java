@@ -1,6 +1,10 @@
 package com.king.tooth.web.processer.coderesource;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.king.tooth.sys.entity.common.ComCode;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.CommonProcesser;
 import com.king.tooth.web.processer.IRequestProcesser;
@@ -30,5 +34,13 @@ public abstract class RequestProcesser extends CommonProcesser implements IReque
 		
 		doProcess();// 进行实际的业务处理，由子类实现
 		return responseBody;
+	}
+	
+	protected void invokeMethod(){
+		ComCode code = requestBody.getReqCodeResource();
+		ResponseBody responseBody = (ResponseBody)ReflectUtil.invokeMethod(code.getCodeClassInstance(), code.getMethodName(), 
+				new Class[]{HttpServletRequest.class, String.class}, 
+				new Object[]{requestBody.getRequest(), requestBody.getFormData()+""});
+		setResponseBody(responseBody);
 	}
 }

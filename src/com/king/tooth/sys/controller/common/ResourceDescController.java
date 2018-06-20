@@ -7,12 +7,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractController;
@@ -23,17 +17,14 @@ import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.desc.resource.ResourceDescEntity;
 import com.king.tooth.sys.entity.desc.resource.table.ColumnResource;
 import com.king.tooth.sys.entity.desc.resource.table.TableResource;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 资源信息描述控制器
  * @author DougLei
  */
-@Scope("prototype")
-@Controller
-@RequestMapping("/ResourceDesc")
 @SuppressWarnings("unchecked")
 public class ResourceDescController extends AbstractController{
 	
@@ -42,9 +33,7 @@ public class ResourceDescController extends AbstractController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/table", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String table(HttpServletRequest request){
+	public ResponseBody table(HttpServletRequest request){
 		String tableResourceName = request.getParameter("resourceName");
 		if(StrUtils.isEmpty(tableResourceName)){
 			return installOperResponseBody("resourceName参数值不能为空", null);
@@ -94,12 +83,10 @@ public class ResourceDescController extends AbstractController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/tableJson", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String tableJson(HttpServletRequest request){
+	public ResponseBody tableJson(HttpServletRequest request){
 		String tableResourceName = request.getParameter("resourceName");
 		if(StrUtils.isEmpty(tableResourceName)){
-			return "resourceName参数值不能为空";
+			return installOperResponseBody("resourceName参数值不能为空", null);
 		}
 		
 		ComSysResource tableResource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysResource.class, 
@@ -107,10 +94,10 @@ public class ResourceDescController extends AbstractController{
 				tableResourceName, 
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 		if(tableResource == null){
-			return "无法查询到resourceName为["+tableResourceName+"]的表资源描述信息，请联系管理员";
+			return installOperResponseBody("无法查询到resourceName为["+tableResourceName+"]的表资源描述信息，请联系管理员", null);
 		}
 		if(tableResource.getIsEnabled() == 0){
-			return "resourceName为["+tableResourceName+"]的表资源被禁用，请联系管理员";
+			return installOperResponseBody("resourceName为["+tableResourceName+"]的表资源被禁用，请联系管理员", null);
 		}
 		
 		
@@ -135,7 +122,7 @@ public class ResourceDescController extends AbstractController{
 		}
 		
 		table.clear();
-		return JsonUtil.toJsonString(json, true);
+		return installResponseBody(null, json);
 	}
 	
 	/**

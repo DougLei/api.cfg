@@ -2,12 +2,7 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
@@ -15,14 +10,12 @@ import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.common.ComDatabaseService;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 数据库数据信息资源对象控制器
  * @author DougLei
  */
-@Scope("prototype")
-@Controller
-@RequestMapping("/ComDatabase")
 public class ComDatabaseController extends AbstractPublishController{
 	
 	private ComDatabaseService databaseService = new ComDatabaseService();
@@ -32,9 +25,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8", consumes = "application/json;charset=utf-8")
-	@ResponseBody
-	public String add(@RequestBody String databaseJson){
+	public ResponseBody add(HttpServletRequest request, String databaseJson){
 		ComDatabase database = JsonUtil.parseObject(databaseJson, ComDatabase.class);
 		String result = database.analysisResourceProp();
 		if(result == null){
@@ -48,9 +39,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String update(@RequestBody String databaseJson){
+	public ResponseBody update(@RequestBody String databaseJson){
 		ComDatabase database = JsonUtil.parseObject(databaseJson, ComDatabase.class);
 		String result = database.analysisResourceProp();
 		if(result == null){
@@ -64,9 +53,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	@RequestMapping(value="/delete", method = RequestMethod.DELETE, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request){
 		String databaseId = request.getParameter("databaseId");
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("要删除的数据库id不能为空", null);
@@ -80,9 +67,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/linkTest", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String linkTest(HttpServletRequest request){
+	public ResponseBody linkTest(HttpServletRequest request){
 		String databaseId = request.getParameter("databaseId");
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("测试连接的数据库id不能为空", null);
@@ -97,9 +82,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/publish", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String publish(HttpServletRequest request){
+	public ResponseBody publish(HttpServletRequest request){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
@@ -117,9 +100,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/cancelPublish", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@ResponseBody
-	public String cancelPublish(HttpServletRequest request){
+	public ResponseBody cancelPublish(HttpServletRequest request){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
