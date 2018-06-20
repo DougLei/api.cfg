@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
-import com.king.tooth.sys.service.common.ComSysAccountService;
+import com.king.tooth.sys.service.ComSysAccountService;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 

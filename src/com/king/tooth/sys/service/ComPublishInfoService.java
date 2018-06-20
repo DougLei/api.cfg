@@ -1,11 +1,10 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
-import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**

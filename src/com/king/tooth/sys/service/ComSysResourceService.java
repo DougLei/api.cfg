@@ -1,9 +1,8 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service;
 
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 

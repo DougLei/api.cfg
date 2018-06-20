@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,116 +9,133 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.controller.AbstractPublishController;
-import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.service.common.ComSqlScriptService;
-import com.king.tooth.util.JsonUtil;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.service.ComTabledataService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
- * sql脚本资源对象控制器
+ * 表数据信息资源对象控制器
  * @author DougLei
  */
 @Scope("prototype")
 @Controller
-@RequestMapping("/ComSqlScript")
-public class ComSqlScriptController extends AbstractPublishController{
+@RequestMapping("/ComTabledata")
+public class ComTabledataController extends AbstractPublishController{
 	
-	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
+	private ComTabledataService tabledataService = new ComTabledataService();
 	
 	/**
-	 * 添加sql脚本
+	 * 添加表
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody add(@RequestBody String sqlScriptJson){
-		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
-		String result = sqlScript.validNotNullProps();
+	public ResponseBody add(@RequestBody ComTabledata table){
+		String result = table.analysisResourceProp();
 		if(result == null){
-			result = sqlScriptService.saveSqlScript(sqlScript);
+			result = tabledataService.saveTable(table);
 		}
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 修改sql脚本
+	 * 修改表
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody update(@RequestBody String sqlScriptJson){
-		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
-		String result = sqlScript.validNotNullProps();
+	public ResponseBody update(@RequestBody ComTabledata table){
+		String result = table.analysisResourceProp();
 		if(result == null){
-			result = sqlScriptService.updateSqlScript(sqlScript);
+			result = tabledataService.updateTable(table);
 		}
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 删除sql脚本
+	 * 删除表
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
 	@RequestMapping(value="/delete", method = RequestMethod.DELETE)
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody delete(HttpServletRequest request){
-		String sqlScriptId = request.getParameter("sqlScriptId");
-		if(StrUtils.isEmpty(sqlScriptId)){
-			return installOperResponseBody("要删除的sql脚本id不能为空", null);
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要删除的表id不能为空", null);
 		}
 		String projectId = request.getParameter("projectId");
-		String result = sqlScriptService.deleteSqlScript(sqlScriptId, projectId);
+		String result = tabledataService.deleteTable(tableId, projectId);
+		return installOperResponseBody(result, null);
+	}
+	
+
+	/**
+	 * 建模
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping(value="/buildModel", method = RequestMethod.GET)
+	@org.springframework.web.bind.annotation.ResponseBody
+	public ResponseBody buildModel(HttpServletRequest request){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("建模功能目前只提供给平台开发人员使用", null);
+		}
+		
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要建模的表id不能为空", null);
+		}
+		String result = tabledataService.buildModel(tableId);
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 建立项目和sql脚本的关联关系
+	 * 建立项目和表的关联关系
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/addProjSqlScriptRelation", method = RequestMethod.GET)
+	@RequestMapping(value="/addProjTableRelation", method = RequestMethod.GET)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody addProjSqlScriptRelation(HttpServletRequest request){
+	public ResponseBody addProjTableRelation(HttpServletRequest request){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
-		if(StrUtils.isEmpty(sqlScriptId)){
-			return installOperResponseBody("要操作的sql脚本id不能为空", null);
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要操作的表id不能为空", null);
 		}
-		String result = sqlScriptService.addProjSqlScriptRelation(projectId, sqlScriptId);
+		String result = tabledataService.addProjTableRelation(projectId, tableId);
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 取消项目和sql脚本的关联关系
+	 * 取消项目和表的关联关系
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/cancelProjSqlScriptRelation", method = RequestMethod.GET)
+	@RequestMapping(value="/cancelProjTableRelation", method = RequestMethod.GET)
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody cancelProjSqlScriptRelation(HttpServletRequest request){
+	public ResponseBody cancelProjTableRelation(HttpServletRequest request){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
-		if(StrUtils.isEmpty(sqlScriptId)){
-			return installOperResponseBody("要操作的sql脚本id不能为空", null);
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要操作的表id不能为空", null);
 		}
-		String result = sqlScriptService.cancelProjSqlScriptRelation(projectId, sqlScriptId);
+		String result = tabledataService.cancelProjTableRelation(projectId, tableId);
 		return installOperResponseBody(result, null);
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
-	 * 发布sql脚本
+	 * 发布表
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
@@ -131,18 +148,18 @@ public class ComSqlScriptController extends AbstractPublishController{
 		
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
+			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
-		if(StrUtils.isEmpty(sqlScriptId)){
-			return installOperResponseBody("要发布的sql脚本id不能为空", null);
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要发布的表id不能为空", null);
 		}
-		String result = sqlScriptService.publishSqlScript(projectId, sqlScriptId);
+		String result = tabledataService.publishTable(projectId, tableId);
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
-	 * 取消发布sql脚本
+	 * 取消发布表
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
@@ -155,13 +172,13 @@ public class ComSqlScriptController extends AbstractPublishController{
 		
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
+			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
-		if(StrUtils.isEmpty(sqlScriptId)){
-			return installOperResponseBody("要取消发布的sql脚本id不能为空", null);
+		String tableId = request.getParameter("tableId");
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要取消发布的表id不能为空", null);
 		}
-		String result = sqlScriptService.cancelPublishSqlScript(projectId, sqlScriptId);
+		String result = tabledataService.cancelPublishTable(projectId, tableId);
 		return installOperResponseBody(result, null);
 	}
 }
