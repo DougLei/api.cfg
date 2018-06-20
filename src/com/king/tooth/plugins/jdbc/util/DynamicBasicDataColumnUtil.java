@@ -83,13 +83,13 @@ public class DynamicBasicDataColumnUtil {
 		}
 		
 		if(table.getIsDatalinkTable() == 0 && !table.getTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
-			ComColumndata createTimeColumn = new ComColumndata("create_time", DataTypeConstants.DATE, 0);
+			ComColumndata createTimeColumn = new ComColumndata("create_date", DataTypeConstants.DATE, 0);
 			createTimeColumn.setName("创建时间");
 			createTimeColumn.setComments("创建时间");
 			createTimeColumn.setOrderCode(9910);
 			table.getColumns().add(createTimeColumn);
 			
-			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_time", DataTypeConstants.DATE, 0);
+			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_date", DataTypeConstants.DATE, 0);
 			lastUpdateTimeColumn.setComments("最后修改时间");
 			lastUpdateTimeColumn.setName("最后修改时间");
 			lastUpdateTimeColumn.setOrderCode(9911);

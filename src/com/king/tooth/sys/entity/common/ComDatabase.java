@@ -298,7 +298,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(dbInstanceName)){
-				validNotNullPropsResult = "数据库名不能为空！";
+				validNotNullPropsResult = "数据库实例名不能为空！";
 				return validNotNullPropsResult;
 			}
 			if(StrUtils.isEmpty(loginUserName)){

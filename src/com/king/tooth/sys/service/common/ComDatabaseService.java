@@ -69,8 +69,11 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(oldDatabase == null){
 			return "没有找到id为["+database.getId()+"]的数据库对象信息";
 		}
+		if(oldDatabase.getIsBuiltin() == 1){
+			return "禁止修改内置的数据库信息";
+		}
 		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){ // 如果已发布，则发出提示信息
-			return "【慎重操作】:["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改数据库信息，或取消发布后再修改";
+			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改数据库信息，或取消发布后再修改";
 		}
 		
 		String operResult = null;
@@ -93,6 +96,9 @@ public class ComDatabaseService extends AbstractPublishService {
 		ComDatabase oldDatabase = getObjectById(databaseId, ComDatabase.class);
 		if(oldDatabase == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
+		}
+		if(oldDatabase.getIsBuiltin() == 1){
+			return "禁止删除内置的数据库信息";
 		}
 		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){
 			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，无法删除，请先取消发布";

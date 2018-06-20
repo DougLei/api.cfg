@@ -30,9 +30,8 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 			return onlineStatus;
 		}
 		
-		// (最后操作时间-登录时间)	或	 (当前时间-最后操作时间)		只要大于了登录超时时限，就提示登录超时
-		if(((onlineStatus.getLastOperDate().getTime() - onlineStatus.getLoginDate().getTime()) > LoginConstants.loginTimeoutDatelimit)
-				|| ((System.currentTimeMillis() - onlineStatus.getLastOperDate().getTime()) > LoginConstants.loginTimeoutDatelimit)){
+		// (当前时间-最后操作时间)		只要大于了登录超时时限，就提示登录超时
+		if(((System.currentTimeMillis() - onlineStatus.getLastOperDate().getTime()) > LoginConstants.loginTimeoutDatelimit)){
 			onlineStatus.setMessage("登录超时(超过"+SysConfig.getSystemConfig("login.timeout.datelimit")+"分钟)，请重新登录");
 			return onlineStatus;
 		}

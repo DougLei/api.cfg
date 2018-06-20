@@ -13,6 +13,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.common.ComDatabaseService;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -33,7 +34,8 @@ public class ComDatabaseController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String add(@RequestBody ComDatabase database){
+	public String add(@RequestBody String databaseJson){
+		ComDatabase database = JsonUtil.parseObject(databaseJson, ComDatabase.class);
 		String result = database.analysisResourceProp();
 		if(result == null){
 			result = databaseService.saveDatabase(database);
@@ -48,7 +50,8 @@ public class ComDatabaseController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String update(@RequestBody ComDatabase database){
+	public String update(@RequestBody String databaseJson){
+		ComDatabase database = JsonUtil.parseObject(databaseJson, ComDatabase.class);
 		String result = database.analysisResourceProp();
 		if(result == null){
 			result = databaseService.updateDatabase(database);

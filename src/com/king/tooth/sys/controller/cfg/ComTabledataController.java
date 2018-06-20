@@ -13,6 +13,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.service.cfg.ComTabledataService;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -33,7 +34,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String add(@RequestBody ComTabledata table){
+	public String add(@RequestBody String tableJson){
+		ComTabledata table = JsonUtil.parseObject(tableJson, ComTabledata.class);
 		String result = table.analysisResourceProp();
 		if(result == null){
 			result = tabledataService.saveTable(table);
@@ -48,7 +50,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String update(@RequestBody ComTabledata table){
+	public String update(@RequestBody String tableJson){
+		ComTabledata table = JsonUtil.parseObject(tableJson, ComTabledata.class);
 		String result = table.analysisResourceProp();
 		if(result == null){
 			result = tabledataService.updateTable(table);

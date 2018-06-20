@@ -13,6 +13,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.common.ComProjectService;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -33,7 +34,8 @@ public class ComProjectController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String add(@RequestBody ComProject project){
+	public String add(@RequestBody String projectJson){
+		ComProject project = JsonUtil.parseObject(projectJson, ComProject.class);
 		String result = project.analysisResourceProp();
 		if(result == null){
 			result = projectService.saveProject(project);
@@ -48,7 +50,8 @@ public class ComProjectController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String update(@RequestBody ComProject project){
+	public String update(@RequestBody String projectJson){
+		ComProject project = JsonUtil.parseObject(projectJson, ComProject.class);
 		String result = project.analysisResourceProp();
 		if(result == null){
 			result = projectService.updateProject(project);

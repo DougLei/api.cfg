@@ -1,6 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.service.common.ComModuleOperationService;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -32,7 +34,8 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String add(@RequestBody ComModuleOperation moduleOperation) {
+	public String add(@RequestBody String moduleOperationJson) {
+		ComModuleOperation moduleOperation = JsonUtil.parseObject(moduleOperationJson, ComModuleOperation.class);
 		String result = moduleOperation.analysisResourceProp();
 		if(result == null){
 			result = moduleOperationService.saveModuleOperation(moduleOperation);
@@ -47,7 +50,8 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String update(@RequestBody ComModuleOperation moduleOperation) {
+	public String update(@RequestBody String moduleOperationJson) {
+		ComModuleOperation moduleOperation = JsonUtil.parseObject(moduleOperationJson, ComModuleOperation.class);
 		String result = moduleOperation.analysisResourceProp();
 		if(result == null){
 			result = moduleOperationService.updateModuleOperation(moduleOperation);

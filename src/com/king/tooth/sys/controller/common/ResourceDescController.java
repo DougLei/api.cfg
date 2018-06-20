@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -42,7 +43,7 @@ public class ResourceDescController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping(value="/table", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@org.springframework.web.bind.annotation.ResponseBody
+	@ResponseBody
 	public String table(HttpServletRequest request){
 		String tableResourceName = request.getParameter("resourceName");
 		if(StrUtils.isEmpty(tableResourceName)){
@@ -94,7 +95,7 @@ public class ResourceDescController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping(value="/tableJson", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-	@org.springframework.web.bind.annotation.ResponseBody
+	@ResponseBody
 	public String tableJson(HttpServletRequest request){
 		String tableResourceName = request.getParameter("resourceName");
 		if(StrUtils.isEmpty(tableResourceName)){

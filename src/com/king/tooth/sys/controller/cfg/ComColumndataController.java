@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -32,7 +33,8 @@ public class ComColumndataController extends AbstractController{
 	 */
 	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String add(@RequestBody ComColumndata column){
+	public String add(@RequestBody String columnJson){
+		ComColumndata column = JsonUtil.parseObject(columnJson, ComColumndata.class);
 		String result = column.analysisResourceProp();
 		if(result == null){
 			result = columnataService.saveColumn(column);
@@ -47,7 +49,8 @@ public class ComColumndataController extends AbstractController{
 	 */
 	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public String update(@RequestBody ComColumndata column){
+	public String update(@RequestBody String columnJson){
+		ComColumndata column = JsonUtil.parseObject(columnJson, ComColumndata.class);
 		String result = column.analysisResourceProp();
 		if(result == null){
 			result = columnataService.updateColumn(column);
