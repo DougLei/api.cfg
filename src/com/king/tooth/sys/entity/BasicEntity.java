@@ -3,6 +3,7 @@ package com.king.tooth.sys.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourceNameConstants;
 
 /**
@@ -18,6 +19,7 @@ public class BasicEntity implements Serializable{
 	/**
 	 * 主键
 	 */
+	@JSONField(name = "Id")
 	protected String id;
 	/**
 	 * 创建人主键

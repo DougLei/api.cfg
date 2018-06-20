@@ -25,7 +25,6 @@ import com.king.tooth.sys.entity.desc.resource.table.TableResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 资源信息描述控制器
@@ -42,9 +41,9 @@ public class ResourceDescController extends AbstractController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/table", method = RequestMethod.GET)
+	@RequestMapping(value="/table", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody table(HttpServletRequest request){
+	public String table(HttpServletRequest request){
 		String tableResourceName = request.getParameter("resourceName");
 		if(StrUtils.isEmpty(tableResourceName)){
 			return installOperResponseBody("resourceName参数值不能为空", null);
@@ -142,7 +141,7 @@ public class ResourceDescController extends AbstractController{
 	 * 给动态表对象，添加基础的字段
 	 * @param table
 	 */
-	public static void initBasicColumnToTable(ComTabledata table){
+	private void initBasicColumnToTable(ComTabledata table){
 		// projectId
 		ComColumndata projectIdColumn = new ComColumndata("project_id", DataTypeConstants.STRING, 32);
 		projectIdColumn.setName("关联的项目主键");

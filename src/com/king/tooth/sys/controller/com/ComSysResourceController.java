@@ -24,7 +24,7 @@ public class ComSysResourceController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	@RequestMapping(value="/modifyIsEnabled", method = RequestMethod.PUT)
+	@RequestMapping(value="/modifyIsEnabled", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody modifyIsEnabled(@RequestBody ComSysResource resource){
 		return null;
@@ -35,7 +35,7 @@ public class ComSysResourceController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	@RequestMapping(value="/modifyReqResourceMethod", method = RequestMethod.PUT)
+	@RequestMapping(value="/modifyReqResourceMethod", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
 	@org.springframework.web.bind.annotation.ResponseBody
 	public ResponseBody updateEnabled(@RequestBody ComSysResource resource){
 		return null;

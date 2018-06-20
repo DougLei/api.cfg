@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
@@ -14,7 +15,6 @@ import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.com.ComSqlScriptService;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * sql脚本资源对象控制器
@@ -32,9 +32,9 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	@RequestMapping(value="/add", method = RequestMethod.POST)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody add(@RequestBody String sqlScriptJson){
+	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String add(@RequestBody String sqlScriptJson){
 		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
 		String result = sqlScript.validNotNullProps();
 		if(result == null){
@@ -48,9 +48,9 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	@RequestMapping(value="/update", method = RequestMethod.PUT)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody update(@RequestBody String sqlScriptJson){
+	@RequestMapping(value="/update", method = RequestMethod.PUT, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String update(@RequestBody String sqlScriptJson){
 		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
 		String result = sqlScript.validNotNullProps();
 		if(result == null){
@@ -64,9 +64,9 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	@RequestMapping(value="/delete", method = RequestMethod.DELETE)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody delete(HttpServletRequest request){
+	@RequestMapping(value="/delete", method = RequestMethod.DELETE, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String delete(HttpServletRequest request){
 		String sqlScriptId = request.getParameter("sqlScriptId");
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要删除的sql脚本id不能为空", null);
@@ -81,9 +81,9 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/addProjSqlScriptRelation", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody addProjSqlScriptRelation(HttpServletRequest request){
+	@RequestMapping(value="/addProjSqlScriptRelation", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String addProjSqlScriptRelation(HttpServletRequest request){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
@@ -101,9 +101,9 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/cancelProjSqlScriptRelation", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody cancelProjSqlScriptRelation(HttpServletRequest request){
+	@RequestMapping(value="/cancelProjSqlScriptRelation", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String cancelProjSqlScriptRelation(HttpServletRequest request){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
@@ -122,9 +122,9 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/publish", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody publish(HttpServletRequest request){
+	@RequestMapping(value="/publish", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String publish(HttpServletRequest request){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
@@ -146,9 +146,9 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	@RequestMapping(value="/cancelPublish", method = RequestMethod.GET)
-	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody cancelPublish(HttpServletRequest request){
+	@RequestMapping(value="/cancelPublish", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String cancelPublish(HttpServletRequest request){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}

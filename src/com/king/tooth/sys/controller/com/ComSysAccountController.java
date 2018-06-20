@@ -13,7 +13,6 @@ import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.service.com.ComSysAccountService;
 import com.king.tooth.util.HttpHelperUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 系统账户资源对象控制器
@@ -33,9 +32,9 @@ public class ComSysAccountController extends AbstractController{
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@org.springframework.web.bind.annotation.ResponseBody
-	public ResponseBody login(@RequestBody ComSysAccount account, HttpServletRequest request){
+	public String login(@RequestBody ComSysAccount account, HttpServletRequest request){
 		ComSysAccountOnlineStatus accountOnlineStatus = accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			return installResponseBody(accountOnlineStatus.getMessage(), null);

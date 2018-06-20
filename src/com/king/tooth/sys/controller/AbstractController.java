@@ -14,7 +14,7 @@ public abstract class AbstractController {
 	 * @param definedMessage 自定义的消息内容
 	 * @return
 	 */
-	protected ResponseBody installOperResponseBody(String operResult, String definedMessage){
+	protected String installOperResponseBody(String operResult, String definedMessage){
 		ResponseBody responseBody = new ResponseBody();
 		if(operResult == null){
 //			if(definedMessage == null){
@@ -25,7 +25,7 @@ public abstract class AbstractController {
 		}else{
 			responseBody.setMessage(operResult);
 		}
-		return responseBody;
+		return responseBody.toStrings();
 	}
 	
 	/**
@@ -34,8 +34,8 @@ public abstract class AbstractController {
 	 * @param data 对象
 	 * @return
 	 */
-	protected ResponseBody installResponseBody(String message, Object data){
+	protected String installResponseBody(String message, Object data){
 		ResponseBody responseBody = new ResponseBody(message, data);
-		return responseBody;
+		return responseBody.toStrings();
 	}
 }
