@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller;
+package com.king.tooth.sys.controller.com;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.service.ComColumndataService;
+import com.king.tooth.sys.service.com.ComColumndataService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 

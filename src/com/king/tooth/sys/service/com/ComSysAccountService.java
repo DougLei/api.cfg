@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service;
+package com.king.tooth.sys.service.com;
 
 import java.util.Date;
 
@@ -6,6 +6,7 @@ import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;

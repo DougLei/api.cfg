@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller;
+package com.king.tooth.sys.controller.com;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.service.ComSqlScriptService;
+import com.king.tooth.sys.service.com.ComSqlScriptService;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;

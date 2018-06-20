@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller;
+package com.king.tooth.sys.controller.com;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 

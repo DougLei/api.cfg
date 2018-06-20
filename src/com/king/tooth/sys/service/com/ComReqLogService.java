@@ -1,8 +1,9 @@
-package com.king.tooth.sys.service;
+package com.king.tooth.sys.service.com;
 
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.sys.entity.common.ComReqLog;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.JsonUtil;
 
