@@ -655,6 +655,9 @@ public class HibernateUtil {
 					setOutputValues(cs, procedureSqlScriptParameterList);
 				} finally {
 					CloseUtil.closeDBConn(cs);
+					if(procedureSqlScriptParameterList != null && procedureSqlScriptParameterList.size() > 0){
+						procedureSqlScriptParameterList.clear();
+					}
 				}
 			}
 			

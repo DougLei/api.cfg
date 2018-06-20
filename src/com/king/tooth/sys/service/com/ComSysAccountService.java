@@ -81,8 +81,8 @@ public class ComSysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
-		String queryAccountHql = "from ComSysAccount where loginName = ? or tel = ? or emails = ?";
-		ComSysAccount loginAccount = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, queryAccountHql, accountName, accountName, accountName);
+		String queryAccountHql = "from ComSysAccount where loginName = ? or tel = ? or emails = ? and projectId = ?";
+		ComSysAccount loginAccount = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, queryAccountHql, accountName, accountName, accountName, CurrentThreadContext.getProjectId());
 		
 		if(loginAccount == null){
 			accountOnlineStatus.setMessage("账号或密码错误，请重新输入");
@@ -121,8 +121,8 @@ public class ComSysAccountService extends AbstractService{
 	 * @return
 	 */
 	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
-		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? or accountName = ?";
-		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName);
+		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? or accountName = ? and projectId = ?";
+		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
 		if(onlineStatus == null){
 			onlineStatus = new ComSysAccountOnlineStatus();
 			onlineStatus.setTryLoginTimes(1);
