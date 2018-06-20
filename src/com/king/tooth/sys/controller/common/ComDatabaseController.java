@@ -32,7 +32,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	@RequestMapping(value="/add", method = RequestMethod.POST, produces = "application/json;charset=utf-8", consumes = "application/json;charset=utf-8")
 	@ResponseBody
 	public String add(@RequestBody String databaseJson){
 		ComDatabase database = JsonUtil.parseObject(databaseJson, ComDatabase.class);

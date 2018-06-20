@@ -54,9 +54,8 @@ public class PageResultEntity implements Serializable {
 	 */
 	@JSONField(name = "rows")
 	private List<? extends Object> resultDatas;
-
-
-	 
+	
+	
 	public String getFocusedId() {
 		return focusedId;
 	}

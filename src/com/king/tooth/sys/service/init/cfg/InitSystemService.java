@@ -517,7 +517,7 @@ public class InitSystemService extends AbstractService{
 		loadComHibernateHbmContent(database);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
-		int count = (int) HibernateUtil.executeUniqueQueryBySql("select count(1) from com_hibernate_hbm where is_enabled = 1 and hbm_resource_name != 'ComHibernateHbm' and ref_database_id = '"+database.getId()+"'", null);
+		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where isEnabled = 1 and hbmResourceName != 'ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
 		if(count == 0){
 			return;
 		}
@@ -588,6 +588,7 @@ public class InitSystemService extends AbstractService{
 		}
 		// 将其加载到当前系统的sessionFactory中
 		HibernateUtil.appendNewConfig(hbmContent.toString().trim());
+		HibernateUtil.getHibernateDefineResourceProps("ComHibernateHbm");
 		hbmContent.setLength(0);
 	}
 }
