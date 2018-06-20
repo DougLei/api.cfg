@@ -197,13 +197,13 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		respBodyColumn.setOrderCode(8);
 		columns.add(respBodyColumn);
 		
-		ComColumndata reqDateColumn = new ComColumndata("req_date", DataTypeConstants.DATE, 32);
+		ComColumndata reqDateColumn = new ComColumndata("req_date", DataTypeConstants.DATE, 0);
 		reqDateColumn.setName("发起请求的时间");
 		reqDateColumn.setComments("发起请求的时间");
 		reqDateColumn.setOrderCode(9);
 		columns.add(reqDateColumn);
 		
-		ComColumndata respDateColumn = new ComColumndata("resp_date", DataTypeConstants.DATE, 32);
+		ComColumndata respDateColumn = new ComColumndata("resp_date", DataTypeConstants.DATE, 0);
 		respDateColumn.setName("完成响应的时间");
 		respDateColumn.setComments("完成响应的时间");
 		respDateColumn.setOrderCode(10);

@@ -21,8 +21,15 @@ import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.app.ComAttachment;
+import com.king.tooth.sys.entity.app.ComDept;
+import com.king.tooth.sys.entity.app.ComOrg;
+import com.king.tooth.sys.entity.app.ComPermission;
+import com.king.tooth.sys.entity.app.ComPosition;
 import com.king.tooth.sys.entity.app.ComRole;
 import com.king.tooth.sys.entity.app.datalinks.ComProjectComHibernateHbmLinks;
+import com.king.tooth.sys.entity.app.datalinks.ComSysAccountComRoleLinks;
+import com.king.tooth.sys.entity.app.datalinks.ComUserComDeptLinks;
+import com.king.tooth.sys.entity.app.datalinks.ComUserComPositionLinks;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
@@ -42,6 +49,8 @@ import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.common.ComUser;
+import com.king.tooth.sys.entity.common.ComVerifyCode;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComProjectComCodeLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
@@ -93,7 +102,6 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComProjectComCodeLinks().toCreateTable());
 		tables.add(new ComSysAccount().toCreateTable());
 		tables.add(new ComDataDictionary().toCreateTable());
-		
 		// 通用表
 		tables.add(new ComSysResource().toCreateTable());
 		tables.add(new ComDataLinks().toCreateTable());
@@ -101,6 +109,8 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComProjectModuleBody().toCreateTable());
 		tables.add(new ComReqLog().toCreateTable());
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable());
+		tables.add(new ComUser().toCreateTable());
+		tables.add(new ComVerifyCode().toCreateTable());
 		// 配置系统表
 		tables.add(new ComColumndata().toCreateTable());
 		tables.add(new ComTabledata().toCreateTable());
@@ -109,7 +119,14 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComProjectComTabledataLinks().toCreateTable());
 		// 运行系统表
 		tables.add(new ComRole().toCreateTable());
+		tables.add(new ComPermission().toCreateTable());
 		tables.add(new ComAttachment().toCreateTable());
+		tables.add(new ComOrg().toCreateTable());
+		tables.add(new ComDept().toCreateTable());
+		tables.add(new ComPosition().toCreateTable());
+		tables.add(new ComSysAccountComRoleLinks().toCreateTable());
+		tables.add(new ComUserComDeptLinks().toCreateTable());
+		tables.add(new ComUserComPositionLinks().toCreateTable());
 		// 初始化基础列
 		for (ComTabledata table : tables) {
 			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);

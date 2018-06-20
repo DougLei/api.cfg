@@ -13,14 +13,14 @@ import com.king.tooth.constants.ResourceNameConstants;
 @SuppressWarnings("serial")
 public class BasicEntity implements Serializable{
 	/**
-	 * 所属项目主键
-	 */
-	protected String projectId;
-	/**
 	 * 主键
 	 */
 	@JSONField(name = "Id")
 	protected String id;
+	/**
+	 * 所属项目主键
+	 */
+	protected String projectId;
 	/**
 	 * 创建人主键
 	 */
