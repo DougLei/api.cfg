@@ -2,8 +2,6 @@ package com.king.tooth.sys.controller.cfg;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
@@ -24,8 +22,8 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(@RequestBody String columnJson){
-		ComColumndata column = JsonUtil.parseObject(columnJson, ComColumndata.class);
+	public ResponseBody add(HttpServletRequest request, String json){
+		ComColumndata column = JsonUtil.parseObject(json, ComColumndata.class);
 		String result = column.analysisResourceProp();
 		if(result == null){
 			result = columnataService.saveColumn(column);
@@ -38,8 +36,8 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(@RequestBody String columnJson){
-		ComColumndata column = JsonUtil.parseObject(columnJson, ComColumndata.class);
+	public ResponseBody update(HttpServletRequest request, String json){
+		ComColumndata column = JsonUtil.parseObject(json, ComColumndata.class);
 		String result = column.analysisResourceProp();
 		if(result == null){
 			result = columnataService.updateColumn(column);
@@ -52,7 +50,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request, String json){
 		String columnId = request.getParameter("columnId");
 		if(StrUtils.isEmpty(columnId)){
 			return installOperResponseBody("要删除的列id不能为空", null);

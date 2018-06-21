@@ -2,11 +2,6 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComProject;
@@ -19,9 +14,6 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
  * 项目信息资源对象控制器
  * @author DougLei
  */
-@Scope("prototype")
-@Controller
-@RequestMapping("/ComProject")
 public class ComProjectController extends AbstractPublishController{
 	
 	private ComProjectService projectService = new ComProjectService();
@@ -31,8 +23,8 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(@RequestBody String projectJson){
-		ComProject project = JsonUtil.parseObject(projectJson, ComProject.class);
+	public ResponseBody add(HttpServletRequest request, String json){
+		ComProject project = JsonUtil.parseObject(json, ComProject.class);
 		String result = project.analysisResourceProp();
 		if(result == null){
 			result = projectService.saveProject(project);
@@ -45,8 +37,8 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(@RequestBody String projectJson){
-		ComProject project = JsonUtil.parseObject(projectJson, ComProject.class);
+	public ResponseBody update(HttpServletRequest request, String json){
+		ComProject project = JsonUtil.parseObject(json, ComProject.class);
 		String result = project.analysisResourceProp();
 		if(result == null){
 			result = projectService.updateProject(project);
@@ -59,7 +51,7 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request, String json){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要删除的项目id不能为空", null);
@@ -73,7 +65,7 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody cancelRelation(HttpServletRequest request){
+	public ResponseBody cancelRelation(HttpServletRequest request, String json){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要取消关联关系的项目id不能为空", null);
@@ -93,7 +85,7 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>【单独发布项目信息】</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request){
+	public ResponseBody publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
@@ -112,7 +104,7 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request){
+	public ResponseBody cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}

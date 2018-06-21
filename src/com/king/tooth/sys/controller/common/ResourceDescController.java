@@ -25,7 +25,6 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
  * 资源信息描述控制器
  * @author DougLei
  */
-@SuppressWarnings("unchecked")
 public class ResourceDescController extends AbstractController{
 	
 	/**
@@ -33,7 +32,8 @@ public class ResourceDescController extends AbstractController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody table(HttpServletRequest request){
+	@SuppressWarnings("unchecked")
+	public ResponseBody table(HttpServletRequest request, String json){
 		String tableResourceName = request.getParameter("resourceName");
 		if(StrUtils.isEmpty(tableResourceName)){
 			return installOperResponseBody("resourceName参数值不能为空", null);
@@ -83,7 +83,7 @@ public class ResourceDescController extends AbstractController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody tableJson(HttpServletRequest request){
+	public ResponseBody tableJson(HttpServletRequest request, String jsonstr){
 		String tableResourceName = request.getParameter("resourceName");
 		if(StrUtils.isEmpty(tableResourceName)){
 			return installOperResponseBody("resourceName参数值不能为空", null);

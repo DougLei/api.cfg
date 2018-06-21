@@ -2,8 +2,6 @@ package com.king.tooth.sys.controller.cfg;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -25,8 +23,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(@RequestBody String tableJson){
-		ComTabledata table = JsonUtil.parseObject(tableJson, ComTabledata.class);
+	public ResponseBody add(HttpServletRequest request, String json){
+		ComTabledata table = JsonUtil.parseObject(json, ComTabledata.class);
 		String result = table.analysisResourceProp();
 		if(result == null){
 			result = tabledataService.saveTable(table);
@@ -39,8 +37,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(@RequestBody String tableJson){
-		ComTabledata table = JsonUtil.parseObject(tableJson, ComTabledata.class);
+	public ResponseBody update(HttpServletRequest request, String json){
+		ComTabledata table = JsonUtil.parseObject(json, ComTabledata.class);
 		String result = table.analysisResourceProp();
 		if(result == null){
 			result = tabledataService.updateTable(table);
@@ -53,7 +51,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request, String json){
 		String tableId = request.getParameter("tableId");
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要删除的表id不能为空", null);
@@ -69,7 +67,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody buildModel(HttpServletRequest request){
+	public ResponseBody buildModel(HttpServletRequest request, String json){
 		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("建模功能目前只提供给平台开发人员使用", null);
 		}
@@ -87,7 +85,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody addProjTableRelation(HttpServletRequest request){
+	public ResponseBody addProjTableRelation(HttpServletRequest request, String json){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
@@ -105,7 +103,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody cancelProjTableRelation(HttpServletRequest request){
+	public ResponseBody cancelProjTableRelation(HttpServletRequest request, String json){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
@@ -124,7 +122,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request){
+	public ResponseBody publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
@@ -146,7 +144,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request){
+	public ResponseBody cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}

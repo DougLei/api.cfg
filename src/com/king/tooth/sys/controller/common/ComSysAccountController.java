@@ -22,11 +22,11 @@ public class ComSysAccountController extends AbstractController{
 	 * 登录
 	 * <p>请求方式：POST</p>
 	 * @param request
-	 * @param account
+	 * @param json
 	 * @return
 	 */
-	public ResponseBody login(HttpServletRequest request, String accountJson){
-		ComSysAccount account = JsonUtil.parseObject(accountJson, ComSysAccount.class);
+	public ResponseBody login(HttpServletRequest request, String json){
+		ComSysAccount account = JsonUtil.parseObject(json, ComSysAccount.class);
 		ComSysAccountOnlineStatus accountOnlineStatus = accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			return installResponseBody(accountOnlineStatus.getMessage(), null);

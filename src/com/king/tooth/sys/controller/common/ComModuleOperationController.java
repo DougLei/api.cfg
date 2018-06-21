@@ -2,8 +2,6 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComModuleOperation;
@@ -25,8 +23,8 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(@RequestBody String moduleOperationJson) {
-		ComModuleOperation moduleOperation = JsonUtil.parseObject(moduleOperationJson, ComModuleOperation.class);
+	public ResponseBody add(HttpServletRequest request, String json) {
+		ComModuleOperation moduleOperation = JsonUtil.parseObject(json, ComModuleOperation.class);
 		String result = moduleOperation.analysisResourceProp();
 		if(result == null){
 			result = moduleOperationService.saveModuleOperation(moduleOperation);
@@ -39,8 +37,8 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(@RequestBody String moduleOperationJson) {
-		ComModuleOperation moduleOperation = JsonUtil.parseObject(moduleOperationJson, ComModuleOperation.class);
+	public ResponseBody update(HttpServletRequest request, String json) {
+		ComModuleOperation moduleOperation = JsonUtil.parseObject(json, ComModuleOperation.class);
 		String result = moduleOperation.analysisResourceProp();
 		if(result == null){
 			result = moduleOperationService.updateModuleOperation(moduleOperation);
@@ -53,7 +51,7 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request, String json){
 		String moduleOperationId = request.getParameter("moduleOperationId");
 		if(StrUtils.isEmpty(moduleOperationId)){
 			return installOperResponseBody("要删除的功能id不能为空", null);
@@ -68,7 +66,7 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request){
+	public ResponseBody publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
@@ -86,7 +84,7 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request){
+	public ResponseBody cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}

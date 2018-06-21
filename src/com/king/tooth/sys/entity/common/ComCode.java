@@ -35,11 +35,6 @@ public class ComCode extends AbstractSysResource implements ITable{
 	 */
 	private String methodName;
 	/**
-	 * 参数类型
-	 * <p>多个用,隔开，按方法声明的顺序配置，类型均为全路径</p>
-	 */
-	private String paramTypes;
-	/**
 	 * 描述
 	 */
 	private String comments;
@@ -72,12 +67,6 @@ public class ComCode extends AbstractSysResource implements ITable{
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
 	}
-	public String getParamTypes() {
-		return paramTypes;
-	}
-	public void setParamTypes(String paramTypes) {
-		this.paramTypes = paramTypes;
-	}
 	public String getComments() {
 		return comments;
 	}
@@ -98,7 +87,7 @@ public class ComCode extends AbstractSysResource implements ITable{
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata codeResourceNameColumn = new ComColumndata("code_resource_name", DataTypeConstants.STRING, 60);
 		codeResourceNameColumn.setName("代码资源名");
@@ -118,16 +107,10 @@ public class ComCode extends AbstractSysResource implements ITable{
 		methodNameColumn.setOrderCode(3);
 		columns.add(methodNameColumn);
 		
-		ComColumndata paramTypesColumn = new ComColumndata("param_types", DataTypeConstants.STRING, 100);
-		paramTypesColumn.setName("参数类型");
-		paramTypesColumn.setComments("参数类型:多个用,隔开，按方法声明的顺序配置，类型均为全路径");
-		paramTypesColumn.setOrderCode(4);
-		columns.add(paramTypesColumn);
-		
 		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 200);
 		commentsColumn.setName("描述");
 		commentsColumn.setComments("描述");
-		commentsColumn.setOrderCode(5);
+		commentsColumn.setOrderCode(4);
 		columns.add(commentsColumn);
 		
 		table.setColumns(columns);

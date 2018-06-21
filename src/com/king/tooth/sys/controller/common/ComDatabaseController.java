@@ -2,8 +2,6 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -25,8 +23,8 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(HttpServletRequest request, String databaseJson){
-		ComDatabase database = JsonUtil.parseObject(databaseJson, ComDatabase.class);
+	public ResponseBody add(HttpServletRequest request, String json){
+		ComDatabase database = JsonUtil.parseObject(json, ComDatabase.class);
 		String result = database.analysisResourceProp();
 		if(result == null){
 			result = databaseService.saveDatabase(database);
@@ -39,8 +37,8 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(@RequestBody String databaseJson){
-		ComDatabase database = JsonUtil.parseObject(databaseJson, ComDatabase.class);
+	public ResponseBody update(HttpServletRequest request, String json){
+		ComDatabase database = JsonUtil.parseObject(json, ComDatabase.class);
 		String result = database.analysisResourceProp();
 		if(result == null){
 			result = databaseService.updateDatabase(database);
@@ -53,7 +51,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request, String json){
 		String databaseId = request.getParameter("databaseId");
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("要删除的数据库id不能为空", null);
@@ -67,7 +65,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody linkTest(HttpServletRequest request){
+	public ResponseBody linkTest(HttpServletRequest request, String json){
 		String databaseId = request.getParameter("databaseId");
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("测试连接的数据库id不能为空", null);
@@ -82,7 +80,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request){
+	public ResponseBody publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
@@ -100,7 +98,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request){
+	public ResponseBody cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}

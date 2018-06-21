@@ -2,11 +2,6 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
@@ -19,9 +14,6 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
  * sql脚本资源对象控制器
  * @author DougLei
  */
-@Scope("prototype")
-@Controller
-@RequestMapping("/ComSqlScript")
 public class ComSqlScriptController extends AbstractPublishController{
 	
 	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
@@ -31,8 +23,8 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(@RequestBody String sqlScriptJson){
-		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
+	public ResponseBody add(HttpServletRequest request, String json){
+		ComSqlScript sqlScript = JsonUtil.parseObject(json, ComSqlScript.class);
 		String result = sqlScript.validNotNullProps();
 		if(result == null){
 			result = sqlScriptService.saveSqlScript(sqlScript);
@@ -45,8 +37,8 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(@RequestBody String sqlScriptJson){
-		ComSqlScript sqlScript = JsonUtil.parseObject(sqlScriptJson, ComSqlScript.class);
+	public ResponseBody update(HttpServletRequest request, String json){
+		ComSqlScript sqlScript = JsonUtil.parseObject(json, ComSqlScript.class);
 		String result = sqlScript.validNotNullProps();
 		if(result == null){
 			result = sqlScriptService.updateSqlScript(sqlScript);
@@ -59,7 +51,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request){
+	public ResponseBody delete(HttpServletRequest request, String json){
 		String sqlScriptId = request.getParameter("sqlScriptId");
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要删除的sql脚本id不能为空", null);
@@ -74,7 +66,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody addProjSqlScriptRelation(HttpServletRequest request){
+	public ResponseBody addProjSqlScriptRelation(HttpServletRequest request, String json){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
@@ -92,7 +84,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody cancelProjSqlScriptRelation(HttpServletRequest request){
+	public ResponseBody cancelProjSqlScriptRelation(HttpServletRequest request, String json){
 		String projectId = request.getParameter("projectId");
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
@@ -111,7 +103,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request){
+	public ResponseBody publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
@@ -133,7 +125,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request){
+	public ResponseBody cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
