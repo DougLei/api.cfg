@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
@@ -156,6 +157,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		return validNotNullProps();
 	}
 	
+	@JSONField(serialize = false)
 	public Integer getResourceType() {
 		return PROJECT;
 	}

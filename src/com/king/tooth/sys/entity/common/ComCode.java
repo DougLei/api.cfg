@@ -132,6 +132,7 @@ public class ComCode extends AbstractSysResource implements ITable{
 		return entityJson.getEntityJson();
 	}
 	
+	@JSONField(serialize = false)
 	public Integer getResourceType() {
 		return CODE;
 	}

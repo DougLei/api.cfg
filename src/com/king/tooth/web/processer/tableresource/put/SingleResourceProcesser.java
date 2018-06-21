@@ -92,6 +92,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 				params.add(updatedJsonObj.get(pn));
 			}
 		}
+		updateHql.setLength(updateHql.length()-1);
 		
 		if(whereIdHql != null){
 			params.add(idValue);

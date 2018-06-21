@@ -379,6 +379,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	
+	@JSONField(serialize = false)
 	public Integer getResourceType() {
 		return TABLE;
 	}

@@ -163,6 +163,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
+		table.setReqResourceMethod(ISysResource.NONE);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);

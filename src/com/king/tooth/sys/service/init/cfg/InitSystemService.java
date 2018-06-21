@@ -15,7 +15,6 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.ISysResource;
@@ -77,15 +76,12 @@ public class InitSystemService extends AbstractService{
 	public void loadSysBasicDatasBySysFirstStart() {
 		try {
 			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
-			initAllTables();// 初始化系统涉及到的所有表
 			initDatabaseInfo();// 初始化数据库信息
 			updateInitConfig();
 			Log4jUtil.debug("系统初始化完成！");
 		} catch (Exception e) {
 			Log4jUtil.debug("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
-		}finally{
-			ResourceHandlerUtil.clearTables(tables);
 		}
 	}
 	
@@ -99,13 +95,12 @@ public class InitSystemService extends AbstractService{
 				CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());
 	}
 	
-	private List<ComTabledata> tables = new ArrayList<ComTabledata>(24);
 	/**
-	 * 初始化系统涉及到的所有表
-	 * <p>包括每个表中的基础列</p>
+	 * 获取系统涉及到的所有表
 	 * @return
 	 */
-	private void initAllTables(){
+	private List<ComTabledata> getAllTables(){
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(34);
 		// 核心表
 		tables.add(new ComDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
@@ -144,10 +139,7 @@ public class InitSystemService extends AbstractService{
 		tables.add(new ComSysAccountComRoleLinks().toCreateTable());
 		tables.add(new ComUserComDeptLinks().toCreateTable());
 		tables.add(new ComUserComPositionLinks().toCreateTable());
-		// 初始化基础列
-		for (ComTabledata table : tables) {
-			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
-		}
+		return tables;
 	}
 	
 	/**
@@ -176,6 +168,7 @@ public class InitSystemService extends AbstractService{
 	 * @return 
 	 */
 	private void createTables(){
+		List<ComTabledata> tables = getAllTables();
 		List<ComTabledata> tmpTables = new ArrayList<ComTabledata>();
 		DBTableHandler dbHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 		for (ComTabledata table : tables) {
@@ -185,25 +178,28 @@ public class InitSystemService extends AbstractService{
 			tmpTables.add(table);
 		}
 		dbHandler.dropTable(tmpTables);// 尝试先删除表
-		dbHandler.createTable(tmpTables, false);// 开始创建表
-		tmpTables.clear();
+		dbHandler.createTable(tmpTables, true);// 开始创建表
+		ResourceHandlerUtil.clearTables(tmpTables);
+		ResourceHandlerUtil.clearTables(tables);
 	}
 	
 	/**
 	 * 根据表创建hbm文件，并将其加入到SessionFactory中
 	 */
 	private void insertHbmContentsToSessionFactory() {
+		List<ComTabledata> tables = getAllTables();
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
 		for (ComTabledata table : tables) {
 			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
 				continue;
 			}
-			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, false));// 记录hbm内容
+			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, true));// 记录hbm内容
 		}
 		// 将hbmContents加入到hibernate sessionFactory中
 		HibernateUtil.appendNewConfig(hbmContents);
 		hbmContents.clear();
+		ResourceHandlerUtil.clearTables(tables);
 	}
 	
 	/**
@@ -261,6 +257,7 @@ public class InitSystemService extends AbstractService{
 	 * @param adminAccountId 
 	 */
 	private void insertAllTables(String adminAccountId) {
+		List<ComTabledata> tables = getAllTables();
 		String tableId;
 		List<ComColumndata> columns = null;
 		ComHibernateHbm hbm;
@@ -290,6 +287,7 @@ public class InitSystemService extends AbstractService{
 			resource = table.turnToResource();
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
+		ResourceHandlerUtil.clearTables(tables);
 	}
 	
 	/**

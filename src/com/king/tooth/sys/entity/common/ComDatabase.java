@@ -359,7 +359,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 				&& StrUtils.compareIsSame(loginUserName, database.getLoginUserName())
 				&& StrUtils.compareIsSame(loginPassword, database.getLoginPassword())
 				&& StrUtils.compareIsSame(dbIp, database.getDbIp())
-				&& dbPort == database.getDbPort()){
+				&& dbPort.equals(database.getDbPort())){
 			return true;
 		}
 		return false;
@@ -386,8 +386,9 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		return false;
 	}
 
+	@JSONField(serialize = false)
 	public Integer getResourceType() {
-		return DATABASE;
+		return 1;
 	}
 	
 	public ComPublishInfo turnToPublish() {

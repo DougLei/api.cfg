@@ -454,6 +454,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return resource;
 	}
 	
+	@JSONField(serialize = false)
 	public Integer getResourceType() {
 		return SQLSCRIPT;
 	}

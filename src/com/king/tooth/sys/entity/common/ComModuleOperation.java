@@ -199,6 +199,7 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	
+	@JSONField(serialize = false)
 	public Integer getResourceType() {
 		return PROJECT_MODULE_OPERATION;
 	}

@@ -84,7 +84,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(operResult == null){
 			HibernateUtil.updateObjectByHql(database, null);
 		}
-		return null;
+		return operResult;
 	}
 	
 	/**

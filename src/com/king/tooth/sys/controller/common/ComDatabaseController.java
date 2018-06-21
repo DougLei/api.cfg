@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -52,7 +53,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String databaseId = request.getParameter("databaseId");
+		String databaseId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("要删除的数据库id不能为空", null);
 		}
@@ -66,7 +67,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody linkTest(HttpServletRequest request, String json){
-		String databaseId = request.getParameter("databaseId");
+		String databaseId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("测试连接的数据库id不能为空", null);
 		}
@@ -81,11 +82,11 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody publish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
-			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
-		}
+//		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+//			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+//		}
 		
-		String databaseId = request.getParameter("databaseId");
+		String databaseId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("要发布的数据库id不能为空", null);
 		}
@@ -99,11 +100,11 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody cancelPublish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
-			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
-		}
+//		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+//			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+//		}
 		
-		String databaseId = request.getParameter("databaseId");
+		String databaseId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(databaseId)){
 			return installOperResponseBody("要取消发布的数据库id不能为空", null);
 		}
