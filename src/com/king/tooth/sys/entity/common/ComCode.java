@@ -10,6 +10,7 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
@@ -136,16 +137,30 @@ public class ComCode extends AbstractSysResource implements ITable{
 	}
 	
 	public ComSysResource turnToResource() {
-		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
-	}
-	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		ComSysResource resource = super.turnToResource();
+		resource.setResourceType(CODE);
+		resource.setResourceName(codeResourceName);
 		return resource;
 	}
 	
+	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
+		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
+	}
+	
 	public ComPublishInfo turnToPublish() {
-		ComPublishInfo publish = new ComPublishInfo();
-		return publish;
+		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
+	}
+	
+	/**
+	 * 转换为要发布的基础数据资源对象
+	 * @return
+	 */
+	public ComPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
+		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+		publishBasicData.setBasicDataResourceName(getEntityName());
+		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
+		publishBasicData.setIsBuiltin(1);
+		publishBasicData.setBelongPlatformType(belongPlatformType);
+		return publishBasicData;
 	}
 }

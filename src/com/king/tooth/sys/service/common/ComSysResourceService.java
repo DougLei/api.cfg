@@ -49,9 +49,6 @@ public class ComSysResourceService extends AbstractService{
 		if(resource.getIsEnabled() == 0){
 			throw new IllegalArgumentException("请求的资源被禁用，请联系管理员：" + resourceName);
 		}
-		if(resource.getValidDate() == null || ((resource.getValidDate().getTime() - System.currentTimeMillis()) < 0)){
-			throw new IllegalArgumentException("请求的资源已过期，请联系管理员：" + resourceName);
-		}
 		return resource;
 	}
 

@@ -11,6 +11,7 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
 
@@ -170,5 +171,18 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		entityJson.put("isCore", isCore);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
+	}
+	
+	/**
+	 * 转换为要发布的基础数据资源对象
+	 * @return
+	 */
+	public ComPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
+		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+		publishBasicData.setBasicDataResourceName(getEntityName());
+		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
+		publishBasicData.setIsBuiltin(1);
+		publishBasicData.setBelongPlatformType(belongPlatformType);
+		return publishBasicData;
 	}
 }

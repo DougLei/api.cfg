@@ -8,7 +8,6 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
@@ -83,7 +82,8 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		resource.setReqResourceMethod(reqResourceMethod);
 		resource.setIsBuiltin(isBuiltin);
 		resource.setIsNeedDeploy(isNeedDeploy);
-		resource.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		resource.setBelongPlatformType(belongPlatformType);
+		resource.setIsCreated(isCreated);
 		return resource;
 	}
 	

@@ -7,14 +7,12 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.JsonUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
  * 要发布的基础数据资源对象
@@ -56,7 +54,7 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 	@JSONField(serialize = false)
 	public JSONObject getBasicDataJsonObject(String projectId) {
 		JSONObject tmpJson = JSONObject.parseObject(basicDataJsonStr);
-		JSONObject json = new JSONObject(tmpJson.size()+2);
+		JSONObject json = new JSONObject(tmpJson.size()+1);
 		Set<String> keys = tmpJson.keySet();
 		for (String key : keys) {
 			if(key.endsWith("Date")){
@@ -66,7 +64,6 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 			}
 		}
 		tmpJson.clear();
-		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 		json.put("projectId", projectId);
 		return json;
 	}

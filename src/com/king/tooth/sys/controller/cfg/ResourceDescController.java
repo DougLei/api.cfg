@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller.cfg;
 
 import java.util.ArrayList;
 import java.util.HashMap;

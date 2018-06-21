@@ -1,7 +1,6 @@
 package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -10,6 +9,7 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
@@ -33,10 +33,6 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	 * 资源名
 	 */
 	private String resourceName;
-	/**
-	 * 资源有效期
-	 */
-	private Date validDate;
 	
 	//-------------------------------------------------------------------------
 	
@@ -58,13 +54,6 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	public void setResourceType(Integer resourceType) {
 		this.resourceType = resourceType;
 	}
-	public Date getValidDate() {
-		return validDate;
-	}
-	public void setValidDate(Date validDate) {
-		this.validDate = validDate;
-	}
-	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SYS_RESOURCE", 0);
@@ -77,7 +66,7 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");
@@ -97,12 +86,6 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 		resourceTypeColumn.setOrderCode(3);
 		columns.add(resourceTypeColumn);
 		
-		ComColumndata validDateColumn = new ComColumndata("valid_date", DataTypeConstants.DATE, 0);
-		validDateColumn.setName("资源有效期");
-		validDateColumn.setComments("资源有效期");
-		validDateColumn.setOrderCode(4);
-		columns.add(validDateColumn);
-		
 		table.setColumns(columns);
 		return table;
 	}
@@ -118,7 +101,6 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
 		entityJson.put("resourceType", resourceType);
-		entityJson.put("validDate", validDate);
 		super.processSysResourceProps(entityJson);
 		return entityJson.getEntityJson();
 	}
@@ -136,5 +118,18 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	
 	public ComPublishInfo turnToPublish() {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
+	}
+	
+	/**
+	 * 转换为要发布的基础数据资源对象
+	 * @return
+	 */
+	public ComPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
+		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+		publishBasicData.setBasicDataResourceName(getEntityName());
+		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
+		publishBasicData.setIsBuiltin(1);
+		publishBasicData.setBelongPlatformType(belongPlatformType);
+		return publishBasicData;
 	}
 }

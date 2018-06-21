@@ -62,7 +62,7 @@ public class ComProjectController extends AbstractPublishController{
 	
 	/**
 	 * 取消项目和[表/sql脚本]的关联信息
-	 * <p>请求方式：DELETE</p>
+	 * <p>请求方式：GET</p>
 	 * @return
 	 */
 	public ResponseBody cancelRelation(HttpServletRequest request, String json){
@@ -82,7 +82,7 @@ public class ComProjectController extends AbstractPublishController{
 	/**
 	 * 发布项目
 	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
-	 * <p>【单独发布项目信息】</p>
+	 * <p>请求方式：GET</p>
 	 * @return
 	 */
 	public ResponseBody publish(HttpServletRequest request, String json){
