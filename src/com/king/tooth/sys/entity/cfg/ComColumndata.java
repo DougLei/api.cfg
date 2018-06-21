@@ -217,7 +217,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		tableIdColumn.setOrderCode(1);
 		columns.add(tableIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 40);
+		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 60);
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
 		nameColumn.setOrderCode(2);
@@ -312,7 +312,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isEnabledColumn.setOrderCode(15);
 		columns.add(isEnabledColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 400);
+		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 600);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		commentsColumn.setOrderCode(16);
