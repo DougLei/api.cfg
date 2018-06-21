@@ -169,13 +169,13 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(projCode);
 		publish.setResourceType(PROJECT);
-		super.turnToPublish();
 		return publish;
 	}
 	
 	public JSONObject toPublishEntityJson(String projectId) {
 		JSONObject json = toEntityJson();
 		json.put("refDataId", json.getString(ResourceNameConstants.ID));
+		processPublishEntityJson(json);
 		return json;
 	}
 }

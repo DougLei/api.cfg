@@ -82,9 +82,9 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody publish(HttpServletRequest request, String json){
-//		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
-//			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
-//		}
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+		}
 		
 		String databaseId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(databaseId)){
@@ -100,9 +100,9 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody cancelPublish(HttpServletRequest request, String json){
-//		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
-//			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
-//		}
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+		}
 		
 		String databaseId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(databaseId)){

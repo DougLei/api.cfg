@@ -77,6 +77,9 @@ public final class SingleResourceProcesser extends PutProcesser {
 				idValue = updatedJsonObj.getString(pn);
 				continue;
 			}
+			if(updatedJsonObj.get(pn) == null){
+				continue;
+			}
 			
 			confPropMetadata = HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, pn);
 			updateHql.append(confPropMetadata.getPropName());

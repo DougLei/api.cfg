@@ -42,7 +42,7 @@ public class BasicEntity implements Serializable{
 	 * 处理基础资源对象的属性
 	 * @param entityJson
 	 */
-	public void processBasicEntityProps(EntityJson entityJson){
+	protected void processBasicEntityProps(EntityJson entityJson){
 		entityJson.put(ResourceNameConstants.ID, id);
 		entityJson.put("createDate", createDate);
 		entityJson.put("lastUpdateDate", lastUpdateDate);

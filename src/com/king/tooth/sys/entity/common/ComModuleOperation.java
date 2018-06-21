@@ -249,7 +249,6 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 		publish.setPublishResourceId(refProjectId);
 		publish.setPublishResourceName(name);
 		publish.setResourceType(PROJECT_MODULE_OPERATION);
-		super.turnToPublish();
 		return publish;
 	}
 }

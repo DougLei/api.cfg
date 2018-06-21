@@ -230,7 +230,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database.getIsBuiltin() == 1){
 			return "内置数据库发布成功";
 		}
-		
+
 		return useLoadPublishApi(database.getId(), "null", "db", "1", 
 				CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
 	}
@@ -298,11 +298,11 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "没有找到id为["+publishDataId+"]的数据库对象信息，运行系统加载失败";
 		}
 		DynamicDBUtil.addDataSource(database);
-		return "success";
+		return "数据库发布成功";
 	}
 
 	protected String unloadPublishData(String projectId, String publishDataId) {
 		DynamicDBUtil.removeDataSource(publishDataId);
-		return "success";
+		return "数据库取消发布成功";
 	}
 }

@@ -231,7 +231,6 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(code);
 		publish.setResourceType(PROJECT_MODULE);
-		super.turnToPublish();
 		return publish;
 	}
 }

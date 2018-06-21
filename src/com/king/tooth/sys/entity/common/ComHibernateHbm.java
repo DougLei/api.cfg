@@ -181,7 +181,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 		}
 		publish.setPublishResourceName(hbmResourceName);
 		publish.setResourceType(TABLE);
-		super.turnToPublish();
 		return publish;
 	}
 	
@@ -190,6 +189,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 		json.put("refDataId", refTableId);
 		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 		json.put("projectId", projectId);
+		processPublishEntityJson(json);
 		return json;
 	}
 	

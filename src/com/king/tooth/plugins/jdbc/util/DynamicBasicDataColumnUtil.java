@@ -32,7 +32,7 @@ public class DynamicBasicDataColumnUtil {
 		projectIdColumn.setOrderCode(9902);
 		table.getColumns().add(projectIdColumn);
 		
-		if(table.getIsResource() == 1){
+		if(table.getIsResource() != null && table.getIsResource() == 1){
 			ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 			isEnabledColumn.setName("资源是否有效");
 			isEnabledColumn.setComments("资源是否有效");

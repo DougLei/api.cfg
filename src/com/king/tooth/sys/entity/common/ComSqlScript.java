@@ -466,7 +466,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(sqlScriptResourceName);
 		publish.setResourceType(SQLSCRIPT);
-		super.turnToPublish();
 		return publish;
 	}
 }

@@ -280,7 +280,7 @@ public class InitSystemService extends AbstractService{
 			hbm = new ComHibernateHbm();
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.tableTurnToHbm(table);
-			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, false));
+			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, true));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
 			// 保存到资源表中

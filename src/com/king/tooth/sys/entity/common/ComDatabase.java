@@ -373,7 +373,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	 */
 	public boolean compareIsSameDatabase(ComDatabase database){
 		if(database.getDbType().equals(DynamicDataConstants.DB_TYPE_ORACLE)){
-			if(StrUtils.compareIsSame(dbInstanceName, database.getDbInstanceName())
+			if(StrUtils.compareIsSameIgnoreCase(dbInstanceName, database.getDbInstanceName())
 					&& StrUtils.compareIsSame(dbIp, database.getDbIp())
 					&& dbPort.equals(database.getDbPort())){
 				return true;
@@ -397,13 +397,13 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(dbInstanceName);
 		publish.setResourceType(DATABASE);
-		super.turnToPublish();
 		return publish;
 	}
 	
 	public JSONObject toPublishEntityJson(String projectId) {
 		JSONObject json = toEntityJson();
 		json.put("refDataId", json.getString(ResourceNameConstants.ID));
+		processPublishEntityJson(json);
 		return json;
 	}
 }

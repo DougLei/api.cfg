@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.ResourceHandlerUtil;
 
@@ -87,32 +86,28 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		return resource;
 	}
 	
-	public ComPublishInfo turnToPublish() {
-		// 这些字段值，是发布到远程数据库表中的数据
-		this.isBuiltin = 0;
-		this.isNeedDeploy = 0;
-		Date publishDate = new Date();
-		this.createDate = publishDate;
-		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
-		this.createUserId = userId;
-		this.lastUpdateDate = publishDate;
-		this.lastUpdatedUserId = userId;
-		return null;
-	}
-	
 	public JSONObject toPublishEntityJson(String projectId) {
 		JSONObject json = toEntityJson();
 		json.put("refDataId", json.getString(ResourceNameConstants.ID));
 		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 		json.put("projectId", projectId);
+		processPublishEntityJson(json);
 		return json;
+	}
+	protected void processPublishEntityJson(JSONObject json){
+		Date publishDate = new Date();
+		json.put("createDate", publishDate);
+		json.put("lastUpdateDate", publishDate);
+		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+		json.put("createUserId", userId);
+		json.put("lastUpdatedUserId", userId);
 	}
 	
 	/**
 	 * 处理资源对象的属性
 	 * @param entityJson
 	 */
-	public void processSysResourceProps(EntityJson entityJson){
+	protected void processSysResourceProps(EntityJson entityJson){
 		super.processBasicEntityProps(entityJson);
 		entityJson.put("isEnabled", isEnabled);
 		entityJson.put("isBuiltin", isBuiltin);

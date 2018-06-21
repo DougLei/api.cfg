@@ -80,6 +80,11 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 * <p>这个由后端开发人员控制，在发布时会用到</p>
 	 */
 	private Integer isCore;
+	/**
+	 * 是否是资源
+	 * <p>这个字段由开发人员控制，不开放给用户</p>
+	 */
+	private Integer isResource;
 	
 	//-----------------------------------------------------------------------
 	
@@ -99,13 +104,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 */
 	@JSONField(serialize = false)
 	private String dbType;
-	/**
-	 * 是否是资源
-	 * <p>这个字段由开发人员控制，不开放给用户</p>
-	 * <p>和数据库没有对应的映射</p>
-	 */
-	@JSONField(serialize = false)
-	private int isResource;
 	/**
 	 * 关联的数据库id
 	 * 该字段在发布的时候用到
@@ -205,10 +203,10 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
-	public int getIsResource() {
+	public Integer getIsResource() {
 		return isResource;
 	}
-	public void setIsResource(int isResource) {
+	public void setIsResource(Integer isResource) {
 		this.isResource = isResource;
 	}
 	public void clear(){
@@ -238,7 +236,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsCreated(1);
 		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(25);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(26);
 		
 		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
@@ -316,6 +314,13 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		isCoreColumn.setOrderCode(11);
 		columns.add(isCoreColumn);
 		
+		ComColumndata isResourceColumn = new ComColumndata("is_resource", DataTypeConstants.INTEGER, 1);
+		isResourceColumn.setName("是否是资源");
+		isResourceColumn.setComments("是否是资源:这个字段由开发人员控制，不开放给用户");
+		isResourceColumn.setDefaultValue("0");
+		isResourceColumn.setOrderCode(12);
+		columns.add(isResourceColumn);
+		
 		table.setColumns(columns);
 		return table;
 	}
@@ -333,6 +338,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		entityJson.put("tableType", tableType);
 		entityJson.put("isHavaDatalink", isHavaDatalink);
 		entityJson.put("isCore", isCore);
+		entityJson.put("isResource", isResource);
 		super.processSysResourceProps(entityJson);
 		return entityJson.getEntityJson();
 	}
@@ -394,7 +400,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(resourceName);
 		publish.setResourceType(TABLE);
-		super.turnToPublish();
 		return publish;
 	}
 }
