@@ -17,7 +17,7 @@ import com.king.tooth.cache.CodeResourceCache;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.sys.service.init.app.InitAppSystemService;
-import com.king.tooth.sys.service.init.cfg.InitSystemService;
+import com.king.tooth.sys.service.init.cfg.InitCfgSystemService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
@@ -85,13 +85,13 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 		String currentSysType = SysConfig.getSystemConfig("current.sys.type");
 		if("1".equals(currentSysType)){// 是配置系统
 			if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
-				new InitSystemService().loadSysBasicDatasBySysFirstStart();
+				new InitCfgSystemService().loadSysBasicDatasBySysFirstStart();
 			}else{
-				new InitSystemService().loadSysBasicDatasByStart();
+				new InitCfgSystemService().loadHbmsByStart();
 			}
 		}else if("2".equals(currentSysType)){// 是运行系统
 			// 系统启动时，初始化配置数据库的表和所有基础数据
-			new InitAppSystemService().loadSysBasicDatasBySysStart();
+			new InitAppSystemService().loadHbmsByStart();
 		}
 		CodeResourceCache.initCodeResourceMappings(currentSysType);
 	}

@@ -68,7 +68,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
-public class InitSystemService extends AbstractService{
+public class InitCfgSystemService extends AbstractService{
 
 	/**
 	 * 系统首次启动时，初始化系统的基础数据
@@ -491,29 +491,26 @@ public class InitSystemService extends AbstractService{
 	 * 系统每次启动时，加载hbm的配置信息
 	 * 主要是hbm内容
 	 */
-	public void loadSysBasicDatasByStart() {
+	public void loadHbmsByStart() {
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
-			// 先加载当前系统的所有hbm映射文件
-			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
+			// 先加载当前系统数据库的所有hbm映射文件
+			loadCurrentSysDatabaseHbms();
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的核心hbm加载进对应的sessionFactory中
 			// 同时建立数据库和项目的关联关系，为之后的发布操作做准备
 			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = 2 and isCreated =1");
 			
 			if(databases != null && databases.size()> 0){
-				// 查询获取核心表资源名都有哪些
-				List<Object> coreTableResourceNames = HibernateUtil.executeListQueryByHql(null, null, 
-						"select resourceName from ComTabledata where isCore=1 and isEnabled=1", null);
-				HibernateUtil.closeCurrentThreadSession();
+				// 查询获取核心表资源名
+				List<Object> coreTableResourceNames = HibernateUtil.executeListQueryByHql(null, null, "select resourceName from ComTabledata where isCore=1 and isEnabled=1 and resourceName != 'ComHibernateHbm'", null);
+				
 				if(coreTableResourceNames == null || coreTableResourceNames.size() == 0){
 					throw new NullPointerException("没有查询到核心的表资源名称，请检查配置系统数据库中的数据是否正确");
 				}
 				StringBuilder sp = new StringBuilder("(");
-				for (Object object : coreTableResourceNames) {
-					if("ComHibernateHbm".equals(object.toString())){
-						continue;
-					}
+				int len = coreTableResourceNames.size();
+				for(int i=0;i<len ;i++){
 					sp.append("?,");
 				}
 				sp.setLength(sp.length()-1);
@@ -521,27 +518,21 @@ public class InitSystemService extends AbstractService{
 				String placholders = sp.toString();
 				sp.setLength(0);
 				
-				for (ComDatabase database : databases) {
-					database.analysisResourceProp();
-					String testLinkResult = database.testDbLink();
-					if(testLinkResult.startsWith("err")){
-						throw new Exception(testLinkResult);
-					}
-					Log4jUtil.debug("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
-					
-					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
-					loadCoreHbmContentsByDatabaseId(database, coreTableResourceNames, placholders);// 加载当前数据库中的hbm到sessionFactory中
-				}
-				
-				coreTableResourceNames.clear();
-				
-				// 加载数据库和项目的关联关系映射
-				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
 				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled = 1 and isCreated =1 and refDatabaseId = ?";
 				for (ComDatabase database : databases) {
-					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
+					if(existsPublishedProjects(projDatabaseRelationQueryHql, database)){
+						database.analysisResourceProp();
+						String testLinkResult = database.testDbLink();
+						if(testLinkResult.startsWith("err")){
+							throw new Exception(testLinkResult);
+						}
+						Log4jUtil.debug("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
+						
+						DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
+						loadCoreHbmContentsByDatabaseId(database, coreTableResourceNames, placholders);// 加载当前数据库中的hbm到sessionFactory中
+					}
 				}
-				HibernateUtil.closeCurrentThreadSession();
+				coreTableResourceNames.clear();
 			}else{
 				HibernateUtil.closeCurrentThreadSession();
 			}
@@ -552,11 +543,27 @@ public class InitSystemService extends AbstractService{
 	}
 	
 	/**
+	 * 验证数据库下是否有发布的项目
+	 * @param projDatabaseRelationQueryHql
+	 * @param database
+	 * @return
+	 */
+	private boolean existsPublishedProjects(String projDatabaseRelationQueryHql, ComDatabase database) {
+		// 加载数据库和项目的关联关系映射
+		CurrentThreadContext.setDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
+		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
+		HibernateUtil.closeCurrentThreadSession();
+		Log4jUtil.debug("数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库，是否存在发布的项目："+ isExists );
+		return isExists;
+	}
+	
+	/**
 	 * 加载项目id和数据库id的关联关系
 	 * @param projDatabaseRelationQueryHql
 	 * @param databaseId
+	 * @return 指定的数据库下，是否存在发布的项目
 	 */
-	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, String databaseId) {
+	private boolean loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, String databaseId) {
 		List<Object> projIds = HibernateUtil.executeListQueryByHqlArr(null, null, projDatabaseRelationQueryHql, databaseId);
 		if(projIds != null && projIds.size() > 0){
 			for (Object projId : projIds) {
@@ -566,16 +573,19 @@ public class InitSystemService extends AbstractService{
 				ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projId.toString(), databaseId);
 			}
 			projIds.clear();
+			return true;
 		}
+		return false;
 	}
 
 	/**
-	 * 加载指定数据库的hbm映射文件
+	 * 加载当前系统数据库的hbm映射文件
 	 * @param database 指定数据库的id
 	 * @throws SQLException 
 	 * @throws IOException 
 	 */
-	private void loadHbmContentsByDatabaseId(ComDatabase database) throws SQLException, IOException {
+	private void loadCurrentSysDatabaseHbms() throws SQLException, IOException {
+		ComDatabase database = CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance;
 		loadComHibernateHbmContent(database);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中

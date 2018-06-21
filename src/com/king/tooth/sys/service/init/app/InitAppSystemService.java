@@ -11,7 +11,6 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.ExceptionUtil;
@@ -41,35 +40,30 @@ public class InitAppSystemService extends AbstractService{
 	 * 系统每次启动时，加载hbm的配置信息
 	 * 主要是hbm内容
 	 */
-	public void loadSysBasicDatasBySysStart() {
+	public void loadHbmsByStart() {
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统的所有hbm映射文件
-			loadHbmContentsByDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
+			loadHbmContentsByDatabase(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的hbm加载进自己的sessionFactory中
-			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = "+ISysResource.APP_PLATFORM);
-			HibernateUtil.closeCurrentThreadSession();
-			
+			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = 2");
 			if(databases != null && databases.size()> 0){
-				for (ComDatabase database : databases) {
-					database.analysisResourceProp();
-					String testLinkResult = database.testDbLink();
-					if(testLinkResult.startsWith("err")){
-						throw new Exception(testLinkResult);
-					}
-					Log4jUtil.debug("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
-					
-					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
-					loadHbmContentsByDatabaseId(database);// 加载当前数据库中的hbm到sessionFactory中
-				}
-				
-				// 加载数据库和项目的关联关系映射
-				CurrentThreadContext.setProjectId(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory
 				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled = 1 and refDatabaseId = ?";
 				for (ComDatabase database : databases) {
-					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
+					if(existsPublishedProjects(projDatabaseRelationQueryHql, database)){
+						database.analysisResourceProp();
+						String testLinkResult = database.testDbLink();
+						if(testLinkResult.startsWith("err")){
+							throw new Exception(testLinkResult);
+						}
+						Log4jUtil.debug("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
+						
+						DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
+						loadHbmContentsByDatabase(database);// 加载当前数据库中的hbm到sessionFactory中
+					}
 				}
+			}else{
 				HibernateUtil.closeCurrentThreadSession();
 			}
 		} catch (Exception e) {
@@ -79,11 +73,27 @@ public class InitAppSystemService extends AbstractService{
 	}
 	
 	/**
+	 * 验证数据库下是否有发布的项目
+	 * @param projDatabaseRelationQueryHql
+	 * @param database
+	 * @return
+	 */
+	private boolean existsPublishedProjects(String projDatabaseRelationQueryHql, ComDatabase database) {
+		// 加载数据库和项目的关联关系映射
+		CurrentThreadContext.setDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即运行系统
+		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
+		HibernateUtil.closeCurrentThreadSession();
+		Log4jUtil.debug("数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库，是否存在发布的项目："+ isExists );
+		return isExists;
+	}
+	
+	/**
 	 * 加载项目id和数据库id的关联关系
 	 * @param projDatabaseRelationQueryHql
 	 * @param databaseId
+	 * @return 指定的数据库下，是否存在发布的项目
 	 */
-	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, String databaseId) {
+	private boolean loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, String databaseId) {
 		List<Object> projIds = HibernateUtil.executeListQueryByHqlArr(null, null, projDatabaseRelationQueryHql, databaseId);
 		if(projIds != null && projIds.size() > 0){
 			for (Object projId : projIds) {
@@ -93,16 +103,18 @@ public class InitAppSystemService extends AbstractService{
 				ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projId.toString(), databaseId);
 			}
 			projIds.clear();
+			return true;
 		}
+		return false;
 	}
-
+	
 	/**
 	 * 加载指定数据库的hbm映射文件
 	 * @param database 指定数据库的id
 	 * @throws SQLException 
 	 * @throws IOException 
 	 */
-	private void loadHbmContentsByDatabaseId(ComDatabase database) throws SQLException, IOException {
+	private void loadHbmContentsByDatabase(ComDatabase database) throws SQLException, IOException {
 		CurrentThreadContext.setDatabaseId(database.getId());
 		// 获取当前系统的ComHibernateHbm映射文件对象
 		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";

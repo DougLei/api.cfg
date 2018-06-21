@@ -171,8 +171,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 				anlaysisParentResourceQueryCond(parentResourceQueryCond, requestUrlParams);
 			}
 			
-			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(parentResourceQueryCond, isSimpleParentSubQueryModel, refParentSubPropName);
-			parentsubQueryMethodProcesser.setResourceName(resourceName);
+			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(parentResourceQueryCond, isSimpleParentSubQueryModel, refParentSubPropName, resourceName);
 			parentsubQueryMethodProcesser.setParentResourceId(parentResourceId);
 			parentsubQueryMethodProcesser.setParentResourceName(parentResourceName);
 			parentsubQueryMethodProcesser.setHqlParameterValues(hqlParameterValues);

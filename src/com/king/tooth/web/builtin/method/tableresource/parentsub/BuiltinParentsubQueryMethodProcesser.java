@@ -37,9 +37,10 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 	 */
 	private String refParentSubPropName;
 	
-	public BuiltinParentsubQueryMethodProcesser(Map<String, String> parentResourceQueryCond, String isSimpleParentSubQueryModel, String refParentSubPropName) {
+	public BuiltinParentsubQueryMethodProcesser(Map<String, String> parentResourceQueryCond, String isSimpleParentSubQueryModel, String refParentSubPropName, String resourceName) {
 		super.isUsed = true;
 		this.parentResourceQueryCond = parentResourceQueryCond;
+		this.resourceName = resourceName;
 		
 		if(StrUtils.isEmpty(isSimpleParentSubQueryModel)){
 			isSimpleParentSubQueryModel = "false";
@@ -49,7 +50,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		if(StrUtils.isEmpty(refParentSubPropName)){
 			refParentSubPropName = "parentId";
 		}else{
-			refParentSubPropName = HibernateUtil.getDefinePropName(resourceName, refParentSubPropName);
+			refParentSubPropName = HibernateUtil.getDefinePropName(this.resourceName, refParentSubPropName);
 		}
 		this.refParentSubPropName = refParentSubPropName;
 	}
