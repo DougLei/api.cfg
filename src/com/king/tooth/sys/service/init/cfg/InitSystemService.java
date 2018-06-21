@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
@@ -446,6 +445,7 @@ public class InitSystemService extends AbstractService{
 			HibernateUtil.saveObject(code.turnToPublishBasicData(belongPlatformType), adminAccountId);
 			
 			ComSysResource resource = code.turnToResource();
+			resource.setId(ResourceHandlerUtil.getIdentity());
 			resource.setRefResourceId(code.getId());
 			HibernateUtil.saveObject(resource.turnToPublishBasicData(belongPlatformType), adminAccountId);
 		}
@@ -456,20 +456,14 @@ public class InitSystemService extends AbstractService{
 	 * @param adminAccountId
 	 */
 	private void insertPublishBasicData(String adminAccountId) {
-		ComPublishBasicData publishBasicData;
-		
 		// 添加一条要发布的管理员账户信息
 		ComSysAccount admin = new ComSysAccount();
+		admin.setId(ResourceHandlerUtil.getIdentity());
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-
-		publishBasicData = new ComPublishBasicData();
-		publishBasicData.setBasicDataResourceName(admin.getEntityName());
-		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(admin));
-		publishBasicData.setBelongPlatformType(ISysResource.APP_PLATFORM);
-		HibernateUtil.saveObject(publishBasicData, adminAccountId);
+		HibernateUtil.saveObject(admin.turnToPublishBasicData(ISysResource.APP_PLATFORM), adminAccountId);
 	}
 	
 	/**

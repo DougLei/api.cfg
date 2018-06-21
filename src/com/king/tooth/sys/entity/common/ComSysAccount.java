@@ -13,6 +13,7 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -235,5 +236,17 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * 转换为要发布的基础数据资源对象
+	 * @return
+	 */
+	public ComPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
+		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+		publishBasicData.setBasicDataResourceName(getEntityName());
+		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
+		publishBasicData.setBelongPlatformType(belongPlatformType);
+		return publishBasicData;
 	}
 }
