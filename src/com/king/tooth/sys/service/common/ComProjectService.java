@@ -315,13 +315,12 @@ public class ComProjectService extends AbstractPublishService {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			// 最后可以根据实际开发的结果，决定这里到底需不需要分页
-			int count = (int) HibernateUtil.executeUniqueQueryBySql(
-					"select count(1) from com_publish_basic_data where is_enabled=1 and is_need_deploy=1 and belong_platform_type!="+ISysResource.CONFIG_PLATFORM, null);
+			int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComPublishBasicData where belongPlatformType!="+ISysResource.CONFIG_PLATFORM, null)).intValue();
 			int loopCount = count/50 + 1;
 			List<ComPublishBasicData> basicDatas;// 获取要发布的基础信息集合
 			for(int i=0;i<loopCount;i++){
 				basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, "50", (i+1)+"", 
-						"from ComPublishBasicData where isEnabled=1 and isNeedDeploy=1 and belongPlatformType != "+ISysResource.CONFIG_PLATFORM);
+						"from ComPublishBasicData where belongPlatformType != "+ISysResource.CONFIG_PLATFORM);
 				for (ComPublishBasicData basicData : basicDatas) {
 					session.save(basicData.getBasicDataResourceName(), basicData.getBasicDataJsonObject(projectId));
 				}

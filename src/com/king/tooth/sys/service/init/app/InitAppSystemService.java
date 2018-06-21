@@ -122,7 +122,7 @@ public class InitAppSystemService extends AbstractService{
 		HibernateUtil.appendNewConfig(hbmContent.toString().trim());
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
-		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryBySql("select count(1) from com_hibernate_hbm where is_enabled = 1 and hbm_resource_name != 'ComHibernateHbm' and ref_database_id = '"+database.getId()+"'", null)+"");
+		int count = ((Long)HibernateUtil.executeUniqueQueryBySql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where isEnabled = 1 and hbmResourceName != 'ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
 		if(count == 0){
 			return;
 		}

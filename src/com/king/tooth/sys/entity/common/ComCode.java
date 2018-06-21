@@ -159,7 +159,6 @@ public class ComCode extends AbstractSysResource implements ITable{
 		ComPublishBasicData publishBasicData = new ComPublishBasicData();
 		publishBasicData.setBasicDataResourceName(getEntityName());
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
-		publishBasicData.setIsBuiltin(1);
 		publishBasicData.setBelongPlatformType(belongPlatformType);
 		return publishBasicData;
 	}

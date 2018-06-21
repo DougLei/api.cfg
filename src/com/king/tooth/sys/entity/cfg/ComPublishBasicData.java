@@ -7,11 +7,11 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.util.JsonUtil;
 
 /**
@@ -19,7 +19,7 @@ import com.king.tooth.util.JsonUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComPublishBasicData extends AbstractSysResource implements ITable, IEntity{
+public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 基础数据所对应的资源名
@@ -30,6 +30,16 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 	 * 基础数据的json字符串内容
 	 */
 	private String basicDataJsonStr;
+	/**
+	 * 资源所属的平台类型
+	 * <p>1：配置平台、2：运行平台、3：通用</p>
+	 * <p>后期开发的功能，如果是每个项目都需要的(基础功能)，则用这个字段控制是否要发布</p>
+	 * <p>和isBuiltin有类似的作用，开放给前端开发使用，但还是不开放给用户</p>
+	 * <p>isBuiltin控制的是系统内置的资源，belongPlatformType控制的是系统外置的资源</p>
+	 * <p>@see ISysResource</p>
+	 * <p>默认值：2</p>
+	 */
+	private Integer belongPlatformType;
 	
 	//----------------------------------------------------------------
 
@@ -45,6 +55,13 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 	public void setBasicDataJsonStr(String basicDataJsonStr) {
 		this.basicDataJsonStr = basicDataJsonStr;
 	}
+	public Integer getBelongPlatformType() {
+		return belongPlatformType;
+	}
+	public void setBelongPlatformType(Integer belongPlatformType) {
+		this.belongPlatformType = belongPlatformType;
+	}
+	
 	/**
 	 * 将basicDataJsonStr转换为对应的basicDataClassPath的jsonObject
 	 * 将其远程保存到运行系统数据库的表中
@@ -72,13 +89,12 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 		ComTabledata table = new ComTabledata("COM_PUBLISH_BASIC_DATA", 0);
 		table.setName("要发布的基础数据资源对象表");
 		table.setComments("要发布的基础数据资源对象表");
-		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
 		table.setIsCreated(1);
-		table.setBelongPlatformType(CONFIG_PLATFORM);
+		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
 		ComColumndata basicDataResourceNameColumn = new ComColumndata("basic_data_resource_name", DataTypeConstants.STRING, 60);
 		basicDataResourceNameColumn.setName("基础数据所对应的资源名");
@@ -91,6 +107,13 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 		basicDataJsonStrColumn.setComments("基础数据的json字符串内容");
 		basicDataJsonStrColumn.setOrderCode(2);
 		columns.add(basicDataJsonStrColumn);
+		
+		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", DataTypeConstants.INTEGER, 1);
+		belongPlatformTypeColumn.setName("资源所属的平台类型");
+		belongPlatformTypeColumn.setComments("资源所属的平台类型:1：配置平台、2：运行平台、3：通用(这个类型由开发者控制)；后期开发的功能，如果是每个项目都需要的(基础功能)，则用这个字段控制是否要发布；和isBuiltin有类似的作用，开放给前端开发使用，但还是不开放给用户；isBuiltin控制的是系统内置的资源，belongPlatformType控制的是系统外置的资源");
+		belongPlatformTypeColumn.setDefaultValue("2");
+		belongPlatformTypeColumn.setOrderCode(3);
+		columns.add(belongPlatformTypeColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -106,23 +129,8 @@ public class ComPublishBasicData extends AbstractSysResource implements ITable, 
 
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		super.processSysResourceProps(entityJson);
+		super.processBasicEntityProps(entityJson);
+		entityJson.put("belongPlatformType", belongPlatformType);
 		return entityJson.getEntityJson();
-	}
-
-	public Integer getResourceType() {
-		return BASIC_DATA;
-	}
-	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
-	}
-
-	public ComSysResource turnToResource() {
-		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
-	}
-
-	public ComPublishInfo turnToPublish() {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
 	}
 }

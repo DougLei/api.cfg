@@ -469,7 +469,6 @@ public class InitSystemService extends AbstractService{
 		publishBasicData = new ComPublishBasicData();
 		publishBasicData.setBasicDataResourceName(admin.getEntityName());
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(admin));
-		publishBasicData.setIsBuiltin(1);
 		publishBasicData.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		HibernateUtil.saveObject(publishBasicData, adminAccountId);
 	}

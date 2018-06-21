@@ -181,7 +181,6 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		ComPublishBasicData publishBasicData = new ComPublishBasicData();
 		publishBasicData.setBasicDataResourceName(getEntityName());
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
-		publishBasicData.setIsBuiltin(1);
 		publishBasicData.setBelongPlatformType(belongPlatformType);
 		return publishBasicData;
 	}
