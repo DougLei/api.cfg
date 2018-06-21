@@ -358,7 +358,6 @@ public class InitSystemService extends AbstractService{
 		dataDictionary.setCodeCaption(codeCaption);
 		dataDictionary.setCodeValue(codeValue);
 		dataDictionary.setOrderCode(orderCode);
-		dataDictionary.setIsCore(1);
 		HibernateUtil.saveObject(dataDictionary, adminAccountId);
 		
 		// 同时，不是配置系统的数据，则添加要发布的基础的数据字典数据
