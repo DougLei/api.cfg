@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.cfg;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
@@ -51,7 +52,7 @@ public class ComColumndataController extends AbstractController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String columnId = request.getParameter("columnId");
+		String columnId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(columnId)){
 			return installOperResponseBody("要删除的列id不能为空", null);
 		}

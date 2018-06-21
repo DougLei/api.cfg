@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComProjectModule;
@@ -52,7 +53,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String projectModuleId = request.getParameter("projectModuleId");
+		String projectModuleId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(projectModuleId)){
 			return installOperResponseBody("要删除的项目模块id不能为空", null);
 		}
@@ -71,7 +72,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String projectModuleId = request.getParameter("projectModuleId");
+		String projectModuleId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(projectModuleId)){
 			return installOperResponseBody("要发布的项目模块id不能为空", null);
 		}
@@ -89,7 +90,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String projectModuleId = request.getParameter("projectModuleId");
+		String projectModuleId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(projectModuleId)){
 			return installOperResponseBody("要取消发布的项目模块id不能为空", null);
 		}

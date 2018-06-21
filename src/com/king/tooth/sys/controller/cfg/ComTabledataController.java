@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.cfg;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -52,7 +53,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String tableId = request.getParameter("tableId");
+		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要删除的表id不能为空", null);
 		}
@@ -72,7 +73,7 @@ public class ComTabledataController extends AbstractPublishController{
 			return installOperResponseBody("建模功能目前只提供给平台开发人员使用", null);
 		}
 		
-		String tableId = request.getParameter("tableId");
+		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要建模的表id不能为空", null);
 		}
@@ -90,7 +91,7 @@ public class ComTabledataController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
 		}
-		String tableId = request.getParameter("tableId");
+		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要操作的表id不能为空", null);
 		}
@@ -108,7 +109,7 @@ public class ComTabledataController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
 		}
-		String tableId = request.getParameter("tableId");
+		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要操作的表id不能为空", null);
 		}
@@ -131,7 +132,7 @@ public class ComTabledataController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
 		}
-		String tableId = request.getParameter("tableId");
+		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要发布的表id不能为空", null);
 		}
@@ -153,7 +154,7 @@ public class ComTabledataController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
 		}
-		String tableId = request.getParameter("tableId");
+		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要取消发布的表id不能为空", null);
 		}

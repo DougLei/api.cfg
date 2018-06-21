@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
@@ -52,7 +53,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String sqlScriptId = request.getParameter("sqlScriptId");
+		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要删除的sql脚本id不能为空", null);
 		}
@@ -71,7 +72,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
+		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要操作的sql脚本id不能为空", null);
 		}
@@ -89,7 +90,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要操作的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
+		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要操作的sql脚本id不能为空", null);
 		}
@@ -112,7 +113,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
+		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要发布的sql脚本id不能为空", null);
 		}
@@ -134,7 +135,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(projectId)){
 			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
 		}
-		String sqlScriptId = request.getParameter("sqlScriptId");
+		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要取消发布的sql脚本id不能为空", null);
 		}
