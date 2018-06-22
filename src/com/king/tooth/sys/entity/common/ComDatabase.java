@@ -230,7 +230,8 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	public String toDropTable() {
 		return "COM_DATABASE";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComDatabase";
 	}

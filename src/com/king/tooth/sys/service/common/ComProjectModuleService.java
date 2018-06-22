@@ -37,7 +37,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validProjectModuleCodeIsExists(ComProjectModule projectModule) {
-		String hql = "select count("+ResourceNameConstants.ID+") from ComProjectModule where projCode = ? and refProjectId = ?";
+		String hql = "select count("+ResourceNameConstants.ID+") from ComProjectModule where code = ? and refProjectId = ?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), projectModule.getRefProjectId());
 		if(count > 0){
 			return "编码为["+projectModule.getCode()+"]的模块信息已存在";
@@ -58,7 +58,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(operResult == null){
 			HibernateUtil.saveObject(projectModule, null);
 		}
-		return null;
+		return operResult;
 	}
 
 	/**

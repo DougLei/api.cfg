@@ -123,6 +123,7 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 		return "COM_PUBLISH_BASIC_DATA";
 	}
 	
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComPublishBasicData";
 	}

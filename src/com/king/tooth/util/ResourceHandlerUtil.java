@@ -60,8 +60,7 @@ public class ResourceHandlerUtil {
 		if(StrUtils.isEmpty(data.get(ResourceNameConstants.ID))){
 			data.put(ResourceNameConstants.ID, getIdentity());
 		}
-		if(!"ComDataLinks".equals(entityName) 
-				&& !entityName.endsWith("Links")){// 不是关系表，才要这些值
+		if(!entityName.endsWith("Links")){// 不是关系表，才要这些值
 			Date currentDate = new Date();
 			data.put("createDate", currentDate);
 			data.put("lastUpdateDate", currentDate);
@@ -107,6 +106,9 @@ public class ResourceHandlerUtil {
 	 * @return
 	 */
 	public static JSONObject validDataProp(String resourceName, JSONObject data) {
+		if(resourceName.endsWith("Links")){
+			return data;
+		}
 		if(data == null || data.size() == 0){
 			throw new NullPointerException("要进行验证的数据对象为null");
 		}
@@ -140,7 +142,7 @@ public class ResourceHandlerUtil {
 	 * @param rightResourceName
 	 * @return
 	 */
-	public static JSONObject getDataLinksObject(String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
+	public static JSONObject getDataLinksObject(String leftId, String rightId, String orderCode, String leftResourceName, String rightResourceName){
 		JSONObject dataLinks = new JSONObject(6);
 		dataLinks.put("leftId", leftId);
 		dataLinks.put("rightId", rightId);

@@ -213,7 +213,8 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public String toDropTable() {
 		return "COM_SYS_ACCOUNT";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComSysAccount";
 	}
@@ -237,6 +238,15 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * 是否是管理员类型
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isAdminType(){
+		return isPlatformDeveloper();
 	}
 	
 	/**

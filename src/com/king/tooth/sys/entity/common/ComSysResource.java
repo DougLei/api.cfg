@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
@@ -93,7 +94,8 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	public String toDropTable() {
 		return "COM_SYS_RESOURCE";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComSysResource";
 	}

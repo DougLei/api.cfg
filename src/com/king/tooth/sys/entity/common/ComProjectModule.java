@@ -181,6 +181,7 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		return "COM_PROJECT_MODULE";
 	}
 
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComProjectModule";
 	}

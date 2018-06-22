@@ -121,7 +121,8 @@ public class ComCode extends AbstractSysResource implements ITable{
 	public String toDropTable() {
 		return "COM_CODE";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComCode";
 	}

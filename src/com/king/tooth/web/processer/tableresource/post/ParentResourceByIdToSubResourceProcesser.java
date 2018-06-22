@@ -77,7 +77,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 			
 			if(!builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
 				datalink = ResourceHandlerUtil.getDataLinksObject(parentId, subData.getString(ResourceNameConstants.ID), 
-						(j+1), requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
+						""+(j+1), requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
 				dataLinkList.add(datalink);
 			}
 		}

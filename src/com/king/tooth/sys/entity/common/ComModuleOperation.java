@@ -203,7 +203,8 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 	public Integer getResourceType() {
 		return PROJECT_MODULE_OPERATION;
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComModuleOperation";
 	}

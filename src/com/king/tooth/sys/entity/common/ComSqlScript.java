@@ -330,7 +330,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public String toDropTable() {
 		return "COM_SQL_SCRIPT";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComSqlScript";
 	}

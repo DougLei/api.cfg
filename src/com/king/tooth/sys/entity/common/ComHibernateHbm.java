@@ -135,7 +135,8 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 	public String toDropTable() {
 		return "COM_HIBERNATE_HBM";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComHibernateHbm";
 	}

@@ -432,7 +432,7 @@ public class HibernateUtil {
 	 * @param rightId
 	 */
 	public static void saveDataLinks(String entityName, String leftId, String rightId){
-		JSONObject datalink = ResourceHandlerUtil.getDataLinksObject(leftId, rightId, 1, null, null);
+		JSONObject datalink = ResourceHandlerUtil.getDataLinksObject(leftId, rightId, "1", null, null);
 		HibernateUtil.saveObject(entityName, datalink, null);
 	}
 	
@@ -759,7 +759,9 @@ public class HibernateUtil {
 			int len = parameterArr.length;
 			parameters = new ArrayList<Object>(len);
 			for(int i=0;i<len;i++){
-				parameters.add(parameterArr[i]);
+				if(parameterArr[i] != null){
+					parameters.add(parameterArr[i]);
+				}
 			}
 		}
 		return parameters;

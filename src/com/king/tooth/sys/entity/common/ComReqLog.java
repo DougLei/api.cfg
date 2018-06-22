@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
@@ -223,7 +224,8 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 	public String toDropTable() {
 		return "COM_REQ_LOG";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComReqLog";
 	}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
@@ -312,7 +313,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isEnabledColumn.setOrderCode(15);
 		columns.add(isEnabledColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 600);
+		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 650);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		commentsColumn.setOrderCode(16);
@@ -326,6 +327,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		return "COM_COLUMNDATA";
 	}
 
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComColumndata";
 	}

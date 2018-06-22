@@ -74,7 +74,7 @@ public abstract class AbstractPublishService extends AbstractService{
 			session.save(publish.getEntityName(), publishEntityJson);
 			
 			if(datalinkResourceName != null){
-				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), 1, null, null);
+				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), "1", null, null);
 				dataLink.put("projectId", projectId);
 				dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(datalinkResourceName, dataLink);
@@ -177,7 +177,7 @@ public abstract class AbstractPublishService extends AbstractService{
 				session.save(entity.getEntityName(), publishEntityJson);
 				
 				if(datalinkResourceName != null){
-					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), orderCode++, null, null);
+					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), ""+(orderCode++), null, null);
 					dataLink.put("projectId", projectId);
 					dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 					session.save(datalinkResourceName, dataLink);

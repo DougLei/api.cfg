@@ -37,6 +37,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	private String resourceName;
 	/**
 	 * 表类型：1:单表、2:树表、3:父子关系表
+	 * <p>默认值:1</p>
 	 */
 	private Integer tableType;
 	/**
@@ -57,6 +58,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 * 如果主子表是一对一的关系，则不需要关系表，子表中有一个parentId关联主表即可，值=0
 	 * 如果主子表是多对多关系，则需要关系表，值=1
 	 * 子表才会配置该字段的值
+	 * <p>默认值:0</p>
 	 */
 	private Integer isHavaDatalink;
 	/**
@@ -329,6 +331,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return "COM_TABLEDATA";
 	}
 	
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComTabledata";
 	}

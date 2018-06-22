@@ -119,7 +119,8 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 	public String toDropTable() {
 		return "COM_PROJECT";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComProject";
 	}

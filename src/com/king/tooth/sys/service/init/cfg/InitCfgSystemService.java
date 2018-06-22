@@ -603,8 +603,8 @@ public class InitCfgSystemService extends AbstractService{
 				hcs.add(obj+"");
 			}
 			HibernateUtil.appendNewConfig(hcs);
-			hcs.clear();
 			hbmContents.clear();
+			hcs.clear();
 		}
 		// 关闭session
 		HibernateUtil.closeCurrentThreadSession();

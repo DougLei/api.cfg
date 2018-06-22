@@ -87,26 +87,27 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	public String saveTable(ComTabledata table) {
 		String operResult = validTableNameIsExists(table);
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-		
-		String projectId = table.getProjectId();
-		table.setProjectId(null);
-		if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
-			if(StrUtils.isEmpty(projectId)){
-				return "表关联的项目id不能为空！";
-			}
-			operResult = validTableRefProjIsExists(projectId);
-			if(operResult == null){
-				operResult = validTableIsExistsInDatabase(projectId, table);
-			}
-		}
 		if(operResult == null){
-			String tableId = HibernateUtil.saveObject(table, null);
-			// 保存表和项目的关联关系
-			if(isPlatformDeveloper){
-				HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
-			}else{
-				HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			String projectId = table.getProjectId();
+			table.setProjectId(null);
+			if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
+				if(StrUtils.isEmpty(projectId)){
+					return "表关联的项目id不能为空！";
+				}
+				operResult = validTableRefProjIsExists(projectId);
+				if(operResult == null){
+					operResult = validTableIsExistsInDatabase(projectId, table);
+				}
+			}
+			if(operResult == null){
+				String tableId = HibernateUtil.saveObject(table, null);
+				// 保存表和项目的关联关系
+				if(isPlatformDeveloper){
+					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
+				}else{
+					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
+				}
 			}
 		}
 		return operResult;
@@ -122,29 +123,30 @@ public class ComTabledataService extends AbstractPublishService {
 		if(oldTable == null){
 			return "没有找到id为["+table.getId()+"]的表对象信息";
 		}
-		
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		String operResult = null;
-		if(!isPlatformDeveloper){
-			if(StrUtils.isEmpty(table.getProjectId())){
-				return "表关联的项目id不能为空！";
-			}
-			String projectId = table.getProjectId();
-			table.setProjectId(null);
-			
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId(), null)){
-				return "该表已经发布，不能修改表信息，或取消发布后再修改";
-			}
-			if(!oldTable.getTableName().equals(table.getTableName())){
-				operResult = validTableNameIsExists(table);
-			}
+		if(!oldTable.getTableName().equals(table.getTableName())){
+			operResult = validTableNameIsExists(table);
 		}
-		
 		if(operResult == null){
-			if(isPlatformDeveloper){
-				table.setIsCreated(0);// 只要修改表信息，就要重新建模
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			if(!isPlatformDeveloper){
+				if(StrUtils.isEmpty(table.getProjectId())){
+					return "表关联的项目id不能为空！";
+				}
+				String projectId = table.getProjectId();
+				table.setProjectId(null);
+				
+				if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId(), null)){
+					return "该表已经发布，不能修改表信息，或取消发布后再修改";
+				}
 			}
-			HibernateUtil.updateObjectByHql(table, null);
+			
+			if(operResult == null){
+				if(isPlatformDeveloper){
+					table.setIsCreated(0);// 只要修改表信息，就要重新建模
+				}
+				HibernateUtil.updateObjectByHql(table, null);
+			}
 		}
 		return operResult;
 	}
@@ -190,7 +192,7 @@ public class ComTabledataService extends AbstractPublishService {
 		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
 		
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
-		if(isPlatformDeveloper){
+		if(isPlatformDeveloper && oldTable.getIsCreated() == 1){
 			// 删除hbm信息
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where refTableId = '"+tableId+"'");
 			
@@ -202,7 +204,7 @@ public class ComTabledataService extends AbstractPublishService {
 			dbTableHandler.dropTable(oldTable);
 			
 			// 从sessionFactory中移除映射
-			HibernateUtil.removeConfig(oldTable.getEntityName());
+			HibernateUtil.removeConfig(oldTable.getResourceName());
 		}
 		return null;
 	}
@@ -388,7 +390,7 @@ public class ComTabledataService extends AbstractPublishService {
 				publishEntityJson = hbm.toPublishEntityJson(projectId);
 				session.save(hbm.getEntityName(), publishEntityJson);
 				
-				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), orderCode++, null, null);
+				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), ""+(orderCode++), null, null);
 				datalink.put("projectId", projectId);
 				datalink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(comProjectComHibernateHbmLinkResourceName, datalink);

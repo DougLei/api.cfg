@@ -224,7 +224,8 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public String toDropTable() {
 		return "COM_SYS_ACCOUNT_ONLINE_STATUS";
 	}
-	
+
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComSysAccountOnlineStatus";
 	}
