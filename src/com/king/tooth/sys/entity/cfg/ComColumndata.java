@@ -41,14 +41,17 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	private String propName;
 	/**
 	 * 字段数据类型
+	 * <p>默认类型为string</p>
 	 */
 	private String columnType;
 	/**
 	 * 字段长度
+	 * <p>默认长度为32</p>
 	 */
 	private Integer length;
 	/**
 	 * 数据精度
+	 * <p>默认为0</p>
 	 */
 	private Integer precision;
 	/**
@@ -57,18 +60,22 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	private String defaultValue;
 	/**
 	 * 是否主键
+	 * <p>默认为0</p>
 	 */
 	private Integer isPrimaryKey;
 	/**
 	 * 是否唯一
+	 * <p>默认为0</p>
 	 */
 	private Integer isUnique;
 	/**
 	 * 是否可为空
+	 * <p>默认为1</p>
 	 */
 	private Integer isNullabled;
 	/**
 	 * 是否数据字典
+	 * <p>默认为0</p>
 	 */
 	private Integer isDataDictionary;
 	/**
@@ -81,6 +88,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	private Integer orderCode;
 	/**
 	 * 是否有效
+	 * <p>默认为1</p>
 	 */
 	private String isEnabled;
 	/**
@@ -239,14 +247,15 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		
 		ComColumndata columnTypeColumn = new ComColumndata("column_type", DataTypeConstants.STRING, 10);
 		columnTypeColumn.setName("字段数据类型");
-		columnTypeColumn.setComments("字段数据类型");
+		columnTypeColumn.setComments("字段数据类型：默认为string");
+		columnTypeColumn.setDefaultValue(DataTypeConstants.STRING);
 		columnTypeColumn.setIsNullabled(0);
 		columnTypeColumn.setOrderCode(5);
 		columns.add(columnTypeColumn);
 		
 		ComColumndata lengthColumn = new ComColumndata("length", DataTypeConstants.INTEGER, 4);
 		lengthColumn.setName("字段长度");
-		lengthColumn.setComments("字段长度");
+		lengthColumn.setComments("字段长度:默认长度为32");
 		lengthColumn.setDefaultValue("32");
 		lengthColumn.setIsNullabled(0);
 		lengthColumn.setOrderCode(6);
@@ -254,7 +263,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		
 		ComColumndata precisionColumn = new ComColumndata("precision", DataTypeConstants.INTEGER, 4);
 		precisionColumn.setName("数据精度");
-		precisionColumn.setComments("数据精度");
+		precisionColumn.setComments("数据精度:默认为0");
 		precisionColumn.setDefaultValue("0");
 		precisionColumn.setOrderCode(7);
 		columns.add(precisionColumn);
@@ -267,28 +276,28 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		
 		ComColumndata isPrimaryKeyColumn = new ComColumndata("is_primary_key", DataTypeConstants.INTEGER, 1);
 		isPrimaryKeyColumn.setName("是否主键");
-		isPrimaryKeyColumn.setComments("是否主键");
+		isPrimaryKeyColumn.setComments("是否主键:默认为0");
 		isPrimaryKeyColumn.setDefaultValue("0");
 		isPrimaryKeyColumn.setOrderCode(9);
 		columns.add(isPrimaryKeyColumn);
 		
 		ComColumndata isUniqueColumn = new ComColumndata("is_unique", DataTypeConstants.INTEGER, 1);
 		isUniqueColumn.setName("是否唯一");
-		isUniqueColumn.setComments("是否唯一");
+		isUniqueColumn.setComments("是否唯一:默认为0");
 		isUniqueColumn.setDefaultValue("0");
 		isUniqueColumn.setOrderCode(10);
 		columns.add(isUniqueColumn);
 		
 		ComColumndata isNullabledColumn = new ComColumndata("is_nullabled", DataTypeConstants.INTEGER, 1);
 		isNullabledColumn.setName("是否可为空");
-		isNullabledColumn.setComments("是否可为空");
+		isNullabledColumn.setComments("是否可为空:默认为1");
 		isNullabledColumn.setDefaultValue("1");
 		isNullabledColumn.setOrderCode(11);
 		columns.add(isNullabledColumn);
 		
 		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary", DataTypeConstants.INTEGER, 1);
 		isDataDictionaryColumn.setName("是否数据字典");
-		isDataDictionaryColumn.setComments("是否数据字典");
+		isDataDictionaryColumn.setComments("是否数据字典:默认为0");
 		isDataDictionaryColumn.setDefaultValue("0");
 		isDataDictionaryColumn.setOrderCode(12);
 		columns.add(isDataDictionaryColumn);
@@ -308,7 +317,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		
 		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("是否有效");
+		isEnabledColumn.setComments("是否有效:默认为1");
 		isEnabledColumn.setDefaultValue("1");
 		isEnabledColumn.setOrderCode(15);
 		columns.add(isEnabledColumn);
@@ -357,7 +366,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 				validNotNullPropsResult = "字段类型不能为空！";
 				return validNotNullPropsResult;
 			}
-			if(DataTypeConstants.STRING.equals(columnType) && length < 1){
+			if(DataTypeConstants.STRING.equals(columnType) && (length == null || length < 1)){
 				validNotNullPropsResult = "字段长度不能为空！";
 				return validNotNullPropsResult;
 			}

@@ -53,40 +53,41 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public String saveSqlScript(ComSqlScript sqlScript) {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-		
-		String projectId = sqlScript.getProjectId();
-		sqlScript.setProjectId(null);
-		if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
-			if(StrUtils.isEmpty(projectId)){
-				return "sql脚本关联的项目id不能为空！";
-			}
-			operResult = validSqlScriptRefProjIsExists(projectId);
-		}
-		
 		if(operResult == null){
-			if(isPlatformDeveloper){
-				/* 属于直接就建模，不需要用户再进行一次建模的操作(表是因为，添加了表信息后，还要添加列信息，然后才能建模) */
-				// 如果是平台开发者，则要解析出sql脚本内容，再保存
-				operResult = sqlScript.analysisResourceProp();
-				if(operResult == null){
-					sqlScript.setIsCreated(1);
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			String projectId = sqlScript.getProjectId();
+			sqlScript.setProjectId(null);
+			if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
+				if(StrUtils.isEmpty(projectId)){
+					return "sql脚本关联的项目id不能为空！";
 				}
+				operResult = validSqlScriptRefProjIsExists(projectId);
 			}
+			
 			if(operResult == null){
-				String sqlScriptId = HibernateUtil.saveObject(sqlScript, null);
-				
 				if(isPlatformDeveloper){
-					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
-					sqlScript.setId(sqlScriptId);
-					new ComSysResourceService().saveSysResource(sqlScript);
+					/* 属于直接就建模，不需要用户再进行一次建模的操作(表是因为，添加了表信息后，还要添加列信息，然后才能建模) */
+					// 如果是平台开发者，则要解析出sql脚本内容，再保存
+					operResult = sqlScript.analysisResourceProp();
+					if(operResult == null){
+						sqlScript.setIsCreated(1);
+					}
 				}
-				
-				// 保存sql脚本和项目的关联关系
-				if(isPlatformDeveloper){
-					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
-				}else{
-					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
+				if(operResult == null){
+					String sqlScriptId = HibernateUtil.saveObject(sqlScript, null);
+					
+					if(isPlatformDeveloper){
+						// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
+						sqlScript.setId(sqlScriptId);
+						new ComSysResourceService().saveSysResource(sqlScript);
+					}
+					
+					// 保存sql脚本和项目的关联关系
+					if(isPlatformDeveloper){
+						HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
+					}else{
+						HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
+					}
 				}
 			}
 		}
@@ -103,35 +104,36 @@ public class ComSqlScriptService extends AbstractPublishService {
 		if(oldSqlScript == null){
 			return "没有找到id为["+sqlScript.getId()+"]的sql脚本对象信息";
 		}
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-		
 		String operResult = null;
-		if(!isPlatformDeveloper){
-			if(StrUtils.isEmpty(sqlScript.getProjectId())){
-				return "表关联的项目id不能为空！";
-			}
-			String projectId = sqlScript.getProjectId();
-			sqlScript.setProjectId(null);
-			
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId(), null)){
-				return "该sql脚本已经发布，不能修改sql脚本信息，或取消发布后再修改";
-			}
-			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
-				operResult = validSqlScriptResourceNameIsExists(sqlScript);
-			}
-		}
-		
-		if(isPlatformDeveloper){
-			operResult = sqlScript.analysisResourceProp();
-			sqlScript.setIsCreated(1);
-			
-			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
-				// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
-				new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
-			}
+		if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+			operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		}
 		if(operResult == null){
-			HibernateUtil.updateObjectByHql(sqlScript, null);
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			if(!isPlatformDeveloper){
+				if(StrUtils.isEmpty(sqlScript.getProjectId())){
+					return "表关联的项目id不能为空！";
+				}
+				String projectId = sqlScript.getProjectId();
+				sqlScript.setProjectId(null);
+				
+				if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId(), null)){
+					return "该sql脚本已经发布，不能修改sql脚本信息，或取消发布后再修改";
+				}
+			}
+			
+			if(isPlatformDeveloper){
+				operResult = sqlScript.analysisResourceProp();
+				sqlScript.setIsCreated(1);
+				
+				if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+					// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
+					new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
+				}
+			}
+			if(operResult == null){
+				HibernateUtil.updateObjectByHql(sqlScript, null);
+			}
 		}
 		return operResult;
 	}
