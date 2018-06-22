@@ -82,6 +82,24 @@ public class ComTabledataController extends AbstractPublishController{
 	}
 	
 	/**
+	 * 取消建模
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	public ResponseBody cancelBuildModel(HttpServletRequest request, String json){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			return installOperResponseBody("取消建模功能目前只提供给平台开发人员使用", null);
+		}
+		
+		String tableId = request.getParameter(ResourceNameConstants.ID);
+		if(StrUtils.isEmpty(tableId)){
+			return installOperResponseBody("要取消建模的表id不能为空", null);
+		}
+		String result = tabledataService.cancelBuildModel(tableId);
+		return installOperResponseBody(result, null);
+	}
+	
+	/**
 	 * 建立项目和表的关联关系
 	 * <p>请求方式：GET</p>
 	 * @return

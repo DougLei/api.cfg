@@ -8,6 +8,7 @@ import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -71,8 +72,8 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(oldProjectModule == null){
 			return "没有找到id为["+projectModule.getId()+"]的模块对象信息";
 		}
-		if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getRefProjectId(), oldProjectModule.getId(), null)){
-			return "该模块已经发布，不能修改模块信息，或取消发布后再修改";
+		if(oldProjectModule.getIsCreated() == 1){
+			return "["+oldProjectModule.getName()+"]模块已经发布，不能修改模块信息，请先取消发布";
 		}
 		
 		String operResult = null;
@@ -99,7 +100,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(oldProjectModule == null){
 			return "没有找到id为["+projectModuleId+"]的模块对象信息";
 		}
-		if(publishInfoService.validResourceIsPublished(null, oldProjectModule.getRefProjectId(), oldProjectModule.getId(), null)){
+		if(oldProjectModule.getIsCreated() == 1){
 			return "["+oldProjectModule.getName()+"]模块已经发布，无法删除，请先取消发布";
 		}
 		
@@ -119,27 +120,26 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(projectModule == null){
 			return "没有找到id为["+projectModuleId+"]的模块对象信息";
 		}
+		if(projectModule.getIsCreated() == 1){
+			return "["+projectModule.getName()+"]模块已经发布，无需再次发布，或取消发布后重新发布";
+		}
 		if(projectModule.getIsNeedDeploy() == 0){
 			return "id为["+projectModuleId+"]的模块不该被发布，如需发布，请联系管理员";
 		}
 		if(projectModule.getIsEnabled() == 0){
 			return "id为["+projectModuleId+"]的模块信息无效，请联系管理员";
 		}
-		if(!publishInfoService.validResourceIsPublished(null, projectModule.getRefProjectId(), null, null)){
+		if(!publishInfoService.validResourceIsPublished(null, projectModule.getRefProjectId(), null)){
 			return "["+projectModule.getName()+"]模块所属的项目还未发布，请先发布项目";
 		}
-		if(publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
-			return "["+projectModule.getName()+"]模块已经发布，无需再次发布，或取消发布后重新发布";
-		}
 		ComProject project = getObjectById(projectModule.getRefProjectId(), ComProject.class);
-		if(project == null){
-			return "模块关联的，id为["+projectModule.getRefProjectId()+"]的项目信息不存在";
-		}
 		
 		publishInfoService.deletePublishedData(null, projectModuleId);
 		projectModule.setRefDatabaseId(project.getRefDatabaseId());
 		projectModule.setProjectId(projectModule.getRefProjectId());
 		executeRemotePublish(project.getRefDatabaseId(), projectModule.getProjectId(), projectModule, 0, null);
+		
+		modifyIsCreatedPropVal(projectModule.getEntityName(), 1, projectModule.getId());
 		return null;
 	}
 	
@@ -153,9 +153,10 @@ public class ComProjectModuleService extends AbstractPublishService {
 		if(projectModule == null){
 			return "没有找到id为["+projectModuleId+"]的模块对象信息";
 		}
-		if(!publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
+		if(projectModule.getIsCreated() == 0){
 			return "["+projectModule.getName()+"]模块未发布，无法取消发布";
 		}
+		
 		String result = validProjectModuleRefProjectIsExists(projectModule.getRefProjectId());
 		if(result != null){
 			return result;
@@ -164,6 +165,8 @@ public class ComProjectModuleService extends AbstractPublishService {
 		executeRemoteUpdate(null, projectModule.getRefProjectId(), 
 				"delete " + projectModule.getEntityName() + " where refDataId='"+projectModuleId+"' and projectId='"+projectModule.getRefProjectId()+"'");
 		publishInfoService.deletePublishedData(null, projectModuleId);
+		
+		modifyIsCreatedPropVal(projectModule.getEntityName(), 0, projectModule.getId());
 		return null;
 	}
 	
@@ -176,21 +179,25 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 */
 	public void batchPublishProjectModule(String databaseId, String projectId, List<Object> projectModuleIds) {
 		List<ComProjectModule> projectModules = new ArrayList<ComProjectModule>(projectModuleIds.size());
-		ComProjectModule projectModule;
+		ComProjectModule projectModule = null;
 		for (Object projectModuleId : projectModuleIds) {
 			projectModule = getObjectById(projectModuleId.toString(), ComProjectModule.class);
 			
 			if(projectModule.getIsNeedDeploy() == 0){
-				projectModule.setBatchPublishMsg("id为["+projectModuleId+"]的模块不该被发布，如需发布，请联系管理员");
+				Log4jUtil.info("id为["+projectModuleId+"]的模块不该被发布，如需发布，请联系管理员");
+				continue;
 			}else if(projectModule.getIsEnabled() == 0){
-				projectModule.setBatchPublishMsg("id为["+projectModuleId+"]的模块信息无效，请联系管理员");
-			}else if(publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
-				projectModule.setBatchPublishMsg("["+projectModule.getName()+"]模块已经发布，无需再次发布，或取消发布后重新发布");
+				Log4jUtil.info("id为["+projectModuleId+"]的模块信息无效，请联系管理员");
+				continue;
+			}else if(projectModule.getIsCreated() == 1){
+				Log4jUtil.info("["+projectModule.getName()+"]模块已经发布，无需再次发布，或取消发布后重新发布");
+				continue;
 			}
 			projectModule.setRefDatabaseId(databaseId);
 			projectModule.setProjectId(projectId);
 			projectModules.add(projectModule);
 		}
+		batchModifyIsCreatedPropVal(projectModule.getEntityName(), 1, projectModuleIds);
 		
 		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
 		executeRemoteBatchPublish(databaseId, projectId, projectModules, 0, null);
@@ -227,6 +234,8 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 */
 	public void batchCancelPublishProjectModule(String databaseId, String projectId, List<Object> projectModuleIds) {
 		publishInfoService.batchDeletePublishedData(projectId, projectModuleIds);
+		ComProjectModule projectModule = new ComProjectModule();
+		batchModifyIsCreatedPropVal(projectModule.getEntityName(), 0, projectModuleIds);
 		
 		// 取消发布模块功能
 		StringBuilder hql = new StringBuilder("select "+ResourceNameConstants.ID+" from ComModuleOperation where isEnabled =1 and isNeedDeploy=1 and moduleId in (");

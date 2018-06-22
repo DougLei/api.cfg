@@ -55,6 +55,11 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	 * 排序值
 	 */
 	private Integer orderCode;
+	/**
+	 * 模块的内容
+	 * <p>json串</p>
+	 */
+	private String moduleBody;
 	
 	//-----------------------------------------------
 	/**
@@ -113,7 +118,12 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	public void setRefDatabaseId(String refDatabaseId) {
 		this.refDatabaseId = refDatabaseId;
 	}
-	
+	public String getModuleBody() {
+		return moduleBody;
+	}
+	public void setModuleBody(String moduleBody) {
+		this.moduleBody = moduleBody;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_PROJECT_MODULE", 0);
@@ -127,7 +137,7 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
 		
 		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", DataTypeConstants.STRING, 32);
 		refProjectIdColumn.setName("关联的项目主键");
@@ -167,11 +177,17 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		iconColumn.setOrderCode(6);
 		columns.add(iconColumn);
 		
+		ComColumndata moduleBodyColumn = new ComColumndata("module_body", DataTypeConstants.CLOB, 0);
+		moduleBodyColumn.setName("模块的内容");
+		moduleBodyColumn.setComments("模块的内容:json串");
+		moduleBodyColumn.setOrderCode(7);
+		columns.add(moduleBodyColumn);
+		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
-		orderCodeColumn.setOrderCode(7);
+		orderCodeColumn.setOrderCode(8);
 		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);

@@ -11,6 +11,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -87,9 +88,9 @@ public class DBTableHandler {
 	public String dropTable(ComTabledata tabledata){
 		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>(2);
 		tabledatas.add(tabledata);
-		String deleteTableName = dropTable(tabledatas);
-		tabledatas.clear();
-		return deleteTableName;
+		String deleteTableResourceNames = dropTable(tabledatas);
+		ResourceHandlerUtil.clearTables(tabledatas);
+		return deleteTableResourceNames;
 	}
 	
 	/**
@@ -104,12 +105,12 @@ public class DBTableHandler {
 			executeDDL(ddlSqlArr, tabledatas);
 		}
 		
-		StringBuilder deleteTableName = new StringBuilder();
+		StringBuilder deleteTableResourceNames = new StringBuilder();
 		for (ComTabledata table : tabledatas) {
-			deleteTableName.append(table.getResourceName()).append(",");
+			deleteTableResourceNames.append(table.getResourceName()).append(",");
 		}
-		deleteTableName.setLength(deleteTableName.length()-1);
-		return deleteTableName.toString();
+		deleteTableResourceNames.setLength(deleteTableResourceNames.length()-1);
+		return deleteTableResourceNames.toString();
 	}
 	
 	

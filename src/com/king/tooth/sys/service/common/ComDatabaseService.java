@@ -17,7 +17,6 @@ import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.AbstractPublishService;
@@ -72,7 +71,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(oldDatabase.getIsBuiltin() == 1){
 			return "禁止修改内置的数据库信息";
 		}
-		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){ // 如果已发布，则发出提示信息
+		if(oldDatabase.getIsCreated() == 1){ // 如果已发布，则发出提示信息
 			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改数据库信息，或取消发布后再修改";
 		}
 		
@@ -100,7 +99,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(oldDatabase.getIsBuiltin() == 1){
 			return "禁止删除内置的数据库信息";
 		}
-		if(publishInfoService.validResourceIsPublished(oldDatabase.getId(), null, null, null)){
+		if(oldDatabase.getIsCreated() == 1){
 			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，无法删除，请先取消发布";
 		}
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
@@ -165,14 +164,13 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param databaseId
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	public String publishDatabase(String databaseId){
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
 		}
 		if(database.getIsCreated() == 1){
-			return "id为["+databaseId+"]的数据库已经被发布，不能重复发布";
+			return "id为["+databaseId+"]的数据库已发布，无需再次发布，或取消发布后重新发布";
 		}
 		if(database.getIsNeedDeploy() == 0){
 			return "id为["+databaseId+"]的数据库不该被发布，如需发布，请联系管理员";
@@ -180,17 +178,11 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database.getIsEnabled() == 0){
 			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
 		}
-		ComPublishInfo ref = null;
-		if(publishInfoService.validResourceIsPublished(databaseId, null, null, ref)){
-			return "id为["+databaseId+"]的数据库已发布，无需再次发布，或取消发布后重新发布";
-		}
 		
 		// 如果是自己的库，要创建
 		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance)){
 			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
-			if(ref != null){
-				databaseHandler.dropDatabase(database);
-			}
+			databaseHandler.dropDatabase(database);
 			databaseHandler.createDatabase(database);
 		}
 		// 还要测试库能不能正常连接上
@@ -203,9 +195,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 创建运行系统所有需要的基础表
 		DBTableHandler dbTableHandler = new DBTableHandler(database);
 		List<ComTabledata> appSystemCoreTables = getBuiltinAppBasicTables();
-		if(ref != null){
-			dbTableHandler.dropTable(appSystemCoreTables);
-		}
+		dbTableHandler.dropTable(appSystemCoreTables);
 		dbTableHandler.createTable(appSystemCoreTables, false);
 		
 		// 创建dataSource和sessionFactory
@@ -224,8 +214,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(null, databaseId);
 		executeRemotePublish(getAppSysDatabaseId(database), null, database, 0, null);
 		
-		database.setIsCreated(1);
-		HibernateUtil.updateObject(database, null);
+		modifyIsCreatedPropVal(database.getEntityName(), 1, database.getId());
 		
 		if(database.getIsBuiltin() == 1){
 			return "内置数据库发布成功";
@@ -257,9 +246,6 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(database.getIsEnabled() == 0){
 			return "id为["+databaseId+"]的数据库信息无效，请联系管理员";
 		}
-		if(!publishInfoService.validResourceIsPublished(databaseId, null, null, null)){
-			return "id为["+databaseId+"]的数据库未发布，无法取消发布";
-		}
 		
 		// 先测试库能不能正常连接上
 		String testLinkResult = database.testDbLink();
@@ -284,8 +270,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 远程删除运行系统中的数据库信息
 		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where id = '"+database.getId()+"'");
 		
-		database.setIsCreated(0);
-		HibernateUtil.updateObject(database, null);
+		modifyIsCreatedPropVal(database.getEntityName(), 0, database.getId());
 		
 		return useLoadPublishApi(database.getId(), "null", "db", "-1", 
 				CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());

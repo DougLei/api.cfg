@@ -9,6 +9,7 @@ import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -71,13 +72,13 @@ public class ComModuleOperationService extends AbstractPublishService {
 		if(oldModuleOperation == null){
 			return "没有找到id为["+moduleOperation.getId()+"]的功能对象信息";
 		}
+		if(oldModuleOperation.getIsCreated() == 1){
+			return "["+oldModuleOperation.getName()+"]功能已经发布，不能修改功能信息，请先取消发布";
+		}
 		
 		ComProjectModule projectModule = getObjectById(oldModuleOperation.getModuleId(), ComProjectModule.class);
 		if(projectModule == null){
 			return "功能关联的，id为["+moduleOperation.getModuleId()+"]的模块信息不存在";
-		}
-		if(publishInfoService.validResourceIsPublished(null, projectModule.getRefProjectId(), oldModuleOperation.getId(), null)){
-			return "该功能已经发布，不能修改功能信息，或取消发布后再修改";
 		}
 		
 		String operResult = null;
@@ -103,7 +104,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 		if(oldModuleOperation == null){
 			return "没有找到id为["+moduleOperationId+"]的功能对象信息";
 		}
-		if(publishInfoService.validResourceIsPublished(null, null, moduleOperationId, null)){
+		if(oldModuleOperation.getIsCreated() == 1){
 			return "["+oldModuleOperation.getName()+"]功能已经发布，无法删除，请先取消发布";
 		}
 		
@@ -121,14 +122,13 @@ public class ComModuleOperationService extends AbstractPublishService {
 		if(moduleOperation == null){
 			return "没有找到id为["+moduleOperationId+"]的功能对象信息";
 		}
-		
 		if(moduleOperation.getIsNeedDeploy() == 0){
 			return "id为["+moduleOperationId+"]的功能不该被发布，如需发布，请联系管理员";
 		}
 		if(moduleOperation.getIsEnabled() == 0){
 			return "id为["+moduleOperationId+"]的功能信息无效，请联系管理员";
 		}
-		if(publishInfoService.validResourceIsPublished(null, null, moduleOperationId, null)){
+		if(moduleOperation.getIsCreated() == 1){
 			return "["+moduleOperation.getName()+"]功能已经发布，无需再次发布，或取消发布后重新发布";
 		}
 		
@@ -136,7 +136,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 		if(projectModule == null){
 			return "功能关联的，id为["+moduleOperation.getModuleId()+"]的模块信息不存在";
 		}
-		if(!publishInfoService.validResourceIsPublished(null, null, projectModule.getId(), null)){
+		if(projectModule.getIsCreated() == 0){
 			return "["+moduleOperation.getName()+"]功能所属的模块还未发布，请先发布模块";
 		}
 		
@@ -146,6 +146,8 @@ public class ComModuleOperationService extends AbstractPublishService {
 		moduleOperation.setRefDatabaseId(project.getRefDatabaseId());
 		moduleOperation.setRefProjectId(project.getId());
 		executeRemotePublish(project.getRefDatabaseId(), project.getId(), moduleOperation, 0, null);
+		
+		modifyIsCreatedPropVal(moduleOperation.getEntityName(), 1, moduleOperation.getId());
 		return null;
 	}
 
@@ -158,7 +160,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 		if(moduleOperation == null){
 			return "没有找到id为["+moduleOperationId+"]的功能对象信息";
 		}
-		if(!publishInfoService.validResourceIsPublished(null, null, moduleOperationId, null)){
+		if(moduleOperation.getIsCreated() == 0){
 			return "["+moduleOperation.getName()+"]功能未发布，无法取消发布";
 		}
 		ComProjectModule projectModule = getObjectById(moduleOperation.getModuleId(), ComProjectModule.class);
@@ -169,6 +171,8 @@ public class ComModuleOperationService extends AbstractPublishService {
 		executeRemoteUpdate(null, projectModule.getRefProjectId(), 
 				"delete " + moduleOperation.getEntityName() + " where refDataId='"+moduleOperationId+"' and projectId='"+projectModule.getRefProjectId()+"'");
 		publishInfoService.deletePublishedData(projectModule.getRefProjectId(), moduleOperationId);
+		
+		modifyIsCreatedPropVal(moduleOperation.getEntityName(), 0, moduleOperation.getId());
 		return null;
 	}
 
@@ -180,21 +184,25 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 */
 	public void batchPublishModuleOperation(String databaseId, String projectId, List<Object> publishDataIds) {
 		List<ComModuleOperation> comModuleOperations = new ArrayList<ComModuleOperation>(publishDataIds.size());
-		ComModuleOperation comModuleOperation;
+		ComModuleOperation comModuleOperation = null;
 		for (Object publishDataId : publishDataIds) {
 			comModuleOperation = getObjectById(publishDataId.toString(), ComModuleOperation.class);
 			
 			if(comModuleOperation.getIsNeedDeploy() == 0){
-				comModuleOperation.setBatchPublishMsg("id为["+publishDataId+"]的功能不该被发布，如需发布，请联系管理员");
+				Log4jUtil.info("id为["+publishDataId+"]的功能不该被发布，如需发布，请联系管理员");
+				continue;
 			}else if(comModuleOperation.getIsEnabled() == 0){
-				comModuleOperation.setBatchPublishMsg("id为["+publishDataId+"]的功能信息无效，请联系管理员");
-			}else if(publishInfoService.validResourceIsPublished(null, null, comModuleOperation.getId(), null)){
-				comModuleOperation.setBatchPublishMsg("["+comModuleOperation.getName()+"]功能已经发布，无需再次发布，或取消发布后重新发布");
+				Log4jUtil.info("id为["+publishDataId+"]的功能信息无效，请联系管理员");
+				continue;
+			}else if(comModuleOperation.getIsCreated() == 1){
+				Log4jUtil.info("["+comModuleOperation.getName()+"]功能已经发布，无需再次发布，或取消发布后重新发布");
+				continue;
 			}
 			comModuleOperation.setRefDatabaseId(databaseId);
 			comModuleOperation.setProjectId(projectId);
 			comModuleOperations.add(comModuleOperation);
 		}
+		batchModifyIsCreatedPropVal(comModuleOperation.getEntityName(), 1, publishDataIds);
 		
 		publishInfoService.batchDeletePublishedData(null, publishDataIds);
 		executeRemoteBatchPublish(databaseId, projectId, comModuleOperations, 0, null);
@@ -208,7 +216,9 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 * @param publishDataIds
 	 */
 	public void batchCancelPublishModuleOperation(String databaseId, String projectId, List<Object> publishDataIds) {
-		publishInfoService.batchDeletePublishedData(projectId, publishDataIds);		
+		publishInfoService.batchDeletePublishedData(projectId, publishDataIds);
+		ComModuleOperation comModuleOperation = new ComModuleOperation();
+		batchModifyIsCreatedPropVal(comModuleOperation.getEntityName(), 0, publishDataIds);
 	}
 
 	//--------------------------------------------------------------------------------------------------------

@@ -41,7 +41,6 @@ import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
-import com.king.tooth.sys.entity.common.ComProjectModuleBody;
 import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
@@ -100,7 +99,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * @return
 	 */
 	private List<ComTabledata> getAllTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(34);
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(33);
 		// 核心表
 		tables.add(new ComDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
@@ -118,7 +117,6 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComSysResource().toCreateTable());
 		tables.add(new ComDataLinks().toCreateTable());
 		tables.add(new ComOperLog().toCreateTable());
-		tables.add(new ComProjectModuleBody().toCreateTable());
 		tables.add(new ComReqLog().toCreateTable());
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable());
 		tables.add(new ComUser().toCreateTable());
@@ -239,9 +237,8 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateUtil.saveObject(appDatabase, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		insertAllTables(adminAccountId);// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
-		
-		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
+		insertAllTables(adminAccountId);
 		// 添加数据字典基础数据
 		insertBasicDataDictionary(adminAccountId);
 		// 添加代码资源
@@ -380,6 +377,7 @@ public class InitCfgSystemService extends AbstractService{
 		insertCodeResource(adminAccountId, "TableUpdate", "com.king.tooth.sys.controller.cfg.ComTabledataController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableDelete", "com.king.tooth.sys.controller.cfg.ComTabledataController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "buildModel", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
+		insertCodeResource(adminAccountId, "TableCancelBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelBuildModel", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableAddProjTableRelation", "com.king.tooth.sys.controller.cfg.ComTabledataController", "addProjTableRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableCancelProjTableRelation", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelProjTableRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TablePublish", "com.king.tooth.sys.controller.cfg.ComTabledataController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);

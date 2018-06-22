@@ -170,6 +170,9 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		this.comments = comments;
 	}
 	public String getResourceName() {
+		if(StrUtils.isEmpty(resourceName)){
+			resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
+		}
 		return resourceName;
 	}
 	public String getParentTableName() {
@@ -381,6 +384,9 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		ComSysResource resource = super.turnToResource();
 		resource.setResourceType(TABLE);
 		resource.setResourceName(resourceName);
+		if(isDatalinkTable == 1){
+			resource.setRefResourceId(parentTableId);
+		}
 		return resource;
 	}
 	

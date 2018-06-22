@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
@@ -301,5 +302,33 @@ public abstract class AbstractPublishService extends AbstractService{
 			return unloadPublishData(projectId, publishDataId);
 		}
 		return "请传入正确的发布类型：[publishType = 1：发布/-1：取消发布]";
+	}
+	
+	/**
+	 * 修改是否created的值
+	 * @param entityName
+	 * @param isCreated
+	 * @param entityId
+	 */
+	protected void modifyIsCreatedPropVal(String entityName, int isCreated, String entityId){
+		String hql = "update " + entityName + " set isCreated ="+isCreated + " where id = '"+entityId+"'";
+		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
+	}
+	/**
+	 * 批量修改是否created的值
+	 * @param entityName
+	 * @param isCreated
+	 * @param entityIds 在方法中被clear
+	 */
+	protected void batchModifyIsCreatedPropVal(String entityName, int isCreated, List<Object> entityIds) {
+		StringBuilder hql = new StringBuilder("update " + entityName + " set isCreated ="+isCreated + " where id in ");
+		for (Object entityId : entityIds) {
+			hql.append("'").append(entityId).append("',");
+		}
+		hql.setLength(hql.length() - 1);
+		hql.append(")");
+		entityIds.clear();
+		
+		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql.toString(), null);
 	}
 }

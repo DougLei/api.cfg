@@ -110,11 +110,15 @@ public class ResourceHandlerUtil {
 			return data;
 		}
 		if(data == null || data.size() == 0){
-			throw new NullPointerException("要进行验证的数据对象为null");
+			throw new NullPointerException("[ResourceHandlerUtil.validDataProp()]要进行验证的数据对象为null");
 		}
 		
 		JSONObject resultData = new JSONObject(data.size());
 		HbmConfPropMetadata[] hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(resourceName);
+		if(hibernateDefineResourceProps == null){
+			throw new NullPointerException("[ResourceHandlerUtil.validDataProp()]hibernateDefineResourceProps对象为null");
+		}
+		
 		Set<String> reqPropnames = data.keySet();
 		HbmConfPropMetadata propMetadata = null;
 		for (String rpn : reqPropnames) {
@@ -182,9 +186,11 @@ public class ResourceHandlerUtil {
 	 * @param tables
 	 */
 	public static void clearTables(List<ComTabledata> tables){
-		for (ComTabledata table : tables) {
-			table.clear();
+		if(tables != null && tables.size() > 0){
+			for (ComTabledata table : tables) {
+				table.clear();
+			}
+			tables.clear();
 		}
-		tables.clear();
 	}
 }

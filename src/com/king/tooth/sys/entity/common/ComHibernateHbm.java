@@ -157,13 +157,17 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 	 * @param table
 	 */
 	public void tableTurnToHbm(ComTabledata table){
-		this.setRefTableId(table.getId());
+		if(table.getIsDatalinkTable() == 1){
+			this.setRefTableId(table.getParentTableId());
+		}else{
+			this.setRefTableId(table.getId());
+		}
 		this.setHbmResourceName(table.getResourceName());
 		this.setIsDataLinkTableHbm(table.getIsDatalinkTable());
 		this.setIsEnabled(table.getIsEnabled());
 		this.setIsNeedDeploy(table.getIsNeedDeploy());
 		this.setReqResourceMethod(table.getReqResourceMethod());
-		this.setIsCreated(table.getIsCreated());
+		this.setIsCreated(1);
 	}
 
 	@JSONField(serialize = false)
@@ -196,8 +200,8 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 	
 	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		ComSysResource resource = super.turnToResource();
-		resource.setRefDataId(refTableId);
 		resource.setId(ResourceHandlerUtil.getIdentity());
+		resource.setRefDataId(refTableId);
 		resource.setResourceType(TABLE);
 		resource.setResourceName(hbmResourceName);
 		resource.setProjectId(projectId);

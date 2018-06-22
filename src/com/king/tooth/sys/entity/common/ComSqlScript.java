@@ -448,8 +448,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	
 	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
 		ComSysResource resource = turnToResource();
-		resource.setRefDataId(id);
 		resource.setId(ResourceHandlerUtil.getIdentity());
+		resource.setRefDataId(id);
 		resource.setProjectId(projectId);
 		resource.setRefResourceId(refResourceId);
 		return resource;

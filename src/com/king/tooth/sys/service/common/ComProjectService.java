@@ -78,8 +78,8 @@ public class ComProjectService extends AbstractPublishService {
 		if(oldProject == null){
 			return "没有找到id为["+project.getId()+"]的项目对象信息";
 		}
-		if(publishInfoService.validResourceIsPublished(oldProject.getRefDatabaseId(), oldProject.getId(), null, null)){
-			return "该项目已经发布，不能修改项目信息，或取消发布后再修改";
+		if(oldProject.getIsCreated() == 1){
+			return "["+oldProject.getProjName()+"]项目已经发布，不能修改，请先取消发布";
 		}
 		
 		String operResult = null;
@@ -106,7 +106,7 @@ public class ComProjectService extends AbstractPublishService {
 		if(oldProject == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
-		if(publishInfoService.validResourceIsPublished(oldProject.getRefDatabaseId(), oldProject.getId(), null, null)){
+		if(oldProject.getIsCreated() == 1){
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
 		
@@ -154,7 +154,7 @@ public class ComProjectService extends AbstractPublishService {
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
 		if(project.getIsCreated() == 1){
-			return "id为["+projectId+"]的项目已经被发布，不能重复发布";
+			return "id为["+projectId+"]的项目已经被发布，无需再次发布，或取消发布后重新发布";
 		}
 		if(project.getIsNeedDeploy() == 0){
 			return "id为["+projectId+"]的项目不该被发布，如需发布，请联系管理员";
@@ -162,11 +162,8 @@ public class ComProjectService extends AbstractPublishService {
 		if(project.getIsEnabled() == 0){
 			return "id为["+projectId+"]的项目信息无效，请联系管理员";
 		}
-		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), null, null, null)){
+		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), null, null)){
 			return "["+project.getProjName()+"]项目所属的数据库还未发布，请先发布数据库";
-		}
-		if(publishInfoService.validResourceIsPublished(null, project.getId(), null, null)){
-			return "["+project.getProjName()+"]项目已经发布，无需再次发布，或取消发布后重新发布";
 		}
 		
 		// 将项目id和数据库id映射起来
@@ -174,6 +171,8 @@ public class ComProjectService extends AbstractPublishService {
 		
 		publishInfoService.deletePublishedData(null, projectId);
 		executeRemotePublish(getAppSysDatabaseId(null), project.getId(), project, 0, null);
+		
+		modifyIsCreatedPropVal(project.getEntityName(), 1, project.getId());
 		return null;
 	}
 	/**
@@ -186,9 +185,6 @@ public class ComProjectService extends AbstractPublishService {
 		String result = publishProject(projectId);
 		if(result == null){
 			ComProject project = getObjectById(projectId, ComProject.class);
-			
-			project.setIsCreated(1);
-			HibernateUtil.updateObject(project, null);
 			
 			// 给远程系统的内置表中插入基础数据
 			executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
@@ -239,7 +235,7 @@ public class ComProjectService extends AbstractPublishService {
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
-		if(project.getIsCreated() == 1){
+		if(project.getIsCreated() == 0){
 			return "["+project.getProjName()+"]项目未发布，无法取消发布";
 		}
 		// 将项目id和数据库id取消映射
@@ -248,6 +244,8 @@ public class ComProjectService extends AbstractPublishService {
 		// 远程删除运行系统中的数据库信息
 		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete " + project.getEntityName() + " where id = '"+projectId+"'");
 		publishInfoService.deletePublishedData(null, projectId);
+		
+		modifyIsCreatedPropVal(project.getEntityName(), 0, project.getId());
 		return null;
 	}
 	/**
@@ -260,9 +258,6 @@ public class ComProjectService extends AbstractPublishService {
 		String result = cancelPublishProject(projectId);
 		if(result == null){
 			ComProject project = getObjectById(projectId, ComProject.class);
-			
-			project.setIsCreated(0);
-			HibernateUtil.updateObject(project, null);
 			
 			// 删除远程系统内置表中的所有和项目相关的数据，即projectId=project.getId()的所有数据
 			executeRemoteDeleteBasicData(project.getRefDatabaseId(), projectId);
