@@ -72,11 +72,11 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	private String validTableIsExistsInDatabase(String projectId, String tableName) {
 		ComProject project = getObjectById(projectId, ComProject.class);
-		String hql = "select count("+ResourceNameConstants.ID+") from " + 
-				"ComDatabase d, ComProject p, ComProjectComTabledataLinks pt, ComTabledata tb" +
+		String hql = "select count(tb."+ResourceNameConstants.ID+") from " + 
+				"ComDatabase d, ComProject p, ComProjectComTabledataLinks pt, ComTabledata tb " +
 				"where d.id = '"+project.getRefDatabaseId()+"' and d.id = p.refDatabaseId and p.id=pt.leftId and tb.id=pt.rightId and tb.tableName='"+tableName + "'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
-		if(count > 1){
+		if(count > 0){
 			return "项目关联的数据库中已经存在表名为["+tableName+"]的数据";
 		}
 		return null;

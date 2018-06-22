@@ -54,11 +54,11 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	private String validSameResourceNameSqlScriptInProject(String sqlScriptResourceName, String projectId) {
-		String hql = "select count("+ResourceNameConstants.ID+") from " +
-				"ComProject p, ComProjectComSqlScriptLinks ps, ComSqlScript cs" +
+		String hql = "select count(cs."+ResourceNameConstants.ID+") from " +
+				"ComProject p, ComProjectComSqlScriptLinks ps, ComSqlScript cs " +
 				"where p.id = '"+projectId+"' and p.id = ps.leftId and cs.id = ps.rightId and cs.sqlScriptResourceName = '"+sqlScriptResourceName+"'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
-		if(count > 1){
+		if(count > 0){
 			return "项目关联的sql脚本中已经存在sql脚本资源名为["+sqlScriptResourceName+"]的数据";
 		}
 		return null;
