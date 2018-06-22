@@ -29,7 +29,8 @@ public abstract class RequestProcesser extends CommonProcesser implements IReque
 	 * @return ResponseBody
 	 */
 	public final ResponseBody doRequestProcess(){
-		Log4jUtil.debug("请求的路由参数值为：{}", requestBody.getRequestUrlParams());
+		Log4jUtil.debug("请求的类为：{}", requestBody.getReqCodeResource().getClassPath());
+		Log4jUtil.debug("请求的方法为：{}", requestBody.getReqCodeResource().getMethodName());
 		Log4jUtil.debug("请求的请求体值为：{}", requestBody.getFormData());
 		
 		doProcess();// 进行实际的业务处理，由子类实现

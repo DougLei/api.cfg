@@ -283,7 +283,7 @@ public class ComTabledataService extends AbstractPublishService {
 			String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
 			
 			// 修改表是否创建的状态
-			modifyIsCreatedPropVal(table.getEntityName(), 1, table.getId());
+			modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
 			
 			// 从sessionFactory中移除映射
 			List<String> resourceNames = new ArrayList<String>(tableResourceNames.length);
