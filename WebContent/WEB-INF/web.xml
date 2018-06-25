@@ -107,17 +107,6 @@
 			<url-pattern>/common/*</url-pattern>
 		</servlet-mapping>
 		
-		<!-- 名为monitoringDataPublish的servlet控制器 -->
-		<!-- 这个是在运行系统配置的servlet，当配置系统给运行系统发布了数据的时候，调用这个接口，运行系统回去加载刚刚发布过来的资源 -->
-		<servlet>
-			<servlet-name>monitoringDataPublish</servlet-name>
-			<servlet-class>com.king.tooth.web.servlet.app.MonitoringDataPublishServlet</servlet-class>
-		</servlet>
-		<servlet-mapping>
-			<servlet-name>monitoringDataPublish</servlet-name>
-			<url-pattern>/monitoring/data/publish</url-pattern>
-		</servlet-mapping>
-		
 <!-- ****************************************************************************************************  -->		
 
 </web-app>
