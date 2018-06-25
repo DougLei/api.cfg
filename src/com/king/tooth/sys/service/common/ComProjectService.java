@@ -109,6 +109,9 @@ public class ComProjectService extends AbstractPublishService {
 		if(oldProject.getIsCreated() == 1){
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
+		if(oldProject.getIsBuiltin() == 1){
+			return "禁止删除内置的项目信息";
+		}
 		
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComTabledataLinks where leftId = ?", projectId);
 		if(count > 0){
@@ -234,6 +237,9 @@ public class ComProjectService extends AbstractPublishService {
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
+		}
+		if(project.getIsBuiltin() == 1){
+			return "内置项目不能进行取消发布操作！";
 		}
 		if(project.getIsCreated() == 0){
 			return "["+project.getProjName()+"]项目未发布，无法取消发布";

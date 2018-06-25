@@ -238,7 +238,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "id为["+databaseId+"]的数据库还未发布，不能取消发布";
 		}
 		if(database.getIsBuiltin() == 1){
-			return "id为["+databaseId+"]的内置数据库不能被删除！";
+			return "内置数据库不能进行取消发布操作！";
 		}
 		if(database.getIsNeedDeploy() == 0){
 			return "id为["+databaseId+"]的数据库不该被发布，如需发布，请联系管理员";
