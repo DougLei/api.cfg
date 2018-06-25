@@ -76,7 +76,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 				Set<String> keys = sqlScriptParams.keySet();
 				for (String key : keys) {
 					ssp = new SqlScriptParameter(1, key);
-					ssp.setActualValue(sqlScriptParams.get(key));
+					ssp.setActualValue(processActualValue(sqlScriptParams.get(key).trim()));
 					sqlScriptActualParameters.add(ssp);
 				}
 				
@@ -102,7 +102,8 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 						}else{
 							ssp = new SqlScriptParameter((i+1), key);
 						}
-						ssp.setActualValue(data.get(key));
+						
+						ssp.setActualValue(processActualValue((data.get(key)+"").trim()));
 						sqlScriptActualParameters.add(ssp);
 					}
 					keys.clear();
@@ -111,6 +112,18 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 			}
 		}
 		return sqlScriptActualParameters;
+	}
+	
+	/**
+	 * 处理每个值最外层的单引号或双引号
+	 * @param actualValue
+	 * @return
+	 */
+	private String processActualValue(String actualValue){
+		if(actualValue.startsWith("'") || actualValue.startsWith("\"")){
+			actualValue = actualValue.substring(1, actualValue.length()-1);
+		}
+		return actualValue;
 	}
 	
 	
