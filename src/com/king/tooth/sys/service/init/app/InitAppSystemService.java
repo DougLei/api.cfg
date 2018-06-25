@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
+import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
+import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -116,22 +118,31 @@ public class InitAppSystemService extends AbstractService{
 	 */
 	private void loadHbmContentsByDatabase(ComDatabase database) throws SQLException, IOException {
 		CurrentThreadContext.setDatabaseId(database.getId());
+		
 		// 获取当前系统的ComHibernateHbm映射文件对象
 		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";
-		Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
-		if(clob == null){
-			throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
-		}
-		
-		Reader reader = clob.getCharacterStream();
-		StringBuilder hbmContent = new StringBuilder();
-		char[] cr = new char[500];
-		while(reader.read(cr) != -1){
-			hbmContent.append(cr);
-			cr = new char[500];
+		String hbmContent = null;
+		if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
+		}else if(DynamicDataConstants.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
+			if(clob == null){
+				throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
+			}
+			
+			Reader reader = clob.getCharacterStream();
+			StringBuilder hbmContentSB = new StringBuilder();
+			char[] cr = new char[500];
+			while(reader.read(cr) != -1){
+				hbmContentSB.append(cr);
+				cr = new char[500];
+			}
+			
+			hbmContent = hbmContentSB.toString().trim();
+			hbmContentSB.setLength(0);
 		}
 		// 将其加载到当前系统的sessionFactory中
-		HibernateUtil.appendNewConfig(hbmContent.toString().trim());
+		HibernateUtil.appendNewConfig(hbmContent);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
 		int count = ((Long)HibernateUtil.executeUniqueQueryBySql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where isEnabled = 1 and hbmResourceName != 'ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
