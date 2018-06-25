@@ -74,6 +74,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * 系统首次启动时，初始化系统的基础数据
 	 */
 	public void loadSysBasicDatasBySysFirstStart() {
+		Log4jUtil.info("loadSysBasicDatasBySysFirstStart..........");
 		try {
 			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 			initDatabaseInfo();// 初始化数据库信息
@@ -502,6 +503,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * 主要是hbm内容
 	 */
 	public void loadHbmsByStart() {
+		Log4jUtil.info("loadHbmsByStart..........");
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统数据库的所有hbm映射文件

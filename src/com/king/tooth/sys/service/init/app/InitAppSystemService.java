@@ -43,6 +43,7 @@ public class InitAppSystemService extends AbstractService{
 	 * 主要是hbm内容
 	 */
 	public void loadHbmsByStart() {
+		Log4jUtil.info("loadHbmsByStart..........");
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统的所有hbm映射文件
