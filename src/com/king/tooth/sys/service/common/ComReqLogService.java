@@ -1,7 +1,9 @@
 package com.king.tooth.sys.service.common;
 
 import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
+
 import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.HttpHelperUtil;
@@ -20,7 +22,7 @@ public class ComReqLogService extends AbstractService{
 	 */
 	public ComReqLog initReqLogInstance(HttpServletRequest request) {
 		ComReqLog reqLog = new ComReqLog();
-		reqLog.setReqAccountId(request.getHeader("_accountId"));
+		reqLog.setReqAccountId(new ComSysAccountOnlineStatusService().getAccountIdByToken(request.getHeader("_token")));
 		reqLog.setReqMethod(request.getMethod());
 		reqLog.setReqIp(HttpHelperUtil.getClientIp(request));
 		reqLog.setReqMac(request.getHeader("_mac"));

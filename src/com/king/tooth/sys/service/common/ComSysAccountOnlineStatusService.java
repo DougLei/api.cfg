@@ -43,4 +43,13 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 		return onlineStatus;
 	}
 	
+	/**
+	 * 根据token获取关联的账户id
+	 * @param token
+	 * @return
+	 */
+	public String getAccountIdByToken(String token){
+		String hql = "select accountId from ComSysAccountOnlineStatus where token = ?";
+		return (String) HibernateUtil.executeUniqueQueryByHqlArr(hql, token);
+	}
 }
