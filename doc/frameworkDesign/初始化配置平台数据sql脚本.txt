@@ -1,11 +1,11 @@
 --oracle 配置平台数据库   ------------------------------------------------------------------
 create temporary tablespace TMPLOG_SmartOneCfg 
-	tempfile 'D:\java\db\cfg\TMPLOG_SmartOneCfg.dbf' 
+	tempfile 'C:\devlopment\api\db\cfg\TMPLOG_SmartOneCfg.dbf' 
 	size 50m autoextend 
 	on next 50m 
 	extent management local;
 create tablespace MAIN_SmartOneCfg 
-	logging datafile 'D:\java\db\cfg\MAIN_SmartOneCfg.dbf' 
+	logging datafile 'C:\devlopment\api\db\cfg\MAIN_SmartOneCfg.dbf' 
 	size 50m autoextend 
 	on next 100m 
 	extent management local;
@@ -23,16 +23,15 @@ drop tablespace MAIN_SmartOneCfg including contents and datafiles;
 
 ------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
-
 --sqlserver 配置平台数据库   ------------------------------------------------------------------
 create database SmartOneCfg on primary (
 	name='MAIN_SmartOneCfg',
-	filename='D:\java\db\cfg\MAIN_SmartOneCfg.mdf',
+	filename='C:\devlopment\api\db\cfg\MAIN_SmartOneCfg.mdf',
 	size=50mb,
 	filegrowth=100mb
 )log on ( 
 	name='TMPLOG_SmartOneCfg',
-	filename='D:\java\db\cfg\TMPLOG_SmartOneCfg.ldf',
+	filename='C:\devlopment\api\db\cfg\TMPLOG_SmartOneCfg.ldf',
 	size=50mb,
 	filegrowth=50mb)
 go
