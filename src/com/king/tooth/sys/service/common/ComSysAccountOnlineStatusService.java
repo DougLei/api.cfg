@@ -7,6 +7,7 @@ import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.HttpHelperUtil;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -48,7 +49,10 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 	 * @param token
 	 * @return
 	 */
-	public String getAccountIdByToken(String token){
+	public String getAccountIdByTokenForLog(String token){
+		if(StrUtils.isEmpty(token)){
+			return null;
+		}
 		String hql = "select accountId from ComSysAccountOnlineStatus where token = ?";
 		return (String) HibernateUtil.executeUniqueQueryByHqlArr(hql, token);
 	}

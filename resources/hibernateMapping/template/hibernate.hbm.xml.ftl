@@ -1,9 +1,9 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE hibernate-mapping PUBLIC 
     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<!-- ${table.resourceName}.hbm.xml的配置文件 -->
+<!-- ${table.resourceName}.hbm.xml config mapping file -->
 <hibernate-mapping>
 	<class entity-name="${table.resourceName}" table="${table.tableName}" dynamic-insert="true">
 		<id name="${id}" column="id" type="string">

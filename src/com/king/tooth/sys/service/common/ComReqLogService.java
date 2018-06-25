@@ -22,7 +22,7 @@ public class ComReqLogService extends AbstractService{
 	 */
 	public ComReqLog initReqLogInstance(HttpServletRequest request) {
 		ComReqLog reqLog = new ComReqLog();
-		reqLog.setReqAccountId(new ComSysAccountOnlineStatusService().getAccountIdByToken(request.getHeader("_token")));
+		reqLog.setReqAccountId(new ComSysAccountOnlineStatusService().getAccountIdByTokenForLog(request.getHeader("_token")));
 		reqLog.setReqMethod(request.getMethod());
 		reqLog.setReqIp(HttpHelperUtil.getClientIp(request));
 		reqLog.setReqMac(request.getHeader("_mac"));
