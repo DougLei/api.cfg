@@ -235,7 +235,18 @@ public class InitCfgSystemService extends AbstractService{
 		appDatabase.analysisResourceProp();
 		appDatabase.setIsBuiltin(1);
 		appDatabase.setIsNeedDeploy(1);
-		HibernateUtil.saveObject(appDatabase, null);
+		String appDatabaseId = HibernateUtil.saveObject(appDatabase, null);
+		
+		//----------------------------------------------------------------------------------------------------------------------------------------------------------
+		// 添加项目信息【运行平台数据库中的一个项目】
+		ComProject project = new ComProject();
+		project.setRefDatabaseId(appDatabaseId);
+		project.setProjName("自动化配置项目(内置)");
+		project.setProjCode("AutoConfigProj");
+		project.analysisResourceProp();
+		project.setIsBuiltin(1);
+		project.setIsNeedDeploy(1);
+		HibernateUtil.saveObject(project, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
