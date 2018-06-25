@@ -226,7 +226,7 @@ public class InitCfgSystemService extends AbstractService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据库信息【运行平台数据库信息】
 		ComDatabase appDatabase = new ComDatabase();
-		appDatabase.setId("05fb6ef9c3ac4fccb91b00add6664db9");
+		appDatabase.setId("05fb6ef9c3ackfccb91b00add666odb9");
 		appDatabase.setDbDisplayName("运行系统通用数据库(内置)");
 		appDatabase.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
 		appDatabase.setDbInstanceName("SmartOneApp");
@@ -242,8 +242,8 @@ public class InitCfgSystemService extends AbstractService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加项目信息【运行平台数据库中的一个项目】
 		ComProject project = new ComProject();
-		project.setId("c854305b333e412e98ee7277fb488142");
-		project.setRefDatabaseId("05fb6ef9c3ac4fccb91b00add6664db9");
+		project.setId("7fe971700f21d3a796d2017398812dcd");
+		project.setRefDatabaseId("05fb6ef9c3ackfccb91b00add666odb9");
 		project.setProjName("自动化配置项目(内置)");
 		project.setProjCode("AutoConfigProj");
 		project.analysisResourceProp();
