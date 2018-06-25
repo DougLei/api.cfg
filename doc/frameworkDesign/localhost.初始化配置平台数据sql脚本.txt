@@ -1,0 +1,98 @@
+--oracle 配置平台数据库   ------------------------------------------------------------------
+create temporary tablespace TMPLOG_SmartOneCfg 
+	tempfile 'C:\devlopment\api\db\cfg\TMPLOG_SmartOneCfg.dbf' 
+	size 50m autoextend 
+	on next 50m 
+	extent management local;
+create tablespace MAIN_SmartOneCfg 
+	logging datafile 'C:\devlopment\api\db\cfg\MAIN_SmartOneCfg.dbf' 
+	size 50m autoextend 
+	on next 100m 
+	extent management local;
+create user SmartOneCfg identified by "root"
+	default tablespace MAIN_SmartOneCfg 
+	temporary tablespace TMPLOG_SmartOneCfg;
+grant connect,resource,dba to SmartOneCfg;
+
+--oracle 运行平台数据库   ------------------------------------------------------------------
+create temporary tablespace TMPLOG_SmartOneApp 
+	tempfile C:\devlopment\api\db\app\TMPLOG_SmartOneApp.dbf' 
+	size 50m autoextend 
+	on next 50m 
+	extent management local;
+create tablespace MAIN_SmartOneApp 
+	logging datafile 'C:\devlopment\api\db\app\MAIN_SmartOneApp.dbf' 
+	size 50m autoextend 
+	on next 100m 
+	extent management local;
+create user SmartOneApp identified by "root"
+	default tablespace MAIN_SmartOneApp 
+	temporary tablespace TMPLOG_SmartOneApp;
+grant connect,resource,dba to SmartOneApp;
+
+/*
+ 删除数据库
+drop user SmartOneCfg cascade;
+drop tablespace TMPLOG_SmartOneCfg including contents and datafiles;
+drop tablespace MAIN_SmartOneCfg including contents and datafiles;
+
+drop user SmartOneApp cascade;
+drop tablespace TMPLOG_SmartOneApp including contents and datafiles;
+drop tablespace MAIN_SmartOneApp including contents and datafiles;
+*/
+
+------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+--sqlserver 配置平台数据库   ------------------------------------------------------------------
+create database SmartOneCfg on primary (
+	name='MAIN_SmartOneCfg',
+	filename='C:\devlopment\api\db\cfg\MAIN_SmartOneCfg.mdf',
+	size=50mb,
+	filegrowth=100mb
+)log on ( 
+	name='TMPLOG_SmartOneCfg',
+	filename='C:\devlopment\api\db\cfg\TMPLOG_SmartOneCfg.ldf',
+	size=50mb,
+	filegrowth=50mb)
+go
+use SmartOneCfg
+go
+create login SmartOneCfg with password='SQL12.',default_database=SmartOneCfg
+go
+create user u_SmartOneCfg for login SmartOneCfg with default_schema=dbo
+go
+exec sp_addrolemember 'db_owner', 'u_SmartOneCfg'
+go
+
+--sqlserver 运行平台数据库   ------------------------------------------------------------------
+create database SmartOneApp on primary (
+	name='MAIN_SmartOneApp',
+	filename='C:\devlopment\api\db\app\MAIN_SmartOneApp.mdf',
+	size=50mb,
+	filegrowth=100mb
+)log on ( 
+	name='TMPLOG_SmartOneApp',
+	filename='C:\devlopment\api\db\app\TMPLOG_SmartOneApp.ldf',
+	size=50mb,
+	filegrowth=50mb)
+go
+use SmartOneApp
+go
+create login SmartOneApp with password='SQL12.',default_database=SmartOneApp
+go
+create user u_SmartOneApp for login SmartOneApp with default_schema=dbo
+go
+exec sp_addrolemember 'db_owner', 'u_SmartOneApp'
+go
+
+/*
+ 删除数据库
+drop user u_SmartOneCfg;
+drop login SmartOneCfg;
+drop database SmartOneCfg;
+
+drop user u_SmartOneApp;
+drop login SmartOneApp;
+drop database SmartOneApp;
+*/
