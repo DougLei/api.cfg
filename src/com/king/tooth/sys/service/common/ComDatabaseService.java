@@ -182,7 +182,6 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 如果是自己的库，要创建
 		if(database.compareIsSameDatabase(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance)){
 			DatabaseHandler databaseHandler = new DatabaseHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
-			databaseHandler.dropDatabase(database);
 			databaseHandler.createDatabase(database);
 		}
 		// 还要测试库能不能正常连接上
@@ -195,7 +194,6 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 创建运行系统所有需要的基础表
 		DBTableHandler dbTableHandler = new DBTableHandler(database);
 		List<ComTabledata> appSystemCoreTables = getBuiltinAppBasicTables();
-		dbTableHandler.dropTable(appSystemCoreTables);
 		dbTableHandler.createTable(appSystemCoreTables, false);
 		
 		// 创建dataSource和sessionFactory

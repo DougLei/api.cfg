@@ -231,7 +231,7 @@ public class InitCfgSystemService extends AbstractService{
 		appDatabase.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
 		appDatabase.setDbInstanceName("SmartOneApp");
 		appDatabase.setLoginUserName("SmartOneApp");
-		appDatabase.setLoginPassword("1");
+		appDatabase.setLoginPassword(SysConfig.getSystemConfig("db.default.password"));
 		appDatabase.setDbIp(SysConfig.getSystemConfig("db.default.ip"));
 		appDatabase.setDbPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
 		appDatabase.analysisResourceProp();
