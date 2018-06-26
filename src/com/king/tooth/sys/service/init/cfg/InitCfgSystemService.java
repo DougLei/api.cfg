@@ -514,39 +514,31 @@ public class InitCfgSystemService extends AbstractService{
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的核心hbm加载进对应的sessionFactory中
 			// 同时建立数据库和项目的关联关系，为之后的发布操作做准备
 			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = 2 and isCreated =1");
-			
 			if(databases != null && databases.size()> 0){
-				// 查询获取核心表资源名
-				List<Object> coreTableResourceNames = HibernateUtil.executeListQueryByHql(null, null, "select resourceName from ComTabledata where isCore=1 and isEnabled=1 and resourceName != 'ComHibernateHbm'", null);
-				
-				if(coreTableResourceNames == null || coreTableResourceNames.size() == 0){
-					throw new NullPointerException("没有查询到核心的表资源名称，请检查配置系统数据库中的数据是否正确");
+				// 查询获取核心表的hbm资源
+				List<String> coreTableHbmContents = HibernateUtil.executeListQueryByHql(null, null, "select h.hbmContent from ComHibernateHbm h, ComTabledata t where h.refTableId = t."+ResourceNameConstants.ID+" and t.isCore=1 and t.isEnabled=1 and h.isEnabled=1", null);
+				HibernateUtil.closeCurrentThreadSession();
+				if(coreTableHbmContents == null || coreTableHbmContents.size() == 0){
+					throw new NullPointerException("没有查询到核心表的hbm资源，请检查配置系统数据库中的数据是否正确");
 				}
-				StringBuilder sp = new StringBuilder("(");
-				int len = coreTableResourceNames.size();
-				for(int i=0;i<len ;i++){
-					sp.append("?,");
-				}
-				sp.setLength(sp.length()-1);
-				sp.append(")");
-				String placholders = sp.toString();
-				sp.setLength(0);
+				addOtherCoreTableHbmContents(coreTableHbmContents);
 				
-				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled = 1 and isCreated =1 and refDatabaseId = ?";
+				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled=1 and isCreated=1 and refDatabaseId= ?";
+				String testLinkResult;
 				for (ComDatabase database : databases) {
-					if(existsPublishedProjects(projDatabaseRelationQueryHql, database)){
-						database.analysisResourceProp();
-						String testLinkResult = database.testDbLink();
-						if(testLinkResult.startsWith("err")){
-							throw new Exception(testLinkResult);
-						}
-						Log4jUtil.debug("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
-						
-						DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
-						loadCoreHbmContentsByDatabaseId(database, coreTableResourceNames, placholders);// 加载当前数据库中的hbm到sessionFactory中
+					database.analysisResourceProp();
+					testLinkResult = database.testDbLink();
+					if(testLinkResult.startsWith("err")){
+						Log4jUtil.error(testLinkResult);
+						continue;
 					}
+					Log4jUtil.info("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
+					Log4jUtil.info("给该数据库的连接数据源，添加核心的hbm内容");
+					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
+					loadCoreHbmContentsToDatabase(database, coreTableHbmContents);// 加载当前数据库中的hbm到sessionFactory中
+					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database);
 				}
-				coreTableResourceNames.clear();
+				coreTableHbmContents.clear();
 			}else{
 				HibernateUtil.closeCurrentThreadSession();
 			}
@@ -557,25 +549,22 @@ public class InitCfgSystemService extends AbstractService{
 	}
 	
 	/**
-	 * 验证数据库下是否有发布的项目
+	 * 加载项目id和数据库id的关联关系
 	 * @param projDatabaseRelationQueryHql
 	 * @param database
 	 * @return
 	 */
-	private boolean existsPublishedProjects(String projDatabaseRelationQueryHql, ComDatabase database) {
+	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, ComDatabase database) {
 		// 加载数据库和项目的关联关系映射
 		CurrentThreadContext.setDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
 		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
 		HibernateUtil.closeCurrentThreadSession();
 		Log4jUtil.debug("数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库，是否存在发布的项目："+ isExists );
-		return isExists;
 	}
-	
 	/**
 	 * 加载项目id和数据库id的关联关系
 	 * @param projDatabaseRelationQueryHql
 	 * @param databaseId
-	 * @return 指定的数据库下，是否存在发布的项目
 	 */
 	private boolean loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, String databaseId) {
 		List<Object> projIds = HibernateUtil.executeListQueryByHqlArr(null, null, projDatabaseRelationQueryHql, databaseId);
@@ -593,14 +582,38 @@ public class InitCfgSystemService extends AbstractService{
 	}
 
 	/**
-	 * 加载当前系统数据库的hbm映射文件
+	 * 加载当前系统数据库的所有hbm映射文件
 	 * @param database 指定数据库的id
 	 * @throws SQLException 
 	 * @throws IOException 
 	 */
 	private void loadCurrentSysDatabaseHbms() throws SQLException, IOException {
 		ComDatabase database = CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance;
-		loadComHibernateHbmContent(database);
+		
+		CurrentThreadContext.setDatabaseId(database.getId());
+		// 获取当前系统的ComHibernateHbm映射文件对象
+		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";
+		String hbmContent = null;
+		if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
+		}else if(DynamicDataConstants.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
+			if(clob == null){
+				throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
+			}
+			
+			Reader reader = clob.getCharacterStream();
+			StringBuilder hbmContentSB = new StringBuilder();
+			char[] cr = new char[500];
+			while(reader.read(cr) != -1){
+				hbmContentSB.append(cr);
+				cr = new char[500];
+			}
+			hbmContent = hbmContentSB.toString().trim();
+			hbmContentSB.setLength(0);
+		}
+		// 将其加载到当前系统的sessionFactory中
+		HibernateUtil.appendNewConfig(hbmContent);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
 		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where isEnabled = 1 and hbmResourceName != 'ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
@@ -625,62 +638,23 @@ public class InitCfgSystemService extends AbstractService{
 	}
 	
 	/**
-	 * 加载指定数据库的核心hbm映射文件
-	 * @param database 指定数据库的id
-	 * @param coreTableResourceNames
-	 * @param placholders
-	 * @throws SQLException 
-	 * @throws IOException 
+	 * 添加其他核心表的hbm资源
+	 * <p>主要针对只在运行系统中会存在的资源，例如ComProjectComHibernateHbmLinks关系表等</p>
+	 * @param coreTableHbmContents
 	 */
-	private void loadCoreHbmContentsByDatabaseId(ComDatabase database, List<Object> coreTableResourceNames, String placholders) throws SQLException, IOException {
-		loadComHibernateHbmContent(database);
-		
-		List<Object> coreHbmContents = HibernateUtil.executeListQueryByHql(null, null, 
-				"select hbmContent from ComHibernateHbm where isEnabled = 1 and refDatabaseId = '"+database.getId()+"' and hbmResourceName in " + placholders, coreTableResourceNames);
-		List<String> hcs = new ArrayList<String>(coreHbmContents.size());
-		for (Object obj : coreHbmContents) {
-			hcs.add(obj+"");
-		}
-		HibernateUtil.appendNewConfig(hcs);
-		
-		hcs.clear();
-		coreHbmContents.clear();
-		
-		// 关闭session
-		HibernateUtil.closeCurrentThreadSession();
+	private void addOtherCoreTableHbmContents(List<String> coreTableHbmContents) {
+		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
+		ComTabledata comProjectComHibernateHbmLinksTable = new ComProjectComHibernateHbmLinks().toCreateTable();
+		coreTableHbmContents.add(hibernateHbmHandler.createHbmMappingContent(comProjectComHibernateHbmLinksTable, true));
 	}
 	
 	/**
-	 * 加载指定数据库中的ComHibernateHbm内容
-	 * @param database
-	 * @throws SQLException
-	 * @throws IOException
+	 * 给指定数据库加载核心hbm映射文件
+	 * @param database 指定数据库
+	 * @param coreTableHbmContents
 	 */
-	private void loadComHibernateHbmContent(ComDatabase database) throws SQLException, IOException{
+	private void loadCoreHbmContentsToDatabase(ComDatabase database, List<String> coreTableHbmContents){
 		CurrentThreadContext.setDatabaseId(database.getId());
-		
-		// 获取当前系统的ComHibernateHbm映射文件对象
-		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";
-		String hbmContent = null;
-		if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
-			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
-		}else if(DynamicDataConstants.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
-			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
-			if(clob == null){
-				throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
-			}
-			
-			Reader reader = clob.getCharacterStream();
-			StringBuilder hbmContentSB = new StringBuilder();
-			char[] cr = new char[500];
-			while(reader.read(cr) != -1){
-				hbmContentSB.append(cr);
-				cr = new char[500];
-			}
-			hbmContent = hbmContentSB.toString().trim();
-			hbmContentSB.setLength(0);
-		}
-		// 将其加载到当前系统的sessionFactory中
-		HibernateUtil.appendNewConfig(hbmContent);
+		HibernateUtil.appendNewConfig(coreTableHbmContents);
 	}
 }
