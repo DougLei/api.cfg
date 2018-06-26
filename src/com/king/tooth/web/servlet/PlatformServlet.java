@@ -1,21 +1,15 @@
 package com.king.tooth.web.servlet;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.constants.RequestUrlParamKeyConstants;
 import com.king.tooth.constants.EncodingConstants;
+import com.king.tooth.constants.RequestUrlParamKeyConstants;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.util.CloseUtil;
-import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;
 
@@ -42,28 +36,7 @@ public class PlatformServlet extends BasicHttpServlet{
 	 * @return
 	 */
 	private Object analysisFormData(HttpServletRequest request) {
-		if(request.getContentLength() <= 0){
-			return null;
-		}
-		StringBuilder formData = new StringBuilder();
-		Reader reader = null;
-		BufferedReader br = null;
-		try {
-			reader = new InputStreamReader(request.getInputStream(), EncodingConstants.UTF_8);
-			br = new BufferedReader(reader);
-			String tmp = null;
-			while((tmp = br.readLine()) != null){
-				formData.append(tmp);
-			}
-		} catch (UnsupportedEncodingException e) {
-			Log4jUtil.debug("[PlatformServlet.analysisBody]方法出现异常信息:{}", e.getMessage());
-		} catch (IOException e) {
-			Log4jUtil.debug("[PlatformServlet.analysisBody]方法出现异常信息:{}", e.getMessage());
-		}finally{
-			CloseUtil.closeIO(br);
-			CloseUtil.closeIO(reader);
-		}
-		return formData;
+		return HttpHelperUtil.analysisFormData(request);
 	}
 
 	/**
