@@ -246,7 +246,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 					if(ssap.getIndex() == ssp.getIndex() && ssap.getParameterName().equalsIgnoreCase(ssp.getParameterName())){
 						ssap.setIsPlaceholderParameter(ssp.getIsPlaceholderParameter());
 						ssp.setActualValue(ssap.getActualValue());
-						break;
 					}
 				}
 			}

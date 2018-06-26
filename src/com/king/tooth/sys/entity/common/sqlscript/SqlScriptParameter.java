@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity.common.sqlscript;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.util.DateUtil;
@@ -94,7 +95,9 @@ public class SqlScriptParameter implements Serializable{
 		}
 		if(isPlaceholderParameter){
 			if(DataTypeConstants.DATE.equals(getParameterDataType())){
-				actualValue = DateUtil.parseDate(actualValue+"");
+				if(!(actualValue instanceof Date)){
+					actualValue = DateUtil.parseDate(actualValue+"");
+				}
 			}
 			return actualValue;
 		}else{
