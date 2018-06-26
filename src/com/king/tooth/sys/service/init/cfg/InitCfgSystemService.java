@@ -79,9 +79,9 @@ public class InitCfgSystemService extends AbstractService{
 			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 			initDatabaseInfo();// 初始化数据库信息
 			updateInitConfig();
-			Log4jUtil.debug("系统初始化完成！");
+			Log4jUtil.info("系统初始化完成！");
 		} catch (Exception e) {
-			Log4jUtil.debug("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
+			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
 		}
 	}
@@ -543,7 +543,7 @@ public class InitCfgSystemService extends AbstractService{
 				HibernateUtil.closeCurrentThreadSession();
 			}
 		} catch (Exception e) {
-			Log4jUtil.debug("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
+			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
 		}
 	}
@@ -559,7 +559,7 @@ public class InitCfgSystemService extends AbstractService{
 		CurrentThreadContext.setDatabaseId(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
 		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
 		HibernateUtil.closeCurrentThreadSession();
-		Log4jUtil.debug("数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库，是否存在发布的项目："+ isExists );
+		Log4jUtil.info("数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库，是否存在发布的项目："+ isExists );
 	}
 	/**
 	 * 加载项目id和数据库id的关联关系
