@@ -604,38 +604,4 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		useLoadPublishApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
 	}
-
-	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String projectId, String publishDataId) {
-		Object[] tableIds = publishDataId.split(",");
-		List<String> hbmContents = new ArrayList<String>(tableIds.length*2);
-		String hql = "select hbmContent from ComHibernateHbm where isCreated=0 and refDataId = ? and projectId='"+projectId+"'";
-		for (Object tableId : tableIds) {
-			hbmContents.add(HibernateUtil.executeListQueryByHqlArr(null, null, hql, tableId)+"");
-		}
-		HibernateUtil.appendNewConfig(hbmContents);
-		hbmContents.clear();
-		
-		StringBuilder hb = new StringBuilder("update ComHibernateHbm set isCreated=1 where projectId = '"+projectId+"' and refDataId in(");
-		int len = tableIds.length;
-		for (int i = 0;i<len ;i++) {
-			hb.append("?,");
-		}
-		hb.setLength(hb.length()-1);
-		hb.append(")");
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, hb.toString(), tableIds);
-		hb.setLength(0);
-		return "success";
-	}
-
-	protected String unloadPublishData(String projectId, String tableResourceNames) {
-		String[] tableResourceNameArr = tableResourceNames.split(",");
-		List<String> tableResourceNameList = new ArrayList<String>(tableResourceNameArr.length);
-		for (String en : tableResourceNameArr) {
-			tableResourceNameList.add(en.trim());
-		}
-		HibernateUtil.removeConfig(tableResourceNameList);
-		tableResourceNameList.clear();
-		return "success";
-	}
 }

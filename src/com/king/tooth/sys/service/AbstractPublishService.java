@@ -221,24 +221,6 @@ public abstract class AbstractPublishService extends AbstractService{
 	// --------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * 加载发布的数据
-	 * <p>属于运行系统的功能</p>
-	 * @param projectId
-	 * @param publishDataId 发布的数据主键
-	 * @return success/其他错误描述信息
-	 */
-	protected abstract String loadPublishData(String projectId, String publishDataId);
-	
-	/**
-	 * 卸载发布的数据
-	 * <p>属于运行系统的功能</p>
-	 * @param projectId
-	 * @param publishDataId 发布的数据主键
-	 * @return success/其他错误描述信息
-	 */
-	protected abstract String unloadPublishData(String projectId, String publishDataId);
-	
-	/**
 	 * 运行系统处理加载/卸载数据的api路径
 	 */
 	private static final String appWebSysProcessPublishDataApiPath = SysConfig.getSystemConfig("app.web.sys.location") + "/monitoring/data/publish";
@@ -286,22 +268,6 @@ public abstract class AbstractPublishService extends AbstractService{
 				getUrlParams(headerProjectId, publishDataType, publishType), 
 				null, getHeaders(headerProjectId), 
 				HttpClientUtil.getHttpStringRequestEntity(publishDataId, "text/json"));
-	}
-	
-	/**
-	 * 处理运行系统发布数据的加载/卸载
-	 * @param projectId
-	 * @param publishDataId 发布的数据主键
-	 * @param publishType 发布的类型:1：发布、-1：取消发布
-	 * @return success/其他错误描述信息
-	 */
-	public String processAppPublishData(String projectId, String publishDataId, String publishType){
-		if("1".equals(publishType)){
-			return loadPublishData(projectId, publishDataId);
-		}else if("-1".equals(publishType)){
-			return unloadPublishData(projectId, publishDataId);
-		}
-		return "请传入正确的发布类型：[publishType = 1：发布/-1：取消发布]";
 	}
 	
 	/**

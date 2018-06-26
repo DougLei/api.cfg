@@ -273,19 +273,4 @@ public class ComDatabaseService extends AbstractPublishService {
 		return useLoadPublishApi(database.getId(), "null", "db", "-1", 
 				CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
 	}
-
-	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String projectId, String publishDataId) {
-		ComDatabase database = getObjectById(publishDataId, ComDatabase.class);
-		if(database == null){
-			return "没有找到id为["+publishDataId+"]的数据库对象信息，运行系统加载失败";
-		}
-		DynamicDBUtil.addDataSource(database);
-		return "数据库发布成功";
-	}
-
-	protected String unloadPublishData(String projectId, String publishDataId) {
-		DynamicDBUtil.removeDataSource(publishDataId);
-		return "数据库取消发布成功";
-	}
 }

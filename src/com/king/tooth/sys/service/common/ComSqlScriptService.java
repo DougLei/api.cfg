@@ -362,22 +362,4 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public void batchCancelPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
 		publishInfoService.batchDeletePublishedData(projectId, sqlScriptIds);
 	}
-
-	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String projectId, String publishDataId) {
-		String[] sqlScriptIds = publishDataId.split(",");
-		ComSqlScript sqlScript;
-		String hql = "from ComSqlScript where isCreated=0 and refDataId = ? and projectId='"+projectId+"'";
-		for (String sqlScriptId : sqlScriptIds) {
-			sqlScript = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSqlScript.class, hql, sqlScriptId.trim());
-			sqlScript.analysisResourceProp();
-			sqlScript.setIsCreated(1);
-			HibernateUtil.updateObjectByHql(sqlScript, null);
-		}
-		return "success";
-	}
-
-	protected String unloadPublishData(String projectId, String publishDataId) {
-		return null;
-	}
 }

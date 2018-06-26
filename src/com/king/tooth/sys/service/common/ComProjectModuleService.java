@@ -251,13 +251,4 @@ public class ComProjectModuleService extends AbstractPublishService {
 			publishDataIds.clear();
 		}
 	}
-
-	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String projectId, String publishDataId) {
-		return null;
-	}
-
-	protected String unloadPublishData(String projectId, String publishDataId) {
-		return null;
-	}
 }

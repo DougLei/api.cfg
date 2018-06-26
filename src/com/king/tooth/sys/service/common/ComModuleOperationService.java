@@ -220,13 +220,4 @@ public class ComModuleOperationService extends AbstractPublishService {
 		ComModuleOperation comModuleOperation = new ComModuleOperation();
 		batchModifyIsCreatedPropVal(comModuleOperation.getEntityName(), 0, publishDataIds);
 	}
-
-	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String projectId, String publishDataId) {
-		return null;
-	}
-
-	protected String unloadPublishData(String projectId, String publishDataId) {
-		return null;
-	}
 }

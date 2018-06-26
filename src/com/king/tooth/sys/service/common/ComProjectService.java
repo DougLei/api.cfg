@@ -369,19 +369,4 @@ public class ComProjectService extends AbstractPublishService {
 			hql.setLength(0);
 		}
 	}
-
-	//--------------------------------------------------------------------------------------------------------
-	protected String loadPublishData(String projectId, String publishDataId) {
-		ComProject project = getObjectById(projectId, ComProject.class);
-		if(project == null){
-			return "没有找到id为["+projectId+"]的项目对象信息，运行系统无法加载";
-		}
-		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projectId, project.getRefDatabaseId());
-		return "success";
-	}
-
-	protected String unloadPublishData(String projectId, String publishDataId) {
-		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
-		return "success";
-	}
 }
