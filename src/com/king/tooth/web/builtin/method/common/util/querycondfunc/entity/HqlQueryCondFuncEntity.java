@@ -56,6 +56,7 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 			// 没有匹配到值，证明使用的是propName=value 的默认规则
 			tmp = value.split(",");
 		}
+		Object[] result = new Object[tmp.length];
 		
 		// 处理每个值最外层的单引号或双引号
 		String tmpVal = null;
@@ -67,10 +68,12 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 			}
 			
 			if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
-				tmp[i] = DateUtil.parseDate(tmp[i]+"");
+				result[i] = DateUtil.parseDate(tmp[i]+"");
+			}else{
+				result[i] = tmp[i];
 			}
 		}
-		this.values = tmp;
+		this.values = result;
 	}
 	
 	/**
