@@ -11,6 +11,7 @@ import com.king.tooth.util.StrUtils;
 public class DatabaseImpl extends AbstractDatabaseHandler{
 
 	public String installCreateDatabaseSql(ComDatabase database) {
+		operDatabaseSql.setLength(0);
 		// 创建数据库文件
 		operDatabaseSql.append("create database ").append(database.getDbInstanceName())
 				       .append(" on primary (")

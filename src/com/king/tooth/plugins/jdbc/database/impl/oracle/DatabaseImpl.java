@@ -11,6 +11,7 @@ import com.king.tooth.util.StrUtils;
 public class DatabaseImpl extends AbstractDatabaseHandler{
 	
 	public String installCreateDatabaseSql(ComDatabase database) {
+		operDatabaseSql.setLength(0);
 		// 如果有，先创建临时表空间
 		if(database.getTmpLogFile() != null && StrUtils.notEmpty(database.getTmpLogFile().getName())){
 			operDatabaseSql.append("create temporary tablespace ").append(database.getTmpLogFile().getName())
