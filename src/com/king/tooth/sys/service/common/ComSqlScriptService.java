@@ -22,6 +22,22 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class ComSqlScriptService extends AbstractPublishService {
 	
 	/**
+	 * 根据id，获取sql脚本资源对象
+	 * @param sqlScriptId
+	 * @return
+	 */
+	public ComSqlScript findSqlScriptResourceById(String sqlScriptId){
+		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
+		if(sqlScript == null){
+			throw new NullPointerException("不存在请求的sql脚本资源，请联系管理员");
+		}
+		if(sqlScript.getIsEnabled() == 0){
+			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员");
+		}
+		return sqlScript;
+	}
+	
+	/**
 	 * 验证sql脚本资源名是否存在
 	 * @param table
 	 * @return operResult
@@ -230,24 +246,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public String cancelProjSqlScriptRelation(String projectId, String sqlScriptId) {
 		HibernateUtil.deleteDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 		return null;
-	}
-	
-	/**
-	 * 根据资源名，查询对应的通用sql脚本资源对象
-	 * @param resourceName
-	 * @return
-	 */
-	public ComSqlScript findSqlScriptResourceByName(String resourceName) {
-		if(StrUtils.isEmpty(resourceName)){
-			throw new NullPointerException("请求的资源名不能为空");
-		}
-		
-		String queryHql = "from ComSqlScript where isEnabled=1 and sqlScriptResourceName = ? and projectId = ?";
-		ComSqlScript sqlScriptResource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSqlScript.class, queryHql, resourceName, CurrentThreadContext.getProjectId());
-		if(sqlScriptResource == null){
-			throw new IllegalArgumentException("不存在请求的sql脚本资源：" + resourceName);
-		}
-		return sqlScriptResource;
 	}
 	
 	//--------------------------------------------------------------------------------------------------------

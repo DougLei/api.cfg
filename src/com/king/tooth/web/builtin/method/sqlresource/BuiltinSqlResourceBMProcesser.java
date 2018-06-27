@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.king.tooth.constants.RequestUrlParamKeyConstants;
+import com.king.tooth.sys.entity.common.ComSqlScript;
+import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.AbstractCommonBuiltinBMProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
@@ -46,10 +48,11 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	/**
 	 * 解析请求的url参数集合
 	 * 调用不同的子类去处理参数
+	 * @param reqSqlScriptResource
 	 * @param requestUrlParams
 	 * @param sqlParameterValues 查询条件参数值集合
 	 */
-	private void analysisRequestUrlParams(Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
+	private void analysisRequestUrlParams(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
 		// 内置聚焦函数处理器实例
 		setFocusedIdProcesser(requestUrlParams);
 		// 内置分页函数处理器实例
@@ -59,7 +62,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		// 内置排序函数处理器实例
 		setSortProcesser(requestUrlParams);
 		// 内置sql脚本处理器实例
-		setSqlScriptMethodProcesser(requestUrlParams, sqlParameterValues);
+		setSqlScriptMethodProcesser(reqSqlScriptResource, requestUrlParams, sqlParameterValues);
 		// 最后剩下的数据，就都是条件查询的参数了【这个一定要放到最后被调用！】
 		// 内置查询条件函数处理器
 		setQuerycondProcesser(requestUrlParams, sqlParameterValues);
@@ -67,26 +70,30 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	
 	/**
 	 * 解析sql脚本参数
-	 * <p>前端给参数传值时，参数名以@开头</p>
+	 * @param sqlScript
 	 * @param requestUrlParams
 	 * @return
 	 */
-	private Map<String, String> analysisSqlScriptParam(Map<String, String> requestUrlParams) {
+	private Map<String, String> analysisSqlScriptParam(ComSqlScript sqlScript, Map<String, String> requestUrlParams) {
 		Map<String, String> sqlScriptParams = null;
-		if(requestUrlParams.size() > 0){
+		List<SqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
+		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0 && requestUrlParams.size() > 0){
 			sqlScriptParams = new HashMap<String, String>(16);// 默认初始长度为16
 			
 			Set<String> keys = requestUrlParams.keySet();
-			for (String key : keys) {
-				if(key.startsWith("@")){
-					sqlScriptParams.put(key.substring(1), requestUrlParams.get(key));
+			for (SqlScriptParameter ssp : sqlScriptParameters) {
+				for (String key : keys) {
+					if(key.equalsIgnoreCase(ssp.getParameterName())){
+						sqlScriptParams.put(key, requestUrlParams.get(key));
+						break;
+					}
 				}
 			}
 			
 			if(sqlScriptParams.size() > 0){
 				keys = sqlScriptParams.keySet();
 				for (String key : keys) {
-					requestUrlParams.remove("@"+key);
+					requestUrlParams.remove(key);
 				}
 			}
 		}
@@ -95,12 +102,13 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	
 	/**
 	 * 内置sql脚本处理器实例
+	 * @param reqSqlScriptResource 
 	 * @param requestUrlParams
 	 * @param sqlParameterValues 
 	 */
-	public void setSqlScriptMethodProcesser(Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
-		Map<String, String> sqlScriptParams = analysisSqlScriptParam(requestUrlParams);
-		sqlScriptMethodProcesser = new BuiltinSqlScriptMethodProcesser(sqlScriptParams, requestFormData);
+	public void setSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
+		Map<String, String> sqlScriptParams = analysisSqlScriptParam(reqSqlScriptResource, requestUrlParams);
+		sqlScriptMethodProcesser = new BuiltinSqlScriptMethodProcesser(reqSqlScriptResource, sqlScriptParams, requestFormData);
 		sqlScriptMethodProcesser.setResourceName(resourceName);
 		sqlScriptMethodProcesser.setParentResourceName(parentResourceName);
 		sqlScriptMethodProcesser.setSqlParameterValues(sqlParameterValues);
@@ -145,18 +153,19 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	
 	/**
 	 * 构造函数
+	 * @param reqSqlScriptResource 
 	 * @param requestUrlParams
 	 * @param sqlParameterValues sql参数值集合
 	 * @param requestFormData
 	 */
-	public BuiltinSqlResourceBMProcesser(Map<String, String> requestUrlParams, Object requestFormData, List<List<Object>> sqlParameterValues){
+	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, Object requestFormData, List<List<Object>> sqlParameterValues){
 		// 这三个key值来自      @see PlatformServlet.processSpecialData()
 		this.resourceName = requestUrlParams.remove(RequestUrlParamKeyConstants.RESOURCE_NAME);
 		this.parentResourceName = requestUrlParams.remove(RequestUrlParamKeyConstants.PARENT_RESOURCE_NAME);
 		this.parentResourceId = requestUrlParams.remove(RequestUrlParamKeyConstants.PARENT_RESOURCE_ID);
 		this.requestFormData = requestFormData;
 		
-		analysisRequestUrlParams(requestUrlParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
+		analysisRequestUrlParams(reqSqlScriptResource, requestUrlParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
 	}
 	
 	public BuiltinFocusedIdMethodProcesser getFocusedIdProcesser() {

@@ -14,7 +14,6 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
-import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -43,14 +42,10 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	 * sql脚本资源
 	 */
 	private ComSqlScript sqlScriptResource;
-	/**
-	 * sql脚本父资源
-	 * [暂时不支持父资源、递归的查询]
-	 */
-	private ComSqlScript sqlScriptParentResource;
-	
-	public BuiltinSqlScriptMethodProcesser(Map<String, String> sqlScriptParams, Object requestFormData) {
+
+	public BuiltinSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> sqlScriptParams, Object requestFormData) {
 		super.isUsed = true;
+		this.sqlScriptResource = reqSqlScriptResource;
 		this.sqlScriptParams = sqlScriptParams;
 		this.requestFormData = requestFormData;
 	}
@@ -97,12 +92,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 				if(data.size() > 0){
 					keys = data.keySet();
 					for (String key : keys) {
-						if(key.startsWith("@")){
-							ssp = new SqlScriptParameter((i+1), key.substring(1));
-						}else{
-							ssp = new SqlScriptParameter((i+1), key);
-						}
-						
+						ssp = new SqlScriptParameter((i+1), key);
 						ssp.setActualValue(processActualValue((data.get(key)+"").trim()));
 						sqlScriptActualParameters.add(ssp);
 					}
@@ -131,19 +121,11 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		// 获取从调用方传过来的脚本参数对象，通过url传入的，现在默认是第一个sql语句的参数，即index=1
 		// 现在考虑是能通过url传值的，应该都是get请求，调用的select sql资源
 		List<SqlScriptParameter> sqlScriptActualParameters = getActualParameters();
-		ComSqlScriptService comSqlScriptService = new ComSqlScriptService();
 		try {
 			// 获取sql脚本资源对象
-			sqlScriptResource = comSqlScriptService.findSqlScriptResourceByName(resourceName);
 			sqlScriptResource.setActualParams(sqlScriptActualParameters);
 			sqlScriptResource.setFinalSqlScript(SqlStatementParserUtil.getFinalSqlScript(sqlScriptResource, sqlParameterValues));
 			
-			if(StrUtils.notEmpty(parentResourceName)){
-				// 获取sql脚本父资源对象
-				sqlScriptParentResource = comSqlScriptService.findSqlScriptResourceByName(parentResourceName);
-				sqlScriptParentResource.setActualParams(sqlScriptActualParameters);
-				sqlScriptParentResource.setFinalSqlScript(SqlStatementParserUtil.getFinalSqlScript(sqlScriptParentResource, sqlParameterValues));
-			}
 		} catch (SqlScriptSyntaxException e) {
 			throw new ParserException(ExceptionUtil.getErrMsg(e));
 		} catch (EDBVendorIsNullException e) {
@@ -166,15 +148,6 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		return sqlScriptResource;
 	}
 
-	/**
-	 * 获取sql脚本父资源
-	 * @return
-	 */
-	public ComSqlScript getSqlScriptParentResource() {
-		execAnalysisParams();
-		return sqlScriptParentResource;
-	}
-
 	public int getProcesserType() {
 		return BuiltinMethodProcesserType.SQL_SCRIPT;
 	}
@@ -194,14 +167,6 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 			}
 			if(sqlScriptResource.getSqlScriptParameterList() != null && sqlScriptResource.getSqlScriptParameterList().size() > 0){
 				sqlScriptResource.getSqlScriptParameterList().clear();
-			}
-		}
-		if(sqlScriptParentResource != null){
-			if(sqlScriptParentResource.getSqlQueryResultColumnList() != null && sqlScriptParentResource.getSqlQueryResultColumnList().size() > 0){
-				sqlScriptParentResource.getSqlQueryResultColumnList().clear();
-			}
-			if(sqlScriptParentResource.getSqlScriptParameterList() != null && sqlScriptParentResource.getSqlScriptParameterList().size() > 0){
-				sqlScriptParentResource.getSqlScriptParameterList().clear();
 			}
 		}
 	}

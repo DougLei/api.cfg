@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComCode;
+import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.common.ComCodeService;
+import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
@@ -50,10 +52,13 @@ public class RequestBody implements Serializable{
 		// 声明父、子资源对象实例
 		ComSysResource requestResource = comSysResourceService.findResourceByResourceName(routeBody.getResourceName());
 		validReqResourceMethod(requestResource, requestMethod);
-		analysisCodeResource(requestResource);
+		analysisResourceInstance(requestResource);
 		
 		ComSysResource requestParentResource = null;
 		if(StrUtils.notEmpty(routeBody.getParentResourceName())){
+			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT){
+				throw new IllegalArgumentException("平台目前不支持处理主子sql资源");
+			}
 			if(requestResource.getResourceType() == ISysResource.CODE){
 				throw new IllegalArgumentException("平台目前不支持处理主子代码资源");
 			}
@@ -63,11 +68,6 @@ public class RequestBody implements Serializable{
 			
 			if(requestParentResource.getResourceType() != requestResource.getResourceType()){
 				throw new IllegalArgumentException("平台目前不支持同时处理不同类型的资源");
-			}
-			
-			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT
-					&& !requestResource.getResourceName().equals(requestParentResource.getResourceName())){
-				throw new IllegalArgumentException("平台目前不支持处理[sql资源]的主子关系查询");
 			}
 		}
 		// 获得资源类型
@@ -97,12 +97,15 @@ public class RequestBody implements Serializable{
 	}
 
 	/**
-	 * 解析代码资源对象实例
+	 * 解析资源对象实例
 	 * @param resource
 	 */
-	private void analysisCodeResource(ComSysResource resource) {
+	private void analysisResourceInstance(ComSysResource resource) {
+		if(resource.getResourceType() == ISysResource.SQLSCRIPT){
+			reqSqlScriptResource = new ComSqlScriptService().findSqlScriptResourceById(resource.getRefResourceId());
+		}
 		if(resource.getResourceType() == ISysResource.CODE){
-			reqCodeResource = new ComCodeService().getComCodeById(resource.getRefResourceId());
+			reqCodeResource = new ComCodeService().findCodeResourceById(resource.getRefResourceId());
 		}
 	}
 	
@@ -141,6 +144,11 @@ public class RequestBody implements Serializable{
 	 */
 	private ComCode reqCodeResource;
 	
+	/**
+	 * 请求的sql脚本资源
+	 */
+	private ComSqlScript reqSqlScriptResource;
+	
 	public Map<String, String> getRequestUrlParams() {
 		return requestUrlParams;
 	}
@@ -173,5 +181,8 @@ public class RequestBody implements Serializable{
 	}
 	public ComCode getReqCodeResource() {
 		return reqCodeResource;
+	}
+	public ComSqlScript getReqSqlScriptResource() {
+		return reqSqlScriptResource;
 	}
 }

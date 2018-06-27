@@ -221,7 +221,7 @@ public class InitCfgSystemService extends AbstractService{
 		normal.setLoginName("normal");
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		normal.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-		HibernateUtil.saveObject(normal, adminAccountId);
+		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据库信息【运行平台数据库信息】
@@ -249,7 +249,7 @@ public class InitCfgSystemService extends AbstractService{
 		project.analysisResourceProp();
 		project.setIsBuiltin(1);
 		project.setIsNeedDeploy(1);
-		HibernateUtil.saveObject(project, null);
+		HibernateUtil.saveObject(project, normalAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
