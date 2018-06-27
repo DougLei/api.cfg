@@ -165,7 +165,7 @@ public class ComProjectService extends AbstractPublishService {
 		if(project.getIsEnabled() == 0){
 			return "id为["+projectId+"]的项目信息无效，请联系管理员";
 		}
-		if(publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), null, null)){
+		if(!publishInfoService.validResourceIsPublished(project.getRefDatabaseId(), null, null)){
 			return "["+project.getProjName()+"]项目所属的数据库还未发布，请先发布数据库";
 		}
 		

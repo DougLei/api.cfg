@@ -1,10 +1,12 @@
 package com.king.tooth.web.processer.coderesource;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.sys.entity.common.ComCode;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.CommonProcesser;
 import com.king.tooth.web.processer.IRequestProcesser;
@@ -39,9 +41,31 @@ public abstract class RequestProcesser extends CommonProcesser implements IReque
 	
 	protected void invokeMethod(){
 		ComCode code = requestBody.getReqCodeResource();
-		ResponseBody responseBody = (ResponseBody)ReflectUtil.invokeMethod(code.getCodeClassInstance(), code.getMethodName(), 
+		ResponseBody responseBody = invokeMethodForCodeResource(code.getCodeClassInstance(), code.getMethodName(), 
 				new Class[]{HttpServletRequest.class, String.class}, 
 				new Object[]{requestBody.getRequest(), requestBody.getFormData()+""});
 		setResponseBody(responseBody);
+	}
+	
+	/**
+	 * 调用代码资源的方法
+	 * @param obj
+	 * @param methodName
+	 * @param clz
+	 * @param params
+	 * @return
+	 */
+	 private ResponseBody invokeMethodForCodeResource(Object obj, String methodName, Class<?>[] clz, Object[] params){
+		ResponseBody responseBody = null;
+		String errMsg;
+		try {
+			Method method = obj.getClass().getDeclaredMethod(methodName, clz);
+			responseBody = (ResponseBody) method.invoke(obj, params);
+		} catch (Exception e) {
+			errMsg = ExceptionUtil.getErrMsg(e);
+			Log4jUtil.debug("[ReflectUtil.invokeMethodForCodeResource]方法出现异常信息:{}", errMsg);
+			responseBody = new ResponseBody(errMsg, null);
+		} 
+		return responseBody;
 	}
 }
