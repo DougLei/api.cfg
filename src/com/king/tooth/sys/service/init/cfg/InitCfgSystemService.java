@@ -115,8 +115,8 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComProjectComCodeLinks().toCreateTable());
 		tables.add(new ComSysAccount().toCreateTable());
 		tables.add(new ComDataDictionary().toCreateTable());
-		// 通用表
 		tables.add(new ComSysResource().toCreateTable());
+		// 通用表
 		tables.add(new ComDataLinks().toCreateTable());
 		tables.add(new ComOperLog().toCreateTable());
 		tables.add(new ComReqLog().toCreateTable());

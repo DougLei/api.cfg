@@ -204,8 +204,8 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt.rightId = table.id)" +
-							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
+					"select table."+ResourceNameConstants.ID+" from ComTabledata table, ComProjectComTabledataLinks pt where pt.rightId = table.id" +
+							" and table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
 							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
@@ -214,9 +214,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps.rightId = sqlScript.id)" +
-							"where sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
-							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
+					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, ComProjectComSqlScriptLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
+							" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
+							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();

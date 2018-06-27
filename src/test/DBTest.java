@@ -1,13 +1,17 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @SuppressWarnings("unused")
 public class DBTest {
 	public static void main(String[] args) {
-		String a = "JFAFEIOWJ";
-		System.out.println(a.charAt(5));
+//		String a = "JFAFEIOWJ";
+//		System.out.println(a.charAt(5));
 		
-		
+		List<String> a = new ArrayList<String>(100);
+		System.out.println(a.size());;
 //		dynamicCreateTable();
 //		dynamicDropTable();
 	}

@@ -215,13 +215,15 @@ public class ComProjectModuleService extends AbstractPublishService {
 		tmpHql.setLength(0);
 		
 		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") "+hql, projectModuleIds);
-		long loopCount = count/200 + 1;
-		hql = "select "+ResourceNameConstants.ID + hql;
-		for(int i=0;i<loopCount;i++){
-			List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr("200", (i+1)+"", hql, projectModuleIds);
-			if(publishDataIds != null && publishDataIds.size() > 0){
-				new ComModuleOperationService().batchPublishModuleOperation(databaseId, projectId, publishDataIds);
-				publishDataIds.clear();
+		if(count > 0){
+			long loopCount = count/200 + 1;
+			hql = "select "+ResourceNameConstants.ID + hql;
+			for(int i=0;i<loopCount;i++){
+				List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr("200", (i+1)+"", hql, projectModuleIds);
+				if(publishDataIds != null && publishDataIds.size() > 0){
+					new ComModuleOperationService().batchPublishModuleOperation(databaseId, projectId, publishDataIds);
+					publishDataIds.clear();
+				}
 			}
 		}
 	}

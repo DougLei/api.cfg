@@ -287,13 +287,12 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param entityIds 在方法中被clear
 	 */
 	protected void batchModifyIsCreatedPropVal(String entityName, int isCreated, List<Object> entityIds) {
-		StringBuilder hql = new StringBuilder("update " + entityName + " set isCreated ="+isCreated + " where id in ");
+		StringBuilder hql = new StringBuilder("update " + entityName + " set isCreated ="+isCreated + " where id in (");
 		for (Object entityId : entityIds) {
 			hql.append("'").append(entityId).append("',");
 		}
 		hql.setLength(hql.length() - 1);
 		hql.append(")");
-		entityIds.clear();
 		
 		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql.toString(), null);
 	}

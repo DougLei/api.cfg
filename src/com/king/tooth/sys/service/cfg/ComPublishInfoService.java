@@ -92,7 +92,7 @@ public class ComPublishInfoService extends AbstractService{
 			if(publishProjectId != null){
 				hql.append(" and ");
 			}
-			hql.append("publishResourceId in(");
+			hql.append(" publishResourceId in(");
 			for (Object resourceId : publishResourceIds) {
 				hql.append("?,");
 				params.add(resourceId);

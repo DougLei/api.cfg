@@ -154,7 +154,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 					return "表关联的项目id不能为空！";
 				}
 				operResult = validSqlScriptRefProjIsExists(projectId);
-				if(operResult == null){
+				if(operResult == null && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 					operResult = validSameResourceNameSqlScriptInProject(sqlScript.getSqlScriptResourceName(), projectId);
 				}
 				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
@@ -343,7 +343,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 		publishInfoService.batchDeletePublishedData(null, sqlScriptIds);
 		executeRemoteBatchPublish(databaseId, projectId, sqlScripts, 1, "ComProjectComSqlScriptLinks");
 		sqlScripts.clear();
-		sqlScriptIds.clear();
 		
 		sqlScriptIdStr.setLength(sqlScriptIdStr.length()-1);
 		useLoadPublishApi(sqlScriptIdStr.toString(), projectId, "sql", "1", projectId);

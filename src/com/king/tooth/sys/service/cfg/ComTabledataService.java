@@ -141,7 +141,7 @@ public class ComTabledataService extends AbstractPublishService {
 					return "表关联的项目id不能为空！";
 				}
 				operResult = validTableRefProjIsExists(projectId);
-				if(operResult == null){
+				if(operResult == null && !oldTable.getTableName().equals(table.getTableName())){
 					operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 				}
 				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
@@ -489,7 +489,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	public void batchPublishTable(String databaseId, String projectId, List<Object> tableIds) {
 		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size()*2);
-		ComDatabase database = getObjectById(projectId, ComDatabase.class);
+		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		ComTabledata table;
 		String validResult;
 		for (Object tableId : tableIds) {
@@ -557,12 +557,13 @@ public class ComTabledataService extends AbstractPublishService {
 			ResourceHandlerUtil.clearTables(tmpTables);
 			tb.clear();
 			
-			if(hbms.get((limitSize-1)) != null){
+			if(hbms.size() == (limitSize-1)){
 				executeRemotePublishTable(databaseId, projectId, hbms, "ComProjectComHibernateHbmLinks");
 				hbms.clear();
 			}
 		}
-		if(hbms.get(0) != null){
+		
+		if(hbms.size() > 0){
 			executeRemotePublishTable(databaseId, projectId, hbms, "ComProjectComHibernateHbmLinks");
 			hbms.clear();
 		}
@@ -570,6 +571,7 @@ public class ComTabledataService extends AbstractPublishService {
 		tableIdStr.setLength(tableIdStr.length()-1);
 		
 		useLoadPublishApi(tableIdStr.toString(), projectId, "table", "1", projectId);
+		tableIdStr.setLength(0);
 	}
 	
 	/**
