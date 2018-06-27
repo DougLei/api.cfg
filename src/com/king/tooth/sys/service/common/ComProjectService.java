@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -238,9 +239,6 @@ public class ComProjectService extends AbstractPublishService {
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
-		if(project.getIsBuiltin() == 1){
-			return "内置项目不能进行取消发布操作！";
-		}
 		if(project.getIsCreated() == 0){
 			return "["+project.getProjName()+"]项目未发布，无法取消发布";
 		}
@@ -280,8 +278,8 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select table."+ResourceNameConstants.ID+" from ComTabledata table left join ComProjectComTabledataLinks pt on(pt.rightId = table.id)" +
-							"where table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
+					"select table."+ResourceNameConstants.ID+" from ComTabledata table, ComProjectComTabledataLinks pt where pt.rightId = table.id" +
+							" and table.isNeedDeploy=1 and table.isBuiltin=0" +
 							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComTabledataService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
@@ -290,9 +288,9 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript left join ComProjectComSqlScriptLinks ps on(ps.rightId = sqlScript.id)" +
-							"where sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
-							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM );
+					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, ComProjectComSqlScriptLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
+							" and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
+							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComSqlScriptService().batchCancelPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -346,9 +344,9 @@ public class ComProjectService extends AbstractPublishService {
 	private void executeRemoteDeleteBasicData(String databaseId, String projectId){
 		List<Object> builtinTableTableNames = HibernateUtil.executeListQueryByHqlArr(null, null, 
 				"select tableName from ComTabledata where isEnabled =1 and isNeedDeploy=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
-		StringBuilder hql = new StringBuilder();
+		List<String> deleteHql = new ArrayList<String>(builtinTableTableNames.size());
 		for (Object builtinTableTableName : builtinTableTableNames) {
-			hql.append("delete ").append(builtinTableTableName).append(" where project_id = '"+projectId+"'");
+			deleteHql.add("delete " + builtinTableTableName + " where project_id = '"+projectId+"'");
 		}
 		builtinTableTableNames.clear();
 		
@@ -357,7 +355,9 @@ public class ComProjectService extends AbstractPublishService {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			session.createSQLQuery(hql.toString()).executeUpdate();
+			for (String hql : deleteHql) {
+				session.createSQLQuery(hql).executeUpdate();
+			}
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
@@ -366,7 +366,7 @@ public class ComProjectService extends AbstractPublishService {
 				session.flush();
 				session.close();
 			}
-			hql.setLength(0);
+			deleteHql.clear();
 		}
 	}
 }

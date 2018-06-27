@@ -599,7 +599,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		// 远程过去drop表
-		ComDatabase database = getObjectById(projectId, ComDatabase.class);
+		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		String deleteTableResourceNames = tableHandler.dropTable(tables);
 		tables.clear();

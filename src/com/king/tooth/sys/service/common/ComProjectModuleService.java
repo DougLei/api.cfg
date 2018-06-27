@@ -247,7 +247,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		}
 		hql.setLength(hql.length()-1);
 		hql.append(")");
-		List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, hql.toString(), projectModuleIds);
+		List<Object> publishDataIds = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), projectModuleIds);
 		if(publishDataIds != null && publishDataIds.size() > 0){
 			new ComModuleOperationService().batchCancelPublishModuleOperation(databaseId, projectId, publishDataIds);
 			publishDataIds.clear();
