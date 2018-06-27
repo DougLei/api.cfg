@@ -40,7 +40,13 @@ public class BuiltinQueryCondMethodProcesser extends AbstractSqlResourceBuiltinM
 		List<Object> queryCondParameters = new ArrayList<Object>();
 		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.SQLSCRIPT, resourceName, se, queryCondParameters, sql, alias);
 		
-		sqlParameterValues.add(queryCondParameters);
+		List<Object> sqlParameterValue = sqlParameterValues.get(0);
+		if(sqlParameterValue == null){
+			sqlParameterValue = queryCondParameters;
+		}else{
+			sqlParameterValue.addAll(queryCondParameters);
+		}
+		
 		Log4jUtil.debug("[BuiltinQueryCondMethodProcesser.execAnalysisParam]解析出来，要执行的条件数据库脚本语句为： {} ", sql);
 		Log4jUtil.debug("[BuiltinQueryCondMethodProcesser.execAnalysisParam]解析出来，要执行的条件数据库脚本参数集合为：{}", queryCondParameters);
 	}
