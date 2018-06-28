@@ -214,10 +214,23 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 * @param databaseId
 	 * @param projectId
 	 * @param publishDataIds
+	 * @param deleteRemoteData 是否远程删除数据
 	 */
-	public void batchCancelPublishModuleOperation(String databaseId, String projectId, List<Object> publishDataIds) {
+	public void batchCancelPublishModuleOperation(String databaseId, String projectId, List<Object> publishDataIds, boolean deleteRemoteData) {
 		publishInfoService.batchDeletePublishedData(projectId, publishDataIds);
 		ComModuleOperation comModuleOperation = new ComModuleOperation();
 		batchModifyIsCreatedPropVal(comModuleOperation.getEntityName(), 0, publishDataIds);
+		
+		if(deleteRemoteData){
+			StringBuilder moduleOperationIds = new StringBuilder();
+			for (Object publishDataId : publishDataIds) {
+				moduleOperationIds.append("'").append(publishDataId).append("',");
+			}
+			moduleOperationIds.setLength(moduleOperationIds.length()-1);
+			
+			executeRemoteUpdate(null, projectId, 
+					"delete " + comModuleOperation.getEntityName() + " where projectId='"+projectId+"' and refDataId in ("+moduleOperationIds+")");
+			moduleOperationIds.setLength(0);
+		}
 	}
 }

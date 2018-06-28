@@ -245,11 +245,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布sql脚本
-	 * @param projectId
 	 * @param sqlScriptId
 	 * @return
 	 */
-	public String publishSqlScript(String projectId, String sqlScriptId) {
+	public String publishSqlScript(String sqlScriptId) {
 		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
 		if(sqlScript == null){
 			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
@@ -260,6 +259,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		if(sqlScript.getIsEnabled() == 0){
 			return "id为["+sqlScriptId+"]的sql脚本信息无效，请联系管理员";
 		}
+		String projectId = CurrentThreadContext.getConfProjectId();
 		if(publishInfoService.validResourceIsPublished(null, projectId, sqlScriptId)){
 			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无需再次发布，或取消发布后重新发布";
 		}
@@ -282,15 +282,15 @@ public class ComSqlScriptService extends AbstractPublishService {
 	
 	/**
 	 * 取消发布sql脚本
-	 * @param projectId
 	 * @param sqlScriptId
 	 * @return
 	 */
-	public String cancelPublishSqlScript(String projectId, String sqlScriptId) {
+	public String cancelPublishSqlScript(String sqlScriptId) {
 		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
 		if(sqlScript == null){
 			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
 		}
+		String projectId = CurrentThreadContext.getConfProjectId();
 		if(!publishInfoService.validResourceIsPublished(null, projectId, sqlScriptId)){
 			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本未发布，无法取消发布";
 		}

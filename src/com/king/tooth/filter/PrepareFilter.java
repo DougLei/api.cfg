@@ -32,23 +32,14 @@ public class PrepareFilter extends AbstractFilter{
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
-		String token = request.getHeader("_token");
-		String projectId;
-		if(StrUtils.isEmpty(token)){
-			projectId = request.getHeader("_projId");
-			if(StrUtils.isEmpty(projectId)){
-				printResult("request header中，请求操作的_projId(项目id)值不能为空！", resp);
-				return;
-			}
-		}else{
-			projectId = TokenRefProjectIdMapping.getProjectId(token);
-			if(StrUtils.isEmpty(projectId)){
-				printResult("token无效，请先登录", resp);
-				return;
-			}
+		String projectId = request.getHeader("_projId");
+		if(StrUtils.isEmpty(projectId)){
+			printResult("request header中，请求操作的_projId(项目id)值不能为空！", resp);
+			return;
 		}
 		
 		CurrentThreadContext.setProjectId(projectId);
+		CurrentThreadContext.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
 		try {
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();

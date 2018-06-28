@@ -108,15 +108,11 @@ public class ComSqlScriptController extends AbstractPublishController{
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String projectId = request.getParameter("projectId");
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
-		}
 		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要发布的sql脚本id不能为空", null);
 		}
-		String result = sqlScriptService.publishSqlScript(projectId, sqlScriptId);
+		String result = sqlScriptService.publishSqlScript(sqlScriptId);
 		return installOperResponseBody(result, null);
 	}
 	
@@ -130,15 +126,11 @@ public class ComSqlScriptController extends AbstractPublishController{
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String projectId = request.getParameter("projectId");
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的sql脚本关联的项目id不能为空", null);
-		}
 		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要取消发布的sql脚本id不能为空", null);
 		}
-		String result = sqlScriptService.cancelPublishSqlScript(projectId, sqlScriptId);
+		String result = sqlScriptService.cancelPublishSqlScript(sqlScriptId);
 		return installOperResponseBody(result, null);
 	}
 }

@@ -103,15 +103,15 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	public String deleteProject(String projectId) {
+		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+			return "禁止删除内置的项目信息";
+		}
 		ComProject oldProject = getObjectById(projectId, ComProject.class);
 		if(oldProject == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
 		}
 		if(oldProject.getIsCreated() == 1){
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
-		}
-		if(oldProject.getIsBuiltin() == 1){
-			return "禁止删除内置的项目信息";
 		}
 		
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComTabledataLinks where leftId = ?", projectId);
@@ -153,6 +153,9 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	private String publishProject(String projectId){
+		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+			return "无法发布内置的项目信息";
+		}
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";
@@ -235,6 +238,9 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	private String cancelPublishProject(String projectId){
+		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+			return "无法取消发布内置的项目信息";
+		}
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
 			return "没有找到id为["+projectId+"]的项目对象信息";

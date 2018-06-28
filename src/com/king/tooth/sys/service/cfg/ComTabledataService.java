@@ -315,11 +315,10 @@ public class ComTabledataService extends AbstractPublishService {
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布表
-	 * @param projectId
 	 * @param tableId
 	 * @return
 	 */
-	public String publishTable(String projectId, String tableId) {
+	public String publishTable(String tableId) {
 		ComTabledata table = getObjectById(tableId, ComTabledata.class);
 		if(table == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
@@ -330,6 +329,7 @@ public class ComTabledataService extends AbstractPublishService {
 		if(table.getIsEnabled() == 0){
 			return "id为["+tableId+"]的表信息无效，请联系管理员";
 		}
+		String projectId = CurrentThreadContext.getConfProjectId();
 		if(publishInfoService.validResourceIsPublished(null, projectId, tableId)){
 			return "["+table.getTableName()+"]表已经发布，无需再次发布，或取消发布后重新发布";
 		}
@@ -441,15 +441,15 @@ public class ComTabledataService extends AbstractPublishService {
 	
 	/**
 	 * 取消发布表
-	 * @param projectId
 	 * @param tableId
 	 * @return
 	 */
-	public String cancelPublishTable(String projectId, String tableId) {
+	public String cancelPublishTable(String tableId) {
 		ComTabledata table = getObjectById(tableId, ComTabledata.class);
 		if(table == null){
 			return "没有找到id为["+table+"]的表对象信息";
 		}
+		String projectId = CurrentThreadContext.getConfProjectId();
 		if(!publishInfoService.validResourceIsPublished(null, projectId, tableId)){
 			return "["+table.getTableName()+"]表未发布，无法取消发布";
 		}
@@ -459,7 +459,8 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		// 远程过去drop表
-		ComDatabase database = getObjectById(projectId, ComDatabase.class);
+		ComProject project = getObjectById(projectId, ComProject.class);
+		ComDatabase database = getObjectById(project.getRefDatabaseId(), ComDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		String deleteTableResourceNames = tableHandler.dropTable(table);
 		

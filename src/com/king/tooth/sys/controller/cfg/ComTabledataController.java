@@ -145,15 +145,11 @@ public class ComTabledataController extends AbstractPublishController{
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String projectId = request.getParameter("projectId");
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
-		}
 		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要发布的表id不能为空", null);
 		}
-		String result = tabledataService.publishTable(projectId, tableId);
+		String result = tabledataService.publishTable(tableId);
 		return installOperResponseBody(result, null);
 	}
 	
@@ -167,15 +163,11 @@ public class ComTabledataController extends AbstractPublishController{
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
-		String projectId = request.getParameter("projectId");
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的表关联的项目id不能为空", null);
-		}
 		String tableId = request.getParameter(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要取消发布的表id不能为空", null);
 		}
-		String result = tabledataService.cancelPublishTable(projectId, tableId);
+		String result = tabledataService.cancelPublishTable(tableId);
 		return installOperResponseBody(result, null);
 	}
 }
