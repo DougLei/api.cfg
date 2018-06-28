@@ -44,6 +44,8 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent sc) {
 		// 获取项目在磁盘的根目录
 		SysConfig.WEB_SYSTEM_CONTEXT_REALPATH = sc.getServletContext().getRealPath(File.separator);
+		// 获取项目类型，是否是配置系统
+		SysConfig.isConfSys = "1".equals(sc.getServletContext().getInitParameter("currentSysType"));
 		
 		loadProperties("api.platform.basic.properties", SysConfig.getSystemProperties());
 		String importProperties = SysConfig.getSystemConfig("imports");

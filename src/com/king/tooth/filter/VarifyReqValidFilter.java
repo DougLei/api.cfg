@@ -10,6 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.cache.SysConfig;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
@@ -73,6 +74,11 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		
 		onlineStatus.setAccount(currentAccount);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(onlineStatus);// 记录当前账户在线对象到当前线程中
+		
+		// 记录配置的项目id，配置系统使用
+		if(SysConfig.isConfSys){
+			CurrentThreadContext.setCurrentConfProjectId(onlineStatus.getConfProjectId());
+		}
 		
 		// 修改最后的操作时间
 		onlineStatus.setLastOperDate(new Date());

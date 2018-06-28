@@ -57,8 +57,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(sqlScriptId)){
 			return installOperResponseBody("要删除的sql脚本id不能为空", null);
 		}
-		String projectId = request.getParameter("projectId");
-		String result = sqlScriptService.deleteSqlScript(sqlScriptId, projectId);
+		String result = sqlScriptService.deleteSqlScript(sqlScriptId);
 		return installOperResponseBody(result, null);
 	}
 	

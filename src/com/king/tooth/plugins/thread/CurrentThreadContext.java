@@ -118,10 +118,30 @@ public class CurrentThreadContext {
 	}
 	/**
 	 * 给当前线程设置请求日志对象
-	 * @param databaseId
+	 * @param currentReqLog
 	 */
 	public static final void setCurrentReqLog(ComReqLog currentReqLog){
 		setCurrentThreadData();
 		currentThreadContext.get().setCurrentReqLog(currentReqLog);
+	}
+	
+	//-------------------------------------------------------------------
+	/**
+	 * 获取当前线程配置的项目id
+	 * <p>配置系统专用</p>
+	 * @return
+	 */
+	public static final String getCurrentConfProjectId(){
+		setCurrentThreadData();
+		return currentThreadContext.get().getConfProjectId();
+	}
+	/**
+	 * 给当前线程设置配置的项目id
+	 * <p>配置系统专用</p>
+	 * @param confProjectId
+	 */
+	public static final void setCurrentConfProjectId(String confProjectId){
+		setCurrentThreadData();
+		currentThreadContext.get().setConfProjectId(confProjectId);
 	}
 }

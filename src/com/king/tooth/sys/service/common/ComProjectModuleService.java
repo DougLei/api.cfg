@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.AbstractPublishService;
@@ -57,6 +58,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			operResult = validProjectModuleCodeIsExists(projectModule);
 		}
 		if(operResult == null){
+			projectModule.setRefProjectId(CurrentThreadContext.getCurrentConfProjectId());
 			HibernateUtil.saveObject(projectModule, null);
 		}
 		return operResult;
@@ -85,6 +87,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			operResult = validProjectModuleRefProjectIsExists(projectModule.getRefProjectId());
 		}
 		if(operResult == null){
+			projectModule.setRefProjectId(CurrentThreadContext.getCurrentConfProjectId());
 			HibernateUtil.updateObjectByHql(projectModule, null);
 		}
 		return operResult;

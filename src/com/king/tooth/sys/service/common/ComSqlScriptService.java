@@ -89,8 +89,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = sqlScript.getProjectId();
-			sqlScript.setProjectId(null);
+			String projectId = CurrentThreadContext.getCurrentConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
 				if(StrUtils.isEmpty(projectId)){
@@ -146,8 +145,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = sqlScript.getProjectId();
-			sqlScript.setProjectId(null);
+			String projectId = CurrentThreadContext.getCurrentConfProjectId();
 			
 			if(!isPlatformDeveloper){
 				if(StrUtils.isEmpty(sqlScript.getProjectId())){
@@ -179,20 +177,16 @@ public class ComSqlScriptService extends AbstractPublishService {
 	/**
 	 * 删除sql脚本
 	 * @param sqlScriptId
-	 * @param projectId
 	 * @return
 	 */
-	public String deleteSqlScript(String sqlScriptId, String projectId) {
+	public String deleteSqlScript(String sqlScriptId) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
 		if(oldSqlScript == null){
 			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
 		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		if(!isPlatformDeveloper){
-			if(StrUtils.isEmpty(projectId)){
-				return "要删除的sql脚本，关联的项目id不能为空";
-			}
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
+			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getCurrentConfProjectId(), oldSqlScript.getId())){
 				return "该sql脚本已经发布，无法删除，请先取消发布";
 			}
 		}

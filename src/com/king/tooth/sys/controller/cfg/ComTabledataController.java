@@ -57,8 +57,7 @@ public class ComTabledataController extends AbstractPublishController{
 		if(StrUtils.isEmpty(tableId)){
 			return installOperResponseBody("要删除的表id不能为空", null);
 		}
-		String projectId = request.getParameter("projectId");
-		String result = tabledataService.deleteTable(tableId, projectId);
+		String result = tabledataService.deleteTable(tableId);
 		return installOperResponseBody(result, null);
 	}
 	

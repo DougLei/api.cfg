@@ -91,13 +91,9 @@ public class ComTabledataService extends AbstractPublishService {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = table.getProjectId();
-			table.setProjectId(null);
+			String projectId = CurrentThreadContext.getCurrentConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
-				if(StrUtils.isEmpty(projectId)){
-					return "表关联的项目id不能为空！";
-				}
 				operResult = validTableRefProjIsExists(projectId);
 				if(operResult == null){
 					operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
@@ -133,8 +129,7 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = table.getProjectId();
-			table.setProjectId(null);
+			String projectId = CurrentThreadContext.getCurrentConfProjectId();
 			
 			if(!isPlatformDeveloper){
 				if(StrUtils.isEmpty(projectId)){
@@ -145,7 +140,7 @@ public class ComTabledataService extends AbstractPublishService {
 					operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 				}
 				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
-						return "该表已经发布，不能修改表信息，或取消发布后再修改";
+					return "该表已经发布，不能修改表信息，或取消发布后再修改";
 				}
 			}
 			
@@ -159,20 +154,16 @@ public class ComTabledataService extends AbstractPublishService {
 	/**
 	 * 删除表
 	 * @param tableId
-	 * @param projectId
 	 * @return
 	 */
-	public String deleteTable(String tableId, String projectId) {
+	public String deleteTable(String tableId) {
 		ComTabledata oldTable = getObjectById(tableId, ComTabledata.class);
 		if(oldTable == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		if(!isPlatformDeveloper){
-			if(StrUtils.isEmpty(projectId)){
-				return "要删除的表，关联的项目id不能为空";
-			}
-			if(publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
+			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getCurrentConfProjectId(), oldTable.getId())){
 				return "该表已经发布，无法删除，请先取消发布";
 			}
 		}

@@ -56,6 +56,11 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 * 最后一次操作的时间
 	 */
 	private Date lastOperDate;
+	/**
+	 * 配置的项目id
+	 * <p>配置系统使用的字段，运行系统不用管理</p>
+	 */
+	private String confProjectId;
 	
 	//-------------------------------------------------------------------------
 	
@@ -154,7 +159,12 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setLastOperDate(Date lastOperDate) {
 		this.lastOperDate = lastOperDate;
 	}
-	
+	public String getConfProjectId() {
+		return confProjectId;
+	}
+	public void setConfProjectId(String confProjectId) {
+		this.confProjectId = confProjectId;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
@@ -166,7 +176,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		table.setReqResourceMethod(ISysResource.NONE);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", DataTypeConstants.STRING, 32);
 		accountIdColumn.setName("关联的账户主键");
@@ -216,6 +226,12 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		lastOperDateColumn.setComments("最后一次操作的时间");
 		lastOperDateColumn.setOrderCode(8);
 		columns.add(lastOperDateColumn);
+		
+		ComColumndata confProjectIdColumn = new ComColumndata("conf_project_id", DataTypeConstants.STRING, 32);
+		confProjectIdColumn.setName("配置的项目id");
+		confProjectIdColumn.setComments("配置的项目id:配置系统使用的字段，运行系统不用管理");
+		confProjectIdColumn.setOrderCode(9);
+		columns.add(confProjectIdColumn);
 		
 		table.setColumns(columns);
 		return table;

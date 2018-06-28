@@ -11,6 +11,11 @@ import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
  */
 class CurrentThreadData {
 	/**
+	 * 配置的项目id
+	 * <p>配置系统专用字段</p>
+	 */
+	private String confProjectId;
+	/**
 	 * 当前线程的项目id
 	 * <p>记录每个线程请求的项目主键</p>
 	 */
@@ -65,5 +70,11 @@ class CurrentThreadData {
 	}
 	public void setCurrentReqLog(ComReqLog currentReqLog) {
 		this.currentReqLog = currentReqLog;
+	}
+	public String getConfProjectId() {
+		return confProjectId;
+	}
+	public void setConfProjectId(String confProjectId) {
+		this.confProjectId = confProjectId;
 	}
 }

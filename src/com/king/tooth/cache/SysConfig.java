@@ -19,6 +19,11 @@ public class SysConfig implements Serializable{
 	public transient static String WEB_SYSTEM_CONTEXT_REALPATH;
 	
 	/**
+	 * 是否是配置系统
+	 */
+	public transient static boolean isConfSys;
+	
+	/**
 	 * 存储系统的参数配置
 	 */
 	private transient static final Map<String, String> SYSTEM_PROPERTIES = new HashMap<String, String>();

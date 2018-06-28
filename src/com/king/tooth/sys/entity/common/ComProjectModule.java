@@ -220,10 +220,6 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	public String validNotNullProps() {
 		if(!isValidNotNullProps){
 			isValidNotNullProps = true;
-			if(StrUtils.isEmpty(refProjectId)){
-				validNotNullPropsResult = "模块关联的项目id不能为空";
-				return validNotNullPropsResult;
-			}
 			if(StrUtils.isEmpty(code)){
 				validNotNullPropsResult = "模块编码不能为空";
 				return validNotNullPropsResult;
