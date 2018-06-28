@@ -89,7 +89,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = CurrentThreadContext.getCurrentConfProjectId();
+			String projectId = CurrentThreadContext.getOperProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
 				if(StrUtils.isEmpty(projectId)){
@@ -145,7 +145,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = CurrentThreadContext.getCurrentConfProjectId();
+			String projectId = CurrentThreadContext.getOperProjectId();
 			
 			if(!isPlatformDeveloper){
 				if(StrUtils.isEmpty(sqlScript.getProjectId())){
@@ -186,7 +186,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		if(!isPlatformDeveloper){
-			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getCurrentConfProjectId(), oldSqlScript.getId())){
+			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getOperProjectId(), oldSqlScript.getId())){
 				return "该sql脚本已经发布，无法删除，请先取消发布";
 			}
 		}

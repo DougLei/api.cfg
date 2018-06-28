@@ -2,7 +2,6 @@ package com.king.tooth.sys.service.common;
 
 import java.util.Date;
 
-import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
@@ -113,10 +112,7 @@ public class ComSysAccountService extends AbstractService{
 		accountOnlineStatus.setTryLoginTimes(0);
 		accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
 		
-		// 这里先写成固定值，配置系统专用
-		if(SysConfig.isConfSys){
-			accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
-		}
+		accountOnlineStatus.setOperProjectId("7fe971700f21d3a796d2017398812dcd");// 这里先写成固定值
 		return accountOnlineStatus;
 	}
 	

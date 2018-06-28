@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -16,10 +15,6 @@ import com.king.tooth.util.StrUtils;
  */
 public class ProjectIdRefDatabaseIdMapping {
 	private transient static final Map<String, String> projIdRefDbIdMapping = new HashMap<String, String>(22);
-	
-	public static void main(String[] args) {
-		System.out.println(ResourceHandlerUtil.getIdentity());
-	}
 	
 	/**
 	 * 存储项目id和数据库id的映射关系
@@ -39,7 +34,6 @@ public class ProjectIdRefDatabaseIdMapping {
 	/**
 	 * 根据项目id，获取对应的数据库id
 	 * @param projectId
-	 * @param databaseId
 	 * @return
 	 */
 	public static String getDbId(String projectId){
