@@ -201,7 +201,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 		
 		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
 		executeRemoteBatchPublish(databaseId, projectId, projectModules, 0, null);
-		projectModules.clear();
 		
 		// 发布模块功能
 		StringBuilder tmpHql = new StringBuilder(" from ComModuleOperation where isEnabled =1 and isNeedDeploy=1 and moduleId in (");
@@ -214,12 +213,14 @@ public class ComProjectModuleService extends AbstractPublishService {
 		String hql = tmpHql.toString();
 		tmpHql.setLength(0);
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") "+hql, projectModuleIds);
+		List<Object> projectModuleIdsCopy = new ArrayList<Object>(projectModuleIds.size());
+		projectModuleIdsCopy.addAll(projectModuleIds);
+		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") "+hql, projectModuleIdsCopy);
 		if(count > 0){
 			long loopCount = count/200 + 1;
 			hql = "select "+ResourceNameConstants.ID + hql;
 			for(int i=0;i<loopCount;i++){
-				List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr("200", (i+1)+"", hql, projectModuleIds);
+				List<Object> publishDataIds = HibernateUtil.executeListQueryByHql("200", (i+1)+"", hql, projectModuleIds);
 				if(publishDataIds != null && publishDataIds.size() > 0){
 					new ComModuleOperationService().batchPublishModuleOperation(databaseId, projectId, publishDataIds);
 					publishDataIds.clear();

@@ -232,10 +232,6 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 				validNotNullPropsResult = "功能编码不能为空！";
 				return validNotNullPropsResult;
 			}
-			if(StrUtils.isEmpty(linkUrl)){
-				validNotNullPropsResult = "操作要连接的url不能为空！";
-				return validNotNullPropsResult;
-			}
 		}
 		return validNotNullPropsResult;
 	}

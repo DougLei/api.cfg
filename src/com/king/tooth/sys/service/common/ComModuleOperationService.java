@@ -60,7 +60,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 		if(operResult == null){
 			HibernateUtil.saveObject(moduleOperation, null);
 		}
-		return null;
+		return operResult;
 	}
 
 	/**
