@@ -77,6 +77,9 @@ public class ProjectIdRefDatabaseIdMapping {
 		if(SysConfig.getSystemConfig("current.sys.project.id").equals(projectId)){
 			throw new IllegalArgumentException("不能移除系统内置的项目/数据库映射");
 		}
+		if(StrUtils.isEmpty(projectId)){
+			return;
+		}
 		projIdRefDbIdMapping.remove(projectId);
 	}
 }

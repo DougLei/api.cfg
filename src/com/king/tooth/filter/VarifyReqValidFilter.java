@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
@@ -22,12 +23,6 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 验证请求是否有效的过滤器
- * <pre>
- * 	1.登录验证
- * 	2.登录是否有效验证
- * 	3.请求的资源是否有效验证
- * 	4.等等
- * </pre>
  * @author DougLei
  */
 public class VarifyReqValidFilter extends AbstractFilter{
@@ -36,8 +31,13 @@ public class VarifyReqValidFilter extends AbstractFilter{
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-		String varifyResultMessage = varifyRequestIsValid((HttpServletRequest)req);
+		HttpServletRequest request = (HttpServletRequest)req;
+		String token = request.getHeader("_token");
+		
+		String varifyResultMessage = varifyRequestIsValid(request, token);
 		if(varifyResultMessage != null){
+			// 登录验证失败时，尝试移除传递的token和对应项目id的映射缓存
+			TokenRefProjectIdMapping.removeMapping(token);
 			printResult(varifyResultMessage, resp);
 		}else{
 			chain.doFilter(req, resp);
@@ -46,16 +46,15 @@ public class VarifyReqValidFilter extends AbstractFilter{
 	
 	/**
 	 * 验证请求是否有效
-	 * @param req
+	 * @param request
+	 * @param token
 	 * @return
 	 * @throws IOException
 	 */
-	private String varifyRequestIsValid(HttpServletRequest request) throws IOException{
+	private String varifyRequestIsValid(HttpServletRequest request, String token) throws IOException{
 		if(ResourceHandlerUtil.isIgnoreLoginValid(request)){
 			return null;
 		}
-		
-		String token = request.getHeader("_token");
 		if(StrUtils.isEmpty(token)){
 			return "请先登录";
 		}

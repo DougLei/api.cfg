@@ -2,7 +2,9 @@ package com.king.tooth.sys.service.common;
 
 import java.util.Date;
 
+import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
+import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
@@ -40,6 +42,17 @@ public class ComSysAccountService extends AbstractService{
 	//-----------------------------------------------------------
 	
 	/**
+	 * 登录
+	 * @param loginIp
+	 * @param accountName
+	 * @param password
+	 * @return
+	 */
+	public ComSysAccountOnlineStatus login(String loginIp, String accountName, String password){
+		return modifyAccountOfOnLineStatus(loginIp, accountName, password);
+	}
+	
+	/**
 	 * 创建或修改一个账户在线状态对象
 	 * <p>登录</p>
 	 * @param loginIp
@@ -47,7 +60,7 @@ public class ComSysAccountService extends AbstractService{
 	 * @param password
 	 * @return
 	 */
-	public ComSysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
+	private ComSysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
 		ComSysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		
@@ -111,7 +124,7 @@ public class ComSysAccountService extends AbstractService{
 		accountOnlineStatus.setLoginDate(new Date());
 		accountOnlineStatus.setTryLoginTimes(0);
 		accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
-		
+
 		accountOnlineStatus.setOperProjectId("7fe971700f21d3a796d2017398812dcd");// 这里先写成固定值
 		return accountOnlineStatus;
 	}
@@ -144,6 +157,19 @@ public class ComSysAccountService extends AbstractService{
 		onlineStatus.setAccountName(accountName);
 		onlineStatus.setIsError(1);// 一开始标识为有错误
 		return onlineStatus;
+	}
+
+	/**
+	 * 退出
+	 * @param token
+	 * @return
+	 */
+	public String loginOut(String token) {
+		// 删除对应的ComSysAccountOnlineStatus数据
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSysAccountOnlineStatus where token = ? ", token);
+		// 移除传递的token和对应项目id的映射缓存
+		TokenRefProjectIdMapping.removeMapping(token);
+		return null;
 	}
 
 	//-----------------------------------------------------------

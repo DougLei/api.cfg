@@ -44,6 +44,9 @@ public class TokenRefProjectIdMapping {
 	 * @param token
 	 */
 	public static void removeMapping(String token){
+		if(StrUtils.isEmpty(token)){
+			return;
+		}
 		tokenRefprojIdMapping.remove(token);
 	}
 }

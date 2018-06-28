@@ -433,6 +433,7 @@ public class InitCfgSystemService extends AbstractService{
 		insertCodeResource(adminAccountId, "SqlScriptCancelPublish", "com.king.tooth.sys.controller.common.ComSqlScriptController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		
 		insertCodeResource(adminAccountId, "login", "com.king.tooth.sys.controller.common.ComSysAccountController", "login", ISysResource.POST, 1, ISysResource.COMMON_PLATFORM);
+		insertCodeResource(adminAccountId, "loginOut", "com.king.tooth.sys.controller.common.ComSysAccountController", "loginOut", ISysResource.POST, 1, ISysResource.COMMON_PLATFORM);
 	}
 	private void insertCodeResource(String adminAccountId, String codeResourceName, String classPath, String methodName, String reqResourceMethod, Integer isNeedDeploy, Integer belongPlatformType){
 		ComCode code = new ComCode();
