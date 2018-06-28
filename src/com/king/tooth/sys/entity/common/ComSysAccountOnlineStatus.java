@@ -57,9 +57,10 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 */
 	private Date lastOperDate;
 	/**
-	 * 操作的项目id
+	 * 配置的项目id
+	 * <p>配置系统使用</p>
 	 */
-	private String operProjectId;
+	private String confProjectId;
 	
 	//-------------------------------------------------------------------------
 	
@@ -158,11 +159,11 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setLastOperDate(Date lastOperDate) {
 		this.lastOperDate = lastOperDate;
 	}
-	public String getOperProjectId() {
-		return operProjectId;
+	public String getConfProjectId() {
+		return confProjectId;
 	}
-	public void setOperProjectId(String operProjectId) {
-		this.operProjectId = operProjectId;
+	public void setConfProjectId(String confProjectId) {
+		this.confProjectId = confProjectId;
 	}
 	
 	public ComTabledata toCreateTable() {
@@ -226,11 +227,11 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		lastOperDateColumn.setOrderCode(8);
 		columns.add(lastOperDateColumn);
 		
-		ComColumndata operProjectIdColumn = new ComColumndata("oper_project_id", DataTypeConstants.STRING, 32);
-		operProjectIdColumn.setName("操作的项目id");
-		operProjectIdColumn.setComments("操作的项目id");
-		operProjectIdColumn.setOrderCode(9);
-		columns.add(operProjectIdColumn);
+		ComColumndata confProjectIdColumn = new ComColumndata("conf_project_id", DataTypeConstants.STRING, 32);
+		confProjectIdColumn.setName("配置的项目id");
+		confProjectIdColumn.setComments("配置的项目id：配置系统使用");
+		confProjectIdColumn.setOrderCode(9);
+		columns.add(confProjectIdColumn);
 		
 		table.setColumns(columns);
 		return table;

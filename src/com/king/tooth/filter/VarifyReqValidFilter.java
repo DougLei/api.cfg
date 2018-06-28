@@ -76,7 +76,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		
 		// 记录配置的项目id，配置系统使用
 		if(SysConfig.isConfSys){
-			CurrentThreadContext.setOperProjectId(onlineStatus.getOperProjectId());
+			CurrentThreadContext.setConfProjectId(onlineStatus.getConfProjectId());
 		}
 		
 		// 修改最后的操作时间

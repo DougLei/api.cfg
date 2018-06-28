@@ -58,7 +58,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			operResult = validProjectModuleCodeIsExists(projectModule);
 		}
 		if(operResult == null){
-			projectModule.setRefProjectId(CurrentThreadContext.getOperProjectId());
+			projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
 			HibernateUtil.saveObject(projectModule, null);
 		}
 		return operResult;

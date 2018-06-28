@@ -91,7 +91,7 @@ public class ComTabledataService extends AbstractPublishService {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = CurrentThreadContext.getOperProjectId();
+			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
 				operResult = validTableRefProjIsExists(projectId);
@@ -129,7 +129,7 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
-			String projectId = CurrentThreadContext.getOperProjectId();
+			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
 				if(StrUtils.isEmpty(projectId)){
@@ -163,7 +163,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
 		if(!isPlatformDeveloper){
-			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getOperProjectId(), oldTable.getId())){
+			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
 				return "该表已经发布，无法删除，请先取消发布";
 			}
 		}

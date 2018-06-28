@@ -127,19 +127,21 @@ public class CurrentThreadContext {
 	
 	//-------------------------------------------------------------------
 	/**
-	 * 获取当前线程操作的项目id
+	 * 获取当前线程配置的项目id
+	 * <p>配置系统专用</p>
 	 * @return
 	 */
-	public static final String getOperProjectId(){
+	public static final String getConfProjectId(){
 		setCurrentThreadData();
-		return currentThreadContext.get().getOperProjectId();
+		return currentThreadContext.get().getConfProjectId();
 	}
 	/**
-	 * 给当前线程设置操作的项目id
-	 * @param operProjectId
+	 * 给当前线程设置配置的项目id
+	 * <p>配置系统专用</p>
+	 * @param confProjectId
 	 */
-	public static final void setOperProjectId(String operProjectId){
+	public static final void setConfProjectId(String confProjectId){
 		setCurrentThreadData();
-		currentThreadContext.get().setOperProjectId(operProjectId);
+		currentThreadContext.get().setConfProjectId(confProjectId);
 	}
 }
