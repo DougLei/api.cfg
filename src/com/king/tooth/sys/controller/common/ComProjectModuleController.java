@@ -1,5 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.ResourceNameConstants;
@@ -7,7 +9,6 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.common.ComProjectModuleService;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
@@ -25,10 +26,15 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody add(HttpServletRequest request, String json) {
-		ComProjectModule projectModule = JsonUtil.parseObject(json, ComProjectModule.class);
-		String result = projectModule.analysisResourceProp();
+		List<ComProjectModule> projectModules = getDataInstanceList(json, ComProjectModule.class);
+		String result = analysisResourceProp(projectModules);
 		if(result == null){
-			result = projectModuleService.saveProjectModule(projectModule);
+			for (ComProjectModule projectModule : projectModules) {
+				result = projectModuleService.saveProjectModule(projectModule);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -39,10 +45,15 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody update(HttpServletRequest request, String json) {
-		ComProjectModule projectModule = JsonUtil.parseObject(json, ComProjectModule.class);
-		String result = projectModule.analysisResourceProp();
+		List<ComProjectModule> projectModules = getDataInstanceList(json, ComProjectModule.class);
+		String result = analysisResourceProp(projectModules);
 		if(result == null){
-			result = projectModuleService.updateProjectModule(projectModule);
+			for (ComProjectModule projectModule : projectModules) {
+				result = projectModuleService.updateProjectModule(projectModule);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -53,11 +64,18 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String projectModuleId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(projectModuleId)){
+		String projectModuleIds = request.getParameter(ResourceNameConstants.ID);
+		if(StrUtils.isEmpty(projectModuleIds)){
 			return installOperResponseBody("要删除的项目模块id不能为空", null);
 		}
-		String result = projectModuleService.deleteProjectModule(projectModuleId);
+		String result = null;
+		String[] projectModuleIdArr = projectModuleIds.split(",");
+		for (String projectModuleId : projectModuleIdArr) {
+			result = projectModuleService.deleteProjectModule(projectModuleId);
+			if(result != null){
+				throw new IllegalArgumentException(result);
+			}
+		}
 		return installOperResponseBody(result, null);
 	}
 	

@@ -91,16 +91,10 @@ public class ComColumndataService extends AbstractService{
 
 	/**
 	 * 删除列
-	 * @param columnId
+	 * @param columnIds
 	 * @return
 	 */
-	public String deleteColumn(String columnId) {
-		ComColumndata oldColumn = getObjectById(columnId, ComColumndata.class);
-		if(oldColumn == null){
-			return "没有找到id为["+columnId+"]的列对象信息";
-		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComColumndata where id = '"+columnId+"'");
-		return null;
+	public String deleteColumn(String columnIds) {
+		return deleteDataById("ComColumndata", columnIds);
 	}
-	
 }

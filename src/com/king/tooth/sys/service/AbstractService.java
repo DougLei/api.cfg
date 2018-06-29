@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service;
 
+import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -23,5 +24,31 @@ public abstract class AbstractService {
 		String className = clazz.toString();
 		className = className.substring(className.lastIndexOf(".")+1);
 		return HibernateUtil.extendExecuteUniqueQueryByHqlArr(clazz, "from "+className +" where id=?", id);
+	}
+	
+	/**
+	 * 根据id删除数据，多个id用,隔开
+	 * @param entityName
+	 * @param ids
+	 * @return
+	 */
+	protected String deleteDataById(String entityName, String ids){
+		String[] idArr = ids.split(",");
+		StringBuilder hql = new StringBuilder("delete "+entityName+" where id ");
+		if(idArr.length ==1){
+			hql.append("= '").append(idArr[0]).append("'");
+		}else if(idArr.length > 1){
+			hql.append("in (");
+			for (String columnId : idArr) {
+				hql.append("'").append(columnId).append("',");
+			}
+			hql.setLength(hql.length()-1);
+			hql.append(")");
+		}else{
+			return "删除数据时，传入的id数据数组长度小于1";
+		}
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, hql.toString());
+		hql.setLength(0);
+		return null;
 	}
 }

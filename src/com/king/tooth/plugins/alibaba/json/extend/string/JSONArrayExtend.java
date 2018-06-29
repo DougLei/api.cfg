@@ -49,4 +49,17 @@ public class JSONArrayExtend implements IJson{
 	public boolean isArray() {
 		return true;
 	}
+
+	public void clear() {
+		if(jsonArray != null && jsonArray.size() > 0){
+			JSONObject tmpJson;
+			for (int i = 0; i < jsonArray.size(); i++) {
+				tmpJson = jsonArray.getJSONObject(i);
+				if(tmpJson != null && tmpJson.size() > 0){
+					tmpJson.clear();
+				}
+			}
+			jsonArray.clear();
+		}
+	}
 }

@@ -156,7 +156,7 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	private String publishProject(String projectId){
 		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
-			return "无法发布内置的项目信息";
+			return "无法发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){
@@ -245,7 +245,7 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	private String cancelPublishProject(String projectId){
 		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
-			return "无法取消发布内置的项目信息";
+			return "无法取消发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
 		if(project == null){

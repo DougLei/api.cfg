@@ -48,4 +48,9 @@ public interface IJson extends Serializable{
 	 * @return
 	 */
 	boolean isArray();
+	
+	/**
+	 * 清空
+	 */
+	void clear();
 }

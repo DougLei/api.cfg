@@ -1,12 +1,13 @@
 package com.king.tooth.sys.controller.cfg;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
@@ -24,10 +25,15 @@ public class ComColumndataController extends AbstractController{
 	 * @return
 	 */
 	public ResponseBody add(HttpServletRequest request, String json){
-		ComColumndata column = JsonUtil.parseObject(json, ComColumndata.class);
-		String result = column.analysisResourceProp();
+		List<ComColumndata> columns = getDataInstanceList(json, ComColumndata.class);
+		String result = analysisResourceProp(columns);
 		if(result == null){
-			result = columnataService.saveColumn(column);
+			for (ComColumndata column : columns) {
+				result = columnataService.saveColumn(column);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -38,10 +44,15 @@ public class ComColumndataController extends AbstractController{
 	 * @return
 	 */
 	public ResponseBody update(HttpServletRequest request, String json){
-		ComColumndata column = JsonUtil.parseObject(json, ComColumndata.class);
-		String result = column.analysisResourceProp();
+		List<ComColumndata> columns = getDataInstanceList(json, ComColumndata.class);
+		String result = analysisResourceProp(columns);
 		if(result == null){
-			result = columnataService.updateColumn(column);
+			for (ComColumndata column : columns) {
+				result = columnataService.updateColumn(column);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -52,11 +63,11 @@ public class ComColumndataController extends AbstractController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String columnId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(columnId)){
+		String columnIds = request.getParameter(ResourceNameConstants.ID);
+		if(StrUtils.isEmpty(columnIds)){
 			return installOperResponseBody("要删除的列id不能为空", null);
 		}
-		String result = columnataService.deleteColumn(columnId);
+		String result = columnataService.deleteColumn(columnIds);
 		return installOperResponseBody(result, null);
 	}
 }

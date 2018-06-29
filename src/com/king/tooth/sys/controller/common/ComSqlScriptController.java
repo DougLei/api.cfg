@@ -1,5 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.ResourceNameConstants;
@@ -7,7 +9,6 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.common.ComSqlScriptService;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
@@ -20,15 +21,36 @@ public class ComSqlScriptController extends AbstractPublishController{
 	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
 	
 	/**
+	 * 验证sql脚本非空字段
+	 * @param sqlScripts
+	 * @return
+	 */
+	private String validNotNullProps(List<ComSqlScript> sqlScripts){
+		String result = null;
+		for (ComSqlScript sqlScript : sqlScripts) {
+			result = sqlScript.validNotNullProps();
+			if(result != null){
+				return result;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * 添加sql脚本
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
 	public ResponseBody add(HttpServletRequest request, String json){
-		ComSqlScript sqlScript = JsonUtil.parseObject(json, ComSqlScript.class);
-		String result = sqlScript.validNotNullProps();
+		List<ComSqlScript> sqlScripts = getDataInstanceList(json, ComSqlScript.class);
+		String result = validNotNullProps(sqlScripts);
 		if(result == null){
-			result = sqlScriptService.saveSqlScript(sqlScript);
+			for (ComSqlScript sqlScript : sqlScripts) {
+				result = sqlScriptService.saveSqlScript(sqlScript);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -39,10 +61,15 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody update(HttpServletRequest request, String json){
-		ComSqlScript sqlScript = JsonUtil.parseObject(json, ComSqlScript.class);
-		String result = sqlScript.validNotNullProps();
+		List<ComSqlScript> sqlScripts = getDataInstanceList(json, ComSqlScript.class);
+		String result = validNotNullProps(sqlScripts);
 		if(result == null){
-			result = sqlScriptService.updateSqlScript(sqlScript);
+			for (ComSqlScript sqlScript : sqlScripts) {
+				result = sqlScriptService.updateSqlScript(sqlScript);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -53,11 +80,18 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String sqlScriptId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(sqlScriptId)){
+		String sqlScriptIds = request.getParameter(ResourceNameConstants.ID);
+		if(StrUtils.isEmpty(sqlScriptIds)){
 			return installOperResponseBody("要删除的sql脚本id不能为空", null);
 		}
-		String result = sqlScriptService.deleteSqlScript(sqlScriptId);
+		String result = null;
+		String[] sqlScriptIdArr = sqlScriptIds.split(",");
+		for (String sqlScriptId : sqlScriptIdArr) {
+			result = sqlScriptService.deleteSqlScript(sqlScriptId);
+			if(result != null){
+				throw new IllegalArgumentException(result);
+			}
+		}
 		return installOperResponseBody(result, null);
 	}
 	

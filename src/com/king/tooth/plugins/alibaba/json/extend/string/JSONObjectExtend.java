@@ -48,4 +48,10 @@ public class JSONObjectExtend implements IJson{
 	public boolean isArray() {
 		return false;
 	}
+
+	public void clear() {
+		if(jsonObject != null && jsonObject.size()>0){
+			jsonObject.clear();
+		}
+	}
 }

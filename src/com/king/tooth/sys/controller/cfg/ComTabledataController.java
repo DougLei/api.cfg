@@ -1,5 +1,7 @@
 package com.king.tooth.sys.controller.cfg;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.ResourceNameConstants;
@@ -25,10 +27,15 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody add(HttpServletRequest request, String json){
-		ComTabledata table = JsonUtil.parseObject(json, ComTabledata.class);
-		String result = table.analysisResourceProp();
+		List<ComTabledata> tables = getDataInstanceList(json, ComTabledata.class);
+		String result = analysisResourceProp(tables);
 		if(result == null){
-			result = tabledataService.saveTable(table);
+			for (ComTabledata table : tables) {
+				result = tabledataService.saveTable(table);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -39,10 +46,15 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody update(HttpServletRequest request, String json){
-		ComTabledata table = JsonUtil.parseObject(json, ComTabledata.class);
-		String result = table.analysisResourceProp();
+		List<ComTabledata> tables = getDataInstanceList(json, ComTabledata.class);
+		String result = analysisResourceProp(tables);
 		if(result == null){
-			result = tabledataService.updateTable(table);
+			for (ComTabledata table : tables) {
+				result = tabledataService.updateTable(table);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -53,18 +65,25 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String tableId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(tableId)){
+		String tableIds = request.getParameter(ResourceNameConstants.ID);
+		if(StrUtils.isEmpty(tableIds)){
 			return installOperResponseBody("要删除的表id不能为空", null);
 		}
-		String result = tabledataService.deleteTable(tableId);
+		String result = null;
+		String[] tableIdArr = tableIds.split(",");
+		for (String tableId : tableIdArr) {
+			result = tabledataService.deleteTable(tableId);
+			if(result != null){
+				throw new IllegalArgumentException(result);
+			}
+		}
 		return installOperResponseBody(result, null);
 	}
 	
 
 	/**
 	 * 建模
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
 	public ResponseBody buildModel(HttpServletRequest request, String json){
@@ -72,17 +91,17 @@ public class ComTabledataController extends AbstractPublishController{
 			return installOperResponseBody("建模功能目前只提供给平台开发人员使用", null);
 		}
 		
-		String tableId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(tableId)){
+		ComTabledata table = JsonUtil.parseObject(json, ComTabledata.class);
+		if(table == null || StrUtils.isEmpty(table.getId())){
 			return installOperResponseBody("要建模的表id不能为空", null);
 		}
-		String result = tabledataService.buildModel(tableId);
+		String result = tabledataService.buildModel(table.getId());
 		return installOperResponseBody(result, null);
 	}
 	
 	/**
 	 * 取消建模
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
 	public ResponseBody cancelBuildModel(HttpServletRequest request, String json){
@@ -90,11 +109,11 @@ public class ComTabledataController extends AbstractPublishController{
 			return installOperResponseBody("取消建模功能目前只提供给平台开发人员使用", null);
 		}
 		
-		String tableId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(tableId)){
+		ComTabledata table = JsonUtil.parseObject(json, ComTabledata.class);
+		if(table == null || StrUtils.isEmpty(table.getId())){
 			return installOperResponseBody("要取消建模的表id不能为空", null);
 		}
-		String result = tabledataService.cancelBuildModel(tableId);
+		String result = tabledataService.cancelBuildModel(table.getId());
 		return installOperResponseBody(result, null);
 	}
 	

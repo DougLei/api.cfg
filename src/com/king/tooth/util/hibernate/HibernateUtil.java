@@ -330,7 +330,7 @@ public class HibernateUtil {
 		try {
 			getCurrentThreadSession().save(entityName, data);
 			Log4jUtil.debug("保存数据成功[{}]", data);
-			return data.get(ResourceNameConstants.ID)+"";
+			return data.getString(ResourceNameConstants.ID);
 		} catch (Exception e) {
 			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 			throw e;

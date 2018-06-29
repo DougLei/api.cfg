@@ -391,8 +391,8 @@ public class InitCfgSystemService extends AbstractService{
 		insertCodeResource(adminAccountId, "TableAdd", "com.king.tooth.sys.controller.cfg.ComTabledataController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableUpdate", "com.king.tooth.sys.controller.cfg.ComTabledataController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableDelete", "com.king.tooth.sys.controller.cfg.ComTabledataController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "buildModel", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableCancelBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelBuildModel", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
+		insertCodeResource(adminAccountId, "TableBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "buildModel", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
+		insertCodeResource(adminAccountId, "TableCancelBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelBuildModel", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableAddProjTableRelation", "com.king.tooth.sys.controller.cfg.ComTabledataController", "addProjTableRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TableCancelProjTableRelation", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelProjTableRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "TablePublish", "com.king.tooth.sys.controller.cfg.ComTabledataController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);

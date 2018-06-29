@@ -88,7 +88,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 		}
 		
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectModule where id = '"+projectModuleId+"'");
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectModuleBody where moduleId = '"+projectModuleId+"'");
 		return null;
 	}
 	

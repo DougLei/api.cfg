@@ -166,6 +166,9 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishDatabase(String databaseId){
+		if(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
+			return "不能发布配置系统数据库";
+		}
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";
@@ -268,6 +271,9 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelPublishDatabase(String databaseId){
+		if(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
+			return "不能取消发布配置系统数据库";
+		}
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
 		if(database == null){
 			return "没有找到id为["+databaseId+"]的数据库对象信息";

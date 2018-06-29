@@ -1,5 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.ResourceNameConstants;
@@ -7,7 +9,6 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.service.common.ComDatabaseService;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
@@ -25,10 +26,15 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody add(HttpServletRequest request, String json){
-		ComDatabase database = JsonUtil.parseObject(json, ComDatabase.class);
-		String result = database.analysisResourceProp();
+		List<ComDatabase> databases = getDataInstanceList(json, ComDatabase.class);
+		String result = analysisResourceProp(databases);
 		if(result == null){
-			result = databaseService.saveDatabase(database);
+			for (ComDatabase database : databases) {
+				result = databaseService.saveDatabase(database);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -39,10 +45,15 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody update(HttpServletRequest request, String json){
-		ComDatabase database = JsonUtil.parseObject(json, ComDatabase.class);
-		String result = database.analysisResourceProp();
+		List<ComDatabase> databases = getDataInstanceList(json, ComDatabase.class);
+		String result = analysisResourceProp(databases);
 		if(result == null){
-			result = databaseService.updateDatabase(database);
+			for (ComDatabase database : databases) {
+				result = databaseService.updateDatabase(database);
+				if(result != null){
+					throw new IllegalArgumentException(result);
+				}
+			}
 		}
 		return installOperResponseBody(result, null);
 	}
@@ -53,11 +64,18 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody delete(HttpServletRequest request, String json){
-		String databaseId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(databaseId)){
+		String databaseIds = request.getParameter(ResourceNameConstants.ID);
+		if(StrUtils.isEmpty(databaseIds)){
 			return installOperResponseBody("要删除的数据库id不能为空", null);
 		}
-		String result = databaseService.deleteDatabase(databaseId);
+		String result = null;
+		String[] databaseIdArr = databaseIds.split(",");
+		for (String databaseId : databaseIdArr) {
+			result = databaseService.deleteDatabase(databaseId);
+			if(result != null){
+				throw new IllegalArgumentException(result);
+			}
+		}
 		return installOperResponseBody(result, null);
 	}
 	
