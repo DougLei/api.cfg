@@ -139,7 +139,10 @@ public class ComSysAccountService extends AbstractService{
 	 * @return
 	 */
 	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
-		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? or accountName = ? and projectId = ?";
+		// 暂时屏蔽
+//		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where (loginIp = ? or accountName = ?) and projectId = ?";
+//		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
+		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and accountName = ? and projectId = ?";
 		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
 		if(onlineStatus == null){
 			onlineStatus = new ComSysAccountOnlineStatus();

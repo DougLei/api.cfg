@@ -66,6 +66,10 @@ _projId
 
 
 **************************************************************
+暂时屏蔽的代码：
+1.ComSysAccountService.findAccountOnlineStatus()
+2.ComSysAccountOnlineStatusService.validAccountOfOnLineStatus()
+**************************************************************
 部署到正式环境后，有几个要改的地方：
 1.log4j.properties的等级改为INFO
 2.api.platform.basic.properties中的is.develop的值改为false

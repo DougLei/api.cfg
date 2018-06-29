@@ -6,7 +6,6 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.service.AbstractService;
-import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -37,6 +36,7 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 			return onlineStatus;
 		}
 		
+		// 暂时屏蔽
 //		if(!onlineStatus.getLoginIp().equals(HttpHelperUtil.getClientIp(request))){
 //			onlineStatus.setMessage("当前请求的ip地址与登录时的ip地址不符，请在当前机器上重新登录");
 //			return onlineStatus;
