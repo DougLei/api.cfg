@@ -32,6 +32,12 @@
 		<listener>
 			<listener-class>com.king.tooth.listener.LoadPropertiesFileListener</listener-class>
 		</listener>
+		
+		<!-- 配置系统类型：(1)配置系统/(2)运行系统 【注意：这里只能配置1或2这两个值，且必须配置！】 -->
+		<context-param>
+			<param-name>currentSysType</param-name>
+			<param-value>1</param-value>
+		</context-param>
 
 <!-- ****************************************************************************************************  -->		
 		

@@ -191,6 +191,7 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 	
 	public JSONObject toPublishEntityJson(String projectId) {
 		JSONObject json = toEntityJson();
+		json.put("isCreated", "0");
 		json.put("refDataId", refTableId);
 		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 		json.put("projectId", projectId);

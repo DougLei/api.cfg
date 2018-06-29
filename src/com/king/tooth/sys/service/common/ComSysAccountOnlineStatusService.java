@@ -37,10 +37,10 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 			return onlineStatus;
 		}
 		
-		if(!onlineStatus.getLoginIp().equals(HttpHelperUtil.getClientIp(request))){
-			onlineStatus.setMessage("当前请求的ip地址与登录时的ip地址不符，请在当前机器上重新登录");
-			return onlineStatus;
-		}
+//		if(!onlineStatus.getLoginIp().equals(HttpHelperUtil.getClientIp(request))){
+//			onlineStatus.setMessage("当前请求的ip地址与登录时的ip地址不符，请在当前机器上重新登录");
+//			return onlineStatus;
+//		}
 		return onlineStatus;
 	}
 	

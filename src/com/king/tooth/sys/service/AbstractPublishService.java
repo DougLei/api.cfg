@@ -224,7 +224,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * 运行系统处理加载/卸载数据的api路径
 	 */
 	private static final String appWebSysProcessPublishDataApiPath = SysConfig.getSystemConfig("app.web.sys.location") + "/monitoring/data/publish";
-	private static final String token = ResourceHandlerUtil.getIdentity();
+	private static final String publishApiToken = ResourceHandlerUtil.getIdentity();
 	
 	/**
 	 * 获取调用加载/卸载数据的api的参数map集合
@@ -238,20 +238,8 @@ public abstract class AbstractPublishService extends AbstractService{
 		urlParams.put("projectId", projectId);
 		urlParams.put("publishDataType", publishDataType);
 		urlParams.put("publishType", publishType);
-		urlParams.put("_token", token);
+		urlParams.put("publish_api_token", publishApiToken);
 		return urlParams;
-	}
-	
-	/**
-	 * 获取调用加载/卸载数据的api的headerMap集合
-	 * <p>主要给header中设置_projId的值  @see PrepareFilter</p>
-	 * @param projectId 
-	 * @return
-	 */
-	private Map<String, String> getHeaders(String projectId) {
-		Map<String, String> header = new HashMap<String, String>(1);
-		header.put("_projId", projectId);
-		return header;
 	}
 	
 	/**
@@ -266,7 +254,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	protected String useLoadPublishApi(String publishDataId, String projectId, String publishDataType, String publishType, String headerProjectId){
 		return HttpClientUtil.doPostBasic(appWebSysProcessPublishDataApiPath, 
 				getUrlParams(headerProjectId, publishDataType, publishType), 
-				null, getHeaders(headerProjectId), 
+				null, null, 
 				HttpClientUtil.getHttpStringRequestEntity(publishDataId, "text/json"));
 	}
 	
