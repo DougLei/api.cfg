@@ -22,6 +22,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.EncodingConstants;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.httpclient.requestentity.HttpMultipartRequestEntity;
 import com.king.tooth.util.httpclient.requestentity.HttpRequestEntity;
@@ -177,6 +178,7 @@ public class HttpClientUtil {
 		reqUrl = dealRequestUrl(reqUrl, urlParams);// 处理请求的url 若有参数，拼装参数到url后
 		HttpClient httpClient = null;
 		PostMethod postMethod = null;
+		String errMsg = null;
 		try {
 			httpClient = new HttpClient();
 			postMethod = new PostMethod(reqUrl);
@@ -189,15 +191,17 @@ public class HttpClientUtil {
 			Log4jUtil.debug("[HttpClientUtil.doPost]方法调用接口\"{}\"的结果为\"{}\"", reqUrl, status);
 			return postMethod.getResponseBodyAsString();
 		} catch (HttpException e) {
-			Log4jUtil.debug("[HttpClientUtil.doPost]方法出现异常：{}", e.getMessage());
+			errMsg = ExceptionUtil.getErrMsg(e);
+			Log4jUtil.debug("[HttpClientUtil.doPostBasic]方法出现异常：{}", errMsg);
 		} catch (IOException e) {
-			Log4jUtil.debug("[HttpClientUtil.doPost]方法出现异常：{}", e.getMessage());
+			errMsg = ExceptionUtil.getErrMsg(e);
+			Log4jUtil.debug("[HttpClientUtil.doPostBasic]方法出现异常：{}", errMsg);
 		}finally{
 			if(postMethod != null){
 				postMethod.releaseConnection();
 			}
 		}
-		return null;
+		return errMsg;
 	}
 	
 	/**
