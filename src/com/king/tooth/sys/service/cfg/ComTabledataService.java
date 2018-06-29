@@ -1,6 +1,7 @@
 package com.king.tooth.sys.service.cfg;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -486,13 +487,7 @@ public class ComTabledataService extends AbstractPublishService {
 		String validResult;
 		for (Object tableId : tableIds) {
 			table = getObjectById(tableId.toString(), ComTabledata.class);
-			if(table.getIsNeedDeploy() == 0){
-				Log4jUtil.info("id为["+tableId+"]的表不该被发布，如需发布，请联系管理员");
-				continue;
-			}else if(table.getIsEnabled() == 0){
-				Log4jUtil.info("id为["+tableId+"]的表信息无效，请联系管理员");
-				continue;
-			}else if(publishInfoService.validResourceIsPublished(null, projectId, table.getId())){
+			if(publishInfoService.validResourceIsPublished(null, projectId, table.getId())){
 				Log4jUtil.info("["+table.getTableName()+"]表已经发布，无需再次发布，或取消发布后重新发布");
 				continue;
 			}
@@ -597,5 +592,56 @@ public class ComTabledataService extends AbstractPublishService {
 		tables.clear();
 		
 		useLoadPublishApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
+	}
+
+	/**
+	 * 发布公用的表资源
+	 * <p>公用的表一般在发布数据库的时候就已经完成，这里主要是将表和项目关联起来，在远程数据库的ComSysResource资源中插入数据</p>
+	 * @param databaseId
+	 * @param projectId
+	 */
+	public void publishCommonTableResource(String databaseId, String projectId) {
+		List<ComTabledata> tables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
+				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=1 ");
+		List<ComSysResource> resources = new ArrayList<ComSysResource>(tables.size());
+		ComSysResource resource;
+		Date currentDate = new Date();
+		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+		for (ComTabledata table : tables) {
+			resource = table.turnToResource();
+			resource.setProjectId(projectId);
+			resource.setRefDataId(table.getId());
+			resource.setId(ResourceHandlerUtil.getIdentity());
+			resource.setCreateDate(currentDate);
+			resource.setLastUpdateDate(currentDate);
+			resource.setCreateUserId(currentUserId);
+			resource.setLastUpdatedUserId(currentUserId);
+			resources.add(resource);
+			table.clear();
+		}
+		tables.clear();
+		
+		if(databaseId == null){
+			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
+		}
+		// 获取远程sessionFactory
+		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			for (ComSysResource csr : resources) {
+				session.save(csr.getEntityName(), csr.toEntityJson());
+			}
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+		}finally{
+			if(session != null){
+				session.flush();
+				session.close();
+			}
+			resources.clear();
+		}
 	}
 }

@@ -3,8 +3,11 @@ package com.king.tooth.sys.service.common;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
@@ -13,15 +16,15 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -131,13 +134,14 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	private List<ComTabledata> getBuiltinAppBasicTables(){
 		List<ComTabledata> builtinAppBasicTables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
-				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and belongPlatformType!="+ISysResource.CONFIG_PLATFORM);
+				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=1 ");
+		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : builtinAppBasicTables) {
 			if(table.getIsCore() == 1){
 				coreTableCount++;
 			}
 			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId ='"+table.getId()+"'"));
-			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
+			table.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, true));
 		}
 		return builtinAppBasicTables;
 	}
@@ -148,12 +152,9 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	private List<InputStream> getCoreTableOfHbmInputstreams(List<ComTabledata> appSystemCoreTables) {
 		List<InputStream> coreTableOfHbmInputstreams = new ArrayList<InputStream>(coreTableCount);
-		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-		String hbmContent;
 		for (ComTabledata table : appSystemCoreTables) {
 			if(table.getIsCore() == 1){
-				hbmContent = hibernateHbmHandler.createHbmMappingContent(table, false);
-				coreTableOfHbmInputstreams.add(new ByteArrayInputStream(hbmContent.getBytes()));
+				coreTableOfHbmInputstreams.add(new ByteArrayInputStream(table.getHbmContent().getBytes()));
 			}
 		}
 		return coreTableOfHbmInputstreams;
@@ -206,7 +207,46 @@ public class ComDatabaseService extends AbstractPublishService {
 			sessionFactory.appendNewHbmConfig(coreTableOfHbmInputstreams);
 			coreTableOfHbmInputstreams.clear();
 		}
-		ResourceHandlerUtil.clearTables(appSystemCoreTables);
+		
+		// 将这些运行系统的基础表的hbm保存到远程数据库的ComHibernateHbm表中
+		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(appSystemCoreTables.size());// 记录表对应的hbm内容，要发布的是这个
+		ComHibernateHbm hbm = null;
+		Date currentDate = new Date();
+		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+		for(ComTabledata table : appSystemCoreTables){
+			hbm = new ComHibernateHbm();
+			hbm.tableTurnToHbm(table);
+			hbm.setId(table.getId());
+			hbm.setRefDatabaseId(databaseId);
+			hbm.setHbmContent(table.getHbmContent());
+			hbm.setRefDataId(table.getId());
+			hbm.setCreateDate(currentDate);
+			hbm.setLastUpdateDate(currentDate);
+			hbm.setCreateUserId(currentUserId);
+			hbm.setLastUpdatedUserId(currentUserId);
+			hbms.add(hbm);
+			table.clear();
+		}
+		appSystemCoreTables.clear();
+		
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			session.beginTransaction();
+			for (ComHibernateHbm h : hbms) {
+				session.save(h.getEntityName(), h.toEntityJson());
+			}
+			session.getTransaction().commit();
+		} catch (HibernateException e) {
+			session.getTransaction().rollback();
+			return ExceptionUtil.getErrMsg(e);
+		}finally{
+			if(session != null){
+				session.flush();
+				session.close();
+			}
+			hbms.clear();
+		}
 		
 		// 删除之前的发布数据【以防万一，如果之前有，这里先删除】
 		publishInfoService.deletePublishedData(null, databaseId);

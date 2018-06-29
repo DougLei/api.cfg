@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -69,7 +70,7 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 	 * @return
 	 */
 	@JSONField(serialize = false)
-	public JSONObject getBasicDataJsonObject(String projectId) {
+	public JSONObject getBasicDataJsonObject(String projectId, String currentUserId, Date currentDate) {
 		JSONObject tmpJson = JSONObject.parseObject(basicDataJsonStr);
 		JSONObject json = new JSONObject(tmpJson.size()+1);
 		Set<String> keys = tmpJson.keySet();
@@ -82,6 +83,10 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 		}
 		tmpJson.clear();
 		json.put("projectId", projectId);
+		json.put("createUserId", currentUserId);
+		json.put("lastUpdatedUserId", currentUserId);
+		json.put("createDate", currentDate);
+		json.put("lastUpdateDate", currentDate);
 		return json;
 	}
 	

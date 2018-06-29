@@ -114,6 +114,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	@JSONField(serialize = false)
 	private String refDatabaseId;
 
+	/**
+	 * 表对应的hbmContent
+	 * 在发布数据库时使用
+	 */
+	@JSONField(serialize = false)
+	private String hbmContent;
 	
 	public ComTabledata() {
 	}
@@ -228,7 +234,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setIsCore(Integer isCore) {
 		this.isCore = isCore;
 	}
-	
+	public String getHbmContent() {
+		return hbmContent;
+	}
+	public void setHbmContent(String hbmContent) {
+		this.hbmContent = hbmContent;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_TABLEDATA", 0);

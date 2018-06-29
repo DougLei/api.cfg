@@ -318,13 +318,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		for (Object sqlScriptId : sqlScriptIds) {
 			sqlScript = getObjectById(sqlScriptId.toString(), ComSqlScript.class);
 			
-			if(sqlScript.getIsNeedDeploy() == 0){
-				Log4jUtil.info("id为["+sqlScriptId+"]的sql脚本不该被发布，如需发布，请联系管理员");
-				continue;
-			}else if(sqlScript.getIsEnabled() == 0){
-				Log4jUtil.info("id为["+sqlScriptId+"]的sql脚本信息无效，请联系管理员");
-				continue;
-			}else if(publishInfoService.validResourceIsPublished(null, projectId, sqlScript.getId())){
+			if(publishInfoService.validResourceIsPublished(null, projectId, sqlScript.getId())){
 				Log4jUtil.info("["+sqlScript.getSqlScriptResourceName()+"]sql脚本已经发布，无需再次发布，或取消发布后重新发布");
 				continue;
 			}

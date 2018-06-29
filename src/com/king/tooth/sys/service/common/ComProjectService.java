@@ -1,6 +1,7 @@
 package com.king.tooth.sys.service.common;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -11,6 +12,7 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.common.ComProject;
@@ -206,20 +208,24 @@ public class ComProjectService extends AbstractPublishService {
 				publishDataIds.clear();
 			}
 			
-			// 发布表
+			// 发布公用的表
+			ComTabledataService tableService = new ComTabledataService();
+			tableService.publishCommonTableResource(project.getRefDatabaseId(), projectId);
+			
+			// 发布项目关联的表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
 					"select table."+ResourceNameConstants.ID+" from ComTabledata table, ComProjectComTabledataLinks pt where pt.rightId = table.id" +
-							" and table.isEnabled =1 and table.isNeedDeploy=1 and table.isBuiltin=0" +
+							" and table.isEnabled =1 and table.isNeedDeploy=1" +
 							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
-				new ComTabledataService().batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
+				tableService.batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
 			}
 			
-			// 发布sql脚本
+			// 发布项目关联的sql脚本或通用的sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
 					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, ComProjectComSqlScriptLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
-							" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
+							" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1" +
 							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
@@ -319,18 +325,14 @@ public class ComProjectService extends AbstractPublishService {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			// 最后可以根据实际开发的结果，决定这里到底需不需要分页
-			int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComPublishBasicData where belongPlatformType!="+ISysResource.CONFIG_PLATFORM, null)).intValue();
-			int loopCount = count/50 + 1;
-			List<ComPublishBasicData> basicDatas;// 获取要发布的基础信息集合
-			for(int i=0;i<loopCount;i++){
-				basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, "50", (i+1)+"", 
-						"from ComPublishBasicData where belongPlatformType != "+ISysResource.CONFIG_PLATFORM);
-				for (ComPublishBasicData basicData : basicDatas) {
-					session.save(basicData.getBasicDataResourceName(), basicData.getBasicDataJsonObject(projectId));
-				}
-				basicDatas.clear();
+			
+			String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+			Date currentDate = new Date();
+			List<ComPublishBasicData> basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, null, null, "from ComPublishBasicData where belongPlatformType != "+ISysResource.CONFIG_PLATFORM);// 获取要发布的基础信息集合
+			for (ComPublishBasicData basicData : basicDatas) {
+				session.save(basicData.getBasicDataResourceName(), basicData.getBasicDataJsonObject(projectId, currentUserId, currentDate));
 			}
+			basicDatas.clear();
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();

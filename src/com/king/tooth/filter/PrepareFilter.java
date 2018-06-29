@@ -35,11 +35,7 @@ public class PrepareFilter extends AbstractFilter{
 		String token = request.getHeader("_token");
 		String projectId;
 		if(StrUtils.isEmpty(token)){
-			projectId = request.getHeader("_projId");
-			if(StrUtils.isEmpty(projectId)){
-				printResult("request header中，请求操作的_projId(项目id)值不能为空！", resp);
-				return;
-			}
+			projectId = "90621e37b806o6fe8538c5eb782901bb";
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
 			if(StrUtils.isEmpty(projectId)){
