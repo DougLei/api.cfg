@@ -330,10 +330,10 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
 		// ComOperLog.operType 操作的类型
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "查询", "select", 1, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "增加", "insert", 2, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "修改", "update", 3, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comoperLog.opertype", "删除", "delete", 4, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperlog.opertype", "查询", "select", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperlog.opertype", "增加", "insert", 2, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperlog.opertype", "修改", "update", 3, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comoperlog.opertype", "删除", "delete", 4, ISysResource.COMMON_PLATFORM);
 		
 		// ComSysAccount.accountType 账户类型
 		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "0", 0, ISysResource.COMMON_PLATFORM);
