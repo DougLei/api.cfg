@@ -47,6 +47,7 @@ public class RouteRule implements Serializable{
 	 * <p>如：1_null、2_Counter等</p>
 	 */
 	public String getRouteRuleIdentity() {
-		return propSetMethodNameArr.length + "_" + (StrUtils.isEmpty(specialWord)?"null":specialWord);
+		boolean includeSpecialWord = StrUtils.notEmpty(specialWord);
+		return (includeSpecialWord?(propSetMethodNameArr.length+1):propSetMethodNameArr.length) + "_" + (includeSpecialWord?specialWord:"null");
 	}
 }

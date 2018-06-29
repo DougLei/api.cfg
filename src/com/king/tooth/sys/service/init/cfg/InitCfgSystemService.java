@@ -252,7 +252,7 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateUtil.saveObject(project, normalAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 将表信息插入的cfgTabledata表中，同时把列的信息插入到cfgColumndata表中
+		// 将表信息插入的comcolumndata表中，同时把列的信息插入到comcolumndata表中
 		insertAllTables(adminAccountId);
 		// 添加数据字典基础数据
 		insertBasicDataDictionary(adminAccountId);
@@ -263,8 +263,8 @@ public class InitCfgSystemService extends AbstractService{
 	}
 	
 	/**
-	 * 将表信息插入的cfgTabledata表中
-	 * <p>同时把列的信息插入到cfgColumndata表中</p>
+	 * 将表信息插入的comcolumndata表中
+	 * <p>同时把列的信息插入到comcolumndata表中</p>
 	 * <p>再根据表创建hbm文件，并将其加入到CfgHibernateHbm表中</p>
 	 * @param adminAccountId 
 	 */
@@ -308,26 +308,26 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void insertBasicDataDictionary(String adminAccountId) {
 		// ComColumndata.columnType 字段数据类型
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符串", "string", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "布尔值", "boolean", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "整型", "integer", 3, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "浮点型", "double", 4, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "日期", "date", 5, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "字符大字段", "clob", 6, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgcolumndata.columntype", "二进制大字段", "blob", 7, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "字符串", "string", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "布尔值", "boolean", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "整型", "integer", 3, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "浮点型", "double", 4, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "日期", "date", 5, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "字符大字段", "clob", 6, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "二进制大字段", "blob", 7, ISysResource.CONFIG_PLATFORM);
 		
 		// ComDatabase.dbType 数据库类型
-		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgdatabase.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
 		// ComTabledata.tableType 表类型
-		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "单表", "1", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "树表", "2", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgtabledata.tabletype", "主子表", "3", 3, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.tabletype", "单表", "1", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.tabletype", "树表", "2", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.tabletype", "主子表", "3", 3, ISysResource.CONFIG_PLATFORM);
 		
 		// ComTabledata.dbType 数据库类型
-		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "cfgtabledata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
 		// ComOperLog.operType 操作的类型
 		insertDataDictionary(adminAccountId, "comoperLog.opertype", "查询", "select", 1, ISysResource.COMMON_PLATFORM);

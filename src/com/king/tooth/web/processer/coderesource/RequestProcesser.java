@@ -64,7 +64,7 @@ public abstract class RequestProcesser extends CommonProcesser implements IReque
 		} catch (Exception e) {
 			errMsg = ExceptionUtil.getErrMsg(e);
 			Log4jUtil.debug("[ReflectUtil.invokeMethodForCodeResource]方法出现异常信息:{}", errMsg);
-			responseBody = new ResponseBody(errMsg, null);
+			throw new IllegalArgumentException(errMsg);
 		} 
 		return responseBody;
 	}
