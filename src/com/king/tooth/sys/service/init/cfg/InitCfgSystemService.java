@@ -363,7 +363,7 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void insertDataDictionary(String adminAccountId, String code, String codeCaption, String codeValue, int orderCode, int belongPlatformType){
 		ComDataDictionary dataDictionary = new ComDataDictionary();
-		dataDictionary.setCode(code);
+		dataDictionary.setCode(code.toLowerCase());
 		dataDictionary.setCodeCaption(codeCaption);
 		dataDictionary.setCodeValue(codeValue);
 		dataDictionary.setOrderCode(orderCode);
