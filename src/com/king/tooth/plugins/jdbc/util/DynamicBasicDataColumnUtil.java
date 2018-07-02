@@ -25,6 +25,13 @@ public class DynamicBasicDataColumnUtil {
 		idColumn.setOrderCode(9901);
 		table.getColumns().add(idColumn);
 		
+		// customerId
+		ComColumndata customerIdColumn = new ComColumndata("customer_id", DataTypeConstants.STRING, 32);
+		customerIdColumn.setName("所属租户主键");
+		customerIdColumn.setComments("所属租户主键");
+		customerIdColumn.setOrderCode(9902);
+		table.getColumns().add(customerIdColumn);
+		
 		// projectId
 		ComColumndata projectIdColumn = new ComColumndata("project_id", DataTypeConstants.STRING, 32);
 		projectIdColumn.setName("关联的项目主键");
