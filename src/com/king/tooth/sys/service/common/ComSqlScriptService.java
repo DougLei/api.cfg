@@ -148,7 +148,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
-				if(StrUtils.isEmpty(sqlScript.getProjectId())){
+				if(StrUtils.isEmpty(projectId)){
 					return "表关联的项目id不能为空！";
 				}
 				operResult = validSqlScriptRefProjIsExists(projectId);

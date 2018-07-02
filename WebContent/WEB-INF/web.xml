@@ -113,6 +113,16 @@
 			<url-pattern>/common/*</url-pattern>
 		</servlet-mapping>
 		
+		<!-- 名为uploadFileServlet的servlet控制器 -->
+		<servlet>
+			<servlet-name>uploadFileServlet</servlet-name>
+			<servlet-class>com.king.tooth.web.servlet.UploadFileServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>uploadFileServlet</servlet-name>
+			<url-pattern>/upload</url-pattern>
+		</servlet-mapping>
+		
 <!-- ****************************************************************************************************  -->		
 
 </web-app>

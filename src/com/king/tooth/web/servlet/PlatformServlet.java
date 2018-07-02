@@ -25,7 +25,7 @@ public class PlatformServlet extends BasicHttpServlet{
 	protected void analysisRequestBody(HttpServletRequest request) {
 		requestBody = new RequestBody(request);
 		requestBody.analysisRouteBody();
-		requestBody.analysisRequestResourceType();
+		requestBody.analysisRequestResource();
 		requestBody.setRequestUrlParams(analysisUrlParams(request));
 		requestBody.setFormData(analysisFormData(request));
 	}
@@ -72,7 +72,7 @@ public class PlatformServlet extends BasicHttpServlet{
 				
 				tmpValue = StrUtils.turnStrEncoding(request.getParameter(tmpKey).trim(), EncodingConstants.ISO8859_1, EncodingConstants.UTF_8);// 获取value，并转码
 				
-				// 如果请求的不是sql脚本资源，或key以_开头，则均要将key转换为纯小写，因为_resultType这些值后续是通过纯小写的key取值的
+				// 如果请求的不是sql脚本资源，或key以_开头，则均要将key转换为纯小写，因为例如"_resultType"这些内置参数后续是通过纯小写的key取值的
 				// 【注意】目前sql脚本不支持主子查询、递归查询，所以可以根据key以_开头作为一个判断条件，如果后续需要加入主子查询或递归查询，则要另考虑其他方式
 				if(!isReqSqlScript || tmpKey.startsWith("_")){
 					tmpKey = tmpKey.trim().toLowerCase();

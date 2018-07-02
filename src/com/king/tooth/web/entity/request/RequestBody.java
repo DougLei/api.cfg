@@ -22,93 +22,6 @@ import com.king.tooth.web.servlet.route.RouteBody;
 @SuppressWarnings("serial")
 public class RequestBody implements Serializable{
 	
-	public RequestBody() {
-	}
-	
-	public RequestBody(HttpServletRequest request) {
-		this.request = request;
-	}
-	
-	/**
-	 * 解析routeBody
-	 */
-	public void analysisRouteBody() {
-		/*
-		 *  将项目名、servlet名都取消掉，减少uri中不必要的数据
-		 *  再根据uri，解析出RouteBody
-		 */
-		String requestUri = request.getRequestURI().replace(
-				request.getContextPath() + request.getServletPath() + "/", "");
-		this.routeBody = new RouteBody(requestUri);
-	}
-	
-	/**
-	 * 解析请求的资源类型
-	 * @throws ResourceException 
-	 */
-	public void analysisRequestResourceType() {
-		String requestMethod = getRequestMethod();
-		ComSysResourceService comSysResourceService = new ComSysResourceService();
-		// 声明父、子资源对象实例
-		ComSysResource requestResource = comSysResourceService.findResourceByResourceName(routeBody.getResourceName());
-		validReqResourceMethod(requestResource, requestMethod);
-		analysisResourceInstance(requestResource);
-		
-		ComSysResource requestParentResource = null;
-		if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT){
-				throw new IllegalArgumentException("平台目前不支持处理主子sql资源");
-			}
-			if(requestResource.getResourceType() == ISysResource.CODE){
-				throw new IllegalArgumentException("平台目前不支持处理主子代码资源");
-			}
-			
-			requestParentResource = comSysResourceService.findResourceByResourceName(routeBody.getParentResourceName());
-			validReqResourceMethod(requestResource, requestMethod);
-			
-			if(requestParentResource.getResourceType() != requestResource.getResourceType()){
-				throw new IllegalArgumentException("平台目前不支持同时处理不同类型的资源");
-			}
-		}
-		// 获得资源类型
-		requestResourceType = requestResource.getResourceType();
-	}
-	
-	/**
-	 * 验证资源的请求方式
-	 * @param requestResource
-	 * @param requestMethod
-	 */
-	private void validReqResourceMethod(ComSysResource requestResource, String requestMethod) {
-		if(ISysResource.ALL.equals(requestResource.getReqResourceMethod())){
-			return;
-		}
-		if(ISysResource.NONE.equals(requestResource.getReqResourceMethod())){
-			throw new IllegalArgumentException("请求的资源["+requestResource.getResourceName()+"]不支持[任何]方式的请求，请联系管理员");
-		}
-		
-		String[] supportMethods = requestResource.getReqResourceMethod().split(",");
-		for (String supportMethod : supportMethods) {
-			if(requestMethod.equals(supportMethod.trim())){
-				return;
-			}
-		}
-		throw new IllegalArgumentException("请求的资源["+requestResource.getResourceName()+"]不支持["+requestMethod+"]方式的请求。其支持以下["+requestResource.getReqResourceMethod()+"]方式的请求");
-	}
-
-	/**
-	 * 解析资源对象实例
-	 * @param resource
-	 */
-	private void analysisResourceInstance(ComSysResource resource) {
-		if(resource.getResourceType() == ISysResource.SQLSCRIPT){
-			reqSqlScriptResource = new ComSqlScriptService().findSqlScriptResourceById(resource.getRefResourceId());
-		}
-		if(resource.getResourceType() == ISysResource.CODE){
-			reqCodeResource = new ComCodeService().findCodeResourceById(resource.getRefResourceId());
-		}
-	}
-	
 	/**
 	 * httpServletRequest请求对象
 	 */
@@ -121,12 +34,11 @@ public class RequestBody implements Serializable{
 	
 	/**
 	 * 请求体
-	 * <p>string类型</p>
 	 */
 	private Object formData;
 	
 	/**
-	 * 请求的资源体对象
+	 * 请求的路由对象
 	 */
 	private RouteBody routeBody;
 	
@@ -140,14 +52,77 @@ public class RequestBody implements Serializable{
 	private int requestResourceType;
 	
 	/**
-	 * 请求的代码资源
+	 * 请求的代码资源对象
 	 */
 	private ComCode reqCodeResource;
 	
 	/**
-	 * 请求的sql脚本资源
+	 * 请求的sql脚本资源对象
 	 */
 	private ComSqlScript reqSqlScriptResource;
+	
+	public RequestBody() {
+	}
+	public RequestBody(HttpServletRequest request) {
+		this.request = request;
+	}
+	
+	/**
+	 * 解析routeBody
+	 * <p>路由体</p>
+	 */
+	public void analysisRouteBody() {
+		/*
+		 *  将项目名、servlet名都取消掉，减少uri中不必要的数据
+		 *  再根据uri，解析出RouteBody
+		 */
+		String requestUri = request.getRequestURI().replace(
+				request.getContextPath() + request.getServletPath() + "/", "");
+		this.routeBody = new RouteBody(requestUri);
+	}
+	
+	/**
+	 * 解析请求的资源
+	 * <p>如果是代码资源，或sql脚本资源，顺便获得其资源对象实例</p>
+	 * @throws ResourceException 
+	 */
+	public void analysisRequestResource() {
+		ComSysResourceService comSysResourceService = new ComSysResourceService();
+		// 声明父、子资源对象实例
+		ComSysResource requestResource = comSysResourceService.findResourceByResourceName(routeBody.getResourceName());
+		analysisResourceInstance(requestResource);
+		
+		ComSysResource requestParentResource = null;
+		if(StrUtils.notEmpty(routeBody.getParentResourceName())){
+			if(requestResource.getResourceType() == ISysResource.SQLSCRIPT){
+				throw new IllegalArgumentException("平台目前不支持处理主子sql资源");
+			}
+			if(requestResource.getResourceType() == ISysResource.CODE){
+				throw new IllegalArgumentException("平台目前不支持处理主子代码资源");
+			}
+			
+			requestParentResource = comSysResourceService.findResourceByResourceName(routeBody.getParentResourceName());
+			
+			if(requestParentResource.getResourceType() != requestResource.getResourceType()){
+				throw new IllegalArgumentException("平台目前不支持同时处理不同类型的资源");
+			}
+		}
+		// 获得资源类型
+		requestResourceType = requestResource.getResourceType();
+	}
+	
+	/**
+	 * 解析资源对象实例
+	 * @param resource
+	 */
+	private void analysisResourceInstance(ComSysResource resource) {
+		if(resource.getResourceType() == ISysResource.SQLSCRIPT){
+			reqSqlScriptResource = new ComSqlScriptService().findSqlScriptResourceById(resource.getRefResourceId());
+		}
+		if(resource.getResourceType() == ISysResource.CODE){
+			reqCodeResource = new ComCodeService().findCodeResourceById(resource.getRefResourceId());
+		}
+	}
 	
 	public Map<String, String> getRequestUrlParams() {
 		return requestUrlParams;
@@ -163,9 +138,6 @@ public class RequestBody implements Serializable{
 	}
 	public HttpServletRequest getRequest() {
 		return request;
-	}
-	public void setRequest(HttpServletRequest request) {
-		this.request = request;
 	}
 	public String getRequestMethod() {
 		return request.getMethod().toLowerCase();
