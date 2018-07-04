@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.EncodingConstants;
-import com.king.tooth.plugins.builtin.params.BuiltinQueryParameters;
+import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.StrUtils;
@@ -114,19 +114,19 @@ public class PlatformServlet extends BasicHttpServlet{
 	 */
 	private void processSpecialData(Map<String, String> params) {
 		// 将资源名存储到map集合中
-		params.put(BuiltinQueryParameters.RESOURCE_NAME, requestBody.getRouteBody().getResourceName());
+		params.put(BuiltinParametersKeys.RESOURCE_NAME, requestBody.getRouteBody().getResourceName());
 		
 		// 如果路由中包括resourceId，则将其也存储到map集合中，key值为_resourceid
 		// @see HqlQueryCondFuncEntity.processSpecialThings()  在该方法中取出，作为查询条件
 		if(StrUtils.notEmpty(requestBody.getRouteBody().getResourceId())){
-			params.put(BuiltinQueryParameters.RESOURCE_ID, requestBody.getRouteBody().getResourceId());
+			params.put(BuiltinParametersKeys.RESOURCE_ID, requestBody.getRouteBody().getResourceId());
 		}
 		// 如果路由体现出父子资源查询，则将主资源名，主资源id 放到map集合中
 		if(StrUtils.notEmpty(requestBody.getRouteBody().getParentResourceName())){
-			params.put(BuiltinQueryParameters.PARENT_RESOURCE_NAME, requestBody.getRouteBody().getParentResourceName());
+			params.put(BuiltinParametersKeys.PARENT_RESOURCE_NAME, requestBody.getRouteBody().getParentResourceName());
 		}
 		if(StrUtils.notEmpty(requestBody.getRouteBody().getParentId())){
-			params.put(BuiltinQueryParameters.PARENT_RESOURCE_ID, requestBody.getRouteBody().getParentId());
+			params.put(BuiltinParametersKeys.PARENT_RESOURCE_ID, requestBody.getRouteBody().getParentId());
 		}
 	}
 }

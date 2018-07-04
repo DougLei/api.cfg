@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.king.tooth.plugins.builtin.params.BuiltinQueryParameters;
+import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.StrUtils;
@@ -160,9 +160,9 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 */
 	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, Object requestFormData, List<List<Object>> sqlParameterValues){
 		// 这三个key值来自      @see PlatformServlet.processSpecialData()
-		this.resourceName = requestUrlParams.remove(BuiltinQueryParameters.RESOURCE_NAME);
-		this.parentResourceName = requestUrlParams.remove(BuiltinQueryParameters.PARENT_RESOURCE_NAME);
-		this.parentResourceId = requestUrlParams.remove(BuiltinQueryParameters.PARENT_RESOURCE_ID);
+		this.resourceName = requestUrlParams.remove(BuiltinParametersKeys.RESOURCE_NAME);
+		this.parentResourceName = requestUrlParams.remove(BuiltinParametersKeys.PARENT_RESOURCE_NAME);
+		this.parentResourceId = requestUrlParams.remove(BuiltinParametersKeys.PARENT_RESOURCE_ID);
 		this.requestFormData = requestFormData;
 		
 		analysisRequestUrlParams(reqSqlScriptResource, requestUrlParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
