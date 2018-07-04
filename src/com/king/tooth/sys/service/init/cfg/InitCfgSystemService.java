@@ -312,15 +312,6 @@ public class InitCfgSystemService extends AbstractService{
 	 * @param adminAccountId 
 	 */
 	private void insertBasicDataDictionary(String adminAccountId) {
-		// ComColumndata.columnType 字段数据类型
-		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "字符串", "string", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "布尔值", "boolean", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "整型", "integer", 3, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "浮点型", "double", 4, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "日期", "date", 5, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "字符大字段", "clob", 6, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.columntype", "二进制大字段", "blob", 7, ISysResource.CONFIG_PLATFORM);
-		
 		// ComDatabase.dbType 数据库类型
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
@@ -357,11 +348,16 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目模块资源", "6", 6, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "基础数据资源", "7", 7, ISysResource.COMMON_PLATFORM);
 		
-		// SqlScriptParameter.parameterFrom
+		// SqlScriptParameter.parameterFrom sql脚本参数的来源
 		insertDataDictionary(adminAccountId, "SqlScriptParameter.parameterFrom", "用户输入", "0", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "SqlScriptParameter.parameterFrom", "系统内置", "1", 2, ISysResource.CONFIG_PLATFORM);
 		
-		// System.builtinQueryParameter
+		// SqlScriptParameter.inOut sql脚本参数in/out类型
+		insertDataDictionary(adminAccountId, "SqlScriptParameter.inOut", "输入参数(in)", "1", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "SqlScriptParameter.inOut", "输出参数(out)", "2", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "SqlScriptParameter.inOut", "输入输出参数(in_out)", "3", 3, ISysResource.CONFIG_PLATFORM);
+		
+		// System.builtinQueryParameter 系统内置查询参数
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前系统时间", "_currentDate", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前租户id", "_currentCustomerId", 2, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前项目id", "_currentProjectId", 3, ISysResource.CONFIG_PLATFORM);
@@ -371,6 +367,15 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属组织id", "_currentOrgId", 7, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属部门id", "_currentDeptId", 8, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属岗位id", "_currentPositionId", 9, ISysResource.CONFIG_PLATFORM);
+		
+		// system.dataType 系统内置数据类型
+		insertDataDictionary(adminAccountId, "system.dataType", "字符串", "string", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.dataType", "布尔值", "boolean", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.dataType", "整型", "integer", 3, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.dataType", "浮点型", "double", 4, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.dataType", "日期", "date", 5, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.dataType", "字符大字段", "clob", 6, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.dataType", "二进制大字段", "blob", 7, ISysResource.CONFIG_PLATFORM);
 	}
 	/**
 	 * 添加数据字典

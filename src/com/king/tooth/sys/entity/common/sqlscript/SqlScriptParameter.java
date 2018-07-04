@@ -26,7 +26,7 @@ public class SqlScriptParameter implements Serializable{
 	/**
 	 * 记录是第几个sql语句的参数
 	 */
-	private int index;
+	private int index = 1;
 	/**
 	 * 参数名称
 	 */
