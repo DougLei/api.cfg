@@ -53,15 +53,15 @@ public class BuiltinQueryParameters {
 	 * @return
 	 */
 	public static boolean isBuiltinQueryParams(String parameterName) {
-		if(currentDate.equalsIgnoreCase(parameterName)
-				|| currentCustomerId.equalsIgnoreCase(parameterName) 
-				|| currentProjectId.equalsIgnoreCase(parameterName)
-				|| accountId.equalsIgnoreCase(parameterName)
-				|| accountName.equalsIgnoreCase(parameterName)
-				|| currentUserId.equalsIgnoreCase(parameterName)
-				|| currentOrgId.equalsIgnoreCase(parameterName)
-				|| currentDeptId.equalsIgnoreCase(parameterName)
-				|| currentPositionId.equalsIgnoreCase(parameterName)){
+		if(currentDate.equals(parameterName)
+				|| currentCustomerId.equals(parameterName) 
+				|| currentProjectId.equals(parameterName)
+				|| accountId.equals(parameterName)
+				|| accountName.equals(parameterName)
+				|| currentUserId.equals(parameterName)
+				|| currentOrgId.equals(parameterName)
+				|| currentDeptId.equals(parameterName)
+				|| currentPositionId.equals(parameterName)){
 			return true;
 		}
 		return false;
@@ -73,31 +73,31 @@ public class BuiltinQueryParameters {
 	 * @return
 	 */
 	public static Object getBuiltinQueryParamValue(String parameterName) {
-		if(currentDate.equalsIgnoreCase(parameterName)){
+		if(currentDate.equals(parameterName)){
 			return new Date();
 		}
-		if(currentCustomerId.equalsIgnoreCase(parameterName)){
+		if(currentCustomerId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
 		}
-		if(currentProjectId.equalsIgnoreCase(parameterName)){
+		if(currentProjectId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentProjectId();
 		}
-		if(accountId.equalsIgnoreCase(parameterName)){
+		if(accountId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		}
-		if(accountName.equalsIgnoreCase(parameterName)){
+		if(accountName.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName();
 		}
-		if(currentUserId.equalsIgnoreCase(parameterName)){
+		if(currentUserId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentUserId();
 		}
-		if(currentOrgId.equalsIgnoreCase(parameterName)){
+		if(currentOrgId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentOrgId();
 		}
-		if(currentDeptId.equalsIgnoreCase(parameterName)){
+		if(currentDeptId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentDeptId();
 		}
-		if(currentPositionId.equalsIgnoreCase(parameterName)){
+		if(currentPositionId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentPositionId();
 		}
 		throw new IllegalArgumentException("没有匹配到内置参数["+parameterName+"]");
