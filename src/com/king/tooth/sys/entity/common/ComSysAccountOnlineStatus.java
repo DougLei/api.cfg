@@ -28,11 +28,11 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 */
 	private String currentCustomerId;
 	/**
-	 * 当前的项目id
+	 * 当前项目id
 	 */
 	private String currentProjectId;
 	/**
-	 * 当前的账户id
+	 * 当前账户id
 	 */
 	private String accountId;
 	/**

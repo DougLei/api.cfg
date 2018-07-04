@@ -19,11 +19,11 @@ public class BuiltinQueryParameters {
 	 */
 	private static final String currentCustomerId = "_currentCustomerId";
 	/**
-	 * 当前的项目id
+	 * 当前项目id
 	 */
 	private static final  String currentProjectId = "_currentProjectId";
 	/**
-	 * 当前的账户id
+	 * 当前账户id
 	 */
 	private static final String accountId = "_accountId";
 	/**

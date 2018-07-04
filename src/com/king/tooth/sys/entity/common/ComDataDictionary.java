@@ -43,6 +43,11 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	 */
 	private Integer orderCode;
 	/**
+	 * 是否有效
+	 * <p>默认值为1</p>
+	 */
+	private Integer isEnabled;
+	/**
 	 * 备注
 	 */
 	private String comments;
@@ -80,6 +85,12 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
+	public Integer getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(Integer isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 	public String getComments() {
 		return comments;
 	}
@@ -97,7 +108,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
 		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 50);
 		codeColumn.setName("编码");
@@ -130,10 +141,17 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.STRING, 150);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("是否有效：默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		isEnabledColumn.setOrderCode(6);
+		columns.add(isEnabledColumn);
+		
 		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 150);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
-		commentsColumn.setOrderCode(6);
+		commentsColumn.setOrderCode(7);
 		columns.add(commentsColumn);
 		
 		table.setColumns(columns);
@@ -152,6 +170,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
 		entityJson.put("orderCode", orderCode);
+		entityJson.put("isEnabled", isEnabled);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
 	}

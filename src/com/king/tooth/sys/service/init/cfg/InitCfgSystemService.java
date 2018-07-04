@@ -356,6 +356,21 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目资源", "5", 5, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目模块资源", "6", 6, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "基础数据资源", "7", 7, ISysResource.COMMON_PLATFORM);
+		
+		// SqlScriptParameter.parameterFrom
+		insertDataDictionary(adminAccountId, "SqlScriptParameter.parameterFrom", "用户输入", "0", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "SqlScriptParameter.parameterFrom", "系统内置", "1", 2, ISysResource.CONFIG_PLATFORM);
+		
+		// System.builtinQueryParameter
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前系统时间", "_currentDate", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前租户id", "_currentCustomerId", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前项目id", "_currentProjectId", 3, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前账户id", "_accountId", 4, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前账户名", "_accountName", 5, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户id", "_currentUserId", 6, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属组织id", "_currentOrgId", 7, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属部门id", "_currentDeptId", 8, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属岗位id", "_currentPositionId", 9, ISysResource.CONFIG_PLATFORM);
 	}
 	/**
 	 * 添加数据字典
