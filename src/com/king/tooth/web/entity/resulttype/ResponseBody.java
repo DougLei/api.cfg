@@ -2,7 +2,6 @@ package com.king.tooth.web.entity.resulttype;
 
 import java.io.Serializable;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -18,19 +17,16 @@ public class ResponseBody implements Serializable{
 	 * 响应的状态码，默认200
 	 * <p>构造函数没有提供该参数，如果需要修改，请使用set方法修改</p>
 	 */
-	@JSONField(name = "status")
 	private int status = 200;
 	
 	/**
 	 * 响应的描述信息
 	 */
-	@JSONField(name = "message")
 	private String message;
 	
 	/**
 	 * 要响应的具体对象内容
 	 */
-	@JSONField(name = "data")
 	private Object data;
 	
 	public ResponseBody() {

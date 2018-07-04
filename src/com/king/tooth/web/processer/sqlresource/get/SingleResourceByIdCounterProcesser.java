@@ -2,6 +2,7 @@ package com.king.tooth.web.processer.sqlresource.get;
 
 import org.hibernate.Query;
 
+import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.web.entity.resulttype.TextResult;
 
 /**
@@ -15,8 +16,12 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 	}
 	
 	protected boolean doGetProcess() {
-		validIdColumnIsExists();
-		String querySql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalCteSql() + 
+		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		if(sqlScriptResource.getSqlQueryResultColumnList() != null){
+			validIdColumnIsExists(sqlScriptResource);
+		}
+		
+		String querySql = sqlScriptResource.getFinalSqlScript().getFinalCteSql() + 
 						  getFromSql().toString();
 		Query query = createQuery(1, querySql);
 		long totalCount = (long) query.uniqueResult();

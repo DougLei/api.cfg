@@ -9,9 +9,9 @@ import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.plugins.builtin.data.BuiltinDatas;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
@@ -105,7 +105,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	public String deleteProject(String projectId) {
-		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+		if(BuiltinDatas.currentSysBuiltinProjectInstance.getId().equals(projectId)){
 			return "禁止删除内置的项目信息";
 		}
 		ComProject oldProject = getObjectById(projectId, ComProject.class);
@@ -155,7 +155,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	private String publishProject(String projectId){
-		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+		if(BuiltinDatas.currentSysBuiltinProjectInstance.getId().equals(projectId)){
 			return "无法发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
@@ -233,7 +233,7 @@ public class ComProjectService extends AbstractPublishService {
 			}
 			
 			result = useLoadPublishApi(projectId, projectId, "project", "1", 
-					CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
+					BuiltinDatas.currentSysBuiltinProjectInstance.getId());
 		}
 		return result;
 	}
@@ -244,7 +244,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	private String cancelPublishProject(String projectId){
-		if(CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+		if(BuiltinDatas.currentSysBuiltinProjectInstance.getId().equals(projectId)){
 			return "无法取消发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
@@ -309,7 +309,7 @@ public class ComProjectService extends AbstractPublishService {
 			}
 			
 			result = useLoadPublishApi(projectId, projectId, "project", "-1", 
-					CurrentSysInstanceConstants.currentSysBuiltinProjectInstance.getId());
+					BuiltinDatas.currentSysBuiltinProjectInstance.getId());
 		}
 		return result;
 	}

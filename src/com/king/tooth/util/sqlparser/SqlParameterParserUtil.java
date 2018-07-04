@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.StrUtils;
 
@@ -48,11 +49,11 @@ public class SqlParameterParserUtil {
 	/**
 	 * 读取多条sql语句，解析出里面的参数
 	 * @param sqlArr
-	 * @return
+	 * @param sqlScript
 	 */
-	public static List<SqlScriptParameter> analysisMultiSqlScriptParam(String[] sqlScriptArr){
+	public static void analysisMultiSqlScriptParam(String[] sqlScriptArr, ComSqlScript sqlScript){
 		if(sqlScriptArr == null || sqlScriptArr.length == 0){
-			return null;
+			return;
 		}
 		
 		int sqlScriptArrLength = sqlScriptArr.length;
@@ -61,8 +62,9 @@ public class SqlParameterParserUtil {
 		List<Integer> parameterPlaceholderIndex = new ArrayList<Integer>();// 记录每个$的下标
 		String sql;
 		int len;
+		Matcher matcher;
 		for(int i=0; i<sqlScriptArrLength; i++){
-			Matcher matcher = sqlScriptParamPattern.matcher(sqlScriptArr[i]);
+			matcher = sqlScriptParamPattern.matcher(sqlScriptArr[i]);
 			while(matcher.find()){
 				sb.append(matcher.group()).append(";");
 			}
@@ -83,14 +85,14 @@ public class SqlParameterParserUtil {
 			sql = sb.toString();
 			len = parameterPlaceholderIndex.size();
 			for (int j = 0; j < len; j++) {
-				SqlScriptParameter sqlScriptParameter = new SqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)));
+				SqlScriptParameter sqlScriptParameter = new SqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), null, 0);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			
 			sb.setLength(0);
 			parameterPlaceholderIndex.clear();
 		}
-		return sqlScriptParameterList;
+		sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
 	}
 	
 	/**
@@ -127,19 +129,9 @@ public class SqlParameterParserUtil {
 		}
 		for (SqlScriptParameter ssp : sqlScriptParameters) {
 			if(ssp.getIndex() == index){
-				sqlScript = sqlScript.replaceAll(escapeCharacterPrefix + prefix + ssp.getParameterName() + escapeCharacterPrefix + suffix, ssp.getActualValue()+"");
+				sqlScript = sqlScript.replaceAll(escapeCharacterPrefix + prefix + ssp.getParameterName() + escapeCharacterPrefix + suffix, ssp.getActualInValue()+"");
 			}
 		}
 		return sqlScript;
-	}
-	
-	/**
-	 * 指定的sql语句中，是否存在对应的参数名
-	 * @param sql
-	 * @param parameterName
-	 * @return
-	 */
-	public static boolean sqlScriptContainsParameterName(String sql, String parameterName){
-		return sql.contains(prefix + parameterName + suffix);
 	}
 }

@@ -63,7 +63,6 @@ public class ComVerifyCode extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
-		table.setReqResourceMethod(ISysResource.GET);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);

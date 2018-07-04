@@ -24,7 +24,6 @@ public class ComProjectComSqlScriptLinks implements Serializable, ITable {
 		table.setComments("项目和sql脚本的关系表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(ISysResource.NONE);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);

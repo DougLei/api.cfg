@@ -80,7 +80,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
@@ -140,18 +139,13 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 	}
 	
 	public String validNotNullProps() {
-		if(!isValidNotNullProps){
-			isValidNotNullProps = true;
-			if(StrUtils.isEmpty(refDatabaseId)){
-				validNotNullPropsResult = "项目关联的数据库id不能为空";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(projCode)){
-				validNotNullPropsResult = "项目编码不能为空";
-				return validNotNullPropsResult;
-			}
+		if(StrUtils.isEmpty(refDatabaseId)){
+			return "项目关联的数据库id不能为空";
 		}
-		return validNotNullPropsResult;
+		if(StrUtils.isEmpty(projCode)){
+			return "项目编码不能为空";
+		}
+		return null;
 	}
 	
 	public String analysisResourceProp() {

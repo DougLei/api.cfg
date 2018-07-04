@@ -105,7 +105,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	protected final void doModifyProcess(String sqlDesc){
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
 		if(sqlScript.getSqlScriptType().equals(SqlStatementType.PROCEDURE)){// 是存储过程
-			Map<String, Object> data = HibernateUtil.executeProcedure(sqlScript.getProcedureName(), sqlScript.getProcedureParameterList());
+			Map<String, Object> data = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getProcedureName(), sqlScript.getSqlScriptParameterList());
 			installResponseBodyForDataObject(data);
 		}else{
 			String[] modifySqlArr = sqlScript.getFinalSqlScript().getFinalModifySqlArr();

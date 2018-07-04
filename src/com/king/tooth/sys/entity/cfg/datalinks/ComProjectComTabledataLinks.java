@@ -24,7 +24,6 @@ public class ComProjectComTabledataLinks implements Serializable, ITable {
 		table.setComments("项目和表的关系表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
-		table.setReqResourceMethod(ISysResource.NONE);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		

@@ -90,7 +90,6 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(NONE);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);

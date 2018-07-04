@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
+import com.king.tooth.sys.entity.common.ComSqlScript;
+
 /**
  * 处理这种请求路径格式的处理器：/{resourceType}/{resourceId}
  * @author DougLei
@@ -16,13 +18,19 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 	}
 	
 	protected boolean doGetProcess() {
-		validIdColumnIsExists();
-		String querySql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalCteSql()+
-						  builtinQueryMethodProcesser.getSql().append(getFromSql())
-															  .append(builtinSortMethodProcesser.getSql())
-															  .toString();
+		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		if(sqlScriptResource.getSqlQueryResultColumnList() != null){
+			validIdColumnIsExists(sqlScriptResource);
+		}
+		
+		String coreQuerySql =  sqlScriptResource.getFinalSqlScript().getFinalCteSql()+
+				  builtinQueryMethodProcesser.getSql().append(getFromSql());
+		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
+		
+		processSelectSqlQueryResultColumns(sqlScriptResource, coreQuerySql);
+		
 		Query query = createQuery(1, querySql);
-		List<Map<String, Object>> dataList = executeList(query, builtinSqlScriptMethodProcesser.getSqlScriptResource().getSqlQueryResultColumnList());
+		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataObject(dataList);
 		return true;

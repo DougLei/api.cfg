@@ -21,29 +21,13 @@ public class ComSqlScriptController extends AbstractPublishController{
 	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
 	
 	/**
-	 * 验证sql脚本非空字段
-	 * @param sqlScripts
-	 * @return
-	 */
-	private String validNotNullProps(List<ComSqlScript> sqlScripts){
-		String result = null;
-		for (ComSqlScript sqlScript : sqlScripts) {
-			result = sqlScript.validNotNullProps();
-			if(result != null){
-				return result;
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * 添加sql脚本
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
 	public ResponseBody add(HttpServletRequest request, String json){
 		List<ComSqlScript> sqlScripts = getDataInstanceList(json, ComSqlScript.class);
-		String result = validNotNullProps(sqlScripts);
+		String result = analysisResourceProp(sqlScripts);
 		if(result == null){
 			for (ComSqlScript sqlScript : sqlScripts) {
 				result = sqlScriptService.saveSqlScript(sqlScript);
@@ -62,7 +46,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 */
 	public ResponseBody update(HttpServletRequest request, String json){
 		List<ComSqlScript> sqlScripts = getDataInstanceList(json, ComSqlScript.class);
-		String result = validNotNullProps(sqlScripts);
+		String result = analysisResourceProp(sqlScripts);
 		if(result == null){
 			for (ComSqlScript sqlScript : sqlScripts) {
 				result = sqlScriptService.updateSqlScript(sqlScript);
@@ -133,12 +117,83 @@ public class ComSqlScriptController extends AbstractPublishController{
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
+	 * 查询sql脚本参数
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	public ResponseBody getSqlScriptParameter(HttpServletRequest request, String json){
+		return null;
+	}
+	
+	/**
+	 * 添加sql脚本参数
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	public ResponseBody addSqlScriptParameter(HttpServletRequest request, String json){
+//		List<ComSqlScript> sqlScripts = getDataInstanceList(json, ComSqlScript.class);
+//		String result = analysisResourceProp(sqlScripts);
+//		if(result == null){
+//			for (ComSqlScript sqlScript : sqlScripts) {
+//				result = sqlScriptService.saveSqlScript(sqlScript);
+//				if(result != null){
+//					throw new IllegalArgumentException(result);
+//				}
+//			}
+//		}
+//		return installOperResponseBody(result, null);
+		return null;
+	}
+	
+	/**
+	 * 修改sql脚本参数
+	 * <p>请求方式：PUT</p>
+	 * @return
+	 */
+	public ResponseBody updateSqlScriptParameter(HttpServletRequest request, String json){
+//		List<ComSqlScript> sqlScripts = getDataInstanceList(json, ComSqlScript.class);
+//		String result = analysisResourceProp(sqlScripts);
+//		if(result == null){
+//			for (ComSqlScript sqlScript : sqlScripts) {
+//				result = sqlScriptService.updateSqlScript(sqlScript);
+//				if(result != null){
+//					throw new IllegalArgumentException(result);
+//				}
+//			}
+//		}
+//		return installOperResponseBody(result, null);
+		return null;
+	}
+	
+	/**
+	 * 删除sql脚本参数
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	public ResponseBody deleteSqlScriptParameter(HttpServletRequest request, String json){
+//		String sqlScriptIds = request.getParameter(ResourceNameConstants.ID);
+//		if(StrUtils.isEmpty(sqlScriptIds)){
+//			return installOperResponseBody("要删除的sql脚本id不能为空", null);
+//		}
+//		String result = null;
+//		String[] sqlScriptIdArr = sqlScriptIds.split(",");
+//		for (String sqlScriptId : sqlScriptIdArr) {
+//			result = sqlScriptService.deleteSqlScript(sqlScriptId);
+//			if(result != null){
+//				throw new IllegalArgumentException(result);
+//			}
+//		}
+		return null;
+	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	/**
 	 * 发布sql脚本
 	 * <p>请求方式：GET</p>
 	 * @return
 	 */
 	public ResponseBody publish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
@@ -156,7 +211,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody cancelPublish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
 		

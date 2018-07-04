@@ -24,7 +24,6 @@ public class ComSysAccountComRoleLinks implements Serializable, ITable {
 		table.setComments("系统账户和角色的关联关系资源对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(ISysResource.NONE);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(5);

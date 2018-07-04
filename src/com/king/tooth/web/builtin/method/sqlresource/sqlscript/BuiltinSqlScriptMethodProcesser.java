@@ -5,19 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.alibaba.druid.sql.parser.ParserException;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.exception.gsp.AnalyzeSqlScriptException;
-import com.king.tooth.exception.gsp.EDBVendorIsNullException;
-import com.king.tooth.exception.gsp.SqlScriptSyntaxException;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
-import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.sqlresource.AbstractSqlResourceBuiltinMethodProcesser;
 
@@ -70,8 +64,8 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 				
 				Set<String> keys = sqlScriptParams.keySet();
 				for (String key : keys) {
-					ssp = new SqlScriptParameter(1, key);
-					ssp.setActualValue(processActualValue(sqlScriptParams.get(key).trim()));
+					ssp = new SqlScriptParameter(1, key, null, 0);
+					ssp.setActualInValue(processActualValue(sqlScriptParams.get(key).trim()));
 					sqlScriptActualParameters.add(ssp);
 				}
 				
@@ -92,8 +86,8 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 				if(data.size() > 0){
 					keys = data.keySet();
 					for (String key : keys) {
-						ssp = new SqlScriptParameter((i+1), key);
-						ssp.setActualValue(processActualValue((data.get(key)+"").trim()));
+						ssp = new SqlScriptParameter((i+1), key, null, 0);
+						ssp.setActualInValue(processActualValue((data.getString(key)).trim()));
 						sqlScriptActualParameters.add(ssp);
 					}
 					keys.clear();
@@ -121,19 +115,9 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		// 获取从调用方传过来的脚本参数对象，通过url传入的，现在默认是第一个sql语句的参数，即index=1
 		// 现在考虑是能通过url传值的，应该都是get请求，调用的select sql资源
 		List<SqlScriptParameter> sqlScriptActualParameters = getActualParameters();
-		try {
-			// 获取sql脚本资源对象
-			sqlScriptResource.setActualParams(sqlScriptActualParameters);
-			sqlScriptResource.setFinalSqlScript(SqlStatementParserUtil.getFinalSqlScript(sqlScriptResource, sqlParameterValues));
-			
-		} catch (SqlScriptSyntaxException e) {
-			throw new ParserException(ExceptionUtil.getErrMsg(e));
-		} catch (EDBVendorIsNullException e) {
-			throw new ParserException(ExceptionUtil.getErrMsg(e));
-		} catch (AnalyzeSqlScriptException e) {
-			throw new ParserException(ExceptionUtil.getErrMsg(e));
-		}
-		
+		// 获取sql脚本资源对象
+		sqlScriptResource.setActualParams(sqlScriptActualParameters);
+		sqlScriptResource.analysisFinalSqlScript(sqlScriptResource, sqlParameterValues);
 		if(sqlScriptActualParameters != null && sqlScriptActualParameters.size() > 0){
 			sqlScriptActualParameters.clear();
 		}

@@ -12,15 +12,13 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class PageResultEntity implements Serializable {
 	
 	/**
-	 * 该属性后面指定资源标识？？
+	 * 该属性后面指定资源标识
 	 */
-	@JSONField(name = "focusedId")
 	private String focusedId;
 	
 	/**
 	 * 一页显示的数量
 	 */
-	@JSONField(name = "pageSize")
 	private int pageSize;
 	
 	/**

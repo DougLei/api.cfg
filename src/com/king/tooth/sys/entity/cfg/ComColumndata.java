@@ -214,7 +214,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setComments("字段数据信息资源对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0); 
-		table.setReqResourceMethod(ISysResource.GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		
@@ -356,22 +355,16 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	}
 	
 	public String validNotNullProps() {
-		if(!isValidNotNullProps){
-			isValidNotNullProps = true;
-			if(StrUtils.isEmpty(columnName)){
-				validNotNullPropsResult = "字段名不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(columnType)){
-				validNotNullPropsResult = "字段类型不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(DataTypeConstants.STRING.equals(columnType) && (length == null || length < 1)){
-				validNotNullPropsResult = "字段长度不能为空！";
-				return validNotNullPropsResult;
-			}
+		if(StrUtils.isEmpty(columnName)){
+			return "字段名不能为空！";
 		}
-		return validNotNullPropsResult;
+		if(StrUtils.isEmpty(columnType)){
+			return "字段类型不能为空！";
+		}
+		if(DataTypeConstants.STRING.equals(columnType) && (length == null || length < 1)){
+			return "字段长度不能为空！";
+		}
+		return null;
 	}
 	
 	public String analysisResourceProp() {

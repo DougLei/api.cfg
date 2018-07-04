@@ -24,10 +24,9 @@ public class ComUserComPositionLinks implements Serializable, ITable {
 		table.setComments("人员和职务的关联关系资源对象");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(ISysResource.NONE);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(5);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(6);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
 		leftIdColumn.setName("左资源id");
@@ -47,6 +46,13 @@ public class ComUserComPositionLinks implements Serializable, ITable {
 		orderCodeColumn.setDefaultValue("0");
 		orderCodeColumn.setOrderCode(3);
 		columns.add(orderCodeColumn);
+		
+		ComColumndata isMainColumn = new ComColumndata("is_main", DataTypeConstants.INTEGER, 1);
+		isMainColumn.setName("是否是主要岗位");
+		isMainColumn.setComments("是否是主要岗位：即默认岗位，其他的都属于兼职岗位");
+		isMainColumn.setDefaultValue("0");
+		isMainColumn.setOrderCode(4);
+		columns.add(isMainColumn);
 		
 		table.setColumns(columns);
 		return table;

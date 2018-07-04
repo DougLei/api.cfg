@@ -58,6 +58,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	 * 账户状态
 	 * 		1.启用
 	 * 		2.禁用
+	 * <p>默认值是：1</p>
 	 */
 	private Integer accountStatus;
 	/**
@@ -150,7 +151,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
-		table.setReqResourceMethod(ISysResource.GET);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
@@ -188,14 +188,14 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 
 		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
 		accountTypeColumn.setName("账户类型");
-		accountTypeColumn.setComments("账户类型:1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)、2.普通账户");
+		accountTypeColumn.setComments("账户类型:1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)、2.普通账户，默认值是：2");
 		accountTypeColumn.setDefaultValue("2");
 		accountTypeColumn.setOrderCode(6);
 		columns.add(accountTypeColumn);
 		
 		ComColumndata accountStatusColumn = new ComColumndata("account_status", DataTypeConstants.INTEGER, 1);
 		accountStatusColumn.setName("账户状态");
-		accountStatusColumn.setComments("账户状态:1.启用、2.禁用");
+		accountStatusColumn.setComments("账户状态:1.启用、2.禁用，默认值是：1");
 		accountStatusColumn.setDefaultValue("1");
 		accountStatusColumn.setOrderCode(7);
 		columns.add(accountStatusColumn);
@@ -226,27 +226,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		entityJson.put("validDate", validDate);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
-	}
-	
-	/**
-	 * 是否是平台的开发者
-	 * @return
-	 */
-	@JSONField(serialize = false)
-	public boolean isPlatformDeveloper(){
-		if(accountType == 1){
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * 是否是管理员类型
-	 * @return
-	 */
-	@JSONField(serialize = false)
-	public boolean isAdminType(){
-		return isPlatformDeveloper();
 	}
 	
 	/**

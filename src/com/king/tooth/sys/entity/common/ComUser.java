@@ -10,18 +10,20 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 人员资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComUser extends BasicEntity implements ITable, IEntity{
+public class ComUser extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的账户主键
 	 */
@@ -94,6 +96,12 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * 是否创建账户
+	 */
+	@JSONField(serialize = false)
+	private int isCreateAccount;
+	
 	public String getAccountId() {
 		return accountId;
 	}
@@ -196,6 +204,13 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 	public void setDescs(String descs) {
 		this.descs = descs;
 	}
+	public int getIsCreateAccount() {
+		return isCreateAccount;
+	}
+	public void setIsCreateAccount(int isCreateAccount) {
+		this.isCreateAccount = isCreateAccount;
+	}
+	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_USER", 0);
@@ -333,5 +348,35 @@ public class ComUser extends BasicEntity implements ITable, IEntity{
 		entityJson.put("secretLevel", secretLevel);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
+	}
+	
+	public String validNotNullProps() {
+		if(isCreateAccount == 1 && StrUtils.isEmpty(workNo)){
+			return "工号不能为空";
+		}
+		if(StrUtils.isEmpty(realName)){
+			return "真实姓名不能为空";
+		}
+		return null;
+	}
+	
+	public String analysisResourceProp() {
+		return validNotNullProps();
+	}
+	
+	public String getName(){
+		if(StrUtils.notEmpty(realName)){
+			return realName;
+		}
+		if(StrUtils.notEmpty(workNo)){
+			return workNo;
+		}
+		if(StrUtils.notEmpty(nikeName)){
+			return nikeName;
+		}
+		if(StrUtils.notEmpty(userEmail)){
+			return userEmail;
+		}
+		return null;
 	}
 }

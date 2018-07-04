@@ -8,7 +8,6 @@ import org.hibernate.Query;
 
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
-
 /**
  * 处理这种请求路径格式的处理器：/{parentResourceType}/{parentId}/{resourceType}
  * <p>处理递归查询</p>
@@ -39,10 +38,10 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 			query = createQuery(queryHql);
 			pageResultEntity = loadPageResultEntity(query);
 		}
-		
+
 		List<Map<String, Object>> dataList = query.list();// 查询
 		// 判断是否要进行递归查询
-		if(builtinRecursiveMethodProcesser.getIsRecursive() && builtinRecursiveMethodProcesser.getDeepLevel() > 1){
+		if(builtinRecursiveMethodProcesser.getIsRecursive() && (builtinRecursiveMethodProcesser.getDeepLevel() > 1 || builtinRecursiveMethodProcesser.getDeepLevel() == -1)){
 			queryHql = builtinQueryMethodProcesser.getHql().append(getFromHql())
 														   .append(builtinQueryCondMethodProcesser.getHqlStartbyAnd(null))
 														   .append(builtinSortMethodProcesser.getHql())

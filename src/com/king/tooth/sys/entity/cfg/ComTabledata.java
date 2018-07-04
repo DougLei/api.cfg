@@ -248,7 +248,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
-		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(CONFIG_PLATFORM);
 		
@@ -361,18 +360,13 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public String validNotNullProps() {
-		if(!isValidNotNullProps){
-			isValidNotNullProps = true;
-			if(StrUtils.isEmpty(tableName)){
-				validNotNullPropsResult = "表名不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 0 && this.tableName.length() > 30){
-				validNotNullPropsResult = "oracle数据库的表名长度不能超过30个字符！";
-				return validNotNullPropsResult;
-			}
+		if(StrUtils.isEmpty(tableName)){
+			return "表名不能为空！";
 		}
-		return validNotNullPropsResult;
+		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 0 && this.tableName.length() > 30){
+			return "oracle数据库的表名长度不能超过30个字符！";
+		}
+		return null;
 	}
 	
 	public String analysisResourceProp() {

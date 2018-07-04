@@ -24,12 +24,12 @@ public class ComPermission extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 关联的资源id
-	 * <p>可以是模块id(菜单id)，也可以是模块下的操作功能id...</p>
+	 * <p>可以是模块id(菜单id)，也可以是模块下的tab id，还可以是模块下的操作功能id  等</p>
 	 */
 	private String refResourceId;
 	/**
 	 * 权限的类型
-	 * <p>1.模块(菜单)、2.页面操作(每个页面上的按钮/超链接)...</p>
+	 * <p>1:模块、2:tabl、3:功能  等</p>
 	 */
 	private Integer permissionType;
 	/**
@@ -91,13 +91,13 @@ public class ComPermission extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("关联的资源id");
-		refResourceIdColumn.setComments("关联的资源id：可以是模块id(菜单id)，也可以是模块下的操作功能id...");
+		refResourceIdColumn.setComments("关联的资源id：可以是模块id(菜单id)，也可以是模块下的tab id，还可以是模块下的操作功能id  等");
 		refResourceIdColumn.setOrderCode(1);
 		columns.add(refResourceIdColumn);
 		
 		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", DataTypeConstants.INTEGER, 2);
 		permissionTypeColumn.setName("权限的类型");
-		permissionTypeColumn.setComments("权限的类型：1.模块(菜单)、2.页面操作(每个页面上的按钮/超链接)...");
+		permissionTypeColumn.setComments("权限的类型：1:模块、2:tab、3:功能  等");
 		permissionTypeColumn.setOrderCode(2);
 		columns.add(permissionTypeColumn);
 		

@@ -4,9 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +25,7 @@ import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.common.sqlscript.ProcedureSqlScriptParameter;
-import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
+import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
@@ -126,51 +122,6 @@ public class HibernateUtil {
 	 */
 	public static String getCurrentDatabaseType(){
 		return getSessionFactory().getDatabaseType();
-	}
-	
-	/**
-	 * 获取查询sql语句，查询结果的列集合
-	 * @see SqlStatementParserUtil.getSelectSqlOfResultColumnNames()使用到
-	 * @param querySql
-	 * @param queryCondParameters 
-	 * @return
-	 */
-	public static List<SqlQueryResultColumn> getQueryResultColumns(final String querySql, final List<Object> queryCondParameters){
-		if(StrUtils.isEmpty(querySql)){
-			return null;
-		}
-		final List<SqlQueryResultColumn> resultColumns = new ArrayList<SqlQueryResultColumn>();
-		getCurrentThreadSession().doWork(new Work() {
-			public void execute(Connection connection) throws SQLException {
-				PreparedStatement pst = null;
-				ResultSet rs = null;
-				try {
-					pst = connection.prepareStatement(querySql);
-					if(queryCondParameters != null && queryCondParameters.size()>0){
-						int i=1;
-						for (Object paramValue : queryCondParameters) {
-							pst.setObject(i++, paramValue);
-						}
-					}
-					rs = pst.executeQuery();
-					ResultSetMetaData rsmd = rs.getMetaData();
-					int len = rsmd.getColumnCount();
-					SqlQueryResultColumn src = null;
-					for(int i=1;i<=len;i++){
-						src = new SqlQueryResultColumn(rsmd.getColumnName(i), rsmd.getColumnName(i));
-						resultColumns.add(src);
-					}
-				} finally{
-					if(queryCondParameters != null){
-						queryCondParameters.clear();
-					}
-					CloseUtil.closeDBConn(rs, pst);// 从当前线程session中获取的connection，会在最后同session一同关闭，不需要单独关闭。即execute中的connection参数
-				}
-			}
-		});
-		Log4jUtil.debug("执行的sql语句为：{}", querySql);
-		Log4jUtil.debug("执行sql语句的条件参数集合为：{}", queryCondParameters);
-		return resultColumns;
 	}
 	
 	//------------------------------------------------------------------------------------------------------
@@ -311,9 +262,9 @@ public class HibernateUtil {
 	 * 保存对象
 	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return id
+	 * @return JSONObject
 	 */
-	public static String saveObject(IEntity entity, String shortDesc){
+	public static JSONObject saveObject(IEntity entity, String shortDesc){
 		return saveObject(entity.getEntityName(), entity.toEntityJson(), shortDesc);
 	}
 	
@@ -322,15 +273,15 @@ public class HibernateUtil {
 	 * @param entityName 实体名
 	 * @param data 要保存的对象数据
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return id
+	 * @return JSONObject
 	 */
-	public static String saveObject(String entityName, JSONObject data, String shortDesc){
+	public static JSONObject saveObject(String entityName, JSONObject data, String shortDesc){
 		data = ResourceHandlerUtil.validDataProp(entityName, data);
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
 		try {
 			getCurrentThreadSession().save(entityName, data);
 			Log4jUtil.debug("保存数据成功[{}]", data);
-			return data.getString(ResourceNameConstants.ID);
+			return data;
 		} catch (Exception e) {
 			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 			throw e;
@@ -342,8 +293,9 @@ public class HibernateUtil {
 	 * 直接通过hibernate的update修改对象
 	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
+	 * @return JSONObject
 	 */
-	public static void updateObject(IEntity entity, String shortDesc){
+	public static JSONObject updateObject(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntityJson();
 		if(StrUtils.isEmpty(data.getString(ResourceNameConstants.ID))){
 			throw new NullPointerException("要修改的数据id值不能为空");
@@ -353,6 +305,7 @@ public class HibernateUtil {
 		try {
 			getCurrentThreadSession().merge(entity.getEntityName(), data);
 			Log4jUtil.debug("修改数据成功[{}]", data);
+			return data;
 		} catch (Exception e) {
 			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 			throw e;
@@ -365,8 +318,9 @@ public class HibernateUtil {
 	 * <p>目前这个方法，和通用表资源的update不是统一的</p>
 	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
+	 * @return JSONObject
 	 */
-	public static void updateObjectByHql(IEntity entity, String shortDesc){
+	public static JSONObject updateObjectByHql(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntityJson();
 		String updateId = data.getString(ResourceNameConstants.ID);
 		if(StrUtils.isEmpty(updateId)){
@@ -398,6 +352,7 @@ public class HibernateUtil {
 			
 			executeUpdateByHql(SqlStatementType.UPDATE, updateHql.toString(), parameters);
 			Log4jUtil.debug("修改数据成功[{}]", data);
+			return data;
 		} catch (Exception e) {
 			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 			throw e;
@@ -638,25 +593,26 @@ public class HibernateUtil {
 	
 	/**
 	 * 执行存储过程
+	 * @param dbType
 	 * @param procedureName
-	 * @param procedureSqlScriptParameterList
+	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	public static Map<String, Object> executeProcedure(final String procedureName, final List<ProcedureSqlScriptParameter> procedureSqlScriptParameterList) {
-		final Map<String, Object> data = new HashMap<String, Object>(procedureSqlScriptParameterList.size());
+	public static Map<String, Object> executeProcedure(final String dbType, final String procedureName, final List<SqlScriptParameter> sqlScriptParameterList) {
+		final Map<String, Object> data = new HashMap<String, Object>(sqlScriptParameterList.size());
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
-				String procedure = callProcedure(procedureName, procedureSqlScriptParameterList);
+				String procedure = callProcedure(procedureName, sqlScriptParameterList);
 				CallableStatement cs = null;
 				try {
 					cs = connection.prepareCall(procedure);
-					setParameters(cs, procedureSqlScriptParameterList);
+					setParameters(cs, sqlScriptParameterList);
 					cs.execute();
-					setOutputValues(cs, procedureSqlScriptParameterList);
+					setOutputValues(cs, sqlScriptParameterList);
 				} finally {
 					CloseUtil.closeDBConn(cs);
-					if(procedureSqlScriptParameterList != null && procedureSqlScriptParameterList.size() > 0){
-						procedureSqlScriptParameterList.clear();
+					if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
+						sqlScriptParameterList.clear();
 					}
 				}
 			}
@@ -664,19 +620,19 @@ public class HibernateUtil {
 			/**
 			 * 设置值
 			 * @param cs
-			 * @param procedureSqlScriptParameterList
+			 * @param sqlScriptParameterList
 			 * @throws SQLException 
 			 */
-			private void setParameters(CallableStatement cs, List<ProcedureSqlScriptParameter> procedureSqlScriptParameterList) throws SQLException {
-				if(procedureSqlScriptParameterList != null && procedureSqlScriptParameterList.size() > 0){
-					for (ProcedureSqlScriptParameter pssp : procedureSqlScriptParameterList) {
-						if(pssp.getInOut() == 1){//in
-							cs.setObject(pssp.getIndex(), pssp.getActualValue());
-						}else if(pssp.getInOut() == 2){//out
-							cs.registerOutParameter(pssp.getIndex(), pssp.getTypes());
-						}else if(pssp.getInOut() == 3){//in out
-							cs.setObject(pssp.getIndex(), pssp.getActualValue());
-							cs.registerOutParameter(pssp.getIndex(), pssp.getTypes());
+			private void setParameters(CallableStatement cs, List<SqlScriptParameter> sqlScriptParameterList) throws SQLException {
+				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
+					for (SqlScriptParameter parameter : sqlScriptParameterList) {
+						if(parameter.getInOut() == 1){//in
+							cs.setObject(parameter.getIndex(), parameter.getActualInValue());
+						}else if(parameter.getInOut() == 2){//out
+							cs.registerOutParameter(parameter.getIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
+						}else if(parameter.getInOut() == 3){//in out
+							cs.setObject(parameter.getIndex(), parameter.getActualInValue());
+							cs.registerOutParameter(parameter.getIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
 						}
 					}
 				}
@@ -685,12 +641,12 @@ public class HibernateUtil {
 			/**
 			 * 设置output类型的值
 			 * @param cs
-			 * @param procedureSqlScriptParameterList
+			 * @param sqlScriptParameterList
 			 * @throws SQLException 
 			 */
-			private void setOutputValues(CallableStatement cs, List<ProcedureSqlScriptParameter> procedureSqlScriptParameterList) throws SQLException {
-				if(procedureSqlScriptParameterList != null && procedureSqlScriptParameterList.size() > 0){
-					for (ProcedureSqlScriptParameter pssp : procedureSqlScriptParameterList) {
+			private void setOutputValues(CallableStatement cs, List<SqlScriptParameter> sqlScriptParameterList) throws SQLException {
+				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
+					for (SqlScriptParameter pssp : sqlScriptParameterList) {
 						if(pssp.getInOut() == 2 || pssp.getInOut() == 3){
 //							pssp.setOutValue(cs.getObject(pssp.getIndex()));
 							data.put(NamingTurnUtil.columnNameTurnPropName(pssp.getParameterName()), cs.getObject(pssp.getIndex()));
@@ -700,10 +656,10 @@ public class HibernateUtil {
 			}
 		});
 		Log4jUtil.debug("执行procedure名为：{}", procedureName);
-		Log4jUtil.debug("执行procedure的条件参数集合为：{}", JsonUtil.toJsonString(procedureSqlScriptParameterList, false));
+		Log4jUtil.debug("执行procedure的条件参数集合为：{}", JsonUtil.toJsonString(sqlScriptParameterList, false));
 		
-		if(procedureSqlScriptParameterList != null && procedureSqlScriptParameterList.size() > 0){
-			procedureSqlScriptParameterList.clear();
+		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
+			sqlScriptParameterList.clear();
 		}
 		return data;
 	}
@@ -711,21 +667,21 @@ public class HibernateUtil {
 	/**
 	 * 组装调用存储过程的语句
 	 * @param procedureName
-	 * @param procedureSqlScriptParameterList
+	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	private static String callProcedure(final String procedureName, final List<ProcedureSqlScriptParameter> procedureSqlScriptParameterList) {
+	private static String callProcedure(final String procedureName, final List<SqlScriptParameter> sqlScriptParameterList) {
 		StringBuilder procedure = new StringBuilder();
 		procedure.append("{call ").append(procedureName).append("(");
-		if(procedureSqlScriptParameterList != null && procedureSqlScriptParameterList.size() > 0){
-			int len = procedureSqlScriptParameterList.size();
+		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
+			int len = sqlScriptParameterList.size();
 			for (int i=0;i<len ;i++) {
 				procedure.append("?,");
 			}
 			procedure.setLength(procedure.length() - 1);
 		}
 		procedure.append(")}");
-		Log4jUtil.debug("调用procedure的字符串为：{}", procedure);
+		Log4jUtil.debug("调用的procedure为：{}", procedure);
 		return procedure.toString();
 	}
 	

@@ -1,17 +1,26 @@
 package com.king.tooth.web.processer.sqlresource.get;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.jdbc.Work;
 
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
+import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.query.BuiltinQueryMethodProcesser;
@@ -217,7 +226,7 @@ public abstract class GetProcesser extends RequestProcesser{
 			// 获得查询总数量的hql语句
 			String countSql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalCteSql() + builtinPagerMethodProcesser.getSql() + getFromSql();
 			Query countQuery = createQuery(1, countSql);
-			long totalCount = (long) countQuery.uniqueResult();// 查询获得数据总数
+			long totalCount = Long.valueOf(countQuery.uniqueResult()+"");// 查询获得数据总数
 			pageResultEntity.setTotalCount(totalCount);
 			pageResultEntity.setPageNum(builtinPagerMethodProcesser.getPageQueryEntity().getPageNum(totalCount));
 			pageResultEntity.setPageTotalCount(builtinPagerMethodProcesser.getPageQueryEntity().getPageTotalCount(totalCount));
@@ -256,9 +265,10 @@ public abstract class GetProcesser extends RequestProcesser{
 	
 	/**
 	 * 验证id字段是否存在
+	 * @param sqlScriptResource 
 	 */
-	protected void validIdColumnIsExists() {
-		List<SqlQueryResultColumn> sqlQueryResultColumns = builtinSqlScriptMethodProcesser.getSqlScriptResource().getSqlQueryResultColumnList();
+	protected void validIdColumnIsExists(ComSqlScript sqlScriptResource) {
+		List<SqlQueryResultColumn> sqlQueryResultColumns = sqlScriptResource.getSqlQueryResultColumnList();
 		boolean unIncludeIdColumn = true;// 是否不包含id字段，如果不包括，则该处理器无法使用
 		for (SqlQueryResultColumn sqrs : sqlQueryResultColumns) {
 			if(sqrs.getResultPropName().equalsIgnoreCase(ResourceNameConstants.ID)){
@@ -269,5 +279,70 @@ public abstract class GetProcesser extends RequestProcesser{
 		if(unIncludeIdColumn){
 			throw new IllegalArgumentException("请求的select sql资源的查询结果字段，不包括id列，请求失败");
 		}
+	}
+	
+	/**
+	 * [首次调用]处理select sql语句查询的结果列名集合
+	 * @param sqlScriptResource
+	 */
+	protected void processSelectSqlQueryResultColumns(ComSqlScript sqlScriptResource, String querySql) {
+		if(sqlScriptResource.getSqlQueryResultColumnList() == null){
+			List<Object> queryCondParameters = null;
+			if(sqlParameterValues.size() > 0){
+				queryCondParameters = new ArrayList<Object>(sqlParameterValues.get(0).size());
+				queryCondParameters.addAll(sqlParameterValues.get(0));
+			}
+			if(builtinQueryCondMethodProcesser.getSql().length() > 0){
+				querySql += " and 1=2";
+			}else{
+				querySql += " where 1=2";
+			}
+			sqlScriptResource.doSetSqlQueryResultColumns(getQueryResultColumns(querySql, queryCondParameters));
+			HibernateUtil.updateObjectByHql(sqlScriptResource, null);
+		}
+	}
+	
+	/**
+	 * 获取查询sql语句，查询结果的列集合
+	 * @param querySql
+	 * @param queryCondParameters 
+	 * @return
+	 */
+	protected List<SqlQueryResultColumn> getQueryResultColumns(final String querySql, final List<Object> queryCondParameters){
+		if(StrUtils.isEmpty(querySql)){
+			return null;
+		}
+		final List<SqlQueryResultColumn> resultColumns = new ArrayList<SqlQueryResultColumn>();
+		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
+			public void execute(Connection connection) throws SQLException {
+				PreparedStatement pst = null;
+				ResultSet rs = null;
+				try {
+					pst = connection.prepareStatement(querySql);
+					if(queryCondParameters != null && queryCondParameters.size()>0){
+						int i=1;
+						for (Object paramValue : queryCondParameters) {
+							pst.setObject(i++, paramValue);
+						}
+					}
+					rs = pst.executeQuery();
+					ResultSetMetaData rsmd = rs.getMetaData();
+					int len = rsmd.getColumnCount();
+					SqlQueryResultColumn src = null;
+					for(int i=1;i<=len;i++){
+						src = new SqlQueryResultColumn(rsmd.getColumnName(i));
+						resultColumns.add(src);
+					}
+				} finally{
+					CloseUtil.closeDBConn(rs, pst);// 从当前线程session中获取的connection，会在最后同session一同关闭，不需要单独关闭。即execute中的connection参数
+				}
+			}
+		});
+		Log4jUtil.debug("执行的sql语句为：{}", querySql);
+		Log4jUtil.debug("执行sql语句的条件参数集合为：{}", queryCondParameters);
+		if(queryCondParameters != null){
+			queryCondParameters.clear();
+		}
+		return resultColumns;
 	}
 }

@@ -24,7 +24,6 @@ public class ComDataLinks implements Serializable, ITable {
 		table.setComments("数据关联关系资源对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(ISysResource.NONE);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		

@@ -71,7 +71,6 @@ public class VarifyReqValidFilter extends AbstractFilter{
 			return currentAccount.getMessage();
 		}
 		
-		onlineStatus.setAccount(currentAccount);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(onlineStatus);// 记录当前账户在线对象到当前线程中
 		
 		// 记录配置的项目id，配置系统使用

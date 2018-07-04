@@ -63,7 +63,6 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);

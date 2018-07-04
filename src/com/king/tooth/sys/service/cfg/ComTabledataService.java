@@ -10,9 +10,9 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.constants.CurrentSysInstanceConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.plugins.builtin.data.BuiltinDatas;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -91,7 +91,7 @@ public class ComTabledataService extends AbstractPublishService {
 	public String saveTable(ComTabledata table) {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
@@ -101,7 +101,7 @@ public class ComTabledataService extends AbstractPublishService {
 				}
 			}
 			if(operResult == null){
-				String tableId = HibernateUtil.saveObject(table, null);
+				String tableId = HibernateUtil.saveObject(table, null).getString(ResourceNameConstants.ID);;
 				// 保存表和项目的关联关系
 				if(isPlatformDeveloper){
 					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
@@ -129,7 +129,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
@@ -162,7 +162,7 @@ public class ComTabledataService extends AbstractPublishService {
 		if(oldTable == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
 		if(!isPlatformDeveloper){
 			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
 				return "该表已经发布，无法删除，请先取消发布";
@@ -211,7 +211,7 @@ public class ComTabledataService extends AbstractPublishService {
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		
 		// 1、建表
-		DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
+		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
 		List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 		
 		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
@@ -271,7 +271,7 @@ public class ComTabledataService extends AbstractPublishService {
 			new ComSysResourceService().deleteSysResource(table.getId());
 			
 			// drop表
-			DBTableHandler dbTableHandler = new DBTableHandler(CurrentSysInstanceConstants.currentSysBuiltinDatabaseInstance);
+			DBTableHandler dbTableHandler = new DBTableHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
 			String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
 			
 			// 修改表是否创建的状态

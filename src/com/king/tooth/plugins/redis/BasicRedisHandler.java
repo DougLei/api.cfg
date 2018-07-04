@@ -8,7 +8,6 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.exception.redis.RedisException;
 import com.king.tooth.util.Log4jUtil;
 
 /**
@@ -27,11 +26,10 @@ public class BasicRedisHandler<K, V> {
 	 * *将值存储到redis中【value为序列化方式存储】
 	 * @param key
 	 * @param value
-	 * @throws Exception 
 	 */
-	protected void setInRedisBySerialize(K key, V value) throws RedisException{
+	protected void setInRedisBySerialize(K key, V value){
 		if(key == null || value == null){
-			throw new RedisException("[BasicRedisHandler.setInRedisBySerialize]方法,参数key和value均不能为null");
+			throw new NullPointerException("[BasicRedisHandler.setInRedisBySerialize]方法,参数key和value均不能为null");
 		}
 		
 		boolean result = true;
@@ -48,11 +46,10 @@ public class BasicRedisHandler<K, V> {
 	 * *根据key，从redis中取值【value为序列化方式存储】
 	 * @param key
 	 * @return
-	 * @throws RedisException 
 	 */
-	protected V getFromRedisBySerialize(K key) throws RedisException{
+	protected V getFromRedisBySerialize(K key) {
 		if(key == null){
-			throw new RedisException("[BasicRedisHandler.getFromRedisBySerialize]方法,参数key不能为null");
+			throw new NullPointerException("[BasicRedisHandler.getFromRedisBySerialize]方法,参数key不能为null");
 		}
 		
 		if(redisTemplate.hasKey(key)){
@@ -70,11 +67,10 @@ public class BasicRedisHandler<K, V> {
 	 * *将值存储到redis中【value为json方式存储】           json本质是string，只是存储格式不一样
 	 * @param key
 	 * @param value
-	 * @throws RedisException 
 	 */
-	protected void setInRedisByJson(K key, V value) throws RedisException{
+	protected void setInRedisByJson(K key, V value){
 		if(key == null || value == null){
-			throw new RedisException("[BasicRedisHandler.setInRedisByJson]方法,参数key和value均不能为null");
+			throw new IllegalArgumentException("[BasicRedisHandler.setInRedisByJson]方法,参数key和value均不能为null");
 		}
 		
 		setInRedisByString(key.toString(), JSONObject.toJSONString(value));
@@ -84,9 +80,8 @@ public class BasicRedisHandler<K, V> {
 	 * 根据key，从redis中取值【value为json方式存储，json为object对象】           json本质是string，只是存储格式不一样
 	 * @param key
 	 * @return JSONObjectExtend
-	 * @throws RedisException 
 	 */
-	protected JSONObject getFromRedisByJsonObj(K key) throws RedisException{
+	protected JSONObject getFromRedisByJsonObj(K key) {
 		String json = getFromRedisByString(key);
 		return JSONObject.parseObject(json);
 	}
@@ -95,9 +90,8 @@ public class BasicRedisHandler<K, V> {
 	 * 根据key，从redis中取值【value为json方式存储，json为array对象】           json本质是string，只是存储格式不一样
 	 * @param key
 	 * @return JSONArrayExtend
-	 * @throws RedisException 
 	 */
-	protected JSONArray getFromRedisByJsonArr(K key) throws RedisException{
+	protected JSONArray getFromRedisByJsonArr(K key) {
 		String json = getFromRedisByString(key);
 		return JSONArray.parseArray(json);
 	}
@@ -108,11 +102,10 @@ public class BasicRedisHandler<K, V> {
 	 * 将值存储到redis中【value为string方式存储】
 	 * @param key
 	 * @param value
-	 * @throws RedisException 
 	 */
-	protected void setInRedisByString(final String key, final String value) throws RedisException{
+	protected void setInRedisByString(final String key, final String value) {
 		if(key == null || value == null){
-			throw new RedisException("[BasicRedisHandler.setInRedisByString]方法,参数key和value均不能为null");
+			throw new NullPointerException("[BasicRedisHandler.setInRedisByString]方法,参数key和value均不能为null");
 		}
 		
 		boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
@@ -134,11 +127,10 @@ public class BasicRedisHandler<K, V> {
 	 * *根据key，从redis中取值【value为string方式存储】
 	 * @param key
 	 * @return
-	 * @throws RedisException 
 	 */
-	protected String getFromRedisByString(final K key) throws RedisException{
+	protected String getFromRedisByString(final K key) {
 		if(key == null){
-			throw new RedisException("[BasicRedisHandler.getFromRedisByString]方法,参数key不能为null");
+			throw new NullPointerException("[BasicRedisHandler.getFromRedisByString]方法,参数key不能为null");
 		}
 		
 		if(redisTemplate.hasKey(key)){

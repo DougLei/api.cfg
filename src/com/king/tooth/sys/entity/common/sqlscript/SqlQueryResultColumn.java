@@ -16,15 +16,10 @@ public class SqlQueryResultColumn {
 	 * 查询结果的属性名
 	 */
 	private String resultPropName;
-	/**
-	 * 列的类型
-	 */
-	private String dataType;
 	
-	public SqlQueryResultColumn(String resultColumnName, String dataType) {
+	public SqlQueryResultColumn(String resultColumnName) {
 		this.resultColumnName = resultColumnName;
 		this.resultPropName = NamingTurnUtil.columnNameTurnPropName(resultColumnName);
-		this.dataType = dataType;
 	}
 	public SqlQueryResultColumn() {
 	}
@@ -34,16 +29,10 @@ public class SqlQueryResultColumn {
 	public String getResultPropName() {
 		return resultPropName;
 	}
-	public String getDataType() {
-		return dataType;
-	}
 	public void setResultColumnName(String resultColumnName) {
 		this.resultColumnName = resultColumnName;
 	}
 	public void setResultPropName(String resultPropName) {
 		this.resultPropName = resultPropName;
-	}
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
 	}
 }

@@ -86,7 +86,7 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody publish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
 			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
 		}
 		
@@ -104,7 +104,7 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * @return
 	 */
 	public ResponseBody cancelPublish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
 			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
 		}
 		

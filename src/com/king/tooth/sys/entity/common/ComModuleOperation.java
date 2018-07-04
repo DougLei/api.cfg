@@ -130,7 +130,6 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 		this.refProjectId = refProjectId;
 	}
 	
-	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_MODULE_OPERATION", 0);
 		table.setName("模块功能资源对象表");
@@ -138,7 +137,6 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
@@ -218,22 +216,16 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 	}
 	
 	public String validNotNullProps() {
-		if(!isValidNotNullProps){
-			isValidNotNullProps = true;
-			if(StrUtils.isEmpty(moduleId)){
-				validNotNullPropsResult = "所属模块主键不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(name)){
-				validNotNullPropsResult = "功能名称不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(code)){
-				validNotNullPropsResult = "功能编码不能为空！";
-				return validNotNullPropsResult;
-			}
+		if(StrUtils.isEmpty(moduleId)){
+			return "所属模块主键不能为空！";
 		}
-		return validNotNullPropsResult;
+		if(StrUtils.isEmpty(name)){
+			return "功能名称不能为空！";
+		}
+		if(StrUtils.isEmpty(code)){
+			return "功能编码不能为空！";
+		}
+		return null;
 	}
 	
 	public String analysisResourceProp() {

@@ -5,9 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**
@@ -22,20 +20,18 @@ public final class SingleResourceProcesser extends GetProcesser{
 	
 	protected boolean doGetProcess() {
 		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
-		if(sqlScriptResource.getSqlScriptType().equals(SqlStatementType.PROCEDURE)){// 是存储过程
-			Map<String, Object> data = HibernateUtil.executeProcedure(sqlScriptResource.getProcedureName(), sqlScriptResource.getProcedureParameterList());
-			installResponseBodyForDataObject(data);
-		}else{
-			String querySql = sqlScriptResource.getFinalSqlScript().getFinalCteSql()+
-					builtinQueryMethodProcesser.getSql().append(getFromSql())
-					.append(builtinSortMethodProcesser.getSql())
-					.toString();
-			Query query = createQuery(1, querySql);
-			PageResultEntity pageResultEntity = loadPageResultEntity(query);
-			List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
-			dataList = doProcessDataCollection(dataList);
-			installResponseBodyForQueryDataList(dataList, pageResultEntity);
-		}
+		
+		String coreQuerySql = sqlScriptResource.getFinalSqlScript().getFinalCteSql()+
+				builtinQueryMethodProcesser.getSql().append(getFromSql());
+		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
+		
+		processSelectSqlQueryResultColumns(sqlScriptResource, coreQuerySql);
+		
+		Query query = createQuery(1, querySql);
+		PageResultEntity pageResultEntity = loadPageResultEntity(query);
+		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
+		dataList = doProcessDataCollection(dataList);
+		installResponseBodyForQueryDataList(dataList, pageResultEntity);
 		return true;
 	}
 

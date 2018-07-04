@@ -88,7 +88,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public String saveSqlScript(ComSqlScript sqlScript) {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
@@ -102,26 +102,19 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 			
 			if(operResult == null){
+				String sqlScriptId = HibernateUtil.saveObject(sqlScript, null).getString(ResourceNameConstants.ID);
+				
 				if(isPlatformDeveloper){
-					/* 属于直接就建模，不需要用户再进行一次建模的操作(表是因为，添加了表信息后，还要添加列信息，然后才能建模) */
-					// 如果是平台开发者，则要解析出sql脚本内容，再保存
-					operResult = sqlScript.analysisResourceProp();
+					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
+					sqlScript.setId(sqlScriptId);
+					new ComSysResourceService().saveSysResource(sqlScript);
 				}
-				if(operResult == null){
-					String sqlScriptId = HibernateUtil.saveObject(sqlScript, null);
-					
-					if(isPlatformDeveloper){
-						// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
-						sqlScript.setId(sqlScriptId);
-						new ComSysResourceService().saveSysResource(sqlScript);
-					}
-					
-					// 保存sql脚本和项目的关联关系
-					if(isPlatformDeveloper){
-						HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
-					}else{
-						HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
-					}
+				
+				// 保存sql脚本和项目的关联关系
+				if(isPlatformDeveloper){
+					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
+				}else{
+					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 				}
 			}
 		}
@@ -144,7 +137,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
@@ -160,12 +153,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 				}
 			}
 			
-			if(isPlatformDeveloper){
-				operResult = sqlScript.analysisResourceProp();
-				if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
-					// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
-					new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
-				}
+			if(isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+				// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
+				new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
 				HibernateUtil.updateObjectByHql(sqlScript, null);
@@ -184,7 +174,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		if(oldSqlScript == null){
 			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
 		}
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper();
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
 		if(!isPlatformDeveloper){
 			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
 				return "该sql脚本已经发布，无法删除，请先取消发布";
@@ -277,7 +267,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		sqlScript.setProjectId(projectId);
 		executeRemotePublish(project.getRefDatabaseId(), projectId, sqlScript, 1, "ComProjectComSqlScriptLinks");
 		
-		return useLoadPublishApi(sqlScriptId, projectId, "sql", "1", projectId);
+		return null;
 	}
 	
 	/**

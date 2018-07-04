@@ -18,6 +18,10 @@ public class BasicEntity implements Serializable{
 	@JSONField(name = "Id")
 	protected String id;
 	/**
+	 * 所属租户主键
+	 */
+	protected String customerId;
+	/**
 	 * 所属项目主键
 	 */
 	protected String projectId;
@@ -26,13 +30,13 @@ public class BasicEntity implements Serializable{
 	 */
 	protected String createUserId;
 	/**
-	 * 最后修改人主键
-	 */
-	protected String lastUpdatedUserId;
-	/**
 	 * 创建时间
 	 */
 	protected Date createDate;
+	/**
+	 * 最后修改人主键
+	 */
+	protected String lastUpdatedUserId;
 	/**
 	 * 最后修改时间
 	 */
@@ -85,17 +89,10 @@ public class BasicEntity implements Serializable{
 	public void setLastUpdateDate(Date lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
 	}
-
-
-	// --------
-	/**
-	 * 是否验证了不能为空的属性
-	 * <p>针对IEntityPropAnalysis接口的实现类</p>
-	 */
-	protected boolean isValidNotNullProps;
-	/**
-	 * 验证不能为空的属性的结果
-	 * <p>针对IEntityPropAnalysis接口的实现类</p>
-	 */
-	protected String validNotNullPropsResult;
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
 }

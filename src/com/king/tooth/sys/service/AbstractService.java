@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -23,7 +24,11 @@ public abstract class AbstractService {
 		
 		String className = clazz.toString();
 		className = className.substring(className.lastIndexOf(".")+1);
-		return HibernateUtil.extendExecuteUniqueQueryByHqlArr(clazz, "from "+className +" where id=?", id);
+		T t = HibernateUtil.extendExecuteUniqueQueryByHqlArr(clazz, "from "+className +" where " + ResourceNameConstants.ID +"=?", id);
+		if(t == null){
+			throw new NullPointerException("不存在id值为'"+id+"'的数据对象");
+		}
+		return t;
 	}
 	
 	/**

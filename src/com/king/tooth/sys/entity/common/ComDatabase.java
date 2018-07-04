@@ -156,7 +156,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setReqResourceMethod(GET);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
@@ -288,38 +287,28 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	}
 	
 	public String validNotNullProps() {
-		if(!isValidNotNullProps){
-			isValidNotNullProps = true;
-			if(StrUtils.isEmpty(dbType)){
-				validNotNullPropsResult = "数据库类型不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(!dbType.equals(DynamicDataConstants.DB_TYPE_ORACLE) && !dbType.equals(DynamicDataConstants.DB_TYPE_SQLSERVER)){
-				validNotNullPropsResult = "系统目前只支持oracle和sqlserver数据库！";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(dbInstanceName)){
-				validNotNullPropsResult = "数据库实例名不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(loginUserName)){
-				validNotNullPropsResult = "数据库登录名不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(loginPassword)){
-				validNotNullPropsResult = "数据库登录密码不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(StrUtils.isEmpty(dbIp)){
-				validNotNullPropsResult = "数据库ip不能为空！";
-				return validNotNullPropsResult;
-			}
-			if(dbPort < 1){
-				validNotNullPropsResult = "数据库端口不能为空！";
-				return validNotNullPropsResult;
-			}
+		if(StrUtils.isEmpty(dbType)){
+			return "数据库类型不能为空！";
 		}
-		return validNotNullPropsResult;
+		if(!dbType.equals(DynamicDataConstants.DB_TYPE_ORACLE) && !dbType.equals(DynamicDataConstants.DB_TYPE_SQLSERVER)){
+			return "系统目前只支持oracle和sqlserver数据库！";
+		}
+		if(StrUtils.isEmpty(dbInstanceName)){
+			return "数据库实例名不能为空！";
+		}
+		if(StrUtils.isEmpty(loginUserName)){
+			return "数据库登录名不能为空！";
+		}
+		if(StrUtils.isEmpty(loginPassword)){
+			return "数据库登录密码不能为空！";
+		}
+		if(StrUtils.isEmpty(dbIp)){
+			return "数据库ip不能为空！";
+		}
+		if(dbPort == null || dbPort < 1){
+			return "数据库端口不能为空！";
+		}
+		return null;
 	}
 	
 	public String analysisResourceProp() {

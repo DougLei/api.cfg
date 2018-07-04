@@ -1,14 +1,14 @@
-package com.king.tooth.constants;
+package com.king.tooth.plugins.builtin.data;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComProject;
 
 /**
- * 当前系统实例常量
+ * 系统内置的数据对象
  * @author DougLei
  */
-public class CurrentSysInstanceConstants {
+public class BuiltinDatas {
 	
 	/**
 	 * 当前系统的数据库对象实例

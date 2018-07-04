@@ -2,8 +2,6 @@ package com.king.tooth.plugins.redis;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.exception.redis.RedisException;
-import com.king.tooth.util.Log4jUtil;
 
 /**
  * 封装BasicRedisOps类，默认实现
@@ -20,11 +18,7 @@ public class DefaultRedisHandler extends BasicRedisHandler<String, Object>{
 	 * @throws Exception 
 	 */
 	public void setInRedisBySerialize(String key, Object value){
-		try {
-			super.setInRedisBySerialize(key, value);
-		} catch (RedisException e) {
-			Log4jUtil.debug("[DefaultRedisHandler.setInRedisBySerialize]方法操作redis出现异常信息:{}", e.getMessage());
-		}
+		super.setInRedisBySerialize(key, value);
 	}
 	
 	/**
@@ -34,12 +28,7 @@ public class DefaultRedisHandler extends BasicRedisHandler<String, Object>{
 	 * @throws RedisException 
 	 */
 	public Object getFromRedisBySerialize(String key){
-		try {
-			return super.getFromRedisBySerialize(key);
-		} catch (RedisException e) {
-			Log4jUtil.debug("[DefaultRedisHandler.getFromRedisBySerialize]方法操作redis出现异常信息:{}", e.getMessage());
-		}
-		return null;
+		return super.getFromRedisBySerialize(key);
 	}
 	//*****************************************************************************
 	
@@ -51,11 +40,7 @@ public class DefaultRedisHandler extends BasicRedisHandler<String, Object>{
 	 * @throws RedisException 
 	 */
 	public void setInRedisByJson(String key, Object value){
-		try {
-			super.setInRedisByJson(key, value);
-		} catch (RedisException e) {
-			Log4jUtil.debug("[DefaultRedisHandler.setInRedisByJson]方法操作redis出现异常信息:{}", e.getMessage());
-		}
+		super.setInRedisByJson(key, value);
 	}
 	
 	/**
@@ -65,12 +50,7 @@ public class DefaultRedisHandler extends BasicRedisHandler<String, Object>{
 	 * @throws RedisException 
 	 */
 	public JSONObject getFromRedisByJsonObj(String key){
-		try {
-			return super.getFromRedisByJsonObj(key);
-		} catch (RedisException e) {
-			Log4jUtil.debug("[DefaultRedisHandler.getFromRedisByJsonObj]方法操作redis出现异常信息:{}", e.getMessage());
-		}
-		return null;
+		return super.getFromRedisByJsonObj(key);
 	}
 	
 	/**
@@ -80,12 +60,7 @@ public class DefaultRedisHandler extends BasicRedisHandler<String, Object>{
 	 * @throws RedisException 
 	 */
 	public JSONArray getFromRedisByJsonArr(String key){
-		try {
-			return super.getFromRedisByJsonArr(key);
-		} catch (RedisException e) {
-			Log4jUtil.debug("[DefaultRedisHandler.getFromRedisByJsonArr]方法操作redis出现异常信息:{}", e.getMessage());
-		}
-		return null;
+		return super.getFromRedisByJsonArr(key);
 	}
 	//*****************************************************************************
 
@@ -97,11 +72,7 @@ public class DefaultRedisHandler extends BasicRedisHandler<String, Object>{
 	 * @throws RedisException 
 	 */
 	public void setInRedisByString(String key, String value){
-		try {
-			super.setInRedisByString(key, value);
-		} catch (RedisException e) {
-			Log4jUtil.debug("[DefaultRedisHandler.setInRedisByString]方法操作redis出现异常信息:{}", e.getMessage());
-		}
+		super.setInRedisByString(key, value);
 	}
 	
 	/**
@@ -111,11 +82,6 @@ public class DefaultRedisHandler extends BasicRedisHandler<String, Object>{
 	 * @throws RedisException 
 	 */
 	public String getFromRedisByString(String key){
-		try {
-			return super.getFromRedisByString(key);
-		} catch (RedisException e) {
-			Log4jUtil.debug("[DefaultRedisHandler.getFromRedisByString]方法操作redis出现异常信息:{}", e.getMessage());
-		}
-		return null;
+		return super.getFromRedisByString(key);
 	}
 }

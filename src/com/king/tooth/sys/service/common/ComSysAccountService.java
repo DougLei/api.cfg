@@ -5,10 +5,12 @@ import java.util.Date;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
+import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -39,8 +41,6 @@ public class ComSysAccountService extends AbstractService{
 		}
 		return account;
 	}
-	
-	//-----------------------------------------------------------
 	
 	/**
 	 * 登录
@@ -102,8 +102,6 @@ public class ComSysAccountService extends AbstractService{
 			accountOnlineStatus.setMessage("账号或密码错误，请重新输入");
 			return accountOnlineStatus;
 		}
-		accountOnlineStatus.setAccountId(loginAccount.getId());
-		
 		if(loginAccount.getAccountStatus() == 2){
 			accountOnlineStatus.setMessage("您的账号已被禁用，请联系管理员");
 			return accountOnlineStatus;
@@ -112,26 +110,68 @@ public class ComSysAccountService extends AbstractService{
 			accountOnlineStatus.setMessage("您的账号已过期，请联系管理员");
 			return accountOnlineStatus;
 		}
-		
 		if(!loginAccount.getLoginPwd().equals(CryptographyUtil.encodeMd5AccountPassword(password, loginAccount.getLoginPwdKey()))){
 			accountOnlineStatus.setMessage("帐号或密码错误，请重新输入");
 			return accountOnlineStatus;
 		}
 		
-//		accountOnlineStatus.setAccount(loginAccount);
-		accountOnlineStatus.setAccountId(loginAccount.getId());
-		accountOnlineStatus.setAccountName(loginAccount.getLoginName());
+		processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
 		accountOnlineStatus.setLoginDate(new Date());
 		accountOnlineStatus.setTryLoginTimes(0);
 		accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
-
 		if(SysConfig.isConfSys){
 			accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");// 这里先写成固定值
 		}
 		return accountOnlineStatus;
 	}
 	
+	/**
+	 * 处理账户在线状态对象的基础数据
+	 * <p>包括当前账户id，当前用户id等等基础信息</p>
+	 * @param accountOnlineStatus
+	 * @param loginAccount
+	 * @param accountName
+	 */
+	private void processOnlineStatusBasicData(ComSysAccountOnlineStatus accountOnlineStatus, ComSysAccount loginAccount, String accountName) {
+		accountOnlineStatus.setCurrentCustomerId("unknow");
+		accountOnlineStatus.setCurrentProjectId("unknow");
+		accountOnlineStatus.setAccountId(loginAccount.getId());
+		accountOnlineStatus.setIsAdministrator(loginAccount.getAccountType());
+		
+		if(SysConfig.isConfSys){
+			accountOnlineStatus.setAccountName(accountName);
+		}else{
+			ComUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComUser.class, "from ComUser where accountId = ?", loginAccount.getId());
+			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
+			accountOnlineStatus.setCurrentUserId(loginUser.getId());
+			
+			accountOnlineStatus.setCurrentPositionId(HibernateUtil.executeUniqueQueryByHqlArr(
+					"select p."+ResourceNameConstants.ID+" from ComPosition p, ComUserComPositionLinks up where p."+ResourceNameConstants.ID+"=up.rightId and up.leftId=? and up.isMain=1", loginUser.getId())+"");
+			accountOnlineStatus.setCurrentDeptId(HibernateUtil.executeUniqueQueryByHqlArr(
+					"select d."+ResourceNameConstants.ID+" from ComDept d, ComUserComDeptLinks ud where d."+ResourceNameConstants.ID+"=ud.rightId and ud.leftId=? and ud.isMain=1", loginUser.getId())+"");
+			accountOnlineStatus.setCurrentOrgId("unknow");
+		}
+	}
+
+	/**
+	 * 获取当前登录的账户名
+	 * @param loginAccount
+	 * @param loginUser
+	 * @param accountName
+	 * @return
+	 */
+	private String getCurrentAccountName(ComUser loginUser, String accountName) {
+		if(loginUser == null){
+			return accountName;
+		}
+		String currentAccountName = loginUser.getName();
+		if(currentAccountName == null){
+			return accountName;
+		}
+		return currentAccountName;
+	}
+
 	/**
 	 * 根据账户名，获取账户的在线状态对象
 	 * @param loginIp 防止客户端故意输入不存在的账户密码，不停的发起请求
@@ -176,6 +216,22 @@ public class ComSysAccountService extends AbstractService{
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
 		return null;
+	}
+	
+	/**
+	 * 修改账户密码
+	 * @param accountId
+	 * @param newLoginPwd
+	 * @return
+	 */
+	public String uploadAccounLoginPwd(String accountId, String newLoginPwd){
+		ComSysAccount account = getObjectById(accountId, ComSysAccount.class);
+		String newPwd = CryptographyUtil.encodeMd5(newLoginPwd, account.getLoginPwdKey());
+		if(newPwd.equals(account.getLoginPwd())){
+			return "新密码不能和旧密码相同";
+		}
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "update ComSysAccount set loginPwd=? where "+ ResourceNameConstants.ID +"=?", newPwd, accountId);
+		return "密码修改成功";
 	}
 
 	//-----------------------------------------------------------

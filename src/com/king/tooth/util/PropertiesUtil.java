@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import com.king.tooth.plugins.jdbc.DBLink;
-
 /**
  * properties操作工具类
  * @author DougLei
@@ -18,7 +16,7 @@ public class PropertiesUtil {
 	 * @return
 	 */
 	public static Properties loadPropertiesFile(String propertiesPath){
-		InputStream propertiesInputStream = DBLink.class.getClassLoader().getResourceAsStream(propertiesPath);
+		InputStream propertiesInputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream(propertiesPath);
 		Properties properties = new Properties();
 		try {
 			properties.load(propertiesInputStream);

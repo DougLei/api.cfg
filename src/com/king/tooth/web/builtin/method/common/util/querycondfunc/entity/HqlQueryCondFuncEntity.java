@@ -5,8 +5,8 @@ import java.io.Serializable;
 import org.hibernate.internal.HbmConfPropMetadata;
 
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.RequestUrlParamKeyConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.builtin.params.BuiltinQueryParameters;
 import com.king.tooth.util.DateUtil;
 
 /**
@@ -83,13 +83,13 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 	private void processSpecialThings() {
 		// 1.如果propName为_ids，则必须把propName改为SystemConstants.ID
 		// key=_ids是客户端请求传递过来的，属于平台内置处理的功能
-		if(this.propMetadata.getPropName().equals(RequestUrlParamKeyConstants._IDS)){
+		if(this.propMetadata.getPropName().equals(BuiltinQueryParameters._IDS)){
 			this.propMetadata.setPropName(ResourceNameConstants.ID);
 		}
 		
 		// 2.如果propName为_resourceid，则必须把propName改为SystemConstants.ID
 		// 这个key值来自      @see PlatformServlet.processSpecialData()
-		if(this.propMetadata.getPropName().equals(RequestUrlParamKeyConstants.RESOURCE_ID)){
+		if(this.propMetadata.getPropName().equals(BuiltinQueryParameters.RESOURCE_ID)){
 			this.propMetadata.setPropName(ResourceNameConstants.ID);
 		}
 		

@@ -82,7 +82,7 @@ public class ComColumndataService extends AbstractService{
 			HibernateUtil.updateObjectByHql(column, null);
 			
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
-			if(CurrentThreadContext.getCurrentAccountOnlineStatus().getAccount().isPlatformDeveloper()){
+			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
 				HibernateUtil.executeUpdateBySql(SqlStatementType.UPDATE, "update com_tabledata set is_created = 0 where id = '"+column.getTableId()+"'", null);
 			}
 		}

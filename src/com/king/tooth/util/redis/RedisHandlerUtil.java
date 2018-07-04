@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.exception.redis.RedisException;
 import com.king.tooth.plugins.redis.DefaultRedisHandler;
 import com.king.tooth.util.Log4jUtil;
 

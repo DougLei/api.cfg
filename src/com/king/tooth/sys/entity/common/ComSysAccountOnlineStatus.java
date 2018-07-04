@@ -24,14 +24,41 @@ import com.king.tooth.util.JsonUtil;
 public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IEntity{
 	
 	/**
-	 * 关联的账户主键
+	 * 当前租户id
+	 */
+	private String currentCustomerId;
+	/**
+	 * 当前的项目id
+	 */
+	private String currentProjectId;
+	/**
+	 * 当前的账户id
 	 */
 	private String accountId;
 	/**
-	 * 账户名
-	 * <p>冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails，如果有对应的ComUser，则保存realName</p>
+	 * 当前账户名
 	 */
 	private String accountName;
+	/**
+	 * 当前用户id
+	 */
+	private String currentUserId;
+	/**
+	 * 当前用户所属组织id
+	 */
+	private String currentOrgId;
+	/**
+	 * 当前用户所属部门id
+	 */
+	private String currentDeptId;
+	/**
+	 * 当前用户所属岗位id
+	 */
+	private String currentPositionId;
+	/**
+	 * 是否是管理员
+	 */
+	private Integer isAdministrator;
 	/**
 	 * token值
 	 */
@@ -65,11 +92,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	//-------------------------------------------------------------------------
 	
 	/**
-	 * 关联的帐号对象
-	 */
-	@JSONField(serialize = false)
-	private ComSysAccount account;
-	/**
 	 * 登录或验证登录时，传递的信息
 	 */
 	@JSONField(serialize = false)
@@ -87,18 +109,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	private boolean isSave;
 	
 	
-	public String getAccountId() {
-		return accountId;
-	}
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
-	public ComSysAccount getAccount() {
-		return account;
-	}
-	public void setAccount(ComSysAccount account) {
-		this.account = account;
-	}
 	public String getToken() {
 		return token;
 	}
@@ -138,12 +148,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public int getIsError() {
 		return isError;
 	}
-	public String getAccountName() {
-		return accountName;
-	}
-	public void setAccountName(String accountName) {
-		this.accountName = accountName;
-	}
 	public void setIsError(int isError) {
 		this.isError = isError;
 	}
@@ -165,6 +169,64 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setConfProjectId(String confProjectId) {
 		this.confProjectId = confProjectId;
 	}
+	public String getCurrentUserId() {
+		return currentUserId;
+	}
+	public void setCurrentUserId(String currentUserId) {
+		this.currentUserId = currentUserId;
+	}
+	public String getCurrentOrgId() {
+		return currentOrgId;
+	}
+	public void setCurrentOrgId(String currentOrgId) {
+		this.currentOrgId = currentOrgId;
+	}
+	public String getCurrentDeptId() {
+		return currentDeptId;
+	}
+	public void setCurrentDeptId(String currentDeptId) {
+		this.currentDeptId = currentDeptId;
+	}
+	public String getCurrentPositionId() {
+		return currentPositionId;
+	}
+	public void setCurrentPositionId(String currentPositionId) {
+		this.currentPositionId = currentPositionId;
+	}
+	public Integer getIsAdministrator() {
+		return isAdministrator;
+	}
+	public void setIsAdministrator(Integer isAdministrator) {
+		this.isAdministrator = isAdministrator;
+	}
+	public String getCurrentCustomerId() {
+		return currentCustomerId;
+	}
+	public void setCurrentCustomerId(String currentCustomerId) {
+		this.currentCustomerId = currentCustomerId;
+	}
+	public String getCurrentProjectId() {
+		return currentProjectId;
+	}
+	public void setCurrentProjectId(String currentProjectId) {
+		this.currentProjectId = currentProjectId;
+	}
+	public String getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+	public String getAccountName() {
+		return accountName;
+	}
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+	public boolean isAdministrator(){
+		return (isAdministrator == 1);
+	}
+	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
@@ -173,64 +235,105 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
-		table.setReqResourceMethod(ISysResource.NONE);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		
+		ComColumndata currentCustomerIdColumn = new ComColumndata("current_customer_id", DataTypeConstants.STRING, 32);
+		currentCustomerIdColumn.setName("当前租户id");
+		currentCustomerIdColumn.setComments("当前租户id");
+		currentCustomerIdColumn.setOrderCode(1);
+		columns.add(currentCustomerIdColumn);
+		
+		ComColumndata currentProjectIdColumn = new ComColumndata("current_project_id", DataTypeConstants.STRING, 32);
+		currentProjectIdColumn.setName("当前项目id");
+		currentProjectIdColumn.setComments("当前项目id");
+		currentProjectIdColumn.setOrderCode(2);
+		columns.add(currentProjectIdColumn);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", DataTypeConstants.STRING, 32);
-		accountIdColumn.setName("关联的账户主键");
-		accountIdColumn.setComments("关联的账户主键");
-		accountIdColumn.setOrderCode(1);
+		accountIdColumn.setName("当前的账户id");
+		accountIdColumn.setComments("当前的账户id");
+		accountIdColumn.setOrderCode(3);
 		columns.add(accountIdColumn);
 		
-		ComColumndata accountNameColumn = new ComColumndata("account_name", DataTypeConstants.STRING, 30);
-		accountNameColumn.setName("账户名");
-		accountNameColumn.setComments("账户名:冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails冗余字段，保存登录时的账户名，可以是loginName，可以是tel，也可以是emails，如果有对应的ComUser，则保存realName");
-		accountNameColumn.setOrderCode(2);
+		ComColumndata accountNameColumn = new ComColumndata("account_name", DataTypeConstants.STRING, 32);
+		accountNameColumn.setName("当前账户名");
+		accountNameColumn.setComments("当前账户名");
+		accountNameColumn.setOrderCode(4);
 		columns.add(accountNameColumn);
+		
+		ComColumndata currentUserIdColumn = new ComColumndata("current_user_id", DataTypeConstants.STRING, 32);
+		currentUserIdColumn.setName("当前用户id");
+		currentUserIdColumn.setComments("当前用户id");
+		currentUserIdColumn.setOrderCode(5);
+		columns.add(currentUserIdColumn);
+		
+		ComColumndata currentOrgIdColumn = new ComColumndata("current_org_id", DataTypeConstants.STRING, 32);
+		currentOrgIdColumn.setName("当前用户所属组织id");
+		currentOrgIdColumn.setComments("当前用户所属组织id");
+		currentOrgIdColumn.setOrderCode(6);
+		columns.add(currentOrgIdColumn);
+		
+		ComColumndata currentDeptIdColumn = new ComColumndata("current_dept_id", DataTypeConstants.STRING, 32);
+		currentDeptIdColumn.setName("当前用户所属部门id");
+		currentDeptIdColumn.setComments("当前用户所属部门id");
+		currentDeptIdColumn.setOrderCode(7);
+		columns.add(currentDeptIdColumn);
+		
+		ComColumndata currentPositionIdColumn = new ComColumndata("current_position_id", DataTypeConstants.STRING, 32);
+		currentPositionIdColumn.setName("当前用户所属岗位id");
+		currentPositionIdColumn.setComments("当前用户所属岗位id");
+		currentPositionIdColumn.setOrderCode(8);
+		columns.add(currentPositionIdColumn);
+		
+		ComColumndata isAdministratorColumn = new ComColumndata("is_administrator", DataTypeConstants.STRING, 32);
+		isAdministratorColumn.setName("token值");
+		isAdministratorColumn.setComments("token值");
+		isAdministratorColumn.setOrderCode(9);
+		columns.add(isAdministratorColumn);
 		
 		ComColumndata tokenColumn = new ComColumndata("token", DataTypeConstants.STRING, 32);
 		tokenColumn.setName("token值");
 		tokenColumn.setComments("token值");
-		tokenColumn.setOrderCode(3);
+		tokenColumn.setOrderCode(10);
 		columns.add(tokenColumn);
 		
 		ComColumndata loginIpColumn = new ComColumndata("login_ip", DataTypeConstants.STRING, 20);
 		loginIpColumn.setName("登录的客户端ip");
 		loginIpColumn.setComments("登录的客户端ip");
-		loginIpColumn.setOrderCode(4);
+		loginIpColumn.setOrderCode(11);
 		columns.add(loginIpColumn);
 		
 		ComColumndata loginMacColumn = new ComColumndata("login_mac", DataTypeConstants.STRING, 50);
 		loginMacColumn.setName("登录的客户端mac");
 		loginMacColumn.setComments("登录的客户端mac");
-		loginMacColumn.setOrderCode(5);
+		loginMacColumn.setOrderCode(12);
 		columns.add(loginMacColumn);
 		
 		ComColumndata loginDateColumn = new ComColumndata("login_date", DataTypeConstants.DATE, 0);
 		loginDateColumn.setName("登录的时间");
 		loginDateColumn.setComments("登录的时间");
-		loginDateColumn.setOrderCode(6);
+		loginDateColumn.setOrderCode(13);
 		columns.add(loginDateColumn);
 		
 		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times", DataTypeConstants.INTEGER, 3);
 		tryLoginTimesColumn.setName("本次尝试登录的次数");
 		tryLoginTimesColumn.setComments("本次尝试登录的次数");
 		tryLoginTimesColumn.setDefaultValue("0");
-		tryLoginTimesColumn.setOrderCode(7);
+		tryLoginTimesColumn.setOrderCode(14);
 		columns.add(tryLoginTimesColumn);
 		
 		ComColumndata lastOperDateColumn = new ComColumndata("last_oper_date", DataTypeConstants.DATE, 0);
 		lastOperDateColumn.setName("最后一次操作的时间");
 		lastOperDateColumn.setComments("最后一次操作的时间");
-		lastOperDateColumn.setOrderCode(8);
+		lastOperDateColumn.setOrderCode(15);
 		columns.add(lastOperDateColumn);
 		
 		ComColumndata confProjectIdColumn = new ComColumndata("conf_project_id", DataTypeConstants.STRING, 32);
 		confProjectIdColumn.setName("配置的项目id");
 		confProjectIdColumn.setComments("配置的项目id：配置系统使用");
-		confProjectIdColumn.setOrderCode(9);
+		confProjectIdColumn.setOrderCode(16);
 		columns.add(confProjectIdColumn);
 		
 		table.setColumns(columns);
@@ -248,6 +351,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
+		entityJson.put("isAdministrator", isAdministrator);
 		entityJson.put("loginDate", loginDate);
 		entityJson.put("lastOperDate", lastOperDate);
 		entityJson.put("tryLoginTimes", tryLoginTimes);

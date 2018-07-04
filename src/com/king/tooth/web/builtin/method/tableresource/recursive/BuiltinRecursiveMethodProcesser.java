@@ -54,7 +54,8 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 		hql.append(" where parentId");
 		
 		if(StrUtils.isNullStr(parentResourceId)){
-			hql.append(" is null ");
+			hql.append(" = ? ");
+			hqlParameterValues.add("");
 		}else{
 			hql.append(" = ? ");
 			hqlParameterValues.add(parentResourceId);
@@ -78,7 +79,7 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 	
 	/**
 	 * 获取钻取的深度
-	 * <p>默认为1级</p>
+	 * <p>默认为2级</p>
 	 * <p>-1为钻到底</p>
 	 */
 	public int getDeepLevel() {
