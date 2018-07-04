@@ -457,6 +457,11 @@ public class InitCfgSystemService extends AbstractService{
 		insertCodeResource(adminAccountId, "SqlScriptPublish", "com.king.tooth.sys.controller.common.ComSqlScriptController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		insertCodeResource(adminAccountId, "SqlScriptCancelPublish", "com.king.tooth.sys.controller.common.ComSqlScriptController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
 		
+		insertCodeResource(adminAccountId, "SqlScriptParameter", "com.king.tooth.sys.controller.common.ComSqlScriptController", "getSqlScriptParameter", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
+		insertCodeResource(adminAccountId, "SqlScriptParameterAdd", "com.king.tooth.sys.controller.common.ComSqlScriptController", "addSqlScriptParameter", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
+		insertCodeResource(adminAccountId, "SqlScriptParameterUpdate", "com.king.tooth.sys.controller.common.ComSqlScriptController", "updateSqlScriptParameter", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
+		insertCodeResource(adminAccountId, "SqlScriptParameterDelete", "com.king.tooth.sys.controller.common.ComSqlScriptController", "deleteSqlScriptParameter", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
+		
 		insertCodeResource(adminAccountId, "login", "com.king.tooth.sys.controller.common.ComSysAccountController", "login", ISysResource.POST, 1, ISysResource.COMMON_PLATFORM);
 		insertCodeResource(adminAccountId, "loginOut", "com.king.tooth.sys.controller.common.ComSysAccountController", "loginOut", ISysResource.POST, 1, ISysResource.COMMON_PLATFORM);
 	}
