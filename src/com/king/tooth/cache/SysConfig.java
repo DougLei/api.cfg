@@ -24,6 +24,11 @@ public class SysConfig implements Serializable{
 	public transient static boolean isConfSys;
 	
 	/**
+	 * 是否是运行系统
+	 */
+	public transient static boolean isAppSys;
+	
+	/**
 	 * 存储系统的参数配置
 	 */
 	private transient static final Map<String, String> SYSTEM_PROPERTIES = new HashMap<String, String>();
