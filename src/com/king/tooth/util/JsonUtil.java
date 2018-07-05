@@ -72,11 +72,10 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static JSONObject toJsonObject(Object data){
-		String jsonStr = JSONObject.toJSONString(data);
-		if(jsonStr == null){
+		if(data == null){
 			throw new NullPointerException("要转换为json对象的data实体对象不能为空");
 		}
-		return JSONObject.parseObject(jsonStr);
+		return (JSONObject) JSONObject.toJSON(data);
 	}
 
 	/**
@@ -99,5 +98,16 @@ public class JsonUtil {
 	public static <T> List<T> turnListMapToJavaListEntity(List<Map<String, Object>> maps, Class<T> clazz) {
 		String jsonStr = toJsonString(maps, false);
 		return JSONObject.parseArray(jsonStr, clazz);
+	}
+	
+	/**
+	 * 清空jsonArray集合对象
+	 * @param jsonArray
+	 */
+	public static void clearJsonArray(JSONArray jsonArray){
+		for(int i=0;i<jsonArray.size();i++){
+			jsonArray.getJSONObject(i).clear();
+		}
+		jsonArray.clear();
 	}
 }

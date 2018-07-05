@@ -26,7 +26,7 @@ public class ComUserComPositionLinks implements Serializable, ITable {
 		table.setIsNeedDeploy(1);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(6);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
 		leftIdColumn.setName("左资源id");

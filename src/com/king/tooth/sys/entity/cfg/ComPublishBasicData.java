@@ -99,7 +99,7 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
 		ComColumndata basicDataResourceNameColumn = new ComColumndata("basic_data_resource_name", DataTypeConstants.STRING, 60);
 		basicDataResourceNameColumn.setName("基础数据所对应的资源名");

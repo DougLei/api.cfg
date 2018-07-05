@@ -105,7 +105,7 @@ public class ComAttachment extends BasicEntity implements ITable, IEntity{
 		table.setIsNeedDeploy(1);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", DataTypeConstants.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");

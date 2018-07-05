@@ -237,7 +237,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
 		
 		ComColumndata currentCustomerIdColumn = new ComColumndata("current_customer_id", DataTypeConstants.STRING, 32);
 		currentCustomerIdColumn.setName("当前租户id");

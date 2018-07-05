@@ -27,7 +27,7 @@ public class ComProjectComTabledataLinks implements Serializable, ITable {
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(5);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(6);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
 		leftIdColumn.setName("左资源id");

@@ -51,13 +51,11 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 	}
 	
 	protected void execAnalysisParam() {
-		hql.append(" where parentId");
-		
 		if(StrUtils.isNullStr(parentResourceId)){
-			hql.append(" = ? ");
+			hql.append(" where (parentId  = ? or parentId is null)");
 			hqlParameterValues.add("");
 		}else{
-			hql.append(" = ? ");
+			hql.append(" where parentId = ? ");
 			hqlParameterValues.add(parentResourceId);
 		}
 		

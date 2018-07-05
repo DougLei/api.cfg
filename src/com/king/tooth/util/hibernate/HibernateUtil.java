@@ -25,7 +25,7 @@ import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
@@ -598,7 +598,7 @@ public class HibernateUtil {
 	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	public static Map<String, Object> executeProcedure(final String dbType, final String procedureName, final List<SqlScriptParameter> sqlScriptParameterList) {
+	public static Map<String, Object> executeProcedure(final String dbType, final String procedureName, final List<ComSqlScriptParameter> sqlScriptParameterList) {
 		final Map<String, Object> data = new HashMap<String, Object>(sqlScriptParameterList.size());
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
@@ -623,16 +623,16 @@ public class HibernateUtil {
 			 * @param sqlScriptParameterList
 			 * @throws SQLException 
 			 */
-			private void setParameters(CallableStatement cs, List<SqlScriptParameter> sqlScriptParameterList) throws SQLException {
+			private void setParameters(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
 				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-					for (SqlScriptParameter parameter : sqlScriptParameterList) {
+					for (ComSqlScriptParameter parameter : sqlScriptParameterList) {
 						if(parameter.getInOut() == 1){//in
-							cs.setObject(parameter.getIndex(), parameter.getActualInValue());
+							cs.setObject(parameter.getSqlIndex(), parameter.getActualInValue());
 						}else if(parameter.getInOut() == 2){//out
-							cs.registerOutParameter(parameter.getIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
+							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
 						}else if(parameter.getInOut() == 3){//in out
-							cs.setObject(parameter.getIndex(), parameter.getActualInValue());
-							cs.registerOutParameter(parameter.getIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
+							cs.setObject(parameter.getSqlIndex(), parameter.getActualInValue());
+							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
 						}
 					}
 				}
@@ -644,12 +644,12 @@ public class HibernateUtil {
 			 * @param sqlScriptParameterList
 			 * @throws SQLException 
 			 */
-			private void setOutputValues(CallableStatement cs, List<SqlScriptParameter> sqlScriptParameterList) throws SQLException {
+			private void setOutputValues(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
 				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-					for (SqlScriptParameter pssp : sqlScriptParameterList) {
+					for (ComSqlScriptParameter pssp : sqlScriptParameterList) {
 						if(pssp.getInOut() == 2 || pssp.getInOut() == 3){
-//							pssp.setOutValue(cs.getObject(pssp.getIndex()));
-							data.put(NamingTurnUtil.columnNameTurnPropName(pssp.getParameterName()), cs.getObject(pssp.getIndex()));
+//							pssp.setOutValue(cs.getObject(pssp.getSqlIndex()));
+							data.put(NamingTurnUtil.columnNameTurnPropName(pssp.getParameterName()), cs.getObject(pssp.getSqlIndex()));
 						}
 					}
 				}
@@ -670,7 +670,7 @@ public class HibernateUtil {
 	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	private static String callProcedure(final String procedureName, final List<SqlScriptParameter> sqlScriptParameterList) {
+	private static String callProcedure(final String procedureName, final List<ComSqlScriptParameter> sqlScriptParameterList) {
 		StringBuilder procedure = new StringBuilder();
 		procedure.append("{call ").append(procedureName).append("(");
 		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){

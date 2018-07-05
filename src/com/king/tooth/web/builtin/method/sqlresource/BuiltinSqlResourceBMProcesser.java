@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.AbstractCommonBuiltinBMProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
@@ -76,12 +76,12 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 */
 	private Map<String, String> analysisSqlScriptParam(ComSqlScript sqlScript, Map<String, String> requestUrlParams) {
 		Map<String, String> sqlScriptParams = null;
-		List<SqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
+		List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
 		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0 && requestUrlParams.size() > 0){
 			sqlScriptParams = new HashMap<String, String>(16);// 默认初始长度为16
 			
 			Set<String> keys = requestUrlParams.keySet();
-			for (SqlScriptParameter ssp : sqlScriptParameters) {
+			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
 				for (String key : keys) {
 					if(key.equalsIgnoreCase(ssp.getParameterName())){
 						sqlScriptParams.put(key, requestUrlParams.get(key));

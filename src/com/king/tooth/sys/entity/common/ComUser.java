@@ -221,7 +221,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", DataTypeConstants.STRING, 32);
 		accountIdColumn.setName("关联的账户主键");

@@ -85,7 +85,7 @@ public class ComOrg extends BasicEntity implements ITable, IEntity{
 		table.setIsNeedDeploy(1);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父组织主键");

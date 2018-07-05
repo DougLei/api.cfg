@@ -3,13 +3,16 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -81,6 +84,31 @@ public class ComSqlScriptService extends AbstractPublishService {
 	}
 	
 	/**
+	 * 保存sql脚本对象时，解析出参数集合，并保存到sqlScriptParameter字段中
+	 * @param isDeleteBeforeSqlScriptParameterDatas 是否清空之前的sql脚本参数数据
+	 * @param sqlScript
+	 * @param sqlScriptId
+	 */
+	private void saveSqlScriptParameter(boolean isDeleteBeforeSqlScriptParameterDatas, ComSqlScript sqlScript, String sqlScriptId){
+		if(isDeleteBeforeSqlScriptParameterDatas){
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
+		}
+		
+		if(StrUtils.notEmpty(sqlScript.getSqlScriptParameters())){
+			List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
+			List<ComSqlScriptParameter> newSqlScriptParameters= new ArrayList<ComSqlScriptParameter>(sqlScriptParameters.size());
+			for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
+				sqlScriptParameter.setSqlScriptId(sqlScriptId);
+				newSqlScriptParameters.add(JSONObject.toJavaObject(HibernateUtil.saveObject(sqlScriptParameter, null), ComSqlScriptParameter.class));
+			}
+			sqlScriptParameters.clear();
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
+					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", JsonUtil.toJsonString(newSqlScriptParameters, false), sqlScriptId);
+			newSqlScriptParameters.clear();
+		}
+	}
+	
+	/**
 	 * 保存sql脚本
 	 * @param sqlScript
 	 * @return
@@ -103,6 +131,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 			
 			if(operResult == null){
 				String sqlScriptId = HibernateUtil.saveObject(sqlScript, null).getString(ResourceNameConstants.ID);
+				if(StrUtils.notEmpty(sqlScript.getSqlScriptParameters())){
+					saveSqlScriptParameter(false, sqlScript, sqlScriptId);
+				}
 				
 				if(isPlatformDeveloper){
 					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
@@ -159,11 +190,15 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 			if(operResult == null){
 				HibernateUtil.updateObjectByHql(sqlScript, null);
+				if(sqlScript.getIsAnalysisParameters() == 1){
+					String sqlScriptId = sqlScript.getId(); 
+					saveSqlScriptParameter(true, sqlScript, sqlScriptId);
+				}
 			}
 		}
 		return operResult;
 	}
-
+	
 	/**
 	 * 删除sql脚本
 	 * @param sqlScriptId
@@ -198,6 +233,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScript where id = '"+sqlScriptId+"'");
 		HibernateUtil.deleteDataLinks("ComProjectComSqlScriptLinks", null, sqlScriptId);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		if(isPlatformDeveloper){
@@ -336,5 +372,113 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public void batchCancelPublishSqlScript(String databaseId, String projectId, List<Object> sqlScriptIds) {
 		publishInfoService.batchDeletePublishedData(projectId, sqlScriptIds);
+	}
+
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 获取指定sql脚本的参数jsonArray对象
+	 * @param sqlScriptId
+	 * @return
+	 */
+	private JSONArray getOldSqlScriptParameterJsonArray(String sqlScriptId){
+		String sqlScriptParameterJson = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptParameters from ComSqlScript where " + ResourceNameConstants.ID + "=?", sqlScriptId)+"";
+		JSONArray sqlScriptParametersJsonArray = JSONArray.parseArray(sqlScriptParameterJson);
+		if(sqlScriptParametersJsonArray == null){
+			sqlScriptParametersJsonArray = new JSONArray();
+		}
+		return sqlScriptParametersJsonArray;
+	}
+	
+	/**
+	 * 修改ComSqlScript的sqlScriptParameter字段的值
+	 * @param sqlScriptId
+	 * @param sqlScriptParameterJsonArray
+	 */
+	private void updateSqlScriptParameter(String sqlScriptId, JSONArray sqlScriptParameterJsonArray){
+		if(sqlScriptParameterJsonArray.size()>0){
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
+					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", sqlScriptParameterJsonArray.toJSONString(), sqlScriptId);
+		}else{
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
+					"update ComSqlScript set sqlScriptParameters = null where "+ResourceNameConstants.ID+"=?", sqlScriptId);
+		}
+	}
+	
+	/**
+	 * 添加sql脚本参数
+	 * @param sqlScriptParameters
+	 * @return
+	 */
+	public String saveSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
+		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
+		getObjectById(sqlScriptId, ComSqlScript.class);
+		JSONArray sqlScriptParameterJsonArray = getOldSqlScriptParameterJsonArray(sqlScriptId);
+		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
+			sqlScriptParameterJsonArray.add(HibernateUtil.saveObject(comSqlScriptParameter, null));
+		}
+		updateSqlScriptParameter(sqlScriptId, sqlScriptParameterJsonArray);
+		return null;
+	}
+
+	/**
+	 * 修改sql脚本参数
+	 * @param sqlScriptParameters
+	 * @return
+	 */
+	public String updateSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
+		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
+		getObjectById(sqlScriptId, ComSqlScript.class);
+		
+		int index = 0;
+		String[] updateSqlScriptParameterIdArr = new String[sqlScriptParameters.size()];
+		
+		JSONArray updatedSqlScriptParameterJsonArray = new JSONArray(sqlScriptParameters.size());
+		JSONObject tmp;
+		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
+			tmp = HibernateUtil.updateObjectByHql(comSqlScriptParameter, null);
+			updateSqlScriptParameterIdArr[index++] = tmp.getString(ResourceNameConstants.ID);
+			updatedSqlScriptParameterJsonArray.add(tmp);
+		}
+		
+		JSONArray sqlScriptParameterJsonArray = getOldSqlScriptParameterJsonArray(sqlScriptId);
+		for (String sqlScriptParameterId : updateSqlScriptParameterIdArr) {
+			for (int i=0;i<sqlScriptParameterJsonArray.size();i++) {
+				if(sqlScriptParameterJsonArray.getJSONObject(i).getString(ResourceNameConstants.ID).equals(sqlScriptParameterId)){
+					sqlScriptParameterJsonArray.getJSONObject(i).clear();
+					sqlScriptParameterJsonArray.remove(i);
+					break;
+				}
+			}
+		}
+		sqlScriptParameterJsonArray.addAll(updatedSqlScriptParameterJsonArray);
+		updatedSqlScriptParameterJsonArray.clear();
+		updateSqlScriptParameter(sqlScriptId, sqlScriptParameterJsonArray);
+		return null;
+	}
+
+	/**
+	 * 删除sql脚本参数
+	 * @param sqlScriptParameterIds
+	 * @return
+	 */
+	public String deleteSqlScriptParameter(String sqlScriptParameterIds) {
+		String sqlScriptId = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptId from ComSqlScriptParameter where "+ResourceNameConstants.ID+"=?", sqlScriptParameterIds.split(",")[0])+"";
+		deleteDataById("ComSqlScriptParameter", sqlScriptParameterIds);
+		
+		JSONArray sqlScriptParameterJsonArray = getOldSqlScriptParameterJsonArray(sqlScriptId);
+		if(sqlScriptParameterJsonArray.size() > 0){
+			String[] sqlScriptParameterIdArr = sqlScriptParameterIds.split(",");
+			for (String sqlScriptParameterId : sqlScriptParameterIdArr) {
+				for (int i=0;i<sqlScriptParameterJsonArray.size();i++) {
+					if(sqlScriptParameterJsonArray.getJSONObject(i).getString(ResourceNameConstants.ID).equals(sqlScriptParameterId)){
+						sqlScriptParameterJsonArray.getJSONObject(i).clear();
+						sqlScriptParameterJsonArray.remove(i);
+						break;
+					}
+				}
+			}
+			updateSqlScriptParameter(sqlScriptId, sqlScriptParameterJsonArray);
+		}
+		return null;
 	}
 }

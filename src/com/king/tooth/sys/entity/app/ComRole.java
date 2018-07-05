@@ -90,7 +90,7 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 		table.setIsNeedDeploy(1);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
 		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 30);
 		nameColumn.setName("角色名称");

@@ -8,8 +8,8 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
@@ -52,19 +52,19 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	 * 根据实际值的map集合，创建对应的sql脚本参数集合
 	 * @return
 	 */
-	private List<SqlScriptParameter> getActualParameters() {
-		List<SqlScriptParameter> sqlScriptActualParameters = null;
+	private List<ComSqlScriptParameter> getActualParameters() {
+		List<ComSqlScriptParameter> sqlScriptActualParameters = null;
 		
 		// 请求体为空，那么是从url传参，则是get请求select sql资源
 		if(StrUtils.isEmpty(requestFormData)){
 			// 解析sql脚本的参数
 			if(sqlScriptParams != null && sqlScriptParams.size() > 0){
-				sqlScriptActualParameters = new ArrayList<SqlScriptParameter>(sqlScriptParams.size());
-				SqlScriptParameter ssp = null;
+				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(sqlScriptParams.size());
+				ComSqlScriptParameter ssp = null;
 				
 				Set<String> keys = sqlScriptParams.keySet();
 				for (String key : keys) {
-					ssp = new SqlScriptParameter(1, key, null, 0);
+					ssp = new ComSqlScriptParameter(1, key, null, 0, false);
 					ssp.setActualInValue(processActualValue(sqlScriptParams.get(key).trim()));
 					sqlScriptActualParameters.add(ssp);
 				}
@@ -75,18 +75,18 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		}
 		// 否则就是通过请求体传参，则是post/put/delete insert/update/delete sql资源
 		else{
-			sqlScriptActualParameters = new ArrayList<SqlScriptParameter>();
+			sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>();
 			
 			IJson json = ProcessStringTypeJsonExtend.getIJson(requestFormData.toString());
 			JSONObject data = null;
 			Set<String> keys = null;
-			SqlScriptParameter ssp = null;
+			ComSqlScriptParameter ssp = null;
 			for(int i=0; i < json.size(); i++){
 				data = json.get(i);
 				if(data.size() > 0){
 					keys = data.keySet();
 					for (String key : keys) {
-						ssp = new SqlScriptParameter((i+1), key, null, 0);
+						ssp = new ComSqlScriptParameter((i+1), key, null, 0, false);
 						ssp.setActualInValue(processActualValue((data.getString(key)).trim()));
 						sqlScriptActualParameters.add(ssp);
 					}
@@ -114,7 +114,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	protected void execAnalysisParam() {
 		// 获取从调用方传过来的脚本参数对象，通过url传入的，现在默认是第一个sql语句的参数，即index=1
 		// 现在考虑是能通过url传值的，应该都是get请求，调用的select sql资源
-		List<SqlScriptParameter> sqlScriptActualParameters = getActualParameters();
+		List<ComSqlScriptParameter> sqlScriptActualParameters = getActualParameters();
 		// 获取sql脚本资源对象
 		sqlScriptResource.setActualParams(sqlScriptActualParameters);
 		sqlScriptResource.analysisFinalSqlScript(sqlScriptResource, sqlParameterValues);

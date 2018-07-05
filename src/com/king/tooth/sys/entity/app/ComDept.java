@@ -96,7 +96,7 @@ public class ComDept extends BasicEntity implements ITable, IEntity{
 		table.setIsNeedDeploy(1);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
 		ComColumndata orgIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 32);
 		orgIdColumn.setName("所属组织主键");

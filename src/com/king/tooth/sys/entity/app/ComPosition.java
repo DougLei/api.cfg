@@ -75,7 +75,7 @@ public class ComPosition extends BasicEntity implements ITable, IEntity{
 		table.setIsNeedDeploy(1);
 		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
 		
 		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 60);
 		nameColumn.setName("职务名称");

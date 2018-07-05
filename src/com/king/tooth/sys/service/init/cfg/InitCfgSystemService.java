@@ -33,6 +33,7 @@ import com.king.tooth.sys.entity.app.datalinks.ComUserComPositionLinks;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
 import com.king.tooth.sys.entity.common.ComCode;
@@ -129,6 +130,7 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComTabledata().toCreateTable());
 		tables.add(new ComPublishInfo().toCreateTable());
 		tables.add(new ComPublishBasicData().toCreateTable());
+		tables.add(new ComSqlScriptParameter().toCreateTable());
 		tables.add(new ComProjectComTabledataLinks().toCreateTable());
 		// 运行系统表
 		tables.add(new ComRole().toCreateTable());
@@ -349,13 +351,13 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "基础数据资源", "7", 7, ISysResource.COMMON_PLATFORM);
 		
 		// SqlScriptParameter.parameterFrom sql脚本参数的来源
-		insertDataDictionary(adminAccountId, "SqlScriptParameter.parameterFrom", "用户输入", "0", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "SqlScriptParameter.parameterFrom", "系统内置", "1", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comSqlScriptParameter.parameterFrom", "用户输入", "0", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comSqlScriptParameter.parameterFrom", "系统内置", "1", 2, ISysResource.CONFIG_PLATFORM);
 		
 		// SqlScriptParameter.inOut sql脚本参数in/out类型
-		insertDataDictionary(adminAccountId, "SqlScriptParameter.inOut", "输入参数(in)", "1", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "SqlScriptParameter.inOut", "输出参数(out)", "2", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "SqlScriptParameter.inOut", "输入输出参数(in_out)", "3", 3, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输入参数(in)", "1", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输出参数(out)", "2", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输入输出参数(in_out)", "3", 3, ISysResource.CONFIG_PLATFORM);
 		
 		// System.builtinQueryParameter 系统内置查询参数
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前系统时间", "_currentDate", 1, ISysResource.CONFIG_PLATFORM);

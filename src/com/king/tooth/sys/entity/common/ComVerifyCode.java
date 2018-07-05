@@ -65,7 +65,7 @@ public class ComVerifyCode extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
 		ComColumndata verifyCodeColumn = new ComColumndata("verify_code", DataTypeConstants.STRING, 12);
 		verifyCodeColumn.setName("验证码值");

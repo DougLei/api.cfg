@@ -141,7 +141,7 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(20);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
 		ComColumndata moduleIdColumn = new ComColumndata("module_id", DataTypeConstants.STRING, 32);
 		moduleIdColumn.setName("所属模块主键");

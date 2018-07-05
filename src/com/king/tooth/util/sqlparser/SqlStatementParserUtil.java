@@ -15,9 +15,9 @@ import java.util.List;
 
 import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -156,8 +156,8 @@ public class SqlStatementParserUtil {
 		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
 			int len = procedureSqlStatement.getParameterDeclarations().size();
 			
-			List<SqlScriptParameter> sqlScriptParameterList = new ArrayList<SqlScriptParameter>(len);
-			SqlScriptParameter parameter = null;
+			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
+			ComSqlScriptParameter parameter = null;
 			TParameterDeclaration param = null;
 			String parameterName;
 			for(int i=0;i<len;i++){
@@ -166,7 +166,7 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new SqlScriptParameter((i+1), parameterName, param.getDataType().toString(), param.getMode());
+				parameter = new ComSqlScriptParameter((i+1), parameterName, param.getDataType().toString(), param.getMode(), true);
 				sqlScriptParameterList.add(parameter);
 			}
 			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
@@ -184,8 +184,8 @@ public class SqlStatementParserUtil {
 		// 解析参数
 		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
 			int len = procedureSqlStatement.getParameterDeclarations().size();
-			List<SqlScriptParameter> sqlScriptParameterList = new ArrayList<SqlScriptParameter>(len);
-			SqlScriptParameter parameter = null;
+			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
+			ComSqlScriptParameter parameter = null;
 			TParameterDeclaration param = null;
 			String parameterName;
 			for(int i=0;i<len;i++){
@@ -197,7 +197,7 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new SqlScriptParameter((i+1), parameterName , param.getDataType().toString(), param.getMode());
+				parameter = new ComSqlScriptParameter((i+1), parameterName , param.getDataType().toString(), param.getMode(), true);
 				sqlScriptParameterList.add(parameter);
 			}
 			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
@@ -216,7 +216,7 @@ public class SqlStatementParserUtil {
 		}
 		TStatementList sqlStatementList = sqlScript.getGsqlParser().sqlstatements;
 		FinalSqlScriptStatement finalSqlScript = new FinalSqlScriptStatement();
-		List<SqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
+		List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
 		TCustomSqlStatement sqlStatement = sqlStatementList.get(0);
 		switch(sqlStatement.sqlstatementtype){
 			case sstselect:
@@ -249,12 +249,12 @@ public class SqlStatementParserUtil {
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalSelectSqlHandler(List<SqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
+	private static void setFinalSelectSqlHandler(List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
 		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0){
 			List<Object> queryCondParameters = new ArrayList<Object>();
 			// 处理参数，将实际值存储到queryCondParameters集合中，再转换成?，替换到select sql语句中
-			for (SqlScriptParameter ssp : sqlScriptParameters) {
-				if(ssp.getIndex() == 1 && ssp.getIsPlaceholder()==1){//如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
+			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
+				if(ssp.getSqlIndex().equals(1) && ssp.getIsPlaceholder().equals(1)){//如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
 					queryCondParameters.add(ssp.getActualInValue());
 					ssp.setActualInValue("?");
 				}
@@ -297,7 +297,7 @@ public class SqlStatementParserUtil {
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalModifySqlHandler(List<SqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
+	private static void setFinalModifySqlHandler(List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
 		int sqlLen = sqlStatementList.size();
 		String[] modifySqlArr = new String[sqlLen];
 		
@@ -306,8 +306,8 @@ public class SqlStatementParserUtil {
 		for(int i = 0; i < sqlLen; i++){
 			index = i+1;
 			sqlParamValues = new ArrayList<Object>();
-			for (SqlScriptParameter ssp : sqlScriptParameters) {
-				if(ssp.getIndex() == index){
+			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
+				if(ssp.getSqlIndex().equals(index)){
 					sqlParamValues.add(ssp.getActualInValue());
 					ssp.setActualInValue("?");
 				}
@@ -337,7 +337,7 @@ public class SqlStatementParserUtil {
 //		TStatementList selectSqlStatementList = sqlParser.sqlstatements;
 //		if(selectSqlStatementList != null && selectSqlStatementList.size() > 0){
 //			
-//			List<SqlScriptParameter> sqlScriptParameters = comSqlScript.getSqlScriptParameterList();
+//			List<ComSqlScriptParameter> sqlScriptParameters = comSqlScript.getSqlScriptParameterList();
 //			
 //			TCustomSqlStatement sqlStatement = selectSqlStatementList.get(0);
 //			switch(sqlStatement.sqlstatementtype){
@@ -368,8 +368,8 @@ public class SqlStatementParserUtil {
 //	 * @param deleteSqlStatement
 //	 * @param sqlScriptParameters
 //	 */
-//	private static void analysisInsertSqlScriptParameters(TStatementList selectSqlStatementList, List<SqlScriptParameter> sqlScriptParameters) {
-//		for (SqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
+//	private static void analysisInsertSqlScriptParameters(TStatementList selectSqlStatementList, List<ComSqlScriptParameter> sqlScriptParameters) {
+//		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
 //			sqlScriptParameter.setIsPlaceholderParameter(1);
 //		}
 //	}
@@ -380,8 +380,8 @@ public class SqlStatementParserUtil {
 //	 * @param deleteSqlStatement
 //	 * @param sqlScriptParameters
 //	 */
-//	private static void analysisUpdateSqlScriptParameters(TStatementList selectSqlStatementList, List<SqlScriptParameter> sqlScriptParameters) {
-//		for (SqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
+//	private static void analysisUpdateSqlScriptParameters(TStatementList selectSqlStatementList, List<ComSqlScriptParameter> sqlScriptParameters) {
+//		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
 //			sqlScriptParameter.setIsPlaceholderParameter(1);
 //		}
 //	}
@@ -392,8 +392,8 @@ public class SqlStatementParserUtil {
 //	 * @param deleteSqlStatement
 //	 * @param sqlScriptParameters
 //	 */
-//	private static void analysisDeleteSqlScriptParameters(TStatementList selectSqlStatementList, List<SqlScriptParameter> sqlScriptParameters) {
-//		for (SqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
+//	private static void analysisDeleteSqlScriptParameters(TStatementList selectSqlStatementList, List<ComSqlScriptParameter> sqlScriptParameters) {
+//		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
 //			sqlScriptParameter.setIsPlaceholderParameter(1);
 //		}
 //	}
@@ -404,7 +404,7 @@ public class SqlStatementParserUtil {
 //	 * @param sqlScriptParameters
 //	 * @return
 //	 */
-//	private static List<SqlQueryResultColumn> getSelectSqlOfResultColumns(TSelectSqlStatement selectSqlStatement, List<SqlScriptParameter> sqlScriptParameters) {
+//	private static List<SqlQueryResultColumn> getSelectSqlOfResultColumns(TSelectSqlStatement selectSqlStatement, List<ComSqlScriptParameter> sqlScriptParameters) {
 //		selectSqlStatement.addCondition("1=2");// 加入 1=2 的条件，结果不会查询出任何数据，因为主要要列名
 //		
 //		List<Object> queryCondParameters = new ArrayList<Object>();// 记录测试时，查询条件的值集合
@@ -428,7 +428,7 @@ public class SqlStatementParserUtil {
 //	 * @param sqlScriptParameterList
 //	 * @param queryCondParameters
 //	 */
-//	private static void processSqlCondClauseParameter(int index, TSelectSqlStatement selectSqlStatement, List<SqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
+//	private static void processSqlCondClauseParameter(int index, TSelectSqlStatement selectSqlStatement, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
 //		// 如果是组合查询，比如是用到了union、union all、intersect、intersect all、minus、 minus all、except、except all这些关键字，将多个查询结果集组合起来
 //		if (selectSqlStatement.isCombinedQuery()) {
 //			processSqlCondClauseParameter(index, selectSqlStatement.getLeftStmt(), sqlScriptParameterList, queryCondParameters);
@@ -453,7 +453,7 @@ public class SqlStatementParserUtil {
 //	 * @param sqlScriptParameterList
 //	 * @param queryCondParameters
 //	 */
-//	private static void processCteClauseSqlCondClauseParameter(int index, TCTEList cteList, List<SqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
+//	private static void processCteClauseSqlCondClauseParameter(int index, TCTEList cteList, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
 //		if(cteList != null && cteList.size() > 0){
 //			int len = cteList.size();
 //			for(int i=0;i<len;i++){
@@ -469,7 +469,7 @@ public class SqlStatementParserUtil {
 //	 * @param sqlScriptParameterList
 //	 * @param queryCondParameters
 //	 */
-//	private static void processJoinClauseSqlOnCondClauseParameter(int index, TJoinList joinSqls, List<SqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
+//	private static void processJoinClauseSqlOnCondClauseParameter(int index, TJoinList joinSqls, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
 //		if(joinSqls != null && joinSqls.size() > 0){
 //			 TJoinItemList joinItemList = null;
 //			 TJoinItem joinItem = null;
@@ -495,9 +495,9 @@ public class SqlStatementParserUtil {
 //	 * @param sqlScriptParameterList
 //	 * @param queryCondParameters
 //	 */
-//	private static void processCondClauseSqlParameter(int index, String conditionSql, List<SqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
+//	private static void processCondClauseSqlParameter(int index, String conditionSql, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
 //		if(conditionSql.contains(SqlParameterParserUtil.PREFIX)){// 这个是判断sql语句中是否有$字符，如果有，则证明有配置参数
-//			for (SqlScriptParameter ssp : sqlScriptParameterList) {
+//			for (ComSqlScriptParameter ssp : sqlScriptParameterList) {
 //				if(index == ssp.getIndex() && SqlParameterParserUtil.sqlScriptContainsParameterName(conditionSql, ssp.getParameterName())){
 //					queryCondParameters.add(ssp.getActualValue());
 //					ssp.setActualValue("?");

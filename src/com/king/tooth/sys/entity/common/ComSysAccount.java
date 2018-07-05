@@ -154,7 +154,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
 		ComColumndata loginNameColumn = new ComColumndata("login_name", DataTypeConstants.STRING, 30);
 		loginNameColumn.setName("登录名");

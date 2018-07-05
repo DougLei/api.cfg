@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameter;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -57,7 +57,7 @@ public class SqlParameterParserUtil {
 		}
 		
 		int sqlScriptArrLength = sqlScriptArr.length;
-		List<SqlScriptParameter> sqlScriptParameterList = new ArrayList<SqlScriptParameter>(sqlScriptArrLength*8);
+		List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(sqlScriptArrLength*8);
 		StringBuilder sb = new StringBuilder();// 记录每个sql语句所有包含参数的语句
 		List<Integer> parameterPlaceholderIndex = new ArrayList<Integer>();// 记录每个$的下标
 		String sql;
@@ -85,7 +85,7 @@ public class SqlParameterParserUtil {
 			sql = sb.toString();
 			len = parameterPlaceholderIndex.size();
 			for (int j = 0; j < len; j++) {
-				SqlScriptParameter sqlScriptParameter = new SqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), null, 0);
+				ComSqlScriptParameter sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), null, 0, true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			
@@ -123,12 +123,12 @@ public class SqlParameterParserUtil {
 	 * @param actualValue 参数对应的实际值
 	 * @return
 	 */
-	public static String replaceSqlScriptParams(int index, String sqlScript, List<SqlScriptParameter> sqlScriptParameters){
+	public static String replaceSqlScriptParams(int index, String sqlScript, List<ComSqlScriptParameter> sqlScriptParameters){
 		if(sqlScriptParameters == null || sqlScriptParameters.size() == 0){
 			return sqlScript;
 		}
-		for (SqlScriptParameter ssp : sqlScriptParameters) {
-			if(ssp.getIndex() == index){
+		for (ComSqlScriptParameter ssp : sqlScriptParameters) {
+			if(ssp.getSqlIndex().equals(index)){
 				sqlScript = sqlScript.replaceAll(escapeCharacterPrefix + prefix + ssp.getParameterName() + escapeCharacterPrefix + suffix, ssp.getActualInValue()+"");
 			}
 		}
