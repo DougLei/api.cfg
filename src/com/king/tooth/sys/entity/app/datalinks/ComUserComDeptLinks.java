@@ -49,7 +49,7 @@ public class ComUserComDeptLinks implements Serializable, ITable {
 		
 		ComColumndata isMainColumn = new ComColumndata("is_main", DataTypeConstants.INTEGER, 1);
 		isMainColumn.setName("是否是主要部门");
-		isMainColumn.setComments("是否是主要部门：即默认部门，其他的都属于兼职部门");
+		isMainColumn.setComments("是否是主要部门：即默认部门，其他的都属于兼职部门，默认值是0");
 		isMainColumn.setDefaultValue("0");
 		isMainColumn.setOrderCode(4);
 		columns.add(isMainColumn);

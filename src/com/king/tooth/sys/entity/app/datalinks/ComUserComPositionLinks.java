@@ -49,7 +49,7 @@ public class ComUserComPositionLinks implements Serializable, ITable {
 		
 		ComColumndata isMainColumn = new ComColumndata("is_main", DataTypeConstants.INTEGER, 1);
 		isMainColumn.setName("是否是主要岗位");
-		isMainColumn.setComments("是否是主要岗位：即默认岗位，其他的都属于兼职岗位");
+		isMainColumn.setComments("是否是主要岗位：即默认岗位，其他的都属于兼职岗位，默认值是0");
 		isMainColumn.setDefaultValue("0");
 		isMainColumn.setOrderCode(4);
 		columns.add(isMainColumn);

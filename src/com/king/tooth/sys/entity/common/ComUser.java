@@ -93,6 +93,20 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	 * 描述
 	 */
 	private String descs;
+	/**
+	 * 主要所属的部门id
+	 * <p>关系表中，isMain=1的部门id</p>
+	 */
+	private String deptId;
+	/**
+	 * 主要所属的组织id
+	 */
+	private String orgId;
+	/**
+	 * 主要所属的岗位id
+	 * <p>关系表中，isMain=1的岗位id</p>
+	 */
+	private String positionId;
 	
 	// ---------------------------------------------------------------------------
 
@@ -207,6 +221,24 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	public int getIsCreateAccount() {
 		return isCreateAccount;
 	}
+	public String getDeptId() {
+		return deptId;
+	}
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+	public String getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+	public String getPositionId() {
+		return positionId;
+	}
+	public void setPositionId(String positionId) {
+		this.positionId = positionId;
+	}
 	public void setIsCreateAccount(int isCreateAccount) {
 		this.isCreateAccount = isCreateAccount;
 	}
@@ -221,7 +253,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(27);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", DataTypeConstants.STRING, 32);
 		accountIdColumn.setName("关联的账户主键");
@@ -325,6 +357,24 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		descsColumn.setComments("描述");
 		descsColumn.setOrderCode(17);
 		columns.add(descsColumn);
+		
+		ComColumndata deptIdColumn = new ComColumndata("dept_id", DataTypeConstants.STRING, 32);
+		deptIdColumn.setName("主要所属的部门id");
+		deptIdColumn.setComments("主要所属的部门id：关系表中，isMain=1的部门id");
+		deptIdColumn.setOrderCode(18);
+		columns.add(deptIdColumn);
+		
+		ComColumndata orgIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 32);
+		orgIdColumn.setName("主要所属的组织id");
+		orgIdColumn.setComments("主要所属的组织id");
+		orgIdColumn.setOrderCode(19);
+		columns.add(orgIdColumn);
+		
+		ComColumndata positionIdColumn = new ComColumndata("position_id", DataTypeConstants.STRING, 32);
+		positionIdColumn.setName("主要所属的岗位id");
+		positionIdColumn.setComments("主要所属的岗位id：关系表中，isMain=1的岗位id");
+		positionIdColumn.setOrderCode(20);
+		columns.add(positionIdColumn);
 		
 		table.setColumns(columns);
 		return table;
