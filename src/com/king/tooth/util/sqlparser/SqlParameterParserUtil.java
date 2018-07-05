@@ -61,6 +61,7 @@ public class SqlParameterParserUtil {
 		StringBuilder sb = new StringBuilder();// 记录每个sql语句所有包含参数的语句
 		List<Integer> parameterPlaceholderIndex = new ArrayList<Integer>();// 记录每个$的下标
 		String sql;
+		int orderCode;
 		int len;
 		Matcher matcher;
 		for(int i=0; i<sqlScriptArrLength; i++){
@@ -84,8 +85,9 @@ public class SqlParameterParserUtil {
 			
 			sql = sb.toString();
 			len = parameterPlaceholderIndex.size();
+			orderCode = 0;
 			for (int j = 0; j < len; j++) {
-				ComSqlScriptParameter sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), null, 0, true);
+				ComSqlScriptParameter sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), null, 0, orderCode++, true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			

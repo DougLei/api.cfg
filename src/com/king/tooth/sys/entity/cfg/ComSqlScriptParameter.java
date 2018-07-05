@@ -59,14 +59,14 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 * <p>0.用户输入、1.系统内置</p>
 	 * <p>默认值是0</p>
 	 */
-	private Integer parameterFrom;
+	private Integer parameterFrom = 0;
 	/**
 	 * 是否是需要占位符的参数
 	 * <p>即是否是需要用?代替的</p>
 	 * <p>目前全部都是1</p>
 	 * <p>默认值是1</p>
 	 */
-	private Integer isPlaceholder;
+	private Integer isPlaceholder = 1;
 	/**
 	 * 参数的in/out类型
 	 * <p>in=1、out=2、inOut=3</p>
@@ -74,6 +74,11 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 * <p>默认值是1</p>
 	 */
 	private Integer inOut;
+	/**
+	 * 参数的顺序值
+	 * <p>递增，必须按顺序，且不能为空，或重复</p>
+	 */
+	private Integer orderCode;
 	
 	//------------------------------------------------------------------------------
 	
@@ -92,12 +97,13 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public ComSqlScriptParameter() {
 		this.id = ResourceHandlerUtil.getIdentity();
 	}
-	public ComSqlScriptParameter(int sqlIndex, String parameterName, String parameterDataType, int inOut, boolean isNeedAnalysisResourceProp) {
+	public ComSqlScriptParameter(int sqlIndex, String parameterName, String parameterDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp) {
 		this();
 		this.sqlIndex = sqlIndex;
 		this.parameterName = parameterName;
 		this.parameterDataType = parameterDataType;
 		this.inOut = inOut;
+		this.orderCode = orderCode;
 		if(isNeedAnalysisResourceProp){ // 在调用sql脚本时，不需要解析
 			analysisResourceProp();
 		}
@@ -202,6 +208,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public void setSqlIndex(Integer sqlIndex) {
 		this.sqlIndex = sqlIndex;
 	}
+	public Integer getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(Integer orderCode) {
+		this.orderCode = orderCode;
+	}
 	public void setSqlScriptId(String sqlScriptId) {
 		this.sqlScriptId = sqlScriptId;
 	}
@@ -218,6 +230,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		entityJson.put("parameterFrom", parameterFrom);
 		entityJson.put("isPlaceholder", isPlaceholder);
 		entityJson.put("inOut", inOut);
+		entityJson.put("orderCode", orderCode);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
 	}
@@ -231,7 +244,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", DataTypeConstants.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -292,6 +305,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		inOutColumn.setDefaultValue("1");
 		inOutColumn.setOrderCode(90);
 		columns.add(inOutColumn);
+		
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
+		orderCodeColumn.setName("参数的顺序值");
+		orderCodeColumn.setComments("参数的顺序值：递增，必须按顺序，且不能为空，或重复");
+		orderCodeColumn.setOrderCode(100);
+		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);
 		return table;

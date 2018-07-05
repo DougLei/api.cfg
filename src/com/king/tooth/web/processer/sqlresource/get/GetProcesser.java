@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -322,7 +323,11 @@ public abstract class GetProcesser extends RequestProcesser{
 					if(queryCondParameters != null && queryCondParameters.size()>0){
 						int i=1;
 						for (Object paramValue : queryCondParameters) {
-							pst.setObject(i++, paramValue);
+							if(paramValue instanceof Date){
+								pst.setDate(i++, new java.sql.Date(((Date)paramValue).getTime()));
+							}else{
+								pst.setObject(i++, paramValue);
+							}
 						}
 					}
 					rs = pst.executeQuery();
@@ -333,6 +338,8 @@ public abstract class GetProcesser extends RequestProcesser{
 						src = new SqlQueryResultColumn(rsmd.getColumnName(i));
 						resultColumns.add(src);
 					}
+				}catch (Exception e){
+					e.printStackTrace();
 				} finally{
 					CloseUtil.closeDBConn(rs, pst);// 从当前线程session中获取的connection，会在最后同session一同关闭，不需要单独关闭。即execute中的connection参数
 				}

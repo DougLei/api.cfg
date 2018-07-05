@@ -166,7 +166,7 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter((i+1), parameterName, param.getDataType().toString(), param.getMode(), true);
+				parameter = new ComSqlScriptParameter((i+1), parameterName, param.getDataType().toString(), param.getMode(), i, true);
 				sqlScriptParameterList.add(parameter);
 			}
 			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
@@ -197,7 +197,7 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter((i+1), parameterName , param.getDataType().toString(), param.getMode(), true);
+				parameter = new ComSqlScriptParameter((i+1), parameterName , param.getDataType().toString(), param.getMode(), i, true);
 				sqlScriptParameterList.add(parameter);
 			}
 			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
@@ -254,7 +254,7 @@ public class SqlStatementParserUtil {
 			List<Object> queryCondParameters = new ArrayList<Object>();
 			// 处理参数，将实际值存储到queryCondParameters集合中，再转换成?，替换到select sql语句中
 			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-				if(ssp.getSqlIndex().equals(1) && ssp.getIsPlaceholder().equals(1)){//如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
+				if(ssp.getSqlIndex() == 1 && ssp.getIsPlaceholder() == 1){//如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
 					queryCondParameters.add(ssp.getActualInValue());
 					ssp.setActualInValue("?");
 				}

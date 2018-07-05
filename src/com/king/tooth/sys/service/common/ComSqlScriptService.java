@@ -3,7 +3,6 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.constants.SqlStatementType;
@@ -376,31 +375,21 @@ public class ComSqlScriptService extends AbstractPublishService {
 
 	//--------------------------------------------------------------------------------------------------------
 	/**
-	 * 获取指定sql脚本的参数jsonArray对象
-	 * @param sqlScriptId
-	 * @return
-	 */
-	private JSONArray getOldSqlScriptParameterJsonArray(String sqlScriptId){
-		String sqlScriptParameterJson = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptParameters from ComSqlScript where " + ResourceNameConstants.ID + "=?", sqlScriptId)+"";
-		JSONArray sqlScriptParametersJsonArray = JSONArray.parseArray(sqlScriptParameterJson);
-		if(sqlScriptParametersJsonArray == null){
-			sqlScriptParametersJsonArray = new JSONArray();
-		}
-		return sqlScriptParametersJsonArray;
-	}
-	
-	/**
 	 * 修改ComSqlScript的sqlScriptParameter字段的值
 	 * @param sqlScriptId
 	 * @param sqlScriptParameterJsonArray
 	 */
-	private void updateSqlScriptParameter(String sqlScriptId, JSONArray sqlScriptParameterJsonArray){
-		if(sqlScriptParameterJsonArray.size()>0){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
-					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", sqlScriptParameterJsonArray.toJSONString(), sqlScriptId);
-		}else{
+	private void updateSqlScriptParameter(String sqlScriptId){
+		List<ComSqlScriptParameter> sqlScriptParameterList = HibernateUtil.extendExecuteListQueryByHqlArr(ComSqlScriptParameter.class, null, null, 
+				"from ComSqlScriptParameter where sqlScriptId=? order by sqlIndex asc, orderCode asc", sqlScriptId);
+		
+		if(sqlScriptParameterList == null || sqlScriptParameterList.size() ==0){
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
 					"update ComSqlScript set sqlScriptParameters = null where "+ResourceNameConstants.ID+"=?", sqlScriptId);
+		}else{
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
+					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", JsonUtil.toJsonString(sqlScriptParameterList, false), sqlScriptId);
+			sqlScriptParameterList.clear();
 		}
 	}
 	
@@ -412,11 +401,11 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public String saveSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
 		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
 		getObjectById(sqlScriptId, ComSqlScript.class);
-		JSONArray sqlScriptParameterJsonArray = getOldSqlScriptParameterJsonArray(sqlScriptId);
+		
 		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
-			sqlScriptParameterJsonArray.add(HibernateUtil.saveObject(comSqlScriptParameter, null));
+			HibernateUtil.saveObject(comSqlScriptParameter, null);
 		}
-		updateSqlScriptParameter(sqlScriptId, sqlScriptParameterJsonArray);
+		updateSqlScriptParameter(sqlScriptId);
 		return null;
 	}
 
@@ -429,30 +418,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
 		getObjectById(sqlScriptId, ComSqlScript.class);
 		
-		int index = 0;
-		String[] updateSqlScriptParameterIdArr = new String[sqlScriptParameters.size()];
-		
-		JSONArray updatedSqlScriptParameterJsonArray = new JSONArray(sqlScriptParameters.size());
-		JSONObject tmp;
 		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
-			tmp = HibernateUtil.updateObjectByHql(comSqlScriptParameter, null);
-			updateSqlScriptParameterIdArr[index++] = tmp.getString(ResourceNameConstants.ID);
-			updatedSqlScriptParameterJsonArray.add(tmp);
+			HibernateUtil.updateObjectByHql(comSqlScriptParameter, null);
 		}
-		
-		JSONArray sqlScriptParameterJsonArray = getOldSqlScriptParameterJsonArray(sqlScriptId);
-		for (String sqlScriptParameterId : updateSqlScriptParameterIdArr) {
-			for (int i=0;i<sqlScriptParameterJsonArray.size();i++) {
-				if(sqlScriptParameterJsonArray.getJSONObject(i).getString(ResourceNameConstants.ID).equals(sqlScriptParameterId)){
-					sqlScriptParameterJsonArray.getJSONObject(i).clear();
-					sqlScriptParameterJsonArray.remove(i);
-					break;
-				}
-			}
-		}
-		sqlScriptParameterJsonArray.addAll(updatedSqlScriptParameterJsonArray);
-		updatedSqlScriptParameterJsonArray.clear();
-		updateSqlScriptParameter(sqlScriptId, sqlScriptParameterJsonArray);
+		updateSqlScriptParameter(sqlScriptId);
 		return null;
 	}
 
@@ -464,21 +433,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public String deleteSqlScriptParameter(String sqlScriptParameterIds) {
 		String sqlScriptId = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptId from ComSqlScriptParameter where "+ResourceNameConstants.ID+"=?", sqlScriptParameterIds.split(",")[0])+"";
 		deleteDataById("ComSqlScriptParameter", sqlScriptParameterIds);
-		
-		JSONArray sqlScriptParameterJsonArray = getOldSqlScriptParameterJsonArray(sqlScriptId);
-		if(sqlScriptParameterJsonArray.size() > 0){
-			String[] sqlScriptParameterIdArr = sqlScriptParameterIds.split(",");
-			for (String sqlScriptParameterId : sqlScriptParameterIdArr) {
-				for (int i=0;i<sqlScriptParameterJsonArray.size();i++) {
-					if(sqlScriptParameterJsonArray.getJSONObject(i).getString(ResourceNameConstants.ID).equals(sqlScriptParameterId)){
-						sqlScriptParameterJsonArray.getJSONObject(i).clear();
-						sqlScriptParameterJsonArray.remove(i);
-						break;
-					}
-				}
-			}
-			updateSqlScriptParameter(sqlScriptId, sqlScriptParameterJsonArray);
-		}
+		updateSqlScriptParameter(sqlScriptId);
 		return null;
 	}
 }

@@ -393,14 +393,25 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		if(StrUtils.isEmpty(this.sqlScriptParameters) || this.sqlScriptParameterList == null || this.sqlScriptParameterList.size() == 0){
 			throw new IllegalArgumentException("在调用sql资源时，传入的实际参数集合为：["+sqlScriptActualParameters+"]，但是被调用的sql资源["+this.sqlScriptResourceName+"]却不存在任何sql脚本的参数对象集合。请检查该sql资源是否确实有参数配置，并确认合法调用sql资源，或联系管理员");
 		}
-		for (ComSqlScriptParameter ssap : sqlScriptActualParameters) {
-			for (ComSqlScriptParameter ssp : sqlScriptParameterList) {
-				if(ssap.getSqlIndex().equals(ssp.getSqlIndex()) && 
-						(ssap.getParameterName().equalsIgnoreCase(ssp.getParameterName()) || ssp.getParameterFrom().equals(1))){
-					ssap.setIsPlaceholder(ssp.getIsPlaceholder());
-					ssp.setActualInValue(ssap.analysisActualInValue());
+		
+		int count = 0;
+		for (ComSqlScriptParameter ssp : sqlScriptParameterList) {
+			if(ssp.getParameterFrom() == 1){// 参数值来源为系统内置
+				ssp.setActualInValue(ssp.analysisActualInValue());
+				count++;
+			}else if(ssp.getParameterFrom().equals(0)){// 参数值来源为用户输入
+				for (ComSqlScriptParameter ssap : sqlScriptActualParameters) {
+					if(ssp.getSqlIndex().equals(ssap.getSqlIndex()) && ssp.getParameterName().equalsIgnoreCase(ssap.getParameterName())){
+						ssp.setActualInValue(ssap.getActualInValue());
+						ssp.setActualInValue(ssp.analysisActualInValue());
+						count++;
+						break;
+					}
 				}
 			}
+		}
+		if(count != sqlScriptParameterList.size()){
+			throw new IllegalArgumentException("调用sql脚本时，传入的参数值数量和配置的参数数量不匹配，请检查");
 		}
 	}
 }

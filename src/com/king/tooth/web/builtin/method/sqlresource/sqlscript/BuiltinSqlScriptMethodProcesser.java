@@ -64,7 +64,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 				
 				Set<String> keys = sqlScriptParams.keySet();
 				for (String key : keys) {
-					ssp = new ComSqlScriptParameter(1, key, null, 0, false);
+					ssp = new ComSqlScriptParameter(1, key, null, 0, -1, false);
 					ssp.setActualInValue(processActualValue(sqlScriptParams.get(key).trim()));
 					sqlScriptActualParameters.add(ssp);
 				}
@@ -86,7 +86,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 				if(data.size() > 0){
 					keys = data.keySet();
 					for (String key : keys) {
-						ssp = new ComSqlScriptParameter((i+1), key, null, 0, false);
+						ssp = new ComSqlScriptParameter((i+1), key, null, 0, -1, false);
 						ssp.setActualInValue(processActualValue((data.getString(key)).trim()));
 						sqlScriptActualParameters.add(ssp);
 					}
