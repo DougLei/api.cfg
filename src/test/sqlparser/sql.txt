@@ -1,6 +1,6 @@
-create proc pp
-@name varchar,
-@age int output
-as
-set @age=2
-go
+declare @var_a int = 10
+while( @var_a > 0)
+begin
+    select @var_a
+    set @var_a=@var_a-1
+end

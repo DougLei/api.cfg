@@ -17,6 +17,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -120,8 +121,10 @@ public class SqlStatementParserUtil {
 	        	 return BuiltinDatabaseData.PROCEDURE;
 	         case sstmssqlcreateprocedure:
 	        	 return BuiltinDatabaseData.PROCEDURE;
+	         default:
+	        	 Log4jUtil.warn("目前平台很可能不支持[?]类型的sql脚本", sqlStatementType);
+	        	 return sqlStatementType.toString();
 	     }
-		 throw new IllegalArgumentException("目前平台不支持["+sqlStatementType+"]类型的sql脚本");
 	}
 	
 	/**

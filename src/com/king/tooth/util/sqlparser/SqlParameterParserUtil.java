@@ -65,6 +65,7 @@ public class SqlParameterParserUtil {
 		int orderCode;
 		int len;
 		Matcher matcher;
+		ComSqlScriptParameter sqlScriptParameter;
 		for(int i=0; i<sqlScriptArrLength; i++){
 			matcher = sqlScriptParamPattern.matcher(sqlScriptArr[i]);
 			while(matcher.find()){
@@ -88,7 +89,7 @@ public class SqlParameterParserUtil {
 			len = parameterPlaceholderIndex.size();
 			orderCode = 0;
 			for (int j = 0; j < len; j++) {
-				ComSqlScriptParameter sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), BuiltinCodeDataType.STRING, 0, orderCode++, true);
+				sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), BuiltinCodeDataType.STRING, 0, orderCode++, true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			

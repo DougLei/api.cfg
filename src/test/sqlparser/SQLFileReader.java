@@ -10,7 +10,7 @@ import java.io.FileReader;
  */
 public class SQLFileReader {
 	public static void main(String[] args) throws Exception {
-		File file = new File("C:\\devlopment\\GitRepository\\api_platform\\src\\test\\sqlparser\\sql.txt");
+		File file = new File("C:\\devlopment\\api\\projects\\api.cfg\\src\\test\\sqlparser\\sql.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		
 		StringBuilder sql = new StringBuilder();
