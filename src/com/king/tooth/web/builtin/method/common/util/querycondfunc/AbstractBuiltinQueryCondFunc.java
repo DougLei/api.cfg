@@ -65,6 +65,7 @@ public abstract class AbstractBuiltinQueryCondFunc{
 		for (Object val : values) {
 			if(StrUtils.isNullStr((val+""))){// 如果查询的值是null，则查询条件为(is null/is not null)
 				valueIsNullStr = true;
+				parameterValues.add("");
 				continue;
 			}
 			

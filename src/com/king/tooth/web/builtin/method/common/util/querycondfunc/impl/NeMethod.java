@@ -11,9 +11,9 @@ public class NeMethod extends AbstractBuiltinQueryCondFunc {
 	public String toDBScriptStatement(String propName, Object[] values) {
 		if(valueIsNullStr){// 如果条件值写的是null
 			if(isInversion){
-				return " (" + propName + " is null)";
+				return " (" + propName + " is null or "+propName+" = ?)";
 			}else{
-				return " (" + propName + " is" + notOperator + "null)";
+				return " (" + propName + " is not null or "+propName+" != '')";
 			}
 		}else{
 			return " (" + propName + " != ?) ";
