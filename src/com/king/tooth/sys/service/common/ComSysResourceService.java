@@ -1,7 +1,7 @@
 package com.king.tooth.sys.service.common;
 
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.service.AbstractService;
@@ -29,7 +29,7 @@ public class ComSysResourceService extends AbstractService{
 	 * @param resourceId
 	 */
 	public void deleteSysResource(String resourceId){
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.DELETE, "delete com_sys_resource where ref_resource_id = ? and project_id = ?", resourceId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateBySqlArr(BuiltinDatabaseData.DELETE, "delete com_sys_resource where ref_resource_id = ? and project_id = ?", resourceId, CurrentThreadContext.getProjectId());
 	}
 	
 	/**
@@ -58,15 +58,6 @@ public class ComSysResourceService extends AbstractService{
 	 * @param resourceName
 	 */
 	public void updateResourceName(String refResourceId, String resourceName) {
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set resource_name = ? where ref_resource_id = ? and project_id = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
-	}
-	
-	/**
-	 * 修改资源的访问方式
-	 * @param refResourceId
-	 * @param reqResourceMethod
-	 */
-	public void updateResourceReqResourceMethod(String refResourceId, String reqResourceMethod) {
-		HibernateUtil.executeUpdateBySqlArr(SqlStatementType.UPDATE, "update com_sys_resource set req_resource_method = ? where ref_resource_id = ? and project_id = ?", reqResourceMethod, refResourceId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateBySqlArr(BuiltinDatabaseData.UPDATE, "update com_sys_resource set resource_name = ? where ref_resource_id = ? and project_id = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
 	}
 }

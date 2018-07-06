@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComSqlScript;
@@ -90,7 +90,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	private void saveSqlScriptParameter(boolean isDeleteBeforeSqlScriptParameterDatas, ComSqlScript sqlScript, String sqlScriptId){
 		if(isDeleteBeforeSqlScriptParameterDatas){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		}
 		
 		if(StrUtils.notEmpty(sqlScript.getSqlScriptParameters())){
@@ -101,7 +101,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 				newSqlScriptParameters.add(JSONObject.toJavaObject(HibernateUtil.saveObject(sqlScriptParameter, null), ComSqlScriptParameter.class));
 			}
 			sqlScriptParameters.clear();
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, 
 					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", JsonUtil.toJsonString(newSqlScriptParameters, false), sqlScriptId);
 			newSqlScriptParameters.clear();
 		}
@@ -230,9 +230,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 			projectIds.clear();
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScript where id = '"+sqlScriptId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where id = '"+sqlScriptId+"'");
 		HibernateUtil.deleteDataLinks("ComProjectComSqlScriptLinks", null, sqlScriptId);
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		if(isPlatformDeveloper){
@@ -384,10 +384,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 				"from ComSqlScriptParameter where sqlScriptId=? order by sqlIndex asc, orderCode asc", sqlScriptId);
 		
 		if(sqlScriptParameterList == null || sqlScriptParameterList.size() ==0){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, 
 					"update ComSqlScript set sqlScriptParameters = null where "+ResourceNameConstants.ID+"=?", sqlScriptId);
 		}else{
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, 
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, 
 					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", JsonUtil.toJsonString(sqlScriptParameterList, false), sqlScriptId);
 			sqlScriptParameterList.clear();
 		}

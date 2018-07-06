@@ -13,8 +13,7 @@ import gudusoft.gsqlparser.stmt.oracle.TPlsqlCreateProcedure;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.DynamicDataConstants;
-import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
@@ -67,9 +66,9 @@ public class SqlStatementParserUtil {
 	 */
 	private static EDbVendor getSqlParserDbDialect() {
 		String dbType = HibernateUtil.getCurrentDatabaseType();
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)){
+		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			return EDbVendor.dbvoracle;
-		}else if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(dbType)){
+		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
 			return EDbVendor.dbvmssql;
 		}
 		throw new IllegalArgumentException("目前系统不支持 ["+dbType+"]类型的数据库sql脚本解析");
@@ -93,7 +92,7 @@ public class SqlStatementParserUtil {
 			if(i == 0){
 				sqlScriptType = getSqlScriptType(sqlStatement.sqlstatementtype);
 				if(i > 1 && 
-						(sqlScriptType.equals(SqlStatementType.SELECT) || sqlScriptType.equals(SqlStatementType.PROCEDURE))){
+						(sqlScriptType.equals(BuiltinDatabaseData.SELECT) || sqlScriptType.equals(BuiltinDatabaseData.PROCEDURE))){
 					throw new ArrayIndexOutOfBoundsException("目前系统只支持一次处理一条select sql语句，或procedure 存储过程");
 				}
 			}
@@ -110,17 +109,17 @@ public class SqlStatementParserUtil {
 	private static String getSqlScriptType(ESqlStatementType sqlStatementType) {
 		 switch(sqlStatementType){
 	         case sstselect:
-	        	 return SqlStatementType.SELECT;
+	        	 return BuiltinDatabaseData.SELECT;
 	         case sstupdate:
-	        	 return SqlStatementType.UPDATE;
+	        	 return BuiltinDatabaseData.UPDATE;
 	         case sstinsert:
-	        	 return SqlStatementType.INSERT;
+	        	 return BuiltinDatabaseData.INSERT;
 	         case sstdelete:
-	        	 return SqlStatementType.DELETE;
+	        	 return BuiltinDatabaseData.DELETE;
 	         case sstplsql_createprocedure:
-	        	 return SqlStatementType.PROCEDURE;
+	        	 return BuiltinDatabaseData.PROCEDURE;
 	         case sstmssqlcreateprocedure:
-	        	 return SqlStatementType.PROCEDURE;
+	        	 return BuiltinDatabaseData.PROCEDURE;
 	     }
 		 throw new IllegalArgumentException("目前平台不支持["+sqlStatementType+"]类型的sql脚本");
 	}
@@ -137,7 +136,7 @@ public class SqlStatementParserUtil {
 		    	analysisOracleProcedure((TPlsqlCreateProcedure)sqlStatement, sqlScript);
 		    	break;
 		    case sstmssqlcreateprocedure:
-		    	analysisSqlserverProcedure((TMssqlCreateProcedure)sqlStatement, sqlScript);
+		    	analysisSqlServerProcedure((TMssqlCreateProcedure)sqlStatement, sqlScript);
 		    	break;
 		    default:
 		    	throw new IllegalArgumentException("目前不支持["+sqlStatement.sqlstatementtype+"]类型的存储过程");
@@ -177,7 +176,7 @@ public class SqlStatementParserUtil {
 	 * @param procedureSqlStatement
 	 * @param sqlScript
 	 */
-	private static void analysisSqlserverProcedure(TMssqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
+	private static void analysisSqlServerProcedure(TMssqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
 		// 解析出存储过程名
 		sqlScript.setProcedureName(procedureSqlStatement.getProcedureName().toString());
 
@@ -211,7 +210,7 @@ public class SqlStatementParserUtil {
 	 * @param 
 	 */
 	public static FinalSqlScriptStatement getFinalSqlScript(ComSqlScript sqlScript, List<List<Object>> sqlParameterValues) {
-		if(sqlScript.getSqlScriptType().equals(SqlStatementType.PROCEDURE)){// 是存储过程，不解析最终的sql语句
+		if(sqlScript.getSqlScriptType().equals(BuiltinDatabaseData.PROCEDURE)){// 是存储过程，不解析最终的sql语句
 			return null;
 		}
 		TStatementList sqlStatementList = sqlScript.getGsqlParser().sqlstatements;

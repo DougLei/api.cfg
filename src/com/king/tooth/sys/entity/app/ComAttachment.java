@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -107,43 +107,43 @@ public class ComAttachment extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
-		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", DataTypeConstants.STRING, 32);
+		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinCodeDataType.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
 		refDataIdColumn.setComments("关联的数据主键值");
 		refDataIdColumn.setOrderCode(1);
 		columns.add(refDataIdColumn);
 		
-		ComColumndata attachmentActNameColumn = new ComColumndata("attachment_act_name", DataTypeConstants.STRING, 300);
+		ComColumndata attachmentActNameColumn = new ComColumndata("attachment_act_name", BuiltinCodeDataType.STRING, 300);
 		attachmentActNameColumn.setName("附件的实际名");
 		attachmentActNameColumn.setComments("附件的实际名：即上传时的文件名称");
 		attachmentActNameColumn.setOrderCode(2);
 		columns.add(attachmentActNameColumn);
 		
-		ComColumndata attachmentCodeColumn = new ComColumndata("attachment_code", DataTypeConstants.STRING, 32);
+		ComColumndata attachmentCodeColumn = new ComColumndata("attachment_code", BuiltinCodeDataType.STRING, 32);
 		attachmentCodeColumn.setName("附件编码");
 		attachmentCodeColumn.setComments("附件编码：在上传的时候，修改实际的文件名");
 		attachmentCodeColumn.setOrderCode(3);
 		columns.add(attachmentCodeColumn);
 		
-		ComColumndata attachmentSizeColumn = new ComColumndata("attachment_size", DataTypeConstants.STRING, 20);
+		ComColumndata attachmentSizeColumn = new ComColumndata("attachment_size", BuiltinCodeDataType.STRING, 20);
 		attachmentSizeColumn.setName("附件大小");
 		attachmentSizeColumn.setComments("附件大小");
 		attachmentSizeColumn.setOrderCode(4);
 		columns.add(attachmentSizeColumn);
 		
-		ComColumndata attachmentSuffixColumn = new ComColumndata("attachment_suffix", DataTypeConstants.STRING, 10);
+		ComColumndata attachmentSuffixColumn = new ComColumndata("attachment_suffix", BuiltinCodeDataType.STRING, 10);
 		attachmentSuffixColumn.setName("附件后缀");
 		attachmentSuffixColumn.setComments("附件后缀");
 		attachmentSuffixColumn.setOrderCode(5);
 		columns.add(attachmentSuffixColumn);
 		
-		ComColumndata attachmentContentColumn = new ComColumndata("attachment_content", DataTypeConstants.BLOB, 0);
+		ComColumndata attachmentContentColumn = new ComColumndata("attachment_content", BuiltinCodeDataType.BLOB, 0);
 		attachmentContentColumn.setName("附件内容");
 		attachmentContentColumn.setComments("附件内容");
 		attachmentContentColumn.setOrderCode(6);
 		columns.add(attachmentContentColumn);
 		
-		ComColumndata secretLevelColumn = new ComColumndata("secret_level", DataTypeConstants.INTEGER, 1);
+		ComColumndata secretLevelColumn = new ComColumndata("secret_level", BuiltinCodeDataType.INTEGER, 1);
 		secretLevelColumn.setName("附件的密级");
 		secretLevelColumn.setComments("附件的密级");
 		secretLevelColumn.setOrderCode(7);

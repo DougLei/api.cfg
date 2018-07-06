@@ -3,7 +3,7 @@ package com.king.tooth.sys.service.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -73,7 +73,7 @@ public class ComPublishInfoService extends AbstractService{
 			hql += " publishResourceId = ?";
 			params.add(publishResourceId);
 		}
-		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, hql, params);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, hql, params);
 	}
 	
 	/**
@@ -100,6 +100,6 @@ public class ComPublishInfoService extends AbstractService{
 			hql.setLength(hql.length()-1);
 			hql.append(")");
 		}
-		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, hql.toString(), params);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, hql.toString(), params);
 	}
 }

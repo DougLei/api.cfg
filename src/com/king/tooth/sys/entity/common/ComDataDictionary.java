@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -110,45 +110,45 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 50);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 50);
 		codeColumn.setName("编码");
 		codeColumn.setComments("编码");
 		codeColumn.setOrderCode(1);
 		columns.add(codeColumn);
 		
-		ComColumndata parentCodeIdColumn = new ComColumndata("parent_code_id", DataTypeConstants.STRING, 32);
+		ComColumndata parentCodeIdColumn = new ComColumndata("parent_code_id", BuiltinCodeDataType.STRING, 32);
 		parentCodeIdColumn.setName("父编码编号(可为空)");
 		parentCodeIdColumn.setComments("父编码编号(可为空)");
 		parentCodeIdColumn.setOrderCode(2);
 		columns.add(parentCodeIdColumn);
 		
-		ComColumndata codeCaptionColumn = new ComColumndata("code_caption", DataTypeConstants.STRING, 50);
+		ComColumndata codeCaptionColumn = new ComColumndata("code_caption", BuiltinCodeDataType.STRING, 50);
 		codeCaptionColumn.setName("显示的文本");
 		codeCaptionColumn.setComments("显示的文本");
 		codeCaptionColumn.setOrderCode(3);
 		columns.add(codeCaptionColumn);
 		
-		ComColumndata codeValueColumn = new ComColumndata("code_value", DataTypeConstants.STRING, 30);
+		ComColumndata codeValueColumn = new ComColumndata("code_value", BuiltinCodeDataType.STRING, 30);
 		codeValueColumn.setName("操作的值(value)");
 		codeValueColumn.setComments("操作的值(value)");
 		codeValueColumn.setOrderCode(4);
 		columns.add(codeValueColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.STRING, 150);
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinCodeDataType.STRING, 150);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效：默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		isEnabledColumn.setOrderCode(6);
 		columns.add(isEnabledColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 150);
+		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinCodeDataType.STRING, 150);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		commentsColumn.setOrderCode(7);

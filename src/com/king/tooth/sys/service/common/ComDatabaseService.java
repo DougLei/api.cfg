@@ -12,12 +12,12 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.plugins.builtin.data.BuiltinDatas;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinDatas;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -109,7 +109,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComDatabase where id = '"+databaseId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComDatabase where id = '"+databaseId+"'");
 		return null;
 	}
 	
@@ -310,7 +310,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		
 		// 删除该库下，所有发布的信息
-		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		// 远程删除运行系统中的数据库信息
 		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where id = '"+database.getId()+"'");
 		

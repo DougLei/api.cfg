@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.StrUtils;
@@ -87,7 +88,7 @@ public class SqlParameterParserUtil {
 			len = parameterPlaceholderIndex.size();
 			orderCode = 0;
 			for (int j = 0; j < len; j++) {
-				ComSqlScriptParameter sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), null, 0, orderCode++, true);
+				ComSqlScriptParameter sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), BuiltinCodeDataType.STRING, 0, orderCode++, true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			

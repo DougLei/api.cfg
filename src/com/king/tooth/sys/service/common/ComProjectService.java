@@ -10,9 +10,9 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.plugins.builtin.data.BuiltinDatas;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinDatas;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.common.ComProject;
@@ -124,7 +124,7 @@ public class ComProjectService extends AbstractPublishService {
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProject where id = '"+projectId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProject where id = '"+projectId+"'");
 		return null;
 	}
 
@@ -136,12 +136,12 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	public String cancelRelation(String projectId, String relationType) {
 		if("all".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
 		}else if("table".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
 		}else if("sql".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
 		}else{
 			return "请传入正确的realtionType";
 		}

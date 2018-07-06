@@ -1,4 +1,4 @@
-package com.king.tooth.plugins.builtin.params;
+package com.king.tooth.sys.builtin.data;
 
 
 /**

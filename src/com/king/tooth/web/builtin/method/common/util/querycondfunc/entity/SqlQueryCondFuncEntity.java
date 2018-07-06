@@ -3,7 +3,7 @@ package com.king.tooth.web.builtin.method.common.util.querycondfunc.entity;
 import java.io.Serializable;
 
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.util.NamingTurnUtil;
 
 /**

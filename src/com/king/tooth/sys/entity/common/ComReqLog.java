@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -150,67 +150,67 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
-		ComColumndata reqAccountIdColumn = new ComColumndata("req_account_id", DataTypeConstants.STRING, 32);
+		ComColumndata reqAccountIdColumn = new ComColumndata("req_account_id", BuiltinCodeDataType.STRING, 32);
 		reqAccountIdColumn.setName("请求的账户信息主键");
 		reqAccountIdColumn.setComments("请求的账户信息主键:记录是哪个用户请求的，可为空");
 		reqAccountIdColumn.setOrderCode(1);
 		columns.add(reqAccountIdColumn);
 		
-		ComColumndata reqMethodColumn = new ComColumndata("req_method", DataTypeConstants.STRING, 10);
+		ComColumndata reqMethodColumn = new ComColumndata("req_method", BuiltinCodeDataType.STRING, 10);
 		reqMethodColumn.setName("请求的方式");
 		reqMethodColumn.setComments("请求的方式");
 		reqMethodColumn.setOrderCode(2);
 		columns.add(reqMethodColumn);
 		
-		ComColumndata reqIpColumn = new ComColumndata("req_ip", DataTypeConstants.STRING, 20);
+		ComColumndata reqIpColumn = new ComColumndata("req_ip", BuiltinCodeDataType.STRING, 20);
 		reqIpColumn.setName("请求的客户端ip");
 		reqIpColumn.setComments("请求的客户端ip");
 		reqIpColumn.setOrderCode(3);
 		columns.add(reqIpColumn);
 		
-		ComColumndata reqMacColumn = new ComColumndata("req_mac", DataTypeConstants.STRING, 50);
+		ComColumndata reqMacColumn = new ComColumndata("req_mac", BuiltinCodeDataType.STRING, 50);
 		reqMacColumn.setName("请求的客户端mac");
 		reqMacColumn.setComments("请求的客户端mac：可为空");
 		reqMacColumn.setOrderCode(4);
 		columns.add(reqMacColumn);
 		
-		ComColumndata reqUrlColumn = new ComColumndata("req_url", DataTypeConstants.STRING, 160);
+		ComColumndata reqUrlColumn = new ComColumndata("req_url", BuiltinCodeDataType.STRING, 160);
 		reqUrlColumn.setName("请求的url");
 		reqUrlColumn.setComments("请求的url");
 		reqUrlColumn.setOrderCode(5);
 		columns.add(reqUrlColumn);
 		
-		ComColumndata reqUrlParamsColumn = new ComColumndata("req_url_params", DataTypeConstants.STRING, 1000);
+		ComColumndata reqUrlParamsColumn = new ComColumndata("req_url_params", BuiltinCodeDataType.STRING, 1000);
 		reqUrlParamsColumn.setName("请求的url参数");
 		reqUrlParamsColumn.setComments("请求的url参数");
 		reqUrlParamsColumn.setOrderCode(6);
 		columns.add(reqUrlParamsColumn);
 		
-		ComColumndata reqBodyColumn = new ComColumndata("req_body", DataTypeConstants.CLOB, 0);
+		ComColumndata reqBodyColumn = new ComColumndata("req_body", BuiltinCodeDataType.CLOB, 0);
 		reqBodyColumn.setName("请求体");
 		reqBodyColumn.setComments("请求体");
 		reqBodyColumn.setOrderCode(7);
 		columns.add(reqBodyColumn);
 		
-		ComColumndata respBodyColumn = new ComColumndata("resp_body", DataTypeConstants.CLOB, 0);
+		ComColumndata respBodyColumn = new ComColumndata("resp_body", BuiltinCodeDataType.CLOB, 0);
 		respBodyColumn.setName("响应体");
 		respBodyColumn.setComments("响应体");
 		respBodyColumn.setOrderCode(8);
 		columns.add(respBodyColumn);
 		
-		ComColumndata reqDateColumn = new ComColumndata("req_date", DataTypeConstants.DATE, 0);
+		ComColumndata reqDateColumn = new ComColumndata("req_date", BuiltinCodeDataType.DATE, 0);
 		reqDateColumn.setName("发起请求的时间");
 		reqDateColumn.setComments("发起请求的时间");
 		reqDateColumn.setOrderCode(9);
 		columns.add(reqDateColumn);
 		
-		ComColumndata respDateColumn = new ComColumndata("resp_date", DataTypeConstants.DATE, 0);
+		ComColumndata respDateColumn = new ComColumndata("resp_date", BuiltinCodeDataType.DATE, 0);
 		respDateColumn.setName("完成响应的时间");
 		respDateColumn.setComments("完成响应的时间");
 		respDateColumn.setOrderCode(10);
 		columns.add(respDateColumn);
 		
-		ComColumndata reqTokenColumn = new ComColumndata("req_token", DataTypeConstants.STRING, 32);
+		ComColumndata reqTokenColumn = new ComColumndata("req_token", BuiltinCodeDataType.STRING, 32);
 		reqTokenColumn.setName("请求携带的token值");
 		reqTokenColumn.setComments("请求携带的token值：可为空");
 		reqTokenColumn.setOrderCode(11);

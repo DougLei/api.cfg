@@ -14,7 +14,7 @@ import javax.servlet.ServletContextListener;
 import org.springframework.util.Assert;
 
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.service.init.cfg.InitCfgSystemService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
@@ -96,9 +96,9 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	 */
 	private void initGSqlParser() {
 		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)){
+		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			new TGSqlParser(EDbVendor.dbvoracle);
-		}else if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(dbType)){
+		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
 			new TGSqlParser(EDbVendor.dbvmssql);
 		}else{
 			throw new IllegalArgumentException("目前系统不支持 ["+dbType+"]类型的数据库sql脚本解析");

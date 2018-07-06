@@ -12,13 +12,12 @@ import java.util.List;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.plugins.builtin.data.BuiltinDatas;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinDatas;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.app.ComAttachment;
 import com.king.tooth.sys.entity.app.ComDept;
@@ -266,7 +265,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 清空用户在线数据表
-		HibernateUtil.executeUpdateByHql(SqlStatementType.DELETE, "delete ComSysAccountOnlineStatus", null);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete ComSysAccountOnlineStatus", null);
 	}
 	
 	/**
@@ -627,9 +626,9 @@ public class InitCfgSystemService extends AbstractService{
 		// 获取当前系统的ComHibernateHbm映射文件对象
 		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";
 		String hbmContent = null;
-		if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
-		}else if(DynamicDataConstants.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+		}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
 			if(clob == null){
 				throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");

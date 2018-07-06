@@ -11,11 +11,11 @@ import org.hibernate.internal.SessionFactoryImpl;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
-import com.king.tooth.plugins.builtin.data.BuiltinDatas;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinDatas;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -184,7 +184,7 @@ public class ComTabledataService extends AbstractPublishService {
 			projectIds.clear();
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComTabledata where id = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where id = '"+tableId+"'");
 		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
 		
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
@@ -266,7 +266,7 @@ public class ComTabledataService extends AbstractPublishService {
 		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'", null);
 		if(count > 0){
 			// 删除hbm信息
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 			// 删除资源
 			new ComSysResourceService().deleteSysResource(table.getId());
 			

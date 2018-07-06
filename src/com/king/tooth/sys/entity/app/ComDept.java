@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -98,37 +98,37 @@ public class ComDept extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
-		ComColumndata orgIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 32);
+		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinCodeDataType.STRING, 32);
 		orgIdColumn.setName("所属组织主键");
 		orgIdColumn.setComments("所属组织主键：顶级部门的这个字段有值，子部门不需要");
 		orgIdColumn.setOrderCode(1);
 		columns.add(orgIdColumn);
 		
-		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
+		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinCodeDataType.STRING, 32);
 		parentIdColumn.setName("父部门主键");
 		parentIdColumn.setComments("父部门主键");
 		parentIdColumn.setOrderCode(2);
 		columns.add(parentIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 100);
 		nameColumn.setName("部门名称");
 		nameColumn.setComments("部门名称");
 		nameColumn.setOrderCode(3);
 		columns.add(nameColumn);
 		
-		ComColumndata shortNameColumn = new ComColumndata("short_name", DataTypeConstants.STRING, 50);
+		ComColumndata shortNameColumn = new ComColumndata("short_name", BuiltinCodeDataType.STRING, 50);
 		shortNameColumn.setName("部门简称");
 		shortNameColumn.setComments("部门简称");
 		shortNameColumn.setOrderCode(4);
 		columns.add(shortNameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 32);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 32);
 		codeColumn.setName("部门编码");
 		codeColumn.setComments("部门编码");
 		codeColumn.setOrderCode(5);
 		columns.add(codeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(6);

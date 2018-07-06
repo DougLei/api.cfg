@@ -8,8 +8,8 @@ import org.hibernate.Query;
 import org.hibernate.internal.HbmConfPropMetadata;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -86,7 +86,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 			updateHql.append(" = ?").append(",");
 			
 			if(updatedJsonObj.get(pn) instanceof String){
-				if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(confPropMetadata.getPropDataType())){
+				if(BuiltinCodeDataType.HIBERNATE_TIMESTAMP.equals(confPropMetadata.getPropDataType())){
 					params.add(DateUtil.parseDate(updatedJsonObj.getString(pn)));
 				}else{
 					params.add(updatedJsonObj.getString(pn));

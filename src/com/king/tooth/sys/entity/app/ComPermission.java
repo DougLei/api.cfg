@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -89,31 +89,31 @@ public class ComPermission extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		ComColumndata refResourceIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 32);
+		ComColumndata refResourceIdColumn = new ComColumndata("org_id", BuiltinCodeDataType.STRING, 32);
 		refResourceIdColumn.setName("关联的资源id");
 		refResourceIdColumn.setComments("关联的资源id：可以是模块id(菜单id)，也可以是模块下的tab id，还可以是模块下的操作功能id  等");
 		refResourceIdColumn.setOrderCode(1);
 		columns.add(refResourceIdColumn);
 		
-		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", DataTypeConstants.INTEGER, 2);
+		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", BuiltinCodeDataType.INTEGER, 2);
 		permissionTypeColumn.setName("权限的类型");
 		permissionTypeColumn.setComments("权限的类型：1:模块、2:tab、3:功能  等");
 		permissionTypeColumn.setOrderCode(2);
 		columns.add(permissionTypeColumn);
 		
-		ComColumndata isVisibilityColumn = new ComColumndata("is_visibility", DataTypeConstants.INTEGER, 1);
+		ComColumndata isVisibilityColumn = new ComColumndata("is_visibility", BuiltinCodeDataType.INTEGER, 1);
 		isVisibilityColumn.setName("是否可见(是否可读)");
 		isVisibilityColumn.setComments("是否可见(是否可读)");
 		isVisibilityColumn.setOrderCode(3);
 		columns.add(isVisibilityColumn);
 		
-		ComColumndata isOperColumn = new ComColumndata("is_oper", DataTypeConstants.INTEGER, 1);
+		ComColumndata isOperColumn = new ComColumndata("is_oper", BuiltinCodeDataType.INTEGER, 1);
 		isOperColumn.setName("是否可操作(是否可写)");
 		isOperColumn.setComments("是否可操作(是否可写)");
 		isOperColumn.setOrderCode(4);
 		columns.add(isOperColumn);
 		
-		ComColumndata secretLevelsColumn = new ComColumndata("secret_levels", DataTypeConstants.STRING, 12);
+		ComColumndata secretLevelsColumn = new ComColumndata("secret_levels", BuiltinCodeDataType.STRING, 12);
 		secretLevelsColumn.setName("密级");
 		secretLevelsColumn.setComments("密级：多个用,隔开");
 		secretLevelsColumn.setOrderCode(5);

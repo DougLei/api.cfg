@@ -8,9 +8,9 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.DynamicDataConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -162,61 +162,61 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
-		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name", DataTypeConstants.STRING, 100);
+		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name", BuiltinCodeDataType.STRING, 100);
 		dbDisplayNameColumn.setName("数字库名");
 		dbDisplayNameColumn.setComments("数字库名");
 		dbDisplayNameColumn.setOrderCode(2);
 		columns.add(dbDisplayNameColumn);
 		
-		ComColumndata dbTypeColumn = new ComColumndata("db_type", DataTypeConstants.STRING, 10);
+		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinCodeDataType.STRING, 10);
 		dbTypeColumn.setName("数据库类型");
 		dbTypeColumn.setComments("数据库类型");
 		dbTypeColumn.setIsNullabled(0);
 		dbTypeColumn.setOrderCode(3);
 		columns.add(dbTypeColumn);
 		
-		ComColumndata dbInstanceNameColumn = new ComColumndata("db_instance_name", DataTypeConstants.STRING, 20);
+		ComColumndata dbInstanceNameColumn = new ComColumndata("db_instance_name", BuiltinCodeDataType.STRING, 20);
 		dbInstanceNameColumn.setName("数据库实例名");
 		dbInstanceNameColumn.setComments("数据库实例名：oracle中是实例名、sqlserver中就是数据库名");
 		dbInstanceNameColumn.setIsNullabled(0);
 		dbInstanceNameColumn.setOrderCode(4);
 		columns.add(dbInstanceNameColumn);
 		
-		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name", DataTypeConstants.STRING, 20);
+		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name", BuiltinCodeDataType.STRING, 20);
 		loginUserNameColumn.setName("数据库登录名");
 		loginUserNameColumn.setComments("数据库登录名");
 		loginUserNameColumn.setIsNullabled(0);
 		loginUserNameColumn.setOrderCode(5);
 		columns.add(loginUserNameColumn);
 		
-		ComColumndata loginPasswordColumn = new ComColumndata("login_password", DataTypeConstants.STRING, 32);
+		ComColumndata loginPasswordColumn = new ComColumndata("login_password", BuiltinCodeDataType.STRING, 32);
 		loginPasswordColumn.setName("数据库登录密码");
 		loginPasswordColumn.setComments("数据库登录密码");
 		loginPasswordColumn.setIsNullabled(0);
 		loginPasswordColumn.setOrderCode(6);
 		columns.add(loginPasswordColumn);
 		
-		ComColumndata dbIpColumn = new ComColumndata("db_ip", DataTypeConstants.STRING, 20);
+		ComColumndata dbIpColumn = new ComColumndata("db_ip", BuiltinCodeDataType.STRING, 20);
 		dbIpColumn.setName("数据库ip");
 		dbIpColumn.setComments("数据库ip");
 		dbIpColumn.setIsNullabled(0);
 		dbIpColumn.setOrderCode(7);
 		columns.add(dbIpColumn);
 		
-		ComColumndata dbPortColumn = new ComColumndata("db_port", DataTypeConstants.INTEGER, 5);
+		ComColumndata dbPortColumn = new ComColumndata("db_port", BuiltinCodeDataType.INTEGER, 5);
 		dbPortColumn.setName("数据库端口");
 		dbPortColumn.setComments("数据库端口");
 		dbPortColumn.setIsNullabled(0);
 		dbPortColumn.setOrderCode(8);
 		columns.add(dbPortColumn);
 		
-		ComColumndata cfgMainFileContentColumn = new ComColumndata("cfg_main_file_content", DataTypeConstants.STRING, 800);
+		ComColumndata cfgMainFileContentColumn = new ComColumndata("cfg_main_file_content", BuiltinCodeDataType.STRING, 800);
 		cfgMainFileContentColumn.setName("数据库文件配置内容");
 		cfgMainFileContentColumn.setComments("数据库文件配置内容(json串)");
 		cfgMainFileContentColumn.setOrderCode(9);
 		columns.add(cfgMainFileContentColumn);
 		
-		ComColumndata cfgTmplogFileContentColumn = new ComColumndata("cfg_tmplog_file_content", DataTypeConstants.STRING, 800);
+		ComColumndata cfgTmplogFileContentColumn = new ComColumndata("cfg_tmplog_file_content", BuiltinCodeDataType.STRING, 800);
 		cfgTmplogFileContentColumn.setName("数据库临时/日志文件配置内容");
 		cfgTmplogFileContentColumn.setComments("数据库临时/日志文件配置内容(json串)");
 		cfgTmplogFileContentColumn.setOrderCode(10);
@@ -248,7 +248,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	 */
 	@JSONField(serialize = false)
 	public String getUrl() {
-		return DynamicDataConstants.getDataBaseLinkUrl(getDbType(), getDbIp(), getDbPort(), getDbInstanceName());
+		return BuiltinDatabaseData.getDataBaseLinkUrl(getDbType(), getDbIp(), getDbPort(), getDbInstanceName());
 	}
 	/**
 	 * 获取数据库驱动
@@ -256,7 +256,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	 */
 	@JSONField(serialize = false)
 	public String getDriverClass() {
-		return DynamicDataConstants.getDataBaseDriver(getDbType());
+		return BuiltinDatabaseData.getDataBaseDriver(getDbType());
 	}
 	/**
 	 * 获取数据库连接方言
@@ -264,7 +264,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	 */
 	@JSONField(serialize = false)
 	public String getDialect(){
-		return DynamicDataConstants.getDataBaseDialect(getDbType());
+		return BuiltinDatabaseData.getDataBaseDialect(getDbType());
 	}
 	
 	/**
@@ -290,7 +290,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		if(StrUtils.isEmpty(dbType)){
 			return "数据库类型不能为空！";
 		}
-		if(!dbType.equals(DynamicDataConstants.DB_TYPE_ORACLE) && !dbType.equals(DynamicDataConstants.DB_TYPE_SQLSERVER)){
+		if(!dbType.equals(BuiltinDatabaseData.DB_TYPE_ORACLE) && !dbType.equals(BuiltinDatabaseData.DB_TYPE_SQLSERVER)){
 			return "系统目前只支持oracle和sqlserver数据库！";
 		}
 		if(StrUtils.isEmpty(dbInstanceName)){
@@ -315,7 +315,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		String result = validNotNullProps();
 		if(result == null){
 			// 验证数据库实例名
-			if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)
+			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)
 					&& SysConfig.getSystemConfig("db.default.ip").equals(dbIp)
 					&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
 				// 如果数据库类型是oracle数据库
@@ -362,13 +362,13 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	 * @return
 	 */
 	public boolean compareIsSameDatabase(ComDatabase database){
-		if(database.getDbType().equals(DynamicDataConstants.DB_TYPE_ORACLE)){
+		if(database.getDbType().equals(BuiltinDatabaseData.DB_TYPE_ORACLE)){
 			if(StrUtils.compareIsSameIgnoreCase(dbInstanceName, database.getDbInstanceName())
 					&& StrUtils.compareIsSame(dbIp, database.getDbIp())
 					&& dbPort.equals(database.getDbPort())){
 				return true;
 			}
-		}else if(database.getDbType().equals(DynamicDataConstants.DB_TYPE_SQLSERVER)){
+		}else if(database.getDbType().equals(BuiltinDatabaseData.DB_TYPE_SQLSERVER)){
 			if(StrUtils.compareIsSame(dbIp, database.getDbIp()) && dbPort.equals(database.getDbPort())){
 				return true;
 			}

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
@@ -108,7 +108,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 			return "["+oldModuleOperation.getName()+"]功能已经发布，无法删除，请先取消发布";
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComModuleOperation where id = '"+moduleOperationId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComModuleOperation where id = '"+moduleOperationId+"'");
 		return null;
 	}
 

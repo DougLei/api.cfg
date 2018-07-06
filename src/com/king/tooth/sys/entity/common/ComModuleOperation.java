@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -143,44 +143,44 @@ public class ComModuleOperation extends AbstractSysResource implements ITable, I
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
-		ComColumndata moduleIdColumn = new ComColumndata("module_id", DataTypeConstants.STRING, 32);
+		ComColumndata moduleIdColumn = new ComColumndata("module_id", BuiltinCodeDataType.STRING, 32);
 		moduleIdColumn.setName("所属模块主键");
 		moduleIdColumn.setComments("所属模块主键");
 		moduleIdColumn.setOrderCode(1);
 		columns.add(moduleIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 20);
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 20);
 		nameColumn.setName("功能名称");
 		nameColumn.setComments("功能名称：例如：添加");
 		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 120);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 120);
 		codeColumn.setName("功能编码");
 		codeColumn.setComments("功能编码：这个编码的命名，要整个项目唯一，命名规则可以考虑：(模块名+add)等方式，来确保唯一性");
 		codeColumn.setOrderCode(3);
 		columns.add(codeColumn);
 		
-		ComColumndata linkUrlColumn = new ComColumndata("link_url", DataTypeConstants.STRING, 100);
+		ComColumndata linkUrlColumn = new ComColumndata("link_url", BuiltinCodeDataType.STRING, 100);
 		linkUrlColumn.setName("操作要连接的url");
 		linkUrlColumn.setComments("操作要连接的url");
 		linkUrlColumn.setOrderCode(4);
 		columns.add(linkUrlColumn);
 		
-		ComColumndata iconColumn = new ComColumndata("icon", DataTypeConstants.STRING, 50);
+		ComColumndata iconColumn = new ComColumndata("icon", BuiltinCodeDataType.STRING, 50);
 		iconColumn.setName("功能图标");
 		iconColumn.setComments("功能图标");
 		iconColumn.setOrderCode(5);
 		columns.add(iconColumn);
 		
-		ComColumndata isHideColumn = new ComColumndata("is_hide", DataTypeConstants.INTEGER, 1);
+		ComColumndata isHideColumn = new ComColumndata("is_hide", BuiltinCodeDataType.INTEGER, 1);
 		isHideColumn.setName("功能是否隐藏");
 		isHideColumn.setComments("功能是否隐藏:例如查看明细这个功能，没有特定的按钮，是在每条数据的第一列可以打开");
 		isHideColumn.setDefaultValue("0");
 		isHideColumn.setOrderCode(6);
 		columns.add(isHideColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 2);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 2);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(7);

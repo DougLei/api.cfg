@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.StrUtils;

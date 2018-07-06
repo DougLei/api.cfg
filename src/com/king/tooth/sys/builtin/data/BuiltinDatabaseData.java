@@ -1,10 +1,10 @@
-package com.king.tooth.constants;
+package com.king.tooth.sys.builtin.data;
 
 /**
- * 动态数据常量值
+ * 内置的数据库数据
  * @author DougLei
  */
-public class DynamicDataConstants {
+public class BuiltinDatabaseData {
 	
 	// -----------------------------------------------------------------------------
 	/**
@@ -93,4 +93,27 @@ public class DynamicDataConstants {
 		}
 		throw new IllegalArgumentException("没有找到["+dbType+"]类型的数据库连接字符串");
 	}
+	
+	// -----------------------------------------------------------------------------
+	// sql语句的类型
+	/**
+	 * select
+	 */
+	public static final String SELECT = "select";
+	/**
+	 * insert
+	 */
+	public static final String INSERT = "insert";
+	/**
+	 * update
+	 */
+	public static final String UPDATE = "update";
+	/**
+	 * delete
+	 */
+	public static final String DELETE = "delete";
+	/**
+	 * procedure
+	 */
+	public static final String PROCEDURE = "procedure";
 }

@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -101,19 +101,19 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
-		ComColumndata basicDataResourceNameColumn = new ComColumndata("basic_data_resource_name", DataTypeConstants.STRING, 60);
+		ComColumndata basicDataResourceNameColumn = new ComColumndata("basic_data_resource_name", BuiltinCodeDataType.STRING, 60);
 		basicDataResourceNameColumn.setName("基础数据所对应的资源名");
 		basicDataResourceNameColumn.setComments("基础数据所对应的资源名：例如：数据字典对应的资源名为ComDataDictionary");
 		basicDataResourceNameColumn.setOrderCode(1);
 		columns.add(basicDataResourceNameColumn);
 		
-		ComColumndata basicDataJsonStrColumn = new ComColumndata("basic_data_json_str", DataTypeConstants.STRING, 1500);
+		ComColumndata basicDataJsonStrColumn = new ComColumndata("basic_data_json_str", BuiltinCodeDataType.STRING, 1500);
 		basicDataJsonStrColumn.setName("基础数据的json字符串内容");
 		basicDataJsonStrColumn.setComments("基础数据的json字符串内容");
 		basicDataJsonStrColumn.setOrderCode(2);
 		columns.add(basicDataJsonStrColumn);
 		
-		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", DataTypeConstants.INTEGER, 1);
+		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", BuiltinCodeDataType.INTEGER, 1);
 		belongPlatformTypeColumn.setName("资源所属的平台类型");
 		belongPlatformTypeColumn.setComments("资源所属的平台类型:1：配置平台、2：运行平台、3：通用(这个类型由开发者控制)；后期开发的功能，如果是每个项目都需要的(基础功能)，则用这个字段控制是否要发布；和isBuiltin有类似的作用，开放给前端开发使用，但还是不开放给用户；isBuiltin控制的是系统内置的资源，belongPlatformType控制的是系统外置的资源");
 		belongPlatformTypeColumn.setDefaultValue("2");

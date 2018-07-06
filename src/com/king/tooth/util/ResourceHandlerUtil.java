@@ -12,9 +12,9 @@ import org.hibernate.internal.HbmConfPropMetadata;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -124,7 +124,7 @@ public class ResourceHandlerUtil {
 		for (String rpn : reqPropnames) {
 			propMetadata = HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, rpn);
 			if(data.get(rpn) instanceof String){
-				if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
+				if(BuiltinCodeDataType.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
 					resultData.put(propMetadata.getPropName(), DateUtil.parseDate(data.getString(rpn)));
 				}else{
 					resultData.put(propMetadata.getPropName(), data.getString(rpn));

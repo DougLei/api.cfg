@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -131,14 +131,14 @@ public class ResourceDescController extends AbstractController{
 	 */
 	private void initBasicColumnToTable(ComTabledata table){
 		// projectId
-		ComColumndata projectIdColumn = new ComColumndata("project_id", DataTypeConstants.STRING, 32);
+		ComColumndata projectIdColumn = new ComColumndata("project_id", BuiltinCodeDataType.STRING, 32);
 		projectIdColumn.setName("关联的项目主键");
 		projectIdColumn.setComments("关联的项目主键");
 		projectIdColumn.setOrderCode(9902);
 		table.getColumns().add(projectIdColumn);
 		
 		// belongPlatformType
-		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", DataTypeConstants.INTEGER, 1);
+		ComColumndata belongPlatformTypeColumn = new ComColumndata("belong_platform_type", BuiltinCodeDataType.INTEGER, 1);
 		belongPlatformTypeColumn.setName("所属的平台类型");
 		belongPlatformTypeColumn.setComments("所属的平台类型:1：配置平台、2：运行平台、3：通用(这个类型由后端开发者控制)");
 		belongPlatformTypeColumn.setDefaultValue("2");
@@ -146,42 +146,42 @@ public class ResourceDescController extends AbstractController{
 		table.getColumns().add(belongPlatformTypeColumn);
 		
 		if(table.getIsResource() == 1){
-			ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+			ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinCodeDataType.INTEGER, 1);
 			isEnabledColumn.setName("资源是否有效");
 			isEnabledColumn.setComments("资源是否有效");
 			isEnabledColumn.setDefaultValue("1");
 			isEnabledColumn.setOrderCode(9904);
 			table.getColumns().add(isEnabledColumn);
 			
-			ComColumndata reqResourceMethodColumn = new ComColumndata("req_resource_method", DataTypeConstants.STRING, 20);
+			ComColumndata reqResourceMethodColumn = new ComColumndata("req_resource_method", BuiltinCodeDataType.STRING, 20);
 			reqResourceMethodColumn.setName("请求资源的方法");
 			reqResourceMethodColumn.setComments("请求资源的方法:get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 			reqResourceMethodColumn.setDefaultValue(ISysResource.ALL);
 			reqResourceMethodColumn.setOrderCode(9905);
 			table.getColumns().add(reqResourceMethodColumn);
 
-			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin", DataTypeConstants.INTEGER, 1);
+			ComColumndata isBuiltinColumn = new ComColumndata("is_builtin", BuiltinCodeDataType.INTEGER, 1);
 			isBuiltinColumn.setName("是否内置资源");
 			isBuiltinColumn.setComments("是否内置资源:这个字段由开发人员控制，不开放给用户");
 			isBuiltinColumn.setDefaultValue("0");
 			isBuiltinColumn.setOrderCode(9906);
 			table.getColumns().add(isBuiltinColumn);
 
-			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy", DataTypeConstants.INTEGER, 1);
+			ComColumndata isNeedDeployColumn = new ComColumndata("is_need_deploy", BuiltinCodeDataType.INTEGER, 1);
 			isNeedDeployColumn.setName("资源是否需要发布");
 			isNeedDeployColumn.setComments("资源是否需要发布");
 			isNeedDeployColumn.setDefaultValue("1");
 			isNeedDeployColumn.setOrderCode(9907);
 			table.getColumns().add(isNeedDeployColumn);
 			
-			ComColumndata isNeedRedeployColumn = new ComColumndata("is_need_redeploy", DataTypeConstants.INTEGER, 1);
+			ComColumndata isNeedRedeployColumn = new ComColumndata("is_need_redeploy", BuiltinCodeDataType.INTEGER, 1);
 			isNeedRedeployColumn.setName("资源是否需要补发布");
 			isNeedRedeployColumn.setComments("资源是否需要补发布:例如，当配置平台开发出来一个新的运行平台通用功能时，将这个字段值改为1，去给所有已经发布的项目，补发增加新的功能");
 			isNeedRedeployColumn.setDefaultValue("0");
 			isNeedRedeployColumn.setOrderCode(9908);
 			table.getColumns().add(isNeedRedeployColumn);
 			
-			ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
+			ComColumndata isCreatedColumn = new ComColumndata("is_created", BuiltinCodeDataType.INTEGER, 1);
 			isCreatedColumn.setName("资源是否被创建");
 			isCreatedColumn.setComments("资源是否被创建：在配置平台中，主要是给平台开发人员使用，也是标识表资源是否被加载到sessionFactory中；在运行平台中，这个字段标识资源是否被加载，主要是指表资源是否被加载到sessionFactory中");
 			isCreatedColumn.setDefaultValue("0");

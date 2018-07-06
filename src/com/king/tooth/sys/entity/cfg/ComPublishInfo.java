@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -107,45 +107,45 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
-		ComColumndata publishDatabaseIdColumn = new ComColumndata("publish_database_id", DataTypeConstants.STRING, 32);
+		ComColumndata publishDatabaseIdColumn = new ComColumndata("publish_database_id", BuiltinCodeDataType.STRING, 32);
 		publishDatabaseIdColumn.setName("发布的数据库主键");
 		publishDatabaseIdColumn.setComments("发布的数据库主键");
 		publishDatabaseIdColumn.setOrderCode(1);
 		columns.add(publishDatabaseIdColumn);
 		
-		ComColumndata publishProjectIdColumn = new ComColumndata("publish_project_id", DataTypeConstants.STRING, 32);
+		ComColumndata publishProjectIdColumn = new ComColumndata("publish_project_id", BuiltinCodeDataType.STRING, 32);
 		publishProjectIdColumn.setName("发布的项目主键");
 		publishProjectIdColumn.setComments("发布的项目主键");
 		publishProjectIdColumn.setOrderCode(2);
 		columns.add(publishProjectIdColumn);
 		
-		ComColumndata publishResourceIdColumn = new ComColumndata("publish_resource_id", DataTypeConstants.STRING, 32);
+		ComColumndata publishResourceIdColumn = new ComColumndata("publish_resource_id", BuiltinCodeDataType.STRING, 32);
 		publishResourceIdColumn.setName("发布的资源主键");
 		publishResourceIdColumn.setComments("发布的资源主键");
 		publishResourceIdColumn.setOrderCode(3);
 		columns.add(publishResourceIdColumn);
 		
-		ComColumndata publishResourceNameColumn = new ComColumndata("publish_resource_name", DataTypeConstants.STRING, 60);
+		ComColumndata publishResourceNameColumn = new ComColumndata("publish_resource_name", BuiltinCodeDataType.STRING, 60);
 		publishResourceNameColumn.setName("发布的资源名");
 		publishResourceNameColumn.setComments("发布的资源名:冗余字段");
 		publishResourceNameColumn.setOrderCode(4);
 		columns.add(publishResourceNameColumn);
 		
-		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", DataTypeConstants.INTEGER, 1);
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinCodeDataType.INTEGER, 1);
 		resourceTypeColumn.setName("发布的资源类型");
 		resourceTypeColumn.setComments("发布的资源类型");
 		resourceTypeColumn.setIsNullabled(0);
 		resourceTypeColumn.setOrderCode(5);
 		columns.add(resourceTypeColumn);
 		
-		ComColumndata isSuccessColumn = new ComColumndata("is_success", DataTypeConstants.INTEGER, 1);
+		ComColumndata isSuccessColumn = new ComColumndata("is_success", BuiltinCodeDataType.INTEGER, 1);
 		isSuccessColumn.setName("是否成功");
 		isSuccessColumn.setComments("是否成功");
 		isSuccessColumn.setDefaultValue("0");
 		isSuccessColumn.setOrderCode(6);
 		columns.add(isSuccessColumn);
 		
-		ComColumndata errMsgColumn = new ComColumndata("err_msg", DataTypeConstants.STRING, 1000);
+		ComColumndata errMsgColumn = new ComColumndata("err_msg", BuiltinCodeDataType.STRING, 1000);
 		errMsgColumn.setName("错误消息");
 		errMsgColumn.setComments("错误消息");
 		errMsgColumn.setOrderCode(7);

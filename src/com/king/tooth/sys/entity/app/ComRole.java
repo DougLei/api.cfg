@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -92,32 +92,32 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 30);
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 30);
 		nameColumn.setName("角色名称");
 		nameColumn.setComments("角色名称");
 		nameColumn.setOrderCode(1);
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 20);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 20);
 		codeColumn.setName("角色编码");
 		codeColumn.setComments("角色编码");
 		codeColumn.setIsNullabled(0);
 		codeColumn.setOrderCode(2);
 		columns.add(codeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 100);
+		ComColumndata descsColumn = new ComColumndata("descs", BuiltinCodeDataType.STRING, 100);
 		descsColumn.setName("角色描述");
 		descsColumn.setComments("角色描述");
 		descsColumn.setOrderCode(3);
 		columns.add(descsColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(4);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinCodeDataType.INTEGER, 1);
 		isEnabledColumn.setName("是否启用");
 		isEnabledColumn.setComments("是否启用");
 		isEnabledColumn.setDefaultValue("1");

@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
@@ -266,7 +266,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	 */
 	protected void modifyIsCreatedPropVal(String entityName, int isCreated, String entityId){
 		String hql = "update " + entityName + " set isCreated ="+isCreated + " where id = '"+entityId+"'";
-		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql, null);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, hql, null);
 	}
 	/**
 	 * 批量修改是否created的值
@@ -282,6 +282,6 @@ public abstract class AbstractPublishService extends AbstractService{
 		hql.setLength(hql.length() - 1);
 		hql.append(")");
 		
-		HibernateUtil.executeUpdateByHql(SqlStatementType.UPDATE, hql.toString(), null);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, hql.toString(), null);
 	}
 }

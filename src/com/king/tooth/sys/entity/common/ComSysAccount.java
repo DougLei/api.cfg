@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -156,51 +156,51 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
-		ComColumndata loginNameColumn = new ComColumndata("login_name", DataTypeConstants.STRING, 30);
+		ComColumndata loginNameColumn = new ComColumndata("login_name", BuiltinCodeDataType.STRING, 30);
 		loginNameColumn.setName("登录名");
 		loginNameColumn.setComments("登录名");
 		loginNameColumn.setOrderCode(1);
 		columns.add(loginNameColumn);
 		
-		ComColumndata loginPwdColumn = new ComColumndata("login_pwd", DataTypeConstants.STRING, 32);
+		ComColumndata loginPwdColumn = new ComColumndata("login_pwd", BuiltinCodeDataType.STRING, 32);
 		loginPwdColumn.setName("登录密码");
 		loginPwdColumn.setComments("登录密码");
 		loginPwdColumn.setOrderCode(2);
 		columns.add(loginPwdColumn);
 		
-		ComColumndata loginPwdKeyColumn = new ComColumndata("login_pwd_key", DataTypeConstants.STRING, 32);
+		ComColumndata loginPwdKeyColumn = new ComColumndata("login_pwd_key", BuiltinCodeDataType.STRING, 32);
 		loginPwdKeyColumn.setName("登录密码的密钥");
 		loginPwdKeyColumn.setComments("登录密码的密钥：和loginPwd结合，得到每个账户独有的密码");
 		loginPwdKeyColumn.setOrderCode(3);
 		columns.add(loginPwdKeyColumn);
 		
-		ComColumndata telColumn = new ComColumndata("tel", DataTypeConstants.STRING, 20);
+		ComColumndata telColumn = new ComColumndata("tel", BuiltinCodeDataType.STRING, 20);
 		telColumn.setName("手机号");
 		telColumn.setComments("手机号");
 		telColumn.setOrderCode(4);
 		columns.add(telColumn);
 		
-		ComColumndata emailsColumn = new ComColumndata("emails", DataTypeConstants.STRING, 80);
+		ComColumndata emailsColumn = new ComColumndata("emails", BuiltinCodeDataType.STRING, 80);
 		emailsColumn.setName("邮箱");
 		emailsColumn.setComments("邮箱");
 		emailsColumn.setOrderCode(5);
 		columns.add(emailsColumn);
 
-		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
+		ComColumndata accountTypeColumn = new ComColumndata("account_type", BuiltinCodeDataType.INTEGER, 1);
 		accountTypeColumn.setName("账户类型");
 		accountTypeColumn.setComments("账户类型:1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)、2.普通账户，默认值是：2");
 		accountTypeColumn.setDefaultValue("2");
 		accountTypeColumn.setOrderCode(6);
 		columns.add(accountTypeColumn);
 		
-		ComColumndata accountStatusColumn = new ComColumndata("account_status", DataTypeConstants.INTEGER, 1);
+		ComColumndata accountStatusColumn = new ComColumndata("account_status", BuiltinCodeDataType.INTEGER, 1);
 		accountStatusColumn.setName("账户状态");
 		accountStatusColumn.setComments("账户状态:1.启用、2.禁用，默认值是：1");
 		accountStatusColumn.setDefaultValue("1");
 		accountStatusColumn.setOrderCode(7);
 		columns.add(accountStatusColumn);
 		
-		ComColumndata validDateColumn = new ComColumndata("valid_date", DataTypeConstants.DATE, 0);
+		ComColumndata validDateColumn = new ComColumndata("valid_date", BuiltinCodeDataType.DATE, 0);
 		validDateColumn.setName("账户有效期限");
 		validDateColumn.setComments("账户有效期限");
 		validDateColumn.setOrderCode(8);

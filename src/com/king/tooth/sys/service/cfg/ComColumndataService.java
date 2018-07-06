@@ -1,8 +1,8 @@
 package com.king.tooth.sys.service.cfg;
 
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
@@ -83,7 +83,7 @@ public class ComColumndataService extends AbstractService{
 			
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-				HibernateUtil.executeUpdateBySql(SqlStatementType.UPDATE, "update com_tabledata set is_created = 0 where id = '"+column.getTableId()+"'", null);
+				HibernateUtil.executeUpdateBySql(BuiltinDatabaseData.UPDATE, "update com_tabledata set is_created = 0 where id = '"+column.getTableId()+"'", null);
 			}
 		}
 		return operResult;

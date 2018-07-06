@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IPublish;
@@ -96,32 +96,32 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
-		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
+		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", BuiltinCodeDataType.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：如果发布到项目中，这个字段必须有值");
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
-		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", DataTypeConstants.STRING, 32);
+		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinCodeDataType.STRING, 32);
 		refTableIdColumn.setName("关联的表主键");
 		refTableIdColumn.setComments("关联的表主键：如果在被发布到项目中，这个字段有无值均可");
 		refTableIdColumn.setOrderCode(2);
 		columns.add(refTableIdColumn);
 		
-		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name", DataTypeConstants.STRING, 60);
+		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name", BuiltinCodeDataType.STRING, 60);
 		hbmResourceNameColumn.setName("hbm资源名");
 		hbmResourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
 		hbmResourceNameColumn.setOrderCode(3);
 		columns.add(hbmResourceNameColumn);
 		
-		ComColumndata isDataLinkTableHbmColumn = new ComColumndata("is_data_link_table_hbm", DataTypeConstants.INTEGER, 1);
+		ComColumndata isDataLinkTableHbmColumn = new ComColumndata("is_data_link_table_hbm", BuiltinCodeDataType.INTEGER, 1);
 		isDataLinkTableHbmColumn.setName("是否是关系表的hbm");
 		isDataLinkTableHbmColumn.setComments("是否是关系表的hbm");
 		isDataLinkTableHbmColumn.setDefaultValue("0");
 		isDataLinkTableHbmColumn.setOrderCode(4);
 		columns.add(isDataLinkTableHbmColumn);
 		
-		ComColumndata hbmContentColumn = new ComColumndata("hbm_content", DataTypeConstants.CLOB, 0);
+		ComColumndata hbmContentColumn = new ComColumndata("hbm_content", BuiltinCodeDataType.CLOB, 0);
 		hbmContentColumn.setName("hbm内容");
 		hbmContentColumn.setComments("hbm内容");
 		hbmContentColumn.setOrderCode(5);

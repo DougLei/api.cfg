@@ -27,10 +27,10 @@ public class HibernateTest {
 		
 //		List<ProcedureSqlScriptParameter> pssp = new ArrayList<ProcedureSqlScriptParameter>();
 //		ProcedureSqlScriptParameter p1 = new ProcedureSqlScriptParameter(
-//				DynamicDataConstants.DB_TYPE_SQLSERVER, 1, "mynameIn", "varchar", 0);
+//				BuiltinDatabaseData.DB_TYPE_SQLSERVER, 1, "mynameIn", "varchar", 0);
 //		p1.setActualValue("哈哈");
 //		ProcedureSqlScriptParameter p2 = new ProcedureSqlScriptParameter(
-//				DynamicDataConstants.DB_TYPE_SQLSERVER, 2, "myageOut", "varchar", 4);
+//				BuiltinDatabaseData.DB_TYPE_SQLSERVER, 2, "myageOut", "varchar", 4);
 //		pssp.add(p1);
 //		pssp.add(p2);
 //		
@@ -46,12 +46,12 @@ public class HibernateTest {
 		
 //		List<ProcedureSqlScriptParameter> pssp = new ArrayList<ProcedureSqlScriptParameter>();
 //		ProcedureSqlScriptParameter p1 = new ProcedureSqlScriptParameter(
-//				DynamicDataConstants.DB_TYPE_ORACLE, 1, "c", "varchar2", 1);
+//				BuiltinDatabaseData.DB_TYPE_ORACLE, 1, "c", "varchar2", 1);
 //		p1.setActualValue("哈哈");
 //		ProcedureSqlScriptParameter p2 = new ProcedureSqlScriptParameter(
-//				DynamicDataConstants.DB_TYPE_ORACLE, 2, "b", "varchar2", 2);
+//				BuiltinDatabaseData.DB_TYPE_ORACLE, 2, "b", "varchar2", 2);
 //		ProcedureSqlScriptParameter p3 = new ProcedureSqlScriptParameter(
-//				DynamicDataConstants.DB_TYPE_ORACLE, 3, "d", "varchar2", 3);
+//				BuiltinDatabaseData.DB_TYPE_ORACLE, 3, "d", "varchar2", 3);
 //		p3.setActualValue("我把只给了p2");
 //		pssp.add(p1);
 //		pssp.add(p2);

@@ -3,7 +3,7 @@ package test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
@@ -22,7 +22,7 @@ public class HbmOperTest {
 		table2.setId("123121111");
 		table2.setColumns(columns);
 //		table2.setTableName("Sub");
-		table2.setTableType(DynamicDataConstants.PARENT_SUB_TABLE);
+		table2.setTableType(BuiltinDatabaseData.PARENT_SUB_TABLE);
 		table2.setParentTableName("Parent");
 		table2.setParentTableId("12312");
 		tabledatas.add(table2);

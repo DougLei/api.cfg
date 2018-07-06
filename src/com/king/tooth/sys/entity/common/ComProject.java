@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -86,27 +86,27 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
-		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
+		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", BuiltinCodeDataType.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：目前系统只支持，一个项目对一个数据库");
 		refDatabaseIdColumn.setIsNullabled(0);
 		refDatabaseIdColumn.setOrderCode(1);
 		columns.add(refDatabaseIdColumn);
 		
-		ComColumndata projNameColumn = new ComColumndata("proj_name", DataTypeConstants.STRING, 200);
+		ComColumndata projNameColumn = new ComColumndata("proj_name", BuiltinCodeDataType.STRING, 200);
 		projNameColumn.setName("项目名称");
 		projNameColumn.setComments("项目名称");
 		projNameColumn.setOrderCode(2);
 		columns.add(projNameColumn);
 		
-		ComColumndata projCodeColumn = new ComColumndata("proj_code", DataTypeConstants.STRING, 100);
+		ComColumndata projCodeColumn = new ComColumndata("proj_code", BuiltinCodeDataType.STRING, 100);
 		projCodeColumn.setName("项目编码");
 		projCodeColumn.setComments("项目编码");
 		projCodeColumn.setIsNullabled(0);
 		projCodeColumn.setOrderCode(3);
 		columns.add(projCodeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 800);
+		ComColumndata descsColumn = new ComColumndata("descs", BuiltinCodeDataType.STRING, 800);
 		descsColumn.setName("项目描述");
 		descsColumn.setComments("项目描述");
 		descsColumn.setOrderCode(4);

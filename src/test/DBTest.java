@@ -25,7 +25,7 @@ public class DBTest {
 ////		table2.setTableName("Sub");
 //		tabledatas.add(table1);
 //		tabledatas.add(table2);
-//		table2.setTableType(DynamicDataConstants.PARENT_SUB_TABLE);
+//		table2.setTableType(BuiltinDatabaseData.PARENT_SUB_TABLE);
 //		table2.setParentTableName("Parent");
 //		dto.dropTable(tabledatas );
 	}
@@ -43,7 +43,7 @@ public class DBTest {
 //		ComTabledata table2 = new ComTabledata();
 //		table2.setColumns(columns);
 ////		table2.setTableName("Sub");
-//		table2.setTableType(DynamicDataConstants.PARENT_SUB_TABLE);
+//		table2.setTableType(BuiltinDatabaseData.PARENT_SUB_TABLE);
 //		table2.setParentTableName("Parent");
 //		tabledatas.add(table2);
 //		

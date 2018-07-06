@@ -1,4 +1,4 @@
-package com.king.tooth.plugins.builtin.data;
+package com.king.tooth.sys.builtin.data;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.entity.common.ComDatabase;

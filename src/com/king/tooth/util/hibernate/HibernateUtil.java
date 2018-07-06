@@ -19,11 +19,11 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.jdbc.Work;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.util.CloseUtil;
@@ -202,14 +202,14 @@ public class HibernateUtil {
 	public static HbmConfPropMetadata getDefinePropMetadata(HbmConfPropMetadata[] defineProps, String propName){
 		if(propName.startsWith("_") // 规范，属性名不能以_开头
 				|| defineProps == null || defineProps.length == 0){ 
-			return new HbmConfPropMetadata(propName, DataTypeConstants.STRING);
+			return new HbmConfPropMetadata(propName, BuiltinCodeDataType.STRING);
 		}
 		for (HbmConfPropMetadata dp : defineProps) {
 			if(dp.getPropName().equalsIgnoreCase(propName)){
 				return dp;
 			}
 		}
-		return new HbmConfPropMetadata(propName, DataTypeConstants.STRING);
+		return new HbmConfPropMetadata(propName, BuiltinCodeDataType.STRING);
 	}
 	
 	/**
@@ -350,7 +350,7 @@ public class HibernateUtil {
 			updateHql.append(" where id = ?");
 			parameters.add(updateId);
 			
-			executeUpdateByHql(SqlStatementType.UPDATE, updateHql.toString(), parameters);
+			executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), parameters);
 			Log4jUtil.debug("修改数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
@@ -411,7 +411,7 @@ public class HibernateUtil {
 			hql += "rightId=?";
 			params.add(rightId);
 		}
-		executeUpdateByHql(SqlStatementType.DELETE, hql, params);
+		executeUpdateByHql(BuiltinDatabaseData.DELETE, hql, params);
 	}
 	
 	//------------------------------------------------------------------------------------------------------
@@ -419,7 +419,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param hqlDes @see SqlStatementType
+	 * @param hqlDes @see BuiltinDatabaseData
 	 * @param modifyHql
 	 * @param parameters
 	 */
@@ -440,7 +440,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param hqlDes @see SqlStatementType
+	 * @param hqlDes @see BuiltinDatabaseData
 	 * @param modifyHql
 	 * @param parameterArr
 	 */
@@ -452,7 +452,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param sqlDes @see SqlStatementType
+	 * @param sqlDes @see BuiltinDatabaseData
 	 * @param modifySql
 	 * @param parameters
 	 */
@@ -474,7 +474,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param sqlDes @see SqlStatementType
+	 * @param sqlDes @see BuiltinDatabaseData
 	 * @param modifySql
 	 * @param parameterArr
 	 */
@@ -629,10 +629,10 @@ public class HibernateUtil {
 						if(parameter.getInOut() == 1){//in
 							cs.setObject(parameter.getSqlIndex(), parameter.getActualInValue());
 						}else if(parameter.getInOut() == 2){//out
-							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
+							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getDatabaseDataTypeCode(dbType));
 						}else if(parameter.getInOut() == 3){//in out
 							cs.setObject(parameter.getSqlIndex(), parameter.getActualInValue());
-							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getProcedureParamsMappingDataTypes(dbType));
+							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getDatabaseDataTypeCode(dbType));
 						}
 					}
 				}

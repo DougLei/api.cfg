@@ -1,6 +1,6 @@
 package com.king.tooth.util.database;
 
-import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -15,9 +15,9 @@ public class DBUtil {
 	 */
 	public static String getStrAppendCharacter(){
 		String dbType = HibernateUtil.getCurrentDatabaseType();
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)){
+		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			return "||";
-		}else if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(dbType)){
+		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
 			return "+";
 		}
 		throw new IllegalArgumentException("根据数据库类型，获取数据库字符串连接符时，无法获取 ["+dbType+"] 数据库类型的字符串连接符");
@@ -29,7 +29,7 @@ public class DBUtil {
 	 */
 	public static boolean isSqlserver(){
 		String dbType = HibernateUtil.getCurrentDatabaseType();
-		if(DynamicDataConstants.DB_TYPE_SQLSERVER.equals(dbType)){
+		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
 			return true;
 		}
 		return false;
@@ -41,7 +41,7 @@ public class DBUtil {
 	 */
 	public static boolean isOracle(){
 		String dbType = HibernateUtil.getCurrentDatabaseType();
-		if(DynamicDataConstants.DB_TYPE_ORACLE.equals(dbType)){
+		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			return true;
 		}
 		return false;

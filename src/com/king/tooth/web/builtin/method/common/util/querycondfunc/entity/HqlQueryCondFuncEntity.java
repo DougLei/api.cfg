@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import org.hibernate.internal.HbmConfPropMetadata;
 
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.util.DateUtil;
 
 /**
@@ -67,7 +67,7 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 				tmp[i] = tmpVal.substring(1, tmpVal.length()-1);
 			}
 			
-			if(DataTypeConstants.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
+			if(BuiltinCodeDataType.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
 				result[i] = DateUtil.parseDate(tmp[i]+"");
 			}else{
 				result[i] = tmp[i];

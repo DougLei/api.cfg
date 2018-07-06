@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.SqlStatementType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -104,7 +104,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 */
 	protected final void doModifyProcess(String sqlDesc){
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
-		if(sqlScript.getSqlScriptType().equals(SqlStatementType.PROCEDURE)){// 是存储过程
+		if(sqlScript.getSqlScriptType().equals(BuiltinDatabaseData.PROCEDURE)){// 是存储过程
 			Map<String, Object> data = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getProcedureName(), sqlScript.getSqlScriptParameterList());
 			installResponseBodyForDataObject(data);
 		}else{

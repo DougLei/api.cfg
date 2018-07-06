@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.AbstractCommonBuiltinBMProcesser;
 import com.king.tooth.web.builtin.method.tableresource.parentsub.BuiltinParentsubQueryMethodProcesser;

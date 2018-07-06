@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -67,19 +67,19 @@ public class ComVerifyCode extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
-		ComColumndata verifyCodeColumn = new ComColumndata("verify_code", DataTypeConstants.STRING, 12);
+		ComColumndata verifyCodeColumn = new ComColumndata("verify_code", BuiltinCodeDataType.STRING, 12);
 		verifyCodeColumn.setName("验证码值");
 		verifyCodeColumn.setComments("验证码值");
 		verifyCodeColumn.setOrderCode(1);
 		columns.add(verifyCodeColumn);
 		
-		ComColumndata reqAccountIdColumn = new ComColumndata("req_account_id", DataTypeConstants.STRING, 32);
+		ComColumndata reqAccountIdColumn = new ComColumndata("req_account_id", BuiltinCodeDataType.STRING, 32);
 		reqAccountIdColumn.setName("请求的账户信息主键");
 		reqAccountIdColumn.setComments("请求的账户信息主键");
 		reqAccountIdColumn.setOrderCode(2);
 		columns.add(reqAccountIdColumn);
 		
-		ComColumndata reqIpColumn = new ComColumndata("req_ip", DataTypeConstants.STRING, 20);
+		ComColumndata reqIpColumn = new ComColumndata("req_ip", BuiltinCodeDataType.STRING, 20);
 		reqIpColumn.setName("请求的客户端ip");
 		reqIpColumn.setComments("请求的客户端ip");
 		reqIpColumn.setOrderCode(3);

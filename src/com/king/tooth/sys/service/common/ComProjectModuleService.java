@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.AbstractPublishService;
@@ -87,7 +87,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			return "["+oldProjectModule.getName()+"]模块已经发布，无法删除，请先取消发布";
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComProjectModule where id = '"+projectModuleId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectModule where id = '"+projectModuleId+"'");
 		return null;
 	}
 	

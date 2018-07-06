@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.ITable;
@@ -89,25 +89,25 @@ public class ComCode extends AbstractSysResource implements ITable{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
-		ComColumndata codeResourceNameColumn = new ComColumndata("code_resource_name", DataTypeConstants.STRING, 60);
+		ComColumndata codeResourceNameColumn = new ComColumndata("code_resource_name", BuiltinCodeDataType.STRING, 60);
 		codeResourceNameColumn.setName("代码资源名");
 		codeResourceNameColumn.setComments("代码资源名");
 		codeResourceNameColumn.setOrderCode(1);
 		columns.add(codeResourceNameColumn);
 		
-		ComColumndata classPathColumn = new ComColumndata("class_path", DataTypeConstants.STRING, 120);
+		ComColumndata classPathColumn = new ComColumndata("class_path", BuiltinCodeDataType.STRING, 120);
 		classPathColumn.setName("类的全路径");
 		classPathColumn.setComments("类的全路径");
 		classPathColumn.setOrderCode(2);
 		columns.add(classPathColumn);
 		
-		ComColumndata methodNameColumn = new ComColumndata("method_name", DataTypeConstants.STRING, 50);
+		ComColumndata methodNameColumn = new ComColumndata("method_name", BuiltinCodeDataType.STRING, 50);
 		methodNameColumn.setName("方法名");
 		methodNameColumn.setComments("方法名");
 		methodNameColumn.setOrderCode(3);
 		columns.add(methodNameColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 200);
+		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinCodeDataType.STRING, 200);
 		commentsColumn.setName("描述");
 		commentsColumn.setComments("描述");
 		commentsColumn.setOrderCode(4);

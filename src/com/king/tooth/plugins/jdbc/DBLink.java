@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Arrays;
 
-import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -117,6 +117,6 @@ public class DBLink {
 	 * @return
 	 */
 	public String[] getDatabaseTypes() {
-		return new String[]{DynamicDataConstants.DB_TYPE_ORACLE, DynamicDataConstants.DB_TYPE_SQLSERVER};
+		return new String[]{BuiltinDatabaseData.DB_TYPE_ORACLE, BuiltinDatabaseData.DB_TYPE_SQLSERVER};
 	}
 }

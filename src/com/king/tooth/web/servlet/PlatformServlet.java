@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.EncodingConstants;
-import com.king.tooth.plugins.builtin.params.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.StrUtils;

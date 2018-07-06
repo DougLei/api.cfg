@@ -6,8 +6,8 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.constants.SqlStatementType;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComUser;
@@ -209,7 +209,7 @@ public class ComSysAccountService extends AbstractService{
 	 */
 	public String loginOut(String token) {
 		// 删除对应的ComSysAccountOnlineStatus数据
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.DELETE, "delete ComSysAccountOnlineStatus where token = ? ", token);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccountOnlineStatus where token = ? ", token);
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
 		return null;
@@ -227,7 +227,7 @@ public class ComSysAccountService extends AbstractService{
 		if(newPwd.equals(account.getLoginPwd())){
 			return "新密码不能和旧密码相同";
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementType.UPDATE, "update ComSysAccount set loginPwd=? where "+ ResourceNameConstants.ID +"=?", newPwd, accountId);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComSysAccount set loginPwd=? where "+ ResourceNameConstants.ID +"=?", newPwd, accountId);
 		return "密码修改成功";
 	}
 

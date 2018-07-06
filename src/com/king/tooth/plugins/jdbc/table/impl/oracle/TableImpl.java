@@ -1,7 +1,7 @@
 package com.king.tooth.plugins.jdbc.table.impl.oracle;
 
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.jdbc.table.AbstractTableHandler;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
@@ -14,19 +14,19 @@ public class TableImpl extends AbstractTableHandler{
 
 	protected void analysisColumnType(ComColumndata column) {
 		String columnType = column.getColumnType();
-		if(DataTypeConstants.STRING.equals(columnType)){
+		if(BuiltinCodeDataType.STRING.equals(columnType)){
 			createTableSql.append("varchar2");
-		}else if(DataTypeConstants.BOOLEAN.equals(columnType)){
+		}else if(BuiltinCodeDataType.BOOLEAN.equals(columnType)){
 			createTableSql.append("char");
-		}else if(DataTypeConstants.INTEGER.equals(columnType)){
+		}else if(BuiltinCodeDataType.INTEGER.equals(columnType)){
 			createTableSql.append("number");
-		}else if(DataTypeConstants.DOUBLE.equals(columnType)){
+		}else if(BuiltinCodeDataType.DOUBLE.equals(columnType)){
 			createTableSql.append("number");
-		}else if(DataTypeConstants.DATE.equals(columnType)){
+		}else if(BuiltinCodeDataType.DATE.equals(columnType)){
 			createTableSql.append("date");
-		}else if(DataTypeConstants.CLOB.equals(columnType)){
+		}else if(BuiltinCodeDataType.CLOB.equals(columnType)){
 			createTableSql.append("clob");
-		}else if(DataTypeConstants.BLOB.equals(columnType)){
+		}else if(BuiltinCodeDataType.BLOB.equals(columnType)){
 			createTableSql.append("blob");
 		}else{
 			throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成oracle对应的数据类型");
@@ -36,17 +36,17 @@ public class TableImpl extends AbstractTableHandler{
 	protected void analysisColumnLength(ComColumndata column) {
 		// 验证哪些类型，oracle不需要加长度限制
 		String columnType = column.getColumnType();
-		if(DataTypeConstants.DATE.equals(columnType)
-				|| DataTypeConstants.CLOB.equals(columnType)
-				|| DataTypeConstants.BLOB.equals(columnType)){
+		if(BuiltinCodeDataType.DATE.equals(columnType)
+				|| BuiltinCodeDataType.CLOB.equals(columnType)
+				|| BuiltinCodeDataType.BLOB.equals(columnType)){
 			return;
-		}else if(DataTypeConstants.BOOLEAN.equals(columnType)){
+		}else if(BuiltinCodeDataType.BOOLEAN.equals(columnType)){
 			createTableSql.append("(1)");
 			return;
 		}
 		
 		Integer length = column.getLength();
-		if(DataTypeConstants.STRING.equals(columnType)){
+		if(BuiltinCodeDataType.STRING.equals(columnType)){
 			if(length < 0 || length > 4000){
 				createTableSql.append("(4000)");
 			}else{

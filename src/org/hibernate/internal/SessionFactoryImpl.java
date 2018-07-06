@@ -131,7 +131,7 @@ import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
 import org.jboss.logging.Logger;
 
-import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -2258,9 +2258,9 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 		if(StrUtils.isEmpty(databaseType)){
 			String dialect = this.properties.getProperty("hibernate.dialect");
 			if("org.hibernate.dialect.OracleDialect".equals(dialect)){
-				databaseType = DynamicDataConstants.DB_TYPE_ORACLE;
+				databaseType = BuiltinDatabaseData.DB_TYPE_ORACLE;
 			}else if("org.hibernate.dialect.SQLServerDialect".equals(dialect)){
-				databaseType = DynamicDataConstants.DB_TYPE_SQLSERVER;
+				databaseType = BuiltinDatabaseData.DB_TYPE_SQLSERVER;
 			}else{
 				throw new IllegalArgumentException("sessionFactory无法获取其操作的数据库类型，它的数据库方言为：" + dialect);
 			}

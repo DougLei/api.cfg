@@ -3,8 +3,8 @@ package com.king.tooth.plugins.jdbc.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.DynamicDataConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -25,7 +25,7 @@ public class DynamicDataLinkTableUtil {
 		List<ComTabledata> datalinkTables = new ArrayList<ComTabledata>();
 		for (ComTabledata tabledata : tabledatas) {
 			if(tabledata.getTableType()!=null  
-					&& DynamicDataConstants.PARENT_SUB_TABLE == tabledata.getTableType()
+					&& BuiltinDatabaseData.PARENT_SUB_TABLE == tabledata.getTableType()
 					&& StrUtils.notEmpty(tabledata.getParentTableName())
 					&& tabledata.getIsHavaDatalink() != null
 					&& tabledata.getIsHavaDatalink() == 1){// 判断标示是需要主子表的
@@ -62,17 +62,17 @@ public class DynamicDataLinkTableUtil {
 		if(isNeedColumns){
 			List<ComColumndata> columns = new ArrayList<ComColumndata>(3);
 			
-			ComColumndata leftIdColumn = new ComColumndata("left_id", DataTypeConstants.STRING, 32);
+			ComColumndata leftIdColumn = new ComColumndata("left_id", BuiltinCodeDataType.STRING, 32);
 			leftIdColumn.setIsNullabled(0);
 			leftIdColumn.setOrderCode(1);
 			columns.add(leftIdColumn);
 			
-			ComColumndata rightIdColumn = new ComColumndata("right_id", DataTypeConstants.STRING, 32);
+			ComColumndata rightIdColumn = new ComColumndata("right_id", BuiltinCodeDataType.STRING, 32);
 			rightIdColumn.setIsNullabled(0);
 			rightIdColumn.setOrderCode(2);
 			columns.add(rightIdColumn);
 			
-			ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+			ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
 			orderCodeColumn.setOrderCode(3);
 			orderCodeColumn.setDefaultValue("0");
 			columns.add(orderCodeColumn);

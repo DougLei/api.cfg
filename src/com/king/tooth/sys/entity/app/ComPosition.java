@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
@@ -77,25 +77,25 @@ public class ComPosition extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 60);
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 60);
 		nameColumn.setName("职务名称");
 		nameColumn.setComments("职务名称");
 		nameColumn.setOrderCode(1);
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 32);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 32);
 		codeColumn.setName("职务编码");
 		codeColumn.setComments("职务编码");
 		codeColumn.setOrderCode(2);
 		columns.add(codeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 100);
+		ComColumndata descsColumn = new ComColumndata("descs", BuiltinCodeDataType.STRING, 100);
 		descsColumn.setName("职务描述");
 		descsColumn.setComments("职务描述");
 		descsColumn.setOrderCode(3);
 		columns.add(descsColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 3);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(4);
