@@ -13,10 +13,7 @@ public class Sub extends Parent{
 		
 		List<String> a = new ArrayList<String>();
 		a.add("a_1111");
-		List<String> b = new ArrayList<String>(a);
-		System.out.println(a);
-		b.clear();
-		System.out.println(a);
-		System.out.println(b);
+		a.add("a_22222");
+		System.out.println(a.toString().replace("[", "").replace("]", ""));
 	}
 }
