@@ -18,6 +18,7 @@ import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.sys.service.cfg.ComTabledataService;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -60,13 +61,13 @@ public class ComProjectService extends AbstractPublishService {
 	 * @param project
 	 * @return
 	 */
-	public String saveProject(ComProject project) {
+	public Object saveProject(ComProject project) {
 		String operResult = validProjectRefDatabaseIsExists(project);
 		if(operResult == null){
 			operResult = validProjectCodeIsExists(project);
 		}
 		if(operResult == null){
-			HibernateUtil.saveObject(project, null);
+			return HibernateUtil.saveObject(project, null);
 		}
 		return operResult;
 	}
@@ -76,7 +77,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @param project
 	 * @return
 	 */
-	public String updateProject(ComProject project) {
+	public Object updateProject(ComProject project) {
 		ComProject oldProject = getObjectById(project.getId(), ComProject.class);
 		if(oldProject == null){
 			return "没有找到id为["+project.getId()+"]的项目对象信息";
@@ -94,7 +95,7 @@ public class ComProjectService extends AbstractPublishService {
 			operResult = validProjectRefDatabaseIsExists(project);
 		}
 		if(operResult == null){
-			HibernateUtil.updateObjectByHql(project, null);
+			return HibernateUtil.updateObjectByHql(project, null);
 		}
 		return operResult;
 	}
@@ -196,44 +197,45 @@ public class ComProjectService extends AbstractPublishService {
 			ComProject project = getObjectById(projectId, ComProject.class);
 			
 			// 给远程系统的内置表中插入基础数据
-			executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
-			
-			// 记录要发布的数据id集合
-			List<Object> publishDataIds;
-			// 发布项目模块
-			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.ID+" from ComProjectModule where isEnabled =1 and isNeedDeploy=1 and refProjectId = '"+projectId+"'");
-			if(publishDataIds != null && publishDataIds.size() > 0){
-				new ComProjectModuleService().batchPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
-				publishDataIds.clear();
+			result = executeRemoteSaveBasicData(project.getRefDatabaseId(), projectId);
+			if(result == null){
+				// 记录要发布的数据id集合
+				List<Object> publishDataIds;
+				// 发布项目模块
+				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+						"select "+ResourceNameConstants.ID+" from ComProjectModule where isEnabled =1 and isNeedDeploy=1 and refProjectId = '"+projectId+"'");
+				if(publishDataIds != null && publishDataIds.size() > 0){
+					new ComProjectModuleService().batchPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
+					publishDataIds.clear();
+				}
+				
+				// 发布公用的表
+				ComTabledataService tableService = new ComTabledataService();
+				tableService.publishCommonTableResource(project.getRefDatabaseId(), projectId);
+				
+				// 发布项目关联的表
+				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+						"select table."+ResourceNameConstants.ID+" from ComTabledata table, ComProjectComTabledataLinks pt where pt.rightId = table.id" +
+								" and table.isEnabled =1 and table.isNeedDeploy=1" +
+								" and pt.leftId='"+projectId+"'");
+				if(publishDataIds != null && publishDataIds.size() > 0){
+					tableService.batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
+					publishDataIds.clear();
+				}
+				
+				// 发布项目关联的sql脚本或通用的sql脚本
+				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
+						"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, ComProjectComSqlScriptLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
+								" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1" +
+								" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
+				if(publishDataIds != null && publishDataIds.size() > 0){
+					new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
+					publishDataIds.clear();
+				}
+				
+				result = usePublishResourceApi(projectId, projectId, "project", "1", 
+						BuiltinDatas.currentSysBuiltinProjectInstance.getId());
 			}
-			
-			// 发布公用的表
-			ComTabledataService tableService = new ComTabledataService();
-			tableService.publishCommonTableResource(project.getRefDatabaseId(), projectId);
-			
-			// 发布项目关联的表
-			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select table."+ResourceNameConstants.ID+" from ComTabledata table, ComProjectComTabledataLinks pt where pt.rightId = table.id" +
-							" and table.isEnabled =1 and table.isNeedDeploy=1" +
-							" and pt.leftId='"+projectId+"'");
-			if(publishDataIds != null && publishDataIds.size() > 0){
-				tableService.batchPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
-				publishDataIds.clear();
-			}
-			
-			// 发布项目关联的sql脚本或通用的sql脚本
-			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, ComProjectComSqlScriptLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
-							" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1" +
-							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
-			if(publishDataIds != null && publishDataIds.size() > 0){
-				new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
-				publishDataIds.clear();
-			}
-			
-			result = useLoadPublishApi(projectId, projectId, "project", "1", 
-					BuiltinDatas.currentSysBuiltinProjectInstance.getId());
 		}
 		return result;
 	}
@@ -308,7 +310,7 @@ public class ComProjectService extends AbstractPublishService {
 				publishDataIds.clear();
 			}
 			
-			result = useLoadPublishApi(projectId, projectId, "project", "-1", 
+			result = usePublishResourceApi(projectId, projectId, "project", "-1", 
 					BuiltinDatas.currentSysBuiltinProjectInstance.getId());
 		}
 		return result;
@@ -319,7 +321,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @param databaseId 
 	 * @param projectId  
 	 */
-	private void executeRemoteSaveBasicData(String databaseId, String projectId){
+	private String executeRemoteSaveBasicData(String databaseId, String projectId){
 		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
 		Session session = null;
 		try {
@@ -334,8 +336,10 @@ public class ComProjectService extends AbstractPublishService {
 			}
 			basicDatas.clear();
 			session.getTransaction().commit();
+			return null;
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
+			return "发布基础数据时出现异常：" + ExceptionUtil.getErrMsg(e);
 		}finally{
 			if(session != null){
 				session.flush();

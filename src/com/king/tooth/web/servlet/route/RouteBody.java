@@ -2,8 +2,6 @@ package com.king.tooth.web.servlet.route;
 
 import java.io.Serializable;
 
-import com.king.tooth.util.StrUtils;
-
 /**
  * 请求的资源体对象
  * <p>从请求uri的路径中，按照规则获取</p>
@@ -24,11 +22,6 @@ public class RouteBody implements Serializable{
 	 */
 	private String routeRuleIdentity;
 	/**
-	 * 父资源类型
-	 * <p>例如：SinoForce.Data.AppUser</p>
-	 */
-	private String parentResourceType;
-	/**
 	 * 父资源名
 	 * <p>例如：AppUser</p>
 	 */
@@ -37,11 +30,6 @@ public class RouteBody implements Serializable{
 	 * 父资源主键ID
 	 */
 	private String parentId;
-	/**
-	 * 资源类型
-	 * <p>例如：SinoForce.Data.AppUser</p>
-	 */
-	private String resourceType;
 	/**
 	 * 资源名
 	 * <p>例如：AppUser</p>
@@ -56,34 +44,20 @@ public class RouteBody implements Serializable{
 	 * <p>例如：UserType</p>
 	 */
 	private String propName;
-	
-	
 	/**
-	 * 从资源类型，获得资源名称
-	 * <p>例如：SinoForce.Data.AppUser中获取AppUser</p>
-	 * @param resourceType
-	 * @return
+	 * 是否请求的是一个action(动作)
 	 */
-	private String getResourceName(String resourceType){
-		String resourceName = RouteMapping.getRouteResource(resourceType);
-		if(StrUtils.isEmpty(resourceName)){
-			resourceName = resourceType.substring(resourceType.lastIndexOf(".")+1);
-			RouteMapping.setRouteResource(resourceType, resourceName);
-		}
-		return resourceName;
-	}
+	private boolean isAction;
+	/**
+	 * 调用的action(动作)名称
+	 */
+	private String actionName;
 	
-	public String getParentResourceType() {
-		return parentResourceType;
-	}
 	public String getParentResourceName() {
 		return parentResourceName;
 	}
 	public String getParentId() {
 		return parentId;
-	}
-	public String getResourceType() {
-		return resourceType;
 	}
 	public String getResourceName() {
 		return resourceName;
@@ -94,17 +68,8 @@ public class RouteBody implements Serializable{
 	public String getPropName() {
 		return propName;
 	}
-	
-	public void setParentResourceType(String parentResourceType) {
-		this.parentResourceType = parentResourceType;
-		this.parentResourceName = getResourceName(this.parentResourceType);
-	}
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
-	}
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
-		this.resourceName = getResourceName(this.resourceType);
 	}
 	public void setResourceId(String resourceId) {
 		this.resourceId = resourceId;
@@ -117,5 +82,23 @@ public class RouteBody implements Serializable{
 	}
 	public void setRouteRuleIdentity(String routeRuleIdentity) {
 		this.routeRuleIdentity = routeRuleIdentity;
+	}
+	public void setParentResourceName(String parentResourceName) {
+		this.parentResourceName = parentResourceName;
+	}
+	public void setResourceName(String resourceName) {
+		this.resourceName = resourceName;
+	}
+	public boolean isAction() {
+		return isAction;
+	}
+	public void setIsAction(boolean isAction) {
+		this.isAction = isAction;
+	}
+	public String getActionName() {
+		return actionName;
+	}
+	public void setActionName(String actionName) {
+		this.actionName = actionName;
 	}
 }

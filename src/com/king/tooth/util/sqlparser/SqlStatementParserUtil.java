@@ -168,7 +168,7 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter((i+1), parameterName, param.getDataType().toString(), param.getMode(), i, true);
+				parameter = new ComSqlScriptParameter(1, parameterName, param.getDataType().toString(), param.getMode(), (i+1), true);
 				sqlScriptParameterList.add(parameter);
 			}
 			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
@@ -199,7 +199,7 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter((i+1), parameterName , param.getDataType().toString(), param.getMode(), i, true);
+				parameter = new ComSqlScriptParameter(1, parameterName , param.getDataType().toString(), param.getMode(), (i+1), true);
 				sqlScriptParameterList.add(parameter);
 			}
 			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);

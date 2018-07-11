@@ -29,14 +29,20 @@ public class ResponseBody implements Serializable{
 	 */
 	private Object data;
 	
+	/**
+	 * 是否成功
+	 */
+	private boolean isSuccess;
+	
 	public ResponseBody() {
 	}
-	public ResponseBody(String message, Object data) {
+	public ResponseBody(String message, Object data, boolean isSuccess) {
+		this(data, isSuccess);
 		this.message = message;
-		this.data = data;
 	}
-	public ResponseBody(Object data) {
+	public ResponseBody(Object data, boolean isSuccess) {
 		this.data = data;
+		this.isSuccess = isSuccess;
 	}
 	
 	public int getStatus() {
@@ -56,6 +62,12 @@ public class ResponseBody implements Serializable{
 	}
 	public void setData(Object data) {
 		this.data = data;
+	}
+	public boolean getIsSuccess() {
+		return isSuccess;
+	}
+	public void setIsSuccess(boolean isSuccess) {
+		this.isSuccess = isSuccess;
 	}
 	
 	/**

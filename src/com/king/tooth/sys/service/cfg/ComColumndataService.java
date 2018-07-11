@@ -49,13 +49,13 @@ public class ComColumndataService extends AbstractService{
 	 * @param column
 	 * @return
 	 */
-	public String saveColumn(ComColumndata column) {
+	public Object saveColumn(ComColumndata column) {
 		String operResult = validColumnRefTableIsExists(column);
 		if(operResult == null){
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
-			HibernateUtil.saveObject(column, null);
+			return HibernateUtil.saveObject(column, null);
 		}
 		return operResult;
 	}
@@ -65,7 +65,7 @@ public class ComColumndataService extends AbstractService{
 	 * @param column
 	 * @return
 	 */
-	public String updateColumn(ComColumndata column) {
+	public Object updateColumn(ComColumndata column) {
 		ComColumndata oldColumn = getObjectById(column.getId(), ComColumndata.class);
 		if(oldColumn == null){
 			return "没有找到id为["+column.getId()+"]的列对象信息";
@@ -79,12 +79,11 @@ public class ComColumndataService extends AbstractService{
 			operResult = validColumnRefTableIsExists(column);
 		}
 		if(operResult == null){
-			HibernateUtil.updateObjectByHql(column, null);
-			
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-				HibernateUtil.executeUpdateBySql(BuiltinDatabaseData.UPDATE, "update com_tabledata set is_created = 0 where id = '"+column.getTableId()+"'", null);
+				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated = 0 where "+ResourceNameConstants.ID+" = '"+column.getTableId()+"'");
 			}
+			return HibernateUtil.updateObjectByHql(column, null);
 		}
 		return operResult;
 	}

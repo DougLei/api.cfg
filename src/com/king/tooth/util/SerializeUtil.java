@@ -78,7 +78,7 @@ public class SerializeUtil {
 	/**
 	 * 从byte[]反序列化对象，返回指定类型
 	 * @param bytes
-	 * @return T
+	 * @return CodeResourceEntity
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T unserializeObjectFromByte(byte[] bytes, Class<T> classType){
@@ -152,7 +152,7 @@ public class SerializeUtil {
 	/**
 	 * 从文件反序列化对象，返回指定类型
 	 * @param path
-	 * @return T
+	 * @return CodeResourceEntity
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T unserializeObjectFromFile(String path, Class<T> classType){

@@ -27,4 +27,11 @@ public class BuiltinParametersKeys {
 	 * url:_parent_resource_id
 	 */
 	public static final String PARENT_RESOURCE_ID = "_parent_resource_id";
+	
+	//------------------------------------------------------------------------------------
+	/**
+	 * request:responseBody
+	 * <p>存储在request中的responseBody</p>
+	 */
+	public static final String _RESPONSE_BODY_KEY = "_responseBody";
 }

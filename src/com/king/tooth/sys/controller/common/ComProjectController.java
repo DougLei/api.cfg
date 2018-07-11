@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.common.ComProjectService;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 项目信息资源对象控制器
@@ -25,18 +25,23 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(HttpServletRequest request, String json){
+	public Object add(HttpServletRequest request, String json){
 		List<ComProject> projects = getDataInstanceList(json, ComProject.class);
-		String result = analysisResourceProp(projects);
-		if(result == null){
-			for (ComProject project : projects) {
-				result = projectService.saveProject(project);
-				if(result != null){
-					throw new IllegalArgumentException(result);
+		analysisResourceProp(projects);
+		if(analysisResult == null){
+			if(projects.size() == 1){
+				resultObject = projectService.saveProject(projects.get(0));
+			}else{
+				for (ComProject project : projects) {
+					resultObject = projectService.saveProject(project);
+					if(resultObject instanceof String){
+						break;
+					}
+					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
 		}
-		return installOperResponseBody(result, null);
+		return getResultObject();
 	}
 	
 	/**
@@ -44,18 +49,23 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(HttpServletRequest request, String json){
+	public Object update(HttpServletRequest request, String json){
 		List<ComProject> projects = getDataInstanceList(json, ComProject.class);
-		String result = analysisResourceProp(projects);
-		if(result == null){
-			for (ComProject project : projects) {
-				result = projectService.updateProject(project);
-				if(result != null){
-					throw new IllegalArgumentException(result);
+		analysisResourceProp(projects);
+		if(analysisResult == null){
+			if(projects.size() == 1){
+				resultObject = projectService.updateProject(projects.get(0));
+			}else{
+				for (ComProject project : projects) {
+					resultObject = projectService.updateProject(project);
+					if(resultObject instanceof String){
+						break;
+					}
+					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
 		}
-		return installOperResponseBody(result, null);
+		return getResultObject();
 	}
 	
 	/**
@@ -63,76 +73,85 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request, String json){
-		String projectIds = request.getParameter(ResourceNameConstants.ID);
+	public Object delete(HttpServletRequest request, String json){
+		String projectIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(projectIds)){
-			return installOperResponseBody("要删除的项目id不能为空", null);
+			return "要删除的项目id不能为空";
 		}
-		String result = null;
+
 		String[] projectIdArr = projectIds.split(",");
 		for (String projectId : projectIdArr) {
-			result = projectService.deleteProject(projectId);
-			if(result != null){
-				throw new IllegalArgumentException(result);
+			resultObject = projectService.deleteProject(projectId);
+			if(resultObject != null){
+				break;
 			}
 		}
-		return installOperResponseBody(result, null);
+		processResultObject(ResourceNameConstants.IDS, projectIds);
+		return getResultObject();
 	}
 	
 	/**
 	 * 取消项目和[表/sql脚本]的关联信息
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody cancelRelation(HttpServletRequest request, String json){
-		String projectId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消关联关系的项目id不能为空", null);
+	public Object cancelRelation(HttpServletRequest request, String json){
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+			return "要取消关联关系的项目id不能为空";
 		}
-		String relationType = request.getParameter("relationType");
-		if(StrUtils.isEmpty(relationType)){
-			return installOperResponseBody("relationType不能为空,值目前包括：table、sql、all", null);
+		if(StrUtils.isEmpty(jsonObject.getString("relationType"))){
+			return "relationType不能为空,值目前包括：table、sql、all，必须传入一个";
 		}
-		String result = projectService.cancelRelation(projectId, relationType);
-		return installOperResponseBody(result, null);
+		resultObject = projectService.cancelRelation(jsonObject.getString(ResourceNameConstants.ID), jsonObject.getString("relationType"));
+		if(resultObject == null){
+			resultObject = jsonObject;
+		}
+		return getResultObject();
 	} 
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布项目
 	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request, String json){
+	public Object publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		String projectId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要发布的项目id不能为空", null);
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+			return "要发布的项目id不能为空";
 		}
-		String result = projectService.publishProjectAll(projectId);
-		return installOperResponseBody(result, null);
+		resultObject = projectService.publishProjectAll(jsonObject.getString(ResourceNameConstants.ID));
+		if(resultObject == null){
+			resultObject = jsonObject;
+		}
+		return getResultObject();
 	}
 	
 	/**
 	 * 取消发布项目
 	 * <p>【取消发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request, String json){
+	public Object cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		String projectId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(projectId)){
-			return installOperResponseBody("要取消发布的项目id不能为空", null);
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+			return "要取消发布的项目id不能为空";
 		}
-		String result = projectService.cancelPublishProjectAll(projectId);
-		return installOperResponseBody(result, null);
+		resultObject = projectService.cancelPublishProjectAll(jsonObject.getString(ResourceNameConstants.ID));
+		if(resultObject == null){
+			resultObject = jsonObject;
+		}
+		return getResultObject();
 	}
 }

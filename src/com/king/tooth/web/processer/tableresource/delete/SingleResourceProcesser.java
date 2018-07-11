@@ -1,6 +1,10 @@
 package com.king.tooth.web.processer.tableresource.delete;
 
-import org.hibernate.Query;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 处理这种请求路径格式的处理器：/{resourceType}
@@ -14,10 +18,9 @@ public final class SingleResourceProcesser extends DeleteProcesser {
 	
 	protected boolean doDeleteProcess() {
 		String deleteHql = getDeleteHql().toString();
-		Query query = createQuery(deleteHql);
-		int deleteRows = query.executeUpdate();
-		
-		installResponseBodyForDeleteData(deleteRows, null);
+		List<Object> tmpParameters = new ArrayList<Object>(hqlParameterValues);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, deleteHql, tmpParameters);
+		installResponseBodyForDeleteData(hqlParameterValues, true);
 		return true;
 	}
 	

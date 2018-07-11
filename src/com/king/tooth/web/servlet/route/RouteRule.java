@@ -50,4 +50,15 @@ public class RouteRule implements Serializable{
 		boolean includeSpecialWord = StrUtils.notEmpty(specialWord);
 		return (includeSpecialWord?(propSetMethodNameArr.length+1):propSetMethodNameArr.length) + "_" + (includeSpecialWord?specialWord:"null");
 	}
+	
+	/**
+	 * 请求的是否是一个action路由
+	 * @return
+	 */
+	public boolean getIsAction() {
+		if(StrUtils.isEmpty(specialWord)){
+			return false;
+		}
+		return "action".equals(specialWord);
+	}
 }

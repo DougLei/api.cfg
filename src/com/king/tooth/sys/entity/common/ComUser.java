@@ -55,7 +55,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	/**
 	 * 邮箱
 	 */
-	private String userEmail;
+	private String email;
 	/**
 	 * 办公地点
 	 */
@@ -99,14 +99,14 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	 */
 	private String deptId;
 	/**
-	 * 主要所属的组织id
-	 */
-	private String orgId;
-	/**
 	 * 主要所属的岗位id
 	 * <p>关系表中，isMain=1的岗位id</p>
 	 */
 	private String positionId;
+	/**
+	 * 主要所属的组织id
+	 */
+	private String orgId;
 	
 	// ---------------------------------------------------------------------------
 
@@ -158,11 +158,11 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	public void setTel(String tel) {
 		this.tel = tel;
 	}
-	public String getUserEmail() {
-		return userEmail;
+	public String getEmail() {
+		return email;
 	}
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getWrokAddr() {
 		return wrokAddr;
@@ -227,17 +227,17 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	public void setDeptId(String deptId) {
 		this.deptId = deptId;
 	}
-	public String getOrgId() {
-		return orgId;
-	}
-	public void setOrgId(String orgId) {
-		this.orgId = orgId;
-	}
 	public String getPositionId() {
 		return positionId;
 	}
 	public void setPositionId(String positionId) {
 		this.positionId = positionId;
+	}
+	public String getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
 	}
 	public void setIsCreateAccount(int isCreateAccount) {
 		this.isCreateAccount = isCreateAccount;
@@ -297,11 +297,11 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		telColumn.setOrderCode(7);
 		columns.add(telColumn);
 		
-		ComColumndata userEmailColumn = new ComColumndata("user_email", BuiltinCodeDataType.STRING, 80);
-		userEmailColumn.setName("邮箱");
-		userEmailColumn.setComments("邮箱");
-		userEmailColumn.setOrderCode(8);
-		columns.add(userEmailColumn);
+		ComColumndata emailColumn = new ComColumndata("email", BuiltinCodeDataType.STRING, 80);
+		emailColumn.setName("邮箱");
+		emailColumn.setComments("邮箱");
+		emailColumn.setOrderCode(8);
+		columns.add(emailColumn);
 		
 		ComColumndata wrokAddrColumn = new ComColumndata("wrok_addr", BuiltinCodeDataType.STRING, 200);
 		wrokAddrColumn.setName("办公地点");
@@ -343,6 +343,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		ComColumndata workNoColumn = new ComColumndata("work_no", BuiltinCodeDataType.STRING, 32);
 		workNoColumn.setName("工号");
 		workNoColumn.setComments("工号");
+		workNoColumn.setIsNullabled(0);
 		workNoColumn.setOrderCode(15);
 		columns.add(workNoColumn);
 		
@@ -364,17 +365,17 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		deptIdColumn.setOrderCode(18);
 		columns.add(deptIdColumn);
 		
-		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinCodeDataType.STRING, 32);
-		orgIdColumn.setName("主要所属的组织id");
-		orgIdColumn.setComments("主要所属的组织id");
-		orgIdColumn.setOrderCode(19);
-		columns.add(orgIdColumn);
-		
 		ComColumndata positionIdColumn = new ComColumndata("position_id", BuiltinCodeDataType.STRING, 32);
 		positionIdColumn.setName("主要所属的岗位id");
 		positionIdColumn.setComments("主要所属的岗位id：关系表中，isMain=1的岗位id");
-		positionIdColumn.setOrderCode(20);
+		positionIdColumn.setOrderCode(19);
 		columns.add(positionIdColumn);
+		
+		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinCodeDataType.STRING, 32);
+		orgIdColumn.setName("主要所属的组织id");
+		orgIdColumn.setComments("主要所属的组织id");
+		orgIdColumn.setOrderCode(20);
+		columns.add(orgIdColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -404,9 +405,6 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		if(isCreateAccount == 1 && StrUtils.isEmpty(workNo)){
 			return "工号不能为空";
 		}
-		if(StrUtils.isEmpty(realName)){
-			return "真实姓名不能为空";
-		}
 		return null;
 	}
 	
@@ -424,8 +422,8 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		if(StrUtils.notEmpty(nikeName)){
 			return nikeName;
 		}
-		if(StrUtils.notEmpty(userEmail)){
-			return userEmail;
+		if(StrUtils.notEmpty(email)){
+			return email;
 		}
 		return null;
 	}

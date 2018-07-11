@@ -1,6 +1,9 @@
 package com.king.tooth.web.processer.tableresource.delete;
 
-import com.king.tooth.util.Log4jUtil;
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
 
@@ -45,13 +48,12 @@ public abstract class DeleteProcesser extends RequestProcesser {
 	
 	/**
 	 * 删除数据后，组装ResponseBody对象
-	 * @param deleteRows 删除的数据行数
-	 * @param data
+	 * @param deleteIds
+	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForDeleteData(int deleteRows, Object data){
-		Log4jUtil.debug("删除了{}条数据", deleteRows);
-		String message = deleteRows + "条" + requestBody.getRouteBody().getResourceName() + "数据已删除";
-		ResponseBody responseBody = new ResponseBody(message, data);
-		setResponseBody(responseBody);
+	protected final void installResponseBodyForDeleteData(List<Object> deleteIds, boolean isSuccess){
+		JSONObject json = new JSONObject(1);
+		json.put(ResourceNameConstants.IDS, deleteIds.toString().replace("[", "").replace("]", ""));
+		setResponseBody(new ResponseBody(json, isSuccess));
 	}
 }

@@ -6,7 +6,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -276,7 +275,7 @@ public class HibernateUtil {
 	 * @return JSONObject
 	 */
 	public static JSONObject saveObject(String entityName, JSONObject data, String shortDesc){
-		data = ResourceHandlerUtil.validDataProp(entityName, data);
+		ResourceHandlerUtil.validDataProp(entityName, data);
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
 		try {
 			getCurrentThreadSession().save(entityName, data);
@@ -422,8 +421,9 @@ public class HibernateUtil {
 	 * @param hqlDes @see BuiltinDatabaseData
 	 * @param modifyHql
 	 * @param parameters
+	 * @return 
 	 */
-	public static void executeUpdateByHql(String hqlDes, String modifyHql, List<Object> parameters) {
+	public static int executeUpdateByHql(String hqlDes, String modifyHql, List<Object> parameters) {
 		Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]要{}数据的hql为：{}", hqlDes, modifyHql);
 		Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]要{}数据的hql所带的参数值集合为：{}", hqlDes, parameters);
 		
@@ -432,8 +432,10 @@ public class HibernateUtil {
 			setParamters(query, parameters);
 			int modifyCount = query.executeUpdate();
 			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}了{}条数据", hqlDes, modifyCount);
+			return modifyCount;
 		} catch (HibernateException e) {
 			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}数据的时候出现了异常信息：{}", hqlDes, ExceptionUtil.getErrMsg(e));
+			return -1;
 		}
 	}
 	
@@ -598,8 +600,8 @@ public class HibernateUtil {
 	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	public static Map<String, Object> executeProcedure(final String dbType, final String procedureName, final List<ComSqlScriptParameter> sqlScriptParameterList) {
-		final Map<String, Object> data = new HashMap<String, Object>(sqlScriptParameterList.size());
+	public static JSONObject executeProcedure(final String dbType, final String procedureName, final List<ComSqlScriptParameter> sqlScriptParameterList) {
+		final JSONObject json = new JSONObject(sqlScriptParameterList.size());
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
 				String procedure = callProcedure(procedureName, sqlScriptParameterList);
@@ -626,13 +628,15 @@ public class HibernateUtil {
 			private void setParameters(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
 				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 					for (ComSqlScriptParameter parameter : sqlScriptParameterList) {
-						if(parameter.getInOut() == 1){//in
-							cs.setObject(parameter.getSqlIndex(), parameter.getActualInValue());
-						}else if(parameter.getInOut() == 2){//out
-							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getDatabaseDataTypeCode(dbType));
-						}else if(parameter.getInOut() == 3){//in out
-							cs.setObject(parameter.getSqlIndex(), parameter.getActualInValue());
-							cs.registerOutParameter(parameter.getSqlIndex(), parameter.getDatabaseDataTypeCode(dbType));
+						if(parameter.getSqlIndex() == 1){
+							if(parameter.getInOut() == 1){//in
+								cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
+							}else if(parameter.getInOut() == 2){//out
+								cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
+							}else if(parameter.getInOut() == 3){//in out
+								cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
+								cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
+							}
 						}
 					}
 				}
@@ -647,9 +651,9 @@ public class HibernateUtil {
 			private void setOutputValues(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
 				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 					for (ComSqlScriptParameter pssp : sqlScriptParameterList) {
-						if(pssp.getInOut() == 2 || pssp.getInOut() == 3){
-//							pssp.setOutValue(cs.getObject(pssp.getSqlIndex()));
-							data.put(NamingTurnUtil.columnNameTurnPropName(pssp.getParameterName()), cs.getObject(pssp.getSqlIndex()));
+						if(pssp.getSqlIndex() == 1 && pssp.getInOut() == 2 || pssp.getInOut() == 3){
+//							pssp.setAcutalOutValue(cs.getObject(pssp.getSqlIndex()));
+							json.put(NamingTurnUtil.columnNameTurnPropName(pssp.getParameterName()), cs.getObject(pssp.getOrderCode()));
 						}
 					}
 				}
@@ -661,7 +665,7 @@ public class HibernateUtil {
 		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 			sqlScriptParameterList.clear();
 		}
-		return data;
+		return json;
 	}
 	
 	/**

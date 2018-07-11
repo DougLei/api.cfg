@@ -39,11 +39,11 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @param projectModule
 	 * @return
 	 */
-	public String saveProjectModule(ComProjectModule projectModule) {
+	public Object saveProjectModule(ComProjectModule projectModule) {
 		String operResult = validProjectModuleCodeIsExists(projectModule);
 		if(operResult == null){
 			projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
-			HibernateUtil.saveObject(projectModule, null);
+			return HibernateUtil.saveObject(projectModule, null);
 		}
 		return operResult;
 	}
@@ -53,7 +53,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @param projectModule
 	 * @return
 	 */
-	public String updateProjectModule(ComProjectModule projectModule) {
+	public Object updateProjectModule(ComProjectModule projectModule) {
 		ComProjectModule oldProjectModule = getObjectById(projectModule.getId(), ComProjectModule.class);
 		if(oldProjectModule == null){
 			return "没有找到id为["+projectModule.getId()+"]的模块对象信息";
@@ -68,7 +68,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			HibernateUtil.updateObjectByHql(projectModule, null);
+			return HibernateUtil.updateObjectByHql(projectModule, null);
 		}
 		return operResult;
 	}

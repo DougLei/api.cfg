@@ -32,7 +32,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		Query query = createQuery(1, querySql);
 		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
 		dataList = doProcessDataCollection(dataList);
-		installResponseBodyForQueryDataObject(dataList);
+		installResponseBodyForQueryDataObject(dataList, true);
 		return true;
 	}
 

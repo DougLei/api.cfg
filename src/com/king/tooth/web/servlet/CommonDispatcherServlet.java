@@ -6,6 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.king.tooth.cache.CodeResourceMapping;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
+import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.IRequestProcesser;
 import com.king.tooth.web.processer.ProcesserConfig;
@@ -20,8 +24,20 @@ public class CommonDispatcherServlet extends PlatformServlet{
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		analysisRequestBody(request);// 解析出请求体、路由规则
-		IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
-		ResponseBody responseBody = process.doRequestProcess();
-		printResult(response, responseBody);
+		
+		ResponseBody responseBody = null;
+		if(requestBody.getRouteBody().isAction() 
+				|| (ISysResource.CODE.equals(requestBody.getRequestResourceType()) && StrUtils.isEmpty(requestBody.getRouteBody().getParentResourceName())) ){
+			Object object = CodeResourceMapping.invokeCodeResource(requestBody.getReqCodeResourceKey(), request, requestBody.getFormData());
+			if(object instanceof String){
+				responseBody = new ResponseBody(object.toString(), null, false);
+			}else{
+				responseBody = new ResponseBody(null, object, true);
+			}
+		}else{
+			IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
+			responseBody = process.doRequestProcess();
+		}
+		request.setAttribute(BuiltinParametersKeys._RESPONSE_BODY_KEY, responseBody);
 	}
 }

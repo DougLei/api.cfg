@@ -22,7 +22,7 @@ public abstract class RequestProcesser extends RequestProcesserCommon implements
 	/**
 	 * 处理方法
 	 * <p>对外的统一接口</p>
-	 * @return ResponseBody
+	 * @return ResponseEntity
 	 */
 	public final ResponseBody doRequestProcess(){
 		Log4jUtil.debug("请求的路由参数值为：{}", requestBody.getRequestUrlParams());

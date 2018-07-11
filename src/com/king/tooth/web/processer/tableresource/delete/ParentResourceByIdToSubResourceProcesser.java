@@ -1,8 +1,10 @@
 package com.king.tooth.web.processer.tableresource.delete;
 
-import org.hibernate.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 
@@ -17,38 +19,43 @@ public final class ParentResourceByIdToSubResourceProcesser extends DeleteProces
 	}
 	
 	protected boolean doDeleteProcess() {
-		Query query = null;
-		int deleteRows = 0;
 		String deleteQueryCondHql = getDeleteHql().toString();
 		String deleteParentResourceHql = getDeleteParentResourceHql(deleteQueryCondHql).toString();// 删除主表资源hql
 		
+//		boolean isCodeResource = ISysResource.CODE.equals(requestBody.getRequestResourceType());
+//		boolean isParentCodeResource = ISysResource.CODE.equals(requestBody.getRequestParentResourceType());
+		
+		List<Object> parameters;
 		if(builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
 			String deleteResourceHql = getDeleteResourceHql(deleteQueryCondHql, null).toString();// 删除子表资源hql
 			
 			// 删除主资源
-			query = createQuery(deleteParentResourceHql);
-			deleteRows += query.executeUpdate();
+			parameters = new ArrayList<Object>(hqlParameterValues);
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, deleteParentResourceHql, parameters);
+			
 			// 删除子资源
-			query = createQuery(deleteResourceHql);
-			deleteRows += query.executeUpdate();
+			parameters = new ArrayList<Object>(hqlParameterValues);
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, deleteResourceHql, parameters);
 		}else{
-			// 获取关联关系
+			// 获取关联关系资源名
 			String dataLinkResourceName = HibernateUtil.getDataLinkResourceName(requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
 			
 			String deleteDatalinkHql = getDeleteDatalinkHql(deleteQueryCondHql, dataLinkResourceName).toString();// 删除数据关联关系hql
 			String deleteResourceHql = getDeleteResourceHql(deleteQueryCondHql, dataLinkResourceName).toString();// 删除子表资源hql
 			
 			// 删除子资源
-			query = createQuery(deleteResourceHql);
-			deleteRows += query.executeUpdate();
+			parameters = new ArrayList<Object>(hqlParameterValues);
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, deleteResourceHql, parameters);
+			
 			// 删除数据关联关系数据
-			query = createQuery(deleteDatalinkHql);
-			deleteRows += query.executeUpdate();
+			parameters = new ArrayList<Object>(hqlParameterValues);
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, deleteDatalinkHql, parameters);
+			
 			// 删除主资源
-			query = createQuery(deleteParentResourceHql);
-			deleteRows += query.executeUpdate();
+			parameters = new ArrayList<Object>(hqlParameterValues);
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, deleteParentResourceHql, parameters);
 		}
-		installResponseBodyForDeleteData(deleteRows, null);
+		installResponseBodyForDeleteData(hqlParameterValues, true);
 		return true;
 	}
 

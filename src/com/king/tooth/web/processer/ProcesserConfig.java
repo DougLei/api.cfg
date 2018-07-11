@@ -60,7 +60,7 @@ public class ProcesserConfig implements Serializable{
 		
 		RouteProcesserAdapter adapter = routeProcesserAdapterMapping.get(adapterIdentity);
 		if(adapter == null){
-			throw new IllegalArgumentException("平台目前不支持您请求的资源调用方式：["+requestBody.getRequestMethod()+":"+requestBody.getRequestUri()+"]");
+			throw new IllegalArgumentException("平台目前不支持您请求的资源调用方式：["+requestBody.getRequestMethod()+"："+requestBody.getRequestUri()+"]，其adapterIdentity的值为：["+adapterIdentity+"]");
 		}
 		IRequestProcesser processer = adapter.getProcesser();
 		
@@ -85,7 +85,13 @@ public class ProcesserConfig implements Serializable{
 		}
 		
 		adapterIdentity += "_" + requestBody.getRequestMethod();
-		adapterIdentity += "_" + requestBody.getRequestResourceType();
+		
+		// 判断如果是主子资源，则requestBody的requestResourceType的值要写成固定值：1
+		if(requestBody.getRequestParentResourceType() == null){// 为空，标识请求的是单资源
+			adapterIdentity += "_" + requestBody.getRequestResourceType();
+		}else{
+			adapterIdentity += "_1";// 目前sql脚本也不支持主子资源的方式调用，所以这里可以这样判断
+		}
 		return adapterIdentity.toString();
 	}
 }

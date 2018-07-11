@@ -205,14 +205,12 @@ public class ComSysAccountService extends AbstractService{
 	/**
 	 * 退出
 	 * @param token
-	 * @return
 	 */
-	public String loginOut(String token) {
+	public void loginOut(String token) {
 		// 删除对应的ComSysAccountOnlineStatus数据
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccountOnlineStatus where token = ? ", token);
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
-		return null;
 	}
 	
 	/**

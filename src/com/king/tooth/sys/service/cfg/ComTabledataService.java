@@ -88,7 +88,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param table
 	 * @return
 	 */
-	public String saveTable(ComTabledata table) {
+	public Object saveTable(ComTabledata table) {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
@@ -101,13 +101,15 @@ public class ComTabledataService extends AbstractPublishService {
 				}
 			}
 			if(operResult == null){
-				String tableId = HibernateUtil.saveObject(table, null).getString(ResourceNameConstants.ID);;
+				JSONObject tableJsonObject = HibernateUtil.saveObject(table, null);
+				String tableId = tableJsonObject.getString(ResourceNameConstants.ID);
 				// 保存表和项目的关联关系
 				if(isPlatformDeveloper){
 					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
 				}else{
 					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
 				}
+				return tableJsonObject;
 			}
 		}
 		return operResult;
@@ -118,7 +120,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param table
 	 * @return
 	 */
-	public String updateTable(ComTabledata table) {
+	public Object updateTable(ComTabledata table) {
 		ComTabledata oldTable = getObjectById(table.getId(), ComTabledata.class);
 		if(oldTable == null){
 			return "没有找到id为["+table.getId()+"]的表对象信息";
@@ -146,7 +148,7 @@ public class ComTabledataService extends AbstractPublishService {
 			}
 			
 			if(operResult == null){
-				HibernateUtil.updateObjectByHql(table, null);
+				return HibernateUtil.updateObjectByHql(table, null);
 			}
 		}
 		return operResult;
@@ -185,6 +187,7 @@ public class ComTabledataService extends AbstractPublishService {
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where id = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
 		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
 		
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
@@ -375,7 +378,7 @@ public class ComTabledataService extends AbstractPublishService {
 		executeRemotePublishTable(project.getRefDatabaseId(), projectId, hbms, "ComProjectComHibernateHbmLinks");
 		hbms.clear();
 		
-		return useLoadPublishApi(tableId, projectId, "table", "1", projectId);
+		return usePublishResourceApi(tableId, projectId, "table", "1", projectId);
 	}
 	
 	/**
@@ -471,7 +474,7 @@ public class ComTabledataService extends AbstractPublishService {
 				"delete ComSysResource where projectId='"+projectId+"' and refDataId = '"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);
 		
-		return useLoadPublishApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
+		return usePublishResourceApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
 	}
 
 	/**
@@ -557,7 +560,7 @@ public class ComTabledataService extends AbstractPublishService {
 		tables.clear();
 		tableIdStr.setLength(tableIdStr.length()-1);
 		
-		useLoadPublishApi(tableIdStr.toString(), projectId, "table", "1", projectId);
+		usePublishResourceApi(tableIdStr.toString(), projectId, "table", "1", projectId);
 		tableIdStr.setLength(0);
 	}
 	
@@ -591,7 +594,7 @@ public class ComTabledataService extends AbstractPublishService {
 		String deleteTableResourceNames = tableHandler.dropTable(tables);
 		tables.clear();
 		
-		useLoadPublishApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
+		usePublishResourceApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
 	}
 
 	/**

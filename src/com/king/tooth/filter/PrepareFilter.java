@@ -11,10 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 预处理的过滤器
@@ -39,7 +41,7 @@ public class PrepareFilter extends AbstractFilter{
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
 			if(StrUtils.isEmpty(projectId)){
-				printResult("token无效，请先登录", resp);
+				printResult("token无效，请先登录", resp, true);
 				return;
 			}
 		}
@@ -49,17 +51,37 @@ public class PrepareFilter extends AbstractFilter{
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			chain.doFilter(req, resp);
-			HibernateUtil.commitTransaction();
+			
+			ResponseBody responseBody = (ResponseBody) request.getAttribute(BuiltinParametersKeys._RESPONSE_BODY_KEY);
+			processResponseBody(resp, responseBody);
+			
 			Log4jUtil.debug("请求处理完成");
 		} catch (Exception err) {
-			Log4jUtil.debug("请求处理出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(err));
+			String errMsg = ExceptionUtil.getErrMsg(err);
+			Log4jUtil.debug("请求处理出现异常，异常信息为:{}", errMsg);
 			HibernateUtil.rollbackTransaction();
-			printResult(ExceptionUtil.getErrMsg(err), resp);
-			err.printStackTrace();
+			printResult(errMsg, resp, false);
 		}finally{
 			HibernateUtil.closeCurrentThreadSession();
 			CurrentThreadContext.clearCurrentThreadData();
 		}
+	}
+
+	/**
+	 * 处理最终的响应体
+	 * @param responseBody
+	 * @throws IOException 
+	 */
+	private void processResponseBody(ServletResponse resp, ResponseBody responseBody) throws IOException {
+		if(responseBody == null){
+			responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员", null, false);
+		}
+		if(responseBody.getIsSuccess()){
+			HibernateUtil.commitTransaction();
+		}else{
+			HibernateUtil.rollbackTransaction();
+		}
+		printResult(resp, responseBody);
 	}
 
 	public void init(FilterConfig arg0) throws ServletException {

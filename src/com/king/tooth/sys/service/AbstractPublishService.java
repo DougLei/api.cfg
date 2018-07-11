@@ -251,7 +251,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param headerProjectId
 	 * @return
 	 */
-	protected String useLoadPublishApi(String publishDataId, String projectId, String publishDataType, String publishType, String headerProjectId){
+	protected String usePublishResourceApi(String publishDataId, String projectId, String publishDataType, String publishType, String headerProjectId){
 		return HttpClientUtil.doPostBasic(appWebSysProcessPublishDataApiPath, 
 				getUrlParams(headerProjectId, publishDataType, publishType), 
 				null, null, 

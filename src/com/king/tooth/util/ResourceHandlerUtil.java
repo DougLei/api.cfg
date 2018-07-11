@@ -56,6 +56,11 @@ public class ResourceHandlerUtil {
 	 */
 	public static void initBasicPropValsForSave(String entityName, Map<String, Object> data, String shortDesc) {
 		data.put("projectId", CurrentThreadContext.getProjectId());
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
+			data.put("customerId", CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
+		}else{
+			Log4jUtil.info("在保存数据，初始化基本属性值时，CurrentThreadContext.getCurrentAccountOnlineStatus()对象为null");
+		}
 		// 当没有id值的时候，再赋予id值
 		if(StrUtils.isEmpty(data.get(ResourceNameConstants.ID))){
 			data.put(ResourceNameConstants.ID, getIdentity());
@@ -103,11 +108,10 @@ public class ResourceHandlerUtil {
 	 * <p>同时校验一下日期类型，如果是日期类型，则要转换为日期类型</p>
 	 * @param resourceName
 	 * @param data
-	 * @return
 	 */
-	public static JSONObject validDataProp(String resourceName, JSONObject data) {
+	public static void validDataProp(String resourceName, JSONObject data) {
 		if(resourceName.endsWith("Links")){
-			return data;
+			return;
 		}
 		if(data == null || data.size() == 0){
 			throw new NullPointerException("[ResourceHandlerUtil.validDataProp()]要进行验证的数据对象为null");
@@ -134,7 +138,8 @@ public class ResourceHandlerUtil {
 			}
 		}
 		data.clear();
-		return resultData;
+		data.putAll(resultData);
+		resultData.clear();
 	}
 	
 	/**

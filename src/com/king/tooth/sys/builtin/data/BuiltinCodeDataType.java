@@ -41,6 +41,8 @@ public class BuiltinCodeDataType {
 	 */
 	public static final String BLOB = "blob";
 	
+	
+	//---------------------------------------------------------------------------------------------
 	/**
 	 * hibernate的timestamp数据类型
 	 */

@@ -133,16 +133,17 @@ public abstract class GetProcesser extends RequestProcesser {
 	 * 查询数据集合时，组装ResponseBody对象
 	 * @param dataList
 	 * @param pageResultEntity
+	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForQueryDataList(List<Map<String, Object>> dataList, PageResultEntity pageResultEntity){
+	protected final void installResponseBodyForQueryDataList(List<Map<String, Object>> dataList, PageResultEntity pageResultEntity, boolean isSuccess) {
 		ResponseBody responseBody = null;
 		if(pageResultEntity == null){
 			// 不是分页查询
-			responseBody = new ResponseBody(dataList);
+			responseBody = new ResponseBody(dataList, isSuccess);
 		}else{
 			// 分页查询，要先将结果集存储到pageResultEntity中，再把pageResultEntity存储到responseBody中
 			pageResultEntity.setResultDatas(dataList);
-			responseBody = new ResponseBody(pageResultEntity);
+			responseBody = new ResponseBody(pageResultEntity, isSuccess);
 		}
 		setResponseBody(responseBody);
 	}
@@ -150,22 +151,24 @@ public abstract class GetProcesser extends RequestProcesser {
 	/**
 	 * 根据ID，查询单个数据对象时，组装ResponseBody对象
 	 * @param dataList
+	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForQueryDataObject(List<Map<String, Object>> dataList) {
+	protected final void installResponseBodyForQueryDataObject(List<Map<String, Object>> dataList, boolean isSuccess) {
 		Map<String, Object> data = null;
 		if(dataList != null && dataList.size() == 1){
 			data = dataList.get(0);
 		}
-		ResponseBody responseBody = new ResponseBody(data);
+		ResponseBody responseBody = new ResponseBody(data, isSuccess);
 		setResponseBody(responseBody);
 	}
 	
 	/**
 	 * 查询总数量时，组装ResponseBody对象
 	 * @param textResult 
+	 * @param isSuccess 
 	 */
-	protected final void installResponseBodyForQueryCounter(TextResult textResult){
-		ResponseBody responseBody = new ResponseBody(textResult);;
+	protected final void installResponseBodyForQueryCounter(TextResult textResult, boolean isSuccess){
+		ResponseBody responseBody = new ResponseBody(textResult, isSuccess);;
 		setResponseBody(responseBody);
 	}
 }

@@ -38,7 +38,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		if(varifyResultMessage != null){
 			// 登录验证失败时，尝试移除传递的token和对应项目id的映射缓存
 			TokenRefProjectIdMapping.removeMapping(token);
-			printResult(varifyResultMessage, resp);
+			printResult(varifyResultMessage, resp, true);
 		}else{
 			chain.doFilter(req, resp);
 		}

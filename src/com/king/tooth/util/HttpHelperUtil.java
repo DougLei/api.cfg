@@ -54,8 +54,7 @@ public class HttpHelperUtil {
 		} catch (IOException e) {
 			Log4jUtil.debug("[HttpHelperUtil.analysisFormData]方法出现异常信息:{}", e.getMessage());
 		}finally{
-			CloseUtil.closeIO(br);
-			CloseUtil.closeIO(reader);
+			CloseUtil.closeIO(br, reader);
 		}
 		return formData;
 	}

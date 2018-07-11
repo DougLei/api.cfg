@@ -3,18 +3,41 @@ package com.king.tooth.sys.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 控制器的抽象父类
  * @author DougLei
  */
 public abstract class AbstractController {
+	
+	/**
+	 * 解析的结果
+	 * <p>包括解析的结果</p>
+	 */
+	protected String analysisResult;
+	
+	/**
+	 * 处理结果对象
+	 * <p>
+	 * 	要么是string类型，记录操作失败的原因
+	 *  要么是jsonObject类型，记录操作结果
+	 *  要么是jsonArray类型
+	 *  只能是这三种类型中的任意一种
+	 * </p>
+	 */
+	protected Object resultObject;
+	
+	/**
+	 * 结果jsonArray对象
+	 */
+	protected JSONArray resultJsonArray;
 	
 	/**
 	 * 根据json串，获取对应数据类型实例集合
@@ -27,6 +50,10 @@ public abstract class AbstractController {
 			throw new NullPointerException("操作的数据不能为空");
 		}
 		IJson ijson = ProcessStringTypeJsonExtend.getIJson(json);
+		if(ijson.isArray()){
+			resultJsonArray = new JSONArray(ijson.size());
+		}
+		
 		List<T> list = new ArrayList<T>(ijson.size());
 		for(int i=0;i<ijson.size();i++){
 			list.add(JsonUtil.parseObject(ijson.get(i).toJSONString(), targetClass));
@@ -38,47 +65,47 @@ public abstract class AbstractController {
 	/**
 	 * 统一解析数据资源属性
 	 * @param list
-	 * @return
 	 */
-	protected String analysisResourceProp(List<? extends IEntityPropAnalysis> list){
-		String result = null;
+	protected void analysisResourceProp(List<? extends IEntityPropAnalysis> list){
 		for (IEntityPropAnalysis iEntityPropAnalysis : list) {
-			result = iEntityPropAnalysis.analysisResourceProp();
-			if(result != null){
-				return result;
+			analysisResult = iEntityPropAnalysis.analysisResourceProp();
+			if(analysisResult != null){
+				break;
 			}
 		}
-		return null;
 	}
 	
 	/**
-	 * 组装操作responseBody对象，主要用于返回操作结果内容
-	 * @param operResult 操作结果内容
-	 * @param definedMessage 自定义的消息内容
+	 * 获得最后的结果对象
 	 * @return
 	 */
-	protected ResponseBody installOperResponseBody(String operResult, String definedMessage){
-		ResponseBody responseBody = new ResponseBody();
-		if(operResult == null){
-//			if(definedMessage == null){
-//				responseBody.setMessage("操作成功");
-//			}else{
-				responseBody.setMessage(definedMessage);
-//			}
-		}else{
-			responseBody.setMessage(operResult);
+	protected Object getResultObject(){
+		if(analysisResult != null){
+			return analysisResult;
 		}
-		return responseBody;
+		if(resultObject instanceof String){
+			return resultObject.toString();
+		}
+		
+		if(resultJsonArray != null && resultJsonArray.size() > 0){
+			return resultJsonArray;
+		}
+		if(resultObject instanceof JSONArray){
+			return (JSONArray) resultObject;
+		}
+		return (JSONObject) resultObject;
 	}
 	
 	/**
-	 * 组装responseBody对象，返回结果内容和对象
-	 * @param message 内容
-	 * @param data 对象
-	 * @return
+	 * 处理ResultObject
+	 * @param key
+	 * @param value
 	 */
-	protected ResponseBody installResponseBody(String message, Object data){
-		ResponseBody responseBody = new ResponseBody(message, data);
-		return responseBody;
+	protected void processResultObject(String key, Object value){
+		if(resultObject == null){
+			JSONObject jsonObject = new JSONObject(1);
+			jsonObject.put(key, value);
+			resultObject = jsonObject;
+		}
 	}
 }

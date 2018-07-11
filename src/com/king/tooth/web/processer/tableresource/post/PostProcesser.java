@@ -20,6 +20,14 @@ public abstract class PostProcesser extends RequestProcesser {
 	protected IJson json;
 	
 	/**
+	 * 初始化内置的函数属性对象
+	 * 方便子类使用
+	 */
+	private void initBuiltinMethods(){
+		builtinParentsubQueryMethodProcesser = builtinTableResourceBMProcesser.getParentsubQueryMethodProcesser();
+	}
+	
+	/**
 	 * 解析formJsonData数据
 	 * @param formJsonData
 	 * @return 返回null，证明请求的json数据为空
@@ -39,9 +47,11 @@ public abstract class PostProcesser extends RequestProcesser {
 	public final boolean doProcess() {
 		json = analysisFormData(requestBody.getFormData());
 		if(json == null){
-			installResponseBodyForSaveData(getProcesserName()+"处理器要保存的formData数据值为null", null);
+			installResponseBodyForSaveData(getProcesserName()+"处理器要保存的formData数据值为null", null, false);
 			return false;
 		}
+		
+		initBuiltinMethods();
 		
 		boolean isKeepOn = doPostProcess();
 		return isKeepOn;
@@ -69,9 +79,10 @@ public abstract class PostProcesser extends RequestProcesser {
 	 * 添加数据后，组装ResponseBody对象
 	 * @param message
 	 * @param data
+	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForSaveData(String message, Object data){
-		ResponseBody responseBody = new ResponseBody(message, data);
+	protected final void installResponseBodyForSaveData(String message, Object data, boolean isSuccess){
+		ResponseBody responseBody = new ResponseBody(message, data, isSuccess);
 		setResponseBody(responseBody);
 	}
 }

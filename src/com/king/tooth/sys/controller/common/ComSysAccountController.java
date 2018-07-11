@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.common;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractController;
@@ -10,7 +11,6 @@ import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.service.common.ComSysAccountService;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.JsonUtil;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 系统账户资源对象控制器
@@ -27,16 +27,17 @@ public class ComSysAccountController extends AbstractController{
 	 * @param json
 	 * @return
 	 */
-	public ResponseBody login(HttpServletRequest request, String json){
+	public Object login(HttpServletRequest request, String json){
 		ComSysAccount account = JsonUtil.parseObject(json, ComSysAccount.class);
 		ComSysAccountOnlineStatus accountOnlineStatus = accountService.login(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
-			return installResponseBody(accountOnlineStatus.getMessage(), null);
+			resultObject = accountOnlineStatus.getMessage();
+		}else{
+			// 登录成功时，记录token和项目id的关系
+			TokenRefProjectIdMapping.setTokenRefProjMapping(accountOnlineStatus.getToken(), CurrentThreadContext.getProjectId());
+			resultObject = JsonUtil.toJsonObject(accountOnlineStatus);
 		}
-		
-		// 登录成功时，记录token和项目id的关系
-		TokenRefProjectIdMapping.setTokenRefProjMapping(accountOnlineStatus.getToken(), CurrentThreadContext.getProjectId());
-		return installResponseBody(null, accountOnlineStatus);
+		return getResultObject();
 	}
 	
 	/**
@@ -46,10 +47,14 @@ public class ComSysAccountController extends AbstractController{
 	 * @param json
 	 * @return
 	 */
-	public ResponseBody loginOut(HttpServletRequest request, String json){
+	public Object loginOut(HttpServletRequest request, String json){
 		String token = request.getHeader("_token");
-		String result = accountService.loginOut(token);
-		return installResponseBody(result, null);
+		accountService.loginOut(token);
+		
+		JSONObject jsonObject = new JSONObject(1);
+		jsonObject.put("_token", token);
+		resultObject = jsonObject;
+		return getResultObject();
 	}
 	
 //	/**
@@ -59,7 +64,7 @@ public class ComSysAccountController extends AbstractController{
 //	 * @param request
 //	 * @return
 //	 */
-//	public ResponseBody register(@RequestBody ComSysAccount account, HttpServletRequest request){
+//	public ResponseEntity register(@RequestBody ComSysAccount account, HttpServletRequest request){
 //		String registerResult = accountService.register(HttpHelperUtil.getClientIp(request), account);
 //		return installResponseBody(registerResult, null);
 //	}
@@ -71,7 +76,7 @@ public class ComSysAccountController extends AbstractController{
 //	 * @param request
 //	 * @return
 //	 */
-//	public ResponseBody validAccountName(@RequestBody ComSysAccount account, HttpServletRequest request){
+//	public ResponseEntity validAccountName(@RequestBody ComSysAccount account, HttpServletRequest request){
 //		String validResult = accountService.validLoginNameIsExists(account.getLoginName());
 //		return installResponseBody(validResult, null);
 //	}

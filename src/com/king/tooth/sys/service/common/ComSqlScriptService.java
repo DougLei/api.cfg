@@ -3,6 +3,7 @@ package com.king.tooth.sys.service.common;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -112,7 +113,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param sqlScript
 	 * @return
 	 */
-	public String saveSqlScript(ComSqlScript sqlScript) {
+	public Object saveSqlScript(ComSqlScript sqlScript) {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
 			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
@@ -129,7 +130,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 			
 			if(operResult == null){
-				String sqlScriptId = HibernateUtil.saveObject(sqlScript, null).getString(ResourceNameConstants.ID);
+				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
+				String sqlScriptId = sqlScriptJsonObject.getString(ResourceNameConstants.ID);
 				if(StrUtils.notEmpty(sqlScript.getSqlScriptParameters())){
 					saveSqlScriptParameter(false, sqlScript, sqlScriptId);
 				}
@@ -146,6 +148,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 				}else{
 					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
 				}
+				return sqlScriptJsonObject;
 			}
 		}
 		return operResult;
@@ -156,7 +159,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param sqlScript
 	 * @return
 	 */
-	public String updateSqlScript(ComSqlScript sqlScript) {
+	public Object updateSqlScript(ComSqlScript sqlScript) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScript.getId(), ComSqlScript.class);
 		if(oldSqlScript == null){
 			return "没有找到id为["+sqlScript.getId()+"]的sql脚本对象信息";
@@ -188,11 +191,11 @@ public class ComSqlScriptService extends AbstractPublishService {
 				new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
-				HibernateUtil.updateObjectByHql(sqlScript, null);
 				if(sqlScript.getIsAnalysisParameters() == 1){
 					String sqlScriptId = sqlScript.getId(); 
 					saveSqlScriptParameter(true, sqlScript, sqlScriptId);
 				}
+				return HibernateUtil.updateObjectByHql(sqlScript, null);
 			}
 		}
 		return operResult;
@@ -358,7 +361,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		sqlScripts.clear();
 		
 		sqlScriptIdStr.setLength(sqlScriptIdStr.length()-1);
-		useLoadPublishApi(sqlScriptIdStr.toString(), projectId, "sql", "1", projectId);
+		usePublishResourceApi(sqlScriptIdStr.toString(), projectId, "sql", "1", projectId);
 		sqlScriptIdStr.setLength(0);
 	}
 	
@@ -398,15 +401,16 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param sqlScriptParameters
 	 * @return
 	 */
-	public String saveSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
+	public Object saveSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
 		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
 		getObjectById(sqlScriptId, ComSqlScript.class);
 		
+		JSONArray jsonArray = new JSONArray(sqlScriptParameters.size());
 		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
-			HibernateUtil.saveObject(comSqlScriptParameter, null);
+			jsonArray.add(HibernateUtil.saveObject(comSqlScriptParameter, null));
 		}
 		updateSqlScriptParameter(sqlScriptId);
-		return null;
+		return jsonArray;
 	}
 
 	/**
@@ -414,15 +418,16 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param sqlScriptParameters
 	 * @return
 	 */
-	public String updateSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
+	public Object updateSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
 		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
 		getObjectById(sqlScriptId, ComSqlScript.class);
 		
+		JSONArray jsonArray = new JSONArray(sqlScriptParameters.size());
 		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
-			HibernateUtil.updateObjectByHql(comSqlScriptParameter, null);
+			jsonArray.add(HibernateUtil.updateObjectByHql(comSqlScriptParameter, null));
 		}
 		updateSqlScriptParameter(sqlScriptId);
-		return null;
+		return jsonArray;
 	}
 
 	/**

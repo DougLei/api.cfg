@@ -26,8 +26,8 @@ public class PlatformServlet extends BasicHttpServlet{
 		requestBody = new RequestBody(request);
 		requestBody.analysisRouteBody();
 		requestBody.analysisRequestResource();
-		requestBody.setRequestUrlParams(analysisUrlParams(request));
 		requestBody.setFormData(analysisFormData(request));
+		requestBody.setRequestUrlParams(analysisUrlParams(request));
 	}
 	
 	/**
@@ -48,13 +48,9 @@ public class PlatformServlet extends BasicHttpServlet{
 	 * @return
 	 */
 	private Map<String, String> analysisUrlParams(HttpServletRequest request) {
-		// 如果请求的是代码资源，则不需要解析请求的参数
-		if(requestBody.getRequestResourceType() == ISysResource.CODE){
-			return null;
-		}
 		// 记录是否请求的是sql脚本资源
 		boolean isReqSqlScript = false;
-		if(requestBody.getRequestResourceType() == ISysResource.SQLSCRIPT){
+		if(ISysResource.SQLSCRIPT.equals(requestBody.getRequestResourceType())){
 			isReqSqlScript = true;
 		}
 		

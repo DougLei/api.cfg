@@ -7,7 +7,6 @@ import org.hibernate.internal.HbmConfPropMetadata;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
-import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
@@ -39,7 +38,7 @@ public abstract class PutProcesser extends RequestProcesser {
 	 */
 	private IJson analysisFormData(Object formJsonData){
 		if(StrUtils.isEmpty(formJsonData)){
-			installResponseBodyForUpdateData(getProcesserName()+"处理器要保存的formData数据值为null", null);
+			installResponseBodyForUpdateData(getProcesserName()+"处理器要保存的formData数据值为null", null, false);
 			return null;
 		}
 		IJson json = ProcessStringTypeJsonExtend.getIJson(formJsonData.toString());
@@ -87,21 +86,10 @@ public abstract class PutProcesser extends RequestProcesser {
 	 * 修改数据后，组装ResponseBody对象
 	 * @param message
 	 * @param data
+	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForUpdateData(String message, Object data){
-		ResponseBody responseBody = new ResponseBody(message, data);
-		setResponseBody(responseBody);
-	}
-	
-	/**
-	 * 修改数据后，组装ResponseBody对象
-	 * @param uploadRows
-	 * @param data
-	 */
-	protected final void installResponseBodyForUpdateData(int uploadRows, Object data){
-		Log4jUtil.debug("修改了{}条数据", uploadRows);
-		String message = uploadRows+"条"+requestBody.getRouteBody().getResourceName()+"数据已修改";
-		ResponseBody responseBody = new ResponseBody(message, data);
+	protected final void installResponseBodyForUpdateData(String message, Object data, boolean isSuccess){
+		ResponseBody responseBody = new ResponseBody(message, data, isSuccess);
 		setResponseBody(responseBody);
 	}
 }

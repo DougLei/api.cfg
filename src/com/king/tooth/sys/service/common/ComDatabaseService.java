@@ -53,10 +53,10 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param database
 	 * @return operResult
 	 */
-	public String saveDatabase(ComDatabase database) {
+	public Object saveDatabase(ComDatabase database) {
 		String operResult = validDatabaseDataIsExists(database);
 		if(operResult == null){
-			HibernateUtil.saveObject(database, null);
+			return HibernateUtil.saveObject(database, null);
 		}
 		return operResult;
 	}
@@ -66,7 +66,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param database
 	 * @return operResult
 	 */
-	public String updateDatabase(ComDatabase database) {
+	public Object updateDatabase(ComDatabase database) {
 		ComDatabase oldDatabase = getObjectById(database.getId(), ComDatabase.class);
 		if(oldDatabase == null){
 			return "没有找到id为["+database.getId()+"]的数据库对象信息";
@@ -84,7 +84,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			operResult = validDatabaseDataIsExists(database);
 		}
 		if(operResult == null){
-			HibernateUtil.updateObjectByHql(database, null);
+			return HibernateUtil.updateObjectByHql(database, null);
 		}
 		return operResult;
 	}
@@ -258,10 +258,10 @@ public class ComDatabaseService extends AbstractPublishService {
 		modifyIsCreatedPropVal(database.getEntityName(), 1, database.getId());
 		
 		if(database.getIsBuiltin() == 1){
-			return "内置数据库发布成功";
+			return null;
 		}
 
-		return useLoadPublishApi(database.getId(), "null", "db", "1", 
+		return usePublishResourceApi(database.getId(), "null", "db", "1", 
 				BuiltinDatas.currentSysBuiltinProjectInstance.getId());
 	}
 	
@@ -316,7 +316,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		
 		modifyIsCreatedPropVal(database.getEntityName(), 0, database.getId());
 		
-		return useLoadPublishApi(database.getId(), "null", "db", "-1", 
+		return usePublishResourceApi(database.getId(), "null", "db", "-1", 
 				BuiltinDatas.currentSysBuiltinProjectInstance.getId());
 	}
 }

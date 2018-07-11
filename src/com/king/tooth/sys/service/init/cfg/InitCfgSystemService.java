@@ -35,7 +35,6 @@ import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
-import com.king.tooth.sys.entity.common.ComCode;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
@@ -110,7 +109,6 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComModuleOperation().toCreateTable());
 		tables.add(new ComHibernateHbm().toCreateTable());
 		tables.add(new ComSqlScript().toCreateTable());
-		tables.add(new ComCode().toCreateTable());
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
 		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
 		tables.add(new ComProjectComCodeLinks().toCreateTable());
@@ -258,8 +256,6 @@ public class InitCfgSystemService extends AbstractService{
 		insertAllTables(adminAccountId);
 		// 添加数据字典基础数据
 		insertBasicDataDictionary(adminAccountId);
-		// 添加代码资源
-		insertCodeResources(adminAccountId);
 		// 添加要发布的基础数据
 		insertPublishBasicData(adminAccountId);
 		
@@ -399,98 +395,6 @@ public class InitCfgSystemService extends AbstractService{
 		if(belongPlatformType != ISysResource.CONFIG_PLATFORM){
 			dataDictionary.setId(ResourceHandlerUtil.getIdentity());
 			HibernateUtil.saveObject(dataDictionary.turnToPublishBasicData(belongPlatformType), adminAccountId);
-		}
-	}
-	
-	/**
-	 * 添加代码资源
-	 * @param adminAccountId
-	 */
-	private void insertCodeResources(String adminAccountId) {
-		insertCodeResource(adminAccountId, "ResourceDescTable", "com.king.tooth.sys.controller.cfg.ResourceDescController", "table", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ResourceDescTableJson", "com.king.tooth.sys.controller.cfg.ResourceDescController", "tableJson", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "ColumnAdd", "com.king.tooth.sys.controller.cfg.ComColumndataController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ColumnUpdate", "com.king.tooth.sys.controller.cfg.ComColumndataController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ColumnDelete", "com.king.tooth.sys.controller.cfg.ComColumndataController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "TableAdd", "com.king.tooth.sys.controller.cfg.ComTabledataController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableUpdate", "com.king.tooth.sys.controller.cfg.ComTabledataController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableDelete", "com.king.tooth.sys.controller.cfg.ComTabledataController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "buildModel", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableCancelBuildModel", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelBuildModel", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableAddProjTableRelation", "com.king.tooth.sys.controller.cfg.ComTabledataController", "addProjTableRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableCancelProjTableRelation", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelProjTableRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TablePublish", "com.king.tooth.sys.controller.cfg.ComTabledataController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "TableCancelPublish", "com.king.tooth.sys.controller.cfg.ComTabledataController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "DatabaseAdd", "com.king.tooth.sys.controller.common.ComDatabaseController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "DatabaseUpdate", "com.king.tooth.sys.controller.common.ComDatabaseController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "DatabaseDelete", "com.king.tooth.sys.controller.common.ComDatabaseController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "DatabaseLinkTest", "com.king.tooth.sys.controller.common.ComDatabaseController", "linkTest", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "DatabasePublish", "com.king.tooth.sys.controller.common.ComDatabaseController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "DatabaseCancelPublish", "com.king.tooth.sys.controller.common.ComDatabaseController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "ModuleOperationAdd", "com.king.tooth.sys.controller.common.ComModuleOperationController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ModuleOperationUpdate", "com.king.tooth.sys.controller.common.ComModuleOperationController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ModuleOperationDelete", "com.king.tooth.sys.controller.common.ComModuleOperationController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ModuleOperationPublish", "com.king.tooth.sys.controller.common.ComModuleOperationController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ModuleOperationCancelPublish", "com.king.tooth.sys.controller.common.ComModuleOperationController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "ProjectAdd", "com.king.tooth.sys.controller.common.ComProjectController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectUpdate", "com.king.tooth.sys.controller.common.ComProjectController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectDelete", "com.king.tooth.sys.controller.common.ComProjectController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectCancelRelation", "com.king.tooth.sys.controller.common.ComProjectController", "cancelRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectPublish", "com.king.tooth.sys.controller.common.ComProjectController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectCancelPublish", "com.king.tooth.sys.controller.common.ComProjectController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "ProjectModuleAdd", "com.king.tooth.sys.controller.common.ComProjectModuleController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectModuleUpdate", "com.king.tooth.sys.controller.common.ComProjectModuleController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectModuleDelete", "com.king.tooth.sys.controller.common.ComProjectModuleController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectModulePublish", "com.king.tooth.sys.controller.common.ComProjectModuleController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "ProjectModuleCancelPublish", "com.king.tooth.sys.controller.common.ComProjectModuleController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "SqlScriptAdd", "com.king.tooth.sys.controller.common.ComSqlScriptController", "add", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptUpdate", "com.king.tooth.sys.controller.common.ComSqlScriptController", "update", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptDelete", "com.king.tooth.sys.controller.common.ComSqlScriptController", "delete", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptAddProjSqlScriptRelation", "com.king.tooth.sys.controller.common.ComSqlScriptController", "addProjSqlScriptRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptCancelProjSqlScriptRelation", "com.king.tooth.sys.controller.common.ComSqlScriptController", "cancelProjSqlScriptRelation", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptPublish", "com.king.tooth.sys.controller.common.ComSqlScriptController", "publish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptCancelPublish", "com.king.tooth.sys.controller.common.ComSqlScriptController", "cancelPublish", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "SqlScriptParameter", "com.king.tooth.sys.controller.common.ComSqlScriptController", "getSqlScriptParameter", ISysResource.GET, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptParameterAdd", "com.king.tooth.sys.controller.common.ComSqlScriptController", "addSqlScriptParameter", ISysResource.POST, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptParameterUpdate", "com.king.tooth.sys.controller.common.ComSqlScriptController", "updateSqlScriptParameter", ISysResource.PUT, 0, ISysResource.CONFIG_PLATFORM);
-		insertCodeResource(adminAccountId, "SqlScriptParameterDelete", "com.king.tooth.sys.controller.common.ComSqlScriptController", "deleteSqlScriptParameter", ISysResource.DELETE, 0, ISysResource.CONFIG_PLATFORM);
-		
-		insertCodeResource(adminAccountId, "login", "com.king.tooth.sys.controller.common.ComSysAccountController", "login", ISysResource.POST, 1, ISysResource.COMMON_PLATFORM);
-		insertCodeResource(adminAccountId, "loginOut", "com.king.tooth.sys.controller.common.ComSysAccountController", "loginOut", ISysResource.POST, 1, ISysResource.COMMON_PLATFORM);
-	}
-	private void insertCodeResource(String adminAccountId, String codeResourceName, String classPath, String methodName, String reqResourceMethod, Integer isNeedDeploy, Integer belongPlatformType){
-		ComCode code = new ComCode();
-		code.setIsCreated(1);
-		code.setIsBuiltin(1);
-		
-		code.setCodeResourceName(codeResourceName);
-		code.setClassPath(classPath);
-		code.setMethodName(methodName);
-		code.setReqResourceMethod(reqResourceMethod);
-		code.setIsNeedDeploy(isNeedDeploy);
-		code.setBelongPlatformType(belongPlatformType);
-		code.setId(HibernateUtil.saveObject(code, adminAccountId).getString(ResourceNameConstants.ID));
-		
-		if(belongPlatformType != ISysResource.APP_PLATFORM){
-			HibernateUtil.saveObject(code.turnToResource(), adminAccountId);
-		}
-		
-		if(belongPlatformType != ISysResource.CONFIG_PLATFORM){
-			code.setId(ResourceHandlerUtil.getIdentity());
-			HibernateUtil.saveObject(code.turnToPublishBasicData(belongPlatformType), adminAccountId);
-			
-			ComSysResource resource = code.turnToResource();
-			resource.setId(ResourceHandlerUtil.getIdentity());
-			resource.setRefResourceId(code.getId());
-			HibernateUtil.saveObject(resource.turnToPublishBasicData(belongPlatformType), adminAccountId);
 		}
 	}
 	

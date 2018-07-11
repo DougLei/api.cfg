@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.service.common.ComProjectModuleService;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 项目模块信息资源对象控制器
@@ -25,18 +25,23 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(HttpServletRequest request, String json) {
+	public Object add(HttpServletRequest request, String json) {
 		List<ComProjectModule> projectModules = getDataInstanceList(json, ComProjectModule.class);
-		String result = analysisResourceProp(projectModules);
-		if(result == null){
-			for (ComProjectModule projectModule : projectModules) {
-				result = projectModuleService.saveProjectModule(projectModule);
-				if(result != null){
-					throw new IllegalArgumentException(result);
+		analysisResourceProp(projectModules);
+		if(analysisResult == null){
+			if(projectModules.size() == 1){
+				resultObject = projectModuleService.saveProjectModule(projectModules.get(0));
+			}else{
+				for (ComProjectModule projectModule : projectModules) {
+					resultObject = projectModuleService.saveProjectModule(projectModule);
+					if(resultObject instanceof String){
+						break;
+					}
+					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
 		}
-		return installOperResponseBody(result, null);
+		return getResultObject();
 	}
 	
 	/**
@@ -44,18 +49,23 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(HttpServletRequest request, String json) {
+	public Object update(HttpServletRequest request, String json) {
 		List<ComProjectModule> projectModules = getDataInstanceList(json, ComProjectModule.class);
-		String result = analysisResourceProp(projectModules);
-		if(result == null){
-			for (ComProjectModule projectModule : projectModules) {
-				result = projectModuleService.updateProjectModule(projectModule);
-				if(result != null){
-					throw new IllegalArgumentException(result);
+		analysisResourceProp(projectModules);
+		if(analysisResult == null){
+			if(projectModules.size() == 1){
+				resultObject = projectModuleService.updateProjectModule(projectModules.get(0));
+			}else{
+				for (ComProjectModule projectModule : projectModules) {
+					resultObject = projectModuleService.updateProjectModule(projectModule);
+					if(resultObject instanceof String){
+						break;
+					}
+					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
 		}
-		return installOperResponseBody(result, null);
+		return getResultObject();
 	}
 	
 	/**
@@ -63,56 +73,63 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request, String json){
-		String projectModuleIds = request.getParameter(ResourceNameConstants.ID);
+	public Object delete(HttpServletRequest request, String json){
+		String projectModuleIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(projectModuleIds)){
-			return installOperResponseBody("要删除的项目模块id不能为空", null);
+			return "要删除的项目模块id不能为空";
 		}
-		String result = null;
+		
 		String[] projectModuleIdArr = projectModuleIds.split(",");
 		for (String projectModuleId : projectModuleIdArr) {
-			result = projectModuleService.deleteProjectModule(projectModuleId);
-			if(result != null){
-				throw new IllegalArgumentException(result);
+			resultObject = projectModuleService.deleteProjectModule(projectModuleId);
+			if(resultObject != null){
+				break;
 			}
 		}
-		return installOperResponseBody(result, null);
+		processResultObject(ResourceNameConstants.IDS, projectModuleIds);
+		return getResultObject();
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布项目模块
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request, String json){
+	public Object publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		String projectModuleId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(projectModuleId)){
-			return installOperResponseBody("要发布的项目模块id不能为空", null);
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+			return "要发布的项目模块id不能为空";
 		}
-		String result = projectModuleService.publishProjectModule(projectModuleId);
-		return installOperResponseBody(result, null);
+		resultObject = projectModuleService.publishProjectModule(jsonObject.getString(ResourceNameConstants.ID));
+		if(resultObject == null){
+			resultObject = jsonObject;
+		}
+		return getResultObject();
 	}
 	
 	/**
 	 * 取消发布项目模块
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request, String json){
+	public Object cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		String projectModuleId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(projectModuleId)){
-			return installOperResponseBody("要取消发布的项目模块id不能为空", null);
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+			return "要取消发布的项目模块id不能为空";
 		}
-		String result = projectModuleService.cancelPublishProjectModule(projectModuleId);
-		return installOperResponseBody(result, null);
+		resultObject = projectModuleService.cancelPublishProjectModule(jsonObject.getString(ResourceNameConstants.ID));
+		if(resultObject == null){
+			resultObject = jsonObject;
+		}
+		return getResultObject();
 	}
 }

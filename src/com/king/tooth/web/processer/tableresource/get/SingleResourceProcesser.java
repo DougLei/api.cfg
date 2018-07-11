@@ -26,7 +26,7 @@ public final class SingleResourceProcesser extends GetProcesser {
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
 		List<Map<String, Object>> dataList = query.list();// 查询
 		dataList = doProcessDataCollection(dataList);
-		installResponseBodyForQueryDataList(dataList, pageResultEntity);
+		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);
 		return true;
 	}
 

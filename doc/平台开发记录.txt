@@ -25,6 +25,7 @@
 # SessionFactoryImpl.hibernateDataLinkResourceNameList
 # ProjectIdRefDatabaseIdMapping
 # TokenRefProjectIdMapping
+# CodeResourceMapping
 
 
 **************************************************************

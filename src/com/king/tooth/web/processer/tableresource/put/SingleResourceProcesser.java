@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Query;
 import org.hibernate.internal.HbmConfPropMetadata;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -25,25 +25,23 @@ public final class SingleResourceProcesser extends PutProcesser {
 	}
 	
 	protected boolean doPutProcess() {
-		int uploadRows = 0;
 		int tmpCount = -1;
 		String updateHql = null;
-		Query query = null;
 		JSONObject updatedJsonObj = null;
 		// 记录set以及where id条件的值集合
 		List<Object> params = new ArrayList<Object>();
 		
+		List<Object> tmpParameters;
 		// 当前更新的资源，在系统中定义的属性名集合
 		HbmConfPropMetadata[] hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(requestBody.getRouteBody().getResourceName());
 		// 遍历提交的数据，拼装update语句，更新数据
 		for(int i=0; i < json.size(); i++){
 			updatedJsonObj = json.get(i);
 			updateHql = getUpdateHql(updatedJsonObj, params, hibernateDefineResourceProps).toString();
-
 			hqlParameterValues.addAll(0, params);// 将set的值，以及where id条件的值一并存储到参数集合，统一调用
-			query = createQuery(updateHql);
 			
-			uploadRows += query.executeUpdate();// 记录每次修改数据的数量
+			tmpParameters = new ArrayList<Object>(hqlParameterValues);
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql, tmpParameters);
 			
 			// 将set的值，以及where id条件的值从hql参数集合移除
 			tmpCount = params.size();
@@ -52,7 +50,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 			}
 			params.clear();
 		}
-		installResponseBodyForUpdateData(uploadRows, null);
+		installResponseBodyForUpdateData(null, json.getJson(), true);
 		return true;
 	}
 

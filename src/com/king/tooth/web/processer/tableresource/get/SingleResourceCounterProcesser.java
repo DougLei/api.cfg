@@ -20,7 +20,7 @@ public final class SingleResourceCounterProcesser extends GetProcesser {
 		Query query = createQuery(queryHql);
 		long totalCount = (long) query.uniqueResult();
 		TextResult textResult = new TextResult(totalCount);
-		installResponseBodyForQueryCounter(textResult);
+		installResponseBodyForQueryCounter(textResult, true);
 		return true;
 	}
 	

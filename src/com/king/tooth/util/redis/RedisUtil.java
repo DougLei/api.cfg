@@ -127,7 +127,7 @@ public class RedisUtil implements Serializable{
 	/**
 	 * 获取对象类型的value【序列化方式】
 	 * @param key
-	 * @return T,不需要强制转换
+	 * @return CodeResourceEntity,不需要强制转换
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getObjectBySerialize(String key, Class<T> classType){

@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.cache.CodeResourceMapping;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -41,17 +43,35 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 			JSONArray subDatas = null;
 			for(int i=0; i < json.size(); i++){
 				parentData = json.get(i);
-				saveData(requestBody.getRouteBody().getParentResourceName(), parentData);
-				
 				subDatas = parentData.getJSONArray("children");
-				saveSubData(parentData.getString(ResourceNameConstants.ID), subDatas);
+				parentData.remove("children");
+				
+				if(ISysResource.CODE.equals(requestBody.getRequestParentResourceType())){
+					Object object = CodeResourceMapping.invokeCodeResource(requestBody.getReqParentCodeResourceKey(), requestBody.getRequest(), parentData.toJSONString());
+					if(object instanceof String){
+						installResponseBodyForSaveData(object.toString(), null, false);
+						return false;
+					}else{
+						parentData.clear();
+						parentData.putAll((JSONObject)object);
+					}
+				}else{
+					saveData(requestBody.getRouteBody().getParentResourceName(), parentData);
+				}
+				
+				if(!saveSubData(parentData.getString(ResourceNameConstants.ID), subDatas)){
+					return false;
+				}
+				parentData.put("children", subDatas);
 			}
 		}else{ // 否则，标识提交的数据只有子资源数据，父资源的id通过路由传递过来
-			saveSubData(parentId, (JSONArray)json.getJson());
+			if(!saveSubData(parentId, (JSONArray)json.getJson())){
+				return false;
+			}
 		}
 		
 		saveDataLinks();
-		installResponseBodyForSaveData(null, json.getJson());
+		installResponseBodyForSaveData(null, json.getJson(), true);
 		return true;
 	}
 
@@ -59,29 +79,63 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 	 * 保存子资源数据
 	 * @param parentId
 	 * @param subDatas
+	 * @return 
 	 */
-	private void saveSubData(String parentId, JSONArray subDatas){
+	private boolean  saveSubData(String parentId, JSONArray subDatas){
 		if(subDatas == null || subDatas.size() == 0){
 			Log4jUtil.debug("主子表保存数据，要保存的子表列表为null");
-			return;
+			return false;
 		}
-		
-		JSONObject datalink = null;
-		JSONObject subData = null;
-		for(int j=0; j<subDatas.size(); j++){
-			subData = subDatas.getJSONObject(j);
+
+		if(ISysResource.CODE.equals(requestBody.getRequestResourceType())){
 			if(builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
-				subData.put(builtinParentsubQueryMethodProcesser.getRefParentSubPropName(), parentId);
+				for(int i=0; i<subDatas.size(); i++){
+					subDatas.getJSONObject(i).put(builtinParentsubQueryMethodProcesser.getRefParentSubPropName(), parentId);
+				}
 			}
-			saveData(requestBody.getRouteBody().getResourceName(), subData);
+			
+			Object object = CodeResourceMapping.invokeCodeResource(requestBody.getReqCodeResourceKey(), requestBody.getRequest(), subDatas.toJSONString());
+			if(object instanceof String){
+				installResponseBodyForSaveData(object.toString(), null, false);
+				return false;
+			}else{
+				subDatas.clear();
+				
+				if(object instanceof JSONObject){
+					JSONArray jsonArray = new JSONArray(1);
+					jsonArray.add(object);
+					subDatas.addAll(jsonArray);
+				}else{
+					subDatas.addAll((JSONArray)object);
+				}
+			}
 			
 			if(!builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
-				datalink = ResourceHandlerUtil.getDataLinksObject(parentId, subData.getString(ResourceNameConstants.ID), 
-						""+(j+1), requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
-				dataLinkList.add(datalink);
+				JSONObject datalink = null;
+				for(int i=0; i<subDatas.size(); i++){
+					datalink = ResourceHandlerUtil.getDataLinksObject(parentId, subDatas.getJSONObject(i).getString(ResourceNameConstants.ID), 
+							""+(i+1), requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
+					dataLinkList.add(datalink);
+				}
+			}
+		}else{
+			JSONObject datalink = null;
+			JSONObject subData = null;
+			for(int i=0; i<subDatas.size(); i++){
+				subData = subDatas.getJSONObject(i);
+				if(builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
+					subData.put(builtinParentsubQueryMethodProcesser.getRefParentSubPropName(), parentId);
+				}
+				saveData(requestBody.getRouteBody().getResourceName(), subData);
+				
+				if(!builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
+					datalink = ResourceHandlerUtil.getDataLinksObject(parentId, subData.getString(ResourceNameConstants.ID), 
+							""+(i+1), requestBody.getRouteBody().getParentResourceName(), requestBody.getRouteBody().getResourceName());
+					dataLinkList.add(datalink);
+				}
 			}
 		}
-//		subDatas.clear();
+		return true;
 	}
 	
 	/**
@@ -97,6 +151,5 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 		for (JSONObject datalink : dataLinkList) {
 			saveData(dataLinkResourceName, datalink);
 		}
-//		dataLinkList.clear();
 	}
 }

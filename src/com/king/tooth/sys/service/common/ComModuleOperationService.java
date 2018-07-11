@@ -51,14 +51,14 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 * 保存模块功能
 	 * @return
 	 */
-	public String saveModuleOperation(ComModuleOperation moduleOperation) {
+	public Object saveModuleOperation(ComModuleOperation moduleOperation) {
 		String operResult = validModuleOperationRefModuleIsExists(moduleOperation.getModuleId());
 		if(operResult == null){
 			ComProjectModule projectModule = getObjectById(moduleOperation.getModuleId(), ComProjectModule.class);
 			operResult = validModuleOperationCodeIsExists(projectModule.getRefProjectId(), moduleOperation);
 		}
 		if(operResult == null){
-			HibernateUtil.saveObject(moduleOperation, null);
+			return HibernateUtil.saveObject(moduleOperation, null);
 		}
 		return operResult;
 	}
@@ -67,7 +67,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 * 修改模块功能
 	 * @return
 	 */
-	public String updateModuleOperation(ComModuleOperation moduleOperation) {
+	public Object updateModuleOperation(ComModuleOperation moduleOperation) {
 		ComModuleOperation oldModuleOperation = getObjectById(moduleOperation.getId(), ComModuleOperation.class);
 		if(oldModuleOperation == null){
 			return "没有找到id为["+moduleOperation.getId()+"]的功能对象信息";
@@ -90,7 +90,7 @@ public class ComModuleOperationService extends AbstractPublishService {
 			operResult = validModuleOperationRefModuleIsExists(moduleOperation.getModuleId());
 		}
 		if(operResult == null){
-			HibernateUtil.updateObjectByHql(moduleOperation, null);
+			return HibernateUtil.updateObjectByHql(moduleOperation, null);
 		}
 		return operResult;
 	}

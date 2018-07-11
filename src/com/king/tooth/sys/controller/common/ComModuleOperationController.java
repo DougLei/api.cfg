@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.service.common.ComModuleOperationService;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
  * 模块功能资源对象控制器
@@ -25,18 +25,23 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody add(HttpServletRequest request, String json) {
+	public Object add(HttpServletRequest request, String json) {
 		List<ComModuleOperation> moduleOperations = getDataInstanceList(json, ComModuleOperation.class);
-		String result = analysisResourceProp(moduleOperations);
-		if(result == null){
-			for (ComModuleOperation moduleOperation : moduleOperations) {
-				result = moduleOperationService.saveModuleOperation(moduleOperation);
-				if(result != null){
-					throw new IllegalArgumentException(result);
+		analysisResourceProp(moduleOperations);
+		if(analysisResult == null){
+			if(moduleOperations.size() == 1){
+				resultObject = moduleOperationService.saveModuleOperation(moduleOperations.get(0));
+			}else{
+				for (ComModuleOperation moduleOperation : moduleOperations) {
+					resultObject = moduleOperationService.saveModuleOperation(moduleOperation);
+					if(resultObject instanceof String){
+						break;
+					}
+					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
 		}
-		return installOperResponseBody(result, null);
+		return getResultObject();
 	}
 	
 	/**
@@ -44,18 +49,23 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public ResponseBody update(HttpServletRequest request, String json) {
+	public Object update(HttpServletRequest request, String json) {
 		List<ComModuleOperation> moduleOperations = getDataInstanceList(json, ComModuleOperation.class);
-		String result = analysisResourceProp(moduleOperations);
-		if(result == null){
-			for (ComModuleOperation moduleOperation : moduleOperations) {
-				result = moduleOperationService.updateModuleOperation(moduleOperation);
-				if(result != null){
-					throw new IllegalArgumentException(result);
+		analysisResourceProp(moduleOperations);
+		if(analysisResult == null){
+			if(moduleOperations.size() == 1){
+				resultObject = moduleOperationService.updateModuleOperation(moduleOperations.get(0));
+			}else{
+				for (ComModuleOperation moduleOperation : moduleOperations) {
+					resultObject = moduleOperationService.updateModuleOperation(moduleOperation);
+					if(resultObject instanceof String){
+						break;
+					}
+					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
 		}
-		return installOperResponseBody(result, null);
+		return getResultObject();
 	}
 	
 	/**
@@ -63,56 +73,63 @@ public class ComModuleOperationController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public ResponseBody delete(HttpServletRequest request, String json){
-		String moduleOperationIds = request.getParameter(ResourceNameConstants.ID);
+	public Object delete(HttpServletRequest request, String json){
+		String moduleOperationIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(moduleOperationIds)){
-			return installOperResponseBody("要删除的功能id不能为空", null);
+			return "要删除的功能id不能为空";
 		}
-		String result = null;
+		
 		String[] moduleOperationIdArr = moduleOperationIds.split(",");
 		for (String moduleOperationId : moduleOperationIdArr) {
-			result = moduleOperationService.deleteModuleOperation(moduleOperationId);
-			if(result != null){
-				throw new IllegalArgumentException(result);
+			resultObject = moduleOperationService.deleteModuleOperation(moduleOperationId);
+			if(resultObject != null){
+				break;
 			}
 		}
-		return installOperResponseBody(result, null);
+		processResultObject(ResourceNameConstants.IDS, moduleOperationIds);
+		return getResultObject();
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布模块功能
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody publish(HttpServletRequest request, String json){
+	public Object publish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-			return installOperResponseBody("发布功能，目前只提供给一般开发账户使用", null);
+			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		String moduleOperationId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(moduleOperationId)){
-			return installOperResponseBody("要发布的功能id不能为空", null);
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+			return "要发布的功能id不能为空";
 		}
-		String result = moduleOperationService.publishModuleOperation(moduleOperationId);
-		return installOperResponseBody(result, null);
+		resultObject = moduleOperationService.publishModuleOperation(jsonObject.getString(ResourceNameConstants.ID));
+		if(resultObject == null){
+			resultObject = jsonObject;
+		}
+		return getResultObject();
 	}
 	
 	/**
 	 * 取消发布模块功能
-	 * <p>请求方式：GET</p>
+	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public ResponseBody cancelPublish(HttpServletRequest request, String json){
+	public Object cancelPublish(HttpServletRequest request, String json){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
-			return installOperResponseBody("取消发布功能，目前只提供给一般开发账户使用", null);
+			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		String moduleOperationId = request.getParameter(ResourceNameConstants.ID);
-		if(StrUtils.isEmpty(moduleOperationId)){
-			return installOperResponseBody("要取消发布的功能id不能为空", null);
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+			return "要取消发布的功能id不能为空";
 		}
-		String result = moduleOperationService.cancelPublishModuleOperation(moduleOperationId);
-		return installOperResponseBody(result, null);
+		resultObject = moduleOperationService.cancelPublishModuleOperation(jsonObject.getString(ResourceNameConstants.ID));
+		if(resultObject == null){
+			resultObject = jsonObject;
+		}
+		return getResultObject();
 	}
 }

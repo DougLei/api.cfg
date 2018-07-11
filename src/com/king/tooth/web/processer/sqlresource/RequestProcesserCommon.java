@@ -2,10 +2,10 @@ package com.king.tooth.web.processer.sqlresource;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Query;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.Log4jUtil;
@@ -31,7 +31,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * sql语句中的参数值集合
 	 * <p>可能有多个sql语句，所有用集合的集合封装参数</p>
 	 */
-	protected final List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>(5);
+	protected final List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>();
 	
 	/**
 	 * 内置sql脚本处理器
@@ -71,28 +71,6 @@ public class RequestProcesserCommon extends CommonProcesser{
 	}
 	
 	/**
-	 * modify数据后，组装ResponseBody对象
-	 * @param sqlDes @see SqlStatementType
-	 * @param modifyRows 删除的数据行数
-	 * @param data
-	 */
-	protected final void installResponseBodyForModifyData(String sqlDes, int modifyRows, Object data){
-		Log4jUtil.debug("{}了{}条数据", sqlDes, modifyRows);
-		String message = sqlDes + "了" + modifyRows + "条数据";
-		ResponseBody responseBody = new ResponseBody(message, data);
-		setResponseBody(responseBody);
-	}
-	
-	/**
-	 * 根据ID，查询单个数据对象时，组装ResponseBody对象
-	 * @param dataList
-	 */
-	protected final void installResponseBodyForDataObject(Map<String, Object> data) {
-		ResponseBody responseBody = new ResponseBody(data);
-		setResponseBody(responseBody);
-	}
-	
-	/**
 	 * 执行修改的处理
 	 * <pre>
 	 * 	包括
@@ -100,23 +78,22 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * 		update(put)
 	 * 		delete(delete)
 	 * </pre>
-	 * @param sqlDesc @see SqlStatementType
+	 * @param sqlDesc @see BuiltinDatabaseData
 	 */
 	protected final void doModifyProcess(String sqlDesc){
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
 		if(sqlScript.getSqlScriptType().equals(BuiltinDatabaseData.PROCEDURE)){// 是存储过程
-			Map<String, Object> data = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getProcedureName(), sqlScript.getSqlScriptParameterList());
-			installResponseBodyForDataObject(data);
+			JSONObject json = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getProcedureName(), sqlScript.getSqlScriptParameterList());
+			setResponseBody(new ResponseBody(json, true));
 		}else{
 			String[] modifySqlArr = sqlScript.getFinalSqlScript().getFinalModifySqlArr();
-			int modifyRows = 0;
 			int len = modifySqlArr.length;
 			Query query;
 			for (int i = 0; i < len; i++) {
 				query = createQuery((i+1), modifySqlArr[i]);
-				modifyRows += query.executeUpdate();
+				query.executeUpdate();
 			}
-			installResponseBodyForModifyData(sqlDesc, modifyRows, null);
+			setResponseBody(new ResponseBody(null, sqlParameterValues, true));
 		}
 	}
 	
