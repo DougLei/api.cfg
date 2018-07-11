@@ -119,11 +119,10 @@ public class CodeResourceMapping {
 		put("ComSqlScriptParameter_put", ComSqlScriptParameterController.class, "update");
 		put("ComSqlScriptParameter_delete", ComSqlScriptParameterController.class, "delete");
 		
-		
 		// 用户操作
-		put("ComComUser_post", ComUserController.class, "add");
-		put("ComComUser_put", ComUserController.class, "update");
-		put("ComComUser_delete", ComUserController.class, "delete");
+		put("ComUser_post", ComUserController.class, "add");
+		put("ComUser_put", ComUserController.class, "update");
+		put("ComUser_delete", ComUserController.class, "delete");
 	}
 	
 

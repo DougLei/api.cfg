@@ -59,7 +59,12 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	 * 模块的内容
 	 * <p>json串</p>
 	 */
-	private String moduleBody;
+	private String body;
+	/**
+	 * 功能树
+	 * <p>json串</p>
+	 */
+	private String functionTree;
 	
 	//-----------------------------------------------
 	/**
@@ -118,11 +123,17 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	public void setRefDatabaseId(String refDatabaseId) {
 		this.refDatabaseId = refDatabaseId;
 	}
-	public String getModuleBody() {
-		return moduleBody;
+	public String getBody() {
+		return body;
 	}
-	public void setModuleBody(String moduleBody) {
-		this.moduleBody = moduleBody;
+	public void setBody(String body) {
+		this.body = body;
+	}
+	public String getFunctionTree() {
+		return functionTree;
+	}
+	public void setFunctionTree(String functionTree) {
+		this.functionTree = functionTree;
 	}
 	
 	public ComTabledata toCreateTable() {
@@ -136,7 +147,7 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
 		
 		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", BuiltinCodeDataType.STRING, 32);
 		refProjectIdColumn.setName("关联的项目主键");
@@ -176,17 +187,23 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		iconColumn.setOrderCode(6);
 		columns.add(iconColumn);
 		
-		ComColumndata moduleBodyColumn = new ComColumndata("module_body", BuiltinCodeDataType.CLOB, 0);
-		moduleBodyColumn.setName("模块的内容");
-		moduleBodyColumn.setComments("模块的内容:json串");
-		moduleBodyColumn.setOrderCode(7);
-		columns.add(moduleBodyColumn);
+		ComColumndata bodyColumn = new ComColumndata("body", BuiltinCodeDataType.CLOB, 0);
+		bodyColumn.setName("模块的内容");
+		bodyColumn.setComments("模块的内容:json串");
+		bodyColumn.setOrderCode(7);
+		columns.add(bodyColumn);
+		
+		ComColumndata functionTreeColumn = new ComColumndata("function_tree", BuiltinCodeDataType.CLOB, 0);
+		functionTreeColumn.setName("功能树");
+		functionTreeColumn.setComments("功能树:json串");
+		functionTreeColumn.setOrderCode(8);
+		columns.add(functionTreeColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
-		orderCodeColumn.setOrderCode(8);
+		orderCodeColumn.setOrderCode(9);
 		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);
