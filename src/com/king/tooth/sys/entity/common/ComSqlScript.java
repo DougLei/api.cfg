@@ -184,7 +184,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	public void initGsqlParser() {
 		if(gsqlParser == null){
-			gsqlParser = SqlStatementParserUtil.getGsqlParser(this.sqlScriptContent.replaceAll("\n", "").replace("\t", "").replaceAll("\r", ""));
+			gsqlParser = SqlStatementParserUtil.getGsqlParser(this.sqlScriptContent.replaceAll("\n", " ").replace("\t", " ").replaceAll("\r", " "));
 		}
 	}
 	public TGSqlParser getGsqlParser() {
