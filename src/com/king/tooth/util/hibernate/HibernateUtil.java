@@ -93,6 +93,7 @@ public class HibernateUtil {
 	 * 在当前线程提交事务
 	 */
 	public static void commitTransaction() {
+		getCurrentThreadSession().flush();
 		getCurrentThreadSession().getTransaction().commit();
 		Log4jUtil.debug("[HibernateUtil.commitTransaction]提交当前事务");
 	}
@@ -108,7 +109,6 @@ public class HibernateUtil {
 	 * 关闭当前线程的session
 	 */
 	public static void closeCurrentThreadSession() {
-		getCurrentThreadSession().flush();
 		getCurrentThreadSession().close();
 		CurrentThreadContext.setCurrentSession(null);
 		Log4jUtil.debug("[HibernateUtil.closeSessionFromCurrentThread]关闭当前线程的session，并将session从CurrentThreadContext中移除");
