@@ -50,7 +50,6 @@ import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.ComVerifyCode;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
-import com.king.tooth.sys.entity.common.datalinks.ComProjectComCodeLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
@@ -101,7 +100,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * @return
 	 */
 	private List<ComTabledata> getAllTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(33);
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(32);
 		// 核心表
 		tables.add(new ComDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
@@ -111,7 +110,6 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComSqlScript().toCreateTable());
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
 		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
-		tables.add(new ComProjectComCodeLinks().toCreateTable());
 		tables.add(new ComSysAccount().toCreateTable());
 		tables.add(new ComDataDictionary().toCreateTable());
 		tables.add(new ComSysResource().toCreateTable());
