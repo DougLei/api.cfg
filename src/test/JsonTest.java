@@ -6,7 +6,7 @@ public class JsonTest {
 		
 //		Map<String, Object> m = new HashMap<String, Object>();
 //		
-//		ResponseBody r = new ResponseBody(m);
+//		ResponseEntity r = new ResponseEntity(m);
 //		System.out.println(r);   
 		
 	}

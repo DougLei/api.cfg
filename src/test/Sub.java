@@ -1,6 +1,7 @@
 package test;
 
-import com.alibaba.fastjson.JSONArray;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Sub extends Parent{
 	private String name;
@@ -9,8 +10,13 @@ public class Sub extends Parent{
 	}
 	
 	public static void main(String[] args) {
-		String sqlScriptParameterJson = "[]";
-		JSONArray sqlScriptParametersJsonArray = JSONArray.parseArray(sqlScriptParameterJson );
-		System.out.println(sqlScriptParametersJsonArray);
+		
+		List<String> a = new ArrayList<String>();
+		a.add("a_1111");
+		List<String> b = new ArrayList<String>(a);
+		System.out.println(a);
+		b.clear();
+		System.out.println(a);
+		System.out.println(b);
 	}
 }
