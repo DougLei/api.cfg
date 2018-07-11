@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.app;
+package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,26 +16,31 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * 组织机构资源对象
+ * 部门资源对象
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComOrg extends BasicEntity implements ITable, IEntity{
+public class ComDept extends BasicEntity implements ITable, IEntity{
 	
 	/**
-	 * 父组织主键
+	 * 所属组织主键
+	 * <p>顶级部门的这个字段有值，子部门不需要</p>
+	 */
+	private String orgId;
+	/**
+	 * 父部门主键
 	 */
 	private String parentId;
 	/**
-	 * 组织名称
+	 * 部门名称
 	 */
 	private String name;
 	/**
-	 * 组织简称
+	 * 部门简称
 	 */
 	private String shortName;
 	/**
-	 * 组织编码
+	 * 部门编码
 	 */
 	private String code;
 	/**
@@ -44,7 +49,14 @@ public class ComOrg extends BasicEntity implements ITable, IEntity{
 	private Integer orderCode;
 
 	// ---------------------------------------------------------------------------
+	
 
+	public String getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
 	public String getParentId() {
 		return parentId;
 	}
@@ -75,46 +87,52 @@ public class ComOrg extends BasicEntity implements ITable, IEntity{
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
-
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_ORG", 0);
-		table.setName("组织机构资源对象表");
-		table.setComments("组织机构资源对象表");
+		ComTabledata table = new ComTabledata("COM_DEPT", 0);
+		table.setName("部门资源对象表");
+		table.setComments("部门资源对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+		
+		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinCodeDataType.STRING, 32);
+		orgIdColumn.setName("所属组织主键");
+		orgIdColumn.setComments("所属组织主键：顶级部门的这个字段有值，子部门不需要");
+		orgIdColumn.setOrderCode(1);
+		columns.add(orgIdColumn);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinCodeDataType.STRING, 32);
-		parentIdColumn.setName("父组织主键");
-		parentIdColumn.setComments("父组织主键");
-		parentIdColumn.setOrderCode(1);
+		parentIdColumn.setName("父部门主键");
+		parentIdColumn.setComments("父部门主键");
+		parentIdColumn.setOrderCode(2);
 		columns.add(parentIdColumn);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 100);
-		nameColumn.setName("组织名称");
-		nameColumn.setComments("组织名称");
-		nameColumn.setOrderCode(2);
+		nameColumn.setName("部门名称");
+		nameColumn.setComments("部门名称");
+		nameColumn.setOrderCode(3);
 		columns.add(nameColumn);
 		
 		ComColumndata shortNameColumn = new ComColumndata("short_name", BuiltinCodeDataType.STRING, 50);
-		shortNameColumn.setName("组织简称");
-		shortNameColumn.setComments("组织简称");
-		shortNameColumn.setOrderCode(3);
+		shortNameColumn.setName("部门简称");
+		shortNameColumn.setComments("部门简称");
+		shortNameColumn.setOrderCode(4);
 		columns.add(shortNameColumn);
 		
 		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 32);
-		codeColumn.setName("组织编码");
-		codeColumn.setComments("组织编码");
-		codeColumn.setOrderCode(4);
+		codeColumn.setName("部门编码");
+		codeColumn.setComments("部门编码");
+		codeColumn.setOrderCode(5);
 		columns.add(codeColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
-		orderCodeColumn.setOrderCode(5);
+		orderCodeColumn.setOrderCode(6);
 		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);
@@ -122,12 +140,12 @@ public class ComOrg extends BasicEntity implements ITable, IEntity{
 	}
 
 	public String toDropTable() {
-		return "COM_ORG";
+		return "COM_DEPT";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComOrg";
+		return "ComDept";
 	}
 	
 	public JSONObject toEntityJson() {

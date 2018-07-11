@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.app;
+package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,8 @@ public class ComPermission extends BasicEntity implements ITable, IEntity{
 		table.setComments("权限资源对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
