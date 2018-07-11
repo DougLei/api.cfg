@@ -42,9 +42,6 @@ public class ProcessStringTypeJsonExtend implements Serializable{
 		if(jsonStr.startsWith("\"")){
 			jsonStr = jsonStr.substring(1, jsonStr.length()-1);
 		}
-		
-		// 2.取消json串中的\转义符
-		jsonStr = jsonStr.replace("\\", "");
 		return jsonStr;
 	}
 }
