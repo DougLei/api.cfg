@@ -98,7 +98,7 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		Date publishDate = new Date();
 		json.put("createDate", publishDate);
 		json.put("lastUpdateDate", publishDate);
-		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
 		json.put("createUserId", userId);
 		json.put("lastUpdatedUserId", userId);
 	}

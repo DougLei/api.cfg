@@ -138,9 +138,9 @@ public class ComSysAccountService extends AbstractService{
 	 */
 	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
 		// 暂时屏蔽
-//		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where (loginIp = ? or accountName = ?) and projectId = ?";
+//		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where (loginIp = ? or currentAccountName = ?) and projectId = ?";
 //		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
-		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and accountName = ? and projectId = ?";
+		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and currentAccountName = ? and projectId = ?";
 		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
 		if(onlineStatus == null){
 			onlineStatus = new ComSysAccountOnlineStatus();
@@ -158,7 +158,7 @@ public class ComSysAccountService extends AbstractService{
 			}
 		}
 		onlineStatus.setLoginIp(loginIp);
-		onlineStatus.setAccountName(accountName);
+		onlineStatus.setCurrentAccountName(accountName);
 		onlineStatus.setIsError(1);// 一开始标识为有错误
 		return onlineStatus;
 	}
@@ -173,14 +173,14 @@ public class ComSysAccountService extends AbstractService{
 	private void processOnlineStatusBasicData(ComSysAccountOnlineStatus accountOnlineStatus, ComSysAccount loginAccount, String accountName) {
 		accountOnlineStatus.setCurrentCustomerId("unknow");
 		accountOnlineStatus.setCurrentProjectId("unknow");
-		accountOnlineStatus.setAccountId(loginAccount.getId());
-		accountOnlineStatus.setIsAdministrator(loginAccount.getAccountType());
+		accountOnlineStatus.setCurrentAccountId(loginAccount.getId());
+		accountOnlineStatus.setCurrentAccountType(loginAccount.getAccountType());
 		
 		if(SysConfig.isConfSys){
-			accountOnlineStatus.setAccountName(accountName);
+			accountOnlineStatus.setCurrentAccountName(accountName);
 		}else{
 			ComUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComUser.class, "from ComUser where accountId = ?", loginAccount.getId());
-			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
+			accountOnlineStatus.setCurrentAccountName(getCurrentAccountName(loginUser, accountName));
 			accountOnlineStatus.setCurrentUserId(loginUser.getId());
 			accountOnlineStatus.setCurrentPositionId(loginUser.getPositionId());
 			accountOnlineStatus.setCurrentDeptId(loginUser.getDeptId());

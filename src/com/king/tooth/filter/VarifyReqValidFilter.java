@@ -66,7 +66,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		}
 		
 		ComSysAccountService accountService = new ComSysAccountService();
-		ComSysAccount currentAccount = accountService.validAccountOfStatus(onlineStatus.getAccountId());
+		ComSysAccount currentAccount = accountService.validAccountOfStatus(onlineStatus.getCurrentAccountId());
 		if(currentAccount.getMessage() != null){
 			return currentAccount.getMessage();
 		}

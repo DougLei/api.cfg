@@ -220,6 +220,14 @@ public class InitCfgSystemService extends AbstractService{
 		normal.setValidDate(BuiltinDatas.validDate);
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourceNameConstants.ID);
 		
+		// 添加平台开发账户【3.平台开发账户】
+		ComSysAccount devloper = new ComSysAccount();
+		devloper.setAccountType(3);
+		devloper.setLoginName("devloper");
+		devloper.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
+		devloper.setValidDate(BuiltinDatas.validDate);
+		HibernateUtil.saveObject(devloper, adminAccountId).getString(ResourceNameConstants.ID);
+		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据库信息【运行平台数据库信息】
 		ComDatabase appDatabase = new ComDatabase();
@@ -326,8 +334,9 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "删除", "delete", 4, ISysResource.COMMON_PLATFORM);
 		
 		// ComSysAccount.accountType 账户类型
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "0", 0, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "1", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "1", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "2", 2, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "平台开发账户", "3", 3, ISysResource.COMMON_PLATFORM);
 		
 		// ComSysAccount.accountStatus 账户状态
 		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "启用", "1", 1, ISysResource.COMMON_PLATFORM);

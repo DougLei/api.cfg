@@ -72,7 +72,7 @@ public class ResourceHandlerUtil {
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
-				String currentAccountId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+				String currentAccountId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
 				data.put("createUserId", currentAccountId);
 				data.put("lastUpdatedUserId",  currentAccountId);
 			}else{
@@ -96,7 +96,7 @@ public class ResourceHandlerUtil {
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
-				data.put("lastUpdatedUserId",  CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+				data.put("lastUpdatedUserId",  CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId());
 			}else{
 				data.put("lastUpdatedUserId",  shortDesc);
 			}

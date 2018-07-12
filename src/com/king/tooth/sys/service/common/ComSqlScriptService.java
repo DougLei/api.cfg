@@ -46,7 +46,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validSqlScriptResourceNameIsExists(ComSqlScript sqlScript) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId());
 		if(count > 0){
 			return "您已经创建过相同sql脚本资源名["+sqlScript.getSqlScriptResourceName()+"]的数据";
 		}
@@ -116,7 +116,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public Object saveSqlScript(ComSqlScript sqlScript) {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
@@ -167,7 +167,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
@@ -205,7 +205,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public String deleteSqlScript(String sqlScriptId) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
 		if(!isPlatformDeveloper){
 			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
 				return "该sql脚本已经发布，无法删除，请先取消发布";

@@ -80,7 +80,7 @@ public class ComColumndataService extends AbstractService{
 		}
 		if(operResult == null){
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
-			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
+			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
 				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated = 0 where "+ResourceNameConstants.ID+" = '"+column.getTableId()+"'");
 			}
 			return HibernateUtil.updateObjectByHql(column, null);

@@ -83,10 +83,10 @@ public class BuiltinQueryParameters {
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentProjectId();
 		}
 		if(accountId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
 		}
 		if(accountName.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountName();
 		}
 		if(currentUserId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentUserId();

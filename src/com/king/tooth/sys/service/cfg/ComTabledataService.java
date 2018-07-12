@@ -45,7 +45,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validTableNameIsExists(ComTabledata table) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId());
 		if(count > 0){
 			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
@@ -91,7 +91,7 @@ public class ComTabledataService extends AbstractPublishService {
 	public Object saveTable(ComTabledata table) {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
@@ -131,7 +131,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
@@ -164,7 +164,7 @@ public class ComTabledataService extends AbstractPublishService {
 		if(oldTable == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
 		if(!isPlatformDeveloper){
 			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
 				return "该表已经发布，无法删除，请先取消发布";
@@ -205,9 +205,6 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	public String buildModel(String tableId){
 		ComTabledata table = getObjectById(tableId, ComTabledata.class);
-		if(table == null){
-			return "没有找到id为["+tableId+"]的表对象信息";
-		}
 		if(table.getIsCreated() == 1){
 			return "["+table.getTableName()+"]已完成建模";
 		}
@@ -251,9 +248,6 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	public String cancelBuildModel(String tableId){
 		ComTabledata table = getObjectById(tableId, ComTabledata.class);
-		if(table == null){
-			return "没有找到id为["+tableId+"]的表对象信息";
-		}
 		if(table.getIsCreated() == 0){
 			return "["+table.getTableName()+"]未建模，无法取消建模";
 		}
@@ -609,7 +603,7 @@ public class ComTabledataService extends AbstractPublishService {
 		List<ComSysResource> resources = new ArrayList<ComSysResource>(tables.size());
 		ComSysResource resource;
 		Date currentDate = new Date();
-		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
 		for (ComTabledata table : tables) {
 			resource = table.turnToResource();
 			resource.setProjectId(projectId);

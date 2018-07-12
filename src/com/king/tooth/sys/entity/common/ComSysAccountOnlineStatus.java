@@ -35,11 +35,16 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	/**
 	 * 当前账户id
 	 */
-	private String accountId;
+	private String currentAccountId;
 	/**
 	 * 当前账户名
 	 */
-	private String accountName;
+	private String currentAccountName;
+	/**
+	 * 当前账户类型
+	 * <p>冗余ComSysAccount表的accountType值</p>
+	 */
+	private Integer currentAccountType;
 	/**
 	 * 当前用户id
 	 */
@@ -56,10 +61,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 * 当前用户所属岗位id
 	 */
 	private String currentPositionId;
-	/**
-	 * 是否是管理员
-	 */
-	private Integer isAdministrator;
 	/**
 	 * token值
 	 */
@@ -194,17 +195,29 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setCurrentPositionId(String currentPositionId) {
 		this.currentPositionId = currentPositionId;
 	}
-	public Integer getIsAdministrator() {
-		return isAdministrator;
-	}
-	public void setIsAdministrator(Integer isAdministrator) {
-		this.isAdministrator = isAdministrator;
-	}
 	public String getCurrentCustomerId() {
 		return currentCustomerId;
 	}
 	public void setCurrentCustomerId(String currentCustomerId) {
 		this.currentCustomerId = currentCustomerId;
+	}
+	public String getCurrentAccountId() {
+		return currentAccountId;
+	}
+	public void setCurrentAccountId(String currentAccountId) {
+		this.currentAccountId = currentAccountId;
+	}
+	public String getCurrentAccountName() {
+		return currentAccountName;
+	}
+	public void setCurrentAccountName(String currentAccountName) {
+		this.currentAccountName = currentAccountName;
+	}
+	public Integer getCurrentAccountType() {
+		return currentAccountType;
+	}
+	public void setCurrentAccountType(Integer currentAccountType) {
+		this.currentAccountType = currentAccountType;
 	}
 	public String getCurrentProjectId() {
 		return currentProjectId;
@@ -212,22 +225,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setCurrentProjectId(String currentProjectId) {
 		this.currentProjectId = currentProjectId;
 	}
-	public String getAccountId() {
-		return accountId;
-	}
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
-	public String getAccountName() {
-		return accountName;
-	}
-	public void setAccountName(String accountName) {
-		this.accountName = accountName;
-	}
-	public boolean isAdministrator(){
-		return (isAdministrator == 1);
-	}
-	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
@@ -252,47 +249,47 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		currentProjectIdColumn.setOrderCode(2);
 		columns.add(currentProjectIdColumn);
 		
-		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinCodeDataType.STRING, 32);
-		accountIdColumn.setName("当前的账户id");
-		accountIdColumn.setComments("当前的账户id");
-		accountIdColumn.setOrderCode(3);
-		columns.add(accountIdColumn);
+		ComColumndata currentAccountIdColumn = new ComColumndata("current_account_id", BuiltinCodeDataType.STRING, 32);
+		currentAccountIdColumn.setName("当前账户id");
+		currentAccountIdColumn.setComments("当前账户id");
+		currentAccountIdColumn.setOrderCode(3);
+		columns.add(currentAccountIdColumn);
 		
-		ComColumndata accountNameColumn = new ComColumndata("account_name", BuiltinCodeDataType.STRING, 32);
-		accountNameColumn.setName("当前账户名");
-		accountNameColumn.setComments("当前账户名");
-		accountNameColumn.setOrderCode(4);
-		columns.add(accountNameColumn);
+		ComColumndata currentAccountNameColumn = new ComColumndata("current_account_name", BuiltinCodeDataType.STRING, 32);
+		currentAccountNameColumn.setName("当前账户名");
+		currentAccountNameColumn.setComments("当前账户名");
+		currentAccountNameColumn.setOrderCode(4);
+		columns.add(currentAccountNameColumn);
+		
+		ComColumndata currentAccountTypeColumn = new ComColumndata("current_account_type", BuiltinCodeDataType.INTEGER, 1);
+		currentAccountTypeColumn.setName("当前账户类型");
+		currentAccountTypeColumn.setComments("当前账户类型：冗余ComSysAccount表的accountType值");
+		currentAccountTypeColumn.setOrderCode(5);
+		columns.add(currentAccountTypeColumn);
 		
 		ComColumndata currentUserIdColumn = new ComColumndata("current_user_id", BuiltinCodeDataType.STRING, 32);
 		currentUserIdColumn.setName("当前用户id");
 		currentUserIdColumn.setComments("当前用户id");
-		currentUserIdColumn.setOrderCode(5);
+		currentUserIdColumn.setOrderCode(6);
 		columns.add(currentUserIdColumn);
 		
 		ComColumndata currentOrgIdColumn = new ComColumndata("current_org_id", BuiltinCodeDataType.STRING, 32);
 		currentOrgIdColumn.setName("当前用户所属组织id");
 		currentOrgIdColumn.setComments("当前用户所属组织id");
-		currentOrgIdColumn.setOrderCode(6);
+		currentOrgIdColumn.setOrderCode(7);
 		columns.add(currentOrgIdColumn);
 		
 		ComColumndata currentDeptIdColumn = new ComColumndata("current_dept_id", BuiltinCodeDataType.STRING, 32);
 		currentDeptIdColumn.setName("当前用户所属部门id");
 		currentDeptIdColumn.setComments("当前用户所属部门id");
-		currentDeptIdColumn.setOrderCode(7);
+		currentDeptIdColumn.setOrderCode(8);
 		columns.add(currentDeptIdColumn);
 		
 		ComColumndata currentPositionIdColumn = new ComColumndata("current_position_id", BuiltinCodeDataType.STRING, 32);
 		currentPositionIdColumn.setName("当前用户所属岗位id");
 		currentPositionIdColumn.setComments("当前用户所属岗位id");
-		currentPositionIdColumn.setOrderCode(8);
+		currentPositionIdColumn.setOrderCode(9);
 		columns.add(currentPositionIdColumn);
-		
-		ComColumndata isAdministratorColumn = new ComColumndata("is_administrator", BuiltinCodeDataType.STRING, 32);
-		isAdministratorColumn.setName("token值");
-		isAdministratorColumn.setComments("token值");
-		isAdministratorColumn.setOrderCode(9);
-		columns.add(isAdministratorColumn);
 		
 		ComColumndata tokenColumn = new ComColumndata("token", BuiltinCodeDataType.STRING, 32);
 		tokenColumn.setName("token值");
@@ -352,11 +349,36 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("isAdministrator", isAdministrator);
+		entityJson.put("currentAccountType", currentAccountType);
 		entityJson.put("loginDate", loginDate);
 		entityJson.put("lastOperDate", lastOperDate);
 		entityJson.put("tryLoginTimes", tryLoginTimes);
 		super.processBasicEntityProps(entityJson);
 		return entityJson.getEntityJson();
+	}
+	
+	/**
+	 * 是否是管理账户
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isAdministrator(){
+		return (currentAccountType == 1);
+	}
+	/**
+	 * 是否是普通账户
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isNormal(){
+		return (currentAccountType == 2);
+	}
+	/**
+	 * 是否是平台开发者账户
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isPlatformDevloper(){
+		return (currentAccountType == 3);
 	}
 }

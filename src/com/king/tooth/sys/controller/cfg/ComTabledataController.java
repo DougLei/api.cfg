@@ -97,7 +97,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object buildModel(HttpServletRequest request, String json){
-		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
 			return "建模功能目前只提供给平台开发人员使用";
 		}
 		
@@ -118,7 +118,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object cancelBuildModel(HttpServletRequest request, String json){
-		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
 			return "取消建模功能目前只提供给平台开发人员使用";
 		}
 		
@@ -180,7 +180,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object publish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
@@ -201,7 +201,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object cancelPublish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
