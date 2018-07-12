@@ -39,45 +39,78 @@ public class ComUserService extends AbstractService{
 	
 	/**
 	 * 验证工号是否已经存在
-	 * @param workNo
+	 * @param user
 	 * @return 
 	 */
-	private String validWorkNoIsExists(String workNo) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where workNo=? and projectId=?", workNo, CurrentThreadContext.getProjectId());
+	private String validWorkNoIsExists(ComUser user) {
+		String workNo = user.getWorkNo();
+		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+		
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where workNo=? and customerId=?", workNo, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在工号为["+workNo+"]的用户";
+		}
+		
+		// 如果同时创建账户，则要去账户表中去判断，是否有重名的loginName
+		if(user.getIsCreateAccount() == 1){
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName=? and customerId=?", workNo, currentCustomerId);
+			if(count > 0){
+				return "系统已经存在登录名为["+workNo+"]的账户";
+			}
 		}
 		return null;
 	}
 	
 	/**
 	 * 验证email邮箱是否已经存在
-	 * @param email
+	 * @param user
 	 * @return 
 	 */
-	private String validEmailIsExists(String email) {
+	private String validEmailIsExists(ComUser user) {
+		String email = user.getEmail();
 		if(StrUtils.isEmpty(email)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where email=? and projectId=?", email, CurrentThreadContext.getProjectId());
+		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+		
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where email=? and customerId=?", email, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的用户";
+		}
+		
+		// 如果同时创建账户，则要去账户表中去判断，是否有重名的email
+		if(user.getIsCreateAccount() == 1){
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where email=? and customerId=?", email, currentCustomerId);
+			if(count > 0){
+				return "系统已经存在邮箱为["+email+"]的账户";
+			}
 		}
 		return null;
 	}
 	
 	/**
 	 * 验证tel手机号是否已经存在
-	 * @param tel
+	 * @param user
 	 * @return 
 	 */
-	private String validTelIsExists(String tel) {
+	private String validTelIsExists(ComUser user) {
+		String tel = user.getTel();
 		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where tel=? and projectId=?", tel, CurrentThreadContext.getProjectId());
+		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+		
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where tel=? and customerId=?", tel, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的用户";
+		}
+		
+		// 如果同时创建账户，则要去账户表中去判断，是否有重名的tel
+		if(user.getIsCreateAccount() == 1){
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where tel=? and customerId=?", tel, currentCustomerId);
+			if(count > 0){
+				return "系统已经存在手机号为["+tel+"]的账户";
+			}
 		}
 		return null;
 	}
@@ -88,12 +121,12 @@ public class ComUserService extends AbstractService{
 	 * @return
 	 */
 	public Object saveUser(ComUser user){
-		String result = validWorkNoIsExists(user.getWorkNo());
+		String result = validWorkNoIsExists(user);
 		if(result == null){
-			result = validEmailIsExists(user.getEmail());
+			result = validEmailIsExists(user);
 		}
 		if(result == null){
-			result = validTelIsExists(user.getTel());
+			result = validTelIsExists(user);
 		}
 		if(result == null){
 			String accountId = null;
@@ -148,22 +181,22 @@ public class ComUserService extends AbstractService{
 		String result = null;
 		if(!oldUser.getWorkNo().equals(user.getWorkNo())){
 			modifyAccountInfo = true;
-			result = validWorkNoIsExists(user.getWorkNo());
-			if(result == null && account != null){
+			result = validWorkNoIsExists(user);
+			if(result == null && user.getIsCreateAccount() == 1){
 				account.setLoginName(user.getWorkNo());
 			}
 		}
 		if(result == null && (StrUtils.notEmpty(oldUser.getEmail()) && !oldUser.getEmail().equals(user.getEmail())) || (StrUtils.isEmpty(oldUser.getEmail()) && StrUtils.notEmpty(user.getEmail()))){
 			modifyAccountInfo = true;
-			result = validEmailIsExists(user.getEmail());
-			if(result == null && account != null){
+			result = validEmailIsExists(user);
+			if(result == null && user.getIsCreateAccount() == 1){
 				account.setEmail(user.getEmail());
 			}
 		}
 		if(result == null && (StrUtils.notEmpty(oldUser.getTel()) && !oldUser.getTel().equals(user.getTel())) || (StrUtils.isEmpty(oldUser.getTel()) && StrUtils.notEmpty(user.getTel()))){
 			modifyAccountInfo = true;
-			result = validTelIsExists(user.getTel());
-			if(result == null && account != null){
+			result = validTelIsExists(user);
+			if(result == null && user.getIsCreateAccount() == 1){
 				account.setTel(user.getTel());
 			}
 		}

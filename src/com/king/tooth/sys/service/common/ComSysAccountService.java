@@ -253,7 +253,7 @@ public class ComSysAccountService extends AbstractService{
 	 * @return 
 	 */
 	private String validWorkNoIsExists(String loginName) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName=? and projectId=?", loginName, CurrentThreadContext.getProjectId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName=? and customerId=?", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
 		if(count > 0){
 			return "系统已经存在登录名为["+loginName+"]的账户";
 		}
@@ -269,7 +269,7 @@ public class ComSysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(email)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where email=? and projectId=?", email, CurrentThreadContext.getProjectId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的账户";
 		}
@@ -285,7 +285,7 @@ public class ComSysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where tel=? and projectId=?", tel, CurrentThreadContext.getProjectId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的账户";
 		}
