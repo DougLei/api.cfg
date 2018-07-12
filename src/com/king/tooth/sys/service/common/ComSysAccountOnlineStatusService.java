@@ -53,7 +53,7 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 		if(StrUtils.isEmpty(token)){
 			return null;
 		}
-		String hql = "select accountId from ComSysAccountOnlineStatus where token = ?";
+		String hql = "select currentAccountId from ComSysAccountOnlineStatus where token = ?";
 		return (String) HibernateUtil.executeUniqueQueryByHqlArr(hql, token);
 	}
 }

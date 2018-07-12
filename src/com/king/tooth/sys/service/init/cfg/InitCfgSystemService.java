@@ -227,7 +227,7 @@ public class InitCfgSystemService extends AbstractService{
 		devloper.setAccountType(3);
 		devloper.setLoginName("devloper");
 		devloper.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		devloper.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
+		devloper.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), devloper.getLoginPwdKey()));
 		devloper.setValidDate(BuiltinDatas.validDate);
 		HibernateUtil.saveObject(devloper, adminAccountId).getString(ResourceNameConstants.ID);
 		
