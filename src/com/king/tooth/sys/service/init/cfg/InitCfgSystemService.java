@@ -208,6 +208,7 @@ public class InitCfgSystemService extends AbstractService{
 		ComSysAccount admin = new ComSysAccount();
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
+		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(BuiltinDatas.validDate);
 		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourceNameConstants.ID);
@@ -216,6 +217,7 @@ public class InitCfgSystemService extends AbstractService{
 		ComSysAccount normal = new ComSysAccount();
 		normal.setAccountType(2);
 		normal.setLoginName("normal");
+		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		normal.setValidDate(BuiltinDatas.validDate);
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourceNameConstants.ID);
@@ -224,6 +226,7 @@ public class InitCfgSystemService extends AbstractService{
 		ComSysAccount devloper = new ComSysAccount();
 		devloper.setAccountType(3);
 		devloper.setLoginName("devloper");
+		devloper.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		devloper.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		devloper.setValidDate(BuiltinDatas.validDate);
 		HibernateUtil.saveObject(devloper, adminAccountId).getString(ResourceNameConstants.ID);
