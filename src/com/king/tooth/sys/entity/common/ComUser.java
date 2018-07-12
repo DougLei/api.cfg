@@ -59,7 +59,7 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	/**
 	 * 办公地点
 	 */
-	private String wrokAddr;
+	private String workAddr;
 	/**
 	 * 居住地点
 	 */
@@ -164,11 +164,11 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getWrokAddr() {
-		return wrokAddr;
+	public String getWorkAddr() {
+		return workAddr;
 	}
-	public void setWrokAddr(String wrokAddr) {
-		this.wrokAddr = wrokAddr;
+	public void setWorkAddr(String workAddr) {
+		this.workAddr = workAddr;
 	}
 	public String getLiveAddr() {
 		return liveAddr;
@@ -303,11 +303,11 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		emailColumn.setOrderCode(8);
 		columns.add(emailColumn);
 		
-		ComColumndata wrokAddrColumn = new ComColumndata("wrok_addr", BuiltinCodeDataType.STRING, 200);
-		wrokAddrColumn.setName("办公地点");
-		wrokAddrColumn.setComments("办公地点");
-		wrokAddrColumn.setOrderCode(9);
-		columns.add(wrokAddrColumn);
+		ComColumndata workAddrColumn = new ComColumndata("work_addr", BuiltinCodeDataType.STRING, 200);
+		workAddrColumn.setName("办公地点");
+		workAddrColumn.setComments("办公地点");
+		workAddrColumn.setOrderCode(9);
+		columns.add(workAddrColumn);
 		
 		ComColumndata liveAddrColumn = new ComColumndata("live_addr", BuiltinCodeDataType.STRING, 200);
 		liveAddrColumn.setName("居住地点");

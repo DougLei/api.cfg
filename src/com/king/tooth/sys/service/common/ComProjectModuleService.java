@@ -55,9 +55,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 */
 	public Object updateProjectModule(ComProjectModule projectModule) {
 		ComProjectModule oldProjectModule = getObjectById(projectModule.getId(), ComProjectModule.class);
-		if(oldProjectModule == null){
-			return "没有找到id为["+projectModule.getId()+"]的模块对象信息";
-		}
 		if(oldProjectModule.getIsCreated() == 1){
 			return "["+oldProjectModule.getName()+"]模块已经发布，不能修改模块信息，请先取消发布";
 		}
@@ -80,14 +77,11 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 */
 	public String deleteProjectModule(String projectModuleId) {
 		ComProjectModule oldProjectModule = getObjectById(projectModuleId, ComProjectModule.class);
-		if(oldProjectModule == null){
-			return "没有找到id为["+projectModuleId+"]的模块对象信息";
-		}
 		if(oldProjectModule.getIsCreated() == 1){
 			return "["+oldProjectModule.getName()+"]模块已经发布，无法删除，请先取消发布";
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectModule where id = '"+projectModuleId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectModule where "+ResourceNameConstants.ID+" = '"+projectModuleId+"'");
 		return null;
 	}
 	
@@ -99,9 +93,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 */
 	public String publishProjectModule(String projectModuleId){
 		ComProjectModule projectModule = getObjectById(projectModuleId, ComProjectModule.class);
-		if(projectModule == null){
-			return "没有找到id为["+projectModuleId+"]的模块对象信息";
-		}
 		if(projectModule.getIsCreated() == 1){
 			return "["+projectModule.getName()+"]模块已经发布，无需再次发布，或取消发布后重新发布";
 		}
@@ -140,9 +131,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 */
 	public String cancelPublishProjectModule(String projectModuleId){
 		ComProjectModule projectModule = getObjectById(projectModuleId, ComProjectModule.class);
-		if(projectModule == null){
-			return "没有找到id为["+projectModuleId+"]的模块对象信息";
-		}
 		if(projectModule.getIsCreated() == 0){
 			return "["+projectModule.getName()+"]模块未发布，无法取消发布";
 		}

@@ -6,15 +6,19 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDatas;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -24,7 +28,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysAccount extends BasicEntity implements ITable, IEntity{
+public class ComSysAccount extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 
 	/**
 	 * 登录名
@@ -46,7 +50,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 邮箱
 	 */
-	private String emails;
+	private String email;
 	/**
 	 * 账户类型
 	 * 		1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)
@@ -116,20 +120,17 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 	public void setValidDate(Date validDate) {
 		this.validDate = validDate;
 	}
-	public String getEmails() {
-		return emails;
-	}
 	public String getLoginPwdKey() {
-		if(StrUtils.isEmpty(loginPwdKey)){
-			loginPwdKey = ResourceHandlerUtil.getLoginPwdKey();
-		}
 		return loginPwdKey;
 	}
 	public void setLoginPwdKey(String loginPwdKey) {
 		this.loginPwdKey = loginPwdKey;
 	}
-	public void setEmails(String emails) {
-		this.emails = emails;
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public Integer getAccountType() {
 		return accountType;
@@ -180,11 +181,11 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		telColumn.setOrderCode(4);
 		columns.add(telColumn);
 		
-		ComColumndata emailsColumn = new ComColumndata("emails", BuiltinCodeDataType.STRING, 80);
-		emailsColumn.setName("邮箱");
-		emailsColumn.setComments("邮箱");
-		emailsColumn.setOrderCode(5);
-		columns.add(emailsColumn);
+		ComColumndata emailColumn = new ComColumndata("email", BuiltinCodeDataType.STRING, 80);
+		emailColumn.setName("邮箱");
+		emailColumn.setComments("邮箱");
+		emailColumn.setOrderCode(5);
+		columns.add(emailColumn);
 
 		ComColumndata accountTypeColumn = new ComColumndata("account_type", BuiltinCodeDataType.INTEGER, 1);
 		accountTypeColumn.setName("账户类型");
@@ -238,5 +239,25 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity{
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
 		publishBasicData.setBelongPlatformType(belongPlatformType);
 		return publishBasicData;
+	}
+	
+	public String validNotNullProps() {
+		if(StrUtils.isEmpty(loginName)){
+			return "登陆名不能为空";
+		}
+		return null;
+	}
+	
+	public String analysisResourceProp() {
+		String result = validNotNullProps();
+		if(result == null){
+			if(StrUtils.isEmpty(loginPwd)){
+				loginPwd = SysConfig.getSystemConfig("account.default.pwd");
+			}
+			loginPwdKey = ResourceHandlerUtil.getLoginPwdKey();
+			loginPwd = CryptographyUtil.encodeMd5(loginPwd, loginPwdKey);
+			validDate = BuiltinDatas.validDate;
+		}
+		return result;
 	}
 }

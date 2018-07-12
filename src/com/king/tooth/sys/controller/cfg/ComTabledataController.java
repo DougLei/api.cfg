@@ -101,7 +101,7 @@ public class ComTabledataController extends AbstractPublishController{
 			return "建模功能目前只提供给平台开发人员使用";
 		}
 		
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要建模的表id不能为空";
 		}
@@ -122,7 +122,7 @@ public class ComTabledataController extends AbstractPublishController{
 			return "取消建模功能目前只提供给平台开发人员使用";
 		}
 		
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要取消建模的表id不能为空";
 		}
@@ -139,7 +139,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object addProjTableRelation(HttpServletRequest request, String json){
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
@@ -159,7 +159,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object cancelProjTableRelation(HttpServletRequest request, String json){
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
@@ -184,7 +184,7 @@ public class ComTabledataController extends AbstractPublishController{
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要发布的表id不能为空";
 		}
@@ -205,7 +205,7 @@ public class ComTabledataController extends AbstractPublishController{
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要取消发布的表id不能为空";
 		}

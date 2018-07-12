@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.service.AbstractService;
@@ -18,6 +19,8 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 public class ComUserService extends AbstractService{
 	
+	private static final String comUserComDeptLinks = "ComUserComDeptLinks";
+	private static final String comUserComPositionLinks = "ComUserComPositionLinks";
 	private ComSysAccountService accountService = new ComSysAccountService();
 	
 	/**
@@ -26,55 +29,55 @@ public class ComUserService extends AbstractService{
 	 * @param newLoginPwd
 	 * @return
 	 */
-	public String uploadUserLoginPwd(String userId, String newLoginPwd){
+	public Object uploadUserLoginPwd(String userId, String newLoginPwd){
 		ComUser user = getObjectById(userId, ComUser.class);
 		if(StrUtils.isEmpty(user.getAccountId())){
 			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
 		}
-		return accountService.uploadAccounLoginPwd(user.getAccountId(), newLoginPwd);
+		return accountService.uploadAccounLoginPwd(user.getId(), user.getAccountId(), newLoginPwd);
 	}
 	
 	/**
 	 * 验证工号是否已经存在
-	 * @param user
+	 * @param workNo
 	 * @return 
 	 */
-	private String validWorkNoIsExists(ComUser user) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where workNo=? and projectId=?", user.getWorkNo(), CurrentThreadContext.getCurrentAccountOnlineStatus().getProjectId());
+	private String validWorkNoIsExists(String workNo) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where workNo=? and projectId=?", workNo, CurrentThreadContext.getProjectId());
 		if(count > 0){
-			return "系统已经存在工号为["+user.getWorkNo()+"]的用户";
+			return "系统已经存在工号为["+workNo+"]的用户";
 		}
 		return null;
 	}
 	
 	/**
 	 * 验证email邮箱是否已经存在
-	 * @param user
+	 * @param email
 	 * @return 
 	 */
-	private String validEmailIsExists(ComUser user) {
-		if(StrUtils.isEmpty(user.getEmail())){
+	private String validEmailIsExists(String email) {
+		if(StrUtils.isEmpty(email)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where email=? and projectId=?", user.getEmail(), CurrentThreadContext.getCurrentAccountOnlineStatus().getProjectId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where email=? and projectId=?", email, CurrentThreadContext.getProjectId());
 		if(count > 0){
-			return "系统已经存在邮箱为["+user.getEmail()+"]的用户";
+			return "系统已经存在邮箱为["+email+"]的用户";
 		}
 		return null;
 	}
 	
 	/**
 	 * 验证tel手机号是否已经存在
-	 * @param user
+	 * @param tel
 	 * @return 
 	 */
-	private String validTelIsExists(ComUser user) {
-		if(StrUtils.isEmpty(user.getTel())){
+	private String validTelIsExists(String tel) {
+		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where tel=? and projectId=?", user.getTel(), CurrentThreadContext.getCurrentAccountOnlineStatus().getProjectId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where tel=? and projectId=?", tel, CurrentThreadContext.getProjectId());
 		if(count > 0){
-			return "系统已经存在手机号为["+user.getTel()+"]的用户";
+			return "系统已经存在手机号为["+tel+"]的用户";
 		}
 		return null;
 	}
@@ -85,12 +88,12 @@ public class ComUserService extends AbstractService{
 	 * @return
 	 */
 	public Object saveUser(ComUser user){
-		String result = validWorkNoIsExists(user);
+		String result = validWorkNoIsExists(user.getWorkNo());
 		if(result == null){
-			result = validEmailIsExists(user);
+			result = validEmailIsExists(user.getEmail());
 		}
 		if(result == null){
-			result = validTelIsExists(user);
+			result = validTelIsExists(user.getTel());
 		}
 		if(result == null){
 			String accountId = null;
@@ -100,24 +103,24 @@ public class ComUserService extends AbstractService{
 				account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
-				account.setEmails(user.getEmail());
+				account.setEmail(user.getEmail());
 				accountId = HibernateUtil.saveObject(account, null).getString(ResourceNameConstants.ID);
 			}
 			user.setAccountId(accountId);
 			JSONObject userJsonObject = HibernateUtil.saveObject(user, null);
-			String useId = userJsonObject.getString(ResourceNameConstants.ID);
+			String userId = userJsonObject.getString(ResourceNameConstants.ID);
 			
 			// 保存部门
 			if(StrUtils.notEmpty(user.getDeptId())){
-				JSONObject udLink = ResourceHandlerUtil.getDataLinksObject(useId, user.getDeptId(), "1", null, null);
+				JSONObject udLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getDeptId(), "1", null, null);
 				udLink.put("isMain", "1");
-				HibernateUtil.saveObject("ComUserComDeptLinks", udLink, null);
+				HibernateUtil.saveObject(comUserComDeptLinks, udLink, null);
 			}
 			// 保存岗位
 			if(StrUtils.notEmpty(user.getPositionId())){
-				JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(useId, user.getPositionId(), "1", null, null);
+				JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
 				upLink.put("isMain", "1");
-				HibernateUtil.saveObject("ComUserComPositionLinks", upLink, null);
+				HibernateUtil.saveObject(comUserComPositionLinks, upLink, null);
 			}
 			
 			return userJsonObject;
@@ -132,25 +135,126 @@ public class ComUserService extends AbstractService{
 	 */
 	public Object updateUser(ComUser user){
 		ComUser oldUser = getObjectById(user.getId(), ComUser.class);
+		
+		String accountId = oldUser.getAccountId();
+		boolean modifyAccountInfo = false;// 标识是否修改账户信息
+		ComSysAccount account = null;
+		if(StrUtils.notEmpty(accountId)){
+			account = getObjectById(oldUser.getAccountId(), ComSysAccount.class);
+		}else if(user.getIsCreateAccount() == 1){
+			account = new ComSysAccount();
+		}
+		
 		String result = null;
 		if(!oldUser.getWorkNo().equals(user.getWorkNo())){
-			result = validWorkNoIsExists(user);
+			modifyAccountInfo = true;
+			result = validWorkNoIsExists(user.getWorkNo());
+			if(result == null && account != null){
+				account.setLoginName(user.getWorkNo());
+			}
 		}
-		if(result == null && oldUser.getEmail() != null && !oldUser.getEmail().equals(user.getEmail())){
-			result = validEmailIsExists(user);
+		if(result == null && (StrUtils.notEmpty(oldUser.getEmail()) && !oldUser.getEmail().equals(user.getEmail())) || (StrUtils.isEmpty(oldUser.getEmail()) && StrUtils.notEmpty(user.getEmail()))){
+			modifyAccountInfo = true;
+			result = validEmailIsExists(user.getEmail());
+			if(result == null && account != null){
+				account.setEmail(user.getEmail());
+			}
 		}
-		if(result == null && oldUser.getTel() != null && !oldUser.getTel().equals(user.getTel())){
-			result = validTelIsExists(user);
+		if(result == null && (StrUtils.notEmpty(oldUser.getTel()) && !oldUser.getTel().equals(user.getTel())) || (StrUtils.isEmpty(oldUser.getTel()) && StrUtils.notEmpty(user.getTel()))){
+			modifyAccountInfo = true;
+			result = validTelIsExists(user.getTel());
+			if(result == null && account != null){
+				account.setTel(user.getTel());
+			}
 		}
 		if(result == null){
+			if(account != null && modifyAccountInfo){
+				if(StrUtils.notEmpty(oldUser.getAccountId())){
+					HibernateUtil.updateObjectByHql(account, null);
+				}else{
+					account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
+					account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+					accountId = HibernateUtil.saveObject(account, null).getString(ResourceNameConstants.ID);
+					user.setAccountId(accountId);
+				}
+			}
 			JSONObject userJsonObject = HibernateUtil.updateObjectByHql(user, null);
+			String userId = oldUser.getId();
 			
 			// 可能修改部门
+			if((StrUtils.notEmpty(oldUser.getDeptId()) && !oldUser.getDeptId().equals(user.getDeptId())) || (StrUtils.isEmpty(oldUser.getDeptId()) && StrUtils.notEmpty(user.getDeptId()))){
+				if(StrUtils.notEmpty(oldUser.getDeptId())){
+					HibernateUtil.deleteDataLinks(comUserComDeptLinks, userId, oldUser.getDeptId());
+				}
+				
+				if(StrUtils.notEmpty(user.getDeptId())){
+					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
+					upLink.put("isMain", "1");
+					HibernateUtil.saveObject(comUserComDeptLinks, upLink, null);
+				}
+			}
 			
 			// 可能修改岗位
-			
+			if((StrUtils.notEmpty(oldUser.getPositionId()) && !oldUser.getPositionId().equals(user.getPositionId())) || (StrUtils.isEmpty(oldUser.getPositionId()) && StrUtils.notEmpty(user.getPositionId()))){
+				if(StrUtils.notEmpty(oldUser.getPositionId())){
+					HibernateUtil.deleteDataLinks(comUserComPositionLinks, userId, oldUser.getPositionId());
+				}
+				
+				if(StrUtils.notEmpty(user.getPositionId())){
+					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
+					upLink.put("isMain", "1");
+					HibernateUtil.saveObject(comUserComPositionLinks, upLink, null);
+				}
+			}
 			return userJsonObject;
 		}
 		return result;
+	}
+
+	/**
+	 * 开通账户
+	 * @param user
+	 * @return
+	 */
+	public Object openAccount(ComUser user) {
+		user = getObjectById(user.getId(), ComUser.class);
+		
+		ComSysAccount account = new ComSysAccount();
+		account.setLoginName(user.getWorkNo());
+		account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
+		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+		account.setTel(user.getTel());
+		account.setEmail(user.getEmail());
+		String accountId = HibernateUtil.saveObject(account, null).getString(ResourceNameConstants.ID);
+		
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComUser set accountId=? where "+ResourceNameConstants.ID+"=?", accountId, user.getId());
+		
+		JSONObject jsonObject = new JSONObject(1);
+		jsonObject.put(ResourceNameConstants.ID, user.getId());
+		return jsonObject;
+	}
+	
+	/**
+	 * 删除用户
+	 * @param userId
+	 * @return
+	 */
+	public String deleteUser(String userId) {
+		ComUser oldUser = getObjectById(userId, ComUser.class);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComUser where "+ResourceNameConstants.ID+" = '"+oldUser.getId()+"'");
+		
+		if(StrUtils.notEmpty(oldUser.getAccountId())){
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccount where "+ResourceNameConstants.ID+" = '"+oldUser.getAccountId()+"'");
+		}
+		
+		if(StrUtils.notEmpty(oldUser.getDeptId())){
+			HibernateUtil.deleteDataLinks(comUserComDeptLinks, oldUser.getId(), oldUser.getDeptId());
+		}
+		
+		if(StrUtils.notEmpty(oldUser.getPositionId())){
+			HibernateUtil.deleteDataLinks(comUserComPositionLinks, oldUser.getId(), oldUser.getPositionId());
+		}
+		
+		return null;
 	}
 }

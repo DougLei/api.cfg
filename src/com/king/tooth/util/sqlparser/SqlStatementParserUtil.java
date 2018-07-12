@@ -122,7 +122,7 @@ public class SqlStatementParserUtil {
 	         case sstmssqlcreateprocedure:
 	        	 return BuiltinDatabaseData.PROCEDURE;
 	         default:
-	        	 Log4jUtil.warn("目前平台很可能不支持[?]类型的sql脚本", sqlStatementType);
+	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
 	        	 return sqlStatementType.toString();
 	     }
 	}

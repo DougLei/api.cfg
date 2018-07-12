@@ -79,9 +79,6 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	public Object updateProject(ComProject project) {
 		ComProject oldProject = getObjectById(project.getId(), ComProject.class);
-		if(oldProject == null){
-			return "没有找到id为["+project.getId()+"]的项目对象信息";
-		}
 		if(oldProject.getIsCreated() == 1){
 			return "["+oldProject.getProjName()+"]项目已经发布，不能修改，请先取消发布";
 		}
@@ -110,9 +107,6 @@ public class ComProjectService extends AbstractPublishService {
 			return "禁止删除内置的项目信息";
 		}
 		ComProject oldProject = getObjectById(projectId, ComProject.class);
-		if(oldProject == null){
-			return "没有找到id为["+projectId+"]的项目对象信息";
-		}
 		if(oldProject.getIsCreated() == 1){
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
@@ -125,7 +119,7 @@ public class ComProjectService extends AbstractPublishService {
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProject where id = '"+projectId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProject where "+ResourceNameConstants.ID+" = '"+projectId+"'");
 		return null;
 	}
 
@@ -160,9 +154,6 @@ public class ComProjectService extends AbstractPublishService {
 			return "无法发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
-		if(project == null){
-			return "没有找到id为["+projectId+"]的项目对象信息";
-		}
 		if(project.getIsCreated() == 1){
 			return "id为["+projectId+"]的项目已经被发布，无需再次发布，或取消发布后重新发布";
 		}
@@ -250,9 +241,6 @@ public class ComProjectService extends AbstractPublishService {
 			return "无法取消发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
-		if(project == null){
-			return "没有找到id为["+projectId+"]的项目对象信息";
-		}
 		if(project.getIsCreated() == 0){
 			return "["+project.getProjName()+"]项目未发布，无法取消发布";
 		}
@@ -260,7 +248,7 @@ public class ComProjectService extends AbstractPublishService {
 		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
 		
 		// 远程删除运行系统中的数据库信息
-		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete " + project.getEntityName() + " where id = '"+projectId+"'");
+		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete " + project.getEntityName() + " where "+ResourceNameConstants.ID+" = '"+projectId+"'");
 		publishInfoService.deletePublishedData(null, projectId);
 		
 		modifyIsCreatedPropVal(project.getEntityName(), 0, project.getId());

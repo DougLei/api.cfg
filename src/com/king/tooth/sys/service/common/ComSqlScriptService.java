@@ -161,9 +161,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public Object updateSqlScript(ComSqlScript sqlScript) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScript.getId(), ComSqlScript.class);
-		if(oldSqlScript == null){
-			return "没有找到id为["+sqlScript.getId()+"]的sql脚本对象信息";
-		}
 		String operResult = null;
 		if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 			operResult = validSqlScriptResourceNameIsExists(sqlScript);
@@ -208,9 +205,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public String deleteSqlScript(String sqlScriptId) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		if(oldSqlScript == null){
-			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
-		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isAdministrator();
 		if(!isPlatformDeveloper){
 			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
@@ -233,7 +227,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			projectIds.clear();
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where id = '"+sqlScriptId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where "+ResourceNameConstants.ID+" = '"+sqlScriptId+"'");
 		HibernateUtil.deleteDataLinks("ComProjectComSqlScriptLinks", null, sqlScriptId);
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		
@@ -278,9 +272,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public String publishSqlScript(String sqlScriptId) {
 		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		if(sqlScript == null){
-			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
-		}
 		if(sqlScript.getIsNeedDeploy() == 0){
 			return "id为["+sqlScriptId+"]的sql脚本不该被发布，如需发布，请联系管理员";
 		}
@@ -315,9 +306,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public String cancelPublishSqlScript(String sqlScriptId) {
 		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		if(sqlScript == null){
-			return "没有找到id为["+sqlScriptId+"]的sql脚本对象信息";
-		}
 		String projectId = CurrentThreadContext.getConfProjectId();
 		if(!publishInfoService.validResourceIsPublished(null, projectId, sqlScriptId)){
 			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本未发布，无法取消发布";

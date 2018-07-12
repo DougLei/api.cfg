@@ -39,6 +39,12 @@ public abstract class AbstractController {
 	 */
 	protected JSONArray resultJsonArray;
 	
+	private void vaildJsonStrNotNull(String json){
+		if(StrUtils.isEmpty(json)){
+			throw new NullPointerException("操作的数据不能为空");
+		}
+	}
+	
 	/**
 	 * 根据json串，获取对应数据类型实例集合
 	 * @param json
@@ -46,9 +52,7 @@ public abstract class AbstractController {
 	 * @return
 	 */
 	protected <T> List<T> getDataInstanceList(String json, Class<T> targetClass){
-		if(StrUtils.isEmpty(json)){
-			throw new NullPointerException("操作的数据不能为空");
-		}
+		vaildJsonStrNotNull(json);
 		IJson ijson = ProcessStringTypeJsonExtend.getIJson(json);
 		if(ijson.isArray()){
 			resultJsonArray = new JSONArray(ijson.size());
@@ -61,6 +65,28 @@ public abstract class AbstractController {
 		ijson.clear();
 		return list;
 	}
+	
+	/**
+	 * 根据json串，获取JSONObject对象
+	 * @param json
+	 * @return
+	 */
+	protected JSONObject getJSONObject(String json){
+		vaildJsonStrNotNull(json);
+		return JsonUtil.parseJsonObject(json);
+	}
+	
+	/**
+	 * 根据json串，获取JSONArray对象
+	 * @param json
+	 * @return
+	 */
+	protected JSONArray getJSONArray(String json){
+		vaildJsonStrNotNull(json);
+		return JsonUtil.parseJsonArray(json);
+	}
+	
+	
 	
 	/**
 	 * 统一解析数据资源属性

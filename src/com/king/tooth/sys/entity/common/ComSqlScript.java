@@ -230,7 +230,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptResourceNameColumn.setOrderCode(3);
 		columns.add(sqlScriptResourceNameColumn);
 		
-		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", BuiltinCodeDataType.STRING, 20);
+		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", BuiltinCodeDataType.STRING, 50);
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
 		sqlScriptTypeColumn.setOrderCode(4);

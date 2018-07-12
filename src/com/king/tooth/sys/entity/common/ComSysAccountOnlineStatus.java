@@ -29,6 +29,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	private String currentCustomerId;
 	/**
 	 * 当前项目id
+	 * <p>和当前线程中的projectId的值一致</p>
 	 */
 	private String currentProjectId;
 	/**
@@ -247,7 +248,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 		
 		ComColumndata currentProjectIdColumn = new ComColumndata("current_project_id", BuiltinCodeDataType.STRING, 32);
 		currentProjectIdColumn.setName("当前项目id");
-		currentProjectIdColumn.setComments("当前项目id");
+		currentProjectIdColumn.setComments("当前项目id：和当前线程中的projectId的值一致");
 		currentProjectIdColumn.setOrderCode(2);
 		columns.add(currentProjectIdColumn);
 		

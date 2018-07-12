@@ -69,9 +69,6 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 */
 	public Object updateModuleOperation(ComModuleOperation moduleOperation) {
 		ComModuleOperation oldModuleOperation = getObjectById(moduleOperation.getId(), ComModuleOperation.class);
-		if(oldModuleOperation == null){
-			return "没有找到id为["+moduleOperation.getId()+"]的功能对象信息";
-		}
 		if(oldModuleOperation.getIsCreated() == 1){
 			return "["+oldModuleOperation.getName()+"]功能已经发布，不能修改功能信息，请先取消发布";
 		}
@@ -101,14 +98,11 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 */
 	public String deleteModuleOperation(String moduleOperationId) {
 		ComModuleOperation oldModuleOperation = getObjectById(moduleOperationId, ComModuleOperation.class);
-		if(oldModuleOperation == null){
-			return "没有找到id为["+moduleOperationId+"]的功能对象信息";
-		}
 		if(oldModuleOperation.getIsCreated() == 1){
 			return "["+oldModuleOperation.getName()+"]功能已经发布，无法删除，请先取消发布";
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComModuleOperation where id = '"+moduleOperationId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComModuleOperation where "+ResourceNameConstants.ID+" = '"+moduleOperationId+"'");
 		return null;
 	}
 
@@ -119,9 +113,6 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 */
 	public String publishModuleOperation(String moduleOperationId) {
 		ComModuleOperation moduleOperation = getObjectById(moduleOperationId, ComModuleOperation.class);
-		if(moduleOperation == null){
-			return "没有找到id为["+moduleOperationId+"]的功能对象信息";
-		}
 		if(moduleOperation.getIsNeedDeploy() == 0){
 			return "id为["+moduleOperationId+"]的功能不该被发布，如需发布，请联系管理员";
 		}
@@ -157,9 +148,6 @@ public class ComModuleOperationService extends AbstractPublishService {
 	 */
 	public String cancelPublishModuleOperation(String moduleOperationId) {
 		ComModuleOperation moduleOperation = getObjectById(moduleOperationId, ComModuleOperation.class);
-		if(moduleOperation == null){
-			return "没有找到id为["+moduleOperationId+"]的功能对象信息";
-		}
 		if(moduleOperation.getIsCreated() == 0){
 			return "["+moduleOperation.getName()+"]功能未发布，无法取消发布";
 		}

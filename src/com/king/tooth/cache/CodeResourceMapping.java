@@ -50,9 +50,6 @@ public class CodeResourceMapping {
 	 * <p>例如：ComTabledata post buildModel就是建模的操作，类似的还有发布操作等</p>
 	 */
 	private static void initActionCodeResource() {
-		// 账户操作
-		put("ComSysAccount_post_login", ComSysAccountController.class, "login");
-		put("ComSysAccount_post_loginOut", ComSysAccountController.class, "loginOut");
 		// 数据库操作
 		put("ComDatabase_post_linkTest", ComTabledataController.class, "linkTest");
 		put("ComDatabase_post_publish", ComTabledataController.class, "publish");
@@ -79,6 +76,14 @@ public class CodeResourceMapping {
 		put("ComSqlScript_post_cancelProjSqlScriptRelation", ComSqlScriptController.class, "cancelProjSqlScriptRelation");
 		put("ComSqlScript_post_publish", ComSqlScriptController.class, "publish");
 		put("ComSqlScript_post_cancelPublish", ComSqlScriptController.class, "cancelPublish");
+		
+		// 用户操作
+		put("ComUser_post_openAccount", ComUserController.class, "openAccount");
+		put("ComUser_post_updatePassword", ComUserController.class, "updatePassword");
+		// 账户操作
+		put("ComSysAccount_post_login", ComSysAccountController.class, "login");
+		put("ComSysAccount_post_loginOut", ComSysAccountController.class, "loginOut");
+		put("ComSysAccount_post_updatePassword", ComSysAccountController.class, "updatePassword");
 	}
 	
 	/**
@@ -123,6 +128,10 @@ public class CodeResourceMapping {
 		put("ComUser_post", ComUserController.class, "add");
 		put("ComUser_put", ComUserController.class, "update");
 		put("ComUser_delete", ComUserController.class, "delete");
+		// 账户操作
+		put("ComSysAccount_post", ComSysAccountController.class, "add");
+		put("ComSysAccount_put", ComSysAccountController.class, "update");
+		put("ComSysAccount_delete", ComSysAccountController.class, "delete");
 	}
 	
 

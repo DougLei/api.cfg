@@ -54,7 +54,6 @@ import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -210,7 +209,7 @@ public class InitCfgSystemService extends AbstractService{
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
-		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		admin.setValidDate(BuiltinDatas.validDate);
 		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourceNameConstants.ID);
 	
 		// 添加普通账户【2.普通账户】
@@ -218,7 +217,7 @@ public class InitCfgSystemService extends AbstractService{
 		normal.setAccountType(2);
 		normal.setLoginName("normal");
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
-		normal.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		normal.setValidDate(BuiltinDatas.validDate);
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourceNameConstants.ID);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -407,7 +406,7 @@ public class InitCfgSystemService extends AbstractService{
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
-		admin.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
+		admin.setValidDate(BuiltinDatas.validDate);
 		HibernateUtil.saveObject(admin.turnToPublishBasicData(ISysResource.APP_PLATFORM), adminAccountId);
 	}
 	

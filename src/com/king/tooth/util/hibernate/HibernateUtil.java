@@ -366,17 +366,19 @@ public class HibernateUtil {
 	 * @param rightId
 	 */
 	public static List<JSONObject> queryDataLinks(String entityName, String leftId, String rightId){
-		String hql = "from " + entityName + " where ";
+		List<Object> params = new ArrayList<Object>(3);
+		String hql = "from " + entityName + " where projectId=?";
+		params.add(CurrentThreadContext.getProjectId());
+		
 		if(leftId != null){
-			hql += "leftId=?";
+			hql += " and leftId=?";
+			params.add(leftId);
 		}
 		if(rightId != null){
-			if(leftId != null){
-				hql += " and ";
-			}
-			hql += "rightId=?";
+			hql += " and rightId=?";
+			params.add(rightId);
 		}
-		return executeListQueryByHqlArr(null, null, hql, leftId, rightId);
+		return executeListQueryByHql(null, null, hql, params);
 	}
 	
 	/**
@@ -397,17 +399,16 @@ public class HibernateUtil {
 	 * @param rightId
 	 */
 	public static void deleteDataLinks(String entityName, String leftId, String rightId){
-		List<Object> params = new ArrayList<Object>(2);
-		String hql = "delete "+entityName+" where ";
+		List<Object> params = new ArrayList<Object>(3);
+		String hql = "delete "+entityName+" where projectId=?";
+		params.add(CurrentThreadContext.getProjectId());
+		
 		if(leftId != null){
-			hql += "leftId=?";
+			hql += " and leftId=?";
 			params.add(leftId);
 		}
 		if(rightId != null){
-			if(leftId != null){
-				hql += " and ";
-			}
-			hql += "rightId=?";
+			hql += " and rightId=?";
 			params.add(rightId);
 		}
 		executeUpdateByHql(BuiltinDatabaseData.DELETE, hql, params);

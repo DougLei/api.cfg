@@ -1,8 +1,11 @@
 package com.king.tooth.sys.builtin.data;
 
+import java.util.Date;
+
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.util.DateUtil;
 
 /**
  * 系统内置的数据对象
@@ -31,4 +34,9 @@ public class BuiltinDatas {
 	static{
 		currentSysBuiltinProjectInstance.setId(SysConfig.getSystemConfig("current.sys.project.id"));
 	}
+	
+	/**
+	 * 数据的有消息
+	 */
+	public transient static final Date validDate = DateUtil.parseDate("2099-12-31 23:59:59");
 }

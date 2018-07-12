@@ -186,7 +186,7 @@ public class ComTabledataService extends AbstractPublishService {
 			projectIds.clear();
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where id = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourceNameConstants.ID+" = '"+tableId+"'");
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
 		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
 		

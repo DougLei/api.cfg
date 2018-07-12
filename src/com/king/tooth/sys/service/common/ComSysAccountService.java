@@ -1,7 +1,9 @@
 package com.king.tooth.sys.service.common;
 
 import java.util.Date;
+import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
@@ -29,7 +31,7 @@ public class ComSysAccountService extends AbstractService{
 	 */
 	public ComSysAccount validAccountOfStatus(String accountId) {
 		// 再验证帐号状态是否正常
-		String hql = "from ComSysAccount where id = '"+accountId+"'";
+		String hql = "from ComSysAccount where "+ResourceNameConstants.ID+" = '"+accountId+"'";
 		ComSysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, hql);
 		if(account.getAccountStatus() == 2){
 			account.setMessage("您的账号已被禁用，请联系管理员");
@@ -42,6 +44,8 @@ public class ComSysAccountService extends AbstractService{
 		return account;
 	}
 	
+	
+	//-----------------------------------------------------------------------------------------------
 	/**
 	 * 登录
 	 * @param loginIp
@@ -95,7 +99,7 @@ public class ComSysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
-		String queryAccountHql = "from ComSysAccount where loginName = ? or tel = ? or emails = ? and projectId = ?";
+		String queryAccountHql = "from ComSysAccount where loginName = ? or tel = ? or email = ? and projectId = ?";
 		ComSysAccount loginAccount = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, queryAccountHql, accountName, accountName, accountName, CurrentThreadContext.getProjectId());
 		
 		if(loginAccount == null){
@@ -124,6 +128,39 @@ public class ComSysAccountService extends AbstractService{
 			accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");// 这里先写成固定值
 		}
 		return accountOnlineStatus;
+	}
+	
+	/**
+	 * 根据账户名，获取账户的在线状态对象
+	 * @param loginIp 防止客户端故意输入不存在的账户密码，不停的发起请求
+	 * @param accountName
+	 * @return
+	 */
+	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
+		// 暂时屏蔽
+//		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where (loginIp = ? or accountName = ?) and projectId = ?";
+//		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
+		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and accountName = ? and projectId = ?";
+		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
+		if(onlineStatus == null){
+			onlineStatus = new ComSysAccountOnlineStatus();
+			onlineStatus.setTryLoginTimes(1);
+			onlineStatus.setIsSave(true);
+			onlineStatus.setLastOperDate(new Date());
+		}else{
+			// 判断上一次操作的时间至当前时间，是否超过了login.timeout.datelimit的时间，如果超过了，则将tryLoginTimes归为1
+			long duration = System.currentTimeMillis() - onlineStatus.getLastOperDate().getTime();
+			if(LoginConstants.loginTimeoutDatelimit < duration){
+				onlineStatus.setTryLoginTimes(1);
+				onlineStatus.setLastOperDate(new Date());
+			}else{
+				onlineStatus.setTryLoginTimes(onlineStatus.getTryLoginTimes() + 1);	
+			}
+		}
+		onlineStatus.setLoginIp(loginIp);
+		onlineStatus.setAccountName(accountName);
+		onlineStatus.setIsError(1);// 一开始标识为有错误
+		return onlineStatus;
 	}
 	
 	/**
@@ -169,39 +206,8 @@ public class ComSysAccountService extends AbstractService{
 		return currentAccountName;
 	}
 
-	/**
-	 * 根据账户名，获取账户的在线状态对象
-	 * @param loginIp 防止客户端故意输入不存在的账户密码，不停的发起请求
-	 * @param accountName
-	 * @return
-	 */
-	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
-		// 暂时屏蔽
-//		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where (loginIp = ? or accountName = ?) and projectId = ?";
-//		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
-		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and accountName = ? and projectId = ?";
-		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
-		if(onlineStatus == null){
-			onlineStatus = new ComSysAccountOnlineStatus();
-			onlineStatus.setTryLoginTimes(1);
-			onlineStatus.setIsSave(true);
-			onlineStatus.setLastOperDate(new Date());
-		}else{
-			// 判断上一次操作的时间至当前时间，是否超过了login.timeout.datelimit的时间，如果超过了，则将tryLoginTimes归为1
-			long duration = System.currentTimeMillis() - onlineStatus.getLastOperDate().getTime();
-			if(LoginConstants.loginTimeoutDatelimit < duration){
-				onlineStatus.setTryLoginTimes(1);
-				onlineStatus.setLastOperDate(new Date());
-			}else{
-				onlineStatus.setTryLoginTimes(onlineStatus.getTryLoginTimes() + 1);	
-			}
-		}
-		onlineStatus.setLoginIp(loginIp);
-		onlineStatus.setAccountName(accountName);
-		onlineStatus.setIsError(1);// 一开始标识为有错误
-		return onlineStatus;
-	}
-
+	//-----------------------------------------------------------------------------------------------
+	
 	/**
 	 * 退出
 	 * @param token
@@ -213,53 +219,139 @@ public class ComSysAccountService extends AbstractService{
 		TokenRefProjectIdMapping.removeMapping(token);
 	}
 	
+	//-----------------------------------------------------------------------------------------------
+	
 	/**
 	 * 修改账户密码
 	 * @param accountId
 	 * @param newLoginPwd
 	 * @return
 	 */
-	public String uploadAccounLoginPwd(String accountId, String newLoginPwd){
+	public Object uploadAccounLoginPwd(String userId, String accountId, String newLoginPwd){
 		ComSysAccount account = getObjectById(accountId, ComSysAccount.class);
 		String newPwd = CryptographyUtil.encodeMd5(newLoginPwd, account.getLoginPwdKey());
 		if(newPwd.equals(account.getLoginPwd())){
 			return "新密码不能和旧密码相同";
 		}
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComSysAccount set loginPwd=? where "+ ResourceNameConstants.ID +"=?", newPwd, accountId);
-		return "密码修改成功";
+		
+		JSONObject json = new JSONObject(2);
+		if(StrUtils.notEmpty(userId)){
+			json.put(ResourceNameConstants.ID, userId);
+		}else if(StrUtils.notEmpty(accountId)){
+			json.put(ResourceNameConstants.ID, accountId);
+		}
+		json.put("password", newPwd);
+		return json;
+	}
+	
+	//-----------------------------------------------------------
+
+	/**
+	 * 验证登录名是否已经存在
+	 * @param loginName
+	 * @return 
+	 */
+	private String validWorkNoIsExists(String loginName) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName=? and projectId=?", loginName, CurrentThreadContext.getProjectId());
+		if(count > 0){
+			return "系统已经存在登录名为["+loginName+"]的账户";
+		}
+		return null;
+	}
+	
+	/**
+	 * 验证email邮箱是否已经存在
+	 * @param email
+	 * @return 
+	 */
+	private String validEmailIsExists(String email) {
+		if(StrUtils.isEmpty(email)){
+			return null;
+		}
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where email=? and projectId=?", email, CurrentThreadContext.getProjectId());
+		if(count > 0){
+			return "系统已经存在邮箱为["+email+"]的账户";
+		}
+		return null;
+	}
+	
+	/**
+	 * 验证tel手机号是否已经存在
+	 * @param tel
+	 * @return 
+	 */
+	private String validTelIsExists(String tel) {
+		if(StrUtils.isEmpty(tel)){
+			return null;
+		}
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where tel=? and projectId=?", tel, CurrentThreadContext.getProjectId());
+		if(count > 0){
+			return "系统已经存在手机号为["+tel+"]的账户";
+		}
+		return null;
+	}
+	
+	/**
+	 * 添加账户
+	 * @param comSysAccount
+	 * @return
+	 */
+	public Object saveAccount(ComSysAccount account) {
+		String result = validWorkNoIsExists(account.getLoginName());
+		if(result == null){
+			result = validEmailIsExists(account.getEmail());
+		}
+		if(result == null){
+			result = validTelIsExists(account.getTel());
+		}
+		if(result == null){
+			JSONObject accountJsonObject = HibernateUtil.saveObject(account, null);
+			return accountJsonObject;
+		}
+		return result;
 	}
 
-	//-----------------------------------------------------------
-	
-//	/**
-//	 * 注册用户
-//	 * @param ip
-//	 * @param account
-//	 */
-//	public String register(String ip, ComSysAccount account) {
-//		String validResult = validLoginNameIsExists(account.getLoginName());
-//		if(validResult != null){
-//			return validResult;
-//		}
-//		
-//		ComSysAccount registerAccount = new ComSysAccount();
-//		registerAccount.setAccountType(1);
-//		registerAccount.setLoginName(account.getLoginName());
-//		registerAccount.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), registerAccount.getLoginPwdKey()));
-//		registerAccount.setValidDate(DateUtil.parseDate("2099-12-31 23:59:59"));
-//		HibernateUtil.saveObject(registerAccount, ip +":注册账户");
-//		return "注册成功";
-//	}
-//	
-//	/**
-//	 * 验证登录名是否存在
-//	 * @param loginName
-//	 */
-//	public String validLoginNameIsExists(String loginName){
-//		int count = Integer.valueOf(HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName = ? or tel = ? or emails = ?", loginName, loginName, loginName)+"");
-//		if(count > 0){
-//			return "用户名["+loginName+"]已存在";
-//		}
-//		return null;
-//	}
+	/**
+	 * 修改账户
+	 * @param comSysAccount
+	 * @return
+	 */
+	public Object updateAccount(ComSysAccount account) {
+		ComSysAccount oldAccount = getObjectById(account.getId(), ComSysAccount.class);
+		String result = null;
+		if(!oldAccount.getLoginName().equals(account.getLoginName())){
+			result = validWorkNoIsExists(account.getLoginName());
+		}
+		if(result == null && (StrUtils.notEmpty(oldAccount.getEmail()) && !oldAccount.getEmail().equals(account.getEmail())) || (StrUtils.isEmpty(oldAccount.getEmail()) && StrUtils.notEmpty(account.getEmail()))){
+			result = validEmailIsExists(account.getEmail());
+		}
+		if(result == null && (StrUtils.notEmpty(oldAccount.getTel()) && !oldAccount.getTel().equals(account.getTel())) || (StrUtils.isEmpty(oldAccount.getTel()) && StrUtils.notEmpty(account.getTel()))){
+			result = validTelIsExists(account.getTel());
+		}
+		if(result == null){
+			return HibernateUtil.updateObjectByHql(account, null);
+		}
+		return result;
+	}
+
+	/**
+	 * 删除账户
+	 * @param accountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Object deleteAccount(String accountId) {
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccount where " + ResourceNameConstants.ID+"=?", accountId);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "update ComUser set accountId =null  where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
+		
+		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr("select token from ComSysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
+		
+		// 移除传递的token和对应项目id的映射缓存
+		for (Object token : tokens) {
+			TokenRefProjectIdMapping.removeMapping(token+"");
+		}
+		return null;
+	}
 }

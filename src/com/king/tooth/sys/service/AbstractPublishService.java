@@ -265,7 +265,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param entityId
 	 */
 	protected void modifyIsCreatedPropVal(String entityName, int isCreated, String entityId){
-		String hql = "update " + entityName + " set isCreated ="+isCreated + " where id = '"+entityId+"'";
+		String hql = "update " + entityName + " set isCreated ="+isCreated + " where "+ResourceNameConstants.ID+" = '"+entityId+"'";
 		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, hql, null);
 	}
 	/**

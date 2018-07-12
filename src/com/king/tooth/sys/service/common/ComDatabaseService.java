@@ -68,9 +68,6 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	public Object updateDatabase(ComDatabase database) {
 		ComDatabase oldDatabase = getObjectById(database.getId(), ComDatabase.class);
-		if(oldDatabase == null){
-			return "没有找到id为["+database.getId()+"]的数据库对象信息";
-		}
 		if(oldDatabase.getIsBuiltin() == 1){
 			return "禁止修改内置的数据库信息";
 		}
@@ -96,9 +93,6 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	public String deleteDatabase(String databaseId) {
 		ComDatabase oldDatabase = getObjectById(databaseId, ComDatabase.class);
-		if(oldDatabase == null){
-			return "没有找到id为["+databaseId+"]的数据库对象信息";
-		}
 		if(oldDatabase.getIsBuiltin() == 1){
 			return "禁止删除内置的数据库信息";
 		}
@@ -109,7 +103,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComDatabase where id = '"+databaseId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComDatabase where "+ResourceNameConstants.ID+" = '"+databaseId+"'");
 		return null;
 	}
 	
@@ -119,9 +113,6 @@ public class ComDatabaseService extends AbstractPublishService {
 	 */
 	public String databaseLinkTest(String databaseId) {
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
-		if(database == null){
-			return "没有找到id为["+databaseId+"]的数据库对象信息";
-		}
 		return database.testDbLink();
 	}
 	
@@ -170,9 +161,6 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "不能发布配置系统数据库";
 		}
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
-		if(database == null){
-			return "没有找到id为["+databaseId+"]的数据库对象信息";
-		}
 		if(database.getIsCreated() == 1){
 			return "id为["+databaseId+"]的数据库已发布，无需再次发布，或取消发布后重新发布";
 		}
@@ -275,9 +263,6 @@ public class ComDatabaseService extends AbstractPublishService {
 			return "不能取消发布配置系统数据库";
 		}
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
-		if(database == null){
-			return "没有找到id为["+databaseId+"]的数据库对象信息";
-		}
 		if(database.getIsCreated() == 0){
 			return "id为["+databaseId+"]的数据库还未发布，不能取消发布";
 		}
@@ -312,7 +297,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 删除该库下，所有发布的信息
 		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		// 远程删除运行系统中的数据库信息
-		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where id = '"+database.getId()+"'");
+		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where "+ResourceNameConstants.ID+" = '"+database.getId()+"'");
 		
 		modifyIsCreatedPropVal(database.getEntityName(), 0, database.getId());
 		

@@ -96,7 +96,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object linkTest(HttpServletRequest request, String json){
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "测试连接的数据库id不能为空";
 		}
@@ -122,7 +122,7 @@ public class ComDatabaseController extends AbstractPublishController{
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要发布的数据库id不能为空";
 		}
@@ -143,7 +143,7 @@ public class ComDatabaseController extends AbstractPublishController{
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = JSONObject.parseObject(json);
+		JSONObject jsonObject = getJSONObject(json);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要取消发布的数据库id不能为空";
 		}

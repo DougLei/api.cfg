@@ -67,6 +67,30 @@ public class JsonUtil {
 	}
 	
 	/**
+	 * 将json字符串转换为JSONObject
+	 * @param json
+	 * @return 
+	 */
+	public static JSONObject parseJsonObject(String json){
+		if(StrUtils.isEmpty(json)){
+			return null;
+		}
+		return JSONObject.parseObject(json);
+	}
+
+	/**
+	 * 将json字符串转换为JSONArray
+	 * @param json
+	 * @return 
+	 */
+	public static JSONArray parseJsonArray(String json){
+		if(StrUtils.isEmpty(json)){
+			return null;
+		}
+		return JSONArray.parseArray(json);
+	}
+	
+	/**
 	 * 将对象转换为json对象
 	 * @param data
 	 * @return
