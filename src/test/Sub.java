@@ -1,10 +1,12 @@
 package test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.util.JsonUtil;
+
 
 public class Sub extends Parent{
 	private String name;
@@ -12,16 +14,36 @@ public class Sub extends Parent{
 		return name;
 	}
 	
-	public static void main(String[] args) {
-		
-		List<String> a = new ArrayList<String>();
-		a.add("a_1111");
-		a.add("a_22222");
-//		System.out.println(a.toString().replace("[", "").replace("]", ""));
-		
-		
-		String b = "{\"sqlScriptContent\":\"SELECT\n  id,\n  name,\n  parent_id,\n  code,\n  url,\n  icon,\n  module_body,\n  is_enabled,\n  CASE is_enabled WHEN '1' THEN '启用' WHEN '0' THEN '禁用'  END AS enabled_text,\n  CASE is_need_deploy WHEN '1' THEN '发布' WHEN '0' THEN '未发布'  END AS deploy_text,\n  CASE belong_platform_type WHEN '0' THEN '配置平台' WHEN '1' THEN '解析平台' WHEN '2' THEN '通用' END AS platform_text\nFROM COM_PROJECT_MODULE\",\"sqlScriptCaption\":\"Case1\",\"sqlScriptResourceName\":\"Case1\",\"isEnabled\":\"1\",\"isNeedDeploy\":\"1\",\"belongPlatformType\":\"1\"}";
-		ComSqlScript sql = JsonUtil.parseObject(b, ComSqlScript.class);
-		System.out.println(sql.getSqlScriptContent());
+	public static void main(String[] args)  {
+		try {
+//			Class.forName("oracle.jdbc.driver.OracleDriver");
+//			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:ORCL", "SmartOneCfg", "root");
+//			PreparedStatement pst = conn.prepareStatement(" select count(1) from user_tables where table_name = ?");
+//			pst.setString(1, "Com_sQL_sCript".toUpperCase());
+//			ResultSet rs = pst.executeQuery();
+//			if(rs.next() && (rs.getInt(1) > 0)){
+//				System.out.println("存在");
+//				return;
+//			}
+//			System.out.println("不存在！！！！！");
+			
+			
+			
+			
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
+			PreparedStatement pst = conn.prepareStatement("select count(1) from  sysobjects where id = object_id(?) and type = 'U'");
+			pst.setString(1, "Com_sQL_sCript".toLowerCase());
+			ResultSet rs = pst.executeQuery();
+			if(rs.next() && (rs.getInt(1) > 0)){
+				System.out.println("存在");
+				return;
+			}
+			System.out.println("不存在！！！！！");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
