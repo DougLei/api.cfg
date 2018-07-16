@@ -119,11 +119,7 @@ public class RequestBody implements Serializable{
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ISysResource.SQLSCRIPT.equals(requestResourceType)){
-				ComSqlScriptService sqlScriptService = new ComSqlScriptService();
-				reqSqlScriptResource = sqlScriptService.findSqlScriptResourceById(requestResource.getRefResourceId());
-				if(StrUtils.isEmpty(reqSqlScriptResource.getSqlScriptParameters())){
-					reqSqlScriptResource.setSqlScriptParameterList(sqlScriptService.findSqlScriptParameters(requestResource.getRefResourceId()));
-				}
+				reqSqlScriptResource = new ComSqlScriptService().findSqlScriptResourceById(requestResource.getRefResourceId());
 			}
 		}
 		

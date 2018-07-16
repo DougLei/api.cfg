@@ -36,6 +36,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 		if(sqlScript.getIsEnabled() == 0){
 			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员");
 		}
+		if(StrUtils.isEmpty(sqlScript.getSqlScriptParameters())){
+			sqlScript.setSqlScriptParameterList(findSqlScriptParameters(sqlScriptId));
+		}
 		return sqlScript;
 	}
 	
@@ -365,7 +368,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param sqlScriptId
 	 * @return
 	 */
-	public List<ComSqlScriptParameter> findSqlScriptParameters(String sqlScriptId) {
+	private List<ComSqlScriptParameter> findSqlScriptParameters(String sqlScriptId) {
 		return HibernateUtil.extendExecuteListQueryByHqlArr(
 				ComSqlScriptParameter.class, null, null, "from ComSqlScriptParameter where sqlScriptId = ? order by orderCode asc", sqlScriptId);
 	}
