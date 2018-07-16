@@ -23,6 +23,7 @@ public abstract class BasicHttpServlet extends HttpServlet implements Serializab
 	/**
 	 * 解析出请求体
 	 * @param request
+	 * @return null表示解析成功，否则标识解析出现问题
 	 */
-	protected abstract void analysisRequestBody(HttpServletRequest request);
+	protected abstract String analysisRequestBody(HttpServletRequest request);
 }

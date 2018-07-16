@@ -34,6 +34,17 @@ public class SqlScriptParameterNameRecord {
 		parameterNames.add(parameterName);
 	}
 	
+	/**
+	 * 添加参数名集合
+	 * @param parameterNames
+	 */
+	public void addParameterNames(List<String> parameterNames){
+		if(this.parameterNames == null){
+			this.parameterNames = new ArrayList<String>(parameterNames.size());
+		}
+		this.parameterNames.addAll(parameterNames);
+	}
+	
 	public int getSqlIndex() {
 		return sqlIndex;
 	}

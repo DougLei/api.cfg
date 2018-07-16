@@ -139,6 +139,15 @@ public class RequestBody implements Serializable{
 		}
 	}
 	
+	/**
+	 * 验证请求的数据
+	 * @return
+	 */
+	public String validData() {
+		return null;
+	}
+	
+	
 	public Map<String, String> getRequestUrlParams() {
 		return requestUrlParams;
 	}

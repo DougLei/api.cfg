@@ -9,6 +9,8 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
@@ -160,9 +162,23 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		this.sqlScriptParameters = sqlScriptParameters;
 		this.sqlScriptParameterList = JsonUtil.parseArray(sqlScriptParameters, ComSqlScriptParameter.class);
 	}
+	@SuppressWarnings("unchecked")
 	public void setParameterNameRecords(String parameterNameRecords) {
 		this.parameterNameRecords = parameterNameRecords;
-		this.parameterNameRecordList = JsonUtil.parseArray(parameterNameRecords, SqlScriptParameterNameRecord.class);
+		if(StrUtils.isEmpty(parameterNameRecords)){
+			return;
+		}
+		IJson ijson = ProcessStringTypeJsonExtend.getIJson(parameterNameRecords);
+		int len = ijson.size();
+		this.parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(len);
+		
+		SqlScriptParameterNameRecord spnr;
+		for(int i=0;i<len;i++){
+			spnr = new SqlScriptParameterNameRecord(ijson.get(i).getIntValue("sqlIndex"));
+			spnr.addParameterNames(ijson.get(i).getJSONArray("parameterNames").toJavaObject(List.class));
+			parameterNameRecordList.add(spnr);
+		}
+		ijson.clear();
 	}
 	public String getParameterNameRecords() {
 		return parameterNameRecords;
@@ -430,7 +446,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		if(sqlScriptActualParameters == null || sqlScriptActualParameters.size() == 0){
 			return;
 		}
-		if(StrUtils.isEmpty(this.sqlScriptParameters) || this.sqlScriptParameterList == null || this.sqlScriptParameterList.size() == 0){
+		
+		if(this.sqlScriptParameterList == null || this.sqlScriptParameterList.size() == 0){
 			throw new IllegalArgumentException("在调用sql资源时，传入的实际参数集合为：["+sqlScriptActualParameters+"]，但是被调用的sql资源["+this.sqlScriptResourceName+"]却不存在任何sql脚本的参数对象集合。请检查该sql资源是否确实有参数配置，并确认合法调用sql资源，或联系管理员");
 		}
 		
@@ -463,6 +480,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * </p>
 	 * @return
 	 */
+	@JSONField(serialize = false)
 	public Map<Integer, List<String>> getParameterNameRecordMap() {
 		if(parameterNameRecordList != null && parameterNameRecordList.size() > 0){
 			Map<Integer, List<String>> parameterNameRecordMap = new HashMap<Integer, List<String>>(parameterNameRecordList.size());
@@ -470,6 +488,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 				parameterNameRecordMap.put(pnr.getSqlIndex(), pnr.getParameterNames());
 			}
 			parameterNameRecordList.clear();
+			return parameterNameRecordMap;
 		}
 		return null;
 	}

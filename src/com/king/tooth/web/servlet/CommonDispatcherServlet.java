@@ -23,20 +23,23 @@ import com.king.tooth.web.processer.ProcesserConfig;
 public class CommonDispatcherServlet extends PlatformServlet{
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		analysisRequestBody(request);// 解析出请求体、路由规则
-		
 		ResponseBody responseBody = null;
-		if(requestBody.getRouteBody().isAction() 
-				|| (ISysResource.CODE.equals(requestBody.getRequestResourceType()) && StrUtils.isEmpty(requestBody.getRouteBody().getParentResourceName())) ){
-			Object object = CodeResourceMapping.invokeCodeResource(requestBody.getReqCodeResourceKey(), request, requestBody.getFormData());
-			if(object instanceof String){
-				responseBody = new ResponseBody(object.toString(), null, false);
+		String analysisResult = analysisRequestBody(request);// 解析出请求体、路由规则
+		if(analysisResult == null){
+			if(requestBody.getRouteBody().isAction() 
+					|| (ISysResource.CODE.equals(requestBody.getRequestResourceType()) && StrUtils.isEmpty(requestBody.getRouteBody().getParentResourceName())) ){
+				Object object = CodeResourceMapping.invokeCodeResource(requestBody.getReqCodeResourceKey(), request, requestBody.getFormData());
+				if(object instanceof String){
+					responseBody = new ResponseBody(object.toString(), null, false);
+				}else{
+					responseBody = new ResponseBody(null, object, true);
+				}
 			}else{
-				responseBody = new ResponseBody(null, object, true);
+				IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
+				responseBody = process.doRequestProcess();
 			}
 		}else{
-			IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
-			responseBody = process.doRequestProcess();
+			responseBody = new ResponseBody(analysisResult, null, false);
 		}
 		request.setAttribute(BuiltinParametersKeys._RESPONSE_BODY_KEY, responseBody);
 	}

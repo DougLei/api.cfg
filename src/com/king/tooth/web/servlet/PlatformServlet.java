@@ -22,12 +22,13 @@ public class PlatformServlet extends BasicHttpServlet{
 	/**
 	 * 解析出来的请求体，直接赋值给属性requestBody
 	 */
-	protected void analysisRequestBody(HttpServletRequest request) {
+	protected String analysisRequestBody(HttpServletRequest request) {
 		requestBody = new RequestBody(request);
 		requestBody.analysisRouteBody();
 		requestBody.analysisRequestResource();
 		requestBody.setFormData(analysisFormData(request));
 		requestBody.setRequestUrlParams(analysisUrlParams(request));
+		return requestBody.validData();
 	}
 	
 	/**

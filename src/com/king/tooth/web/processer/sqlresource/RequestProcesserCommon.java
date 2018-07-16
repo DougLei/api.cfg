@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSqlScript;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.sqlresource.BuiltinSqlResourceBMProcesser;
@@ -93,7 +94,12 @@ public class RequestProcesserCommon extends CommonProcesser{
 				query = createQuery(i, modifySqlArr[i]);
 				query.executeUpdate();
 			}
-			setResponseBody(new ResponseBody(null, sqlParameterValues, true));
+			
+			if(requestBody.getFormData() == null){
+				setResponseBody(new ResponseBody(null, null, true));
+			}else{
+				setResponseBody(new ResponseBody(null, JsonUtil.parseJsonObject(requestBody.getFormData().toString()), true));
+			}
 		}
 	}
 	
