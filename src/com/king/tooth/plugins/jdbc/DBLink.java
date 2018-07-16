@@ -3,6 +3,7 @@ package com.king.tooth.plugins.jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 
@@ -57,7 +58,9 @@ public class DBLink {
 						// 执行建库建表语句错误，也要继续下去
 						st.executeUpdate(ds);
 					} catch (Exception e) {
-						Log4jUtil.info("[DBLink.executeDDL]发生错误的ddl-sql语句为:[{}]，错误信息为：{}", ds, ExceptionUtil.getErrMsg(e));
+						String errMessage = "[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]，错误信息为："+ExceptionUtil.getErrMsg(e);
+						Log4jUtil.info(errMessage);
+						throw new IllegalArgumentException(errMessage);
 					}
 				}
 			}
@@ -97,7 +100,7 @@ public class DBLink {
 				}
 			}
 		} catch (Exception e) {
-			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e) + " ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]");
+			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e) + " ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]，错误信息为："+ExceptionUtil.getErrMsg(e));
 		}finally{
 			CloseUtil.closeDBConn(pst, connection);
 		}
@@ -118,5 +121,17 @@ public class DBLink {
 	 */
 	public String[] getDatabaseTypes() {
 		return new String[]{BuiltinDatabaseData.DB_TYPE_ORACLE, BuiltinDatabaseData.DB_TYPE_SQLSERVER};
+	}
+	
+	/**
+	 * 获取数据库连接
+	 * @return
+	 * @throws ClassNotFoundException 
+	 * @throws SQLException 
+	 */
+	public Connection getConnection() throws ClassNotFoundException, SQLException{
+		Class.forName(database.getDriverClass());
+		Connection connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
+		return connection;
 	}
 }

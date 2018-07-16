@@ -3,7 +3,9 @@ package com.king.tooth.sys.entity.common;
 import gudusoft.gsqlparser.TGSqlParser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -20,6 +22,7 @@ import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
+import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -63,14 +66,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	private List<ComSqlScriptParameter> sqlScriptParameterList;
 	
 	/**
-	 * sql查询结果的列名对象集合(json串)
-	 * <p>[该属性针对查询的sql语句]</p>
-	 */
-	private String sqlQueryResultColumns;
-	@JSONField(serialize = false)
-	private List<SqlQueryResultColumn> sqlQueryResultColumnList;
-	
-	/**
 	 * 存储过程名称
 	 * <p>[该属性针对存储过程的sql语句]</p>
 	 */
@@ -80,6 +75,22 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * 备注
 	 */
 	private String comments;
+	
+	/**
+	 * sql查询结果的列名对象集合(json串)
+	 * <p>[该属性针对查询的sql语句，程序内部使用，不开放给用户]</p>
+	 */
+	private String sqlQueryResultColumns;
+	@JSONField(serialize = false)
+	private List<SqlQueryResultColumn> sqlQueryResultColumnList;
+	
+	/**
+	 * sql参数名的记录对象集合
+	 * <p>记录，第几个sql，都有哪些参数名，程序内部使用，不开放给用户</p>
+	 */
+	private String parameterNameRecords;
+	@JSONField(serialize = false)
+	private List<SqlScriptParameterNameRecord> parameterNameRecordList;
 	
 	//--------------------------------------------------------
 	
@@ -149,6 +160,13 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		this.sqlScriptParameters = sqlScriptParameters;
 		this.sqlScriptParameterList = JsonUtil.parseArray(sqlScriptParameters, ComSqlScriptParameter.class);
 	}
+	public void setParameterNameRecords(String parameterNameRecords) {
+		this.parameterNameRecords = parameterNameRecords;
+		this.parameterNameRecordList = JsonUtil.parseArray(parameterNameRecords, SqlScriptParameterNameRecord.class);
+	}
+	public String getParameterNameRecords() {
+		return parameterNameRecords;
+	}
 	public String getProcedureName() {
 		return procedureName;
 	}
@@ -197,6 +215,13 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public void setSqlScriptType(String sqlScriptType) {
 		this.sqlScriptType = sqlScriptType;
 	}
+	public void setSqlScriptParameterList(List<ComSqlScriptParameter> sqlScriptParameterList) {
+		this.sqlScriptParameterList = sqlScriptParameterList;
+	}
+	public List<SqlScriptParameterNameRecord> getParameterNameRecordList() {
+		return parameterNameRecordList;
+	}
+	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT", 0);
@@ -209,7 +234,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		table.setBelongPlatformType(COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinCodeDataType.STRING, 16);
 		dbTypeColumn.setName("数据库类型");
@@ -249,23 +274,29 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptParametersColumn.setOrderCode(6);
 		columns.add(sqlScriptParametersColumn);
 		
-		ComColumndata sqlQueryResultColumnsColumn = new ComColumndata("sql_query_result_columns", BuiltinCodeDataType.STRING, 9999);
-		sqlQueryResultColumnsColumn.setName("sql查询结果的列名对象集合");
-		sqlQueryResultColumnsColumn.setComments("sql查询结果的列名对象集合(json串)：该属性针对查询的sql语句");
-		sqlQueryResultColumnsColumn.setOrderCode(7);
-		columns.add(sqlQueryResultColumnsColumn);
-		
 		ComColumndata procedureNameColumn = new ComColumndata("procedure_name", BuiltinCodeDataType.STRING, 80);
 		procedureNameColumn.setName("存储过程名称");
 		procedureNameColumn.setComments("存储过程名称");
-		procedureNameColumn.setOrderCode(8);
+		procedureNameColumn.setOrderCode(7);
 		columns.add(procedureNameColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinCodeDataType.STRING, 200);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
-		commentsColumn.setOrderCode(9);
+		commentsColumn.setOrderCode(8);
 		columns.add(commentsColumn);
+		
+		ComColumndata sqlQueryResultColumnsColumn = new ComColumndata("sql_query_result_columns", BuiltinCodeDataType.STRING, 9999);
+		sqlQueryResultColumnsColumn.setName("sql查询结果的列名对象集合");
+		sqlQueryResultColumnsColumn.setComments("sql查询结果的列名对象集合(json串)：该属性针对查询的sql语句，程序内部使用，不开放给用户");
+		sqlQueryResultColumnsColumn.setOrderCode(9);
+		columns.add(sqlQueryResultColumnsColumn);
+		
+		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinCodeDataType.STRING, 9999);
+		parameterNameRecordsColumn.setName("sql参数名的记录对象集合");
+		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
+		parameterNameRecordsColumn.setOrderCode(10);
+		columns.add(parameterNameRecordsColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -341,7 +372,16 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			this.sqlScriptParameters = JsonUtil.toJsonString(sqlScriptParameterList, false);
 		}
 	}
-	
+	/**
+	 * 设置sql参数名的记录对象集合
+	 * @param parameterRecordList
+	 */
+	public void doSetParameterRecordList(List<SqlScriptParameterNameRecord> parameterNameRecordList) {
+		this.parameterNameRecordList = parameterNameRecordList;
+		if(parameterNameRecordList != null && parameterNameRecordList.size() > 0){
+			this.parameterNameRecords = JsonUtil.toJsonString(parameterNameRecordList, false);
+		}
+	}
 	/**
 	 * 解析出最终要操作的sql语句
 	 * @param sqlScriptResource
@@ -399,9 +439,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			if(ssp.getParameterFrom() == 1){// 参数值来源为系统内置
 				ssp.setActualInValue(ssp.analysisActualInValue());
 				count++;
-			}else if(ssp.getParameterFrom().equals(0)){// 参数值来源为用户输入
+			}else if(ssp.getParameterFrom() == 0){// 参数值来源为用户输入
 				for (ComSqlScriptParameter ssap : sqlScriptActualParameters) {
-					if(ssp.getSqlIndex().equals(ssap.getSqlIndex()) && ssp.getParameterName().equalsIgnoreCase(ssap.getParameterName())){
+					if(ssp.getParameterName().equalsIgnoreCase(ssap.getParameterName())){
 						ssp.setActualInValue(ssap.getActualInValue());
 						ssp.setActualInValue(ssp.analysisActualInValue());
 						count++;
@@ -413,5 +453,24 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		if(count != sqlScriptParameterList.size()){
 			throw new IllegalArgumentException("调用sql脚本时，传入的参数值数量和配置的参数数量不匹配，请检查");
 		}
+	}
+	
+	/**
+	 * 获取脚本参数记录的map
+	 * <p>
+	 * 	key=sqlIndex
+	 *  value=参数名集合
+	 * </p>
+	 * @return
+	 */
+	public Map<Integer, List<String>> getParameterNameRecordMap() {
+		if(parameterNameRecordList != null && parameterNameRecordList.size() > 0){
+			Map<Integer, List<String>> parameterNameRecordMap = new HashMap<Integer, List<String>>(parameterNameRecordList.size());
+			for (SqlScriptParameterNameRecord pnr : parameterNameRecordList) {
+				parameterNameRecordMap.put(pnr.getSqlIndex(), pnr.getParameterNames());
+			}
+			parameterNameRecordList.clear();
+		}
+		return null;
 	}
 }

@@ -1,5 +1,8 @@
 package com.king.tooth.plugins.jdbc.table;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,8 +10,10 @@ import java.util.List;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.jdbc.util.DynamicDataLinkTableUtil;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -154,14 +159,15 @@ public class DBTableHandler {
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, false);
 			for (ComTabledata tabledata : tabledatas) {
-				dropSql.append(" drop table ").append(tabledata.getTableName()).append(";");
+				if(tableIsExists(tabledata.getTableName())){
+					dropSql.append(" drop table ").append(tabledata.getTableName()).append(";");
+				}
 			}
 			dropSql.setLength(dropSql.length() - 1);
 			return dropSql.toString();
 		}
 		return null;
 	}
-	
 	
 	/**
 	 * 执行操作数据表的ddlsql语句
@@ -175,4 +181,36 @@ public class DBTableHandler {
 			Log4jUtil.debug("[DBTableHandler.executeDDL]操作数据表失败，异常信息为：{}", result);
 		}
 	}
+	
+	/**
+	 * 表是否存在
+	 * @param tableName
+	 * @return
+	 */
+	private boolean tableIsExists(String tableName){
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			conn = dblink.getConnection();
+			if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dblink.getDBType())){
+				pst = conn.prepareStatement(sqlserver_queryTableIsExistsSql);
+			}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dblink.getDBType())){
+				pst = conn.prepareStatement(oracle_queryTableIsExistsSql);
+			}
+			pst.setString(1, tableName.toUpperCase());
+			rs = pst.executeQuery();
+			
+			if(rs.next() && (rs.getInt(1) > 0)){
+				return true;
+			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}finally{
+			CloseUtil.closeDBConn(rs, pst, conn);
+		}
+		return false;
+	}
+	private static final String sqlserver_queryTableIsExistsSql = "select count(1) from  sysobjects where id = object_id(?) and type = 'U'";
+	private static final String oracle_queryTableIsExistsSql = "select count(1) from user_tables where table_name = ?";
 }

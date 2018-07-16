@@ -27,7 +27,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 		
 		processSelectSqlQueryResultColumns(sqlScriptResource, coreQuerySql);
 		
-		Query query = createQuery(1, querySql);
+		Query query = createQuery(0, querySql);
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
 		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
 		dataList = doProcessDataCollection(dataList);

@@ -29,7 +29,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		
 		processSelectSqlQueryResultColumns(sqlScriptResource, coreQuerySql);
 		
-		Query query = createQuery(1, querySql);
+		Query query = createQuery(0, querySql);
 		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataObject(dataList, true);

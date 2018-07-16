@@ -5,11 +5,13 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.query.BuiltinQueryMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.recursive.BuiltinRecursiveMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.sort.BuiltinSortMethodProcesser;
+import com.king.tooth.web.builtin.method.tableresource.sublist.BuiltinSublistMethodProcesser;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.entity.resulttype.TextResult;
@@ -47,6 +49,11 @@ public abstract class GetProcesser extends RequestProcesser {
 	protected BuiltinRecursiveMethodProcesser builtinRecursiveMethodProcesser;
 	
 	/**
+	 * 子资源集合
+	 */
+	protected BuiltinSublistMethodProcesser builtinSublistMethodProcesser;
+	
+	/**
 	 * 处理请求
 	 */
 	protected final boolean doProcess() {
@@ -67,6 +74,7 @@ public abstract class GetProcesser extends RequestProcesser {
 		builtinFocusedIdMethodProcesser = builtinTableResourceBMProcesser.getFocusedIdProcesser();
 		builtinRecursiveMethodProcesser = builtinTableResourceBMProcesser.getRecursiveProcesser();
 		builtinParentsubQueryMethodProcesser = builtinTableResourceBMProcesser.getParentsubQueryMethodProcesser();
+		builtinSublistMethodProcesser = builtinTableResourceBMProcesser.getSublistMethodProcesser();
 	}
 	
 	/**
@@ -127,6 +135,25 @@ public abstract class GetProcesser extends RequestProcesser {
 			dataList = builtinQueryMethodProcesser.doProcessDataCollection(dataList);
 		}
 		return dataList;
+	}
+	
+	/**
+	 * 处理查询子资源数据集合
+	 * @param dataList
+	 */
+	protected final void doProcessSubListQuery(List<Map<String, Object>> dataList){
+		if(builtinSublistMethodProcesser.getIsUsed() && dataList != null && dataList.size() > 0){
+			String parentId;
+			List<Map<String, Object>> nullSubList = null;
+			for (Map<String, Object> map : dataList) {
+				parentId = (String) map.get(ResourceNameConstants.ID);
+				if(parentId == null){
+					map.put("children", nullSubList);
+				}else{
+					map.put("children", builtinSublistMethodProcesser.querySubList(parentId));
+				}
+			}
+		}
 	}
 	
 	/**

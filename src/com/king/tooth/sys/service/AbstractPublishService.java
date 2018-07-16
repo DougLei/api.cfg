@@ -259,9 +259,9 @@ public abstract class AbstractPublishService extends AbstractService{
 	}
 	
 	/**
-	 * 修改是否created的值
+	 * 修改isCreated的值
 	 * @param entityName
-	 * @param isCreated
+	 * @param isCreated 0/1
 	 * @param entityId
 	 */
 	protected void modifyIsCreatedPropVal(String entityName, int isCreated, String entityId){

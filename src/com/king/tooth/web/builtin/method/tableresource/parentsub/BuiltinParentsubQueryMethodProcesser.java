@@ -33,11 +33,11 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 	
 	/**
 	 * 子资源中，关联主子源对应的属性名
-	 * 如果请求的url中没有指定，则默认为parentId。     @see ResourceConstants.PARENT_ID
+	 * 如果请求的url中没有指定，则默认为parentId
 	 */
-	private String refParentSubPropName;
+	private String refPropName;
 	
-	public BuiltinParentsubQueryMethodProcesser(Map<String, String> parentResourceQueryCond, String isSimpleParentSubQueryModel, String refParentSubPropName, String resourceName) {
+	public BuiltinParentsubQueryMethodProcesser(Map<String, String> parentResourceQueryCond, String isSimpleParentSubQueryModel, String refPropName, String resourceName) {
 		super.isUsed = true;
 		this.parentResourceQueryCond = parentResourceQueryCond;
 		this.resourceName = resourceName;
@@ -47,12 +47,12 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		}
 		this.isSimpleParentSubQueryModel = Boolean.valueOf(isSimpleParentSubQueryModel);
 		
-		if(StrUtils.isEmpty(refParentSubPropName)){
-			refParentSubPropName = "parentId";
+		if(StrUtils.isEmpty(refPropName)){
+			refPropName = "parentId";
 		}else{
-			refParentSubPropName = HibernateUtil.getDefinePropName(this.resourceName, refParentSubPropName);
+			refPropName = HibernateUtil.getDefinePropName(this.resourceName, refPropName);
 		}
-		this.refParentSubPropName = refParentSubPropName;
+		this.refPropName = refPropName;
 	}
 	
 	public BuiltinParentsubQueryMethodProcesser() {
@@ -66,7 +66,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 
 	protected void execAnalysisParam() {
 		if(isSimpleParentSubQueryModel){
-			hql.append(" where s_.").append(refParentSubPropName);
+			hql.append(" where s_.").append(refPropName);
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
 				hql.append(" in( select p_.").append(ResourceNameConstants.ID)
 				   .append(" from ").append(parentResourceName).append(" p_ where ");
@@ -128,12 +128,8 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		return isSimpleParentSubQueryModel;
 	}
 
-	public String getRefParentSubPropName() {
-		return refParentSubPropName;
-	}
-	
-	public StringBuilder getSql() {
-		throw new IllegalArgumentException("[BuiltinParentsubQueryMethodProcesser]目前不支持getSql()方法");
+	public String getRefPropName() {
+		return refPropName;
 	}
 	
 	public void clearInvalidMemory() {

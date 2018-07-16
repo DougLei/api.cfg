@@ -12,7 +12,6 @@ import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.service.AbstractPublishService;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -86,25 +85,17 @@ public class ComSqlScriptService extends AbstractPublishService {
 	/**
 	 * 保存sql脚本对象时，解析出参数集合，并保存到sqlScriptParameter字段中
 	 * @param isDeleteBeforeSqlScriptParameterDatas 是否清空之前的sql脚本参数数据
-	 * @param sqlScript
+	 * @param sqlScriptParameterList
 	 * @param sqlScriptId
 	 */
-	private void saveSqlScriptParameter(boolean isDeleteBeforeSqlScriptParameterDatas, ComSqlScript sqlScript, String sqlScriptId){
+	private void saveSqlScriptParameter(boolean isDeleteBeforeSqlScriptParameterDatas, List<ComSqlScriptParameter> sqlScriptParameterList, String sqlScriptId){
 		if(isDeleteBeforeSqlScriptParameterDatas){
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		}
 		
-		if(StrUtils.notEmpty(sqlScript.getSqlScriptParameters())){
-			List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
-			List<ComSqlScriptParameter> newSqlScriptParameters= new ArrayList<ComSqlScriptParameter>(sqlScriptParameters.size());
-			for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
-				sqlScriptParameter.setSqlScriptId(sqlScriptId);
-				newSqlScriptParameters.add(JSONObject.toJavaObject(HibernateUtil.saveObject(sqlScriptParameter, null), ComSqlScriptParameter.class));
-			}
-			sqlScriptParameters.clear();
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, 
-					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", JsonUtil.toJsonString(newSqlScriptParameters, false), sqlScriptId);
-			newSqlScriptParameters.clear();
+		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameterList) {
+			sqlScriptParameter.setSqlScriptId(sqlScriptId);
+			HibernateUtil.saveObject(sqlScriptParameter, null);
 		}
 	}
 	
@@ -116,7 +107,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public Object saveSqlScript(ComSqlScript sqlScript) {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
@@ -131,9 +122,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 			
 			if(operResult == null){
 				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
+				
 				String sqlScriptId = sqlScriptJsonObject.getString(ResourceNameConstants.ID);
-				if(StrUtils.notEmpty(sqlScript.getSqlScriptParameters())){
-					saveSqlScriptParameter(false, sqlScript, sqlScriptId);
+				if(sqlScript.getSqlScriptParameterList() != null && sqlScript.getSqlScriptParameterList().size() >0 ){
+					saveSqlScriptParameter(false, sqlScript.getSqlScriptParameterList(), sqlScriptId);
 				}
 				
 				if(isPlatformDeveloper){
@@ -167,7 +159,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
@@ -188,9 +180,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 				new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
-				if(sqlScript.getIsAnalysisParameters() == 1){
+				if(sqlScript.getIsAnalysisParameters() == 1 && sqlScript.getSqlScriptParameterList() != null && sqlScript.getSqlScriptParameterList().size() >0){
 					String sqlScriptId = sqlScript.getId(); 
-					saveSqlScriptParameter(true, sqlScript, sqlScriptId);
+					saveSqlScriptParameter(true, sqlScript.getSqlScriptParameterList(), sqlScriptId);
 				}
 				return HibernateUtil.updateObjectByHql(sqlScript, null);
 			}
@@ -205,7 +197,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 */
 	public String deleteSqlScript(String sqlScriptId) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 		if(!isPlatformDeveloper){
 			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
 				return "该sql脚本已经发布，无法删除，请先取消发布";
@@ -290,6 +282,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		if(project.getIsCreated() == 0){
 			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本所属的项目还未发布，请先发布项目";
 		}
+		sqlScript.doSetSqlScriptParameterList(findSqlScriptParameters(sqlScriptId));
 		
 		publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		sqlScript.setRefDatabaseId(project.getRefDatabaseId());
@@ -339,6 +332,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 				continue;
 			}
 			sqlScriptIdStr.append(sqlScriptId).append(",");
+			
+			sqlScript.doSetSqlScriptParameterList(findSqlScriptParameters(sqlScript.getId()));
 			sqlScript.setRefDatabaseId(databaseId);
 			sqlScript.setProjectId(projectId);
 			sqlScripts.add(sqlScript);
@@ -366,22 +361,13 @@ public class ComSqlScriptService extends AbstractPublishService {
 
 	//--------------------------------------------------------------------------------------------------------
 	/**
-	 * 修改ComSqlScript的sqlScriptParameter字段的值
+	 * 根据sql脚本id，查询对应的参数集合
 	 * @param sqlScriptId
-	 * @param sqlScriptParameterJsonArray
+	 * @return
 	 */
-	private void updateSqlScriptParameter(String sqlScriptId){
-		List<ComSqlScriptParameter> sqlScriptParameterList = HibernateUtil.extendExecuteListQueryByHqlArr(ComSqlScriptParameter.class, null, null, 
-				"from ComSqlScriptParameter where sqlScriptId=? order by sqlIndex asc, orderCode asc", sqlScriptId);
-		
-		if(sqlScriptParameterList == null || sqlScriptParameterList.size() ==0){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, 
-					"update ComSqlScript set sqlScriptParameters = null where "+ResourceNameConstants.ID+"=?", sqlScriptId);
-		}else{
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, 
-					"update ComSqlScript set sqlScriptParameters =? where "+ResourceNameConstants.ID+"=?", JsonUtil.toJsonString(sqlScriptParameterList, false), sqlScriptId);
-			sqlScriptParameterList.clear();
-		}
+	public List<ComSqlScriptParameter> findSqlScriptParameters(String sqlScriptId) {
+		return HibernateUtil.extendExecuteListQueryByHqlArr(
+				ComSqlScriptParameter.class, null, null, "from ComSqlScriptParameter where sqlScriptId = ? order by orderCode asc", sqlScriptId);
 	}
 	
 	/**
@@ -397,7 +383,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
 			jsonArray.add(HibernateUtil.saveObject(comSqlScriptParameter, null));
 		}
-		updateSqlScriptParameter(sqlScriptId);
 		return jsonArray;
 	}
 
@@ -414,7 +399,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
 			jsonArray.add(HibernateUtil.updateObjectByHql(comSqlScriptParameter, null));
 		}
-		updateSqlScriptParameter(sqlScriptId);
 		return jsonArray;
 	}
 
@@ -424,9 +408,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String deleteSqlScriptParameter(String sqlScriptParameterIds) {
-		String sqlScriptId = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptId from ComSqlScriptParameter where "+ResourceNameConstants.ID+"=?", sqlScriptParameterIds.split(",")[0])+"";
 		deleteDataById("ComSqlScriptParameter", sqlScriptParameterIds);
-		updateSqlScriptParameter(sqlScriptId);
 		return null;
 	}
 }

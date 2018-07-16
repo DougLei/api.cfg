@@ -103,10 +103,6 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 		return false;
 	}
 	
-	public StringBuilder getSql() {
-		throw new IllegalArgumentException("[BuiltinRecursiveMethodProcesser]目前不支持getSql()方法");
-	}
-	
 	public void clearInvalidMemory() {
 		if(this.parentResourceQueryCond != null && this.parentResourceQueryCond.size() > 0){
 			this.parentResourceQueryCond.clear();

@@ -67,6 +67,16 @@ public abstract class AbstractController {
 	}
 	
 	/**
+	 * 根据json串，获取ijson对象昂
+	 * @param json
+	 * @return
+	 */
+	protected IJson getIJson(String json){
+		vaildJsonStrNotNull(json);
+		return ProcessStringTypeJsonExtend.getIJson(json);
+	}
+	
+	/**
 	 * 根据json串，获取JSONObject对象
 	 * @param json
 	 * @return
@@ -75,18 +85,6 @@ public abstract class AbstractController {
 		vaildJsonStrNotNull(json);
 		return JsonUtil.parseJsonObject(json);
 	}
-	
-	/**
-	 * 根据json串，获取JSONArray对象
-	 * @param json
-	 * @return
-	 */
-	protected JSONArray getJSONArray(String json){
-		vaildJsonStrNotNull(json);
-		return JsonUtil.parseJsonArray(json);
-	}
-	
-	
 	
 	/**
 	 * 统一解析数据资源属性
@@ -108,6 +106,9 @@ public abstract class AbstractController {
 	protected Object getResultObject(){
 		if(analysisResult != null){
 			return analysisResult;
+		}
+		if(resultObject == null){
+			return "系统异常，操作结果记录对象[resultObject]为空，请联系开发人员";
 		}
 		if(resultObject instanceof String){
 			return resultObject.toString();

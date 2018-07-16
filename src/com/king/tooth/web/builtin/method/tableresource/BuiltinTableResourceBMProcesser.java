@@ -13,6 +13,7 @@ import com.king.tooth.web.builtin.method.tableresource.query.BuiltinQueryMethodP
 import com.king.tooth.web.builtin.method.tableresource.querycond.BuiltinQueryCondMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.recursive.BuiltinRecursiveMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.sort.BuiltinSortMethodProcesser;
+import com.king.tooth.web.builtin.method.tableresource.sublist.BuiltinSublistMethodProcesser;
 
 /**
  * 表资源的内置函数的处理器对外接口
@@ -40,7 +41,10 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 * 内置父子资源链接查询函数处理器实例
 	 */
 	private BuiltinParentsubQueryMethodProcesser parentsubQueryMethodProcesser;
-	
+	/**
+	 * 内置子资源数据集合查询函数处理器实例
+	 */
+	private BuiltinSublistMethodProcesser sublistMethodProcesser;
 	
 	/**
 	 * 解析请求的url参数集合
@@ -57,6 +61,8 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		setQueryProcesser(requestUrlParams);
 		// 内置排序函数处理器实例
 		setSortProcesser(requestUrlParams);
+		// 内置子资源数据集合查询函数处理器实例
+		setSublistMethodProcesser(requestUrlParams);
 		// 内置递归函数处理器实例
 		setRecursiveProcesser(requestUrlParams, hqlParameterValues);
 		// 内置父子资源链接查询函数处理器实例
@@ -125,6 +131,19 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		}
 	}
 	/**
+	 * 内置父子资源链接查询函数处理器实例 
+	 * @param requestUrlParams
+	 * @param hqlParameterValues hql参数值集合
+	 */
+	public void setSublistMethodProcesser(Map<String, String> requestUrlParams) {
+		String subResourceName = requestUrlParams.remove("_subresourcename");
+		String refPropName = requestUrlParams.get("_refpropname");
+		String subSort = requestUrlParams.remove("_subsort");
+		if(StrUtils.notEmpty(subResourceName)){
+			sublistMethodProcesser = new BuiltinSublistMethodProcesser(subResourceName, refPropName, subSort);
+		}
+	}
+	/**
 	 * 内置递归函数处理器实例
 	 * @param requestUrlParams
 	 * @param hqlParameterValues
@@ -161,7 +180,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 */
 	private void setParentsubQueryMethodProcesser(Map<String, String> requestUrlParams, List<Object> hqlParameterValues) {
 		String isSimpleParentSubQueryModel = requestUrlParams.remove("_simplemodel");
-		String refParentSubPropName = requestUrlParams.remove("_refparsubpropame");
+		String refPropName = requestUrlParams.remove("_refpropname");
 		if(StrUtils.notEmpty(parentResourceId) && StrUtils.notEmpty(parentResourceName)){
 			
 			Map<String, String> parentResourceQueryCond = null;
@@ -171,7 +190,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 				anlaysisParentResourceQueryCond(parentResourceQueryCond, requestUrlParams);
 			}
 			
-			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(parentResourceQueryCond, isSimpleParentSubQueryModel, refParentSubPropName, resourceName);
+			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(parentResourceQueryCond, isSimpleParentSubQueryModel, refPropName, resourceName);
 			parentsubQueryMethodProcesser.setParentResourceId(parentResourceId);
 			parentsubQueryMethodProcesser.setParentResourceName(parentResourceName);
 			parentsubQueryMethodProcesser.setHqlParameterValues(hqlParameterValues);
@@ -212,6 +231,12 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		}
 		return queryProcesser;
 	}
+	public BuiltinSublistMethodProcesser getSublistMethodProcesser() {
+		if(sublistMethodProcesser == null){
+			sublistMethodProcesser = new BuiltinSublistMethodProcesser();
+		}
+		return sublistMethodProcesser;
+	}
 	public BuiltinRecursiveMethodProcesser getRecursiveProcesser() {
 		if(recursiveProcesser == null){
 			recursiveProcesser = new BuiltinRecursiveMethodProcesser();
@@ -236,7 +261,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		}
 		return parentsubQueryMethodProcesser;
 	}
-	
+
 	/**
 	 * 释放不用的内存
 	 */
@@ -255,6 +280,9 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		}
 		if(parentsubQueryMethodProcesser != null){
 			parentsubQueryMethodProcesser.clearInvalidMemory();
+		}
+		if(sublistMethodProcesser != null){
+			sublistMethodProcesser.clearInvalidMemory();
 		}
 	}
 }

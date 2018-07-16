@@ -1,6 +1,6 @@
 package com.king.tooth.sys.builtin.data;
 
-import java.util.Date;
+import java.sql.Date;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 
@@ -74,7 +74,7 @@ public class BuiltinQueryParameters {
 	 */
 	public static Object getBuiltinQueryParamValue(String parameterName) {
 		if(currentDate.equals(parameterName)){
-			return new Date();
+			return new Date(new java.util.Date().getTime());
 		}
 		if(currentCustomerId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();

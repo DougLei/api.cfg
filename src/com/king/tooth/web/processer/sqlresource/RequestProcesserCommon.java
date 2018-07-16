@@ -60,7 +60,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 */
 	private void setQueryCondParamters(int index, Query query){
 		if(sqlParameterValues.size() > 0){
-			List<Object> querySqlParameterValues = sqlParameterValues.get(index-1);
+			List<Object> querySqlParameterValues = sqlParameterValues.get(index);
 			if(querySqlParameterValues != null && querySqlParameterValues.size() > 0){
 				int i = 0;
 				for (Object val : querySqlParameterValues) {
@@ -90,7 +90,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 			int len = modifySqlArr.length;
 			Query query;
 			for (int i = 0; i < len; i++) {
-				query = createQuery((i+1), modifySqlArr[i]);
+				query = createQuery(i, modifySqlArr[i]);
 				query.executeUpdate();
 			}
 			setResponseBody(new ResponseBody(null, sqlParameterValues, true));

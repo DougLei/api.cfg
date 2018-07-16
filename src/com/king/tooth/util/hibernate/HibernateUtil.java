@@ -29,7 +29,6 @@ import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.SpringContextHelper;
 import com.king.tooth.util.StrUtils;
@@ -629,15 +628,13 @@ public class HibernateUtil {
 			private void setParameters(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
 				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 					for (ComSqlScriptParameter parameter : sqlScriptParameterList) {
-						if(parameter.getSqlIndex() == 1){
-							if(parameter.getInOut() == 1){//in
-								cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
-							}else if(parameter.getInOut() == 2){//out
-								cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
-							}else if(parameter.getInOut() == 3){//in out
-								cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
-								cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
-							}
+						if(parameter.getInOut() == 1){//in
+							cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
+						}else if(parameter.getInOut() == 2){//out
+							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
+						}else if(parameter.getInOut() == 3){//in out
+							cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
+							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
 						}
 					}
 				}
@@ -652,9 +649,9 @@ public class HibernateUtil {
 			private void setOutputValues(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
 				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 					for (ComSqlScriptParameter pssp : sqlScriptParameterList) {
-						if(pssp.getSqlIndex() == 1 && pssp.getInOut() == 2 || pssp.getInOut() == 3){
+						if(pssp.getInOut() == 2 || pssp.getInOut() == 3){
 //							pssp.setAcutalOutValue(cs.getObject(pssp.getSqlIndex()));
-							json.put(NamingTurnUtil.columnNameTurnPropName(pssp.getParameterName()), cs.getObject(pssp.getOrderCode()));
+							json.put(pssp.getParameterName(), cs.getObject(pssp.getOrderCode()));
 						}
 					}
 				}

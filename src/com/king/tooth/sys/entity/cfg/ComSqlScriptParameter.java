@@ -32,11 +32,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 */
 	private String sqlScriptId;
 	/**
-	 * 记录是第几个sql语句的参数
-	 * <p>默认值是1</p>
-	 */
-	private Integer sqlIndex;
-	/**
 	 * 参数名称
 	 */
 	private String parameterName;
@@ -76,7 +71,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	private Integer inOut;
 	/**
 	 * 参数的顺序值
-	 * <p>递增，必须按顺序，且不能为空，或重复</p>
 	 */
 	private Integer orderCode;
 	
@@ -97,9 +91,8 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public ComSqlScriptParameter() {
 		this.id = ResourceHandlerUtil.getIdentity();
 	}
-	public ComSqlScriptParameter(int sqlIndex, String parameterName, String parameterDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp) {
+	public ComSqlScriptParameter(String parameterName, String parameterDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp) {
 		this();
-		this.sqlIndex = sqlIndex;
 		this.parameterName = parameterName;
 		this.parameterDataType = parameterDataType;
 		this.inOut = inOut;
@@ -123,13 +116,13 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			}
 			if(isPlaceholder == 1){
 				if(BuiltinCodeDataType.INTEGER.equals(parameterDataType)){
-					return Integer.valueOf(actualInValue+"");
+					return Integer.valueOf(actualInValue.toString());
 				}else if(BuiltinCodeDataType.DOUBLE.equals(parameterDataType)){
-					return Double.valueOf(actualInValue+"");
+					return Double.valueOf(actualInValue.toString());
 				}else if(BuiltinCodeDataType.DATE.equals(parameterDataType)){
-					return DateUtil.parseDate(actualInValue+"");
+					return DateUtil.parseSqlDate(actualInValue.toString());
 				}else{
-					return actualInValue+"";
+					return actualInValue.toString();
 				}
 			}else{
 				return "'"+actualInValue+"'";
@@ -137,7 +130,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		}else if(parameterFrom == 1){
 			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
 			if(actualInValue == null){
-				throw new NullPointerException("调用sql脚本时，内置参数["+parameterName+"]的值为空，请检查配置，或程序代码");
+				throw new NullPointerException("调用sql脚本时，内置参数["+parameterName+"]的值为空，请联系开发人员");
 			}
 			return actualInValue;
 		}else{
@@ -202,12 +195,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public void setInOut(Integer inOut) {
 		this.inOut = inOut;
 	}
-	public Integer getSqlIndex() {
-		return sqlIndex;
-	}
-	public void setSqlIndex(Integer sqlIndex) {
-		this.sqlIndex = sqlIndex;
-	}
 	public Integer getOrderCode() {
 		return orderCode;
 	}
@@ -225,7 +212,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 
 	public JSONObject toEntityJson() {
 		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("sqlIndex", sqlIndex);
 		entityJson.put("length", length);
 		entityJson.put("parameterFrom", parameterFrom);
 		entityJson.put("isPlaceholder", isPlaceholder);
@@ -244,7 +230,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinCodeDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -252,64 +238,57 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		sqlScriptIdColumn.setOrderCode(10);
 		columns.add(sqlScriptIdColumn);
 		
-		ComColumndata sqlIndexColumn = new ComColumndata("sql_index", BuiltinCodeDataType.INTEGER, 2);
-		sqlIndexColumn.setName("记录是第几个sql语句的参数");
-		sqlIndexColumn.setComments("记录是第几个sql语句的参数:默认值是1");
-		sqlIndexColumn.setDefaultValue("1");
-		sqlIndexColumn.setOrderCode(20);
-		columns.add(sqlIndexColumn);
-		
 		ComColumndata parameterNameColumn = new ComColumndata("parameter_name", BuiltinCodeDataType.STRING, 50);
 		parameterNameColumn.setName("参数名称");
 		parameterNameColumn.setComments("参数名称");
-		parameterNameColumn.setOrderCode(30);
+		parameterNameColumn.setOrderCode(20);
 		columns.add(parameterNameColumn);
 		
 		ComColumndata lengthColumn = new ComColumndata("length", BuiltinCodeDataType.INTEGER, 4);
 		lengthColumn.setName("参数长度");
 		lengthColumn.setComments("参数长度：默认值为32");
 		lengthColumn.setDefaultValue("32");
-		lengthColumn.setOrderCode(40);
+		lengthColumn.setOrderCode(30);
 		columns.add(lengthColumn);
 		
 		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinCodeDataType.STRING, 10);
 		parameterDataTypeColumn.setName("参数数据类型");
 		parameterDataTypeColumn.setComments("参数数据类型:默认值为string");
 		parameterDataTypeColumn.setDefaultValue(BuiltinCodeDataType.STRING);
-		parameterDataTypeColumn.setOrderCode(50);
+		parameterDataTypeColumn.setOrderCode(40);
 		columns.add(parameterDataTypeColumn);
 		
 		ComColumndata defaultValueColumn = new ComColumndata("default_value", BuiltinCodeDataType.STRING, 100);
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
-		defaultValueColumn.setOrderCode(60);
+		defaultValueColumn.setOrderCode(50);
 		columns.add(defaultValueColumn);
 		
 		ComColumndata parameterFromColumn = new ComColumndata("parameter_from", BuiltinCodeDataType.INTEGER, 1);
 		parameterFromColumn.setName("参数来源");
 		parameterFromColumn.setComments("参数来源:0.用户输入、1.系统内置，默认值为0");
 		parameterFromColumn.setDefaultValue("0");
-		parameterFromColumn.setOrderCode(70);
+		parameterFromColumn.setOrderCode(60);
 		columns.add(parameterFromColumn);
 		
 		ComColumndata isPlaceholderColumn = new ComColumndata("is_placeholder", BuiltinCodeDataType.INTEGER, 1);
 		isPlaceholderColumn.setName("是否是需要占位符的参数");
 		isPlaceholderColumn.setComments("是否是需要占位符的参数:即是否是需要用?代替的，目前全部都是1，默认值是1");
 		isPlaceholderColumn.setDefaultValue("1");
-		isPlaceholderColumn.setOrderCode(80);
+		isPlaceholderColumn.setOrderCode(70);
 		columns.add(isPlaceholderColumn);
 		
 		ComColumndata inOutColumn = new ComColumndata("in_out", BuiltinCodeDataType.STRING, 32);
 		inOutColumn.setName("参数的in/out类型");
 		inOutColumn.setComments("参数的in/out类型:in=1、out=2、inOut=3，默认值是1");
 		inOutColumn.setDefaultValue("1");
-		inOutColumn.setOrderCode(90);
+		inOutColumn.setOrderCode(80);
 		columns.add(inOutColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 3);
 		orderCodeColumn.setName("参数的顺序值");
-		orderCodeColumn.setComments("参数的顺序值：递增，必须按顺序，且不能为空，或重复");
-		orderCodeColumn.setOrderCode(100);
+		orderCodeColumn.setComments("参数的顺序值");
+		orderCodeColumn.setOrderCode(90);
 		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);

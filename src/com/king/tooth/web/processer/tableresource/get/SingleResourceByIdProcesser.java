@@ -24,6 +24,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		
 		List<Map<String, Object>> dataList = query.list();// 查询
 		dataList = doProcessDataCollection(dataList);
+		doProcessSubListQuery(dataList);
 		installResponseBodyForQueryDataObject(dataList, true);
 		return true;
 	}

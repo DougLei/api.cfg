@@ -90,7 +90,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 		if(ISysResource.CODE.equals(requestBody.getRequestResourceType())){
 			if(builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
 				for(int i=0; i<subDatas.size(); i++){
-					subDatas.getJSONObject(i).put(builtinParentsubQueryMethodProcesser.getRefParentSubPropName(), parentId);
+					subDatas.getJSONObject(i).put(builtinParentsubQueryMethodProcesser.getRefPropName(), parentId);
 				}
 			}
 			
@@ -124,7 +124,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends PostProcesse
 			for(int i=0; i<subDatas.size(); i++){
 				subData = subDatas.getJSONObject(i);
 				if(builtinParentsubQueryMethodProcesser.getIsSimpleParentSubQueryModel()){
-					subData.put(builtinParentsubQueryMethodProcesser.getRefParentSubPropName(), parentId);
+					subData.put(builtinParentsubQueryMethodProcesser.getRefPropName(), parentId);
 				}
 				saveData(requestBody.getRouteBody().getResourceName(), subData);
 				

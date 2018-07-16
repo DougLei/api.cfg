@@ -45,4 +45,9 @@ public final class BuiltinMethodProcesserType {
 	 * sql脚本处理器
 	 */
 	public static final int SQL_SCRIPT = 8;
+	
+	/**
+	 * 子资源数据集合查询函数处理器
+	 */
+	public static final int SUB_LIST = 9;
 }

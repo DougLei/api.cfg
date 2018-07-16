@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.util.StrUtils;
+import com.king.tooth.sys.entity.common.sqlscript.ActParameter;
+import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
 
 /**
  * sql参数解析工具类
@@ -56,17 +57,24 @@ public class SqlParameterParserUtil {
 		if(sqlScriptArr == null || sqlScriptArr.length == 0){
 			return;
 		}
+		List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>();
+		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>();
+		
+		List<String> parameterNames = new ArrayList<String>();// 记录参数名
+		List<Integer> parameterPlaceholderIndex = new ArrayList<Integer>();// 记录每个$的下标
 		
 		int sqlScriptArrLength = sqlScriptArr.length;
-		List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(sqlScriptArrLength*8);
-		StringBuilder sb = new StringBuilder();// 记录每个sql语句所有包含参数的语句
-		List<Integer> parameterPlaceholderIndex = new ArrayList<Integer>();// 记录每个$的下标
-		String sql;
-		int orderCode;
-		int len;
 		Matcher matcher;
+		StringBuilder sb = new StringBuilder();// 记录每个sql语句所有包含参数的语句
+		int len;
+		String sql;
+		String parameterName;
+		SqlScriptParameterNameRecord parameterNameRecord;
 		ComSqlScriptParameter sqlScriptParameter;
 		for(int i=0; i<sqlScriptArrLength; i++){
+			parameterNameRecord = new SqlScriptParameterNameRecord(i);
+			parameterNameRecordList.add(parameterNameRecord);
+			
 			matcher = sqlScriptParamPattern.matcher(sqlScriptArr[i]);
 			while(matcher.find()){
 				sb.append(matcher.group()).append(";");
@@ -86,34 +94,25 @@ public class SqlParameterParserUtil {
 			}
 			
 			sql = sb.toString();
+			sb.setLength(0);
+			
 			len = parameterPlaceholderIndex.size();
-			orderCode = 0;
 			for (int j = 0; j < len; j++) {
-				sqlScriptParameter = new ComSqlScriptParameter((i+1), sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j)), BuiltinCodeDataType.STRING, 0, orderCode++, true);
+				parameterName = sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j));
+				parameterNameRecord.addParameterName(parameterName);
+				if(parameterNames.contains(parameterName)){
+					continue;
+				}
+				parameterNames.add(parameterName);
+				
+				sqlScriptParameter = new ComSqlScriptParameter(parameterName, BuiltinCodeDataType.STRING, 0, (i+1), true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
-			
-			sb.setLength(0);
 			parameterPlaceholderIndex.clear();
 		}
-		sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
-	}
-	
-	/**
-	 * <pre>
-	 * 	[单一替换]
-	 * 	将sql语句中的指定参数替换为对应的值，并返回替换后的结果sql语句
-	 * </pre>
-	 * @param sql
-	 * @param parameterName 参数名
-	 * @param actualValue 参数对应的实际值
-	 * @return
-	 */
-	public static String replaceSqlScriptParam(String sql, String parameterName, String actualValue){
-		if(StrUtils.isEmpty(parameterName)){
-			return sql;
-		}
-		return sql.replaceAll(escapeCharacterPrefix + prefix + parameterName + escapeCharacterPrefix + suffix, actualValue);
+		parameterNames.clear();
+		sqlScript.setSqlScriptParameterList(sqlScriptParameterList);
+		sqlScript.doSetParameterRecordList(parameterNameRecordList);
 	}
 	
 	/**
@@ -121,21 +120,18 @@ public class SqlParameterParserUtil {
 	 * 	[多个替换]
 	 * 	将sql脚本语句中的参数替换为对应的值，并返回替换后的结果sql脚本语句
 	 * </pre>
-	 * @param index
 	 * @param sqlScript
-	 * @param parameterName 参数名
-	 * @param actualValue 参数对应的实际值
+	 * @param actParameters 实际的参数集合
 	 * @return
 	 */
-	public static String replaceSqlScriptParams(int index, String sqlScript, List<ComSqlScriptParameter> sqlScriptParameters){
-		if(sqlScriptParameters == null || sqlScriptParameters.size() == 0){
+	public static String replaceSqlScriptParams(String sqlScript, List<ActParameter> actParameters){
+		if(actParameters == null || actParameters.size() == 0){
 			return sqlScript;
 		}
-		for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-			if(ssp.getSqlIndex().equals(index)){
-				sqlScript = sqlScript.replaceAll(escapeCharacterPrefix + prefix + ssp.getParameterName() + escapeCharacterPrefix + suffix, ssp.getActualInValue()+"");
-			}
+		for (ActParameter ac : actParameters) {
+			sqlScript = sqlScript.replaceAll(escapeCharacterPrefix + prefix + ac.getParameterName() + escapeCharacterPrefix + suffix, ac.getActualValue()+"");
 		}
+		actParameters.clear();
 		return sqlScript;
 	}
 }

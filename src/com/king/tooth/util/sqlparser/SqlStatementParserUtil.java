@@ -12,11 +12,14 @@ import gudusoft.gsqlparser.stmt.oracle.TPlsqlCreateProcedure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
+import com.king.tooth.sys.entity.common.sqlscript.ActParameter;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
+import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -154,12 +157,17 @@ public class SqlStatementParserUtil {
 		// 解析出存储过程名
 		sqlScript.setProcedureName(procedureSqlStatement.getProcedureName().toString());
 
+		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
+		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
+		parameterNameRecordList.add(parameterNameRecord);
+		
 		// 解析参数
 		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
 			int len = procedureSqlStatement.getParameterDeclarations().size();
 			
 			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
 			ComSqlScriptParameter parameter = null;
+			
 			TParameterDeclaration param = null;
 			String parameterName;
 			for(int i=0;i<len;i++){
@@ -168,10 +176,12 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter(1, parameterName, param.getDataType().toString(), param.getMode(), (i+1), true);
+				parameter = new ComSqlScriptParameter(parameterName, param.getDataType().toString(), param.getMode(), (i+1), true);
 				sqlScriptParameterList.add(parameter);
+				parameterNameRecord.addParameterName(parameterName);
 			}
-			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
+			sqlScript.setSqlScriptParameterList(sqlScriptParameterList);
+			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
 	}
 	/**
@@ -183,11 +193,17 @@ public class SqlStatementParserUtil {
 		// 解析出存储过程名
 		sqlScript.setProcedureName(procedureSqlStatement.getProcedureName().toString());
 
+		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
+		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
+		parameterNameRecordList.add(parameterNameRecord);
+		
 		// 解析参数
 		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
 			int len = procedureSqlStatement.getParameterDeclarations().size();
+		
 			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
 			ComSqlScriptParameter parameter = null;
+			
 			TParameterDeclaration param = null;
 			String parameterName;
 			for(int i=0;i<len;i++){
@@ -199,10 +215,12 @@ public class SqlStatementParserUtil {
 				if(parameterName.indexOf("(") != -1){
 					parameterName = parameterName.substring(0, parameterName.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter(1, parameterName , param.getDataType().toString(), param.getMode(), (i+1), true);
+				parameter = new ComSqlScriptParameter(parameterName , param.getDataType().toString(), param.getMode(), (i+1), true);
 				sqlScriptParameterList.add(parameter);
+				parameterNameRecord.addParameterName(parameterName);
 			}
-			sqlScript.doSetSqlScriptParameterList(sqlScriptParameterList);
+			sqlScript.setSqlScriptParameterList(sqlScriptParameterList);
+			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
 	}
 	
@@ -223,48 +241,62 @@ public class SqlStatementParserUtil {
 		switch(sqlStatement.sqlstatementtype){
 			case sstselect:
 				finalSqlScript.setIsSelectSqlScript(true);
-				setFinalSelectSqlHandler(sqlScriptParameters, finalSqlScript, sqlStatement, sqlParameterValues);
+				setFinalSelectSqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatement, sqlParameterValues);
 				break;
 			case sstinsert:
 				finalSqlScript.setIsInsertSqlScript(true);
-				setFinalModifySqlHandler(sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
+				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
 				break;
 			case sstupdate:
 				finalSqlScript.setIsUpdateSqlScript(true);
-				setFinalModifySqlHandler(sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
+				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
 				break;
 			case sstdelete:
 				finalSqlScript.setIsDeleteSqlScript(true);
-				setFinalModifySqlHandler(sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
+				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
 				break;
-		}
-		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0){
-			sqlScriptParameters.clear();
 		}
 		return finalSqlScript;
 	}
 	
 	/**
 	 * 最终的select sql语句处理
+	 * @param parameterNameRecordMap 
 	 * @param sqlScriptParameters
 	 * @param finalSelect
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalSelectSqlHandler(List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
-		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0){
-			List<Object> queryCondParameters = new ArrayList<Object>();
-			// 处理参数，将实际值存储到queryCondParameters集合中，再转换成?，替换到select sql语句中
-			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-				if(ssp.getSqlIndex() == 1 && ssp.getIsPlaceholder() == 1){//如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
-					queryCondParameters.add(ssp.getActualInValue());
-					ssp.setActualInValue("?");
+	private static void setFinalSelectSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
+		List<String> parameterNames = parameterNameRecordMap.get(0);
+		if(parameterNames!=null && parameterNames.size()>0){
+			List<Object> queryCondParameters = new ArrayList<Object>(parameterNames.size());
+			
+			List<ActParameter> actParams = new ArrayList<ActParameter>(parameterNames.size());
+			ActParameter actParam;
+			
+			for (String parameterName : parameterNames) {
+				for (ComSqlScriptParameter ssp : sqlScriptParameters) {
+					if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+						actParam = new ActParameter();
+						actParams.add(actParam);
+						
+						actParam.setParameterName(parameterName);
+						
+						// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
+						if(ssp.getIsPlaceholder() == 1){
+							actParam.setActualValue("?");
+							queryCondParameters.add(ssp.getActualInValue());
+						}else{
+							actParam.setActualValue(ssp.getActualInValue());
+						}
+						break;
+					}
 				}
 			}
 			// 将该条select sql的条件值对象加到最终的参数集合中
 			sqlParameterValues.add(queryCondParameters);
-			
-			analysisSelectSqlScript(SqlParameterParserUtil.replaceSqlScriptParams(1, sqlStatement.toString(), sqlScriptParameters), finalSelect);
+			analysisSelectSqlScript(SqlParameterParserUtil.replaceSqlScriptParams(sqlStatement.toString(), actParams), finalSelect);
 			return;
 		}
 		// 如果sql脚本中没有参数，则直接返回sql语句，这个就是最终的查询语句
@@ -294,29 +326,53 @@ public class SqlStatementParserUtil {
 	
 	/**
 	 * 最终的insert/update/delete sql语句处理
+	 * @param parameterNameRecordMap 
 	 * @param sqlScriptParameters
 	 * @param finalSelect
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalModifySqlHandler(List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
+	private static void setFinalModifySqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
 		int sqlLen = sqlStatementList.size();
 		String[] modifySqlArr = new String[sqlLen];
 		
-		int index;
+		List<String> parameterNames;
 		List<Object> sqlParamValues;
+		List<ActParameter> actParams;
+		ActParameter actParam;
+		int size;
 		for(int i = 0; i < sqlLen; i++){
-			index = i+1;
-			sqlParamValues = new ArrayList<Object>();
-			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-				if(ssp.getSqlIndex().equals(index)){
-					sqlParamValues.add(ssp.getActualInValue());
-					ssp.setActualInValue("?");
+			parameterNames = parameterNameRecordMap.get(i);
+			if(parameterNames != null && parameterNames.size() > 0){
+				size = parameterNames.size();
+				sqlParamValues = new ArrayList<Object>(size);
+				actParams = new ArrayList<ActParameter>(size);
+				
+				for (String parameterName : parameterNames) {
+					for (ComSqlScriptParameter ssp : sqlScriptParameters) {
+						if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+							actParam = new ActParameter();
+							actParams.add(actParam);
+							
+							actParam.setParameterName(parameterName);
+							
+							// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
+							if(ssp.getIsPlaceholder() == 1){
+								actParam.setActualValue("?");
+								sqlParamValues.add(ssp.getActualInValue());
+							}else{
+								actParam.setActualValue(ssp.getActualInValue());
+							}
+							break;
+						}
+					}
 				}
+				modifySqlArr[i] = SqlParameterParserUtil.replaceSqlScriptParams(sqlStatementList.get(i).toString(), actParams);
+			}else{
+				sqlParamValues = null;
+				modifySqlArr[i] = sqlStatementList.get(i).toString();
 			}
 			sqlParameterValues.add(sqlParamValues);
-			
-			modifySqlArr[i] = SqlParameterParserUtil.replaceSqlScriptParams(index, sqlStatementList.get(i).toString(), sqlScriptParameters);
 		}
 		finalSqlScript.setFinalModifySqlArr(modifySqlArr);
 	}

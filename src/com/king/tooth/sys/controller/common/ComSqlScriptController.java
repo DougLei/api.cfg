@@ -137,7 +137,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object publish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
@@ -158,7 +158,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object cancelPublish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		

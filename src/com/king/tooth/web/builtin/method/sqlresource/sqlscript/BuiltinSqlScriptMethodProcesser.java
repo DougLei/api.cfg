@@ -6,10 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
@@ -54,45 +53,36 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	 */
 	private List<ComSqlScriptParameter> getActualParameters() {
 		List<ComSqlScriptParameter> sqlScriptActualParameters = null;
+		ComSqlScriptParameter ssp = null;
 		
 		// 请求体为空，那么是从url传参，则是get请求select sql资源
-		if(StrUtils.isEmpty(requestFormData)){
+		if(StrUtils.isEmpty(requestFormData) && sqlScriptParams != null && sqlScriptParams.size() > 0){
 			// 解析sql脚本的参数
-			if(sqlScriptParams != null && sqlScriptParams.size() > 0){
-				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(sqlScriptParams.size());
-				ComSqlScriptParameter ssp = null;
+			sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(sqlScriptParams.size());
+			
+			Set<String> parameterNames = sqlScriptParams.keySet();
+			for (String parameterName : parameterNames) {
+				ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
+				ssp.setActualInValue(processActualValue(sqlScriptParams.get(parameterName).trim()));
+				sqlScriptActualParameters.add(ssp);
+			}
+			
+			sqlScriptParams.clear();
+		}
+		// 否则就是通过请求体传参，则是post/put/delete insert/update/delete 等sql资源
+		else{
+			JSONObject json = JsonUtil.parseJsonObject(requestFormData.toString());
+			if(json != null && json.size()>0){
+				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(json.size());
 				
-				Set<String> keys = sqlScriptParams.keySet();
-				for (String key : keys) {
-					ssp = new ComSqlScriptParameter(1, key, null, 0, -1, false);
-					ssp.setActualInValue(processActualValue(sqlScriptParams.get(key).trim()));
+				Set<String> parameterNames = json.keySet();
+				for (String parameterName : parameterNames) {
+					ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
+					ssp.setActualInValue(json.getString(parameterName).trim());
 					sqlScriptActualParameters.add(ssp);
 				}
 				
-				keys.clear();
-				sqlScriptParams.clear();
-			}
-		}
-		// 否则就是通过请求体传参，则是post/put/delete insert/update/delete sql资源
-		else{
-			sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>();
-			
-			IJson json = ProcessStringTypeJsonExtend.getIJson(requestFormData.toString());
-			JSONObject data = null;
-			Set<String> keys = null;
-			ComSqlScriptParameter ssp = null;
-			for(int i=0; i < json.size(); i++){
-				data = json.get(i);
-				if(data.size() > 0){
-					keys = data.keySet();
-					for (String key : keys) {
-						ssp = new ComSqlScriptParameter((i+1), key, null, 0, -1, false);
-						ssp.setActualInValue(processActualValue((data.getString(key)).trim()));
-						sqlScriptActualParameters.add(ssp);
-					}
-					keys.clear();
-					data.clear();
-				}
+				json.clear();
 			}
 		}
 		return sqlScriptActualParameters;
@@ -100,6 +90,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	
 	/**
 	 * 处理每个值最外层的单引号或双引号
+	 * <p>主要针对url参数的处理</p>
 	 * @param actualValue
 	 * @return
 	 */
@@ -118,6 +109,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		// 获取sql脚本资源对象
 		sqlScriptResource.setActualParams(sqlScriptActualParameters);
 		sqlScriptResource.analysisFinalSqlScript(sqlScriptResource, sqlParameterValues);
+		
 		if(sqlScriptActualParameters != null && sqlScriptActualParameters.size() > 0){
 			sqlScriptActualParameters.clear();
 		}
@@ -151,6 +143,9 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 			}
 			if(sqlScriptResource.getSqlScriptParameterList() != null && sqlScriptResource.getSqlScriptParameterList().size() > 0){
 				sqlScriptResource.getSqlScriptParameterList().clear();
+			}
+			if(sqlScriptResource.getParameterNameRecordList() != null && sqlScriptResource.getParameterNameRecordList().size() > 0){
+				sqlScriptResource.getParameterNameRecordList().clear();
 			}
 		}
 	}

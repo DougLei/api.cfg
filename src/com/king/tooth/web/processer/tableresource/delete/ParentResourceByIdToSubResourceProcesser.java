@@ -70,7 +70,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends DeleteProces
 		if(dataLinkResourceName == null){
 			hql.append(" delete ").append(requestBody.getRouteBody().getResourceName())
 			   .append(" where ")
-			   .append(builtinParentsubQueryMethodProcesser.getRefParentSubPropName())
+			   .append(builtinParentsubQueryMethodProcesser.getRefPropName())
 			   .append(" in (select p_.").append(ResourceNameConstants.ID)
 			   .append(" from ")
 			   .append(requestBody.getRouteBody().getParentResourceName()).append(" p_ where ")

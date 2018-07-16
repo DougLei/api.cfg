@@ -34,7 +34,6 @@ import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComDept;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
-import com.king.tooth.sys.entity.common.ComModuleOperation;
 import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComOrg;
 import com.king.tooth.sys.entity.common.ComPermission;
@@ -104,7 +103,6 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
 		tables.add(new ComProjectModule().toCreateTable());
-		tables.add(new ComModuleOperation().toCreateTable());
 		tables.add(new ComHibernateHbm().toCreateTable());
 		tables.add(new ComSqlScript().toCreateTable());
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
@@ -174,7 +172,10 @@ public class InitCfgSystemService extends AbstractService{
 			}
 			tmpTables.add(table);
 		}
-		dbHandler.dropTable(tmpTables);// 尝试先删除表
+		try {
+			dbHandler.dropTable(tmpTables);// 尝试先删除表
+		} catch (Exception e) {
+		}
 		dbHandler.createTable(tmpTables, true);// 开始创建表
 		ResourceHandlerUtil.clearTables(tmpTables);
 		ResourceHandlerUtil.clearTables(tables);
@@ -223,13 +224,13 @@ public class InitCfgSystemService extends AbstractService{
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourceNameConstants.ID);
 		
 		// 添加平台开发账户【3.平台开发账户】
-		ComSysAccount devloper = new ComSysAccount();
-		devloper.setAccountType(3);
-		devloper.setLoginName("devloper");
-		devloper.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		devloper.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), devloper.getLoginPwdKey()));
-		devloper.setValidDate(BuiltinDatas.validDate);
-		HibernateUtil.saveObject(devloper, adminAccountId).getString(ResourceNameConstants.ID);
+		ComSysAccount developer = new ComSysAccount();
+		developer.setAccountType(3);
+		developer.setLoginName("developer");
+		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
+		developer.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
+		developer.setValidDate(BuiltinDatas.validDate);
+		HibernateUtil.saveObject(developer, adminAccountId).getString(ResourceNameConstants.ID);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据库信息【运行平台数据库信息】

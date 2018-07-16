@@ -40,7 +40,7 @@ public class DateUtil {
 	 */
 	public static Date parseDate(String dateStr){
 		if(StrUtils.isEmpty(dateStr)){
-			return null;
+			throw new NullPointerException("[DateUtil.parseDate]格式化日期字符串["+dateStr+"]不能为空！");
 		}
 		try {
 			if(dateStr.indexOf(":") != -1){
@@ -49,8 +49,16 @@ public class DateUtil {
 				return sdfSimple.parse(dateStr);
 			}
 		} catch (ParseException e) {
-			Log4jUtil.debug("[DateUtil.parseDate]格式化日期字符串[{}]为日期对象时出现错误：{}", dateStr, ExceptionUtil.getErrMsg(e));
+			throw new IllegalArgumentException("[DateUtil.parseDate]格式化日期字符串["+dateStr+"]为日期对象时出现错误："+ExceptionUtil.getErrMsg(e));
 		}
-		return null;
+	}
+	
+	/**
+	 * 格式化日期字符串为sql类型的日期对象
+	 * @param dateStr
+	 * @return
+	 */
+	public static Date parseSqlDate(String dateStr){
+		return new java.sql.Date(parseDate(dateStr).getTime());
 	}
 }

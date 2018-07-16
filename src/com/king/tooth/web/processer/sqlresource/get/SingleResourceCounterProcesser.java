@@ -17,7 +17,7 @@ public final class SingleResourceCounterProcesser extends GetProcesser {
 	protected boolean doGetProcess() {
 		String querySql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalCteSql() + 
 						  getFromSql().toString();
-		Query query = createQuery(1, querySql);
+		Query query = createQuery(0, querySql);
 		long totalCount = (long) query.uniqueResult();
 		TextResult textResult = new TextResult(totalCount);
 		installResponseBodyForQueryCounter(textResult, true);

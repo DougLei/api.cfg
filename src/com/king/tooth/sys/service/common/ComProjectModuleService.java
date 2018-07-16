@@ -16,7 +16,6 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 项目模块信息资源对象处理器
  * @author DougLei
  */
-@SuppressWarnings("unchecked")
 public class ComProjectModuleService extends AbstractPublishService {
 
 	/**
@@ -113,14 +112,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 		executeRemotePublish(project.getRefDatabaseId(), projectModule.getProjectId(), projectModule, 0, null);
 
 		modifyIsCreatedPropVal(projectModule.getEntityName(), 1, projectModule.getId());
-		
-		// 发布模块功能
-		String hql = "select "+ResourceNameConstants.ID +  " from ComModuleOperation where isEnabled =1 and isNeedDeploy=1 and moduleId = ?";
-		List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, hql, projectModuleId);
-		if(publishDataIds != null && publishDataIds.size() > 0){
-			new ComModuleOperationService().batchPublishModuleOperation(project.getRefDatabaseId(), project.getId(), publishDataIds);
-			publishDataIds.clear();
-		}
 		return null;
 	}
 	
@@ -140,15 +131,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 		publishInfoService.deletePublishedData(null, projectModuleId);
 		
 		modifyIsCreatedPropVal(projectModule.getEntityName(), 0, projectModule.getId());
-		
-		// 取消发布模块功能
-		String hql = "select "+ResourceNameConstants.ID +  " from ComModuleOperation where moduleId = ?";
-		List<Object> publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, hql, projectModuleId);
-		if(publishDataIds != null && publishDataIds.size() > 0){
-			ComProject project = getObjectById(projectModule.getRefProjectId(), ComProject.class);
-			new ComModuleOperationService().batchCancelPublishModuleOperation(project.getRefDatabaseId(), project.getId(), publishDataIds, true);
-			publishDataIds.clear();
-		}
 		return null;
 	}
 	
@@ -183,32 +165,6 @@ public class ComProjectModuleService extends AbstractPublishService {
 		
 		publishInfoService.batchDeletePublishedData(null, projectModuleIds);
 		executeRemoteBatchPublish(databaseId, projectId, projectModules, 0, null);
-		
-		// 发布模块功能
-		StringBuilder tmpHql = new StringBuilder(" from ComModuleOperation where isEnabled =1 and isNeedDeploy=1 and moduleId in (");
-		int len = projectModuleIds.size();
-		for (int i=0;i<len;i++) {
-			tmpHql.append("?,");
-		}
-		tmpHql.setLength(tmpHql.length()-1);
-		tmpHql.append(")");
-		String hql = tmpHql.toString();
-		tmpHql.setLength(0);
-		
-		List<Object> projectModuleIdsCopy = new ArrayList<Object>(projectModuleIds.size());
-		projectModuleIdsCopy.addAll(projectModuleIds);
-		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") "+hql, projectModuleIdsCopy);
-		if(count > 0){
-			long loopCount = count/200 + 1;
-			hql = "select "+ResourceNameConstants.ID + hql;
-			for(int i=0;i<loopCount;i++){
-				List<Object> publishDataIds = HibernateUtil.executeListQueryByHql("200", (i+1)+"", hql, projectModuleIds);
-				if(publishDataIds != null && publishDataIds.size() > 0){
-					new ComModuleOperationService().batchPublishModuleOperation(databaseId, projectId, publishDataIds);
-					publishDataIds.clear();
-				}
-			}
-		}
 	}
 
 	/**
@@ -221,19 +177,5 @@ public class ComProjectModuleService extends AbstractPublishService {
 		publishInfoService.batchDeletePublishedData(projectId, projectModuleIds);
 		ComProjectModule projectModule = new ComProjectModule();
 		batchModifyIsCreatedPropVal(projectModule.getEntityName(), 0, projectModuleIds);
-		
-		// 取消发布模块功能
-		StringBuilder hql = new StringBuilder("select "+ResourceNameConstants.ID+" from ComModuleOperation where moduleId in (");
-		int len = projectModuleIds.size();
-		for (int i=0;i<len;i++) {
-			hql.append("?,");
-		}
-		hql.setLength(hql.length()-1);
-		hql.append(")");
-		List<Object> publishDataIds = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), projectModuleIds);
-		if(publishDataIds != null && publishDataIds.size() > 0){
-			new ComModuleOperationService().batchCancelPublishModuleOperation(databaseId, projectId, publishDataIds, false);
-			publishDataIds.clear();
-		}
 	}
 }

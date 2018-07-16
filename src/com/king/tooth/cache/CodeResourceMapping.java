@@ -9,7 +9,6 @@ import com.king.tooth.cache.entity.CodeResourceEntity;
 import com.king.tooth.sys.controller.cfg.ComColumndataController;
 import com.king.tooth.sys.controller.cfg.ComTabledataController;
 import com.king.tooth.sys.controller.common.ComDatabaseController;
-import com.king.tooth.sys.controller.common.ComModuleOperationController;
 import com.king.tooth.sys.controller.common.ComProjectController;
 import com.king.tooth.sys.controller.common.ComProjectModuleController;
 import com.king.tooth.sys.controller.common.ComSqlScriptController;
@@ -61,12 +60,9 @@ public class CodeResourceMapping {
 		// 项目模块操作
 		put("ComProjectModule_post_publish", ComProjectModuleController.class, "publish");
 		put("ComProjectModule_post_cancelPublish", ComProjectModuleController.class, "cancelPublish");
-		// 模块功能操作
-		put("ComModuleOperation_post_publish", ComModuleOperationController.class, "publish");
-		put("ComModuleOperation_post_cancelPublish", ComModuleOperationController.class, "cancelPublish");
 		// 表操作
 		put("ComTabledata_post_buildModel", ComTabledataController.class, "buildModel");
-		put("ComTabledata_post_cancelBuildModel", ComTabledataController.class, "cancelBuildModel");
+//		put("ComTabledata_post_cancelBuildModel", ComTabledataController.class, "cancelBuildModel");
 		put("ComTabledata_post_addProjTableRelation", ComTabledataController.class, "addProjTableRelation");
 		put("ComTabledata_post_cancelProjTableRelation", ComTabledataController.class, "cancelProjTableRelation");
 		put("ComTabledata_post_publish", ComTabledataController.class, "publish");
@@ -103,10 +99,6 @@ public class CodeResourceMapping {
 		put("ComProjectModule_post", ComProjectModuleController.class, "add");
 		put("ComProjectModule_put", ComProjectModuleController.class, "update");
 		put("ComProjectModule_delete", ComProjectModuleController.class, "delete");
-		// 模块功能操作
-		put("ComModuleOperation_post", ComModuleOperationController.class, "add");
-		put("ComModuleOperation_put", ComModuleOperationController.class, "update");
-		put("ComModuleOperation_delete", ComModuleOperationController.class, "delete");
 		// 表操作
 		put("ComTabledata_post", ComTabledataController.class, "add");
 		put("ComTabledata_put", ComTabledataController.class, "update");

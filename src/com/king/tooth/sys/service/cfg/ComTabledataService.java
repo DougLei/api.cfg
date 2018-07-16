@@ -91,7 +91,7 @@ public class ComTabledataService extends AbstractPublishService {
 	public Object saveTable(ComTabledata table) {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
@@ -131,7 +131,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
+			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
 			if(!isPlatformDeveloper){
@@ -164,7 +164,7 @@ public class ComTabledataService extends AbstractPublishService {
 		if(oldTable == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper();
+		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 		if(!isPlatformDeveloper){
 			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
 				return "该表已经发布，无法删除，请先取消发布";
@@ -186,14 +186,15 @@ public class ComTabledataService extends AbstractPublishService {
 			projectIds.clear();
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourceNameConstants.ID+" = '"+tableId+"'");
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
-		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
 		
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
 		if(isPlatformDeveloper && oldTable.getIsCreated() == 1){
 			cancelBuildModel(oldTable);
 		}
+		
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourceNameConstants.ID+" = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
+		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
 		return null;
 	}
 	
@@ -206,7 +207,7 @@ public class ComTabledataService extends AbstractPublishService {
 	public String buildModel(String tableId){
 		ComTabledata table = getObjectById(tableId, ComTabledata.class);
 		if(table.getIsCreated() == 1){
-			return "["+table.getTableName()+"]已完成建模";
+			cancelBuildModel(table);
 		}
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		
@@ -237,22 +238,24 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		// 5、修改表是否创建的状态
 		modifyIsCreatedPropVal(table.getEntityName(), 1, table.getId());
+		
 		ResourceHandlerUtil.clearTables(tables);
 		return null;
 	}
 	
 	/**
-	 * 取消建模
-	 * @param tableId
-	 * @return
+	 * 批量取消建模
+	 * <p>目前用在建模失败的时候，要进行的批量撤销，且忽略所有异常</p>
+	 * @param deleteTableIds
 	 */
-	public String cancelBuildModel(String tableId){
-		ComTabledata table = getObjectById(tableId, ComTabledata.class);
-		if(table.getIsCreated() == 0){
-			return "["+table.getTableName()+"]未建模，无法取消建模";
+	public void batchCancelBuildModel(List<String> deleteTableIds) {
+		if(deleteTableIds != null && deleteTableIds.size() > 0){
+			ComTabledata table;
+			for (String tableId : deleteTableIds) {
+				table = getObjectById(tableId, ComTabledata.class);
+				cancelBuildModel(table);
+			}
 		}
-		cancelBuildModel(table);
-		return null;
 	}
 	
 	/**
@@ -260,30 +263,27 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param table
 	 */
 	private void cancelBuildModel(ComTabledata table){
-		long count = (long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'", null);
-		if(count > 0){
-			// 删除hbm信息
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
-			// 删除资源
-			new ComSysResourceService().deleteSysResource(table.getId());
-			
-			// drop表
-			DBTableHandler dbTableHandler = new DBTableHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
-			String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
-			
-			// 修改表是否创建的状态
-			modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
-			
-			// 从sessionFactory中移除映射
-			List<String> resourceNames = new ArrayList<String>(tableResourceNames.length);
-			for (String tableResourceName : tableResourceNames) {
-				resourceNames.add(tableResourceName);
-			}
-			HibernateUtil.removeConfig(resourceNames);
-			resourceNames.clear();
+		// drop表
+		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
+		String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
+		
+		// 从sessionFactory中移除映射
+		List<String> resourceNames = new ArrayList<String>(tableResourceNames.length);
+		for (String tableResourceName : tableResourceNames) {
+			resourceNames.add(tableResourceName);
 		}
+		HibernateUtil.removeConfig(resourceNames);
+		resourceNames.clear();
+		
+		// 修改表是否创建的状态
+		modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
+		
+		// 删除hbm信息
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+		// 删除资源
+		new ComSysResourceService().deleteSysResource(table.getId());
 	}
-
+	
 	/**
 	 * 建立项目和表的关联关系
 	 * @param projectId

@@ -1,11 +1,13 @@
 package com.king.tooth.sys.controller.cfg;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -97,38 +99,40 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object buildModel(HttpServletRequest request, String json){
-		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "建模功能目前只提供给平台开发人员使用";
 		}
 		
-		JSONObject jsonObject = getJSONObject(json);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
-			return "要建模的表id不能为空";
+		IJson ijson = getIJson(json);
+		int len = ijson.size();
+		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id
+		String tableId;
+		if(len == 1){
+			tableId = ijson.get(0).getString(ResourceNameConstants.ID);
+			if(StrUtils.isEmpty(tableId)){
+				return "要建模的表id不能为空";
+			}
+			deleteTableIds.add(tableId);
+			resultObject = tabledataService.buildModel(tableId);
+		}else{
+			for(int i=0;i<len ;i++){
+				tableId = ijson.get(i).getString(ResourceNameConstants.ID);
+				if(StrUtils.isEmpty(tableId)){
+					resultObject = "要建模的表id不能为空";
+					continue;
+				}
+				deleteTableIds.add(tableId);
+				resultObject = tabledataService.buildModel(tableId);
+				if(resultObject != null){
+					break;
+				}
+			}
 		}
-		resultObject = tabledataService.buildModel(jsonObject.getString(ResourceNameConstants.ID));
 		if(resultObject == null){
-			resultObject = jsonObject;
-		}
-		return getResultObject();
-	}
-	
-	/**
-	 * 取消建模
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	public Object cancelBuildModel(HttpServletRequest request, String json){
-		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
-			return "取消建模功能目前只提供给平台开发人员使用";
-		}
-		
-		JSONObject jsonObject = getJSONObject(json);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
-			return "要取消建模的表id不能为空";
-		}
-		resultObject = tabledataService.cancelBuildModel(jsonObject.getString(ResourceNameConstants.ID));
-		if(resultObject == null){
-			resultObject = jsonObject;
+			resultObject = ijson.getJson();
+		}else{
+			// 如果建模出现异常，要将一起建模操作且成功的表都删除掉
+			tabledataService.batchCancelBuildModel(deleteTableIds);
 		}
 		return getResultObject();
 	}
@@ -180,7 +184,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object publish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
@@ -201,7 +205,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object cancelPublish(HttpServletRequest request, String json){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDevloper()){
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		

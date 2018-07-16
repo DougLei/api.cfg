@@ -116,8 +116,14 @@ public class RequestBody implements Serializable{
 		}else{
 			ComSysResource requestResource = sysResourceService.findResourceByResourceName(routeBody.getResourceName());
 			requestResourceType = requestResource.getResourceType();
+			
+			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ISysResource.SQLSCRIPT.equals(requestResourceType)){
-				reqSqlScriptResource = new ComSqlScriptService().findSqlScriptResourceById(requestResource.getRefResourceId());
+				ComSqlScriptService sqlScriptService = new ComSqlScriptService();
+				reqSqlScriptResource = sqlScriptService.findSqlScriptResourceById(requestResource.getRefResourceId());
+				if(StrUtils.isEmpty(reqSqlScriptResource.getSqlScriptParameters())){
+					reqSqlScriptResource.setSqlScriptParameterList(sqlScriptService.findSqlScriptParameters(requestResource.getRefResourceId()));
+				}
 			}
 		}
 		

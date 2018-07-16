@@ -378,7 +378,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 * @return
 	 */
 	@JSONField(serialize = false)
-	public boolean isPlatformDevloper(){
+	public boolean isPlatformDeveloper(){
 		return (currentAccountType == 3);
 	}
 }
