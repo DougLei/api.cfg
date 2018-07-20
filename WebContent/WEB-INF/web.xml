@@ -101,6 +101,16 @@
 			<url-pattern>/common/*</url-pattern>
 		</filter-mapping>
 		
+		<!-- 配置请求数据的预处理过滤器 -->
+		<filter>
+			<filter-name>reqDataPreProcesser</filter-name>
+			<filter-class>com.king.tooth.filter.ReqDataPreProcesser</filter-class>
+		</filter>
+		<filter-mapping>
+			<filter-name>reqDataPreProcesser</filter-name>
+			<url-pattern>/common/*</url-pattern>
+		</filter-mapping>
+		
 <!-- ****************************************************************************************************  -->		
 		
 		<!-- 名为common的servlet通用控制器 -->
