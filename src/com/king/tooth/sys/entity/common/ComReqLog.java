@@ -4,17 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.JsonUtil;
 
 /**
  * 请求日志资源对象
@@ -227,13 +224,5 @@ public class ComReqLog extends BasicEntity implements ITable, IEntity{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComReqLog";
-	}
-	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("reqDate", reqDate);
-		entityJson.put("respDate", reqDate);
-		super.processBasicEntityProps(entityJson);
-		return entityJson.getEntityJson();
 	}
 }

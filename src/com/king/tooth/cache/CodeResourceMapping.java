@@ -6,15 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.cache.entity.CodeResourceEntity;
-import com.king.tooth.sys.controller.cfg.ComColumndataController;
-import com.king.tooth.sys.controller.cfg.ComTabledataController;
-import com.king.tooth.sys.controller.common.ComDatabaseController;
-import com.king.tooth.sys.controller.common.ComProjectController;
-import com.king.tooth.sys.controller.common.ComProjectModuleController;
-import com.king.tooth.sys.controller.common.ComSqlScriptController;
-import com.king.tooth.sys.controller.common.ComSqlScriptParameterController;
-import com.king.tooth.sys.controller.common.ComSysAccountController;
-import com.king.tooth.sys.controller.common.ComUserController;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.util.Log4jUtil;
 
 /**
@@ -29,9 +22,8 @@ public class CodeResourceMapping {
 	 */
 	private static boolean unInitCodeResourceMapping = true;
 	
-	@SuppressWarnings("rawtypes")
-	private static void put(String key, Class clz, String methodName){
-		codeResourceMapping.put(key.toLowerCase(), new CodeResourceEntity(clz, methodName));
+	private static void put(String key, Object instance, String methodName){
+		codeResourceMapping.put(key.toLowerCase(), new CodeResourceEntity(instance, methodName));
 	}
 	
 	/**
@@ -50,36 +42,35 @@ public class CodeResourceMapping {
 	 */
 	private static void initActionCodeResource() {
 		// 数据库操作
-		put("ComDatabase_post_linkTest", ComTabledataController.class, "linkTest");
-		put("ComDatabase_post_publish", ComTabledataController.class, "publish");
-		put("ComDatabase_post_cancelPublish", ComTabledataController.class, "cancelPublish");
+		put("ComDatabase_post_linkTest", BuiltinInstance.databaseController, "linkTest");
+		put("ComDatabase_post_publish", BuiltinInstance.databaseController, "publish");
+		put("ComDatabase_post_cancelPublish", BuiltinInstance.databaseController, "cancelPublish");
 		// 项目操作
-		put("ComProject_post_cancelRelation", ComProjectController.class, "cancelRelation");
-		put("ComProject_post_publish", ComProjectController.class, "publish");
-		put("ComProject_post_cancelPublish", ComProjectController.class, "cancelPublish");
+		put("ComProject_post_cancelRelation", BuiltinInstance.projectController, "cancelRelation");
+		put("ComProject_post_publish", BuiltinInstance.projectController, "publish");
+		put("ComProject_post_cancelPublish", BuiltinInstance.projectController, "cancelPublish");
 		// 项目模块操作
-		put("ComProjectModule_post_publish", ComProjectModuleController.class, "publish");
-		put("ComProjectModule_post_cancelPublish", ComProjectModuleController.class, "cancelPublish");
+		put("ComProjectModule_post_publish", BuiltinInstance.projectModuleController, "publish");
+		put("ComProjectModule_post_cancelPublish", BuiltinInstance.projectModuleController, "cancelPublish");
 		// 表操作
-		put("ComTabledata_post_buildModel", ComTabledataController.class, "buildModel");
-//		put("ComTabledata_post_cancelBuildModel", ComTabledataController.class, "cancelBuildModel");
-		put("ComTabledata_post_addProjTableRelation", ComTabledataController.class, "addProjTableRelation");
-		put("ComTabledata_post_cancelProjTableRelation", ComTabledataController.class, "cancelProjTableRelation");
-		put("ComTabledata_post_publish", ComTabledataController.class, "publish");
-		put("ComTabledata_post_cancelPublish", ComTabledataController.class, "cancelPublish");
+		put("ComTabledata_post_buildModel", BuiltinInstance.tabledataController, "buildModel");
+		put("ComTabledata_post_addProjTableRelation", BuiltinInstance.tabledataController, "addProjTableRelation");
+		put("ComTabledata_post_cancelProjTableRelation", BuiltinInstance.tabledataController, "cancelProjTableRelation");
+		put("ComTabledata_post_publish", BuiltinInstance.tabledataController, "publish");
+		put("ComTabledata_post_cancelPublish", BuiltinInstance.tabledataController, "cancelPublish");
 		// sql脚本操作
-		put("ComSqlScript_post_addProjSqlScriptRelation", ComSqlScriptController.class, "addProjSqlScriptRelation");
-		put("ComSqlScript_post_cancelProjSqlScriptRelation", ComSqlScriptController.class, "cancelProjSqlScriptRelation");
-		put("ComSqlScript_post_publish", ComSqlScriptController.class, "publish");
-		put("ComSqlScript_post_cancelPublish", ComSqlScriptController.class, "cancelPublish");
+		put("ComSqlScript_post_addProjSqlScriptRelation", BuiltinInstance.sqlController, "addProjSqlScriptRelation");
+		put("ComSqlScript_post_cancelProjSqlScriptRelation", BuiltinInstance.sqlController, "cancelProjSqlScriptRelation");
+		put("ComSqlScript_post_publish", BuiltinInstance.sqlController, "publish");
+		put("ComSqlScript_post_cancelPublish", BuiltinInstance.sqlController, "cancelPublish");
 		
 		// 用户操作
-		put("ComUser_post_openAccount", ComUserController.class, "openAccount");
-		put("ComUser_post_updatePassword", ComUserController.class, "updatePassword");
+		put("ComUser_post_openAccount", BuiltinInstance.userController, "openAccount");
+		put("ComUser_post_updatePassword", BuiltinInstance.userController, "updatePassword");
 		// 账户操作
-		put("ComSysAccount_post_login", ComSysAccountController.class, "login");
-		put("ComSysAccount_post_loginOut", ComSysAccountController.class, "loginOut");
-		put("ComSysAccount_post_updatePassword", ComSysAccountController.class, "updatePassword");
+		put("ComSysAccount_post_login", BuiltinInstance.accountController, "login");
+		put("ComSysAccount_post_loginOut", BuiltinInstance.accountController, "loginOut");
+		put("ComSysAccount_post_updatePassword", BuiltinInstance.accountController, "updatePassword");
 	}
 	
 	/**
@@ -88,42 +79,42 @@ public class CodeResourceMapping {
 	 */
 	private static void initNormalCodeResource() {
 		// 数据库操作
-		put("ComDatabase_post", ComDatabaseController.class, "add");
-		put("ComDatabase_put", ComDatabaseController.class, "update");
-		put("ComDatabase_delete", ComDatabaseController.class, "delete");
+		put("ComDatabase_post", BuiltinInstance.databaseController, "add");
+		put("ComDatabase_put", BuiltinInstance.databaseController, "update");
+		put("ComDatabase_delete", BuiltinInstance.databaseController, "delete");
 		// 项目操作
-		put("ComProject_post", ComProjectController.class, "add");
-		put("ComProject_put", ComProjectController.class, "update");
-		put("ComProject_delete", ComProjectController.class, "delete");
+		put("ComProject_post", BuiltinInstance.projectController, "add");
+		put("ComProject_put", BuiltinInstance.projectController, "update");
+		put("ComProject_delete", BuiltinInstance.projectController, "delete");
 		// 项目模块操作
-		put("ComProjectModule_post", ComProjectModuleController.class, "add");
-		put("ComProjectModule_put", ComProjectModuleController.class, "update");
-		put("ComProjectModule_delete", ComProjectModuleController.class, "delete");
+		put("ComProjectModule_post", BuiltinInstance.projectModuleController, "add");
+		put("ComProjectModule_put", BuiltinInstance.projectModuleController, "update");
+		put("ComProjectModule_delete", BuiltinInstance.projectModuleController, "delete");
 		// 表操作
-		put("ComTabledata_post", ComTabledataController.class, "add");
-		put("ComTabledata_put", ComTabledataController.class, "update");
-		put("ComTabledata_delete", ComTabledataController.class, "delete");
+		put("ComTabledata_post", BuiltinInstance.tabledataController, "add");
+		put("ComTabledata_put", BuiltinInstance.tabledataController, "update");
+		put("ComTabledata_delete", BuiltinInstance.tabledataController, "delete");
 		// 列操作
-		put("ComColumndata_post", ComColumndataController.class, "add");
-		put("ComColumndata_put", ComColumndataController.class, "update");
-		put("ComColumndata_delete", ComColumndataController.class, "delete");
+		put("ComColumndata_post", BuiltinInstance.columndataController, "add");
+		put("ComColumndata_put", BuiltinInstance.columndataController, "update");
+		put("ComColumndata_delete", BuiltinInstance.columndataController, "delete");
 		// sql脚本操作
-		put("ComSqlScript_post", ComSqlScriptController.class, "add");
-		put("ComSqlScript_put", ComSqlScriptController.class, "update");
-		put("ComSqlScript_delete", ComSqlScriptController.class, "delete");
+		put("ComSqlScript_post", BuiltinInstance.sqlController, "add");
+		put("ComSqlScript_put", BuiltinInstance.sqlController, "update");
+		put("ComSqlScript_delete", BuiltinInstance.sqlController, "delete");
 		// sql脚本参数操作
-		put("ComSqlScriptParameter_post", ComSqlScriptParameterController.class, "add");
-		put("ComSqlScriptParameter_put", ComSqlScriptParameterController.class, "update");
-		put("ComSqlScriptParameter_delete", ComSqlScriptParameterController.class, "delete");
+		put("ComSqlScriptParameter_post", BuiltinInstance.sqlParamController, "add");
+		put("ComSqlScriptParameter_put", BuiltinInstance.sqlParamController, "update");
+		put("ComSqlScriptParameter_delete", BuiltinInstance.sqlParamController, "delete");
 		
 		// 用户操作
-		put("ComUser_post", ComUserController.class, "add");
-		put("ComUser_put", ComUserController.class, "update");
-		put("ComUser_delete", ComUserController.class, "delete");
+		put("ComUser_post", BuiltinInstance.userController, "add");
+		put("ComUser_put", BuiltinInstance.userController, "update");
+		put("ComUser_delete", BuiltinInstance.userController, "delete");
 		// 账户操作
-		put("ComSysAccount_post", ComSysAccountController.class, "add");
-		put("ComSysAccount_put", ComSysAccountController.class, "update");
-		put("ComSysAccount_delete", ComSysAccountController.class, "delete");
+		put("ComSysAccount_post", BuiltinInstance.accountController, "add");
+		put("ComSysAccount_put", BuiltinInstance.accountController, "update");
+		put("ComSysAccount_delete", BuiltinInstance.accountController, "delete");
 	}
 	
 
@@ -162,22 +153,19 @@ public class CodeResourceMapping {
 	 * <p>在调用前，最好先调用isCodeResource()方法，判断是否是代码资源，结果为true再调用该方法，防止出错</p>
 	 * @param codeResourceKey
 	 * @param request
-	 * @param formData
+	 * @param ijson
 	 * @return 
 	 */
-	public static Object invokeCodeResource(String codeResourceKey, HttpServletRequest request, Object formData){
+	public static Object invokeCodeResource(String codeResourceKey, HttpServletRequest request, IJson ijson){
 		CodeResourceEntity codeResource = codeResourceMapping.get(codeResourceKey);
 		if(codeResource == null){
-			Log4jUtil.warn("没有找到codeResourceKey值为["+codeResourceKey+"]的代码资源对象实例");
-			return null;
+			return "没有找到codeResourceKey值为["+codeResourceKey+"]的代码资源对象实例";
 		}
 		Log4jUtil.debug(" ========================> 此次请求调用的代码资源key为：{}", codeResourceKey);
-		if(formData == null){
-			formData = "";
-		}
-		Object object = codeResource.invokeMethodForCodeResource(request, formData.toString());
+		
+		Object object = codeResource.invokeMethodForCodeResource(request, ijson);
 		if(object == null){
-			throw new NullPointerException("系统在调用codeResourceKey为["+codeResourceKey+"]的代码资源时，返回的结果为null，请联系开发人员");
+			return "系统在调用codeResourceKey为["+codeResourceKey+"]的代码资源时，返回的结果为null，请联系开发人员";
 		}
 		return object;
 	}

@@ -9,7 +9,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class RouteRule implements Serializable{
+class RouteRule implements Serializable{
 	/**
 	 * 路由中包含的特殊标示符
 	 * <p>Counter、Values</p>

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
@@ -24,8 +25,8 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, String json){
-		List<ComColumndata> columns = getDataInstanceList(json, ComColumndata.class);
+	public Object add(HttpServletRequest request, IJson ijson){
+		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
@@ -48,8 +49,8 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, String json){
-		List<ComColumndata> columns = getDataInstanceList(json, ComColumndata.class);
+	public Object update(HttpServletRequest request, IJson ijson){
+		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
@@ -72,7 +73,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, String json){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String columnIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(columnIds)){
 			return "要删除的列id不能为空";

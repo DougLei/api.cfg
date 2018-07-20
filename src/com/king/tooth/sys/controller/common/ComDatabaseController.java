@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -25,8 +26,8 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, String json){
-		List<ComDatabase> databases = getDataInstanceList(json, ComDatabase.class);
+	public Object add(HttpServletRequest request, IJson ijson){
+		List<ComDatabase> databases = getDataInstanceList(ijson, ComDatabase.class);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
@@ -49,8 +50,8 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, String json){
-		List<ComDatabase> databases = getDataInstanceList(json, ComDatabase.class);
+	public Object update(HttpServletRequest request, IJson ijson){
+		List<ComDatabase> databases = getDataInstanceList(ijson, ComDatabase.class);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
@@ -73,7 +74,7 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, String json){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String databaseIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(databaseIds)){
 			return "要删除的数据库id不能为空";
@@ -95,8 +96,8 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object linkTest(HttpServletRequest request, String json){
-		JSONObject jsonObject = getJSONObject(json);
+	public Object linkTest(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "测试连接的数据库id不能为空";
 		}
@@ -117,12 +118,12 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object publish(HttpServletRequest request, String json){
+	public Object publish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = getJSONObject(json);
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要发布的数据库id不能为空";
 		}
@@ -138,12 +139,12 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelPublish(HttpServletRequest request, String json){
+	public Object cancelPublish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = getJSONObject(json);
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要取消发布的数据库id不能为空";
 		}

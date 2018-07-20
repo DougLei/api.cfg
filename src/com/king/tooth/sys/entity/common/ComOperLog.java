@@ -3,11 +3,9 @@ package com.king.tooth.sys.entity.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
@@ -131,12 +129,5 @@ public class ComOperLog extends BasicEntity implements ITable, IEntity{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComOperLog";
-	}
-	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("operResultIsSuccess", operResultIsSuccess);
-		super.processBasicEntityProps(entityJson);
-		return entityJson.getEntityJson();
 	}
 }

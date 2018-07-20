@@ -2,12 +2,8 @@ package com.king.tooth.web.processer.tableresource.put;
 
 import java.util.List;
 
-import org.hibernate.internal.HbmConfPropMetadata;
-
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
-import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
 
@@ -31,26 +27,12 @@ public abstract class PutProcesser extends RequestProcesser {
 	}
 	
 	/**
-	 * 解析formJsonData数据
-	 * @param formJsonData
-	 * @return 返回null，证明请求的json数据为空
-	 *         否则，返回请求数据的String格式
-	 */
-	private IJson analysisFormData(Object formJsonData){
-		if(StrUtils.isEmpty(formJsonData)){
-			installResponseBodyForUpdateData(getProcesserName()+"处理器要保存的formData数据值为null", null, false);
-			return null;
-		}
-		IJson json = ProcessStringTypeJsonExtend.getIJson(formJsonData.toString());
-		return json;
-	}
-	
-	/**
 	 * 处理请求
 	 */
 	public final boolean doProcess() {
-		json = analysisFormData(requestBody.getFormData());
+		json = requestBody.getFormData();
 		if(json == null){
+			installResponseBodyForUpdateData(getProcesserName()+"处理器要保存的formData数据值为null", null, false);
 			return false;
 		}
 		
@@ -74,7 +56,7 @@ public abstract class PutProcesser extends RequestProcesser {
 	 * @param hibernateDefineResourceProps 当前更新的资源，在系统hibernate定义的属性集合
 	 * @return
 	 */
-	protected abstract StringBuilder getUpdateHql(JSONObject updatedJsonObj, List<Object> params, HbmConfPropMetadata[] hibernateDefineResourceProps);
+	protected abstract StringBuilder getUpdateHql(JSONObject updatedJsonObj, List<Object> params);
 	protected final StringBuilder updateHql = new StringBuilder();// 因为子类会多次操作这个对象，所以提取出来，作为属性，方便调用
 	
 	// ******************************************************************************************************

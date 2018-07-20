@@ -8,14 +8,12 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -124,12 +122,6 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		return "ComProject";
 	}
 
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		super.processSysResourceProps(entityJson);
-		return entityJson.getEntityJson();
-	}
-	
 	public ComSysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}

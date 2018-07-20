@@ -13,18 +13,6 @@ import com.king.tooth.util.NamingTurnUtil;
 @SuppressWarnings("serial")
 public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implements Serializable{
 	
-	/**
-	 * 要查询的属性
-	 */
-	private String propName;
-	
-	/**
-	 * sql语句中，会将属性名，改为列名，作为查询的条件
-	 */
-	public String getPropName() {
-		return propName;
-	}
-	
 	public SqlQueryCondFuncEntity(String propName, String value) {
 		this.propName = propName;
 		analysisQueryParams(value);

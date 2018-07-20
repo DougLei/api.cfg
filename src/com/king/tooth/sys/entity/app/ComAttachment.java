@@ -3,17 +3,14 @@ package com.king.tooth.sys.entity.app;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.JsonUtil;
 
 /**
  * 附件资源对象
@@ -160,12 +157,5 @@ public class ComAttachment extends BasicEntity implements ITable, IEntity{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComAttachment";
-	}
-	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		super.processBasicEntityProps(entityJson);
-		entityJson.put("secretLevel", secretLevel);
-		return entityJson.getEntityJson();
 	}
 }

@@ -3,7 +3,6 @@ package com.king.tooth.plugins.thread;
 import org.hibernate.Session;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 
 /**
@@ -105,24 +104,6 @@ public class CurrentThreadContext {
 		setCurrentThreadData();
 		currentThreadContext.get().setProjectId(projectId);
 		currentThreadContext.get().setDatabaseId(ProjectIdRefDatabaseIdMapping.getDbId(projectId));
-	}
-	
-	//-------------------------------------------------------------------
-	/**
-	 * 获取当前线程的请求日志对象
-	 * @return
-	 */
-	public static final ComReqLog getCurrentReqLog(){
-		setCurrentThreadData();
-		return currentThreadContext.get().getCurrentReqLog();
-	}
-	/**
-	 * 给当前线程设置请求日志对象
-	 * @param currentReqLog
-	 */
-	public static final void setCurrentReqLog(ComReqLog currentReqLog){
-		setCurrentThreadData();
-		currentThreadContext.get().setCurrentReqLog(currentReqLog);
 	}
 	
 	//-------------------------------------------------------------------

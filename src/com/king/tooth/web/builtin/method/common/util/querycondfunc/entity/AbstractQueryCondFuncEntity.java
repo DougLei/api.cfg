@@ -21,6 +21,11 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 	protected String methodName;
 	
 	/**
+	 * 要查询的属性
+	 */
+	protected String propName;
+	
+	/**
 	 * 要查询的属性值数组
 	 */
 	protected Object[] values;
@@ -29,6 +34,9 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 	 */
 	protected boolean isInversion;
 	
+	public String getPropName() {
+		return propName;
+	}
 	public String getMethodName() {
 		return methodName;
 	}

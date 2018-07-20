@@ -17,7 +17,7 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinDatas;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.ComDatabase;
@@ -157,7 +157,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishDatabase(String databaseId){
-		if(BuiltinDatas.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
+		if(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
 			return "不能发布配置系统数据库";
 		}
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
@@ -172,8 +172,8 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		
 		// 如果是自己的库，要创建
-		if(database.compareIsSameDatabase(BuiltinDatas.currentSysBuiltinDatabaseInstance)){
-			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
+		if(database.compareIsSameDatabase(BuiltinInstance.currentSysBuiltinDatabaseInstance)){
+			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
 			databaseHandler.createDatabase(database);
 		}
 		// 还要测试库能不能正常连接上
@@ -214,7 +214,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			hbm.setCreateDate(currentDate);
 			hbm.setLastUpdateDate(currentDate);
 			hbm.setCreateUserId(currentUserId);
-			hbm.setLastUpdatedUserId(currentUserId);
+			hbm.setLastUpdateUserId(currentUserId);
 			hbms.add(hbm);
 			table.clear();
 		}
@@ -250,7 +250,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 
 		return usePublishResourceApi(database.getId(), "null", "db", "1", 
-				BuiltinDatas.currentSysBuiltinProjectInstance.getId());
+				BuiltinInstance.currentSysBuiltinProjectInstance.getId());
 	}
 	
 	/**
@@ -259,7 +259,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelPublishDatabase(String databaseId){
-		if(BuiltinDatas.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
+		if(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
 			return "不能取消发布配置系统数据库";
 		}
 		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
@@ -289,8 +289,8 @@ public class ComDatabaseService extends AbstractPublishService {
 		DynamicDBUtil.removeDataSource(databaseId);
 		
 		// 如果是自己的库，要删除
-		if(database.compareIsSameDatabase(BuiltinDatas.currentSysBuiltinDatabaseInstance)){
-			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
+		if(database.compareIsSameDatabase(BuiltinInstance.currentSysBuiltinDatabaseInstance)){
+			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
 			databaseHandler.dropDatabase(database);
 		}
 		
@@ -302,6 +302,6 @@ public class ComDatabaseService extends AbstractPublishService {
 		modifyIsCreatedPropVal(database.getEntityName(), 0, database.getId());
 		
 		return usePublishResourceApi(database.getId(), "null", "db", "-1", 
-				BuiltinDatas.currentSysBuiltinProjectInstance.getId());
+				BuiltinInstance.currentSysBuiltinProjectInstance.getId());
 	}
 }

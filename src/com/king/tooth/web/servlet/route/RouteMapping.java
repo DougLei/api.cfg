@@ -9,7 +9,7 @@ import java.util.Map;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class RouteMapping implements Serializable{
+class RouteMapping implements Serializable{
 	
 	/**
 	 * 资源映射

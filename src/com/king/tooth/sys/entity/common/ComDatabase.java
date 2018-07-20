@@ -12,7 +12,6 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
@@ -233,13 +232,6 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComDatabase";
-	}
-	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("dbPort", dbPort);
-		super.processSysResourceProps(entityJson);
-		return entityJson.getEntityJson();
 	}
 	
 	/**

@@ -30,8 +30,11 @@ public class BuiltinParametersKeys {
 	
 	//------------------------------------------------------------------------------------
 	/**
-	 * request:responseBody
-	 * <p>存储在request中的responseBody</p>
+	 * 存储在request中的RequestBody实例，方便在各个地方调用到
+	 */
+	public static final String _REQUEST_BODY_KEY = "_requestBody";
+	/**
+	 * 存储在request中的ResponseBody实例，方便在各个地方调用到
 	 */
 	public static final String _RESPONSE_BODY_KEY = "_responseBody";
 }

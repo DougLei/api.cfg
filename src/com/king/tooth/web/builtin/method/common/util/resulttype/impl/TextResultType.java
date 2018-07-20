@@ -8,7 +8,7 @@ import java.util.Map;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.resulttype.IResultType;
 import com.king.tooth.web.builtin.method.sqlresource.query.SelectNaming;
-import com.king.tooth.web.entity.resulttype.TextResult;
+import com.king.tooth.web.entity.resulttype.TextResultEntity;
 
 /**
  * _resultType=Text
@@ -68,7 +68,7 @@ public class TextResultType implements IResultType{
 			processMapType(dataList, split, valueStr);
 		}
 		
-		TextResult textResult = new TextResult(); 
+		TextResultEntity textResult = new TextResultEntity(); 
 		textResult.setResult(valueStr);
 		list.add(textResult);
 		

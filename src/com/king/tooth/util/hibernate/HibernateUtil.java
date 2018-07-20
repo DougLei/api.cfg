@@ -13,7 +13,6 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.internal.HbmConfPropMetadata;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.jdbc.Work;
 
@@ -21,7 +20,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
@@ -180,66 +178,6 @@ public class HibernateUtil {
 	}
 	
 	//------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * 根据实体类名，即资源名，获取hibernate映射文件中，配置定义的属性信息集合
-	 * @param resourceName
-	 * @return
-	 */
-	public static HbmConfPropMetadata[] getHibernateDefineResourceProps(String resourceName){
-		HbmConfPropMetadata[] properties = getSessionFactory().getHibernateDefineResourceProps(resourceName);
-		return properties;
-	}
-	
-	/**
-	 * 获取hibernate映射文件中，配置定义的属性元数据对象
-	 * @param defineProps 配置定义的属性集合
-	 * @param propName 前端传递过来的属性名
-	 * @return
-	 */
-	public static HbmConfPropMetadata getDefinePropMetadata(HbmConfPropMetadata[] defineProps, String propName){
-		if(propName.startsWith("_") // 规范，属性名不能以_开头
-				|| defineProps == null || defineProps.length == 0){ 
-			return new HbmConfPropMetadata(propName, BuiltinCodeDataType.STRING);
-		}
-		for (HbmConfPropMetadata dp : defineProps) {
-			if(dp.getPropName().equalsIgnoreCase(propName)){
-				return dp;
-			}
-		}
-		return new HbmConfPropMetadata(propName, BuiltinCodeDataType.STRING);
-	}
-	
-	/**
-	 * 获取hibernate映射文件中，配置定义的属性名
-	 * @param defineProps 配置定义的属性集合
-	 * @param propName 前端传递过来的属性名
-	 * @return
-	 */
-	public static String getDefinePropName(HbmConfPropMetadata[] defineProps, String propName){
-		if(propName.startsWith("_") // 规范，属性名不能以_开头
-				|| defineProps == null || defineProps.length == 0){ 
-			return propName;
-		}
-		for (HbmConfPropMetadata dp : defineProps) {
-			if(dp.getPropName().equalsIgnoreCase(propName)){
-				return dp.getPropName();
-			}
-		}
-		return propName;
-	}
-	
-	/**
-	 * 根据资源名，以及属性名，从hibernate映射文件中，获取配置定义的属性名
-	 * @param resourceName
-	 * @param propName
-	 * @return
-	 */
-	public static String getDefinePropName(String resourceName, String propName){
-		HbmConfPropMetadata[] defineProps = getHibernateDefineResourceProps(resourceName);
-		return getDefinePropName(defineProps, propName);
-	}
-	
 	/**
 	 * 获取父子资源对应的关系资源名
 	 * @param parentResourceName
@@ -274,7 +212,6 @@ public class HibernateUtil {
 	 * @return JSONObject
 	 */
 	public static JSONObject saveObject(String entityName, JSONObject data, String shortDesc){
-		ResourceHandlerUtil.validDataProp(entityName, data);
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
 		try {
 			getCurrentThreadSession().save(entityName, data);
@@ -331,21 +268,18 @@ public class HibernateUtil {
 			StringBuilder updateHql = new StringBuilder("update ");
 			updateHql.append(entity.getEntityName()).append(" set ");
 			
-			HbmConfPropMetadata[] hibernateDefineResourceProps = getHibernateDefineResourceProps(entity.getEntityName());
-			HbmConfPropMetadata confPropMetadata = null;
 			Set<String> propNames = data.keySet();
 			for (String pn : propNames) {
 				if(pn.equalsIgnoreCase(ResourceNameConstants.ID)){
 					continue;
 				}
-				confPropMetadata = getDefinePropMetadata(hibernateDefineResourceProps, pn);
-				updateHql.append(confPropMetadata.getPropName());
+				updateHql.append(pn);
 				updateHql.append(" = ?").append(",");
 				parameters.add(data.get(pn));
 			}
 			
 			updateHql.setLength(updateHql.length()-1);
-			updateHql.append(" where id = ?");
+			updateHql.append(" where ").append(ResourceNameConstants.ID).append(" =?");
 			parameters.add(updateId);
 			
 			executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), parameters);

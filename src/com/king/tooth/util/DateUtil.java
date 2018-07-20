@@ -1,5 +1,6 @@
 package com.king.tooth.util;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,7 +59,34 @@ public class DateUtil {
 	 * @param dateStr
 	 * @return
 	 */
-	public static Date parseSqlDate(String dateStr){
+	public static java.sql.Date parseSqlDate(String dateStr){
 		return new java.sql.Date(parseDate(dateStr).getTime());
+	}
+	
+	/**
+	 * 格式化日期字符串为sql类型的日期对象
+	 * @param dateStr
+	 * @return
+	 */
+	public static java.sql.Date parseSqlDate(Date date){
+		return new java.sql.Date(date.getTime());
+	}
+	
+	/**
+	 * 格式化日期字符串为sql类型的日期对象
+	 * @param dateStr
+	 * @return
+	 */
+	public static Timestamp parseTimestamp(String dateStr){
+		return new Timestamp(parseDate(dateStr).getTime());
+	}
+	
+	/**
+	 * 格式化日期字符串为sql类型的日期对象
+	 * @param dateStr
+	 * @return
+	 */
+	public static Timestamp parseTimestamp(Date date){
+		return new Timestamp(date.getTime());
 	}
 }

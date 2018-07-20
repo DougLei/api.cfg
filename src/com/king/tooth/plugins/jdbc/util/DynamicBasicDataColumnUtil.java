@@ -108,11 +108,11 @@ public class DynamicBasicDataColumnUtil {
 			createUserIdColumn.setOrderCode(9912);
 			table.getColumns().add(createUserIdColumn);
 			
-			ComColumndata lastUpdatedUserIdColumn = new ComColumndata("last_updated_user_id", BuiltinCodeDataType.STRING, 32);
-			lastUpdatedUserIdColumn.setComments("最后修改人主键");
-			lastUpdatedUserIdColumn.setName("最后修改人主键");
-			lastUpdatedUserIdColumn.setOrderCode(9913);
-			table.getColumns().add(lastUpdatedUserIdColumn);
+			ComColumndata lastUpdateUserIdColumn = new ComColumndata("last_update_user_id", BuiltinCodeDataType.STRING, 32);
+			lastUpdateUserIdColumn.setComments("最后修改人主键");
+			lastUpdateUserIdColumn.setName("最后修改人主键");
+			lastUpdateUserIdColumn.setOrderCode(9913);
+			table.getColumns().add(lastUpdateUserIdColumn);
 		}
 	}
 }

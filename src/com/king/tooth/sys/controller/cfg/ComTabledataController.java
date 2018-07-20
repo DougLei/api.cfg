@@ -27,8 +27,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, String json){
-		List<ComTabledata> tables = getDataInstanceList(json, ComTabledata.class);
+	public Object add(HttpServletRequest request, IJson ijson){
+		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
 			if(tables.size() == 1){
@@ -51,8 +51,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, String json){
-		List<ComTabledata> tables = getDataInstanceList(json, ComTabledata.class);
+	public Object update(HttpServletRequest request, IJson ijson){
+		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
 			if(tables.size() == 1){
@@ -75,7 +75,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, String json){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String tableIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(tableIds)){
 			return "要删除的表id不能为空";
@@ -98,12 +98,11 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object buildModel(HttpServletRequest request, String json){
+	public Object buildModel(HttpServletRequest request, IJson ijson){
 		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "建模功能目前只提供给平台开发人员使用";
 		}
 		
-		IJson ijson = getIJson(json);
 		int len = ijson.size();
 		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id
 		String tableId;
@@ -142,8 +141,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object addProjTableRelation(HttpServletRequest request, String json){
-		JSONObject jsonObject = getJSONObject(json);
+	public Object addProjTableRelation(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
@@ -162,8 +161,8 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelProjTableRelation(HttpServletRequest request, String json){
-		JSONObject jsonObject = getJSONObject(json);
+	public Object cancelProjTableRelation(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
@@ -183,12 +182,12 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object publish(HttpServletRequest request, String json){
+	public Object publish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = getJSONObject(json);
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要发布的表id不能为空";
 		}
@@ -204,12 +203,12 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelPublish(HttpServletRequest request, String json){
+	public Object cancelPublish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}
 		
-		JSONObject jsonObject = getJSONObject(json);
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要取消发布的表id不能为空";
 		}

@@ -49,8 +49,6 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		
 		if(StrUtils.isEmpty(refPropName)){
 			refPropName = "parentId";
-		}else{
-			refPropName = HibernateUtil.getDefinePropName(this.resourceName, refPropName);
 		}
 		this.refPropName = refPropName;
 	}

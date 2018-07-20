@@ -158,17 +158,52 @@ public class DBTableHandler {
 			StringBuilder dropSql = new StringBuilder();
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, false);
-			for (ComTabledata tabledata : tabledatas) {
-				if(tableIsExists(tabledata.getTableName())){
-					dropSql.append(" drop table ").append(tabledata.getTableName()).append(";");
+			List<String> tableNames = filterExistsTables(tabledatas);
+			if(tableNames!= null && tableNames.size() > 0){
+				for (String tn: tableNames) {
+					dropSql.append(" drop table ").append(tn).append(";");
 				}
+				dropSql.setLength(dropSql.length() - 1);
 			}
-			dropSql.setLength(dropSql.length() - 1);
 			return dropSql.toString();
 		}
 		return null;
 	}
 	
+	/**
+	 * 筛选出存在的表，再删除
+	 * @param tabledatas
+	 * @return tableNames
+	 */
+	private List<String> filterExistsTables(List<ComTabledata> tabledatas) {
+		List<String> tableNames = new ArrayList<String>(tabledatas.size());
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			conn = dblink.getConnection();
+			if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dblink.getDBType())){
+				pst = conn.prepareStatement(sqlserver_queryTableIsExistsSql);
+			}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dblink.getDBType())){
+				pst = conn.prepareStatement(oracle_queryTableIsExistsSql);
+			}
+			for (ComTabledata table : tabledatas) {
+				pst.setString(1, table.getTableName());
+				rs = pst.executeQuery();
+				if(rs.next() && (rs.getInt(1) > 0)){
+					tableNames.add(table.getTableName());
+				}
+			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}finally{
+			CloseUtil.closeDBConn(rs, pst, conn);
+		}
+		return tableNames;
+	}
+	private static final String sqlserver_queryTableIsExistsSql = "select count(1) from  sysobjects where id = object_id(?) and type = 'U'";
+	private static final String oracle_queryTableIsExistsSql = "select count(1) from user_tables where table_name = ?";
+
 	/**
 	 * 执行操作数据表的ddlsql语句
 	 * @param ddlSqlArr
@@ -182,35 +217,4 @@ public class DBTableHandler {
 		}
 	}
 	
-	/**
-	 * 表是否存在
-	 * @param tableName
-	 * @return
-	 */
-	private boolean tableIsExists(String tableName){
-		Connection conn = null;
-		PreparedStatement pst = null;
-		ResultSet rs = null;
-		try {
-			conn = dblink.getConnection();
-			if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dblink.getDBType())){
-				pst = conn.prepareStatement(sqlserver_queryTableIsExistsSql);
-			}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dblink.getDBType())){
-				pst = conn.prepareStatement(oracle_queryTableIsExistsSql);
-			}
-			pst.setString(1, tableName.toUpperCase());
-			rs = pst.executeQuery();
-			
-			if(rs.next() && (rs.getInt(1) > 0)){
-				return true;
-			}
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}finally{
-			CloseUtil.closeDBConn(rs, pst, conn);
-		}
-		return false;
-	}
-	private static final String sqlserver_queryTableIsExistsSql = "select count(1) from  sysobjects where id = object_id(?) and type = 'U'";
-	private static final String oracle_queryTableIsExistsSql = "select count(1) from user_tables where table_name = ?";
 }

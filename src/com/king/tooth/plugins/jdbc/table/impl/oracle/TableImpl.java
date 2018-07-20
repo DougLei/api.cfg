@@ -17,7 +17,7 @@ public class TableImpl extends AbstractTableHandler{
 		if(BuiltinCodeDataType.STRING.equals(columnType)){
 			createTableSql.append("varchar2");
 		}else if(BuiltinCodeDataType.BOOLEAN.equals(columnType)){
-			createTableSql.append("char");
+			createTableSql.append("char(1)");
 		}else if(BuiltinCodeDataType.INTEGER.equals(columnType)){
 			createTableSql.append("number");
 		}else if(BuiltinCodeDataType.DOUBLE.equals(columnType)){
@@ -38,10 +38,8 @@ public class TableImpl extends AbstractTableHandler{
 		String columnType = column.getColumnType();
 		if(BuiltinCodeDataType.DATE.equals(columnType)
 				|| BuiltinCodeDataType.CLOB.equals(columnType)
-				|| BuiltinCodeDataType.BLOB.equals(columnType)){
-			return;
-		}else if(BuiltinCodeDataType.BOOLEAN.equals(columnType)){
-			createTableSql.append("(1)");
+				|| BuiltinCodeDataType.BLOB.equals(columnType)
+				|| BuiltinCodeDataType.BOOLEAN.equals(columnType)){
 			return;
 		}
 		

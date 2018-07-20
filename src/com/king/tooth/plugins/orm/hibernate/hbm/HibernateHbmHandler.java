@@ -26,7 +26,7 @@ public class HibernateHbmHandler {
 	 * 静态块，从配置文件读取，并初始化属性值
 	 */
 	static{
-		HBM_FTL_FILE_PATH = initConfValue("hbm.flt.file.path", 
+		HBM_FTL_FILE_PATH = initConfValue("hbm.ftl.file.path", 
 				SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separator + "classes" + File.separator + "hibernateMapping" + File.separator + "template" + File.separator + "hibernate.hbm.xml.ftl");
 	}
 	

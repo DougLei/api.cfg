@@ -3,11 +3,8 @@ package com.king.tooth.web.builtin.method.tableresource.query;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.internal.HbmConfPropMetadata;
-
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.util.resulttype.IResultType;
 import com.king.tooth.web.builtin.method.common.util.resulttype.ResultTypeUtil;
@@ -84,22 +81,18 @@ public class BuiltinQueryMethodProcesser extends AbstractTableResourceBuiltinMet
 			propArr = this.select.split(",");
 			propArrCopyOnlyPropName = new String[propArr.length];
 			
-			HbmConfPropMetadata[] hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(resourceName);
 			int len = propArr.length;
 			int asIndex = -1;// 记录as的下标
-			String tmpQueryPropName = null;// 记录_select参数中指定的属性名称
-			String queryPropName = null;// 记录从Hibernate元数据中获得的属性名称
+			String queryPropName = null;// 记录_select参数中指定的属性名称
 			for (int i = 0; i < len ; i++) {
 				asIndex = propArr[i].toLowerCase().indexOf(" as ");
 				if(asIndex != -1){
-					tmpQueryPropName = propArr[i].substring(0, asIndex).trim();
+					queryPropName = propArr[i].substring(0, asIndex).trim();
 				}else{
-					tmpQueryPropName = propArr[i].trim();
-					propArr[i] = tmpQueryPropName + " as " + tmpQueryPropName;
+					queryPropName = propArr[i].trim();
+					propArr[i] = queryPropName + " as " + queryPropName;
 				}
-				queryPropName = HibernateUtil.getDefinePropName(hibernateDefineResourceProps, tmpQueryPropName);
 				propArrCopyOnlyPropName[i] = queryPropName ;
-				propArr[i] = propArr[i].replace(tmpQueryPropName, queryPropName);
 			}
 		}
 	}

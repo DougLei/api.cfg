@@ -43,8 +43,6 @@ public class BuiltinSublistMethodProcesser extends AbstractTableResourceBuiltinM
 		
 		if(StrUtils.isEmpty(refPropName)){
 			refPropName = "parentId";
-		}else{
-			refPropName = HibernateUtil.getDefinePropName(subResourceName, refPropName);
 		}
 		this.refPropName = refPropName;
 	}

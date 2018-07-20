@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysAccount;
@@ -31,8 +32,8 @@ public class ComSysAccountController extends AbstractController{
 	 * @param json
 	 * @return
 	 */
-	public Object login(HttpServletRequest request, String json){
-		ComSysAccount account = JsonUtil.parseObject(json, ComSysAccount.class);
+	public Object login(HttpServletRequest request, IJson ijson){
+		ComSysAccount account = JsonUtil.toJavaObject(ijson.get(0), ComSysAccount.class);
 		ComSysAccountOnlineStatus accountOnlineStatus = accountService.login(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			JSONObject jsonObject = new JSONObject(1);
@@ -53,7 +54,7 @@ public class ComSysAccountController extends AbstractController{
 	 * @param json
 	 * @return
 	 */
-	public Object loginOut(HttpServletRequest request, String json){
+	public Object loginOut(HttpServletRequest request, IJson ijson){
 		String token = request.getHeader("_token");
 		accountService.loginOut(token);
 		
@@ -70,8 +71,8 @@ public class ComSysAccountController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, String json){
-		List<ComSysAccount> accounts = getDataInstanceList(json, ComSysAccount.class);
+	public Object add(HttpServletRequest request, IJson ijson){
+		List<ComSysAccount> accounts = getDataInstanceList(ijson, ComSysAccount.class);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
@@ -94,8 +95,8 @@ public class ComSysAccountController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, String json){
-		List<ComSysAccount> accounts = getDataInstanceList(json, ComSysAccount.class);
+	public Object update(HttpServletRequest request, IJson ijson){
+		List<ComSysAccount> accounts = getDataInstanceList(ijson, ComSysAccount.class);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
@@ -118,7 +119,7 @@ public class ComSysAccountController extends AbstractController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, String json){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String accountIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(accountIds)){
 			return "要删除的账户id不能为空";
@@ -140,8 +141,8 @@ public class ComSysAccountController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object updatePassword(HttpServletRequest request, String json){
-		JSONObject jsonObject = getJSONObject(json);
+	public Object updatePassword(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要修改密码的账户id不能为空";
 		}

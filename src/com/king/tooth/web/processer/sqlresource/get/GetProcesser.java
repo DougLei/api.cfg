@@ -30,7 +30,7 @@ import com.king.tooth.web.builtin.method.sqlresource.querycond.BuiltinQueryCondM
 import com.king.tooth.web.builtin.method.sqlresource.sort.BuiltinSortMethodProcesser;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
-import com.king.tooth.web.entity.resulttype.TextResult;
+import com.king.tooth.web.entity.resulttype.TextResultEntity;
 import com.king.tooth.web.processer.sqlresource.RequestProcesser;
 
 /**
@@ -262,7 +262,7 @@ public abstract class GetProcesser extends RequestProcesser{
 	 * @param textResult 
 	 * @param isSuccess 
 	 */
-	protected final void installResponseBodyForQueryCounter(TextResult textResult, boolean isSuccess) {
+	protected final void installResponseBodyForQueryCounter(TextResultEntity textResult, boolean isSuccess) {
 		ResponseBody responseBody = new ResponseBody(textResult, isSuccess);
 		setResponseBody(responseBody);
 	}

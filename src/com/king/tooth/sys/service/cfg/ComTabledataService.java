@@ -15,7 +15,7 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinDatas;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -212,7 +212,7 @@ public class ComTabledataService extends AbstractPublishService {
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		
 		// 1、建表
-		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
+		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
 		List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 		
 		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
@@ -264,7 +264,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	private void cancelBuildModel(ComTabledata table){
 		// drop表
-		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinDatas.currentSysBuiltinDatabaseInstance);
+		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
 		String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
 		
 		// 从sessionFactory中移除映射
@@ -612,7 +612,7 @@ public class ComTabledataService extends AbstractPublishService {
 			resource.setCreateDate(currentDate);
 			resource.setLastUpdateDate(currentDate);
 			resource.setCreateUserId(currentUserId);
-			resource.setLastUpdatedUserId(currentUserId);
+			resource.setLastUpdateUserId(currentUserId);
 			resources.add(resource);
 			table.clear();
 		}

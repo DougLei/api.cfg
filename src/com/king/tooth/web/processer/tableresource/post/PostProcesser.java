@@ -2,8 +2,6 @@ package com.king.tooth.web.processer.tableresource.post;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
-import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
@@ -28,24 +26,10 @@ public abstract class PostProcesser extends RequestProcesser {
 	}
 	
 	/**
-	 * 解析formJsonData数据
-	 * @param formJsonData
-	 * @return 返回null，证明请求的json数据为空
-	 *         否则，返回请求数据的String格式
-	 */
-	private IJson analysisFormData(Object formJsonData){
-		if(StrUtils.isEmpty(formJsonData)){
-			return null;
-		}
-		IJson json = ProcessStringTypeJsonExtend.getIJson(formJsonData.toString());
-		return json;
-	}
-	
-	/**
 	 * 处理请求
 	 */
 	public final boolean doProcess() {
-		json = analysisFormData(requestBody.getFormData());
+		json = requestBody.getFormData();
 		if(json == null){
 			installResponseBodyForSaveData(getProcesserName()+"处理器要保存的formData数据值为null", null, false);
 			return false;

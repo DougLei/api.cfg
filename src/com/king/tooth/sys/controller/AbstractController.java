@@ -6,10 +6,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.JsonUtil;
-import com.king.tooth.util.StrUtils;
 
 /**
  * 控制器的抽象父类
@@ -39,21 +37,20 @@ public abstract class AbstractController {
 	 */
 	protected JSONArray resultJsonArray;
 	
-	private void vaildJsonStrNotNull(String json){
-		if(StrUtils.isEmpty(json)){
+	private void vaildIJsonNotNull(IJson ijson){
+		if(ijson == null || ijson.size() == 0){
 			throw new NullPointerException("操作的数据不能为空");
 		}
 	}
 	
 	/**
 	 * 根据json串，获取对应数据类型实例集合
-	 * @param json
+	 * @param ijson
 	 * @param targetClass
 	 * @return
 	 */
-	protected <T> List<T> getDataInstanceList(String json, Class<T> targetClass){
-		vaildJsonStrNotNull(json);
-		IJson ijson = ProcessStringTypeJsonExtend.getIJson(json);
+	protected <T> List<T> getDataInstanceList(IJson ijson, Class<T> targetClass){
+		vaildIJsonNotNull(ijson);
 		if(ijson.isArray()){
 			resultJsonArray = new JSONArray(ijson.size());
 		}
@@ -68,22 +65,22 @@ public abstract class AbstractController {
 	
 	/**
 	 * 根据json串，获取ijson对象昂
-	 * @param json
+	 * @param ijson
 	 * @return
 	 */
-	protected IJson getIJson(String json){
-		vaildJsonStrNotNull(json);
-		return ProcessStringTypeJsonExtend.getIJson(json);
+	protected IJson getIJson(IJson ijson){
+		vaildIJsonNotNull(ijson);
+		return ijson;
 	}
 	
 	/**
 	 * 根据json串，获取JSONObject对象
-	 * @param json
+	 * @param ijson
 	 * @return
 	 */
-	protected JSONObject getJSONObject(String json){
-		vaildJsonStrNotNull(json);
-		return JsonUtil.parseJsonObject(json);
+	protected JSONObject getJSONObject(IJson ijson){
+		vaildIJsonNotNull(ijson);
+		return ijson.get(0);
 	}
 	
 	/**

@@ -119,7 +119,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 * @param requestUrlParams
 	 */
 	private void setQueryProcesser(Map<String, String> requestUrlParams) {
-		String resultType = requestUrlParams.remove("_resulttype");
+		String resultType = requestUrlParams.remove("_resultType");
 		String select = requestUrlParams.remove("_select");
 		String split = requestUrlParams.remove("_split");
 		queryProcesser = new BuiltinQueryMethodProcesser(resultType, select, split);

@@ -3,20 +3,15 @@ package com.king.tooth.util;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.hibernate.internal.HbmConfPropMetadata;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 资源工具类
@@ -74,10 +69,10 @@ public class ResourceHandlerUtil {
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
 				String currentAccountId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
 				data.put("createUserId", currentAccountId);
-				data.put("lastUpdatedUserId",  currentAccountId);
+				data.put("lastUpdateUserId",  currentAccountId);
 			}else{
 				data.put("createUserId", shortDesc);
-				data.put("lastUpdatedUserId",  shortDesc);
+				data.put("lastUpdateUserId",  shortDesc);
 			}
 		}
 	}
@@ -90,56 +85,16 @@ public class ResourceHandlerUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void initBasicPropValsForUpdate(String entityName, Map<String, Object> data, String shortDesc) {
-		if(!"ComDataLinks".equals(entityName) 
-				&& !entityName.endsWith("Links")){// 不是关系表，才要修改这些值
+		if(!entityName.endsWith("Links")){// 不是关系表，才要修改这些值
 			data.put("lastUpdateDate",  new Date());
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
-				data.put("lastUpdatedUserId",  CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId());
+				data.put("lastUpdateUserId",  CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId());
 			}else{
-				data.put("lastUpdatedUserId",  shortDesc);
+				data.put("lastUpdateUserId",  shortDesc);
 			}
 		}
-	}
-	
-	/**
-	 * 验证要操作的数据的属性名是否和hbm配置定义的属性名一致
-	 * <p>同时校验一下日期类型，如果是日期类型，则要转换为日期类型</p>
-	 * @param resourceName
-	 * @param data
-	 */
-	public static void validDataProp(String resourceName, JSONObject data) {
-		if(resourceName.endsWith("Links")){
-			return;
-		}
-		if(data == null || data.size() == 0){
-			throw new NullPointerException("[ResourceHandlerUtil.validDataProp()]要进行验证的数据对象为null");
-		}
-		
-		JSONObject resultData = new JSONObject(data.size());
-		HbmConfPropMetadata[] hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(resourceName);
-		if(hibernateDefineResourceProps == null){
-			throw new NullPointerException("[ResourceHandlerUtil.validDataProp()]hibernateDefineResourceProps对象为null");
-		}
-		
-		Set<String> reqPropnames = data.keySet();
-		HbmConfPropMetadata propMetadata = null;
-		for (String rpn : reqPropnames) {
-			propMetadata = HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, rpn);
-			if(data.get(rpn) instanceof String){
-				if(BuiltinCodeDataType.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
-					resultData.put(propMetadata.getPropName(), DateUtil.parseDate(data.getString(rpn)));
-				}else{
-					resultData.put(propMetadata.getPropName(), data.getString(rpn));
-				}
-			}else{
-				resultData.put(propMetadata.getPropName(), data.get(rpn));
-			}
-		}
-		data.clear();
-		data.putAll(resultData);
-		resultData.clear();
 	}
 	
 	/**

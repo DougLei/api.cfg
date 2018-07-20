@@ -10,15 +10,15 @@ import com.alibaba.fastjson.annotation.JSONField;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class TextResult implements Serializable {
+public class TextResultEntity implements Serializable {
 	
 	@JSONField(name = "result")
 	private Object result;
 
-	public TextResult(Object result) {
+	public TextResultEntity(Object result) {
 		this.result = result;
 	}
-	public TextResult() {
+	public TextResultEntity() {
 	}
 	public Object getResult() {
 		return result;

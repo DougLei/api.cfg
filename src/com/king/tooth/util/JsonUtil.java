@@ -3,6 +3,7 @@ package com.king.tooth.util;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -100,6 +101,19 @@ public class JsonUtil {
 			throw new NullPointerException("要转换为json对象的data实体对象不能为空");
 		}
 		return (JSONObject) JSONObject.toJSON(data);
+	}
+	
+	/**
+	 * 将对象转换为java对象
+	 * @param json
+	 * @param clz
+	 * @return
+	 */
+	public static <T> T toJavaObject(JSON json, Class<T> clz){
+		if(json == null){
+			throw new NullPointerException("要转换为java对象的json实体对象不能为空");
+		}
+		return JSONObject.toJavaObject(json, clz);
 	}
 
 	/**

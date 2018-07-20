@@ -3,7 +3,7 @@ package com.king.tooth.web.processer.sqlresource.get;
 import org.hibernate.Query;
 
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.web.entity.resulttype.TextResult;
+import com.king.tooth.web.entity.resulttype.TextResultEntity;
 
 /**
  * 处理这种请求路径格式的处理器：/Counter/{resourceType}/{resourceId}
@@ -25,7 +25,7 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 						  getFromSql().toString();
 		Query query = createQuery(0, querySql);
 		long totalCount = (long) query.uniqueResult();
-		TextResult textResult = new TextResult(totalCount);
+		TextResultEntity textResult = new TextResultEntity(totalCount);
 		installResponseBodyForQueryCounter(textResult, true);
 		return true;
 	}

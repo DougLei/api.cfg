@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.service.common.ComUserService;
@@ -23,8 +24,8 @@ public class ComUserController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, String json){
-		List<ComUser> users = getDataInstanceList(json, ComUser.class);
+	public Object add(HttpServletRequest request, IJson ijson){
+		List<ComUser> users = getDataInstanceList(ijson, ComUser.class);
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
@@ -47,8 +48,8 @@ public class ComUserController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, String json){
-		List<ComUser> users = getDataInstanceList(json, ComUser.class);
+	public Object update(HttpServletRequest request, IJson ijson){
+		List<ComUser> users = getDataInstanceList(ijson, ComUser.class);
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
@@ -71,7 +72,7 @@ public class ComUserController extends AbstractController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, String json){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String userIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(userIds)){
 			return "要删除的用户id不能为空";
@@ -93,8 +94,8 @@ public class ComUserController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object openAccount(HttpServletRequest request, String json){
-		List<ComUser> users = getDataInstanceList(json, ComUser.class);
+	public Object openAccount(HttpServletRequest request, IJson ijson){
+		List<ComUser> users = getDataInstanceList(ijson, ComUser.class);
 		if(users.size() == 1){
 			resultObject = userService.openAccount(users.get(0));
 		}else{
@@ -114,8 +115,8 @@ public class ComUserController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object updatePassword(HttpServletRequest request, String json){
-		JSONObject jsonObject = getJSONObject(json);
+	public Object updatePassword(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要修改密码的用户id不能为空";
 		}

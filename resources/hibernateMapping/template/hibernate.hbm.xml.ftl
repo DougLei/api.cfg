@@ -5,7 +5,7 @@
 
 <!-- ${table.resourceName}.hbm.xml config mapping file -->
 <hibernate-mapping>
-	<class entity-name="${table.resourceName}" table="${table.tableName}" dynamic-insert="true">
+	<class entity-name="${table.resourceName}" table="${table.tableName}" dynamic-insert="true" dynamic-update="true">
 		<id name="${id}" column="id" type="string">
 			<generator class="assigned" />
 		</id>
@@ -14,7 +14,13 @@
 			<#if column.propName?lower_case != "id">
 				<property name="${column.propName}" column="${column.columnName}" 
 					<#if column.columnType == "date">
-						type="timestamp"
+						type="org.hibernate.types.sqlserver.Timestamp"
+					<#elseif column.columnType == "boolean">
+						type="org.hibernate.types.sqlserver.Boolean"
+					<#elseif column.columnType == "integer">
+						type="org.hibernate.types.sqlserver.Integer"
+					<#elseif column.columnType == "double">
+						type="org.hibernate.types.sqlserver.Double"
 					<#else>
 						type="string"
 					</#if>

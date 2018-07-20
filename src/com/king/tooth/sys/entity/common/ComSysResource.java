@@ -7,13 +7,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.JsonUtil;
 
 /**
  * 系统资源对象
@@ -98,13 +96,6 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComSysResource";
-	}
-	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("resourceType", resourceType);
-		super.processSysResourceProps(entityJson);
-		return entityJson.getEntityJson();
 	}
 	
 	public void analysisResourceData() {

@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.internal.HbmConfPropMetadata;
-
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -32,12 +28,10 @@ public final class SingleResourceProcesser extends PutProcesser {
 		List<Object> params = new ArrayList<Object>();
 		
 		List<Object> tmpParameters;
-		// 当前更新的资源，在系统中定义的属性名集合
-		HbmConfPropMetadata[] hibernateDefineResourceProps = HibernateUtil.getHibernateDefineResourceProps(requestBody.getRouteBody().getResourceName());
 		// 遍历提交的数据，拼装update语句，更新数据
 		for(int i=0; i < json.size(); i++){
 			updatedJsonObj = json.get(i);
-			updateHql = getUpdateHql(updatedJsonObj, params, hibernateDefineResourceProps).toString();
+			updateHql = getUpdateHql(updatedJsonObj, params).toString();
 			hqlParameterValues.addAll(0, params);// 将set的值，以及where id条件的值一并存储到参数集合，统一调用
 			
 			tmpParameters = new ArrayList<Object>(hqlParameterValues);
@@ -54,7 +48,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 		return true;
 	}
 
-	protected StringBuilder getUpdateHql(JSONObject updatedJsonObj, List<Object> params, HbmConfPropMetadata[] hibernateDefineResourceProps) {
+	protected StringBuilder getUpdateHql(JSONObject updatedJsonObj, List<Object> params) {
 		ResourceHandlerUtil.initBasicPropValsForUpdate(requestBody.getRouteBody().getResourceName(), updatedJsonObj, null);
 		
 		updateHql.setLength(0);
@@ -68,7 +62,6 @@ public final class SingleResourceProcesser extends PutProcesser {
 		
 		Set<String> propsNames = updatedJsonObj.keySet();
 		
-		HbmConfPropMetadata confPropMetadata = null;
 		for (String pn : propsNames) {
 			if(pn.equalsIgnoreCase(ResourceNameConstants.ID)){
 				whereIdHql = " where " + ResourceNameConstants.ID + " = ?";
@@ -79,19 +72,9 @@ public final class SingleResourceProcesser extends PutProcesser {
 				continue;
 			}
 			
-			confPropMetadata = HibernateUtil.getDefinePropMetadata(hibernateDefineResourceProps, pn);
-			updateHql.append(confPropMetadata.getPropName());
+			updateHql.append(pn);
 			updateHql.append(" = ?").append(",");
-			
-			if(updatedJsonObj.get(pn) instanceof String){
-				if(BuiltinCodeDataType.HIBERNATE_TIMESTAMP.equals(confPropMetadata.getPropDataType())){
-					params.add(DateUtil.parseDate(updatedJsonObj.getString(pn)));
-				}else{
-					params.add(updatedJsonObj.getString(pn));
-				}
-			}else{
-				params.add(updatedJsonObj.get(pn));
-			}
+			params.add(updatedJsonObj.get(pn));
 		}
 		updateHql.setLength(updateHql.length()-1);
 		

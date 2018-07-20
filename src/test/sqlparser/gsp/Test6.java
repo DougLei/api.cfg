@@ -1,6 +1,6 @@
 package test.sqlparser.gsp;
 /*
- * Date: 2010-12-10
+ * Timestamp: 2010-12-10
  * Time: 16:24:30
  */
 

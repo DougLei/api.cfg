@@ -8,9 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
-import com.king.tooth.sys.builtin.data.BuiltinDatas;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
@@ -19,7 +18,6 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.CryptographyUtil;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -221,15 +219,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity, IEnti
 		return "ComSysAccount";
 	}
 	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("accountType", accountType);
-		entityJson.put("accountStatus", accountStatus);
-		entityJson.put("validDate", validDate);
-		super.processBasicEntityProps(entityJson);
-		return entityJson.getEntityJson();
-	}
-	
 	/**
 	 * 转换为要发布的基础数据资源对象
 	 * @return
@@ -257,7 +246,7 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity, IEnti
 			}
 			loginPwdKey = ResourceHandlerUtil.getLoginPwdKey();
 			loginPwd = CryptographyUtil.encodeMd5(loginPwd, loginPwdKey);
-			validDate = BuiltinDatas.validDate;
+			validDate = BuiltinInstance.validDate;
 		}
 		return result;
 	}

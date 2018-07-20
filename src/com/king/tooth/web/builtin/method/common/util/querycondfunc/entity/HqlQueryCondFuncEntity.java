@@ -2,12 +2,8 @@ package com.king.tooth.web.builtin.method.common.util.querycondfunc.entity;
 
 import java.io.Serializable;
 
-import org.hibernate.internal.HbmConfPropMetadata;
-
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
-import com.king.tooth.util.DateUtil;
 
 /**
  * hql查询函数参数实体类
@@ -16,17 +12,8 @@ import com.king.tooth.util.DateUtil;
 @SuppressWarnings("serial")
 public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implements Serializable{
 	
-	/**
-	 * 要查询的属性
-	 */
-	private HbmConfPropMetadata propMetadata;
-	
-	public String getPropName() {
-		return propMetadata.getPropName();
-	}
-	
-	public HqlQueryCondFuncEntity(HbmConfPropMetadata propMetadata, String value) {
-		this.propMetadata = propMetadata;
+	public HqlQueryCondFuncEntity(String propName, String value) {
+		this.propName = propName;
 		analysisQueryParams(value);
 	}
 	
@@ -66,12 +53,7 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 			if(tmpVal.startsWith("'") || tmpVal.startsWith("\"")){
 				tmp[i] = tmpVal.substring(1, tmpVal.length()-1);
 			}
-			
-			if(BuiltinCodeDataType.HIBERNATE_TIMESTAMP.equals(propMetadata.getPropDataType())){
-				result[i] = DateUtil.parseDate(tmp[i]+"");
-			}else{
-				result[i] = tmp[i];
-			}
+			result[i] = tmp[i];
 		}
 		this.values = result;
 	}
@@ -81,16 +63,15 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 	 * 有什么其他，可以自行向里面添加
 	 */
 	private void processSpecialThings() {
-		// 1.如果propName为_ids，则必须把propName改为SystemConstants.ID
-		// key=_ids是客户端请求传递过来的，属于平台内置处理的功能
-		if(this.propMetadata.getPropName().equals(BuiltinParametersKeys._IDS)){
-			this.propMetadata.setPropName(ResourceNameConstants.ID);
-		}
+		/* 
+		   1.如果propName为_ids，则必须把propName改为SystemConstants.ID
+		   key=_ids是客户端请求传递过来的，属于平台内置处理的功能
 		
-		// 2.如果propName为_resourceid，则必须把propName改为SystemConstants.ID
-		// 这个key值来自      @see PlatformServlet.processSpecialData()
-		if(this.propMetadata.getPropName().equals(BuiltinParametersKeys.RESOURCE_ID)){
-			this.propMetadata.setPropName(ResourceNameConstants.ID);
+		   2.如果propName为_resourceid，则必须把propName改为SystemConstants.ID
+		      这个key值来自      @see PlatformServlet.processSpecialData()
+		*/
+		if(this.propName.equals(BuiltinParametersKeys._IDS) || this.propName.equals(BuiltinParametersKeys.RESOURCE_ID)){
+			this.propName = ResourceNameConstants.ID;
 		}
 		
 		// 3.如果ne方法，有多个值，则改为调用!in的方法，这个可以提高效率

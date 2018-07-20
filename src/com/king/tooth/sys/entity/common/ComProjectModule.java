@@ -3,18 +3,15 @@ package com.king.tooth.sys.entity.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -216,13 +213,6 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComProjectModule";
-	}
-	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("orderCode", orderCode);
-		super.processSysResourceProps(entityJson);
-		return entityJson.getEntityJson();
 	}
 	
 	public ComSysResource turnToResource() {

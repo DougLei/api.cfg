@@ -12,7 +12,7 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinDatas;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.common.ComProject;
@@ -103,7 +103,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	public String deleteProject(String projectId) {
-		if(BuiltinDatas.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+		if(BuiltinInstance.currentSysBuiltinProjectInstance.getId().equals(projectId)){
 			return "禁止删除内置的项目信息";
 		}
 		ComProject oldProject = getObjectById(projectId, ComProject.class);
@@ -150,7 +150,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	private String publishProject(String projectId){
-		if(BuiltinDatas.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+		if(BuiltinInstance.currentSysBuiltinProjectInstance.getId().equals(projectId)){
 			return "无法发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
@@ -225,7 +225,7 @@ public class ComProjectService extends AbstractPublishService {
 				}
 				
 				result = usePublishResourceApi(projectId, projectId, "project", "1", 
-						BuiltinDatas.currentSysBuiltinProjectInstance.getId());
+						BuiltinInstance.currentSysBuiltinProjectInstance.getId());
 			}
 		}
 		return result;
@@ -237,7 +237,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return
 	 */
 	private String cancelPublishProject(String projectId){
-		if(BuiltinDatas.currentSysBuiltinProjectInstance.getId().equals(projectId)){
+		if(BuiltinInstance.currentSysBuiltinProjectInstance.getId().equals(projectId)){
 			return "无法取消发布配置系统项目";
 		}
 		ComProject project = getObjectById(projectId, ComProject.class);
@@ -299,7 +299,7 @@ public class ComProjectService extends AbstractPublishService {
 			}
 			
 			result = usePublishResourceApi(projectId, projectId, "project", "-1", 
-					BuiltinDatas.currentSysBuiltinProjectInstance.getId());
+					BuiltinInstance.currentSysBuiltinProjectInstance.getId());
 		}
 		return result;
 	}

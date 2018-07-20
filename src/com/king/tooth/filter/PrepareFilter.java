@@ -16,6 +16,7 @@ import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -63,7 +64,13 @@ public class PrepareFilter extends AbstractFilter{
 			printResult(errMsg, resp, false);
 		}finally{
 			HibernateUtil.closeCurrentThreadSession();
+			
 			CurrentThreadContext.clearCurrentThreadData();
+			
+			RequestBody requestBody = (RequestBody) req.getAttribute(BuiltinParametersKeys._REQUEST_BODY_KEY);
+			if(requestBody != null){
+				requestBody.clear();
+			}
 		}
 	}
 

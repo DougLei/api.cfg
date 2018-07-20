@@ -14,7 +14,7 @@ import com.king.tooth.web.builtin.method.tableresource.sort.BuiltinSortMethodPro
 import com.king.tooth.web.builtin.method.tableresource.sublist.BuiltinSublistMethodProcesser;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
-import com.king.tooth.web.entity.resulttype.TextResult;
+import com.king.tooth.web.entity.resulttype.TextResultEntity;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
 
 /**
@@ -194,7 +194,7 @@ public abstract class GetProcesser extends RequestProcesser {
 	 * @param textResult 
 	 * @param isSuccess 
 	 */
-	protected final void installResponseBodyForQueryCounter(TextResult textResult, boolean isSuccess){
+	protected final void installResponseBodyForQueryCounter(TextResultEntity textResult, boolean isSuccess){
 		ResponseBody responseBody = new ResponseBody(textResult, isSuccess);;
 		setResponseBody(responseBody);
 	}

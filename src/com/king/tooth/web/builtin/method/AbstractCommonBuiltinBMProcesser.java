@@ -40,7 +40,7 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 	 * @param requestUrlParams
 	 */
 	protected void setFocusedIdProcesser(Map<String, String> requestUrlParams) {
-		String focusedId = requestUrlParams.remove("_focusedid");
+		String focusedId = requestUrlParams.remove("_focusedId");
 		if(StrUtils.notEmpty(focusedId)){
 			focusedIdProcesser = new BuiltinFocusedIdMethodProcesser(focusedId);
 		}

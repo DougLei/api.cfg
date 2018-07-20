@@ -85,13 +85,7 @@ public class ProcesserConfig implements Serializable{
 		}
 		
 		adapterIdentity += "_" + requestBody.getRequestMethod();
-		
-		// 判断如果是主子资源，则requestBody的requestResourceType的值要写成固定值：1
-		if(requestBody.getRequestParentResourceType() == null){// 为空，标识请求的是单资源
-			adapterIdentity += "_" + requestBody.getRequestResourceType();
-		}else{
-			adapterIdentity += "_1";// 目前sql脚本也不支持主子资源的方式调用，所以这里可以这样判断
-		}
+		adapterIdentity += "_" + requestBody.getResourceInfo().getResourceType();
 		return adapterIdentity.toString();
 	}
 }

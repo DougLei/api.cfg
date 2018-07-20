@@ -100,22 +100,9 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 		json.put("lastUpdateDate", publishDate);
 		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
 		json.put("createUserId", userId);
-		json.put("lastUpdatedUserId", userId);
+		json.put("lastUpdateUserId", userId);
 	}
 	
-	/**
-	 * 处理资源对象的属性
-	 * @param entityJson
-	 */
-	protected void processSysResourceProps(EntityJson entityJson){
-		super.processBasicEntityProps(entityJson);
-		entityJson.put("isEnabled", isEnabled);
-		entityJson.put("isBuiltin", isBuiltin);
-		entityJson.put("isNeedDeploy", isNeedDeploy);
-		entityJson.put("belongPlatformType", belongPlatformType);
-		entityJson.put("isCreated", isCreated);
-	}
-
 	public Integer getIsEnabled() {
 		return isEnabled;
 	}

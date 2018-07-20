@@ -536,8 +536,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 		this.currentTenantIdentifierResolver = determineCurrentTenantIdentifierResolver( cfg.getCurrentTenantIdentifierResolver() );
 		this.transactionEnvironment = new TransactionEnvironmentImpl( this );
 		this.observer.sessionFactoryCreated( this );
-		
-		appendToHibernateDefineResourcePropNameMap(classMeta, false);
 	}
 
 	private JdbcConnectionAccess buildLocalConnectionAccess() {
@@ -1812,7 +1810,7 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 * @return 新添加的映射文件集合 
 	 *         Map<String,ClassMetadata>  classMeta
 	 */
-	private Map<String,ClassMetadata> appendNewHbmConfig(Configuration cfg){
+	private void appendNewHbmConfig(Configuration cfg){
 		Log4jUtil.debug("add new config .....");
 		cfg.buildMappings();
 		Mapping mapping = cfg.buildMapping();
@@ -2067,19 +2065,7 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 		this.currentTenantIdentifierResolver = determineCurrentTenantIdentifierResolver( cfg.getCurrentTenantIdentifierResolver() );
 		this.transactionEnvironment = new TransactionEnvironmentImpl( this );
 		this.observer.sessionFactoryCreated(this);
-		
-		return classMeta;
 	}  
-	
-	
-	/**
-	 * <pre>
-	 *   hibernate每个映射配置文件中entity-name和property数组的缓存
-	 *   	将hibernate映射配置文件中每个entity-name和对应的所有属性名数组，存储到这个map中，方便后续调用
-	 *   	例如可以根据实体类名，即资源名(entity-name)，获取hibernate映射文件中，配置定义的属性信息集合，然后校验前段传过来的属性名是否匹配，不匹配则修改为映射配置文件中的
-	 * </pre>
-	 */
-	private transient final Map<String, HbmConfPropMetadata[]> hibernateDefineResourcePropNameMap = new HashMap<String, HbmConfPropMetadata[]>();
 	
 	/**
 	 * <pre>
@@ -2103,61 +2089,13 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 			return;
 		}
 		Configuration cfg = new Configuration();
-		int count = 0;
 		for (InputStream in : input) {
 			if(in == null){
 				break;
 			}
-			count++;
 			cfg.addInputStream(in);
 		}
-		if(count > 0){
-			Map<String, ClassMetadata> newMappingConfClassMetadata = appendNewHbmConfig(cfg);
-			appendToHibernateDefineResourcePropNameMap(newMappingConfClassMetadata, true);
-		}
-	}
-	
-	/**
-	 * 将新追加入系统的hibernate配置映射文件元数据，加入到hibernateDefineResourcePropNameMap缓存中
-	 * @param mappingConfClassMetadata
-	 * @param clearMappingConfClassMetadata 是否清空上一个参数，mappingConfClassMetadata
-	 */
-	private void appendToHibernateDefineResourcePropNameMap(Map<String, ClassMetadata> mappingConfClassMetadata, boolean clearMappingConfClassMetadata) {
-		if(mappingConfClassMetadata != null && mappingConfClassMetadata.size() > 0){
-			ClassMetadata tmpClassMetadata = null;
-			String[] propnames = null;
-			HbmConfPropMetadata[] hbmConfClassMetadatas = null;
-			Set<String> keys = mappingConfClassMetadata.keySet();
-			for (String resourceName : keys) {
-				if(resourceName.endsWith("Links")){// 如果是关系资源，则要加入到hibernateDataLinkResourceNameList缓存中
-					hibernateDataLinkResourceNameList.add(resourceName);
-					continue;
-				}
-				
-				tmpClassMetadata = mappingConfClassMetadata.get(resourceName);
-				propnames = tmpClassMetadata.getPropertyNames();
-				hbmConfClassMetadatas = new HbmConfPropMetadata[propnames.length];
-				for (int i = 0; i < propnames.length; i++) {
-					hbmConfClassMetadatas[i] = new HbmConfPropMetadata(propnames[i], tmpClassMetadata.getPropertyType(propnames[i]).getName());
-				}
-				hibernateDefineResourcePropNameMap.put(resourceName, hbmConfClassMetadatas);
-			}
-			if(clearMappingConfClassMetadata){
-				mappingConfClassMetadata.clear();
-			}
-		}
-	}
-
-	/**
-	 * 根据实体类名，即资源名，获取hibernate映射文件中，配置定义的属性信息集合
-	 * @param resourceName
-	 * @return
-	 */
-	public HbmConfPropMetadata[] getHibernateDefineResourceProps(String resourceName) {
-		if(hibernateDefineResourcePropNameMap.containsKey(resourceName)){
-			return hibernateDefineResourcePropNameMap.get(resourceName);
-		}
-		throw new NullPointerException("在hibernate映射配置文件中，没有找到 entity-name为 [ " + resourceName + " ] 的资源");
+		appendNewHbmConfig(cfg);
 	}
 	
 	/**
@@ -2168,7 +2106,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 */
 	public void reloadHibernateDefineResourcePropName(){
 		clearCache();
-		appendToHibernateDefineResourcePropNameMap(classMetadata, false);
 	}
 	
 	/**
@@ -2187,9 +2124,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 * 清除DougLei在SessionFactoryImpl类中添加的缓存
 	 */
 	private void clearCache() {
-		if(hibernateDefineResourcePropNameMap != null && hibernateDefineResourcePropNameMap.size() > 0){
-			hibernateDefineResourcePropNameMap.clear();
-		}
 		if(hibernateDataLinkResourceNameList != null && hibernateDataLinkResourceNameList.size() > 0){
 			hibernateDataLinkResourceNameList.clear();
 		}
@@ -2278,7 +2212,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 				break;
 			}
 			classMetadata.remove(resourceName);
-			hibernateDefineResourcePropNameMap.remove(resourceName);
 			hibernateDataLinkResourceNameList.remove(resourceName);
 		}
 	}

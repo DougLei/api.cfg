@@ -3,16 +3,13 @@ package com.king.tooth.sys.entity.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
@@ -349,16 +346,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return "ComTabledata";
 	}
 	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("tableType", tableType);
-		entityJson.put("isHavaDatalink", isHavaDatalink);
-		entityJson.put("isCore", isCore);
-		entityJson.put("isResource", isResource);
-		super.processSysResourceProps(entityJson);
-		return entityJson.getEntityJson();
-	}
-	
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(tableName)){
 			return "表名不能为空！";
@@ -372,7 +359,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
-			this.tableName = tableName.trim();
+			this.tableName = tableName.trim().toUpperCase();
 			this.resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
 			
 			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 1 && this.tableName.length() > 30){

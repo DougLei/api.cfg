@@ -101,16 +101,6 @@
 			<url-pattern>/common/*</url-pattern>
 		</filter-mapping>
 		
-		<!-- 配置处理结果集，各个值的过滤器 -->
-		<filter>
-			<filter-name>processValuesFilter</filter-name>
-			<filter-class>com.king.tooth.filter.ProcessValuesFilter</filter-class>
-		</filter>
-		<filter-mapping>
-			<filter-name>processValuesFilter</filter-name>
-			<url-pattern>/common/*</url-pattern>
-		</filter-mapping>
-		
 <!-- ****************************************************************************************************  -->		
 		
 		<!-- 名为common的servlet通用控制器 -->

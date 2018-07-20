@@ -6,19 +6,16 @@ import java.util.List;
 
 import oracle.jdbc.OracleTypes;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
@@ -210,17 +207,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		return "ComSqlScriptParameter";
 	}
 
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("length", length);
-		entityJson.put("parameterFrom", parameterFrom);
-		entityJson.put("isPlaceholder", isPlaceholder);
-		entityJson.put("inOut", inOut);
-		entityJson.put("orderCode", orderCode);
-		super.processBasicEntityProps(entityJson);
-		return entityJson.getEntityJson();
-	}
-
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT_PARAMETER", 0);
 		table.setName("sql脚本的参数资源对象表");
@@ -337,7 +323,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			}else if("number".equalsIgnoreCase(parameterDataType)){
 				return OracleTypes.NUMBER;
 			}else if("date".equalsIgnoreCase(parameterDataType)){
-				return OracleTypes.DATE;
+				return OracleTypes.TIMESTAMP;
 			}
 			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+parameterDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
 		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
@@ -350,7 +336,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			}else if("decimal".equalsIgnoreCase(parameterDataType)){
 				return Types.DECIMAL;
 			}else if("datetime".equalsIgnoreCase(parameterDataType)){
-				return Types.DATE;
+				return Types.TIMESTAMP;
 			}
 			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+parameterDataType+"]数据类型转换，请联系管理员");
 		}

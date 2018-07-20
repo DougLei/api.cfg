@@ -113,7 +113,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 * @param requestUrlParams
 	 */
 	private void setQueryProcesser(Map<String, String> requestUrlParams) {
-		String resultType = requestUrlParams.remove("_resulttype");
+		String resultType = requestUrlParams.remove("_resultType");
 		String select = requestUrlParams.remove("_select");
 		String split = requestUrlParams.remove("_split");
 		queryProcesser = new BuiltinQueryMethodProcesser(resultType, select, split);
@@ -136,9 +136,9 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 * @param hqlParameterValues hql参数值集合
 	 */
 	public void setSublistMethodProcesser(Map<String, String> requestUrlParams) {
-		String subResourceName = requestUrlParams.remove("_subresourcename");
-		String refPropName = requestUrlParams.get("_refpropname");
-		String subSort = requestUrlParams.remove("_subsort");
+		String subResourceName = requestUrlParams.remove("_subResourceName");
+		String refPropName = requestUrlParams.get("_refPropName");
+		String subSort = requestUrlParams.remove("_subSort");
 		if(StrUtils.notEmpty(subResourceName)){
 			sublistMethodProcesser = new BuiltinSublistMethodProcesser(subResourceName, refPropName, subSort);
 		}
@@ -179,8 +179,8 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 * @param hqlParameterValues hql参数值集合
 	 */
 	private void setParentsubQueryMethodProcesser(Map<String, String> requestUrlParams, List<Object> hqlParameterValues) {
-		String isSimpleParentSubQueryModel = requestUrlParams.remove("_simplemodel");
-		String refPropName = requestUrlParams.remove("_refpropname");
+		String isSimpleParentSubQueryModel = requestUrlParams.remove("_simpleModel");
+		String refPropName = requestUrlParams.remove("_refPropName");
 		if(StrUtils.notEmpty(parentResourceId) && StrUtils.notEmpty(parentResourceName)){
 			
 			Map<String, String> parentResourceQueryCond = null;

@@ -3,17 +3,14 @@ package com.king.tooth.sys.entity.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.common.ComSysResource;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -340,20 +337,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		return "ComColumndata";
 	}
 	
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		entityJson.put("length", length);
-		entityJson.put("precision", precision);
-		entityJson.put("isPrimaryKey", isPrimaryKey);
-		entityJson.put("isUnique", isUnique);
-		entityJson.put("isNullabled", isNullabled);
-		entityJson.put("isDataDictionary", isDataDictionary);
-		entityJson.put("isEnabled", isEnabled);
-		entityJson.put("orderCode", orderCode);
-		super.processBasicEntityProps(entityJson);
-		return entityJson.getEntityJson();
-	}
-	
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(columnName)){
 			return "字段名不能为空！";
@@ -370,7 +353,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
-			this.columnName = columnName.trim();
+			this.columnName = columnName.trim().toUpperCase();
 			this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
 		}
 		return result;

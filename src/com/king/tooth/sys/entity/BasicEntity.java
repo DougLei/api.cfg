@@ -3,8 +3,10 @@ package com.king.tooth.sys.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 基础实体类资源对象
@@ -36,22 +38,15 @@ public class BasicEntity implements Serializable{
 	/**
 	 * 最后修改人主键
 	 */
-	protected String lastUpdatedUserId;
+	protected String lastUpdateUserId;
 	/**
 	 * 最后修改时间
 	 */
 	protected Date lastUpdateDate;
 	
-	/**
-	 * 处理基础资源对象的属性
-	 * @param entityJson
-	 */
-	protected void processBasicEntityProps(EntityJson entityJson){
-		entityJson.put(ResourceNameConstants.ID, id);
-		entityJson.put("createDate", createDate);
-		entityJson.put("lastUpdateDate", lastUpdateDate);
+	public JSONObject toEntityJson() {
+		return JsonUtil.toJsonObject(this);
 	}
-	
 	
 	public String getId() {
 		return id;
@@ -71,11 +66,11 @@ public class BasicEntity implements Serializable{
 	public void setCreateUserId(String createUserId) {
 		this.createUserId = createUserId;
 	}
-	public String getLastUpdatedUserId() {
-		return lastUpdatedUserId;
+	public String getLastUpdateUserId() {
+		return lastUpdateUserId;
 	}
-	public void setLastUpdatedUserId(String lastUpdatedUserId) {
-		this.lastUpdatedUserId = lastUpdatedUserId;
+	public void setLastUpdateUserId(String lastUpdateUserId) {
+		this.lastUpdateUserId = lastUpdateUserId;
 	}
 	public Date getCreateDate() {
 		return createDate;
@@ -90,6 +85,9 @@ public class BasicEntity implements Serializable{
 		this.lastUpdateDate = lastUpdateDate;
 	}
 	public String getCustomerId() {
+		if(StrUtils.isEmpty(customerId)){
+			customerId = "unknow";
+		}
 		return customerId;
 	}
 	public void setCustomerId(String customerId) {

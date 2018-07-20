@@ -9,11 +9,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.EntityJson;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.util.JsonUtil;
 
 /**
  * 要发布的基础数据资源对象
@@ -75,7 +73,7 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 		JSONObject json = new JSONObject(tmpJson.size()+1);
 		Set<String> keys = tmpJson.keySet();
 		for (String key : keys) {
-			if(key.endsWith("Date")){
+			if(key.endsWith("Timestamp")){
 				json.put(key, tmpJson.getDate(key));
 			}else{
 				json.put(key, tmpJson.getString(key));
@@ -84,7 +82,7 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 		tmpJson.clear();
 		json.put("projectId", projectId);
 		json.put("createUserId", currentUserId);
-		json.put("lastUpdatedUserId", currentUserId);
+		json.put("lastUpdateUserId", currentUserId);
 		json.put("createDate", currentDate);
 		json.put("lastUpdateDate", currentDate);
 		return json;
@@ -131,12 +129,5 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ComPublishBasicData";
-	}
-
-	public JSONObject toEntityJson() {
-		EntityJson entityJson = new EntityJson(JsonUtil.toJsonObject(this));
-		super.processBasicEntityProps(entityJson);
-		entityJson.put("belongPlatformType", belongPlatformType);
-		return entityJson.getEntityJson();
 	}
 }
