@@ -38,7 +38,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		if(varifyResultMessage != null){
 			// 登录验证失败时，尝试移除传递的token和对应项目id的映射缓存
 			TokenRefProjectIdMapping.removeMapping(token);
-			printResult(varifyResultMessage, resp, true);
+			installFailResponseBody(req, varifyResultMessage);
 		}else{
 			chain.doFilter(req, resp);
 		}
@@ -80,7 +80,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		
 		// 修改最后的操作时间
 		onlineStatus.setLastOperDate(new Date());
-		HibernateUtil.updateObject(onlineStatus, null);
+		HibernateUtil.updateObjectByHql(onlineStatus, null);
 		return null;
 	}
 

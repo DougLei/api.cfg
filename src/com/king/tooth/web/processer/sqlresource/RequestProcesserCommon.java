@@ -8,7 +8,6 @@ import org.hibernate.Query;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.sqlresource.BuiltinSqlResourceBMProcesser;
@@ -83,23 +82,25 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 */
 	protected final void doModifyProcess(String sqlDesc){
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		
 		if(sqlScript.getSqlScriptType().equals(BuiltinDatabaseData.PROCEDURE)){// 是存储过程
 			JSONObject json = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getProcedureName(), sqlScript.getSqlScriptParameterList());
 			setResponseBody(new ResponseBody(json, true));
+			return;
+		}
+		
+		String[] modifySqlArr = sqlScript.getFinalSqlScript().getFinalModifySqlArr();
+		int len = modifySqlArr.length;
+		Query query;
+		for (int i = 0; i < len; i++) {
+			query = createQuery(i, modifySqlArr[i]);
+			query.executeUpdate();
+		}
+		
+		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
+			setResponseBody(new ResponseBody(null, true));
 		}else{
-			String[] modifySqlArr = sqlScript.getFinalSqlScript().getFinalModifySqlArr();
-			int len = modifySqlArr.length;
-			Query query;
-			for (int i = 0; i < len; i++) {
-				query = createQuery(i, modifySqlArr[i]);
-				query.executeUpdate();
-			}
-			
-			if(requestBody.getFormData() == null){
-				setResponseBody(new ResponseBody(null, null, true));
-			}else{
-				setResponseBody(new ResponseBody(null, JsonUtil.parseJsonObject(requestBody.getFormData().toString()), true));
-			}
+			setResponseBody(new ResponseBody(requestBody.getFormData().get(0), true));
 		}
 	}
 	

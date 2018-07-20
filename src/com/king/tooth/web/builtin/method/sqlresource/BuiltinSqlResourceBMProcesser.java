@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
@@ -43,7 +44,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	/**
 	 * 请求体
 	 */
-	private Object requestFormData;
+	private IJson formData;
 	
 	/**
 	 * 解析请求的url参数集合
@@ -108,7 +109,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 */
 	public void setSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
 		Map<String, String> sqlScriptParams = analysisSqlScriptParam(reqSqlScriptResource, requestUrlParams);
-		sqlScriptMethodProcesser = new BuiltinSqlScriptMethodProcesser(reqSqlScriptResource, sqlScriptParams, requestFormData);
+		sqlScriptMethodProcesser = new BuiltinSqlScriptMethodProcesser(reqSqlScriptResource, sqlScriptParams, formData);
 		sqlScriptMethodProcesser.setResourceName(resourceName);
 		sqlScriptMethodProcesser.setParentResourceName(parentResourceName);
 		sqlScriptMethodProcesser.setSqlParameterValues(sqlParameterValues);
@@ -158,12 +159,12 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 * @param sqlParameterValues sql参数值集合
 	 * @param requestFormData
 	 */
-	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, Object requestFormData, List<List<Object>> sqlParameterValues){
+	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, IJson formData, List<List<Object>> sqlParameterValues){
 		// 这三个key值来自      @see PlatformServlet.processSpecialData()
 		this.resourceName = requestUrlParams.remove(BuiltinParametersKeys.RESOURCE_NAME);
 		this.parentResourceName = requestUrlParams.remove(BuiltinParametersKeys.PARENT_RESOURCE_NAME);
 		this.parentResourceId = requestUrlParams.remove(BuiltinParametersKeys.PARENT_RESOURCE_ID);
-		this.requestFormData = requestFormData;
+		this.formData = formData;
 		
 		analysisRequestUrlParams(reqSqlScriptResource, requestUrlParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
 	}

@@ -6,11 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.sqlresource.AbstractSqlResourceBuiltinMethodProcesser;
 
@@ -29,18 +28,18 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	/**
 	 * 请求体
 	 */
-	private Object requestFormData;
+	private IJson formData;
 	
 	/**
 	 * sql脚本资源
 	 */
 	private ComSqlScript sqlScriptResource;
 
-	public BuiltinSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> sqlScriptParams, Object requestFormData) {
+	public BuiltinSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> sqlScriptParams, IJson formData) {
 		super.isUsed = true;
 		this.sqlScriptResource = reqSqlScriptResource;
 		this.sqlScriptParams = sqlScriptParams;
-		this.requestFormData = requestFormData;
+		this.formData = formData;
 	}
 
 	public BuiltinSqlScriptMethodProcesser() {
@@ -56,7 +55,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		ComSqlScriptParameter ssp = null;
 		
 		// 请求体为空，那么是从url传参，则是get请求select sql资源
-		if(StrUtils.isEmpty(requestFormData) && sqlScriptParams != null && sqlScriptParams.size() > 0){
+		if((formData == null || formData.size() == 0) && sqlScriptParams != null && sqlScriptParams.size() > 0){
 			// 解析sql脚本的参数
 			sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(sqlScriptParams.size());
 			
@@ -71,7 +70,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		}
 		// 否则就是通过请求体传参，则是post/put/delete insert/update/delete 等sql资源
 		else{
-			JSONObject json = JsonUtil.parseJsonObject(requestFormData.toString());
+			JSONObject json = formData.get(0);
 			if(json != null && json.size()>0){
 				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(json.size());
 				
@@ -81,8 +80,6 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 					ssp.setActualInValue(json.getString(parameterName).trim());
 					sqlScriptActualParameters.add(ssp);
 				}
-				
-				json.clear();
 			}
 		}
 		return sqlScriptActualParameters;

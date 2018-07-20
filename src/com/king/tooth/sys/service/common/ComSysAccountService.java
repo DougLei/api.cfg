@@ -72,7 +72,7 @@ public class ComSysAccountService extends AbstractService{
 		if(accountOnlineStatus.getIsSave()){
 			HibernateUtil.saveObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}else{
-			HibernateUtil.updateObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
+			HibernateUtil.updateObjectByHql(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}
 		return accountOnlineStatus;
 	}
@@ -120,12 +120,14 @@ public class ComSysAccountService extends AbstractService{
 		}
 		
 		processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
+		accountOnlineStatus.setLastOperDate(new Date());
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
 		accountOnlineStatus.setLoginDate(new Date());
 		accountOnlineStatus.setTryLoginTimes(0);
 		accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
 		if(SysConfig.isConfSys){
-			accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");// 这里先写成固定值
+			// TODO 这里暂时写成固定值
+			accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
 		}
 		return accountOnlineStatus;
 	}
@@ -137,9 +139,10 @@ public class ComSysAccountService extends AbstractService{
 	 * @return
 	 */
 	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
-		// 暂时屏蔽
+		// TODO 暂时屏蔽
 //		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where (loginIp = ? or currentAccountName = ?) and projectId = ?";
 //		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
+		
 		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and currentAccountName = ? and projectId = ?";
 		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
 		if(onlineStatus == null){
@@ -157,6 +160,7 @@ public class ComSysAccountService extends AbstractService{
 				onlineStatus.setTryLoginTimes(onlineStatus.getTryLoginTimes() + 1);	
 			}
 		}
+		
 		onlineStatus.setLoginIp(loginIp);
 		onlineStatus.setCurrentAccountName(accountName);
 		onlineStatus.setIsError(1);// 一开始标识为有错误

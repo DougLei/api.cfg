@@ -36,9 +36,7 @@ public class ComSysAccountController extends AbstractController{
 		ComSysAccount account = JsonUtil.toJavaObject(ijson.get(0), ComSysAccount.class);
 		ComSysAccountOnlineStatus accountOnlineStatus = accountService.login(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
-			JSONObject jsonObject = new JSONObject(1);
-			jsonObject.put("errMessage", accountOnlineStatus.getMessage());
-			resultObject = jsonObject;
+			resultObject = accountOnlineStatus.getMessage();
 		}else{
 			// 登录成功时，记录token和项目id的关系
 			TokenRefProjectIdMapping.setTokenRefProjMapping(accountOnlineStatus.getToken(), CurrentThreadContext.getProjectId());

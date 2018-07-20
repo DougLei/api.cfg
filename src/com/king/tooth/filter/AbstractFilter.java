@@ -1,12 +1,9 @@
 package com.king.tooth.filter;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import javax.servlet.Filter;
-import javax.servlet.ServletResponse;
+import javax.servlet.ServletRequest;
 
-import com.king.tooth.util.CloseUtil;
+import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -16,28 +13,14 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 public abstract class AbstractFilter implements Filter{
 	
 	/**
-	 * 打印结果
+	 * 组装失败的responseBody
+	 * @param request
 	 * @param message
-	 * @param resp
 	 * @param isSuccess
-	 * @throws IOException 
 	 */
-	protected void printResult(String message, ServletResponse resp, boolean isSuccess) throws IOException{
-		ResponseBody responseBody = new ResponseBody(message, null, isSuccess);
-		PrintWriter out = resp.getWriter();
-		out.write(responseBody.toStrings());
-		CloseUtil.closeIO(out);
-	}
-	
-	/**
-	 * 打印结果
-	 * @param resp
-	 * @param responseBody
-	 * @throws IOException 
-	 */
-	protected void printResult(ServletResponse resp, ResponseBody responseBody) throws IOException {
-		PrintWriter out = resp.getWriter();
-		out.write(responseBody.toStrings());
-		CloseUtil.closeIO(out);
+	protected void installFailResponseBody(ServletRequest request, String message){
+		ResponseBody responseBody = new ResponseBody();
+		responseBody.setMessage(message);
+		request.setAttribute(BuiltinParametersKeys._RESPONSE_BODY_KEY, responseBody);
 	}
 }

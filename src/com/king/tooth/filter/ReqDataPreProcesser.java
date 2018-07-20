@@ -34,7 +34,7 @@ public class ReqDataPreProcesser extends AbstractFilter{
 		HttpServletRequest request = (HttpServletRequest) req;
 		RequestBody requestBody = analysisRequestBody(request);
 		if(requestBody == null){
-			printResult("[ReqDataPreProcesser]解析请求体(requestBody)解析结果为null，请联系系统开发人员", resp, false);
+			installFailResponseBody(req, "[ReqDataPreProcesser]解析请求体(requestBody)解析结果为null，请联系系统开发人员");
 		}else{
 			request.setAttribute(BuiltinParametersKeys._REQUEST_BODY_KEY, requestBody);
 			chain.doFilter(req, resp);

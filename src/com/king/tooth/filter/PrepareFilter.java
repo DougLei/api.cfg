@@ -1,6 +1,7 @@
 package com.king.tooth.filter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
+import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -38,11 +40,12 @@ public class PrepareFilter extends AbstractFilter{
 		String token = request.getHeader("_token");
 		String projectId;
 		if(StrUtils.isEmpty(token)){
+			// TODO 这里暂时写成固定值
 			projectId = "90621e37b806o6fe8538c5eb782901bb";
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
 			if(StrUtils.isEmpty(projectId)){
-				printResult("token无效，请先登录", resp, true);
+				printResult("token无效，请先登录", resp, false);
 				return;
 			}
 		}
@@ -73,7 +76,7 @@ public class PrepareFilter extends AbstractFilter{
 			}
 		}
 	}
-
+	
 	/**
 	 * 处理最终的响应体
 	 * @param responseBody
@@ -89,6 +92,32 @@ public class PrepareFilter extends AbstractFilter{
 			HibernateUtil.rollbackTransaction();
 		}
 		printResult(resp, responseBody);
+	}
+	
+	/**
+	 * 打印结果
+	 * @param message
+	 * @param resp
+	 * @param isSuccess
+	 * @throws IOException 
+	 */
+	private void printResult(String message, ServletResponse resp, boolean isSuccess) throws IOException{
+		ResponseBody responseBody = new ResponseBody(message, null, isSuccess);
+		PrintWriter out = resp.getWriter();
+		out.write(responseBody.toStrings());
+		CloseUtil.closeIO(out);
+	}
+	
+	/**
+	 * 打印结果
+	 * @param resp
+	 * @param responseBody
+	 * @throws IOException 
+	 */
+	private void printResult(ServletResponse resp, ResponseBody responseBody) throws IOException {
+		PrintWriter out = resp.getWriter();
+		out.write(responseBody.toStrings());
+		CloseUtil.closeIO(out);
 	}
 
 	public void init(FilterConfig arg0) throws ServletException {

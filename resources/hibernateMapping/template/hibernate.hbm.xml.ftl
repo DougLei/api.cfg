@@ -5,7 +5,7 @@
 
 <!-- ${table.resourceName}.hbm.xml config mapping file -->
 <hibernate-mapping>
-	<class entity-name="${table.resourceName}" table="${table.tableName}" dynamic-insert="true" dynamic-update="true">
+	<class entity-name="${table.resourceName}" table="${table.tableName}" dynamic-insert="true">
 		<id name="${id}" column="id" type="string">
 			<generator class="assigned" />
 		</id>
