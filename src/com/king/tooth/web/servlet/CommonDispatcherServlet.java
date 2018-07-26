@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.king.tooth.cache.CodeResourceMapping;
-import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.IRequestProcesser;
@@ -24,7 +24,7 @@ import com.king.tooth.web.processer.ProcesserConfig;
 public class CommonDispatcherServlet extends HttpServlet implements Serializable{
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestBody requestBody = (RequestBody) request.getAttribute(BuiltinParametersKeys._REQUEST_BODY_KEY);
+		RequestBody requestBody = (RequestBody) request.getAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY);
 		
 		ResponseBody responseBody = null;
 		if(requestBody.getResourceInfo().isCodeResource()){
@@ -38,6 +38,6 @@ public class CommonDispatcherServlet extends HttpServlet implements Serializable
 			IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
 			responseBody = process.doRequestProcess();
 		}
-		request.setAttribute(BuiltinParametersKeys._RESPONSE_BODY_KEY, responseBody);
+		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
 	}
 }

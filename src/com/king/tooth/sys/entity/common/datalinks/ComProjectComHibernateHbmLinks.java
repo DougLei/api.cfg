@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.app.datalinks;
+package com.king.tooth.sys.entity.common.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +24,8 @@ public class ComProjectComHibernateHbmLinks implements Serializable, ITable {
 		table.setComments("项目和hbm的关系表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(6);

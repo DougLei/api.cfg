@@ -205,41 +205,46 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return
 	 */
 	public String buildModel(String tableId){
-		ComTabledata table = getObjectById(tableId, ComTabledata.class);
-		if(table.getIsCreated() == 1){
-			cancelBuildModel(table);
+		try {
+			ComTabledata table = getObjectById(tableId, ComTabledata.class);
+			if(table.getIsCreated() == 1){
+				cancelBuildModel(table);
+			}
+				
+			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
+			
+			// 1、建表
+			DBTableHandler dbTableHandler = new DBTableHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
+			List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
+			
+			HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
+			List<String> hbmContents = new ArrayList<String>(tables.size());
+			int i = 0;
+			for (ComTabledata tb : tables) {
+				hbmContents.add(hbmHandler.createHbmMappingContent(tb, false));
+				
+				// 2、插入hbm
+				ComHibernateHbm hbm = new ComHibernateHbm();
+				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
+				hbm.tableTurnToHbm(tb);
+				hbm.setHbmContent(hbmContents.get(i++));
+				HibernateUtil.saveObject(hbm, null);
+				
+				// 3、插入资源数据
+				new ComSysResourceService().saveSysResource(tb);
+				
+			}
+			// 4、将hbm配置内容，加入到sessionFactory中
+			HibernateUtil.appendNewConfig(hbmContents);
+			hbmContents.clear();
+			
+			// 5、修改表是否创建的状态
+			modifyIsCreatedPropVal(table.getEntityName(), 1, table.getId());
+			
+			ResourceHandlerUtil.clearTables(tables);
+		} catch (Exception e) {
+			return ExceptionUtil.getErrMsg(e);
 		}
-		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
-		
-		// 1、建表
-		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
-		List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
-		
-		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
-		List<String> hbmContents = new ArrayList<String>(tables.size());
-		int i = 0;
-		for (ComTabledata tb : tables) {
-			hbmContents.add(hbmHandler.createHbmMappingContent(tb, false));
-			
-			// 2、插入hbm
-			ComHibernateHbm hbm = new ComHibernateHbm();
-			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
-			hbm.tableTurnToHbm(tb);
-			hbm.setHbmContent(hbmContents.get(i++));
-			HibernateUtil.saveObject(hbm, null);
-			
-			// 3、插入资源数据
-			new ComSysResourceService().saveSysResource(tb);
-			
-		}
-		// 4、将hbm配置内容，加入到sessionFactory中
-		HibernateUtil.appendNewConfig(hbmContents);
-		hbmContents.clear();
-		
-		// 5、修改表是否创建的状态
-		modifyIsCreatedPropVal(table.getEntityName(), 1, table.getId());
-		
-		ResourceHandlerUtil.clearTables(tables);
 		return null;
 	}
 	

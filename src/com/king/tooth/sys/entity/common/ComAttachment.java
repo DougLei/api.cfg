@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.app;
+package com.king.tooth.sys.entity.common;
 
 import java.util.ArrayList;
 import java.util.List;

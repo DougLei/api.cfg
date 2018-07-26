@@ -1,36 +1,37 @@
 package test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
 
 
 public class TestMain {
 	public static void main(String[] args) {
 		
-		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>();
-		parameterNameRecordList.add(new SqlScriptParameterNameRecord(1));
-		parameterNameRecordList.add(new SqlScriptParameterNameRecord(2));
+		List<Object> a = new ArrayList<Object>();
+		a.add("4c024427c47c46be953efdb564e87cf1");
+		a.add("6d2b6fa4167844ae8596211900c7a924");
+		a.add("0ee3724673ca4db781c83c433b7bcb53");
+		a.add("113b755c7b094421bccc1d9062b687e5");
+		a.add("041c89eca5d64d419a958d8ea15b12a2");
+		System.out.println(a);
 		
-		parameterNameRecordList.get(0).addParameterName("11111");
-		parameterNameRecordList.get(0).addParameterName("222");
+		List<Object> b = new ArrayList<Object>();
 		
-		SqlScriptParameterNameRecord p = parameterNameRecordList.get(0);
-		System.out.println(p.getParameterNames());
-		
-		
-		Map<Integer, List<String>> parameterNameRecordMap = new HashMap<Integer, List<String>>(10);
-		
-		for (SqlScriptParameterNameRecord pnr : parameterNameRecordList) {
-			parameterNameRecordMap.put(pnr.getSqlIndex(), pnr.getParameterNames());
-			pnr.getParameterNames().clear();
+		String[] ar = {"6d2b6fa4167844ae8596211900c7a924", "113b755c7b094421bccc1d9062b687e5"};
+		for (String t : ar) {
+			if(a.contains(t)){
+				b.add(t);
+				a.remove(t);
+			}
 		}
-		parameterNameRecordList.clear();
 		
-		System.out.println(p.getParameterNames());
-		System.out.println(parameterNameRecordMap);
+		if(a.size() > 0){
+			System.out.println(a.size());
+			b.addAll(a);
+			a.clear();
+		}
+		System.out.println(b);
+		System.out.println(a);
+		
 	}
 }

@@ -264,7 +264,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		isPlaceholderColumn.setOrderCode(70);
 		columns.add(isPlaceholderColumn);
 		
-		ComColumndata inOutColumn = new ComColumndata("in_out", BuiltinCodeDataType.STRING, 32);
+		ComColumndata inOutColumn = new ComColumndata("in_out", BuiltinCodeDataType.INTEGER, 1);
 		inOutColumn.setName("参数的in/out类型");
 		inOutColumn.setComments("参数的in/out类型:in=1、out=2、inOut=3，默认值是1");
 		inOutColumn.setDefaultValue("1");

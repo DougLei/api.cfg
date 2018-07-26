@@ -5,7 +5,7 @@ package com.king.tooth.sys.builtin.data;
  * 系统内置的参数key
  * @author DougLei
  */
-public class BuiltinParametersKeys {
+public class BuiltinParameterKeys {
 	
 	/**
 	 * url:_ids

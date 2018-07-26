@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
-import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;
@@ -36,7 +36,7 @@ public class ReqDataPreProcesser extends AbstractFilter{
 		if(requestBody == null){
 			installFailResponseBody(req, "[ReqDataPreProcesser]解析请求体(requestBody)解析结果为null，请联系系统开发人员");
 		}else{
-			request.setAttribute(BuiltinParametersKeys._REQUEST_BODY_KEY, requestBody);
+			request.setAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY, requestBody);
 			chain.doFilter(req, resp);
 		}
 	}
@@ -98,21 +98,21 @@ public class ReqDataPreProcesser extends AbstractFilter{
 		RouteBody routeBody = requestBody.getRouteBody();
 		
 		// 将资源名存储到map集合中
-		urlParams.put(BuiltinParametersKeys.RESOURCE_NAME, routeBody.getResourceName());
+		urlParams.put(BuiltinParameterKeys.RESOURCE_NAME, routeBody.getResourceName());
 		
 		// 如果路由中包括resourceId，则将其也存储到map集合中，key值为_resourceid
 		// @see HqlQueryCondFuncEntity.processSpecialThings()  在该方法中取出，作为查询条件
 		if(StrUtils.notEmpty(routeBody.getResourceId())){
-			urlParams.put(BuiltinParametersKeys.RESOURCE_ID, routeBody.getResourceId());
+			urlParams.put(BuiltinParameterKeys.RESOURCE_ID, routeBody.getResourceId());
 		}
 		
 		// 如果路由体现出父子资源查询，则将主资源名，主资源id 放到map集合中
 		if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-			urlParams.put(BuiltinParametersKeys.PARENT_RESOURCE_NAME, routeBody.getParentResourceName());
+			urlParams.put(BuiltinParameterKeys.PARENT_RESOURCE_NAME, routeBody.getParentResourceName());
 		}
 		
 		if(StrUtils.notEmpty(routeBody.getParentId())){
-			urlParams.put(BuiltinParametersKeys.PARENT_RESOURCE_ID, routeBody.getParentId());
+			urlParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, routeBody.getParentId());
 		}
 	}
 

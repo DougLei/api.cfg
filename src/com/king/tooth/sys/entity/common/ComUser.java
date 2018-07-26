@@ -96,8 +96,8 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	 */
 	private String deptId;
 	/**
-	 * 主要所属的岗位id
-	 * <p>关系表中，isMain=1的岗位id</p>
+	 * 主要所属的职务id
+	 * <p>关系表中，isMain=1的职务id</p>
 	 */
 	private String positionId;
 	/**
@@ -363,8 +363,8 @@ public class ComUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		columns.add(deptIdColumn);
 		
 		ComColumndata positionIdColumn = new ComColumndata("position_id", BuiltinCodeDataType.STRING, 32);
-		positionIdColumn.setName("主要所属的岗位id");
-		positionIdColumn.setComments("主要所属的岗位id：关系表中，isMain=1的岗位id");
+		positionIdColumn.setName("主要所属的职务id");
+		positionIdColumn.setComments("主要所属的岗位id：关系表中，isMain=1的职务id");
 		positionIdColumn.setOrderCode(19);
 		columns.add(positionIdColumn);
 		

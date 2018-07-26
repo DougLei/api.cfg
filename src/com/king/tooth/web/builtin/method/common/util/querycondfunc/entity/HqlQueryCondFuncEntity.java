@@ -3,7 +3,7 @@ package com.king.tooth.web.builtin.method.common.util.querycondfunc.entity;
 import java.io.Serializable;
 
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 
 /**
  * hql查询函数参数实体类
@@ -70,7 +70,7 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 		   2.如果propName为_resourceid，则必须把propName改为SystemConstants.ID
 		      这个key值来自      @see PlatformServlet.processSpecialData()
 		*/
-		if(this.propName.equals(BuiltinParametersKeys._IDS) || this.propName.equals(BuiltinParametersKeys.RESOURCE_ID)){
+		if(this.propName.equals(BuiltinParameterKeys._IDS) || this.propName.equals(BuiltinParameterKeys.RESOURCE_ID)){
 			this.propName = ResourceNameConstants.ID;
 		}
 		

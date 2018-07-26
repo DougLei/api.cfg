@@ -1,6 +1,8 @@
 package com.king.tooth.sys.builtin.data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.controller.app.ComDeptController;
@@ -14,12 +16,14 @@ import com.king.tooth.sys.controller.common.ComSqlScriptParameterController;
 import com.king.tooth.sys.controller.common.ComSysAccountController;
 import com.king.tooth.sys.controller.common.ComUserController;
 import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.common.ComPermissionPriority;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.app.ComDeptService;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.sys.service.cfg.ComPublishInfoService;
 import com.king.tooth.sys.service.cfg.ComTabledataService;
 import com.king.tooth.sys.service.common.ComDatabaseService;
+import com.king.tooth.sys.service.common.ComPermissionService;
 import com.king.tooth.sys.service.common.ComProjectModuleService;
 import com.king.tooth.sys.service.common.ComProjectService;
 import com.king.tooth.sys.service.common.ComReqLogService;
@@ -39,7 +43,7 @@ public class BuiltinInstance {
 	/**
 	 * 当前系统的数据库对象实例
 	 */
-	public transient static final ComDatabase currentSysBuiltinDatabaseInstance = new ComDatabase(); 
+	public transient static final ComDatabase currentSysBuiltinDatabaseInstance = new ComDatabase();
 	static{
 		currentSysBuiltinDatabaseInstance.setId(SysConfig.getSystemConfig("current.sys.database.id"));
 		currentSysBuiltinDatabaseInstance.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
@@ -59,9 +63,21 @@ public class BuiltinInstance {
 	}
 	
 	/**
-	 * 数据的有消息
+	 * 数据的有效期
 	 */
 	public transient static final Date validDate = DateUtil.parseDate("2099-12-31 23:59:59");
+	
+	//---------------------------------------------------------
+	/**
+	 * 权限优先级集合
+	 */
+	public static final List<ComPermissionPriority> permissionPriorities = new ArrayList<ComPermissionPriority>(4); 
+	static{
+		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.ACCOUNT, 4));
+		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.ROLE, 3));
+		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.DEPT, 2));
+		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.POSITION, 1));
+	}
 	
 	//---------------------------------------------------------
 	//controller
@@ -90,5 +106,6 @@ public class BuiltinInstance {
 	public static final ComSysAccountService accountService = new ComSysAccountService();
 	public static final ComSysResourceService resourceService = new ComSysResourceService();
 	public static final ComUserService userService = new ComUserService();
+	public static final ComPermissionService permissionService = new ComPermissionService();
 	
 }

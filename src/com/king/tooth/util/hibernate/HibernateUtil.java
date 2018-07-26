@@ -246,7 +246,7 @@ public class HibernateUtil {
 			
 			Set<String> propNames = data.keySet();
 			for (String pn : propNames) {
-				if(pn.equalsIgnoreCase(ResourceNameConstants.ID)){
+				if(pn.equalsIgnoreCase(ResourceNameConstants.ID) || (data.get(pn) == null)){
 					continue;
 				}
 				updateHql.append(pn);

@@ -87,7 +87,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 * <p>配置系统使用</p>
 	 */
 	private String confProjectId;
-	
+
 	//-------------------------------------------------------------------------
 	
 	/**
@@ -106,7 +106,10 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 */
 	@JSONField(serialize = false)
 	private boolean isSave;
-	
+	/**
+	 * 当前账户的权限集合
+	 */
+	private List<ComPermission> permissions;
 	
 	public String getToken() {
 		return token;
@@ -221,6 +224,12 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	}
 	public void setCurrentProjectId(String currentProjectId) {
 		this.currentProjectId = currentProjectId;
+	}
+	public List<ComPermission> gainPermissions() {
+		return permissions;
+	}
+	public void setPermissions(List<ComPermission> permissions) {
+		this.permissions = permissions;
 	}
 	
 	public ComTabledata toCreateTable() {

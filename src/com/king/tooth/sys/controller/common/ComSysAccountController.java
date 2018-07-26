@@ -34,13 +34,16 @@ public class ComSysAccountController extends AbstractController{
 	 */
 	public Object login(HttpServletRequest request, IJson ijson){
 		ComSysAccount account = JsonUtil.toJavaObject(ijson.get(0), ComSysAccount.class);
-		ComSysAccountOnlineStatus accountOnlineStatus = accountService.login(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
+		ComSysAccountOnlineStatus accountOnlineStatus = accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{
 			// 登录成功时，记录token和项目id的关系
 			TokenRefProjectIdMapping.setTokenRefProjMapping(accountOnlineStatus.getToken(), CurrentThreadContext.getProjectId());
-			resultObject = JsonUtil.toJsonObject(accountOnlineStatus);
+			// 组装到结果json中
+			JSONObject json = JsonUtil.toJsonObject(accountOnlineStatus);
+			json.put("permissions", accountOnlineStatus.gainPermissions());
+			resultObject = json;
 		}
 		return getResultObject();
 	}

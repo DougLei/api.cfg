@@ -123,6 +123,9 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static <T> T turnMapToJavaEntity(Map<String, Object> map, Class<T> clazz) {
+		if(map == null || map.size() == 0){
+			return null;
+		}
 		String jsonStr = toJsonString(map, false);
 		return JSONObject.parseObject(jsonStr, clazz);
 	}
@@ -134,6 +137,9 @@ public class JsonUtil {
 	 * @return
 	 */
 	public static <T> List<T> turnListMapToJavaListEntity(List<Map<String, Object>> maps, Class<T> clazz) {
+		if(maps == null || maps.size() == 0){
+			return null;
+		}
 		String jsonStr = toJsonString(maps, false);
 		return JSONObject.parseArray(jsonStr, clazz);
 	}
@@ -143,6 +149,9 @@ public class JsonUtil {
 	 * @param jsonArray
 	 */
 	public static void clearJsonArray(JSONArray jsonArray){
+		if(jsonArray == null || jsonArray.size() == 0){
+			return;
+		}
 		for(int i=0;i<jsonArray.size();i++){
 			jsonArray.getJSONObject(i).clear();
 		}

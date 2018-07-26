@@ -10,6 +10,7 @@ import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComUser;
@@ -24,7 +25,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 public class ComSysAccountService extends AbstractService{
-
+	
 	/**
 	 * 验证账户的状态
 	 * @param accountId
@@ -47,17 +48,6 @@ public class ComSysAccountService extends AbstractService{
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
-	 * 登录
-	 * @param loginIp
-	 * @param accountName
-	 * @param password
-	 * @return
-	 */
-	public ComSysAccountOnlineStatus login(String loginIp, String accountName, String password){
-		return modifyAccountOfOnLineStatus(loginIp, accountName, password);
-	}
-	
-	/**
 	 * 创建或修改一个账户在线状态对象
 	 * <p>登录</p>
 	 * @param loginIp
@@ -65,7 +55,7 @@ public class ComSysAccountService extends AbstractService{
 	 * @param password
 	 * @return
 	 */
-	private ComSysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
+	public ComSysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
 		ComSysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		
@@ -74,6 +64,9 @@ public class ComSysAccountService extends AbstractService{
 		}else{
 			HibernateUtil.updateObjectByHql(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}
+		
+		// 获取当前登陆帐号的权限
+		accountOnlineStatus.setPermissions(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getCurrentAccountId()));
 		return accountOnlineStatus;
 	}
 	
@@ -119,6 +112,7 @@ public class ComSysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
+		// 处理基本信息
 		processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
 		accountOnlineStatus.setLastOperDate(new Date());
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
@@ -133,6 +127,39 @@ public class ComSysAccountService extends AbstractService{
 	}
 	
 	/**
+	 * 处理账户在线状态对象的基础数据
+	 * <p>包括当前账户id，当前用户id等等基础信息</p>
+	 * @param accountOnlineStatus
+	 * @param loginAccount
+	 * @param accountName
+	 */
+	private void processOnlineStatusBasicData(ComSysAccountOnlineStatus accountOnlineStatus, ComSysAccount loginAccount, String accountName) {
+		accountOnlineStatus.setCurrentCustomerId("unknow");
+		accountOnlineStatus.setCurrentProjectId(CurrentThreadContext.getProjectId());
+		accountOnlineStatus.setCurrentAccountId(loginAccount.getId());
+		accountOnlineStatus.setCurrentAccountType(loginAccount.getAccountType());
+		
+		if(SysConfig.isConfSys){
+			accountOnlineStatus.setCurrentAccountName(accountName);
+		}else{
+			ComUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComUser.class, "from ComUser where accountId = ?", loginAccount.getId());
+			if(loginUser == null){
+				accountOnlineStatus.setCurrentAccountName(accountName);
+				accountOnlineStatus.setCurrentUserId("none");
+				accountOnlineStatus.setCurrentPositionId("none");
+				accountOnlineStatus.setCurrentDeptId("none");
+				accountOnlineStatus.setCurrentOrgId("none");
+			}else{
+				accountOnlineStatus.setCurrentAccountName(getCurrentAccountName(loginUser, accountName));
+				accountOnlineStatus.setCurrentUserId(loginUser.getId());
+				accountOnlineStatus.setCurrentPositionId(loginUser.getPositionId());
+				accountOnlineStatus.setCurrentDeptId(loginUser.getDeptId());
+				accountOnlineStatus.setCurrentOrgId(loginUser.getOrgId());
+			}
+		}
+	}
+	
+	/**
 	 * 根据账户名，获取账户的在线状态对象
 	 * @param loginIp 防止客户端故意输入不存在的账户密码，不停的发起请求
 	 * @param accountName
@@ -144,54 +171,29 @@ public class ComSysAccountService extends AbstractService{
 //		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
 		
 		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and currentAccountName = ? and projectId = ?";
-		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
-		if(onlineStatus == null){
-			onlineStatus = new ComSysAccountOnlineStatus();
-			onlineStatus.setTryLoginTimes(1);
-			onlineStatus.setIsSave(true);
-			onlineStatus.setLastOperDate(new Date());
+		ComSysAccountOnlineStatus accountOnlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getProjectId());
+		if(accountOnlineStatus == null){
+			accountOnlineStatus = new ComSysAccountOnlineStatus();
+			accountOnlineStatus.setTryLoginTimes(1);
+			accountOnlineStatus.setIsSave(true);
+			accountOnlineStatus.setLastOperDate(new Date());
 		}else{
 			// 判断上一次操作的时间至当前时间，是否超过了login.timeout.datelimit的时间，如果超过了，则将tryLoginTimes归为1
-			long duration = System.currentTimeMillis() - onlineStatus.getLastOperDate().getTime();
+			long duration = System.currentTimeMillis() - accountOnlineStatus.getLastOperDate().getTime();
 			if(LoginConstants.loginTimeoutDatelimit < duration){
-				onlineStatus.setTryLoginTimes(1);
-				onlineStatus.setLastOperDate(new Date());
+				accountOnlineStatus.setTryLoginTimes(1);
+				accountOnlineStatus.setLastOperDate(new Date());
 			}else{
-				onlineStatus.setTryLoginTimes(onlineStatus.getTryLoginTimes() + 1);	
+				accountOnlineStatus.setTryLoginTimes(accountOnlineStatus.getTryLoginTimes() + 1);	
 			}
 		}
 		
-		onlineStatus.setLoginIp(loginIp);
-		onlineStatus.setCurrentAccountName(accountName);
-		onlineStatus.setIsError(1);// 一开始标识为有错误
-		return onlineStatus;
+		accountOnlineStatus.setLoginIp(loginIp);
+		accountOnlineStatus.setCurrentAccountName(accountName);
+		accountOnlineStatus.setIsError(1);// 一开始标识为有错误
+		return accountOnlineStatus;
 	}
 	
-	/**
-	 * 处理账户在线状态对象的基础数据
-	 * <p>包括当前账户id，当前用户id等等基础信息</p>
-	 * @param accountOnlineStatus
-	 * @param loginAccount
-	 * @param accountName
-	 */
-	private void processOnlineStatusBasicData(ComSysAccountOnlineStatus accountOnlineStatus, ComSysAccount loginAccount, String accountName) {
-		accountOnlineStatus.setCurrentCustomerId("unknow");
-		accountOnlineStatus.setCurrentProjectId("unknow");
-		accountOnlineStatus.setCurrentAccountId(loginAccount.getId());
-		accountOnlineStatus.setCurrentAccountType(loginAccount.getAccountType());
-		
-		if(SysConfig.isConfSys){
-			accountOnlineStatus.setCurrentAccountName(accountName);
-		}else{
-			ComUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComUser.class, "from ComUser where accountId = ?", loginAccount.getId());
-			accountOnlineStatus.setCurrentAccountName(getCurrentAccountName(loginUser, accountName));
-			accountOnlineStatus.setCurrentUserId(loginUser.getId());
-			accountOnlineStatus.setCurrentPositionId(loginUser.getPositionId());
-			accountOnlineStatus.setCurrentDeptId(loginUser.getDeptId());
-			accountOnlineStatus.setCurrentOrgId(loginUser.getOrgId());
-		}
-	}
-
 	/**
 	 * 获取当前登录的账户名
 	 * @param loginAccount

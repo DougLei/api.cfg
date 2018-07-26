@@ -1,7 +1,7 @@
 package com.king.tooth.constants;
 
 /**
- * 资源的名称常量
+ * 资源名的名称常量
  * @author DougLei
  */
 public class ResourceNameConstants {
@@ -14,7 +14,7 @@ public class ResourceNameConstants {
 	/**
 	 * 多个主键的属性
 	 * <p>删除数据的时候，传入的key值</p>
-	 * <p>和 @BuiltinParametersKeys._IDS 保持一直</p>
+	 * <p>和 @BuiltinParameterKeys._IDS 保持一直</p>
 	 */
 	public static final String IDS = "_ids";
 }

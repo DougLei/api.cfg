@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -40,7 +40,7 @@ public class PrepareFilter extends AbstractFilter{
 		String token = request.getHeader("_token");
 		String projectId;
 		if(StrUtils.isEmpty(token)){
-			// TODO 这里暂时写成固定值
+			// TODO 这里暂时写成固定值，这个是配置系统的项目id
 			projectId = "90621e37b806o6fe8538c5eb782901bb";
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
@@ -56,7 +56,7 @@ public class PrepareFilter extends AbstractFilter{
 			HibernateUtil.beginTransaction();
 			chain.doFilter(req, resp);
 			
-			ResponseBody responseBody = (ResponseBody) request.getAttribute(BuiltinParametersKeys._RESPONSE_BODY_KEY);
+			ResponseBody responseBody = (ResponseBody) request.getAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY);
 			processResponseBody(resp, responseBody);
 			
 			Log4jUtil.debug("请求处理完成");
@@ -70,7 +70,7 @@ public class PrepareFilter extends AbstractFilter{
 			
 			CurrentThreadContext.clearCurrentThreadData();
 			
-			RequestBody requestBody = (RequestBody) req.getAttribute(BuiltinParametersKeys._REQUEST_BODY_KEY);
+			RequestBody requestBody = (RequestBody) req.getAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY);
 			if(requestBody != null){
 				requestBody.clear();
 			}

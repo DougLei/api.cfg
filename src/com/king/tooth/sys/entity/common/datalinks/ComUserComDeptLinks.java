@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.app.datalinks;
+package com.king.tooth.sys.entity.common.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +24,8 @@ public class ComUserComDeptLinks implements Serializable, ITable {
 		table.setComments("人员和部门的关联关系资源对象表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
 		

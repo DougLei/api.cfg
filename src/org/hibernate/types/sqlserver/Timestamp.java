@@ -51,6 +51,8 @@ public class Timestamp implements UserType{
 		if(StrUtils.notEmpty(value)){
 			if(value instanceof String){
 				st.setTimestamp(index, DateUtil.parseTimestamp(value.toString()));
+			}else if(value instanceof Long){
+				st.setTimestamp(index, new java.sql.Timestamp(Long.valueOf(value.toString())));
 			}else{
 				st.setTimestamp(index, DateUtil.parseTimestamp((java.util.Date)value));
 			}

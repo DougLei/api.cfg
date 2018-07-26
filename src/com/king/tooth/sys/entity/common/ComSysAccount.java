@@ -82,7 +82,6 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity, IEnti
 	@JSONField(serialize = false)
 	private String verifyCode;
 	
-	
 	public String getLoginName() {
 		return loginName;
 	}

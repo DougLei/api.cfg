@@ -3,7 +3,7 @@ package com.king.tooth.filter;
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
 
-import com.king.tooth.sys.builtin.data.BuiltinParametersKeys;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -21,6 +21,6 @@ public abstract class AbstractFilter implements Filter{
 	protected void installFailResponseBody(ServletRequest request, String message){
 		ResponseBody responseBody = new ResponseBody();
 		responseBody.setMessage(message);
-		request.setAttribute(BuiltinParametersKeys._RESPONSE_BODY_KEY, responseBody);
+		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
 	}
 }

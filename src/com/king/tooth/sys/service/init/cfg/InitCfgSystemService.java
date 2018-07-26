@@ -19,17 +19,13 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.app.ComAttachment;
-import com.king.tooth.sys.entity.app.datalinks.ComProjectComHibernateHbmLinks;
-import com.king.tooth.sys.entity.app.datalinks.ComSysAccountComRoleLinks;
-import com.king.tooth.sys.entity.app.datalinks.ComUserComDeptLinks;
-import com.king.tooth.sys.entity.app.datalinks.ComUserComPositionLinks;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
+import com.king.tooth.sys.entity.common.ComAttachment;
 import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComDept;
@@ -37,6 +33,7 @@ import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComOrg;
 import com.king.tooth.sys.entity.common.ComPermission;
+import com.king.tooth.sys.entity.common.ComPermissionPriority;
 import com.king.tooth.sys.entity.common.ComPosition;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
@@ -49,7 +46,11 @@ import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.ComVerifyCode;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComProjectComHibernateHbmLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComSysAccountComRoleLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComUserComDeptLinks;
+import com.king.tooth.sys.entity.common.datalinks.ComUserComPositionLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -127,6 +128,7 @@ public class InitCfgSystemService extends AbstractService{
 		// 运行系统表
 		tables.add(new ComRole().toCreateTable());
 		tables.add(new ComPermission().toCreateTable());
+		tables.add(new ComPermissionPriority().toCreateTable());
 		tables.add(new ComAttachment().toCreateTable());
 		tables.add(new ComOrg().toCreateTable());
 		tables.add(new ComDept().toCreateTable());
@@ -383,6 +385,13 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "system.dataType", "日期", "date", 5, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "system.dataType", "字符大字段", "clob", 6, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "system.dataType", "二进制大字段", "blob", 7, ISysResource.CONFIG_PLATFORM);
+		
+		// system.dataType 系统内置权限类型
+		insertDataDictionary(adminAccountId, "system.permissionType", "角色", "role", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.permissionType", "帐号", "account", 2, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.permissionType", "部门", "dept", 3, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.permissionType", "岗位", "position", 4, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "system.permissionType", "帐号组", "accountGroup", 5, ISysResource.COMMON_PLATFORM);
 	}
 	/**
 	 * 添加数据字典
