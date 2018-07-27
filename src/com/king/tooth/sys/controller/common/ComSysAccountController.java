@@ -42,7 +42,7 @@ public class ComSysAccountController extends AbstractController{
 			TokenRefProjectIdMapping.setTokenRefProjMapping(accountOnlineStatus.getToken(), CurrentThreadContext.getProjectId());
 			// 组装到结果json中
 			JSONObject json = JsonUtil.toJsonObject(accountOnlineStatus);
-			json.put("permissions", accountOnlineStatus.gainPermissions());
+			json.put("permissions", accountOnlineStatus.gainPermission());
 			resultObject = json;
 		}
 		return getResultObject();

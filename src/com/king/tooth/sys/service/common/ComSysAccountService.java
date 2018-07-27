@@ -66,7 +66,7 @@ public class ComSysAccountService extends AbstractService{
 		}
 		
 		// 获取当前登陆帐号的权限
-		accountOnlineStatus.setPermissions(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getCurrentAccountId()));
+		accountOnlineStatus.setPermission(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getCurrentAccountId()));
 		return accountOnlineStatus;
 	}
 	

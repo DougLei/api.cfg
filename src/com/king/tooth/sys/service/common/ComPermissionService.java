@@ -49,7 +49,7 @@ public class ComPermissionService extends AbstractService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ComPermission> findAccountOfPermissions(String accountId){
+	public ComPermission findAccountOfPermissions(String accountId){
 		String projectId = CurrentThreadContext.getProjectId();
 		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
 		
@@ -108,7 +108,16 @@ public class ComPermissionService extends AbstractService{
 			}
 			mergePermissions(permissions, newPermissions);
 		}
-		return permissions;
+		
+		if(permissions.size() > 0){
+			ComPermission permission = new ComPermission();
+			permission.setRefResourceCode("ROOT");
+			permission.setRefResourceId("ROOT");
+			permission.setRefResourceType("ROOT");
+			permission.setChildren(permissions);
+			return permission;
+		}
+		return null;
 	}
 	
 	/**
