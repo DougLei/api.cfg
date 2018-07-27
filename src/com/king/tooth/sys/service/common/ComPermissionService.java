@@ -211,10 +211,17 @@ public class ComPermissionService extends AbstractService{
 			}
 			
 			for (ComPermission np : newPermissions) {
-				boolean unSame = true;
+				boolean unExists = true;
 				for (ComPermission p : permissions) {
 					if(np.getRefResourceId().equals(p.getRefResourceId()) || np.getRefResourceCode().equals(p.getRefResourceCode())){
-						unSame = false;
+						unExists = false;
+						
+						if(np.getIsVisibility()==1){
+							p.setIsVisibility(1);
+						}
+						if(np.getIsOper()==1){
+							p.setIsOper(1);
+						}
 						
 						if(p.gainChildren() == null){
 							p.setChildren(new ArrayList<ComPermission>());
@@ -223,7 +230,7 @@ public class ComPermissionService extends AbstractService{
 						break;
 					}
 				}
-				if(unSame){
+				if(unExists){
 					permissions.add(np);
 				}
 			}
