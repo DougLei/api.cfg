@@ -54,4 +54,11 @@ public class JSONObjectExtend implements IJson{
 			jsonObject.clear();
 		}
 	}
+	
+	public String toString(){
+		if(jsonObject == null){
+			return null;
+		}
+		return jsonObject.toJSONString();
+	}
 }

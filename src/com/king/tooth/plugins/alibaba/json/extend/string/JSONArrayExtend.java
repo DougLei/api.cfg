@@ -62,4 +62,11 @@ public class JSONArrayExtend implements IJson{
 			jsonArray.clear();
 		}
 	}
+	
+	public String toString(){
+		if(jsonArray == null){
+			return null;
+		}
+		return jsonArray.toJSONString();
+	}
 }

@@ -53,4 +53,6 @@ public interface IJson extends Serializable{
 	 * 清空
 	 */
 	void clear();
+	
+	String toString();
 }

@@ -31,6 +31,10 @@ public class FinalSqlScriptStatement implements Serializable{
 	 * 是否是存储过程
 	 */
 	private boolean isProcedure;
+	/**
+	 * 是否是其他
+	 */
+	private boolean isOther;
 	
 	
 	//select sql专用属性---------------------------------------------------------------------
@@ -47,7 +51,7 @@ public class FinalSqlScriptStatement implements Serializable{
 
 	
 	
-	//insert/update/delete sql专用属性---------------------------------------------------------------------
+	//insert/update/delete/其他 sql专用属性---------------------------------------------------------------------
 	/**
 	 * 最终的修改sql脚本语句数组
 	 */
@@ -106,5 +110,11 @@ public class FinalSqlScriptStatement implements Serializable{
 	}
 	public void setFinalModifySqlArr(String[] finalModifySqlArr) {
 		this.finalModifySqlArr = finalModifySqlArr;
+	}
+	public boolean getIsOther() {
+		return isOther;
+	}
+	public void setIsOther(boolean isOther) {
+		this.isOther = isOther;
 	}
 }

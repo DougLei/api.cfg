@@ -11,6 +11,7 @@ import gudusoft.gsqlparser.stmt.mssql.TMssqlCreateProcedure;
 import gudusoft.gsqlparser.stmt.oracle.TPlsqlCreateProcedure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,47 +88,65 @@ public class SqlStatementParserUtil {
 	public static String[] parseSqlScript(TGSqlParser gsqlParser, ComSqlScript comSqlScript) {
 		TStatementList sqlList = gsqlParser.sqlstatements;
 		int len = sqlList.size();
-		String[] sqlScriptArr = new String[len];
 		
-		String sqlScriptType = null;
-		TCustomSqlStatement sqlStatement;
-		for(int i=0;i<len;i++){
-			sqlStatement = sqlList.get(i);
-			if(i == 0){
-				sqlScriptType = getSqlScriptType(sqlStatement.sqlstatementtype);
-				if(i > 1 && 
-						(sqlScriptType.equals(BuiltinDatabaseData.SELECT) || sqlScriptType.equals(BuiltinDatabaseData.PROCEDURE))){
-					throw new ArrayIndexOutOfBoundsException("目前系统只支持一次处理一条select sql语句，或procedure 存储过程");
-				}
-			}
-			sqlScriptArr[i] = sqlStatement.toString();
+		Map<String, String> typeMap = getSqlScriptTypeMap(sqlList.get(0).sqlstatementtype);
+		if(len > 1 &&  ("true".equals(typeMap.get("isUnique")))){
+			throw new ArrayIndexOutOfBoundsException("目前系统只支持一次处理一条["+typeMap.get("type")+"]类型的sql脚本语句");
 		}
-		comSqlScript.setSqlScriptType(sqlScriptType);
+		comSqlScript.setSqlScriptType(typeMap.get("type"));
+		
+		String[] sqlScriptArr;
+		if("true".equals(typeMap.get("other"))){
+			sqlScriptArr = new String[1];
+			sqlScriptArr[0] =  gsqlParser.sqltext;
+		}else{
+			sqlScriptArr = new String[len];
+			for(int i=0;i<len;i++){
+				sqlScriptArr[i] = sqlList.get(i).toString();
+			}
+		}
 		return sqlScriptArr;
 	}
+	
 	/**
 	 * 获取sql脚本类型
 	 * @param sqlStatementType
 	 * @return
 	 */
-	private static String getSqlScriptType(ESqlStatementType sqlStatementType) {
+	private static Map<String, String> getSqlScriptTypeMap(ESqlStatementType sqlStatementType) {
+		 Map<String, String> typeMap = new HashMap<String, String>(3);
+		 typeMap.put("other", "false");
+		 typeMap.put("isUnique", "false");
+		 
 		 switch(sqlStatementType){
 	         case sstselect:
-	        	 return BuiltinDatabaseData.SELECT;
+	        	 typeMap.put("type", BuiltinDatabaseData.SELECT);
+	        	 typeMap.put("isUnique", "true");
+	        	 break;
 	         case sstupdate:
-	        	 return BuiltinDatabaseData.UPDATE;
+	        	 typeMap.put("type", BuiltinDatabaseData.UPDATE);
+	        	 break;
 	         case sstinsert:
-	        	 return BuiltinDatabaseData.INSERT;
+	        	 typeMap.put("type", BuiltinDatabaseData.INSERT);
+	        	 break;
 	         case sstdelete:
-	        	 return BuiltinDatabaseData.DELETE;
+	        	 typeMap.put("type", BuiltinDatabaseData.DELETE);
+	        	 break;
 	         case sstplsql_createprocedure:
-	        	 return BuiltinDatabaseData.PROCEDURE;
+	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
+	        	 typeMap.put("isUnique", "true");
+	        	 break;
 	         case sstmssqlcreateprocedure:
-	        	 return BuiltinDatabaseData.PROCEDURE;
+	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
+	        	 typeMap.put("isUnique", "true");
+	        	 break;
 	         default:
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
-	        	 return sqlStatementType.toString();
+	        	 typeMap.put("type", sqlStatementType.toString());
+	        	 typeMap.put("other", "true");
+	        	 break;
 	     }
+		 return typeMap;
 	}
 	
 	/**
@@ -255,6 +274,10 @@ public class SqlStatementParserUtil {
 				finalSqlScript.setIsDeleteSqlScript(true);
 				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
 				break;
+			default:
+				finalSqlScript.setIsOther(true);
+				setFinalOtherSqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlScript.getGsqlParser().sqltext, sqlParameterValues);
+				break;
 		}
 		return finalSqlScript;
 	}
@@ -375,6 +398,54 @@ public class SqlStatementParserUtil {
 			sqlParameterValues.add(sqlParamValues);
 		}
 		finalSqlScript.setFinalModifySqlArr(modifySqlArr);
+	}
+	
+	/**
+	 * 最终的other类型的 sql语句处理
+	 * @param parameterNameRecordMap
+	 * @param sqlScriptParameters
+	 * @param finalSqlScript
+	 * @param otherSql
+	 * @param sqlParameterValues
+	 */
+	private static void setFinalOtherSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSqlScript, String otherSql, List<List<Object>> sqlParameterValues) {
+		List<String> parameterNames = parameterNameRecordMap.get(0);
+		String[] otherSqlArr = new String[1];
+		
+		List<Object> sqlParamValues = null;
+		
+		if(parameterNames!=null && parameterNames.size()>0){
+			int size = parameterNames.size();
+			sqlParamValues = new ArrayList<Object>(size);
+			
+			List<ActParameter> actParams = new ArrayList<ActParameter>(size);
+			ActParameter actParam;
+			
+			for (String parameterName : parameterNames) {
+				for (ComSqlScriptParameter ssp : sqlScriptParameters) {
+					if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+						actParam = new ActParameter();
+						actParams.add(actParam);
+						
+						actParam.setParameterName(parameterName);
+						
+						// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
+						if(ssp.getIsPlaceholder() == 1){
+							actParam.setActualValue("?");
+							sqlParamValues.add(ssp.getActualInValue());
+						}else{
+							actParam.setActualValue(ssp.getActualInValue());
+						}
+						break;
+					}
+				}
+			}
+			otherSqlArr[0] = SqlParameterParserUtil.replaceSqlScriptParams(otherSql, actParams);
+		}else{
+			otherSqlArr[0] = otherSql;
+		}
+		sqlParameterValues.add(sqlParamValues);
+		finalSqlScript.setFinalModifySqlArr(otherSqlArr);
 	}
 
 	

@@ -116,6 +116,12 @@ public class RequestBody implements Serializable{
 	public void setRequestUrlParams(Map<String, String> requestUrlParams) {
 		this.requestUrlParams = requestUrlParams;
 	}
+	public String getFormDataStr() {
+		if(formData == null){
+			return null;
+		}
+		return formData.toString();
+	}
 	public IJson getFormData() {
 		return formData;
 	}

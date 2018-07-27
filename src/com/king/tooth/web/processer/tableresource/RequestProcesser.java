@@ -26,7 +26,7 @@ public abstract class RequestProcesser extends RequestProcesserCommon implements
 	 */
 	public final ResponseBody doRequestProcess(){
 		Log4jUtil.debug("请求的路由参数值为：{}", requestBody.getRequestUrlParams());
-		Log4jUtil.debug("请求的请求体值为：{}", requestBody.getFormData());
+		Log4jUtil.debug("请求的请求体值为：{}", requestBody.getFormDataStr());
 		
 		// 初始化内置函数处理器的类实例
 		builtinTableResourceBMProcesser = new BuiltinTableResourceBMProcesser(requestBody.getRequestUrlParams(), hqlParameterValues);
