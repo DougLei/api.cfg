@@ -57,12 +57,12 @@ public class SysFileService extends AbstractService{
 		List<FileItem> fileList = null;
 		try {
 			fileList = servletUpload.parseRequest(request);
-			if(uploadFileIsEmpty(fileList)){
+			SysFile basicSysFile = uploadFileIsEmpty(fileList);
+			if(basicSysFile.getIsFileIsEmpty()){
 				return "没有获得要操作的文件";
 			}else{
-				SysFile file;
-				
-				
+				for (FileItem file : fileList) {
+				}
 			}
 		} catch (FileUploadException e) {
 			return ExceptionUtil.getErrMsg(e);
@@ -74,15 +74,16 @@ public class SysFileService extends AbstractService{
 		return null;
 	}
 	// 验证上传的文件是否为空
-	private boolean uploadFileIsEmpty(List<FileItem> fileList){
-		boolean fileIsEmpty = true; 
+	private SysFile uploadFileIsEmpty(List<FileItem> fileList){
+		SysFile sysFile = new SysFile(); 
 		for (FileItem file : fileList) {
-			if(!file.isFormField()){
-				fileIsEmpty = false;
-				break;
+			if(file.isFormField()){
+				
+			}else{
+				sysFile.setIsFileIsEmpty(false);
 			}
 		}
-		return fileIsEmpty;
+		return sysFile;
 	}
 	
 	/**

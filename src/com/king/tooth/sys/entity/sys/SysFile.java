@@ -60,6 +60,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	
 	// ---------------------------------------------------------------------------
 	
+	/**
+	 * 传递数据时使用，记录调用文件接口时，是否存在文件
+	 */
+	@JSONField(serialize = false)
+	private boolean fileIsEmpty;
+	
 	public String getRefDataId() {
 		return refDataId;
 	}
@@ -113,6 +119,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	}
 	public void setLevel(Integer level) {
 		this.level = level;
+	}
+	public boolean getIsFileIsEmpty() {
+		return fileIsEmpty;
+	}
+	public void setIsFileIsEmpty(boolean fileIsEmpty) {
+		this.fileIsEmpty = fileIsEmpty;
 	}
 	
 	public ComTabledata toCreateTable() {
