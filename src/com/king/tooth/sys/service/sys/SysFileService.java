@@ -62,6 +62,8 @@ public class SysFileService extends AbstractService{
 				return "没有获得要操作的文件";
 			}else{
 				for (FileItem file : fileList) {
+					
+					
 				}
 			}
 		} catch (FileUploadException e) {
@@ -78,7 +80,8 @@ public class SysFileService extends AbstractService{
 		SysFile sysFile = new SysFile(); 
 		for (FileItem file : fileList) {
 			if(file.isFormField()){
-				
+				System.out.println(file.getName());
+				System.out.println(file.getFieldName());
 			}else{
 				sysFile.setIsFileIsEmpty(false);
 			}
