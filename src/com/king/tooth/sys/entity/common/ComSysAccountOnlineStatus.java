@@ -22,11 +22,12 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	
 	/**
 	 * 当前租户id
+	 * <p>和CurrentThreadData中的customerId的值一致</p>
 	 */
 	private String currentCustomerId;
 	/**
 	 * 当前项目id
-	 * <p>和当前线程中的projectId的值一致</p>
+	 * <p>和CurrentThreadData中的projectId的值一致</p>
 	 */
 	private String currentProjectId;
 	/**

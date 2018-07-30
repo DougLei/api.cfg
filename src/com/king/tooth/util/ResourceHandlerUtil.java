@@ -142,6 +142,20 @@ public class ResourceHandlerUtil {
 	}
 	
 	/**
+	 * 初始化配置参数值
+	 * @param configKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public static String initConfValue(String configKey, String defaultValue){
+		String confValue = SysConfig.getSystemConfig(configKey);
+		if(StrUtils.isEmpty(confValue)){
+			confValue = defaultValue;
+		}
+		return confValue;
+	}
+	
+	/**
 	 * 清除表信息
 	 * @param tables
 	 */

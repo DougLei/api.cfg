@@ -32,6 +32,7 @@ import com.king.tooth.sys.service.common.ComSysAccountOnlineStatusService;
 import com.king.tooth.sys.service.common.ComSysAccountService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.sys.service.common.ComUserService;
+import com.king.tooth.sys.service.sys.SysFileService;
 import com.king.tooth.util.DateUtil;
 
 /**
@@ -107,5 +108,6 @@ public class BuiltinInstance {
 	public static final ComSysResourceService resourceService = new ComSysResourceService();
 	public static final ComUserService userService = new ComUserService();
 	public static final ComPermissionService permissionService = new ComPermissionService();
+	public static final SysFileService fileService = new SysFileService();
 	
 }

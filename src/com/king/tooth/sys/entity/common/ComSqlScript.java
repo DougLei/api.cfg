@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
@@ -171,9 +172,13 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		this.parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(len);
 		
 		SqlScriptParameterNameRecord spnr;
+		JSONArray jsonArray;
 		for(int i=0;i<len;i++){
 			spnr = new SqlScriptParameterNameRecord(ijson.get(i).getIntValue("sqlIndex"));
-			spnr.addParameterNames(ijson.get(i).getJSONArray("parameterNames").toJavaObject(List.class));
+			jsonArray = ijson.get(i).getJSONArray("parameterNames");
+			if(jsonArray != null){
+				spnr.addParameterNames(jsonArray.toJavaObject(List.class));
+			}
 			parameterNameRecordList.add(spnr);
 		}
 		ijson.clear();

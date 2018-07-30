@@ -99,9 +99,9 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object buildModel(HttpServletRequest request, IJson ijson){
-		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
-			return "建模功能目前只提供给平台开发人员使用";
-		}
+//		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
+//			return "建模功能目前只提供给平台开发人员使用";
+//		}
 		
 		int len = ijson.size();
 		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id

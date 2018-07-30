@@ -55,18 +55,20 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		ComSqlScriptParameter ssp = null;
 		
 		// 请求体为空，那么是从url传参，则是get请求select sql资源
-		if((formData == null || formData.size() == 0) && sqlScriptParams != null && sqlScriptParams.size() > 0){
-			// 解析sql脚本的参数
-			sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(sqlScriptParams.size());
-			
-			Set<String> parameterNames = sqlScriptParams.keySet();
-			for (String parameterName : parameterNames) {
-				ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
-				ssp.setActualInValue(processActualValue(sqlScriptParams.get(parameterName).trim()));
-				sqlScriptActualParameters.add(ssp);
+		if((formData == null || formData.size() == 0)){
+			if(sqlScriptParams != null && sqlScriptParams.size() > 0){
+				// 解析sql脚本的参数
+				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(sqlScriptParams.size());
+				
+				Set<String> parameterNames = sqlScriptParams.keySet();
+				for (String parameterName : parameterNames) {
+					ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
+					ssp.setActualInValue(processActualValue(sqlScriptParams.get(parameterName).trim()));
+					sqlScriptActualParameters.add(ssp);
+				}
+				
+				sqlScriptParams.clear();
 			}
-			
-			sqlScriptParams.clear();
 		}
 		// 否则就是通过请求体传参，则是post/put/delete insert/update/delete 等sql资源
 		else{

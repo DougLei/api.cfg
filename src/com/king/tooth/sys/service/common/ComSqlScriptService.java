@@ -131,18 +131,20 @@ public class ComSqlScriptService extends AbstractPublishService {
 					saveSqlScriptParameter(false, sqlScript.getSqlScriptParameterList(), sqlScriptId);
 				}
 				
-				if(isPlatformDeveloper){
+				// TODO 单项目，取消是否平台开发者的判断
+//				if(isPlatformDeveloper){
 					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
 					sqlScript.setId(sqlScriptId);
 					new ComSysResourceService().saveSysResource(sqlScript);
-				}
+//				}
 				
+				// TODO 单项目，取消是否平台开发者的判断
 				// 保存sql脚本和项目的关联关系
-				if(isPlatformDeveloper){
-					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
-				}else{
+//				if(isPlatformDeveloper){
+//					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
+//				}else{
 					HibernateUtil.saveDataLinks("ComProjectComSqlScriptLinks", projectId, sqlScriptId);
-				}
+//				}
 				return sqlScriptJsonObject;
 			}
 		}
@@ -167,18 +169,22 @@ public class ComSqlScriptService extends AbstractPublishService {
 			
 			if(!isPlatformDeveloper){
 				if(StrUtils.isEmpty(projectId)){
-					return "表关联的项目id不能为空！";
+					return "sql脚本关联的项目id不能为空！";
 				}
 				operResult = validSqlScriptRefProjIsExists(projectId);
 				if(operResult == null && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 					operResult = validSameResourceNameSqlScriptInProject(sqlScript.getSqlScriptResourceName(), projectId);
 				}
-				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
-					return "该sql脚本已经发布，不能修改sql脚本信息，或取消发布后再修改";
-				}
+				
+				// TODO 单项目，取消是否平台开发者的判断
+//				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldSqlScript.getId())){
+//					return "该sql脚本已经发布，不能修改sql脚本信息，或取消发布后再修改";
+//				}
 			}
 			
-			if(isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+			// TODO 单项目，取消是否平台开发者的判断
+//			if(isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 				// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
 				new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
@@ -201,11 +207,13 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public String deleteSqlScript(String sqlScriptId) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
-		if(!isPlatformDeveloper){
-			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
-				return "该sql脚本已经发布，无法删除，请先取消发布";
-			}
-		}
+		
+		// TODO 单项目，取消是否平台开发者的判断
+//		if(!isPlatformDeveloper){
+//			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
+//				return "该sql脚本已经发布，无法删除，请先取消发布";
+//			}
+//		}
 		
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("ComProjectComSqlScriptLinks", null, sqlScriptId);
 		if(datalinks.size() > 1){
@@ -227,9 +235,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		
 		// 如果是平台开发者账户，还要删除资源信息
-		if(isPlatformDeveloper){
+		// TODO 单项目，取消是否平台开发者的判断
+//		if(isPlatformDeveloper){
 			new ComSysResourceService().deleteSysResource(sqlScriptId);
-		}
+//		}
 		return null;
 	}
 	

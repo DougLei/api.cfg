@@ -50,73 +50,73 @@ public class ComPermissionService extends AbstractService{
 	 */
 	@SuppressWarnings("unchecked")
 	public ComPermission findAccountOfPermissions(String accountId){
-		String projectId = CurrentThreadContext.getProjectId();
-		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
-		
-		List<ComPermission> permissions = new ArrayList<ComPermission>();
-		List<ComPermission> newPermissions = new ArrayList<ComPermission>();
-		List<ComPermission> tmpPermissions = null;
-		
-		List<ComPermissionPriority> permissionPriorities = getPermissionPriorities();
-		for (ComPermissionPriority permissionPriority : permissionPriorities) {
-			// 帐号
-			if(BuiltinPermissionType.ACCOUNT.equals(permissionPriority.getPermissionType())){
-				newPermissions = getRootPermissionsByData(BuiltinPermissionType.ACCOUNT, accountId, projectId, customerId);
-				setSubPermissionsByData(newPermissions, projectId, customerId);
-			}
-			// 角色
-			else if(BuiltinPermissionType.ROLE.equals(permissionPriority.getPermissionType())){
-				List<Object> roleIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfRolesHql, accountId);
-				if(roleIds != null && roleIds.size() > 0){
-					roleIds = processSamePermissionTypeLevel(roleIds, permissionPriority.getSamePermissionTypeLv());
-					
-					for (Object roleId : roleIds) {
-						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, roleId, projectId, customerId);
-						setSubPermissionsByData(tmpPermissions, projectId, customerId);
-						mergePermissions(newPermissions, tmpPermissions);
-					}
-					roleIds.clear();
-				}
-			}
-			// 部门
-			else if(BuiltinPermissionType.DEPT.equals(permissionPriority.getPermissionType())){
-				List<Object> deptIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfDeptsHql, accountId);
-				if(deptIds != null && deptIds.size() > 0){
-					deptIds = processSamePermissionTypeLevel(deptIds, permissionPriority.getSamePermissionTypeLv());		
-					
-					for (Object deptId : deptIds) {
-						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, deptId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, projectId, customerId);
-						mergePermissions(newPermissions, tmpPermissions);
-					}
-					deptIds.clear();
-				}
-			}
-			// 岗位
-			else if(BuiltinPermissionType.POSITION.equals(permissionPriority.getPermissionType())){
-				List<Object> positionIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfPositionsHql, accountId);
-				if(positionIds != null && positionIds.size() > 0){
-					positionIds = processSamePermissionTypeLevel(positionIds, permissionPriority.getSamePermissionTypeLv());	
-					
-					for (Object positionId : positionIds) {
-						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, positionId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, projectId, customerId);
-						mergePermissions(newPermissions, tmpPermissions);
-					}
-					positionIds.clear();
-				}
-			}
-			mergePermissions(permissions, newPermissions);
-		}
-		
-		if(permissions.size() > 0){
-			ComPermission permission = new ComPermission();
-			permission.setRefResourceCode("ROOT");
-			permission.setRefResourceId("ROOT");
-			permission.setRefResourceType("ROOT");
-			permission.setChildren(permissions);
-			return permission;
-		}
+//		String projectId = CurrentThreadContext.getProjectId();
+//		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+//		
+//		List<ComPermission> permissions = new ArrayList<ComPermission>();
+//		List<ComPermission> newPermissions = new ArrayList<ComPermission>();
+//		List<ComPermission> tmpPermissions = null;
+//		
+//		List<ComPermissionPriority> permissionPriorities = getPermissionPriorities();
+//		for (ComPermissionPriority permissionPriority : permissionPriorities) {
+//			// 帐号
+//			if(BuiltinPermissionType.ACCOUNT.equals(permissionPriority.getPermissionType())){
+//				newPermissions = getRootPermissionsByData(BuiltinPermissionType.ACCOUNT, accountId, projectId, customerId);
+//				setSubPermissionsByData(newPermissions, projectId, customerId);
+//			}
+//			// 角色
+//			else if(BuiltinPermissionType.ROLE.equals(permissionPriority.getPermissionType())){
+//				List<Object> roleIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfRolesHql, accountId);
+//				if(roleIds != null && roleIds.size() > 0){
+//					roleIds = processSamePermissionTypeLevel(roleIds, permissionPriority.getSamePermissionTypeLv());
+//					
+//					for (Object roleId : roleIds) {
+//						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, roleId, projectId, customerId);
+//						setSubPermissionsByData(tmpPermissions, projectId, customerId);
+//						mergePermissions(newPermissions, tmpPermissions);
+//					}
+//					roleIds.clear();
+//				}
+//			}
+//			// 部门
+//			else if(BuiltinPermissionType.DEPT.equals(permissionPriority.getPermissionType())){
+//				List<Object> deptIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfDeptsHql, accountId);
+//				if(deptIds != null && deptIds.size() > 0){
+//					deptIds = processSamePermissionTypeLevel(deptIds, permissionPriority.getSamePermissionTypeLv());		
+//					
+//					for (Object deptId : deptIds) {
+//						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, deptId, projectId, customerId);
+//						setSubPermissionsByData(newPermissions, projectId, customerId);
+//						mergePermissions(newPermissions, tmpPermissions);
+//					}
+//					deptIds.clear();
+//				}
+//			}
+//			// 岗位
+//			else if(BuiltinPermissionType.POSITION.equals(permissionPriority.getPermissionType())){
+//				List<Object> positionIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfPositionsHql, accountId);
+//				if(positionIds != null && positionIds.size() > 0){
+//					positionIds = processSamePermissionTypeLevel(positionIds, permissionPriority.getSamePermissionTypeLv());	
+//					
+//					for (Object positionId : positionIds) {
+//						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, positionId, projectId, customerId);
+//						setSubPermissionsByData(newPermissions, projectId, customerId);
+//						mergePermissions(newPermissions, tmpPermissions);
+//					}
+//					positionIds.clear();
+//				}
+//			}
+//			mergePermissions(permissions, newPermissions);
+//		}
+//		
+//		if(permissions.size() > 0){
+//			ComPermission permission = new ComPermission();
+//			permission.setRefResourceCode("ROOT");
+//			permission.setRefResourceId("ROOT");
+//			permission.setRefResourceType("ROOT");
+//			permission.setChildren(permissions);
+//			return permission;
+//		}
 		return null;
 	}
 	

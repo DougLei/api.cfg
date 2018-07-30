@@ -103,12 +103,14 @@ public class ComTabledataService extends AbstractPublishService {
 			if(operResult == null){
 				JSONObject tableJsonObject = HibernateUtil.saveObject(table, null);
 				String tableId = tableJsonObject.getString(ResourceNameConstants.ID);
+				
 				// 保存表和项目的关联关系
-				if(isPlatformDeveloper){
-					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
-				}else{
+				// TODO 单项目，取消是否平台开发者的判断
+//				if(isPlatformDeveloper){
+//					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
+//				}else{
 					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
-				}
+//				}
 				return tableJsonObject;
 			}
 		}
@@ -142,9 +144,11 @@ public class ComTabledataService extends AbstractPublishService {
 				if(operResult == null && !oldTable.getTableName().equals(table.getTableName())){
 					operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 				}
-				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
-					return "该表已经发布，不能修改表信息，或取消发布后再修改";
-				}
+				
+				// TODO 单项目，取消是否平台开发者的判断
+//				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
+//					return "该表已经发布，不能修改表信息，或取消发布后再修改";
+//				}
 			}
 			
 			if(operResult == null){
@@ -165,11 +169,13 @@ public class ComTabledataService extends AbstractPublishService {
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
 		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
-		if(!isPlatformDeveloper){
-			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
-				return "该表已经发布，无法删除，请先取消发布";
-			}
-		}
+		
+		// TODO 单项目，取消是否平台开发者的判断
+//		if(!isPlatformDeveloper){
+//			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
+//				return "该表已经发布，无法删除，请先取消发布";
+//			}
+//		}
 		
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("ComProjectComTabledataLinks", null, tableId);
 		if(datalinks.size() > 1){
@@ -188,7 +194,9 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
-		if(isPlatformDeveloper && oldTable.getIsCreated() == 1){
+		// TODO 单项目，取消是否平台开发者的判断
+//		if(isPlatformDeveloper && oldTable.getIsCreated() == 1){
+		if(oldTable.getIsCreated() == 1){
 			cancelBuildModel(oldTable);
 		}
 		

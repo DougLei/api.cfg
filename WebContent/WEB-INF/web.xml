@@ -125,12 +125,12 @@
 		
 		<!-- 名为uploadFileServlet的，上传文件的servlet控制器 -->
 		<servlet>
-			<servlet-name>uploadFileServlet</servlet-name>
-			<servlet-class>com.king.tooth.web.servlet.UploadFileServlet</servlet-class>
+			<servlet-name>fileServlet</servlet-name>
+			<servlet-class>com.king.tooth.web.servlet.FileServlet</servlet-class>
 		</servlet>
 		<servlet-mapping>
-			<servlet-name>uploadFileServlet</servlet-name>
-			<url-pattern>/upload</url-pattern>
+			<servlet-name>fileServlet</servlet-name>
+			<url-pattern>/file/*</url-pattern>
 		</servlet-mapping>
 		
 <!-- ****************************************************************************************************  -->		

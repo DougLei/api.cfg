@@ -89,6 +89,24 @@ public class CurrentThreadContext {
 	
 	//-------------------------------------------------------------------
 	/**
+	 * 获取当前线程的租户主键
+	 * @return
+	 */
+	public static final String getCustomerId(){
+		setCurrentThreadData();
+		return currentThreadContext.get().getCustomerId();
+	}
+	/**
+	 * 给当前线程设置要调用的租户主键
+	 * @param projectId
+	 */
+	public static final void setCustomerId(String customerId){
+		setCurrentThreadData();
+		currentThreadContext.get().setCustomerId(customerId);
+	}
+	
+	//-------------------------------------------------------------------
+	/**
 	 * 获取当前线程的项目主键
 	 * @return
 	 */

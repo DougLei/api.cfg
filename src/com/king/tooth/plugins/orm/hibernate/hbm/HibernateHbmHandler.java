@@ -8,7 +8,7 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.freemarker.FreemarkerUtil;
 
 /**
@@ -26,22 +26,8 @@ public class HibernateHbmHandler {
 	 * 静态块，从配置文件读取，并初始化属性值
 	 */
 	static{
-		HBM_FTL_FILE_PATH = initConfValue("hbm.ftl.file.path", 
+		HBM_FTL_FILE_PATH = ResourceHandlerUtil.initConfValue("hbm.ftl.file.path", 
 				SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separator + "classes" + File.separator + "hibernateMapping" + File.separator + "template" + File.separator + "hibernate.hbm.xml.ftl");
-	}
-	
-	/**
-	 * 初始化配置参数值
-	 * @param configKey
-	 * @param defaultValue
-	 * @return
-	 */
-	private static String initConfValue(String configKey, String defaultValue){
-		String confValue = SysConfig.getSystemConfig(configKey);
-		if(StrUtils.isEmpty(confValue)){
-			confValue = defaultValue;
-		}
-		return confValue;
 	}
 	
 	/**

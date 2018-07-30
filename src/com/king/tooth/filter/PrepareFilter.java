@@ -51,6 +51,9 @@ public class PrepareFilter extends AbstractFilter{
 		}
 		
 		CurrentThreadContext.setProjectId(projectId);
+		
+		// TODO:customerId写成 unknow
+		CurrentThreadContext.setCustomerId("unknow");
 		try {
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
@@ -84,7 +87,7 @@ public class PrepareFilter extends AbstractFilter{
 	 */
 	private void processResponseBody(ServletResponse resp, ResponseBody responseBody) throws IOException {
 		if(responseBody == null){
-			responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员", null, false);
+			responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员");
 		}
 		if(responseBody.getIsSuccess()){
 			HibernateUtil.commitTransaction();

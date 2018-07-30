@@ -36,6 +36,9 @@ public class ResponseBody implements Serializable{
 	
 	public ResponseBody() {
 	}
+	public ResponseBody(String message) {
+		this.message = message;
+	}
 	public ResponseBody(String message, Object data, boolean isSuccess) {
 		this(data, isSuccess);
 		this.message = message;

@@ -30,9 +30,9 @@ public class CommonDispatcherServlet extends HttpServlet implements Serializable
 		if(requestBody.getResourceInfo().isCodeResource()){
 			Object object = CodeResourceMapping.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData());
 			if(object instanceof String){
-				responseBody = new ResponseBody(object.toString(), null, false);
+				responseBody = new ResponseBody(object.toString());
 			}else{
-				responseBody = new ResponseBody(null, object, true);
+				responseBody = new ResponseBody(object, true);
 			}
 		}else{
 			IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
