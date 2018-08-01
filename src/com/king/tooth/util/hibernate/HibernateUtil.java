@@ -218,7 +218,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
-			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg("HibernateUtil", "saveObject", e));
 			throw e;
 		}
 	}
@@ -262,7 +262,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("修改数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
-			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg("HibernateUtil", "updateObjectByHql", e));
 			throw e;
 		}
 	}
@@ -344,7 +344,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}了{}条数据", hqlDes, modifyCount);
 			return modifyCount;
 		} catch (HibernateException e) {
-			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}数据的时候出现了异常信息：{}", hqlDes, ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}数据的时候出现了异常信息：{}", hqlDes, ExceptionUtil.getErrMsg("HibernateUtil", "executeUpdateByHql", e));
 			return -1;
 		}
 	}
@@ -378,7 +378,7 @@ public class HibernateUtil {
 			int modifyCount = query.executeUpdate();
 			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}了{}条数据", sqlDes, modifyCount);
 		} catch (HibernateException e) {
-			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}数据的时候出现了异常信息：{}", sqlDes, ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}数据的时候出现了异常信息：{}", sqlDes, ExceptionUtil.getErrMsg("HibernateUtil", "executeUpdateBySql", e));
 			throw e;
 		}
 	}

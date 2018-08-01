@@ -90,7 +90,7 @@ public abstract class AbstractPublishService extends AbstractService{
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
 			publishInfo.setIsSuccess(0);
-			publishInfo.setErrMsg(ExceptionUtil.getErrMsg(e));
+			publishInfo.setErrMsg(ExceptionUtil.getErrMsg("AbstractPublishService", "executeRemotePublish", e));
 		}finally{
 			if(session != null){
 				session.flush();
@@ -196,7 +196,7 @@ public abstract class AbstractPublishService extends AbstractService{
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			errMsg = ExceptionUtil.getErrMsg(e);
+			errMsg = ExceptionUtil.getErrMsg("AbstractPublishService", "executeRemoteBatchPublish", e);
 		}finally{
 			if(session != null){
 				session.flush();

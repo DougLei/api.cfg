@@ -58,14 +58,14 @@ public class DBLink {
 						// 执行建库建表语句错误，也要继续下去
 						st.executeUpdate(ds);
 					} catch (Exception e) {
-						String errMessage = "[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]，错误信息为："+ExceptionUtil.getErrMsg(e);
+						String errMessage = "[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]，错误信息为："+ExceptionUtil.getErrMsg("DBLink", "executeDDL", e);
 						Log4jUtil.info(errMessage);
 						throw new IllegalArgumentException(errMessage);
 					}
 				}
 			}
-		} catch (Exception e) {
-			Log4jUtil.debug("[DBLink.executeDDL]" + ExceptionUtil.getErrMsg(e));
+		} catch (Exception e) {                                                                           
+			Log4jUtil.debug("[DBLink.executeDDL]" + ExceptionUtil.getErrMsg("DBLink", "executeDDL", e));
 		}finally{
 			CloseUtil.closeDBConn(st, connection);
 		}
@@ -100,7 +100,7 @@ public class DBLink {
 				}
 			}
 		} catch (Exception e) {
-			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e) + " ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]，错误信息为："+ExceptionUtil.getErrMsg(e));
+			throw new IllegalArgumentException(" ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]，错误信息为："+ExceptionUtil.getErrMsg("DBLink", "executeUpdate", e));
 		}finally{
 			CloseUtil.closeDBConn(pst, connection);
 		}

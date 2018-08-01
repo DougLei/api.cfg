@@ -168,9 +168,9 @@ public class ComTabledataService extends AbstractPublishService {
 		if(oldTable == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 		
 		// TODO 单项目，取消是否平台开发者的判断
+//		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 //		if(!isPlatformDeveloper){
 //			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
 //				return "该表已经发布，无法删除，请先取消发布";
@@ -251,7 +251,7 @@ public class ComTabledataService extends AbstractPublishService {
 			
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {
-			return ExceptionUtil.getErrMsg(e);
+			return ExceptionUtil.getErrMsg("ComTabledataService", "buildModel", e);
 		}
 		return null;
 	}
@@ -428,7 +428,7 @@ public class ComTabledataService extends AbstractPublishService {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			errMsg = ExceptionUtil.getErrMsg(e);
+			errMsg = ExceptionUtil.getErrMsg("ComTabledataService", "executeRemotePublishTable", e);
 		}finally{
 			if(session != null){
 				session.flush();

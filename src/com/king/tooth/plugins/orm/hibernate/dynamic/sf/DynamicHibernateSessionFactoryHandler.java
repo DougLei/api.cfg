@@ -51,7 +51,7 @@ public class DynamicHibernateSessionFactoryHandler {
 		try {
 			lsfb.afterPropertiesSet();
 		} catch (IOException e) {
-			Log4jUtil.debug("动态添加sessionFacotry出现异常：{}", ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("动态添加sessionFacotry出现异常：{}", ExceptionUtil.getErrMsg("DynamicHibernateSessionFactoryHandler", "addSessionFactory", e));
 		}
 		sessionFactoryHolder.addSessionFactory(databaseId, lsfb.getObject());
 	}

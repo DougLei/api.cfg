@@ -205,10 +205,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String deleteSqlScript(String sqlScriptId) {
-		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 		
 		// TODO 单项目，取消是否平台开发者的判断
+//		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
+//		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
 //		if(!isPlatformDeveloper){
 //			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
 //				return "该sql脚本已经发布，无法删除，请先取消发布";

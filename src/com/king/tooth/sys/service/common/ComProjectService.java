@@ -327,7 +327,7 @@ public class ComProjectService extends AbstractPublishService {
 			return null;
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			return "发布基础数据时出现异常：" + ExceptionUtil.getErrMsg(e);
+			return "发布基础数据时出现异常：" + ExceptionUtil.getErrMsg("ComProjectService", "executeRemoteSaveBasicData", e);
 		}finally{
 			if(session != null){
 				session.flush();

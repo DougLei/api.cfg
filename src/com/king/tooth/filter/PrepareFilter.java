@@ -54,47 +54,45 @@ public class PrepareFilter extends AbstractFilter{
 		
 		// TODO:customerId写成 unknow
 		CurrentThreadContext.setCustomerId("unknow");
+		
+		// 默认是要打印responseBody的
+		request.setAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY, true);
 		try {
+			
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			chain.doFilter(req, resp);
 			
 			ResponseBody responseBody = (ResponseBody) request.getAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY);
-			processResponseBody(resp, responseBody);
+			if(responseBody == null){
+				responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员");
+			}
+			if(responseBody.getIsSuccess()){
+				HibernateUtil.commitTransaction();
+			}else{
+				HibernateUtil.rollbackTransaction();
+			}
 			
-			Log4jUtil.debug("请求处理完成");
+			boolean isPrintResponseBody = (boolean) request.getAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY);
+			if(isPrintResponseBody){
+				printResult(resp, responseBody);
+			}
 		} catch (Exception err) {
-			String errMsg = ExceptionUtil.getErrMsg(err);
+			String errMsg = ExceptionUtil.getErrMsg("PrepareFilter", "doFilter", err);
 			Log4jUtil.debug("请求处理出现异常，异常信息为:{}", errMsg);
 			HibernateUtil.rollbackTransaction();
 			printResult(errMsg, resp, false);
 		}finally{
+			// 关闭连接
 			HibernateUtil.closeCurrentThreadSession();
-			
+			// 请求本次请求的线程数据
 			CurrentThreadContext.clearCurrentThreadData();
-			
+			// 如果存在请求体，也清空
 			RequestBody requestBody = (RequestBody) req.getAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY);
 			if(requestBody != null){
 				requestBody.clear();
 			}
 		}
-	}
-	
-	/**
-	 * 处理最终的响应体
-	 * @param responseBody
-	 * @throws IOException 
-	 */
-	private void processResponseBody(ServletResponse resp, ResponseBody responseBody) throws IOException {
-		if(responseBody == null){
-			responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员");
-		}
-		if(responseBody.getIsSuccess()){
-			HibernateUtil.commitTransaction();
-		}else{
-			HibernateUtil.rollbackTransaction();
-		}
-		printResult(resp, responseBody);
 	}
 	
 	/**

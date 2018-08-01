@@ -26,7 +26,7 @@ public abstract class AbstractService {
 		className = className.substring(className.lastIndexOf(".")+1);
 		T t = HibernateUtil.extendExecuteUniqueQueryByHqlArr(clazz, "from "+className +" where " + ResourceNameConstants.ID +"=?", id);
 		if(t == null){
-			throw new NullPointerException("不存在id值为'"+id+"'的数据对象");
+			throw new NullPointerException("不存在id值为'"+id+"'的"+className+"数据对象");
 		}
 		return t;
 	}

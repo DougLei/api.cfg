@@ -24,10 +24,24 @@ public class DateUtil {
 	
 	/**
 	 * 格式化日期对象为字符串
+	 * <p>只包括年月日</p>
 	 * @param date
 	 * @return
 	 */
 	public static String formatDate(Date date){
+		if(date == null){
+			return null;
+		}
+		return sdfSimple.format(date);
+	}
+	
+	/**
+	 * 格式化日期对象为字符串
+	 * <p>包括时分秒</p>
+	 * @param date
+	 * @return
+	 */
+	public static String formatDatetime(Date date){
 		if(date == null){
 			return null;
 		}
@@ -50,7 +64,7 @@ public class DateUtil {
 				return sdfSimple.parse(dateStr);
 			}
 		} catch (ParseException e) {
-			throw new IllegalArgumentException("[DateUtil.parseDate]格式化日期字符串["+dateStr+"]为日期对象时出现错误："+ExceptionUtil.getErrMsg(e));
+			throw new IllegalArgumentException("[DateUtil.parseDate]格式化日期字符串["+dateStr+"]为日期对象时出现错误："+ExceptionUtil.getErrMsg("DateUtil", "parseDate", e));
 		}
 	}
 	

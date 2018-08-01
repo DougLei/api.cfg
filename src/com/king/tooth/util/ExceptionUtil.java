@@ -15,17 +15,20 @@ public class ExceptionUtil {
 	
 	/**
 	 * 获取异常信息
+	 * @param throwEClassName
+	 * @param throwEMethodName
 	 * @param e
 	 * @return
 	 */
-	public static String getErrMsg(Exception e) {
+	public static String getErrMsg(String throwEClassName, String throwEMethodName, Exception e) {
 		if(isDevelop){
 			e.printStackTrace();
 		}
-		StringBuilder errMsg = new StringBuilder();
+		StringBuilder errMsg = new StringBuilder("抛出异常信息的位置为：[");
+		errMsg.append(throwEClassName).append(".").append(throwEMethodName).append("]>>>>>>");
 		errMsg.append("异常的信息为：").append(e.getMessage());
 		if(e.getCause() != null){
-			errMsg.append("。").append(e.getCause().getMessage());
+			errMsg.append(">>>>>>").append(e.getCause().getMessage());
 		}
 		return errMsg.toString();
 	}

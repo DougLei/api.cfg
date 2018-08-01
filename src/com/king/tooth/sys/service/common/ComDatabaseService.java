@@ -230,7 +230,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			return ExceptionUtil.getErrMsg(e);
+			return ExceptionUtil.getErrMsg("ComDatabaseService", "publishDatabase", e);
 		}finally{
 			if(session != null){
 				session.flush();

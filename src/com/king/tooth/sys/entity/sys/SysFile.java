@@ -3,6 +3,8 @@ package com.king.tooth.sys.entity.sys;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
+
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -33,9 +35,9 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	 */
 	private String code;
 	/**
-	 * 文件大小
+	 * 文件大小，单位为b
 	 */
-	private Double size;
+	private String size;
 	/**
 	 * 文件后缀
 	 */
@@ -46,9 +48,9 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	private String savePath;
 	/**
 	 * 文件的存储方式
-	 * <p>1:存储在数据库，2:存储在系统服务器上...</p>
+	 * <p>db:存储在数据库，service:存储在系统服务器上...</p>
 	 */
-	private Integer saveType;
+	private String saveType;
 	/**
 	 * 文件内容
 	 */
@@ -56,15 +58,19 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 文件的密级
 	 */
-	private Integer level;
+	private Integer secretLevel;
+	/**
+	 * 下载次数
+	 */
+	private Integer downloadCount;
 	
 	// ---------------------------------------------------------------------------
 	
 	/**
-	 * 传递数据时使用，记录调用文件接口时，是否存在文件
+	 * 记录上传文件的临时对象
 	 */
 	@JSONField(serialize = false)
-	private boolean fileIsEmpty;
+	private FileItem fileItem;
 	
 	public String getRefDataId() {
 		return refDataId;
@@ -84,10 +90,10 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public Double getSize() {
+	public String getSize() {
 		return size;
 	}
-	public void setSize(Double size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 	public String getSuffix() {
@@ -102,10 +108,10 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setSavePath(String savePath) {
 		this.savePath = savePath;
 	}
-	public Integer getSaveType() {
+	public String getSaveType() {
 		return saveType;
 	}
-	public void setSaveType(Integer saveType) {
+	public void setSaveType(String saveType) {
 		this.saveType = saveType;
 	}
 	public String getContent() {
@@ -114,18 +120,25 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public Integer getLevel() {
-		return level;
+	public Integer getSecretLevel() {
+		return secretLevel;
 	}
-	public void setLevel(Integer level) {
-		this.level = level;
+	public void setSecretLevel(Integer secretLevel) {
+		this.secretLevel = secretLevel;
 	}
-	public boolean getIsFileIsEmpty() {
-		return fileIsEmpty;
+	public FileItem getFileItem() {
+		return fileItem;
 	}
-	public void setIsFileIsEmpty(boolean fileIsEmpty) {
-		this.fileIsEmpty = fileIsEmpty;
+	public void setFileItem(FileItem fileItem) {
+		this.fileItem = fileItem;
 	}
+	public Integer getDownloadCount() {
+		return downloadCount;
+	}
+	public void setDownloadCount(Integer downloadCount) {
+		this.downloadCount = downloadCount;
+	}
+	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_FILE", 0);
@@ -133,9 +146,9 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		table.setComments("文件表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
-		table.setBelongPlatformType(ISysResource.APP_PLATFORM);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinCodeDataType.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
@@ -155,9 +168,9 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		codeColumn.setOrderCode(3);
 		columns.add(codeColumn);
 		
-		ComColumndata sizeColumn = new ComColumndata("size", BuiltinCodeDataType.DOUBLE, 20);
+		ComColumndata sizeColumn = new ComColumndata("size", BuiltinCodeDataType.STRING, 30);
 		sizeColumn.setName("文件大小");
-		sizeColumn.setComments("文件大小");
+		sizeColumn.setComments("文件大小，单位为b");
 		sizeColumn.setOrderCode(4);
 		columns.add(sizeColumn);
 		
@@ -167,15 +180,16 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		suffixColumn.setOrderCode(5);
 		columns.add(suffixColumn);
 		
-		ComColumndata savePathColumn = new ComColumndata("save_path", BuiltinCodeDataType.BLOB, 0);
+		ComColumndata savePathColumn = new ComColumndata("save_path", BuiltinCodeDataType.STRING, 1000);
 		savePathColumn.setName("文件的存储路径");
 		savePathColumn.setComments("文件的存储路径：存储文件的路径");
 		savePathColumn.setOrderCode(6);
 		columns.add(savePathColumn);
 		
-		ComColumndata saveTypeColumn = new ComColumndata("save_type", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata saveTypeColumn = new ComColumndata("save_type", BuiltinCodeDataType.STRING, 10);
 		saveTypeColumn.setName("文件的存储方式");
-		saveTypeColumn.setComments("文件的存储方式：1:存储在数据库，2:存储在系统服务器上...");
+		saveTypeColumn.setComments("文件的存储方式：db:存储在数据库，service:存储在系统服务器上...");
+		saveTypeColumn.setDefaultValue(service);
 		saveTypeColumn.setOrderCode(7);
 		columns.add(saveTypeColumn);
 		
@@ -191,6 +205,13 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		secretLevelColumn.setOrderCode(9);
 		columns.add(secretLevelColumn);
 		
+		ComColumndata downloadCountColumn = new ComColumndata("download_count", BuiltinCodeDataType.INTEGER, 10);
+		downloadCountColumn.setName("文件的下载次数");
+		downloadCountColumn.setComments("文件的下载次数");
+		downloadCountColumn.setDefaultValue("0");
+		downloadCountColumn.setOrderCode(10);
+		columns.add(downloadCountColumn);
+		
 		table.setColumns(columns);
 		return table;
 	}
@@ -203,4 +224,13 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "SysFile";
 	}
+
+	/**
+	 * 保存文件到数据库中
+	 */
+	public static final String db = "db";
+	/**
+	 * 保存文件到服务器上
+	 */
+	public static final String service = "service";
 }

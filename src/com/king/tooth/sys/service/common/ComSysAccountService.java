@@ -10,7 +10,6 @@ import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComUser;
@@ -65,8 +64,9 @@ public class ComSysAccountService extends AbstractService{
 			HibernateUtil.updateObjectByHql(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}
 		
+		// TODO 暂时不要
 		// 获取当前登陆帐号的权限
-		accountOnlineStatus.setPermission(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getCurrentAccountId()));
+//		accountOnlineStatus.setPermission(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getCurrentAccountId()));
 		return accountOnlineStatus;
 	}
 	

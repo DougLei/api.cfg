@@ -19,7 +19,7 @@ public class StrUtils {
 		try {
 			return new String(str.getBytes(fromEncoding), toEncoding);
 		} catch (UnsupportedEncodingException e) {
-			Log4jUtil.debug("[StrUtils.encodingString]方法在转换字符串编码时出现异常：{}", ExceptionUtil.getErrMsg(e));
+			Log4jUtil.debug("[StrUtils.encodingString]方法在转换字符串编码时出现异常：{}", ExceptionUtil.getErrMsg("StrUtils", "turnStrEncoding", e));
 		}
 		return null;
 	}

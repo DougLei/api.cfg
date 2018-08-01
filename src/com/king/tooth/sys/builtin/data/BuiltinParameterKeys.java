@@ -37,4 +37,9 @@ public class BuiltinParameterKeys {
 	 * 存储在request中的ResponseBody实例，方便在各个地方调用到
 	 */
 	public static final String _RESPONSE_BODY_KEY = "_responseBody";
+	/**
+	 * 存储在request中，标识是否需要打印出responseBody
+	 * <p>目前只有在下载文件的时候，是不需要打印responseBody</p>
+	 */
+	public static final String _IS_PRINT_RESPONSEBODY = "_isPrintResponseBody";
 }
