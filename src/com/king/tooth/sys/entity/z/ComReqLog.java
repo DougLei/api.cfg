@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.z;
 
 import java.util.ArrayList;
 import java.util.Date;

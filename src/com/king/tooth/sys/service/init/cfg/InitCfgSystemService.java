@@ -29,14 +29,12 @@ import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComDept;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
-import com.king.tooth.sys.entity.common.ComOperLog;
 import com.king.tooth.sys.entity.common.ComOrg;
 import com.king.tooth.sys.entity.common.ComPermission;
 import com.king.tooth.sys.entity.common.ComPermissionPriority;
 import com.king.tooth.sys.entity.common.ComPosition;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
-import com.king.tooth.sys.entity.common.ComReqLog;
 import com.king.tooth.sys.entity.common.ComRole;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
@@ -50,6 +48,7 @@ import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComSysAccountComRoleLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComUserComDeptLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComUserComPositionLinks;
+import com.king.tooth.sys.entity.sys.SysOperLog;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
@@ -99,8 +98,8 @@ public class InitCfgSystemService extends AbstractService{
 	 * @return
 	 */
 	private List<ComTabledata> getAllTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(32);
-		// 核心表
+		List<ComTabledata> tables = new ArrayList<ComTabledata>(50);
+		
 		tables.add(new ComDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
 		tables.add(new ComProjectModule().toCreateTable());
@@ -111,21 +110,20 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComSysAccount().toCreateTable());
 		tables.add(new ComDataDictionary().toCreateTable());
 		tables.add(new ComSysResource().toCreateTable());
-		// 通用表
+		
 		tables.add(new ComDataLinks().toCreateTable());
-		tables.add(new ComOperLog().toCreateTable());
-		tables.add(new ComReqLog().toCreateTable());
+		tables.add(new SysOperLog().toCreateTable());
 		tables.add(new ComSysAccountOnlineStatus().toCreateTable());
 		tables.add(new ComUser().toCreateTable());
 		tables.add(new ComVerifyCode().toCreateTable());
-		// 配置系统表
+		
 		tables.add(new ComColumndata().toCreateTable());
 		tables.add(new ComTabledata().toCreateTable());
 		tables.add(new ComPublishInfo().toCreateTable());
 		tables.add(new ComPublishBasicData().toCreateTable());
 		tables.add(new ComSqlScriptParameter().toCreateTable());
 		tables.add(new ComProjectComTabledataLinks().toCreateTable());
-		// 运行系统表
+		
 		tables.add(new ComRole().toCreateTable());
 		tables.add(new ComPermission().toCreateTable());
 		tables.add(new ComPermissionPriority().toCreateTable());
@@ -333,7 +331,7 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
-		// ComOperLog.operType 操作的类型
+		// SysOperLog.operType 操作的类型
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "查询", "select", 1, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "增加", "insert", 2, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "修改", "update", 3, ISysResource.COMMON_PLATFORM);
