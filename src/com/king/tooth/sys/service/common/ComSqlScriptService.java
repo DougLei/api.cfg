@@ -193,6 +193,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 					String sqlScriptId = sqlScript.getId(); 
 					saveSqlScriptParameter(true, sqlScript.getSqlScriptParameterList(), sqlScriptId);
 				}
+				sqlScript.setSqlQueryResultColumns("");
 				return HibernateUtil.updateObjectByHql(sqlScript, null);
 			}
 		}

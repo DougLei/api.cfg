@@ -249,9 +249,15 @@ public class HibernateUtil {
 				if(pn.equalsIgnoreCase(ResourceNameConstants.ID) || (data.get(pn) == null)){
 					continue;
 				}
-				updateHql.append(pn);
-				updateHql.append(" = ?").append(",");
-				parameters.add(data.get(pn));
+				
+				if(StrUtils.isEmpty(data.get(pn))){
+					updateHql.append(pn);
+					updateHql.append(" = null").append(",");
+				}else{
+					updateHql.append(pn);
+					updateHql.append(" = ?").append(",");
+					parameters.add(data.get(pn));
+				}
 			}
 			
 			updateHql.setLength(updateHql.length()-1);
