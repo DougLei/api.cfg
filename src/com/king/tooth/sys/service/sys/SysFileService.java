@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
@@ -56,6 +55,7 @@ public class SysFileService extends AbstractService{
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload servletUpload = new ServletFileUpload(factory);
 		List<FileItem> fileList = null;
+		List<String> filePathList = null;// 记录文件在服务器上的路径，如果上传出现错误，要删除已经上传的数据
 		try {
 			fileList = servletUpload.parseRequest(request);
 			if(fileList != null && fileList.size() > 0){
@@ -66,6 +66,7 @@ public class SysFileService extends AbstractService{
 					return uploadFileInfo.errMsg;
 				}else{
 					String uploadDir = validUploadDirIsExists();
+					filePathList = new ArrayList<String>(uploadFileInfo.count);
 					Map<Integer, SysFile> sysfileMap = new HashMap<Integer, SysFile>(uploadFileInfo.count);
 					SysFile sysFile;
 					Integer index;
@@ -81,18 +82,22 @@ public class SysFileService extends AbstractService{
 							sysfileMap.put(index, sysFile);
 						}
 						
-						if(file.isFormField() && file.getFieldName().startsWith("secretLevel_")){
-							if(StrUtils.notEmpty(file.getString())){
+						if(file.isFormField()){
+							if(file.getFieldName().startsWith("secretLevel_") && StrUtils.notEmpty(file.getString())){
 								sysFile.setSecretLevel(Integer.valueOf(file.getString()));
 							}
-						}else if(!file.isFormField() && file.getFieldName().startsWith("file_")){
-							fileName = file.getName().substring(file.getName().lastIndexOf("\\")+1);
-							sysFile.setActName(fileName);
-							sysFile.setSize(file.getSize()+"");
-							sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1));
-							sysFile.setFileItem(file);
-							if(FileUtil.saveToService){
-								sysFile.setSavePath(uploadDir + File.separator + sysFile.getCode() + "." + sysFile.getSuffix());
+						}else{
+							if(file.getFieldName().startsWith("file_")){
+								fileName = file.getName().substring(file.getName().lastIndexOf("\\")+1);
+								
+								sysFile.setActName(fileName);
+								sysFile.setSize(file.getSize()+"");
+								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1));
+								sysFile.setFileItem(file);
+								if(FileUtil.saveToService){
+									sysFile.setSavePath(uploadDir + File.separator + sysFile.getCode() + "." + sysFile.getSuffix());
+									filePathList.add(sysFile.getSavePath());
+								}
 							}
 						}
 					}
@@ -101,13 +106,23 @@ public class SysFileService extends AbstractService{
 			}else{
 				return "没有获得要操作的任何数据[fileList is null]";
 			}
-		} catch (FileUploadException e) {
+		} catch (Exception e) {
+			if(FileUtil.saveToService && filePathList != null && filePathList.size() > 0){
+				File tf;
+				for (String fp : filePathList) {
+					tf = new File(fp);
+					if(tf.exists() && tf.isFile()){
+						tf.delete();
+					}
+				}
+			}
 			return ExceptionUtil.getErrMsg("SysFileService", "upload", e);
-		} catch (IOException e) {
-			return ExceptionUtil.getErrMsg("SysFileService", "upload", e);
-		}  finally{
+		} finally{
 			if(fileList != null){
 				fileList.clear();
+			}
+			if(FileUtil.saveToService && filePathList != null){
+				filePathList.clear();
 			}
 		}
 	}
