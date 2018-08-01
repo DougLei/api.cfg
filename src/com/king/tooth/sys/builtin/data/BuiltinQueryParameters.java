@@ -3,6 +3,7 @@ package com.king.tooth.sys.builtin.data;
 import java.sql.Date;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
  * 系统内置的查询参数
@@ -10,6 +11,10 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
  */
 public class BuiltinQueryParameters {
 	
+	/**
+	 * 主键
+	 */
+	private static final String id = "_Id";
 	/**
 	 * 当前时间
 	 */
@@ -53,7 +58,8 @@ public class BuiltinQueryParameters {
 	 * @return
 	 */
 	public static boolean isBuiltinQueryParams(String parameterName) {
-		if(currentDate.equals(parameterName)
+		if(id.equals(parameterName)
+				|| currentDate.equals(parameterName)
 				|| currentCustomerId.equals(parameterName) 
 				|| currentProjectId.equals(parameterName)
 				|| accountId.equals(parameterName)
@@ -73,6 +79,9 @@ public class BuiltinQueryParameters {
 	 * @return
 	 */
 	public static Object getBuiltinQueryParamValue(String parameterName) {
+		if(id.equals(parameterName)){
+			return ResourceHandlerUtil.getIdentity();
+		}
 		if(currentDate.equals(parameterName)){
 			return new Date(new java.util.Date().getTime());
 		}
