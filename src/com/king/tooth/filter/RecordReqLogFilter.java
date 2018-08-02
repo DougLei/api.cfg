@@ -7,6 +7,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
+import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.entity.sys.SysReqLog;
 
 /**
  * 记录请求日志的过滤器
@@ -17,8 +21,8 @@ public class RecordReqLogFilter extends AbstractFilter{
 	}
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-		
-		
+		SysReqLog reqLog = new SysReqLog((HttpServletRequest)req);
+		CurrentThreadContext.getReqLogData().setReqLog(reqLog);
 		chain.doFilter(req, resp);
 	}
 

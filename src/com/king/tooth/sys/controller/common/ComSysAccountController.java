@@ -10,10 +10,10 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -31,8 +31,10 @@ public class ComSysAccountController extends AbstractController{
 	 * @return
 	 */
 	public Object login(HttpServletRequest request, IJson ijson){
+		CurrentThreadContext.getReqLogData().getReqLog().setType(1);// 标识为登陆日志
+		
 		ComSysAccount account = JsonUtil.toJavaObject(ijson.get(0), ComSysAccount.class);
-		SysAccountOnlineStatus accountOnlineStatus = BuiltinInstance.accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinInstance.accountService.modifyAccountOfOnLineStatus(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{
@@ -54,6 +56,8 @@ public class ComSysAccountController extends AbstractController{
 	 * @return
 	 */
 	public Object loginOut(HttpServletRequest request, IJson ijson){
+		CurrentThreadContext.getReqLogData().getReqLog().setType(2);// 标识为退出登陆日志
+		
 		String token = request.getHeader("_token");
 		BuiltinInstance.accountService.loginOut(token);
 		

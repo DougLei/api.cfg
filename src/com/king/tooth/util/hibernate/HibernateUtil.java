@@ -54,6 +54,14 @@ public class HibernateUtil {
 	}
 	
 	/**
+	 * 获得当前线程的logSession对象
+	 * @return
+	 */
+	public static Session getCurrentThreadLogSession(){
+		return getSessionFactory().openSession();
+	}
+	
+	/**
 	 * 获得当前线程的session对象
 	 * @return
 	 */

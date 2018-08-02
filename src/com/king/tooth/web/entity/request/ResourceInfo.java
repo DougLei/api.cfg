@@ -1,6 +1,7 @@
 package com.king.tooth.web.entity.request;
 
 import com.king.tooth.cache.CodeResourceMapping;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSqlScript;
@@ -52,21 +53,23 @@ public class ResourceInfo {
 				throw new IllegalArgumentException("平台目前不支持处理主子action code资源");
 			}
 			resourceType = ISysResource.CODE;
-			return;
+		}else{
+			ComSysResource resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
+			resourceType = resource.getResourceType();
+			
+			// 如果是sql脚本资源，则要去查询sql脚本实例
+			if(ISysResource.SQLSCRIPT == resourceType){
+				sqlScriptResource = BuiltinInstance.sqlScriptService.findSqlScriptResourceById(resource.getRefResourceId());
+			}
+			
+			// 如果请求包括父资源，则验证父资源是否可以调用
+			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
+				resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
+			}
 		}
 		
-		ComSysResource resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
-		resourceType = resource.getResourceType();
-		
-		// 如果是sql脚本资源，则要去查询sql脚本实例
-		if(ISysResource.SQLSCRIPT == resourceType){
-			sqlScriptResource = BuiltinInstance.sqlScriptService.findSqlScriptResourceById(resource.getRefResourceId());
-		}
-		
-		// 如果请求包括父资源，则验证父资源是否可以调用
-		if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-			resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
-		}
+		// 记录日志，请求的资源类型
+		CurrentThreadContext.getReqLogData().getReqLog().setResourceType(resourceType);
 	}
 	
 	/**

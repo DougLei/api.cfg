@@ -10,6 +10,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.Log4jUtil;
 
@@ -29,6 +30,9 @@ public class CorsFilter extends AbstractFilter{
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		
+		String clientIp = HttpHelperUtil.getClientIp(request);
+		request.setAttribute(BuiltinParameterKeys._CLIENT_IP, clientIp);
+		
 		response.setHeader("Access-Control-Allow-Origin", "*");  
 		response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");  
 		response.setHeader("Access-Control-Max-Age", "3600");  
@@ -36,10 +40,10 @@ public class CorsFilter extends AbstractFilter{
 		
 		String requestMethod = request.getMethod();
 		if("options".equalsIgnoreCase(requestMethod)){
-			Log4jUtil.debug("来自ip地址为{}的客户端发起跨域请求", HttpHelperUtil.getClientIp(request));
+			Log4jUtil.debug("来自ip地址为{}的客户端发起跨域请求", clientIp);
 			return;
 		}
-		Log4jUtil.debug("来自ip地址为{}的客户端发起的{}请求", HttpHelperUtil.getClientIp(request), requestMethod);
+		Log4jUtil.debug("来自ip地址为{}的客户端发起的{}请求", clientIp, requestMethod);
 		chain.doFilter(req, resp);
 	}
 }

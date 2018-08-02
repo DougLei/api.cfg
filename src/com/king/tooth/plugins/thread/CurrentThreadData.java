@@ -1,5 +1,7 @@
 package com.king.tooth.plugins.thread;
 
+import java.io.Serializable;
+
 import org.hibernate.Session;
 
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
@@ -9,7 +11,9 @@ import com.king.tooth.util.StrUtils;
  * 当前线程的数据对象
  * @author DougLei
  */
-class CurrentThreadData {
+@SuppressWarnings("serial")
+class CurrentThreadData implements Serializable{
+	
 	/**
 	 * 进行配置的项目id
 	 * <p>配置系统专用</p>
@@ -40,6 +44,10 @@ class CurrentThreadData {
 	 * 当前线程的账户在线状态
 	 */
 	private SysAccountOnlineStatus currentAccountOnlineStatus;
+	/**
+	 * 当前线程的请求日志数据对象
+	 */
+	private ReqLogData reqLogData;
 	
 	public String getCustomerId() {
 		if(StrUtils.isEmpty(customerId)){
@@ -79,5 +87,11 @@ class CurrentThreadData {
 	}
 	public void setConfProjectId(String confProjectId) {
 		this.confProjectId = confProjectId;
+	}
+	public ReqLogData getReqLogData() {
+		if(reqLogData == null){
+			reqLogData = new ReqLogData();
+		}
+		return reqLogData;
 	}
 }

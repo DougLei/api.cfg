@@ -2,6 +2,7 @@ package com.king.tooth.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -39,20 +40,21 @@ public class PrepareFilter extends AbstractFilter{
 		HttpServletRequest request = (HttpServletRequest) req;
 		String token = request.getHeader("_token");
 		String projectId;
+		ResponseBody responseBody = null;
 		if(StrUtils.isEmpty(token)){
 			// TODO 这里暂时写成固定值，这个是配置系统的项目id
 			projectId = "90621e37b806o6fe8538c5eb782901bb";
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
 			if(StrUtils.isEmpty(projectId)){
-				printResult("token无效，请先登录", resp, false);
+				responseBody = new ResponseBody("token无效，请先登录");
+				printResult(resp, responseBody);
 				return;
 			}
 		}
 		
 		CurrentThreadContext.setProjectId(projectId);
-		
-		// TODO:customerId写成 unknow
+		// TODO customerId写成 unknow
 		CurrentThreadContext.setCustomerId("unknow");
 		
 		// 默认是要打印responseBody的
@@ -63,10 +65,11 @@ public class PrepareFilter extends AbstractFilter{
 			HibernateUtil.beginTransaction();
 			chain.doFilter(req, resp);
 			
-			ResponseBody responseBody = (ResponseBody) request.getAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY);
+			responseBody = (ResponseBody) request.getAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY);
 			if(responseBody == null){
 				responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员");
 			}
+			
 			if(responseBody.getIsSuccess()){
 				HibernateUtil.commitTransaction();
 			}else{
@@ -81,32 +84,26 @@ public class PrepareFilter extends AbstractFilter{
 			String errMsg = ExceptionUtil.getErrMsg("PrepareFilter", "doFilter", err);
 			Log4jUtil.debug("请求处理出现异常，异常信息为:{}", errMsg);
 			HibernateUtil.rollbackTransaction();
-			printResult(errMsg, resp, false);
+			responseBody = new ResponseBody(errMsg);
+			printResult(resp, responseBody);
 		}finally{
 			// 关闭连接
 			HibernateUtil.closeCurrentThreadSession();
-			// 请求本次请求的线程数据
-			CurrentThreadContext.clearCurrentThreadData();
+			
 			// 如果存在请求体，也清空
 			RequestBody requestBody = (RequestBody) req.getAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY);
 			if(requestBody != null){
 				requestBody.clear();
 			}
+			
+			// 记录日志
+			CurrentThreadContext.getReqLogData().getReqLog().setRespData(responseBody.toStrings());
+			CurrentThreadContext.getReqLogData().getReqLog().setRespDate(new Date());
+			CurrentThreadContext.getReqLogData().recordLogs();
+			
+			// 请求本次请求的线程数据
+			CurrentThreadContext.clearCurrentThreadData();
 		}
-	}
-	
-	/**
-	 * 打印结果
-	 * @param message
-	 * @param resp
-	 * @param isSuccess
-	 * @throws IOException 
-	 */
-	private void printResult(String message, ServletResponse resp, boolean isSuccess) throws IOException{
-		ResponseBody responseBody = new ResponseBody(message, null, isSuccess);
-		PrintWriter out = resp.getWriter();
-		out.write(responseBody.toStrings());
-		CloseUtil.closeIO(out);
 	}
 	
 	/**

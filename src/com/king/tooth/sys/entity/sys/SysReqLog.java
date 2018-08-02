@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
  * 请求日志信息表
@@ -25,6 +29,10 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	 * <p>1：login、2：loginOut、3：sql</p>
 	 */
 	private Integer type;
+	/**
+	 * 请求的资源类型
+	 */
+	private Integer resourceType;
 	/**
 	 * 请求方式
 	 * <p>get/post/delete/update</p>
@@ -51,26 +59,33 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	 */
 	private String respData;
 	/**
+	 * 请求的时间
+	 */
+	private Date reqDate;
+	/**
 	 * 响应的时间
 	 */
 	private Date respDate;
-	/**
-	 * 是否成功
-	 */
-	private Integer isSuccess;
-	/**
-	 * 错误信息
-	 * <p>如果失败，则记录错误信息</p>
-	 */
-	private String errMsg;
 	
 	// ------------------------------------------------
+	
+	/**
+	 * 操作sql的日志集合
+	 */
+	@JSONField(serialize = false)
+	private List<SysOperSqlLog> operSqlLogs;
 	
 	public Integer getType() {
 		return type;
 	}
 	public void setType(Integer type) {
 		this.type = type;
+	}
+	public Integer getResourceType() {
+		return resourceType;
+	}
+	public void setResourceType(Integer resourceType) {
+		this.resourceType = resourceType;
 	}
 	public String getMethod() {
 		return method;
@@ -108,23 +123,30 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	public void setRespData(String respData) {
 		this.respData = respData;
 	}
+	public Date getReqDate() {
+		return reqDate;
+	}
+	public void setReqDate(Date reqDate) {
+		this.reqDate = reqDate;
+	}
 	public Date getRespDate() {
 		return respDate;
 	}
 	public void setRespDate(Date respDate) {
 		this.respDate = respDate;
 	}
-	public Integer getIsSuccess() {
-		return isSuccess;
+	public List<SysOperSqlLog> getOperSqlLogs() {
+		return operSqlLogs;
 	}
-	public void setIsSuccess(Integer isSuccess) {
-		this.isSuccess = isSuccess;
+	
+	public SysReqLog() {
 	}
-	public String getErrMsg() {
-		return errMsg;
-	}
-	public void setErrMsg(String errMsg) {
-		this.errMsg = errMsg;
+	public SysReqLog(HttpServletRequest request) {
+		this.id = ResourceHandlerUtil.getIdentity();
+		this.method = request.getMethod().toLowerCase();
+		this.apiAddr = request.getRequestURI();
+		this.clientIp = request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString();
+		this.reqDate = new Date();
 	}
 
 	public ComTabledata toCreateTable() {
@@ -145,59 +167,59 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		typeColumn.setOrderCode(1);
 		columns.add(typeColumn);
 		
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinCodeDataType.INTEGER, 1);
+		resourceTypeColumn.setName("请求的资源类型");
+		resourceTypeColumn.setComments("请求的资源类型");
+		resourceTypeColumn.setOrderCode(2);
+		columns.add(resourceTypeColumn);
+		
 		ComColumndata methodColumn = new ComColumndata("method", BuiltinCodeDataType.STRING, 8);
 		methodColumn.setName("请求方式");
 		methodColumn.setComments("get/post/delete/update");
-		methodColumn.setOrderCode(2);
+		methodColumn.setOrderCode(3);
 		columns.add(methodColumn);
 		
 		ComColumndata apiAddrColumn = new ComColumndata("api_addr", BuiltinCodeDataType.STRING, 300);
 		apiAddrColumn.setName("请求的接口地址");
 		apiAddrColumn.setComments("请求的接口地址");
-		apiAddrColumn.setOrderCode(3);
+		apiAddrColumn.setOrderCode(4);
 		columns.add(apiAddrColumn);
 		
 		ComColumndata clientIpColumn = new ComColumndata("client_ip", BuiltinCodeDataType.STRING, 20);
 		clientIpColumn.setName("请求的客户端ip");
 		clientIpColumn.setComments("请求的客户端ip");
-		clientIpColumn.setOrderCode(4);
+		clientIpColumn.setOrderCode(5);
 		columns.add(clientIpColumn);
 		
 		ComColumndata clientMacColumn = new ComColumndata("client_mac", BuiltinCodeDataType.STRING, 50);
 		clientMacColumn.setName("请求的客户端mac");
 		clientMacColumn.setComments("请求的客户端max");
-		clientMacColumn.setOrderCode(5);
+		clientMacColumn.setOrderCode(6);
 		columns.add(clientMacColumn);
 		
 		ComColumndata reqDataColumn = new ComColumndata("req_data", BuiltinCodeDataType.CLOB, 0);
 		reqDataColumn.setName("请求的数据");
 		reqDataColumn.setComments("请求的数据");
-		reqDataColumn.setOrderCode(6);
+		reqDataColumn.setOrderCode(7);
 		columns.add(reqDataColumn);
 		
 		ComColumndata respDataColumn = new ComColumndata("resp_data", BuiltinCodeDataType.CLOB, 0);
 		respDataColumn.setName("响应的数据");
 		respDataColumn.setComments("响应的数据");
-		respDataColumn.setOrderCode(7);
+		respDataColumn.setOrderCode(8);
 		columns.add(respDataColumn);
+		
+		ComColumndata reqDateColumn = new ComColumndata("req_date", BuiltinCodeDataType.DATE, 0);
+		reqDateColumn.setName("响应的时间");
+		reqDateColumn.setComments("响应的时间");
+		reqDateColumn.setOrderCode(9);
+		columns.add(reqDateColumn);
 		
 		ComColumndata respDateColumn = new ComColumndata("resp_date", BuiltinCodeDataType.DATE, 0);
 		respDateColumn.setName("响应的时间");
 		respDateColumn.setComments("响应的时间");
-		respDateColumn.setOrderCode(8);
+		respDateColumn.setOrderCode(10);
 		columns.add(respDateColumn);
-		
-		ComColumndata isSuccessColumn = new ComColumndata("is_success", BuiltinCodeDataType.INTEGER, 1);
-		isSuccessColumn.setName("是否成功");
-		isSuccessColumn.setComments("是否成功");
-		isSuccessColumn.setOrderCode(9);
-		columns.add(isSuccessColumn);
-		
-		ComColumndata errMsgColumn = new ComColumndata("err_msg", BuiltinCodeDataType.STRING, 600);
-		errMsgColumn.setName("错误信息");
-		errMsgColumn.setComments("如果失败，则记录错误信息");
-		errMsgColumn.setOrderCode(10);
-		columns.add(errMsgColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -210,5 +232,21 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "SysReqLog";
+	}
+	
+	/**
+	 * 添加一条操作sql的日志
+	 * @param sqlScript
+	 * @param sqlParams
+	 */
+	public void addOperSqlLog(String sqlScript, String sqlParams) {
+		if(operSqlLogs == null){
+			operSqlLogs = new ArrayList<SysOperSqlLog>();
+		}
+		SysOperSqlLog operSqlLog = new SysOperSqlLog();
+		operSqlLog.setReqLogId(this.id);
+		operSqlLog.setSqlScript(sqlScript);
+		operSqlLog.setSqlParams(sqlParams);
+		operSqlLogs.add(operSqlLog);
 	}
 }

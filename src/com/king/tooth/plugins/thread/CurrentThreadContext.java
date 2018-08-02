@@ -143,4 +143,14 @@ public class CurrentThreadContext {
 		setCurrentThreadData();
 		currentThreadContext.get().setConfProjectId(confProjectId);
 	}
+	
+	//-------------------------------------------------------------------
+	/**
+	 * 获取当前线程的请求日志数据对象
+	 * @return
+	 */
+	public static final ReqLogData getReqLogData(){
+		setCurrentThreadData();
+		return currentThreadContext.get().getReqLogData();
+	}
 }

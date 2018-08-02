@@ -15,8 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.HttpHelperUtil;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.servlet.route.RouteBody;
@@ -60,7 +62,9 @@ public class ReqDataPreProcesser extends AbstractFilter{
 	private IJson analysisFormData(HttpServletRequest request) {
 		Object obj = HttpHelperUtil.analysisFormData(request);
 		if(StrUtils.notEmpty(obj)){
-			return ProcessStringTypeJsonExtend.getIJson(obj.toString());
+			IJson ijson = ProcessStringTypeJsonExtend.getIJson(obj.toString());
+			CurrentThreadContext.getReqLogData().getReqLog().setReqData(ijson.toString());// 记录请求体
+			return ijson;
 		}
 		return null;
 	}
@@ -69,10 +73,10 @@ public class ReqDataPreProcesser extends AbstractFilter{
 	 * 解析请求url后的键值对参数
 	 * @param request
 	 * @param requestBody 
-	 * @return
+	 * @return 
 	 */
 	private Map<String, String> analysisUrlParams(HttpServletRequest request, RequestBody requestBody) {
-		Map<String, String> urlParams = new HashMap<String, String>();
+		Map<String, String> urlParams = new HashMap<String, String>(16);
 		Enumeration<String> parameterNames = request.getParameterNames();
 		if(parameterNames != null && parameterNames.hasMoreElements()){
 			String key = null;
@@ -84,6 +88,12 @@ public class ReqDataPreProcesser extends AbstractFilter{
 				urlParams.put(key, StrUtils.turnStrEncoding(request.getParameter(key).trim(), EncodingConstants.ISO8859_1, EncodingConstants.UTF_8));
 			}
 		}
+		
+		// 记录请求体
+		if(urlParams.size() > 0){
+			CurrentThreadContext.getReqLogData().getReqLog().setReqData(JsonUtil.toJsonString(urlParams, false));
+		}
+		
 		processRouteData(requestBody, urlParams);
 		return urlParams;
 	}

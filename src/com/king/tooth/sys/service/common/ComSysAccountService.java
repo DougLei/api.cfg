@@ -143,10 +143,10 @@ public class ComSysAccountService extends AbstractService{
 		ComUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComUser.class, "from ComUser where accountId = ?", loginAccount.getId());
 		if(loginUser == null){
 			accountOnlineStatus.setAccountName(accountName);
-			accountOnlineStatus.setUserId("none");
-			accountOnlineStatus.setPositionId("none");
-			accountOnlineStatus.setDeptId("none");
-			accountOnlineStatus.setOrgId("none");
+			accountOnlineStatus.setUserId("unknow");
+			accountOnlineStatus.setPositionId("unknow");
+			accountOnlineStatus.setDeptId("unknow");
+			accountOnlineStatus.setOrgId("unknow");
 		}else{
 			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
 			accountOnlineStatus.setUserId(loginUser.getId());

@@ -370,7 +370,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 
 	@JSONField(serialize = false)
 	public Integer getResourceType() {
-		return 1;
+		return DATABASE;
 	}
 	
 	public ComPublishInfo turnToPublish() {
