@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +15,11 @@ import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 数据字典资源对象
+ * 数据字典表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
+public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 编码
 	 */
@@ -51,7 +51,7 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	private String comments;
 	
 	//-------------------------------------------------------------------------
-	public ComDataDictionary() {
+	public SysDataDictionary() {
 	}
 	public String getCode() {
 		return code;
@@ -97,9 +97,9 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_DATA_DICTIONARY", 0);
-		table.setName("数据字典资源对象表");
-		table.setComments("数据字典资源对象表");
+		ComTabledata table = new ComTabledata("SYS_DATA_DICTIONARY", 0);
+		table.setName("数据字典表");
+		table.setComments("数据字典表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -157,12 +157,12 @@ public class ComDataDictionary extends BasicEntity implements ITable, IEntity{
 	}
 
 	public String toDropTable() {
-		return "COM_DATA_DICTIONARY";
+		return "SYS_DATA_DICTIONARY";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComDataDictionary";
+		return "SysDataDictionary";
 	}
 	
 	/**

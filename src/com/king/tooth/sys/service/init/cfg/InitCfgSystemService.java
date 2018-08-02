@@ -25,7 +25,6 @@ import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
-import com.king.tooth.sys.entity.common.ComDataDictionary;
 import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComDept;
 import com.king.tooth.sys.entity.common.ComHibernateHbm;
@@ -48,8 +47,10 @@ import com.king.tooth.sys.entity.common.datalinks.ComSysAccountComRoleLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComUserComDeptLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComUserComPositionLinks;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.entity.sys.SysOperLog;
+import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysFile;
+import com.king.tooth.sys.entity.sys.SysOperSqlLog;
+import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -108,11 +109,12 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
 		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
 		tables.add(new ComSysAccount().toCreateTable());
-		tables.add(new ComDataDictionary().toCreateTable());
+		tables.add(new SysDataDictionary().toCreateTable());
 		tables.add(new ComSysResource().toCreateTable());
 		
 		tables.add(new ComDataLinks().toCreateTable());
-		tables.add(new SysOperLog().toCreateTable());
+		tables.add(new SysReqLog().toCreateTable());
+		tables.add(new SysOperSqlLog().toCreateTable());
 		tables.add(new SysAccountOnlineStatus().toCreateTable());
 		tables.add(new ComUser().toCreateTable());
 		tables.add(new ComVerifyCode().toCreateTable());
@@ -172,10 +174,7 @@ public class InitCfgSystemService extends AbstractService{
 			}
 			tmpTables.add(table);
 		}
-		try {
-			dbHandler.dropTable(tmpTables);// 尝试先删除表
-		} catch (Exception e) {
-		}
+		dbHandler.dropTable(tmpTables);// 尝试先删除表
 		dbHandler.createTable(tmpTables, true);// 开始创建表
 		ResourceHandlerUtil.clearTables(tmpTables);
 		ResourceHandlerUtil.clearTables(tables);
@@ -331,7 +330,7 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
-		// SysOperLog.operType 操作的类型
+		// SysReqLog.operType 操作的类型
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "查询", "select", 1, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "增加", "insert", 2, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "修改", "update", 3, ISysResource.COMMON_PLATFORM);
@@ -363,6 +362,11 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输入参数(in)", "1", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输出参数(out)", "2", 2, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输入输出参数(in_out)", "3", 3, ISysResource.CONFIG_PLATFORM);
+		
+		// SysReqLog.type 请求日志的请求类型
+		insertDataDictionary(adminAccountId, "SysReqLog.type", "login", "1", 1, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "SysReqLog.type", "loginOut", "2", 2, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "SysReqLog.type", "sql", "3", 3, ISysResource.CONFIG_PLATFORM);
 		
 		// System.builtinQueryParameter 系统内置查询参数
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前系统时间", "_currentDate", 1, ISysResource.CONFIG_PLATFORM);
@@ -401,7 +405,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * @return
 	 */
 	private void insertDataDictionary(String adminAccountId, String code, String codeCaption, String codeValue, int orderCode, int belongPlatformType){
-		ComDataDictionary dataDictionary = new ComDataDictionary();
+		SysDataDictionary dataDictionary = new SysDataDictionary();
 		dataDictionary.setCode(code.toLowerCase());
 		dataDictionary.setCodeCaption(codeCaption);
 		dataDictionary.setCodeValue(codeValue);

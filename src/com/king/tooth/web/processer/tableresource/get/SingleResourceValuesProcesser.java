@@ -65,7 +65,7 @@ public final class SingleResourceValuesProcesser extends GetProcesser {
 		hqlParameterValues.clear();// 清空所有的查询条件值
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append("select codeCaption, codeValue from ComDataDictionary where code = ? and isEnabled = 1 order by orderCode asc");
+		hql.append("select codeCaption, codeValue from SysDataDictionary where code = ? and isEnabled = 1 order by orderCode asc");
 		String queryValue = requestBody.getRouteBody().getResourceName()+"."+requestBody.getRouteBody().getPropName();
 		hqlParameterValues.add(queryValue.toLowerCase());
 		return hql;
