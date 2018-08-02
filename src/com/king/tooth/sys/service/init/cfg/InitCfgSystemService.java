@@ -38,7 +38,6 @@ import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.entity.common.ComRole;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
-import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.ComVerifyCode;
@@ -48,6 +47,7 @@ import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComSysAccountComRoleLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComUserComDeptLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComUserComPositionLinks;
+import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysOperLog;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.service.AbstractService;
@@ -113,7 +113,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		tables.add(new ComDataLinks().toCreateTable());
 		tables.add(new SysOperLog().toCreateTable());
-		tables.add(new ComSysAccountOnlineStatus().toCreateTable());
+		tables.add(new SysAccountOnlineStatus().toCreateTable());
 		tables.add(new ComUser().toCreateTable());
 		tables.add(new ComVerifyCode().toCreateTable());
 		
@@ -270,7 +270,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 清空用户在线数据表
-		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete ComSysAccountOnlineStatus", null);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus", null);
 	}
 	
 	/**

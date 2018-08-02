@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.LoginConstants;
-import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -21,11 +21,11 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 	 * @param token
 	 * @return
 	 */
-	public ComSysAccountOnlineStatus validAccountOfOnLineStatus(HttpServletRequest request, String token){
-		String hql = "from ComSysAccountOnlineStatus where token = ? ";
-		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, hql, token);
+	public SysAccountOnlineStatus validAccountOfOnLineStatus(HttpServletRequest request, String token){
+		String hql = "from SysAccountOnlineStatus where token = ? ";
+		SysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountOnlineStatus.class, hql, token);
 		if(onlineStatus == null){
-			onlineStatus = new ComSysAccountOnlineStatus();
+			onlineStatus = new SysAccountOnlineStatus();
 			onlineStatus.setMessage("请先登录");
 			return onlineStatus;
 		}
@@ -53,7 +53,7 @@ public class ComSysAccountOnlineStatusService extends AbstractService{
 		if(StrUtils.isEmpty(token)){
 			return null;
 		}
-		String hql = "select currentAccountId from ComSysAccountOnlineStatus where token = ?";
+		String hql = "select currentAccountId from SysAccountOnlineStatus where token = ?";
 		return (String) HibernateUtil.executeUniqueQueryByHqlArr(hql, token);
 	}
 }

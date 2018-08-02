@@ -2,7 +2,8 @@ package com.king.tooth.plugins.thread;
 
 import org.hibernate.Session;
 
-import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 当前线程的数据对象
@@ -10,7 +11,7 @@ import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
  */
 class CurrentThreadData {
 	/**
-	 * 配置的项目id
+	 * 进行配置的项目id
 	 * <p>配置系统专用</p>
 	 */
 	private String confProjectId;
@@ -33,15 +34,17 @@ class CurrentThreadData {
 	private String databaseId;
 	/**
 	 * 当前线程的hibernate session对象
-     * <p>方便管理，比如事务</p>
 	 */
 	private Session currentSession;
 	/**
-	 * 当前线程的帐号对象
+	 * 当前线程的账户在线状态
 	 */
-	private ComSysAccountOnlineStatus currentAccountOnlineStatus;
+	private SysAccountOnlineStatus currentAccountOnlineStatus;
 	
 	public String getCustomerId() {
+		if(StrUtils.isEmpty(customerId)){
+			return "unknow";
+		}
 		return customerId;
 	}
 	public void setCustomerId(String customerId) {
@@ -65,11 +68,10 @@ class CurrentThreadData {
 	public void setCurrentSession(Session currentSession) {
 		this.currentSession = currentSession;
 	}
-	public ComSysAccountOnlineStatus getCurrentAccountOnlineStatus() {
+	public SysAccountOnlineStatus getCurrentAccountOnlineStatus() {
 		return currentAccountOnlineStatus;
 	}
-	public void setCurrentAccountOnlineStatus(
-			ComSysAccountOnlineStatus currentAccountOnlineStatus) {
+	public void setCurrentAccountOnlineStatus(SysAccountOnlineStatus currentAccountOnlineStatus) {
 		this.currentAccountOnlineStatus = currentAccountOnlineStatus;
 	}
 	public String getConfProjectId() {

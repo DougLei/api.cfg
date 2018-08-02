@@ -12,7 +12,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysAccount;
-import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
@@ -32,7 +32,7 @@ public class ComSysAccountController extends AbstractController{
 	 */
 	public Object login(HttpServletRequest request, IJson ijson){
 		ComSysAccount account = JsonUtil.toJavaObject(ijson.get(0), ComSysAccount.class);
-		ComSysAccountOnlineStatus accountOnlineStatus = BuiltinInstance.accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinInstance.accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{

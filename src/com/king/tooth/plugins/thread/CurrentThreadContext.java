@@ -3,7 +3,7 @@ package com.king.tooth.plugins.thread;
 import org.hibernate.Session;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 
 /**
  * 当前线程的上下文
@@ -38,7 +38,7 @@ public class CurrentThreadContext {
 	 * 获取当前线程的账户在线对象
 	 * @return
 	 */
-	public static ComSysAccountOnlineStatus getCurrentAccountOnlineStatus(){
+	public static SysAccountOnlineStatus getCurrentAccountOnlineStatus(){
 		setCurrentThreadData();
 		return currentThreadContext.get().getCurrentAccountOnlineStatus();
 	}
@@ -46,7 +46,7 @@ public class CurrentThreadContext {
 	 * 设置当前线程的账户在线对象
 	 * @param session
 	 */
-	public static void setCurrentAccountOnlineStatus(ComSysAccountOnlineStatus currentAccountOnlineStatus){
+	public static void setCurrentAccountOnlineStatus(SysAccountOnlineStatus currentAccountOnlineStatus){
 		setCurrentThreadData();
 		currentThreadContext.get().setCurrentAccountOnlineStatus(currentAccountOnlineStatus);
 	}

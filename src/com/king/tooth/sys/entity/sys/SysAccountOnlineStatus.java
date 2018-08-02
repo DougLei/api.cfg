@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,53 +12,44 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.common.ComPermission;
 
 /**
- * 系统账户在线状态资源对象
+ * 账户在线状态信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IEntity{
+public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEntity{
 	
-	/**
-	 * 当前租户id
-	 * <p>和CurrentThreadData中的customerId的值一致</p>
-	 */
-	private String currentCustomerId;
-	/**
-	 * 当前项目id
-	 * <p>和CurrentThreadData中的projectId的值一致</p>
-	 */
-	private String currentProjectId;
 	/**
 	 * 当前账户id
 	 */
-	private String currentAccountId;
+	private String accountId;
 	/**
 	 * 当前账户名
 	 */
-	private String currentAccountName;
+	private String accountName;
 	/**
 	 * 当前账户类型
-	 * <p>冗余ComSysAccount表的accountType值</p>
+	 * <p>冗余SysAccount表的accountType值</p>
 	 */
-	private Integer currentAccountType;
+	private Integer accountType;
 	/**
 	 * 当前用户id
 	 */
-	private String currentUserId;
+	private String userId;
 	/**
 	 * 当前用户所属组织id
 	 */
-	private String currentOrgId;
+	private String orgId;
 	/**
 	 * 当前用户所属部门id
 	 */
-	private String currentDeptId;
+	private String deptId;
 	/**
 	 * 当前用户所属岗位id
 	 */
-	private String currentPositionId;
+	private String positionId;
 	/**
 	 * token值
 	 */
@@ -172,59 +163,47 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	public void setConfProjectId(String confProjectId) {
 		this.confProjectId = confProjectId;
 	}
-	public String getCurrentUserId() {
-		return currentUserId;
+	public String getAccountId() {
+		return accountId;
 	}
-	public void setCurrentUserId(String currentUserId) {
-		this.currentUserId = currentUserId;
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
-	public String getCurrentOrgId() {
-		return currentOrgId;
+	public String getAccountName() {
+		return accountName;
 	}
-	public void setCurrentOrgId(String currentOrgId) {
-		this.currentOrgId = currentOrgId;
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
-	public String getCurrentDeptId() {
-		return currentDeptId;
+	public Integer getAccountType() {
+		return accountType;
 	}
-	public void setCurrentDeptId(String currentDeptId) {
-		this.currentDeptId = currentDeptId;
+	public void setAccountType(Integer accountType) {
+		this.accountType = accountType;
 	}
-	public String getCurrentPositionId() {
-		return currentPositionId;
+	public String getUserId() {
+		return userId;
 	}
-	public void setCurrentPositionId(String currentPositionId) {
-		this.currentPositionId = currentPositionId;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
-	public String getCurrentCustomerId() {
-		return currentCustomerId;
+	public String getOrgId() {
+		return orgId;
 	}
-	public void setCurrentCustomerId(String currentCustomerId) {
-		this.currentCustomerId = currentCustomerId;
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
 	}
-	public String getCurrentAccountId() {
-		return currentAccountId;
+	public String getDeptId() {
+		return deptId;
 	}
-	public void setCurrentAccountId(String currentAccountId) {
-		this.currentAccountId = currentAccountId;
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
 	}
-	public String getCurrentAccountName() {
-		return currentAccountName;
+	public String getPositionId() {
+		return positionId;
 	}
-	public void setCurrentAccountName(String currentAccountName) {
-		this.currentAccountName = currentAccountName;
-	}
-	public Integer getCurrentAccountType() {
-		return currentAccountType;
-	}
-	public void setCurrentAccountType(Integer currentAccountType) {
-		this.currentAccountType = currentAccountType;
-	}
-	public String getCurrentProjectId() {
-		return currentProjectId;
-	}
-	public void setCurrentProjectId(String currentProjectId) {
-		this.currentProjectId = currentProjectId;
+	public void setPositionId(String positionId) {
+		this.positionId = positionId;
 	}
 	public ComPermission gainPermission() {
 		return permission;
@@ -234,69 +213,57 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_SYS_ACCOUNT_ONLINE_STATUS", 0);
-		table.setName("系统账户在线状态资源对象表");
-		table.setComments("系统账户在线状态资源对象表");
+		ComTabledata table = new ComTabledata("SYS_ACCOUNT_ONLINE_STATUS", 0);
+		table.setName("账户在线状态信息表");
+		table.setComments("账户在线状态信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
-		ComColumndata currentCustomerIdColumn = new ComColumndata("current_customer_id", BuiltinCodeDataType.STRING, 32);
-		currentCustomerIdColumn.setName("当前租户id");
-		currentCustomerIdColumn.setComments("当前租户id");
-		currentCustomerIdColumn.setOrderCode(1);
-		columns.add(currentCustomerIdColumn);
+		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinCodeDataType.STRING, 32);
+		accountIdColumn.setName("当前账户id");
+		accountIdColumn.setComments("当前账户id");
+		accountIdColumn.setOrderCode(3);
+		columns.add(accountIdColumn);
 		
-		ComColumndata currentProjectIdColumn = new ComColumndata("current_project_id", BuiltinCodeDataType.STRING, 32);
-		currentProjectIdColumn.setName("当前项目id");
-		currentProjectIdColumn.setComments("当前项目id：和当前线程中的projectId的值一致");
-		currentProjectIdColumn.setOrderCode(2);
-		columns.add(currentProjectIdColumn);
+		ComColumndata accountNameColumn = new ComColumndata("account_name", BuiltinCodeDataType.STRING, 32);
+		accountNameColumn.setName("当前账户名");
+		accountNameColumn.setComments("当前账户名");
+		accountNameColumn.setOrderCode(4);
+		columns.add(accountNameColumn);
 		
-		ComColumndata currentAccountIdColumn = new ComColumndata("current_account_id", BuiltinCodeDataType.STRING, 32);
-		currentAccountIdColumn.setName("当前账户id");
-		currentAccountIdColumn.setComments("当前账户id");
-		currentAccountIdColumn.setOrderCode(3);
-		columns.add(currentAccountIdColumn);
+		ComColumndata accountTypeColumn = new ComColumndata("account_type", BuiltinCodeDataType.INTEGER, 1);
+		accountTypeColumn.setName("当前账户类型");
+		accountTypeColumn.setComments("当前账户类型：冗余ComSysAccount表的accountType值");
+		accountTypeColumn.setOrderCode(5);
+		columns.add(accountTypeColumn);
 		
-		ComColumndata currentAccountNameColumn = new ComColumndata("current_account_name", BuiltinCodeDataType.STRING, 32);
-		currentAccountNameColumn.setName("当前账户名");
-		currentAccountNameColumn.setComments("当前账户名");
-		currentAccountNameColumn.setOrderCode(4);
-		columns.add(currentAccountNameColumn);
+		ComColumndata userIdColumn = new ComColumndata("user_id", BuiltinCodeDataType.STRING, 32);
+		userIdColumn.setName("当前用户id");
+		userIdColumn.setComments("当前用户id");
+		userIdColumn.setOrderCode(6);
+		columns.add(userIdColumn);
 		
-		ComColumndata currentAccountTypeColumn = new ComColumndata("current_account_type", BuiltinCodeDataType.INTEGER, 1);
-		currentAccountTypeColumn.setName("当前账户类型");
-		currentAccountTypeColumn.setComments("当前账户类型：冗余ComSysAccount表的accountType值");
-		currentAccountTypeColumn.setOrderCode(5);
-		columns.add(currentAccountTypeColumn);
+		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinCodeDataType.STRING, 32);
+		orgIdColumn.setName("当前用户所属组织id");
+		orgIdColumn.setComments("当前用户所属组织id");
+		orgIdColumn.setOrderCode(7);
+		columns.add(orgIdColumn);
 		
-		ComColumndata currentUserIdColumn = new ComColumndata("current_user_id", BuiltinCodeDataType.STRING, 32);
-		currentUserIdColumn.setName("当前用户id");
-		currentUserIdColumn.setComments("当前用户id");
-		currentUserIdColumn.setOrderCode(6);
-		columns.add(currentUserIdColumn);
+		ComColumndata deptIdColumn = new ComColumndata("dept_id", BuiltinCodeDataType.STRING, 32);
+		deptIdColumn.setName("当前用户所属部门id");
+		deptIdColumn.setComments("当前用户所属部门id");
+		deptIdColumn.setOrderCode(8);
+		columns.add(deptIdColumn);
 		
-		ComColumndata currentOrgIdColumn = new ComColumndata("current_org_id", BuiltinCodeDataType.STRING, 32);
-		currentOrgIdColumn.setName("当前用户所属组织id");
-		currentOrgIdColumn.setComments("当前用户所属组织id");
-		currentOrgIdColumn.setOrderCode(7);
-		columns.add(currentOrgIdColumn);
-		
-		ComColumndata currentDeptIdColumn = new ComColumndata("current_dept_id", BuiltinCodeDataType.STRING, 32);
-		currentDeptIdColumn.setName("当前用户所属部门id");
-		currentDeptIdColumn.setComments("当前用户所属部门id");
-		currentDeptIdColumn.setOrderCode(8);
-		columns.add(currentDeptIdColumn);
-		
-		ComColumndata currentPositionIdColumn = new ComColumndata("current_position_id", BuiltinCodeDataType.STRING, 32);
-		currentPositionIdColumn.setName("当前用户所属岗位id");
-		currentPositionIdColumn.setComments("当前用户所属岗位id");
-		currentPositionIdColumn.setOrderCode(9);
-		columns.add(currentPositionIdColumn);
+		ComColumndata positionIdColumn = new ComColumndata("position_id", BuiltinCodeDataType.STRING, 32);
+		positionIdColumn.setName("当前用户所属岗位id");
+		positionIdColumn.setComments("当前用户所属岗位id");
+		positionIdColumn.setOrderCode(9);
+		columns.add(positionIdColumn);
 		
 		ComColumndata tokenColumn = new ComColumndata("token", BuiltinCodeDataType.STRING, 32);
 		tokenColumn.setName("token值");
@@ -346,12 +313,12 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	}
 
 	public String toDropTable() {
-		return "COM_SYS_ACCOUNT_ONLINE_STATUS";
+		return "SYS_ACCOUNT_ONLINE_STATUS";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComSysAccountOnlineStatus";
+		return "SysAccountOnlineStatus";
 	}
 
 	/**
@@ -360,7 +327,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 */
 	@JSONField(serialize = false)
 	public boolean isAdministrator(){
-		return (currentAccountType == 1);
+		return (accountType == 1);
 	}
 	/**
 	 * 是否是普通账户
@@ -368,7 +335,7 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 */
 	@JSONField(serialize = false)
 	public boolean isNormal(){
-		return (currentAccountType == 2);
+		return (accountType == 2);
 	}
 	/**
 	 * 是否是平台开发者账户
@@ -376,6 +343,6 @@ public class ComSysAccountOnlineStatus extends BasicEntity implements ITable, IE
 	 */
 	@JSONField(serialize = false)
 	public boolean isPlatformDeveloper(){
-		return (currentAccountType == 3);
+		return (accountType == 3);
 	}
 }

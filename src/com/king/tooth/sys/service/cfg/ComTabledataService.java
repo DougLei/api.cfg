@@ -45,7 +45,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validTableNameIsExists(ComTabledata table) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 		if(count > 0){
 			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
@@ -616,7 +616,7 @@ public class ComTabledataService extends AbstractPublishService {
 		List<ComSysResource> resources = new ArrayList<ComSysResource>(tables.size());
 		ComSysResource resource;
 		Date currentDate = new Date();
-		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
+		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		for (ComTabledata table : tables) {
 			resource = table.turnToResource();
 			resource.setProjectId(projectId);

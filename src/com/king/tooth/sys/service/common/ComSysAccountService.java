@@ -11,8 +11,8 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSysAccount;
-import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
 import com.king.tooth.sys.entity.common.ComUser;
+import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -54,8 +54,8 @@ public class ComSysAccountService extends AbstractService{
 	 * @param password
 	 * @return
 	 */
-	public ComSysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
-		ComSysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
+	public SysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
+		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		
 		if(accountOnlineStatus.getIsSave()){
@@ -76,8 +76,8 @@ public class ComSysAccountService extends AbstractService{
 	 * @param password
 	 * @return
 	 */
-	private ComSysAccountOnlineStatus getAccountOfOnLineStatus(String loginIp, String accountName, String password){
-		ComSysAccountOnlineStatus accountOnlineStatus = findAccountOnlineStatus(loginIp, accountName);
+	private SysAccountOnlineStatus getAccountOfOnLineStatus(String loginIp, String accountName, String password){
+		SysAccountOnlineStatus accountOnlineStatus = findAccountOnlineStatus(loginIp, accountName);
 		
 		if(accountOnlineStatus.getTryLoginTimes() > LoginConstants.tryLoginTimes){
 			long lastOperDateDuration = System.currentTimeMillis() - accountOnlineStatus.getLastOperDate().getTime();
@@ -133,30 +133,26 @@ public class ComSysAccountService extends AbstractService{
 	 * @param loginAccount
 	 * @param accountName
 	 */
-	private void processOnlineStatusBasicData(ComSysAccountOnlineStatus accountOnlineStatus, ComSysAccount loginAccount, String accountName) {
-		// TODO:customerId写成 unknow
-		accountOnlineStatus.setCurrentCustomerId("unknow");
-		accountOnlineStatus.setCurrentProjectId(CurrentThreadContext.getProjectId());
-		accountOnlineStatus.setCurrentAccountId(loginAccount.getId());
-		accountOnlineStatus.setCurrentAccountType(loginAccount.getAccountType());
+	private void processOnlineStatusBasicData(SysAccountOnlineStatus accountOnlineStatus, ComSysAccount loginAccount, String accountName) {
+		accountOnlineStatus.setCustomerId(CurrentThreadContext.getCustomerId());
+		accountOnlineStatus.setProjectId(CurrentThreadContext.getProjectId());
 		
-		if(SysConfig.isConfSys){
-			accountOnlineStatus.setCurrentAccountName(accountName);
+		accountOnlineStatus.setAccountId(loginAccount.getId());
+		accountOnlineStatus.setAccountType(loginAccount.getAccountType());
+		
+		ComUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComUser.class, "from ComUser where accountId = ?", loginAccount.getId());
+		if(loginUser == null){
+			accountOnlineStatus.setAccountName(accountName);
+			accountOnlineStatus.setUserId("none");
+			accountOnlineStatus.setPositionId("none");
+			accountOnlineStatus.setDeptId("none");
+			accountOnlineStatus.setOrgId("none");
 		}else{
-			ComUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComUser.class, "from ComUser where accountId = ?", loginAccount.getId());
-			if(loginUser == null){
-				accountOnlineStatus.setCurrentAccountName(accountName);
-				accountOnlineStatus.setCurrentUserId("none");
-				accountOnlineStatus.setCurrentPositionId("none");
-				accountOnlineStatus.setCurrentDeptId("none");
-				accountOnlineStatus.setCurrentOrgId("none");
-			}else{
-				accountOnlineStatus.setCurrentAccountName(getCurrentAccountName(loginUser, accountName));
-				accountOnlineStatus.setCurrentUserId(loginUser.getId());
-				accountOnlineStatus.setCurrentPositionId(loginUser.getPositionId());
-				accountOnlineStatus.setCurrentDeptId(loginUser.getDeptId());
-				accountOnlineStatus.setCurrentOrgId(loginUser.getOrgId());
-			}
+			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
+			accountOnlineStatus.setUserId(loginUser.getId());
+			accountOnlineStatus.setPositionId(loginUser.getPositionId());
+			accountOnlineStatus.setDeptId(loginUser.getDeptId());
+			accountOnlineStatus.setOrgId(loginUser.getOrgId());
 		}
 	}
 	
@@ -166,15 +162,15 @@ public class ComSysAccountService extends AbstractService{
 	 * @param accountName
 	 * @return
 	 */
-	private ComSysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
+	private SysAccountOnlineStatus findAccountOnlineStatus(String loginIp, String accountName) {
 		// TODO 暂时屏蔽
-//		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where (loginIp = ? or currentAccountName = ?) and customerId = ?";
-//		ComSysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getCustomerId());
+//		String queryAccountStatusHql = "from SysAccountOnlineStatus where (loginIp = ? or accountName = ?) and customerId = ?";
+//		SysAccountOnlineStatus onlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getCustomerId());
 		
-		String queryAccountStatusHql = "from ComSysAccountOnlineStatus where loginIp = ? and currentAccountName = ? and customerId = ?";
-		ComSysAccountOnlineStatus accountOnlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getCustomerId());
+		String queryAccountStatusHql = "from SysAccountOnlineStatus where loginIp = ? and accountName = ? and customerId = ?";
+		SysAccountOnlineStatus accountOnlineStatus = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountOnlineStatus.class, queryAccountStatusHql, loginIp, accountName, CurrentThreadContext.getCustomerId());
 		if(accountOnlineStatus == null){
-			accountOnlineStatus = new ComSysAccountOnlineStatus();
+			accountOnlineStatus = new SysAccountOnlineStatus();
 			accountOnlineStatus.setTryLoginTimes(1);
 			accountOnlineStatus.setIsSave(true);
 			accountOnlineStatus.setLastOperDate(new Date());
@@ -190,7 +186,7 @@ public class ComSysAccountService extends AbstractService{
 		}
 		
 		accountOnlineStatus.setLoginIp(loginIp);
-		accountOnlineStatus.setCurrentAccountName(accountName);
+		accountOnlineStatus.setAccountName(accountName);
 		accountOnlineStatus.setIsError(1);// 一开始标识为有错误
 		return accountOnlineStatus;
 	}
@@ -220,8 +216,8 @@ public class ComSysAccountService extends AbstractService{
 	 * @param token
 	 */
 	public void loginOut(String token) {
-		// 删除对应的ComSysAccountOnlineStatus数据
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccountOnlineStatus where token = ? ", token);
+		// 删除对应的SysAccountOnlineStatus数据
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where token = ? ", token);
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
 	}
@@ -260,7 +256,7 @@ public class ComSysAccountService extends AbstractService{
 	 * @return 
 	 */
 	private String validWorkNoIsExists(String loginName) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName=? and customerId=?", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName=? and customerId=?", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在登录名为["+loginName+"]的账户";
 		}
@@ -276,7 +272,7 @@ public class ComSysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(email)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的账户";
 		}
@@ -292,7 +288,7 @@ public class ComSysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的账户";
 		}
@@ -352,8 +348,8 @@ public class ComSysAccountService extends AbstractService{
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccount where " + ResourceNameConstants.ID+"=?", accountId);
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "update ComUser set accountId =null  where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
 		
-		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr("select token from ComSysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
+		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr("select token from SysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
 		
 		// 移除传递的token和对应项目id的映射缓存
 		for (Object token : tokens) {

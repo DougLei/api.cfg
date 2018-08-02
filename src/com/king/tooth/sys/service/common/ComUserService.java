@@ -44,7 +44,7 @@ public class ComUserService extends AbstractService{
 	 */
 	private String validWorkNoIsExists(ComUser user) {
 		String workNo = user.getWorkNo();
-		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where workNo=? and customerId=?", workNo, currentCustomerId);
 		if(count > 0){
@@ -71,7 +71,7 @@ public class ComUserService extends AbstractService{
 		if(StrUtils.isEmpty(email)){
 			return null;
 		}
-		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where email=? and customerId=?", email, currentCustomerId);
 		if(count > 0){
@@ -98,7 +98,7 @@ public class ComUserService extends AbstractService{
 		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
-		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where tel=? and customerId=?", tel, currentCustomerId);
 		if(count > 0){

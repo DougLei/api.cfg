@@ -86,28 +86,28 @@ public class BuiltinQueryParameters {
 			return new Date(new java.util.Date().getTime());
 		}
 		if(currentCustomerId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		}
 		if(currentProjectId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentProjectId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getProjectId();
 		}
 		if(accountId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		}
 		if(accountName.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountName();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName();
 		}
 		if(currentUserId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentUserId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
 		}
 		if(currentOrgId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentOrgId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getOrgId();
 		}
 		if(currentDeptId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentDeptId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getDeptId();
 		}
 		if(currentPositionId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentPositionId();
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getPositionId();
 		}
 		throw new IllegalArgumentException("没有匹配到内置参数["+parameterName+"]");
 	}

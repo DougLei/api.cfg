@@ -203,7 +203,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(appSystemCoreTables.size());// 记录表对应的hbm内容，要发布的是这个
 		ComHibernateHbm hbm = null;
 		Date currentDate = new Date();
-		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
+		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		for(ComTabledata table : appSystemCoreTables){
 			hbm = new ComHibernateHbm();
 			hbm.tableTurnToHbm(table);

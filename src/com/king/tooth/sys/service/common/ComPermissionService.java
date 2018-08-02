@@ -25,7 +25,7 @@ public class ComPermissionService extends AbstractService{
 	 */
 	private List<ComPermissionPriority> getPermissionPriorities(){
 		String hql = "from ComPermissionPriority where projectId=? and customerId=? order by lv desc";
-		List<ComPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(ComPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
+		List<ComPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(ComPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(permissionPriorities == null || permissionPriorities.size() == 0){
 			permissionPriorities = BuiltinInstance.permissionPriorities;
 		}
@@ -51,7 +51,7 @@ public class ComPermissionService extends AbstractService{
 	@SuppressWarnings("unchecked")
 	public ComPermission findAccountOfPermissions(String accountId){
 		String projectId = CurrentThreadContext.getProjectId();
-		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId();
+		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
 		List<ComPermission> permissions = new ArrayList<ComPermission>();
 		List<ComPermission> newPermissions = new ArrayList<ComPermission>();

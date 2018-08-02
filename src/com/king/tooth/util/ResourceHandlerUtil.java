@@ -51,11 +51,8 @@ public class ResourceHandlerUtil {
 	 */
 	public static void initBasicPropValsForSave(String entityName, Map<String, Object> data, String shortDesc) {
 		data.put("projectId", CurrentThreadContext.getProjectId());
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
-			data.put("customerId", CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentCustomerId());
-		}else{
-			Log4jUtil.info("在保存数据，初始化基本属性值时，CurrentThreadContext.getCurrentAccountOnlineStatus()对象为null");
-		}
+		data.put("customerId", CurrentThreadContext.getCustomerId());
+		
 		// 当没有id值的时候，再赋予id值
 		if(StrUtils.isEmpty(data.get(ResourceNameConstants.ID))){
 			data.put(ResourceNameConstants.ID, getIdentity());
@@ -67,7 +64,7 @@ public class ResourceHandlerUtil {
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
-				String currentAccountId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
+				String currentAccountId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 				data.put("createUserId", currentAccountId);
 				data.put("lastUpdateUserId",  currentAccountId);
 			}else{
@@ -90,7 +87,7 @@ public class ResourceHandlerUtil {
 			
 			// 比如注册操作，肯定没有创建人
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
-				data.put("lastUpdateUserId",  CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId());
+				data.put("lastUpdateUserId",  CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 			}else{
 				data.put("lastUpdateUserId",  shortDesc);
 			}

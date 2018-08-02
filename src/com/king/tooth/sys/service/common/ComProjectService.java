@@ -316,7 +316,7 @@ public class ComProjectService extends AbstractPublishService {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			
-			String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCurrentAccountId();
+			String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 			Date currentDate = new Date();
 			List<ComPublishBasicData> basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, null, null, "from ComPublishBasicData where belongPlatformType != "+ISysResource.CONFIG_PLATFORM);// 获取要发布的基础信息集合
 			for (ComPublishBasicData basicData : basicDatas) {
