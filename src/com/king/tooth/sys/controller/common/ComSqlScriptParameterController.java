@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -16,8 +16,6 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 public class ComSqlScriptParameterController extends AbstractPublishController{
-	
-	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
 	
 	/**
 	 * 添加sql脚本参数
@@ -28,7 +26,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = sqlScriptService.saveSqlScriptParameter(sqlScriptParameters);
+			resultObject = BuiltinInstance.sqlScriptService.saveSqlScriptParameter(sqlScriptParameters);
 		}
 		return getResultObject();
 	}
@@ -42,7 +40,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = sqlScriptService.updateSqlScriptParameter(sqlScriptParameters);
+			resultObject = BuiltinInstance.sqlScriptService.updateSqlScriptParameter(sqlScriptParameters);
 		}
 		return getResultObject();
 	}
@@ -57,7 +55,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 		if(StrUtils.isEmpty(sqlScriptParameterIds)){
 			return "要删除的sql脚本参数id不能为空";
 		}
-		resultObject = sqlScriptService.deleteSqlScriptParameter(sqlScriptParameterIds);
+		resultObject = BuiltinInstance.sqlScriptService.deleteSqlScriptParameter(sqlScriptParameterIds);
 		processResultObject(ResourceNameConstants.IDS, sqlScriptParameterIds);
 		return getResultObject();
 	}

@@ -60,7 +60,7 @@ public class ResourceInfo {
 		
 		// 如果是sql脚本资源，则要去查询sql脚本实例
 		if(ISysResource.SQLSCRIPT == resourceType){
-			sqlScriptResource = BuiltinInstance.sqlService.findSqlScriptResourceById(resource.getRefResourceId());
+			sqlScriptResource = BuiltinInstance.sqlScriptService.findSqlScriptResourceById(resource.getRefResourceId());
 		}
 		
 		// 如果请求包括父资源，则验证父资源是否可以调用

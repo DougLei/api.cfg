@@ -5,6 +5,7 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.service.AbstractService;
@@ -21,7 +22,6 @@ public class ComUserService extends AbstractService{
 	
 	private static final String comUserComDeptLinks = "ComUserComDeptLinks";
 	private static final String comUserComPositionLinks = "ComUserComPositionLinks";
-	private ComSysAccountService accountService = new ComSysAccountService();
 	
 	/**
 	 * 修改用户关联的账户密码
@@ -34,7 +34,7 @@ public class ComUserService extends AbstractService{
 		if(StrUtils.isEmpty(user.getAccountId())){
 			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
 		}
-		return accountService.uploadAccounLoginPwd(user.getId(), user.getAccountId(), newLoginPwd);
+		return BuiltinInstance.accountService.uploadAccounLoginPwd(user.getId(), user.getAccountId(), newLoginPwd);
 	}
 	
 	/**

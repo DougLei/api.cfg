@@ -7,6 +7,5 @@ import com.king.tooth.sys.controller.AbstractController;
  * @author DougLei
  */
 public class ComDeptController extends AbstractController{
-//	private ComDeptService deptService = new ComDeptService();
-	
+
 }

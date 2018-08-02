@@ -8,9 +8,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -18,8 +18,6 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 public class ComSqlScriptController extends AbstractPublishController{
-	
-	private ComSqlScriptService sqlScriptService = new ComSqlScriptService();
 	
 	/**
 	 * 添加sql脚本
@@ -31,10 +29,10 @@ public class ComSqlScriptController extends AbstractPublishController{
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
 			if(sqlScripts.size() == 1){
-				resultObject = sqlScriptService.saveSqlScript(sqlScripts.get(0));
+				resultObject = BuiltinInstance.sqlScriptService.saveSqlScript(sqlScripts.get(0));
 			}else{
 				for (ComSqlScript sqlScript : sqlScripts) {
-					resultObject = sqlScriptService.saveSqlScript(sqlScript);
+					resultObject = BuiltinInstance.sqlScriptService.saveSqlScript(sqlScript);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -55,10 +53,10 @@ public class ComSqlScriptController extends AbstractPublishController{
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
 			if(sqlScripts.size() == 1){
-				resultObject = sqlScriptService.updateSqlScript(sqlScripts.get(0));
+				resultObject = BuiltinInstance.sqlScriptService.updateSqlScript(sqlScripts.get(0));
 			}else{
 				for (ComSqlScript sqlScript : sqlScripts) {
-					resultObject = sqlScriptService.updateSqlScript(sqlScript);
+					resultObject = BuiltinInstance.sqlScriptService.updateSqlScript(sqlScript);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -82,7 +80,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 
 		String[] sqlScriptIdArr = sqlScriptIds.split(",");
 		for (String sqlScriptId : sqlScriptIdArr) {
-			resultObject = sqlScriptService.deleteSqlScript(sqlScriptId);
+			resultObject = BuiltinInstance.sqlScriptService.deleteSqlScript(sqlScriptId);
 			if(resultObject != null){
 				break;
 			}
@@ -104,7 +102,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要操作的sql脚本id不能为空";
 		}
-		resultObject = sqlScriptService.addProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.addProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -124,7 +122,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要操作的sql脚本id不能为空";
 		}
-		resultObject = sqlScriptService.cancelProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.cancelProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -146,7 +144,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要发布的sql脚本id不能为空";
 		}
-		resultObject = sqlScriptService.publishSqlScript(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.publishSqlScript(jsonObject.getString(ResourceNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -167,7 +165,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要取消发布的sql脚本id不能为空";
 		}
-		resultObject = sqlScriptService.cancelPublishSqlScript(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.cancelPublishSqlScript(jsonObject.getString(ResourceNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

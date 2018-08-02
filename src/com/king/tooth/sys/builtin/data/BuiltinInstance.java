@@ -26,7 +26,6 @@ import com.king.tooth.sys.service.common.ComDatabaseService;
 import com.king.tooth.sys.service.common.ComPermissionService;
 import com.king.tooth.sys.service.common.ComProjectModuleService;
 import com.king.tooth.sys.service.common.ComProjectService;
-import com.king.tooth.sys.service.common.ComReqLogService;
 import com.king.tooth.sys.service.common.ComSqlScriptService;
 import com.king.tooth.sys.service.common.ComSysAccountOnlineStatusService;
 import com.king.tooth.sys.service.common.ComSysAccountService;
@@ -101,8 +100,7 @@ public class BuiltinInstance {
 	public static final ComDatabaseService databaseService = new ComDatabaseService();
 	public static final ComProjectService projectService = new ComProjectService();
 	public static final ComProjectModuleService projectModuleService = new ComProjectModuleService();
-	public static final ComReqLogService reqLogService = new ComReqLogService();
-	public static final ComSqlScriptService sqlService = new ComSqlScriptService();
+	public static final ComSqlScriptService sqlScriptService = new ComSqlScriptService();
 	public static final ComSysAccountOnlineStatusService accountOnlineStatusService = new ComSysAccountOnlineStatusService();
 	public static final ComSysAccountService accountService = new ComSysAccountService();
 	public static final ComSysResourceService resourceService = new ComSysResourceService();

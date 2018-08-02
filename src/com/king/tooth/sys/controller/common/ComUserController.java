@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComUser;
-import com.king.tooth.sys.service.common.ComUserService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -17,8 +17,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 public class ComUserController extends AbstractController{
-	private ComUserService userService = new ComUserService();
-	
+
 	/**
 	 * 添加用户
 	 * <p>请求方式：POST</p>
@@ -29,10 +28,10 @@ public class ComUserController extends AbstractController{
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
-				resultObject = userService.saveUser(users.get(0));
+				resultObject = BuiltinInstance.userService.saveUser(users.get(0));
 			}else{
 				for (ComUser user : users) {
-					resultObject = userService.saveUser(user);
+					resultObject = BuiltinInstance.userService.saveUser(user);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -53,10 +52,10 @@ public class ComUserController extends AbstractController{
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
-				resultObject = userService.updateUser(users.get(0));
+				resultObject = BuiltinInstance.userService.updateUser(users.get(0));
 			}else{
 				for (ComUser user : users) {
-					resultObject = userService.updateUser(user);
+					resultObject = BuiltinInstance.userService.updateUser(user);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -80,7 +79,7 @@ public class ComUserController extends AbstractController{
 		
 		String[] userIdArr = userIds.split(",");
 		for (String userId : userIdArr) {
-			resultObject = userService.deleteUser(userId);
+			resultObject = BuiltinInstance.userService.deleteUser(userId);
 			if(resultObject != null){
 				break;
 			}
@@ -97,10 +96,10 @@ public class ComUserController extends AbstractController{
 	public Object openAccount(HttpServletRequest request, IJson ijson){
 		List<ComUser> users = getDataInstanceList(ijson, ComUser.class);
 		if(users.size() == 1){
-			resultObject = userService.openAccount(users.get(0));
+			resultObject = BuiltinInstance.userService.openAccount(users.get(0));
 		}else{
 			for (ComUser user : users) {
-				resultObject = userService.openAccount(user);
+				resultObject = BuiltinInstance.userService.openAccount(user);
 				if(resultObject instanceof String){
 					break;
 				}
@@ -123,7 +122,7 @@ public class ComUserController extends AbstractController{
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = userService.uploadUserLoginPwd(jsonObject.getString(ResourceNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinInstance.userService.uploadUserLoginPwd(jsonObject.getString(ResourceNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

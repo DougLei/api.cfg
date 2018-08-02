@@ -81,16 +81,6 @@
 			<url-pattern>/*</url-pattern>
 		</filter-mapping>
 		
-		<!-- 配置记录请求日志的过滤器 -->
-		<filter>
-			<filter-name>recordReqLogFilter</filter-name>
-			<filter-class>com.king.tooth.filter.RecordReqLogFilter</filter-class>
-		</filter>
-		<filter-mapping>
-			<filter-name>recordReqLogFilter</filter-name>
-			<url-pattern>/*</url-pattern>
-		</filter-mapping>
-		
 		<!-- 配置验证请求是否有效的过滤器 -->
 		<filter>
 			<filter-name>varifyReqValidFilter</filter-name>

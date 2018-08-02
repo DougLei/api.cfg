@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -17,8 +17,6 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 public class ComColumndataController extends AbstractController{
-	
-	private ComColumndataService columnataService = new ComColumndataService();
 	
 	/**
 	 * 添加列
@@ -30,10 +28,10 @@ public class ComColumndataController extends AbstractController{
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
-				resultObject = columnataService.saveColumn(columns.get(0));
+				resultObject = BuiltinInstance.columndataService.saveColumn(columns.get(0));
 			}else{
 				for (ComColumndata column : columns) {
-					resultObject = columnataService.saveColumn(column);
+					resultObject = BuiltinInstance.columndataService.saveColumn(column);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -54,10 +52,10 @@ public class ComColumndataController extends AbstractController{
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
-				resultObject = columnataService.updateColumn(columns.get(0));
+				resultObject = BuiltinInstance.columndataService.updateColumn(columns.get(0));
 			}else{
 				for (ComColumndata column : columns) {
-					resultObject = columnataService.updateColumn(column);
+					resultObject = BuiltinInstance.columndataService.updateColumn(column);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -78,7 +76,7 @@ public class ComColumndataController extends AbstractController{
 		if(StrUtils.isEmpty(columnIds)){
 			return "要删除的列id不能为空";
 		}
-		resultObject = columnataService.deleteColumn(columnIds);
+		resultObject = BuiltinInstance.columndataService.deleteColumn(columnIds);
 		processResultObject(ResourceNameConstants.IDS, columnIds);
 		return getResultObject();
 	}

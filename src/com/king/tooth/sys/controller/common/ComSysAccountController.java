@@ -9,10 +9,10 @@ import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComSysAccountOnlineStatus;
-import com.king.tooth.sys.service.common.ComSysAccountService;
 import com.king.tooth.util.HttpHelperUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
@@ -23,8 +23,6 @@ import com.king.tooth.util.StrUtils;
  */
 public class ComSysAccountController extends AbstractController{
 	
-	private ComSysAccountService accountService = new ComSysAccountService();
-	
 	/**
 	 * 登录
 	 * <p>请求方式：POST</p>
@@ -34,7 +32,7 @@ public class ComSysAccountController extends AbstractController{
 	 */
 	public Object login(HttpServletRequest request, IJson ijson){
 		ComSysAccount account = JsonUtil.toJavaObject(ijson.get(0), ComSysAccount.class);
-		ComSysAccountOnlineStatus accountOnlineStatus = accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
+		ComSysAccountOnlineStatus accountOnlineStatus = BuiltinInstance.accountService.modifyAccountOfOnLineStatus(HttpHelperUtil.getClientIp(request), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{
@@ -57,7 +55,7 @@ public class ComSysAccountController extends AbstractController{
 	 */
 	public Object loginOut(HttpServletRequest request, IJson ijson){
 		String token = request.getHeader("_token");
-		accountService.loginOut(token);
+		BuiltinInstance.accountService.loginOut(token);
 		
 		JSONObject jsonObject = new JSONObject(1);
 		jsonObject.put("_token", token);
@@ -77,10 +75,10 @@ public class ComSysAccountController extends AbstractController{
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
-				resultObject = accountService.saveAccount(accounts.get(0));
+				resultObject = BuiltinInstance.accountService.saveAccount(accounts.get(0));
 			}else{
 				for (ComSysAccount account : accounts) {
-					resultObject = accountService.saveAccount(account);
+					resultObject = BuiltinInstance.accountService.saveAccount(account);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -101,10 +99,10 @@ public class ComSysAccountController extends AbstractController{
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
-				resultObject = accountService.updateAccount(accounts.get(0));
+				resultObject = BuiltinInstance.accountService.updateAccount(accounts.get(0));
 			}else{
 				for (ComSysAccount account : accounts) {
-					resultObject = accountService.updateAccount(account);
+					resultObject = BuiltinInstance.accountService.updateAccount(account);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -128,7 +126,7 @@ public class ComSysAccountController extends AbstractController{
 		
 		String[] accountIdArr = accountIds.split(",");
 		for (String accountId : accountIdArr) {
-			resultObject = accountService.deleteAccount(accountId);
+			resultObject = BuiltinInstance.accountService.deleteAccount(accountId);
 			if(resultObject != null){
 				break;
 			}
@@ -150,7 +148,7 @@ public class ComSysAccountController extends AbstractController{
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = accountService.uploadAccounLoginPwd(null, jsonObject.getString(ResourceNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinInstance.accountService.uploadAccounLoginPwd(null, jsonObject.getString(ResourceNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

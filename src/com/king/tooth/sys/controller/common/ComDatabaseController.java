@@ -8,9 +8,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.service.common.ComDatabaseService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -18,8 +18,6 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 public class ComDatabaseController extends AbstractPublishController{
-	
-	private ComDatabaseService databaseService = new ComDatabaseService();
 	
 	/**
 	 * 添加数据库
@@ -31,10 +29,10 @@ public class ComDatabaseController extends AbstractPublishController{
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
-				resultObject = databaseService.saveDatabase(databases.get(0));
+				resultObject = BuiltinInstance.databaseService.saveDatabase(databases.get(0));
 			}else{
 				for (ComDatabase database : databases) {
-					resultObject = databaseService.saveDatabase(database);
+					resultObject = BuiltinInstance.databaseService.saveDatabase(database);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -55,10 +53,10 @@ public class ComDatabaseController extends AbstractPublishController{
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
-				resultObject = databaseService.updateDatabase(databases.get(0));
+				resultObject = BuiltinInstance.databaseService.updateDatabase(databases.get(0));
 			}else{
 				for (ComDatabase database : databases) {
-					resultObject = databaseService.updateDatabase(database);
+					resultObject = BuiltinInstance.databaseService.updateDatabase(database);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -82,7 +80,7 @@ public class ComDatabaseController extends AbstractPublishController{
 		
 		String[] databaseIdArr = databaseIds.split(",");
 		for (String databaseId : databaseIdArr) {
-			resultObject = databaseService.deleteDatabase(databaseId);
+			resultObject = BuiltinInstance.databaseService.deleteDatabase(databaseId);
 			if(resultObject != null){
 				break;
 			}
@@ -101,7 +99,7 @@ public class ComDatabaseController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "测试连接的数据库id不能为空";
 		}
-		resultObject = databaseService.databaseLinkTest(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.databaseService.databaseLinkTest(jsonObject.getString(ResourceNameConstants.ID));
 		String linkMsg = resultObject.toString();
 		if(linkMsg.startsWith("ok:")){
 			jsonObject.put("linkMsg", linkMsg.replaceAll("ok:", ""));
@@ -127,7 +125,7 @@ public class ComDatabaseController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
 			return "要发布的数据库id不能为空";
 		}
-		resultObject = databaseService.publishDatabase(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.databaseService.publishDatabase(jsonObject.getString(ResourceNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -149,7 +147,7 @@ public class ComDatabaseController extends AbstractPublishController{
 			return "要取消发布的数据库id不能为空";
 		}
 		
-		resultObject = databaseService.cancelPublishDatabase(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.databaseService.cancelPublishDatabase(jsonObject.getString(ResourceNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
