@@ -276,9 +276,6 @@ public class HibernateUtil {
 			updateHql.append(" where ").append(ResourceNameConstants.ID).append(" =?");
 			parameters.add(updateId);
 			
-			// 日志记录发出的hql/sql语句
-			CurrentThreadContext.toReqLogDataAddOperSqlLog(updateHql.toString(), parameters);
-			
 			executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), parameters);
 			Log4jUtil.debug("修改数据成功[{}]", data);
 			return data;
