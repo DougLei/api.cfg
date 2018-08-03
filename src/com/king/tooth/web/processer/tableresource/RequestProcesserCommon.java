@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.tableresource.BuiltinTableResourceBMProcesser;
@@ -61,6 +62,9 @@ public class RequestProcesserCommon extends CommonProcesser{
 		
 		Log4jUtil.debug("【最后执行的hql语句为：{}】", hql);
 		Log4jUtil.debug("【最后执行的hql语句对应的条件值集合为：{}】", hqlParameterValues);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(hql, hqlParameterValues);
 		return query;
 	}
 	
@@ -90,6 +94,9 @@ public class RequestProcesserCommon extends CommonProcesser{
 		
 		Log4jUtil.debug("【最后执行的hql语句为：{}】", hql);
 		Log4jUtil.debug("【最后执行的hql语句对应的条件值集合为：{}】", hqlParameterValues);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(hql, hqlParameterValues);
 		return query;
 	}
 	

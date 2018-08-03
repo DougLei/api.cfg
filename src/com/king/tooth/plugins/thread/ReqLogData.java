@@ -57,7 +57,9 @@ public class ReqLogData implements Serializable{
 			operSqlLogs = reqLog.getOperSqlLogs();
 			if(operSqlLogs != null && operSqlLogs.size() > 0){
 				entityName = operSqlLogs.get(0).getEntityName();
+				int orderCode = 1;
 				for (SysOperSqlLog operSqlLog : operSqlLogs) {
+					operSqlLog.setOrderCode(orderCode++);
 					reqLogJson = operSqlLog.toEntityJson();
 					ResourceHandlerUtil.initBasicPropValsForSave(entityName, reqLogJson, null);
 					logSession.save(entityName, reqLogJson);

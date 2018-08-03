@@ -223,6 +223,10 @@ public class HibernateUtil {
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
 		try {
 			getCurrentThreadSession().save(entityName, data);
+			
+			// 日志记录发出的hql/sql语句
+			CurrentThreadContext.toReqLogDataAddOperSqlLog("insert " + entityName, data);
+			
 			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
@@ -271,6 +275,9 @@ public class HibernateUtil {
 			updateHql.setLength(updateHql.length()-1);
 			updateHql.append(" where ").append(ResourceNameConstants.ID).append(" =?");
 			parameters.add(updateId);
+			
+			// 日志记录发出的hql/sql语句
+			CurrentThreadContext.toReqLogDataAddOperSqlLog(updateHql.toString(), parameters);
 			
 			executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), parameters);
 			Log4jUtil.debug("修改数据成功[{}]", data);
@@ -353,6 +360,10 @@ public class HibernateUtil {
 		
 		try {
 			Query query = getCurrentThreadSession().createQuery(modifyHql);
+			
+			// 日志记录发出的hql/sql语句
+			CurrentThreadContext.toReqLogDataAddOperSqlLog(modifyHql, parameters);
+			
 			setParamters(query, parameters);
 			int modifyCount = query.executeUpdate();
 			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}了{}条数据", hqlDes, modifyCount);
@@ -388,6 +399,10 @@ public class HibernateUtil {
 		
 		try {
 			Query query = getCurrentThreadSession().createSQLQuery(modifySql);
+			
+			// 日志记录发出的hql/sql语句
+			CurrentThreadContext.toReqLogDataAddOperSqlLog(modifySql, parameters);
+			
 			setParamters(query, parameters);
 			int modifyCount = query.executeUpdate();
 			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}了{}条数据", sqlDes, modifyCount);
@@ -434,6 +449,10 @@ public class HibernateUtil {
 	 */
 	public static List executeListQueryByHql(String rows, String pageNo, String queryHql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createQuery(queryHql);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(queryHql, parameters);
+		
 		setParamters(query, parameters);
 		setPageQuery(query, rows, pageNo);
 		return query.list();
@@ -458,6 +477,10 @@ public class HibernateUtil {
 	 */
 	public static Object executeUniqueQueryByHql(String queryHql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createQuery(queryHql);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(queryHql, parameters);
+		
 		setParamters(query, parameters);
 		return query.uniqueResult();
 	}
@@ -487,6 +510,10 @@ public class HibernateUtil {
 	 */
 	public static List executeListQueryBySql(String rows, String pageNo, String querySql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createSQLQuery(querySql);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
+		
 		setParamters(query, parameters);
 		setPageQuery(query, rows, pageNo);
 		return query.list();
@@ -511,6 +538,10 @@ public class HibernateUtil {
 	 */
 	public static Object executeUniqueQueryBySql(String querySql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createSQLQuery(querySql);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
+		
 		setParamters(query, parameters);
 		return query.uniqueResult();
 	}
@@ -608,6 +639,10 @@ public class HibernateUtil {
 		}
 		procedure.append(")}");
 		Log4jUtil.debug("调用的procedure为：{}", procedure);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(procedure.toString(), sqlScriptParameterList);
+		
 		return procedure.toString();
 	}
 	

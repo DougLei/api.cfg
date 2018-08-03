@@ -15,6 +15,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
@@ -29,10 +30,6 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	 * <p>1：login、2：loginOut、3：sql</p>
 	 */
 	private Integer type;
-	/**
-	 * 请求的资源类型
-	 */
-	private Integer resourceType;
 	/**
 	 * 请求方式
 	 * <p>get/post/delete/update</p>
@@ -66,6 +63,18 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	 * 响应的时间
 	 */
 	private Date respDate;
+	/**
+	 * 请求的资源类型
+	 */
+	private Integer resourceType;
+	/**
+	 * 请求的资源名
+	 */
+	private String resourceName;
+	/**
+	 * 请求的父资源名
+	 */
+	private String parentResourceName;
 	
 	// ------------------------------------------------
 	
@@ -135,6 +144,18 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	public void setRespDate(Date respDate) {
 		this.respDate = respDate;
 	}
+	public String getResourceName() {
+		return resourceName;
+	}
+	public void setResourceName(String resourceName) {
+		this.resourceName = resourceName;
+	}
+	public String getParentResourceName() {
+		return parentResourceName;
+	}
+	public void setParentResourceName(String parentResourceName) {
+		this.parentResourceName = parentResourceName;
+	}
 	public List<SysOperSqlLog> getOperSqlLogs() {
 		return operSqlLogs;
 	}
@@ -158,7 +179,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata typeColumn = new ComColumndata("type", BuiltinCodeDataType.INTEGER, 1);
 		typeColumn.setName("请求类型");
@@ -167,59 +188,71 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		typeColumn.setOrderCode(1);
 		columns.add(typeColumn);
 		
-		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinCodeDataType.INTEGER, 1);
-		resourceTypeColumn.setName("请求的资源类型");
-		resourceTypeColumn.setComments("请求的资源类型");
-		resourceTypeColumn.setOrderCode(2);
-		columns.add(resourceTypeColumn);
-		
 		ComColumndata methodColumn = new ComColumndata("method", BuiltinCodeDataType.STRING, 8);
 		methodColumn.setName("请求方式");
 		methodColumn.setComments("get/post/delete/update");
-		methodColumn.setOrderCode(3);
+		methodColumn.setOrderCode(2);
 		columns.add(methodColumn);
 		
 		ComColumndata apiAddrColumn = new ComColumndata("api_addr", BuiltinCodeDataType.STRING, 300);
 		apiAddrColumn.setName("请求的接口地址");
 		apiAddrColumn.setComments("请求的接口地址");
-		apiAddrColumn.setOrderCode(4);
+		apiAddrColumn.setOrderCode(3);
 		columns.add(apiAddrColumn);
 		
 		ComColumndata clientIpColumn = new ComColumndata("client_ip", BuiltinCodeDataType.STRING, 20);
 		clientIpColumn.setName("请求的客户端ip");
 		clientIpColumn.setComments("请求的客户端ip");
-		clientIpColumn.setOrderCode(5);
+		clientIpColumn.setOrderCode(4);
 		columns.add(clientIpColumn);
 		
 		ComColumndata clientMacColumn = new ComColumndata("client_mac", BuiltinCodeDataType.STRING, 50);
 		clientMacColumn.setName("请求的客户端mac");
 		clientMacColumn.setComments("请求的客户端max");
-		clientMacColumn.setOrderCode(6);
+		clientMacColumn.setOrderCode(5);
 		columns.add(clientMacColumn);
 		
 		ComColumndata reqDataColumn = new ComColumndata("req_data", BuiltinCodeDataType.CLOB, 0);
 		reqDataColumn.setName("请求的数据");
 		reqDataColumn.setComments("请求的数据");
-		reqDataColumn.setOrderCode(7);
+		reqDataColumn.setOrderCode(6);
 		columns.add(reqDataColumn);
 		
 		ComColumndata respDataColumn = new ComColumndata("resp_data", BuiltinCodeDataType.CLOB, 0);
 		respDataColumn.setName("响应的数据");
 		respDataColumn.setComments("响应的数据");
-		respDataColumn.setOrderCode(8);
+		respDataColumn.setOrderCode(7);
 		columns.add(respDataColumn);
 		
 		ComColumndata reqDateColumn = new ComColumndata("req_date", BuiltinCodeDataType.DATE, 0);
 		reqDateColumn.setName("响应的时间");
 		reqDateColumn.setComments("响应的时间");
-		reqDateColumn.setOrderCode(9);
+		reqDateColumn.setOrderCode(8);
 		columns.add(reqDateColumn);
 		
 		ComColumndata respDateColumn = new ComColumndata("resp_date", BuiltinCodeDataType.DATE, 0);
 		respDateColumn.setName("响应的时间");
 		respDateColumn.setComments("响应的时间");
-		respDateColumn.setOrderCode(10);
+		respDateColumn.setOrderCode(9);
 		columns.add(respDateColumn);
+		
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinCodeDataType.INTEGER, 1);
+		resourceTypeColumn.setName("请求的资源类型");
+		resourceTypeColumn.setComments("请求的资源类型");
+		resourceTypeColumn.setOrderCode(10);
+		columns.add(resourceTypeColumn);
+		
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinCodeDataType.STRING, 60);
+		resourceNameColumn.setName("请求的资源名");
+		resourceNameColumn.setComments("请求的资源名");
+		resourceNameColumn.setOrderCode(11);
+		columns.add(resourceNameColumn);
+		
+		ComColumndata parentResourceNameColumn = new ComColumndata("parent_resource_name", BuiltinCodeDataType.STRING, 60);
+		parentResourceNameColumn.setName("请求的父资源名");
+		parentResourceNameColumn.setComments("请求的父资源名");
+		parentResourceNameColumn.setOrderCode(12);
+		columns.add(parentResourceNameColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -239,14 +272,14 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	 * @param sqlScript
 	 * @param sqlParams
 	 */
-	public void addOperSqlLog(String sqlScript, String sqlParams) {
+	public void addOperSqlLog(String sqlScript, Object sqlParams) {
 		if(operSqlLogs == null){
 			operSqlLogs = new ArrayList<SysOperSqlLog>();
 		}
 		SysOperSqlLog operSqlLog = new SysOperSqlLog();
 		operSqlLog.setReqLogId(this.id);
 		operSqlLog.setSqlScript(sqlScript);
-		operSqlLog.setSqlParams(sqlParams);
+		operSqlLog.setSqlParams(JsonUtil.toJsonString(sqlParams, false));
 		operSqlLogs.add(operSqlLog);
 	}
 }

@@ -31,6 +31,11 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 	 * 对应的参数
 	 */
 	private String sqlParams;
+	/**
+	 * 排序
+	 * <p>发出sql的顺序</p>
+	 */
+	private Integer orderCode;
 	
 	// ------------------------------------------------
 
@@ -52,7 +57,13 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 	public void setSqlParams(String sqlParams) {
 		this.sqlParams = sqlParams;
 	}
-
+	public Integer getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(Integer orderCode) {
+		this.orderCode = orderCode;
+	}
+	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_OPER_SQL_LOG", 0);
 		table.setName("操作sql日志信息表");
@@ -62,7 +73,7 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
 		ComColumndata reqLogIdColumn = new ComColumndata("req_log_id", BuiltinCodeDataType.STRING, 32);
 		reqLogIdColumn.setName("关联的请求日志主键");
@@ -70,17 +81,23 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 		reqLogIdColumn.setOrderCode(1);
 		columns.add(reqLogIdColumn);
 		
-		ComColumndata sqlScriptColumn = new ComColumndata("sqlScript", BuiltinCodeDataType.STRING, 1000);
+		ComColumndata sqlScriptColumn = new ComColumndata("sql_script", BuiltinCodeDataType.STRING, 2000);
 		sqlScriptColumn.setName("操作的sql语句");
 		sqlScriptColumn.setComments("操作的sql语句");
 		sqlScriptColumn.setOrderCode(2);
 		columns.add(sqlScriptColumn);
 		
-		ComColumndata sqlParamsColumn = new ComColumndata("sqlParams", BuiltinCodeDataType.STRING, 500);
+		ComColumndata sqlParamsColumn = new ComColumndata("sql_params", BuiltinCodeDataType.STRING, 1200);
 		sqlParamsColumn.setName("对应的参数");
 		sqlParamsColumn.setComments("对应的参数");
 		sqlParamsColumn.setOrderCode(3);
 		columns.add(sqlParamsColumn);
+		
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 2);
+		orderCodeColumn.setName("排序");
+		orderCodeColumn.setComments("发出sql的顺序");
+		orderCodeColumn.setOrderCode(4);
+		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);
 		return table;

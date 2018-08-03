@@ -97,7 +97,9 @@ public class PrepareFilter extends AbstractFilter{
 			}
 			
 			// 记录日志
-			CurrentThreadContext.getReqLogData().getReqLog().setRespData(responseBody.toStrings());
+			if(!"get".equals(CurrentThreadContext.getReqLogData().getReqLog().getMethod())){
+				CurrentThreadContext.getReqLogData().getReqLog().setRespData(responseBody.toStrings());
+			}
 			CurrentThreadContext.getReqLogData().getReqLog().setRespDate(new Date());
 			CurrentThreadContext.getReqLogData().recordLogs();
 			

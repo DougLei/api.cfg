@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.Log4jUtil;
@@ -45,11 +46,14 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * @param
 	 */
 	protected final Query createQuery(int index, String sql){
-		Query query = HibernateUtil.getCurrentThreadSession().createSQLQuery(sql.replace(";", ""));
+		Query query = HibernateUtil.getCurrentThreadSession().createSQLQuery(sql);
 		setQueryCondParamters(index, query);
 		
 		Log4jUtil.debug("【最后执行的sql语句为：{}】", sql);
 		Log4jUtil.debug("【最后执行的sql语句对应的条件值集合为：{}】", sqlParameterValues);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(sql, sqlParameterValues.size()>0?sqlParameterValues.get(index):null);
 		return query;
 	}
 	
@@ -93,7 +97,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		int len = modifySqlArr.length;
 		Query query;
 		for (int i = 0; i < len; i++) {
-			query = createQuery(i, modifySqlArr[i]);
+			query = createQuery(i, modifySqlArr[i].replace(";", ""));
 			query.executeUpdate();
 		}
 		

@@ -64,7 +64,7 @@ public class AnonymousResultType implements IResultType{
 	
 //	public static void main(String[] args) {
 //		Map<String, String> m = new HashMap<String, String>();
-//		m.put("姓名", "石磊");
+//		m.put("姓名", "DougLei");
 //		m.put("Code", "123");
 //		System.out.println(JSONObjectExtend.toJSON(m));
 //	}

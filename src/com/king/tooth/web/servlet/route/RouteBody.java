@@ -2,6 +2,8 @@ package com.king.tooth.web.servlet.route;
 
 import java.io.Serializable;
 
+import com.king.tooth.plugins.thread.CurrentThreadContext;
+
 /**
  * 请求的资源体对象
  * <p>从请求uri的路径中，按照规则获取</p>
@@ -14,6 +16,14 @@ public class RouteBody implements Serializable{
 	
 	public RouteBody(String requestUri) {
 		analysis.doAnalysis(requestUri, this);
+		
+		// 记录日志，请求的资源名
+		if(resourceName != null){
+			CurrentThreadContext.getReqLogData().getReqLog().setResourceName(resourceName);
+		}
+		if(parentResourceName != null){
+			CurrentThreadContext.getReqLogData().getReqLog().setParentResourceName(parentResourceName);
+		}
 	}
 	
 	/**

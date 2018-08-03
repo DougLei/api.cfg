@@ -31,8 +31,8 @@ public class ComSysAccountService extends AbstractService{
 	 */
 	public ComSysAccount validAccountOfStatus(String accountId) {
 		// 再验证帐号状态是否正常
-		String hql = "from ComSysAccount where "+ResourceNameConstants.ID+" = '"+accountId+"'";
-		ComSysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, hql);
+		String hql = "from ComSysAccount where "+ResourceNameConstants.ID+" = ?";
+		ComSysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysAccount.class, hql, accountId);
 		if(account.getAccountStatus() == 2){
 			account.setMessage("您的账号已被禁用，请联系管理员");
 			return account;

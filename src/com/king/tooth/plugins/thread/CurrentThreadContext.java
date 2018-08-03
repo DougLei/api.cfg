@@ -4,6 +4,7 @@ import org.hibernate.Session;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysReqLog;
 
 /**
  * 当前线程的上下文
@@ -152,5 +153,16 @@ public class CurrentThreadContext {
 	public static final ReqLogData getReqLogData(){
 		setCurrentThreadData();
 		return currentThreadContext.get().getReqLogData();
+	}
+	/**
+	 * 给当前线程的请求日志中增加一条操作的sql日志
+	 * @param sqlScript
+	 * @param sqlParams
+	 */
+	public static final void toReqLogDataAddOperSqlLog(String sqlScript, Object sqlParams){
+		SysReqLog reqLog = getReqLogData().getReqLog();
+		if(reqLog != null){
+			reqLog.addOperSqlLog(sqlScript, sqlParams);
+		}
 	}
 }
