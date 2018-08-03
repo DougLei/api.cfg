@@ -367,6 +367,7 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "SysReqLog.type", "login", "1", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "SysReqLog.type", "loginOut", "2", 2, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "SysReqLog.type", "sql", "3", 3, ISysResource.CONFIG_PLATFORM);
+		insertDataDictionary(adminAccountId, "SysReqLog.type", "file", "4", 4, ISysResource.CONFIG_PLATFORM);
 		
 		// System.builtinQueryParameter 系统内置查询参数
 		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前系统时间", "_currentDate", 1, ISysResource.CONFIG_PLATFORM);

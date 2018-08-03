@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.sys.SysFile;
@@ -128,28 +130,36 @@ public class SysFileService extends AbstractService{
 	}
 	
 	// 验证上传的文件是否为空
-	private UploadFileInfo uploadFileIsEmpty(List<FileItem> fileList){
+	private UploadFileInfo uploadFileIsEmpty(List<FileItem> fileList) throws UnsupportedEncodingException{
+		JSONObject logJsonObject = new JSONObject(fileList.size());
+		
 		UploadFileInfo uploadFileInfo = new UploadFileInfo();
 		FileItem fi;
 		long fileSizeKB;
 		for (int i = 0; i < fileList.size(); i++) {
 			fi = fileList.get(i);
-			if("refDataId".equals(fi.getFieldName())){
-				uploadFileInfo.refDataId = fi.getString();
-				fileList.remove(i--);
-				continue;
-			}
-			if(!fi.isFormField()){
+			if(fi.isFormField()){
+				logJsonObject.put(fi.getFieldName(), fi.getString(EncodingConstants.UTF_8));
+				
+				if("refDataId".equals(fi.getFieldName())){
+					uploadFileInfo.refDataId = fi.getString();
+					fileList.remove(i--);
+				}
+			}else{
+				fileSizeKB = fi.getSize()/1024;
+				
+				logJsonObject.put(fi.getFieldName(), new FileInfo(fi.getName(), (fileSizeKB + " KB")));
+				
 				uploadFileInfo.isEmpty = false;
 				uploadFileInfo.count++;
 				
-				fileSizeKB = fi.getSize()/1024;
 				if(fileSizeKB > FileUtil.fileMaxSize){
 					uploadFileInfo.errMsg = "文件的大小为"+(fileSizeKB/1024)+"M，系统限制单个文件的大小不能超过"+(FileUtil.fileMaxSize/1024)+"M，请修改后再上传";
-					break;
 				}
 			}
 		}
+		
+		CurrentThreadContext.getReqLogData().getReqLog().setReqData(logJsonObject.toString());// 记录请求体
 		return uploadFileInfo;
 	}
 	// 上传文件的信息
@@ -158,6 +168,20 @@ public class SysFileService extends AbstractService{
 		public boolean isEmpty = true;// 在调用上传文件接口时，是否传递了文件
 		public int count;// 传递的文件数量
 		public String refDataId;// 文件关联的业务数据id
+	}
+	// 文件信息
+	private class FileInfo{
+		@SuppressWarnings("unused")
+		public String fileName;// 文件名
+		@SuppressWarnings("unused")
+		public String size;// 文件大小
+		public FileInfo(String fileName, String size) {
+			this.fileName = fileName;
+			this.size = size;
+		}
+		@SuppressWarnings("unused")
+		public FileInfo() {
+		}
 	}
 	
 	/**
@@ -249,6 +273,11 @@ public class SysFileService extends AbstractService{
 	 */
 	public Object download(HttpServletRequest request, HttpServletResponse response){
 		String fileIds = request.getParameter(ResourceNameConstants.IDS);
+		
+		JSONObject jsonObject = new JSONObject(1);
+		jsonObject.put(ResourceNameConstants.IDS, fileIds);
+		CurrentThreadContext.getReqLogData().getReqLog().setReqData(jsonObject.toString());// 记录请求体
+		
 		if(StrUtils.isEmpty(fileIds)){
 			return "下载文件时，传入的_ids参数值不能为空";
 		}
@@ -325,8 +354,6 @@ public class SysFileService extends AbstractService{
 		}
 		
 		// 组装结果
-		JSONObject jsonObject = new JSONObject(1);
-		jsonObject.put(ResourceNameConstants.IDS, fileIds);
 		return jsonObject;
 	}
 	//----------------------------------------------------------------------------------------------------------------
@@ -338,6 +365,11 @@ public class SysFileService extends AbstractService{
 	 */
 	public Object delete(HttpServletRequest request){
 		String fileIds = request.getParameter(ResourceNameConstants.IDS);
+		
+		JSONObject jsonObject = new JSONObject(1);
+		jsonObject.put(ResourceNameConstants.IDS, fileIds);
+		CurrentThreadContext.getReqLogData().getReqLog().setReqData(jsonObject.toString());// 记录请求体
+		
 		if(StrUtils.isEmpty(fileIds)){
 			return "删除文件时，传入的_ids参数值不能为空";
 		}
@@ -365,8 +397,6 @@ public class SysFileService extends AbstractService{
 		}
 		
 		// 组装结果
-		JSONObject jsonObject = new JSONObject(1);
-		jsonObject.put(ResourceNameConstants.IDS, fileIds);
 		return jsonObject;
 	}
 }

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.king.tooth.constants.EncodingConstants;
+import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.FileUtil;
@@ -21,6 +22,8 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 public class FileServlet extends HttpServlet{
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		CurrentThreadContext.getReqLogData().getReqLog().setType(4);// 标识日志的类型为文件
+		
 		ResponseBody responseBody = null;
 		if(FileUtil.saveToService){
 			String[] uri = request.getRequestURI().split("/");

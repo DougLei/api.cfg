@@ -27,7 +27,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 请求类型
-	 * <p>1：login、2：loginOut、3：sql</p>
+	 * <p>1：login、2：loginOut、3：sql、4：file...</p>
 	 */
 	private Integer type;
 	/**
@@ -183,7 +183,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata typeColumn = new ComColumndata("type", BuiltinCodeDataType.INTEGER, 1);
 		typeColumn.setName("请求类型");
-		typeColumn.setComments("1：login、2：loginOut、3：sql");
+		typeColumn.setComments("1：login、2：loginOut、3：sql、4：file...");
 		typeColumn.setDefaultValue("3");
 		typeColumn.setOrderCode(1);
 		columns.add(typeColumn);
