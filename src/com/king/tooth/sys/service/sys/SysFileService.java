@@ -35,6 +35,7 @@ import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.FileUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -79,6 +80,7 @@ public class SysFileService extends AbstractService{
 						if(sysFile == null){
 							sysFile = new SysFile();
 							sysFile.setRefDataId(uploadFileInfo.refDataId);
+							sysFile.setBatch(uploadFileInfo.batch);
 							sysFile.setCode(FileUtil.getFileCode());
 							sysFile.setSaveType(FileUtil.fileSaveType);
 							sysfileMap.put(index, sysFile);
@@ -135,14 +137,20 @@ public class SysFileService extends AbstractService{
 		
 		UploadFileInfo uploadFileInfo = new UploadFileInfo();
 		FileItem fi;
+		String fiValue;
 		long fileSizeKB;
 		for (int i = 0; i < fileList.size(); i++) {
 			fi = fileList.get(i);
 			if(fi.isFormField()){
-				logJsonObject.put(fi.getFieldName(), fi.getString(EncodingConstants.UTF_8));
+				fiValue = fi.getString(EncodingConstants.UTF_8);
+				logJsonObject.put(fi.getFieldName(), fiValue);
 				
 				if("refDataId".equals(fi.getFieldName())){
-					uploadFileInfo.refDataId = fi.getString();
+					uploadFileInfo.refDataId = fiValue;
+					fileList.remove(i--);
+				}
+				if("batch".equals(fi.getFieldName())){
+					uploadFileInfo.batch = fiValue;
 					fileList.remove(i--);
 				}
 			}else{
@@ -159,8 +167,12 @@ public class SysFileService extends AbstractService{
 			}
 		}
 
-		if(StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
-			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id格式错误，即参数名为refDataId的值格式错误：不能为空，或长度不符合要求";
+		// TODO 因为前端在上传文件时，是和表单分开提交的，所以一开始是没有refDataId的，所以这里的约束取消
+//		if(StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
+//			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id格式错误，即参数名为refDataId的值格式错误：不能为空，或长度不符合要求";
+//		}
+		if(StrUtils.isEmpty(uploadFileInfo.batch) || uploadFileInfo.batch.length() != 32){
+			uploadFileInfo.batch = ResourceHandlerUtil.getIdentity();
 		}
 		
 		CurrentThreadContext.getReqLogData().getReqLog().setReqData(logJsonObject.toString());// 记录请求体
@@ -172,6 +184,7 @@ public class SysFileService extends AbstractService{
 		public boolean isEmpty = true;// 在调用上传文件接口时，是否传递了文件
 		public int count;// 传递的文件数量
 		public String refDataId;// 文件关联的业务数据id
+		public String batch;// 同一次上传文件批次
 	}
 	// 文件信息
 	private class FileInfo{

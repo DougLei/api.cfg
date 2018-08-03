@@ -3,7 +3,6 @@ package com.king.tooth.web.builtin.method.tableresource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.StrUtils;
@@ -70,42 +69,6 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		// 最后剩下的数据，就都是条件查询的参数了【这个一定要放到最后被调用！】
 		// 内置查询条件函数处理器
 		setQuerycondProcesser(requestUrlParams, hqlParameterValues);
-	}
-	
-	/**
-	 * 解析父资源的查询条件
-	 * <p>说明：因为递归查询和父子表查询都要用到这个方法，在最后调用这个方法的时候，再把isRemoveUrlParam的值设为true，从集合中删除解析出来的数据，否则会造成第一次解析就移除的数据，后面再调用就无法解析到的bug</p>
-	 * @param parentResourceQueryCond
-	 * @param requestUrlParams
-	 */
-	private void anlaysisParentResourceQueryCond(Map<String, String> parentResourceQueryCond, Map<String, String> requestUrlParams) {
-		/* 
-		 * 系统处理逻辑说明：在请求的url中
-		 * 
-		 * 父资源id的值可以使用   <"_"+"名称"(例如:_root，以下就用_root说明)> 的方式书写，实现占位符对象功能
-		 * 在请求的url参数中，可以通过 _root.父资源属性名=xxx，设置查询父资源时的条件
-		 * 其中:	_root变量必须以'_'下划线开头
-		 *    	_xxx中的xxx，可以自定义，在url参数中，必须用_xxx.父资源属性名=值来设置查询条件
-		 */
-		if(requestUrlParams.size() > 0 && parentResourceId.startsWith("_")){
-			parentResourceId = parentResourceId.toLowerCase() + ".";
-			
-			// 在requestUrlParams中寻找，是否有父资源的查询条件
-			Set<String> keys = requestUrlParams.keySet();
-			for (String k : keys) {
-				if(k.startsWith(parentResourceId)){
-					parentResourceQueryCond.put(k.replace(parentResourceId, ""), requestUrlParams.get(k));
-				}
-			}
-			
-			// 如果找到父资源的查询条件，则将其从requestUrlParams中移除
-			if(parentResourceQueryCond.size() > 0){
-				keys = parentResourceQueryCond.keySet();
-				for (String k : keys) {
-					requestUrlParams.remove(parentResourceId+k);
-				}
-			}
-		}
 	}
 	
 	/**

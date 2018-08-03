@@ -28,6 +28,7 @@ import com.king.tooth.web.builtin.method.sqlresource.query.BuiltinQueryMethodPro
 import com.king.tooth.web.builtin.method.sqlresource.query.SelectNaming;
 import com.king.tooth.web.builtin.method.sqlresource.querycond.BuiltinQueryCondMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sort.BuiltinSortMethodProcesser;
+import com.king.tooth.web.builtin.method.sqlresource.recursive.BuiltinRecursiveMethodProcesser;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.entity.resulttype.TextResultEntity;
@@ -66,6 +67,11 @@ public abstract class GetProcesser extends RequestProcesser{
 	protected BuiltinFocusedIdMethodProcesser builtinFocusedIdMethodProcesser;
 	
 	/**
+	 * 递归
+	 */
+	protected BuiltinRecursiveMethodProcesser builtinRecursiveMethodProcesser;
+	
+	/**
 	 * 处理请求
 	 */
 	protected final boolean doProcess() {
@@ -84,6 +90,7 @@ public abstract class GetProcesser extends RequestProcesser{
 		builtinSortMethodProcesser = builtinSqlResourceBMProcesser.getSortProcesser();
 		builtinPagerMethodProcesser = builtinSqlResourceBMProcesser.getPagerProcesser();
 		builtinFocusedIdMethodProcesser = builtinSqlResourceBMProcesser.getFocusedIdProcesser();
+		builtinRecursiveMethodProcesser = builtinSqlResourceBMProcesser.getRecursiveProcesser();
 	}
 	
 	/**

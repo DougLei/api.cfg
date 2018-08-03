@@ -63,6 +63,11 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	 * 下载次数
 	 */
 	private Integer downloadCount;
+	/**
+	 * 批次
+	 * <p>标识同一次上传的文件</p>
+	 */
+	private String batch;
 	
 	// ---------------------------------------------------------------------------
 	
@@ -138,6 +143,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setDownloadCount(Integer downloadCount) {
 		this.downloadCount = downloadCount;
 	}
+	public String getBatch() {
+		return batch;
+	}
+	public void setBatch(String batch) {
+		this.batch = batch;
+	}
 	
 	
 	public ComTabledata toCreateTable() {
@@ -148,7 +159,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		table.setIsNeedDeploy(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinCodeDataType.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
@@ -211,6 +222,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		downloadCountColumn.setDefaultValue("0");
 		downloadCountColumn.setOrderCode(10);
 		columns.add(downloadCountColumn);
+		
+		ComColumndata batchColumn = new ComColumndata("batch", BuiltinCodeDataType.STRING, 32);
+		batchColumn.setName("批次");
+		batchColumn.setComments("标识同一次上传的文件");
+		batchColumn.setOrderCode(11);
+		columns.add(batchColumn);
 		
 		table.setColumns(columns);
 		return table;

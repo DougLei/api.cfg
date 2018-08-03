@@ -11,10 +11,9 @@ import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.AbstractCommonBuiltinBMProcesser;
-import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
-import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.query.BuiltinQueryMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.querycond.BuiltinQueryCondMethodProcesser;
+import com.king.tooth.web.builtin.method.sqlresource.recursive.BuiltinRecursiveMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sort.BuiltinSortMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sqlscript.BuiltinSqlScriptMethodProcesser;
 
@@ -28,6 +27,10 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 * 内置查询函数处理器实例
 	 */
 	private BuiltinQueryMethodProcesser queryProcesser;
+	/**
+	 * 内置递归函数处理器实例
+	 */
+	private BuiltinRecursiveMethodProcesser recursiveProcesser;
 	/**
 	 * 内置排序函数处理器实例
 	 */
@@ -62,6 +65,8 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		setQueryProcesser(requestUrlParams);
 		// 内置排序函数处理器实例
 		setSortProcesser(requestUrlParams);
+		// 内置递归函数处理器实例
+		setRecursiveProcesser(requestUrlParams, sqlParameterValues);
 		// 内置sql脚本处理器实例
 		setSqlScriptMethodProcesser(reqSqlScriptResource, requestUrlParams, sqlParameterValues);
 		// 最后剩下的数据，就都是条件查询的参数了【这个一定要放到最后被调用！】
@@ -139,6 +144,37 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	}
 	
 	/**
+	 * 内置递归函数处理器实例
+	 * @param requestUrlParams
+	 * @param sqlParameterValues
+	 */
+	private void setRecursiveProcesser(Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
+		String recursive = requestUrlParams.remove("_recursive");
+		String deepLevel = requestUrlParams.remove("_deep");
+		
+		if(StrUtils.notEmpty(parentResourceId)){
+			if(StrUtils.isEmpty(recursive)){
+				recursive = "false";// 默认不进行递归查询
+			}
+			if(StrUtils.isEmpty(deepLevel)){
+				deepLevel = "2";// 默认递归查询钻取的深度为2
+			}
+			
+			Map<String, String> parentResourceQueryCond = null;
+			if(StrUtils.compareIsSame(resourceName, parentResourceName)){// 主资源名和资源名相同，是递归查询
+				parentResourceQueryCond = new HashMap<String, String>();
+				// 解析父资源查询条件参数
+				anlaysisParentResourceQueryCond(parentResourceQueryCond, requestUrlParams);
+			}
+			
+			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, parentResourceQueryCond);
+			recursiveProcesser.setResourceName(resourceName);
+			recursiveProcesser.setParentResourceId(parentResourceId);
+			recursiveProcesser.setSqlParameterValues(sqlParameterValues);
+		}
+	}
+	
+	/**
 	 * 最后剩下的数据，就都是条件查询的参数了
 	 * 内置查询条件函数处理器
 	 * @param requestUrlParams
@@ -169,23 +205,17 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		analysisRequestUrlParams(reqSqlScriptResource, requestUrlParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
 	}
 	
-	public BuiltinFocusedIdMethodProcesser getFocusedIdProcesser() {
-		if(focusedIdProcesser == null){
-			focusedIdProcesser = new BuiltinFocusedIdMethodProcesser();
-		}
-		return focusedIdProcesser;
-	}
-	public BuiltinPagerMethodProcesser getPagerProcesser() {
-		if(pagerProcesser == null){
-			pagerProcesser = new BuiltinPagerMethodProcesser();
-		}
-		return pagerProcesser;
-	}
 	public BuiltinQueryMethodProcesser getQueryProcesser() {
 		if(queryProcesser == null){
 			queryProcesser = new BuiltinQueryMethodProcesser();
 		}
 		return queryProcesser;
+	}
+	public BuiltinRecursiveMethodProcesser getRecursiveProcesser() {
+		if(recursiveProcesser == null){
+			recursiveProcesser = new BuiltinRecursiveMethodProcesser();
+		}
+		return recursiveProcesser;
 	}
 	public BuiltinSortMethodProcesser getSortProcesser() {
 		if(sortProcesser == null){
