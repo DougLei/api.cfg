@@ -50,7 +50,7 @@ public class ResourceInfo {
 		
 		if(routeBody.isAction() || CodeResourceMapping.isCodeResource(codeResourceKey)){
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				throw new IllegalArgumentException("平台目前不支持处理主子action code资源");
+				throw new IllegalArgumentException("平台目前不支持处理[主子/递归]方式调用code资源");
 			}
 			resourceType = ISysResource.CODE;
 		}else{
@@ -65,6 +65,13 @@ public class ResourceInfo {
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
 				resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
+				
+				if(resource.getResourceType() != resourceType){
+					throw new IllegalArgumentException("平台目前不支持处理不同类型的资源混合调用");
+				}
+				if(resource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
+					throw new IllegalArgumentException("平台目前不支持处理[主子]方式调用sql资源");
+				}
 			}
 		}
 		
