@@ -158,6 +158,10 @@ public class SysFileService extends AbstractService{
 				}
 			}
 		}
+
+		if(StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
+			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id格式错误，即参数名为refDataId的值格式错误：不能为空，或长度不符合要求";
+		}
 		
 		CurrentThreadContext.getReqLogData().getReqLog().setReqData(logJsonObject.toString());// 记录请求体
 		return uploadFileInfo;

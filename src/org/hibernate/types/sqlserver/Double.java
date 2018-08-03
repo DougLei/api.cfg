@@ -44,7 +44,6 @@ public class Double implements UserType{
 		if(obj == null){
 			return null;
 		}
-		
 		return java.lang.Double.valueOf(obj.toString());
 	}
 
