@@ -13,7 +13,7 @@ import com.king.tooth.web.entity.resulttype.PageResultEntity;
  * <p>处理递归查询总数量：只查询第一级的数据总数量</p>
  * @author DougLei
  */
-public final class RecursiveParentResourceByIdToSubResourceCounterProcesser extends GetProcesser {
+public final class RecursiveParentResourceByIdToSubResourceCounterProcesser extends RecursiveQueryProcesser {
 
 	public String getProcesserName() {
 		return "【Get-SqlResource】RecursiveParentResourceByIdToSubResourceCounterProcesser";

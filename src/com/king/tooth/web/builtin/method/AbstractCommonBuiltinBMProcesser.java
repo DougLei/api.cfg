@@ -3,6 +3,7 @@ package com.king.tooth.web.builtin.method;
 import java.util.Map;
 import java.util.Set;
 
+import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
@@ -93,10 +94,17 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 			parentResourceId = parentResourceId.toLowerCase() + ".";
 			
 			// 在requestUrlParams中寻找，是否有父资源的查询条件
+			String pid = null;
 			Set<String> keys = requestUrlParams.keySet();
+			String tmpKey;
 			for (String k : keys) {
 				if(k.startsWith(parentResourceId)){
-					parentResourceQueryCond.put(k.replace(parentResourceId, ""), requestUrlParams.get(k));
+					tmpKey = k.replace(parentResourceId, "");
+					if(tmpKey.equals(ResourceNameConstants.ID)){
+						pid = requestUrlParams.get(k);
+					}else{
+						parentResourceQueryCond.put(k.replace(parentResourceId, ""), requestUrlParams.get(k));
+					}
 				}
 			}
 			
@@ -106,6 +114,11 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 				for (String k : keys) {
 					requestUrlParams.remove(parentResourceId+k);
 				}
+			}
+			
+			if(pid != null){
+				requestUrlParams.remove(parentResourceId+ResourceNameConstants.ID);
+				parentResourceId = pid;
 			}
 		}
 	}

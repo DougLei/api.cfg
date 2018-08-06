@@ -1,5 +1,6 @@
 package com.king.tooth.web.processer.sqlresource.get;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import com.king.tooth.web.entity.resulttype.PageResultEntity;
  * <p>处理递归查询</p>
  * @author DougLei
  */
-public final class RecursiveParentResourceByIdToSubResourceProcesser extends GetProcesser {
+public final class RecursiveParentResourceByIdToSubResourceProcesser extends RecursiveQueryProcesser {
 
 	public String getProcesserName() {
 		return "【Get-SqlResource】RecursiveParentResourceByIdToSubResourceProcesser";
@@ -24,11 +25,40 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Get
 		
 		String coreQuerySql = sqlScriptResource.getFinalSqlScript().getFinalCteSql()+
 				builtinQueryMethodProcesser.getSql().append(getFromSql());
-		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
-		
 		processSelectSqlQueryResultColumns(sqlScriptResource, coreQuerySql);
 		
-		Query query = createQuery(0, querySql);
+		
+		
+		StringBuilder firstRecursiveQuerySql = new StringBuilder();
+		firstRecursiveQuerySql.append(sqlScriptResource.getFinalSqlScript().getFinalCteSql())
+		                      .append(builtinQueryMethodProcesser.getSql())
+		                      .append(" from ( ")
+		                      .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalSelectSqlScript())
+		                      .append(" ) s_ ");
+		List<Object> firstRecursiveQueryParams = new ArrayList<Object>();
+		builtinRecursiveMethodProcesser.getFirstRecursiveQuerySql(firstRecursiveQuerySql, firstRecursiveQueryParams);
+		
+		
+		
+		
+		
+		
+		
+		
+		if(builtinRecursiveMethodProcesser.getIsRecursive() && (builtinRecursiveMethodProcesser.getDeepLevel() > 1 || builtinRecursiveMethodProcesser.getDeepLevel() == -1)){
+			
+		}
+		
+		
+		
+		
+		
+		
+		String recursiveQuerySql = coreQuerySql + builtinSortMethodProcesser.getSql();
+		Query query = createQuery(0, recursiveQuerySql);
+		
+		
+		
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
 		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
 		dataList = doProcessDataCollection(dataList);
