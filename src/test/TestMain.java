@@ -1,16 +1,13 @@
 package test;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 
 public class TestMain {
 	public static void main(String[] args) {
-		List<List<Object>> o = new ArrayList<List<Object>>(10);
-		System.out.println(o.size());
-		
-		System.out.println(o.get(0));
+		StringBuilder a = new StringBuilder("123");
+		a.insert(0, "aa").append("bb");
+		System.out.println(a);
 	}
 	
 }

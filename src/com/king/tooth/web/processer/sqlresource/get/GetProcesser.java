@@ -157,7 +157,6 @@ public abstract class GetProcesser extends RequestProcesser{
 		}else{
 			Log4jUtil.debug("将sql查询结果集转为list<Map>时，sql查询的结果集为空，转换结果为空");
 		}
-		sqlQueryResultColumns.clear();
 		return dataList;
 	}
 	

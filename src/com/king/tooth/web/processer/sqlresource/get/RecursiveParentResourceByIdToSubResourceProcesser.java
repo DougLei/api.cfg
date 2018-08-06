@@ -23,47 +23,55 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 	protected boolean doGetProcess() {
 		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
 		
-		String coreQuerySql = sqlScriptResource.getFinalSqlScript().getFinalCteSql()+
-				builtinQueryMethodProcesser.getSql().append(getFromSql());
+		// 获取首次递归查询根数据的sql语句和参数集合
+		StringBuilder firstRecursiveQuerySql = new StringBuilder(sqlScriptResource.getFinalSqlScript().getFinalCteSql());
+		List<Object> firstRecursiveQueryParams = new ArrayList<Object>();
+		getFirstRecursiveQueryInfo(firstRecursiveQuerySql, firstRecursiveQueryParams);
+		
+		// 获取二次以后的查询sql语句，并获取查询语句最终的结果字段集合
+		String queryMethodSql = builtinQueryMethodProcesser.getSql().toString();
+		String coreQuerySql = builtinQueryMethodProcesser.getSql()
+														 .insert(0, sqlScriptResource.getFinalSqlScript().getFinalCteSql())
+														 .append(getFromSql()).toString();
 		processSelectSqlQueryResultColumns(sqlScriptResource, coreQuerySql);
 		
-		
-		
-		StringBuilder firstRecursiveQuerySql = new StringBuilder();
-		firstRecursiveQuerySql.append(sqlScriptResource.getFinalSqlScript().getFinalCteSql())
-		                      .append(builtinQueryMethodProcesser.getSql())
-		                      .append(" from ( ")
-		                      .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalSelectSqlScript())
-		                      .append(" ) s_ ");
-		List<Object> firstRecursiveQueryParams = new ArrayList<Object>();
-		builtinRecursiveMethodProcesser.getFirstRecursiveQuerySql(firstRecursiveQuerySql, firstRecursiveQueryParams);
-		
-		
-		
-		
-		
-		
-		
-		
-		if(builtinRecursiveMethodProcesser.getIsRecursive() && (builtinRecursiveMethodProcesser.getDeepLevel() > 1 || builtinRecursiveMethodProcesser.getDeepLevel() == -1)){
-			
-		}
-		
-		
-		
-		
-		
-		
-		String recursiveQuerySql = coreQuerySql + builtinSortMethodProcesser.getSql();
-		Query query = createQuery(0, recursiveQuerySql);
-		
-		
-		
-		PageResultEntity pageResultEntity = loadPageResultEntity(query);
+		Query query = createRecursiveQuery(queryMethodSql + firstRecursiveQuerySql, firstRecursiveQueryParams);
+		PageResultEntity pageResultEntity = loadRecursiveQueryPageResultEntity(query, "select count(1) " + firstRecursiveQuerySql, firstRecursiveQueryParams);
 		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
+
+		if(builtinRecursiveMethodProcesser.getIsRecursive() && (builtinRecursiveMethodProcesser.getDeepLevel() > 1 || builtinRecursiveMethodProcesser.getDeepLevel() == -1)){
+			if(builtinQueryCondMethodProcesser.getSql().length() > 0){
+				coreQuerySql += " and parent_id = ?";
+			}else{
+				coreQuerySql += " where parent_id = ?";
+			}
+			String recursiveQuerySql = coreQuerySql + builtinSortMethodProcesser.getSql();
+			if(sqlParameterValues.size() > 0){
+				sqlParameterValues.get(0).add("tmp");
+			}else{
+				List<Object> spv = new ArrayList<Object>();
+				spv.add("tmp");
+				sqlParameterValues.add(spv);
+			}
+			recursiveQuery(dataList, recursiveQuerySql, builtinRecursiveMethodProcesser.getDeepLevel(), sqlScriptResource.getSqlQueryResultColumnList());
+		}
+		firstRecursiveQueryParams.clear();
+		
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);
 		return true;
+	}
+
+	/**
+	 * 获取首次递归查询根数据的sql语句和参数集合
+	 * @param firstRecursiveQuerySql
+	 * @param firstRecursiveQueryParams
+	 */
+	private void getFirstRecursiveQueryInfo(StringBuilder firstRecursiveQuerySql, List<Object> firstRecursiveQueryParams) {
+		firstRecursiveQuerySql.append(" from ( ")
+        				      .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalSelectSqlScript())
+        				      .append(" ) s_ ");
+		builtinRecursiveMethodProcesser.getFirstRecursiveQuerySql(firstRecursiveQuerySql, firstRecursiveQueryParams);
 	}
 
 	protected StringBuilder getFromSql() {
