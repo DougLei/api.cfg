@@ -10,6 +10,7 @@ import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.common.ComSysAccount;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
@@ -66,7 +67,7 @@ public class ComSysAccountService extends AbstractService{
 		
 		// TODO 暂时不要
 		// 获取当前登陆帐号的权限
-//		accountOnlineStatus.setPermission(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getCurrentAccountId()));
+		accountOnlineStatus.setPermission(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId()));
 		return accountOnlineStatus;
 	}
 	
