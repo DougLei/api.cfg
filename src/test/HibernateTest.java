@@ -8,7 +8,7 @@ public class HibernateTest {
 	public static void main(String[] args) {
 		SpringApplication.getApplicationContext();
 		CurrentThreadContext.setDatabaseId("447f1ef0272847018f9df0e9edc48d37");
-		HibernateUtil.executeListQueryByHql("100", 2+"", "select hbmContent from ComHibernateHbm where isEnabled = 1", null);
+		HibernateUtil.executeListQueryByHql("100", 2+"", "select hbmContent from SysHibernateHbm where isEnabled = 1", null);
 		
 		
 		

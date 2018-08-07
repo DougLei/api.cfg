@@ -18,10 +18,10 @@ import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.entity.common.ComHibernateHbm;
+import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -39,8 +39,8 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param database
 	 * @return operResult
 	 */
-	private String validDatabaseDataIsExists(ComDatabase database) {
-		String hql = "select count("+ResourceNameConstants.ID+") from ComDatabase where dbType=? and dbInstanceName=? and loginUserName=? and loginPassword=? and dbIp=? and dbPort=?";
+	private String validDatabaseDataIsExists(CfgDatabase database) {
+		String hql = "select count("+ResourceNameConstants.ID+") from CfgDatabase where dbType=? and dbInstanceName=? and loginUserName=? and loginPassword=? and dbIp=? and dbPort=?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, database.getDbType(), database.getDbInstanceName(), database.getLoginUserName(), database.getLoginPassword(), database.getDbIp(), database.getDbPort()+"");
 		if(count > 0){
 			return "[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库连接信息已存在";
@@ -53,7 +53,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param database
 	 * @return operResult
 	 */
-	public Object saveDatabase(ComDatabase database) {
+	public Object saveDatabase(CfgDatabase database) {
 		String operResult = validDatabaseDataIsExists(database);
 		if(operResult == null){
 			return HibernateUtil.saveObject(database, null);
@@ -66,8 +66,8 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param database
 	 * @return operResult
 	 */
-	public Object updateDatabase(ComDatabase database) {
-		ComDatabase oldDatabase = getObjectById(database.getId(), ComDatabase.class);
+	public Object updateDatabase(CfgDatabase database) {
+		CfgDatabase oldDatabase = getObjectById(database.getId(), CfgDatabase.class);
 		if(oldDatabase.getIsBuiltin() == 1){
 			return "禁止修改内置的数据库信息";
 		}
@@ -92,7 +92,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @return
 	 */
 	public String deleteDatabase(String databaseId) {
-		ComDatabase oldDatabase = getObjectById(databaseId, ComDatabase.class);
+		CfgDatabase oldDatabase = getObjectById(databaseId, CfgDatabase.class);
 		if(oldDatabase.getIsBuiltin() == 1){
 			return "禁止删除内置的数据库信息";
 		}
@@ -103,7 +103,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComDatabase where "+ResourceNameConstants.ID+" = '"+databaseId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgDatabase where "+ResourceNameConstants.ID+" = '"+databaseId+"'");
 		return null;
 	}
 	
@@ -112,7 +112,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @param databaseId
 	 */
 	public String databaseLinkTest(String databaseId) {
-		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		CfgDatabase database = getObjectById(databaseId, CfgDatabase.class);
 		return database.testDbLink();
 	}
 	
@@ -160,7 +160,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
 			return "不能发布配置系统数据库";
 		}
-		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		CfgDatabase database = getObjectById(databaseId, CfgDatabase.class);
 		if(database.getIsCreated() == 1){
 			return "id为["+databaseId+"]的数据库已发布，无需再次发布，或取消发布后重新发布";
 		}
@@ -200,12 +200,12 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		
 		// 将这些运行系统的基础表的hbm保存到远程数据库的ComHibernateHbm表中
-		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(appSystemCoreTables.size());// 记录表对应的hbm内容，要发布的是这个
-		ComHibernateHbm hbm = null;
+		List<SysHibernateHbm> hbms = new ArrayList<SysHibernateHbm>(appSystemCoreTables.size());// 记录表对应的hbm内容，要发布的是这个
+		SysHibernateHbm hbm = null;
 		Date currentDate = new Date();
 		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		for(ComTabledata table : appSystemCoreTables){
-			hbm = new ComHibernateHbm();
+			hbm = new SysHibernateHbm();
 			hbm.tableTurnToHbm(table);
 			hbm.setId(table.getId());
 			hbm.setRefDatabaseId(databaseId);
@@ -224,7 +224,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			for (ComHibernateHbm h : hbms) {
+			for (SysHibernateHbm h : hbms) {
 				session.save(h.getEntityName(), h.toEntityJson());
 			}
 			session.getTransaction().commit();
@@ -262,7 +262,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
 			return "不能取消发布配置系统数据库";
 		}
-		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		CfgDatabase database = getObjectById(databaseId, CfgDatabase.class);
 		if(database.getIsCreated() == 0){
 			return "id为["+databaseId+"]的数据库还未发布，不能取消发布";
 		}

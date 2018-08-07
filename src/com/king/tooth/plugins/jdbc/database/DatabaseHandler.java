@@ -3,7 +3,7 @@ package com.king.tooth.plugins.jdbc.database;
 import java.util.Arrays;
 
 import com.king.tooth.plugins.jdbc.DBLink;
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.StrUtils;
@@ -31,7 +31,7 @@ public class DatabaseHandler {
 	 * 构造函数
 	 * @param database 动态数据库对象 
 	 */
-	public DatabaseHandler(ComDatabase database){
+	public DatabaseHandler(CfgDatabase database){
 		dblink = new DBLink(database);
 		newAbstractCreateDatabaseInstance();
 	}
@@ -53,7 +53,7 @@ public class DatabaseHandler {
 	 * 执行操作数据库的ddlsql语句
 	 * @param ddlSqlArr
 	 */
-	private void executeDDL(String[] ddlSqlArr, ComDatabase database){
+	private void executeDDL(String[] ddlSqlArr, CfgDatabase database){
 		String result = dblink.executeDDL(ddlSqlArr);
 		if(result == null){
 			Log4jUtil.debug("[DatabaseHandler.executeDDL]操作数据库成功：{}", database);
@@ -67,7 +67,7 @@ public class DatabaseHandler {
 	 * @param database
 	 * @return
 	 */
-	public void createDatabase(ComDatabase database){
+	public void createDatabase(CfgDatabase database){
 		String tmpSql = getCreateDatabaseSql(database);
 		if(StrUtils.notEmpty(tmpSql)){
 			String[] ddlSqlArr = tmpSql.split(";");
@@ -79,7 +79,7 @@ public class DatabaseHandler {
 	 * 删除数据库
 	 * @param database
 	 */
-	public void dropDatabase(ComDatabase database){
+	public void dropDatabase(CfgDatabase database){
 		String tmpSql = getDropDatabaseSql(database);
 		if(StrUtils.notEmpty(tmpSql)){
 			String[] ddlSqlArr = tmpSql.split(";");
@@ -92,7 +92,7 @@ public class DatabaseHandler {
 	 * @param database
 	 * @return
 	 */
-	public String getCreateDatabaseSql(ComDatabase database){
+	public String getCreateDatabaseSql(CfgDatabase database){
 		if(dbOper == null){
 			Log4jUtil.debug("[DatabaseHandler.createDatabase]操作数据库的对象AbstractDatabaseOper dbOper为null");
 			return null;
@@ -105,7 +105,7 @@ public class DatabaseHandler {
 	 * @param database
 	 * @return
 	 */
-	public String getDropDatabaseSql(ComDatabase database){
+	public String getDropDatabaseSql(CfgDatabase database){
 		if(dbOper == null){
 			Log4jUtil.debug("[DatabaseHandler.dropDatabase]操作数据库的对象AbstractDatabaseOper dbOper为null");
 			return null;

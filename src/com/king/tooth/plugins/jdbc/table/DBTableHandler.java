@@ -11,8 +11,8 @@ import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.jdbc.util.DynamicDataLinkTableUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
@@ -40,7 +40,7 @@ public class DBTableHandler {
 	 * 构造函数
 	 * @param database 数据库对象 
 	 */
-	public DBTableHandler(ComDatabase database){
+	public DBTableHandler(CfgDatabase database){
 		dblink = new DBLink(database);
 		newAbstractCreateTableInstance();
 	}

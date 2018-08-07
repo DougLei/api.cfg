@@ -5,7 +5,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
 
@@ -54,7 +54,7 @@ public class ResourceInfo {
 			}
 			resourceType = ISysResource.CODE;
 		}else{
-			ComSysResource resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
+			SysResource resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
 			resourceType = resource.getResourceType();
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例

@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -23,13 +23,13 @@ public class DBLink {
 	/**
 	 * 数据库
 	 */
-	private ComDatabase database;
+	private CfgDatabase database;
 	
 	/**
 	 * 根据动态数据库对象，获取dblink实例
 	 * @param sessionFactory 
 	 */
-	public DBLink(ComDatabase database){
+	public DBLink(CfgDatabase database){
 		this.database = database;
 	}
 	

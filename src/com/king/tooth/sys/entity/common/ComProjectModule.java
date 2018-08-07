@@ -12,6 +12,7 @@ import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -215,11 +216,11 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		return "ComProjectModule";
 	}
 	
-	public ComSysResource turnToResource() {
+	public SysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
+	public SysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	

@@ -19,15 +19,14 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
-import com.king.tooth.sys.entity.common.ComDatabase;
 import com.king.tooth.sys.entity.common.ComDept;
-import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComOrg;
 import com.king.tooth.sys.entity.common.ComPermission;
 import com.king.tooth.sys.entity.common.ComPermissionPriority;
@@ -37,7 +36,6 @@ import com.king.tooth.sys.entity.common.ComProjectModule;
 import com.king.tooth.sys.entity.common.ComRole;
 import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.sys.entity.common.ComSysAccount;
-import com.king.tooth.sys.entity.common.ComSysResource;
 import com.king.tooth.sys.entity.common.ComUser;
 import com.king.tooth.sys.entity.common.ComVerifyCode;
 import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
@@ -49,8 +47,10 @@ import com.king.tooth.sys.entity.common.datalinks.ComUserComPositionLinks;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysFile;
+import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -101,16 +101,16 @@ public class InitCfgSystemService extends AbstractService{
 	private List<ComTabledata> getAllTables(){
 		List<ComTabledata> tables = new ArrayList<ComTabledata>(50);
 		
-		tables.add(new ComDatabase().toCreateTable());
+		tables.add(new CfgDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
 		tables.add(new ComProjectModule().toCreateTable());
-		tables.add(new ComHibernateHbm().toCreateTable());
+		tables.add(new SysHibernateHbm().toCreateTable());
 		tables.add(new ComSqlScript().toCreateTable());
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
 		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
 		tables.add(new ComSysAccount().toCreateTable());
 		tables.add(new SysDataDictionary().toCreateTable());
-		tables.add(new ComSysResource().toCreateTable());
+		tables.add(new SysResource().toCreateTable());
 		
 		tables.add(new ComDataLinks().toCreateTable());
 		tables.add(new SysReqLog().toCreateTable());
@@ -233,7 +233,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据库信息【运行平台数据库信息】
-		ComDatabase appDatabase = new ComDatabase();
+		CfgDatabase appDatabase = new CfgDatabase();
 		appDatabase.setId("05fb6ef9c3ackfccb91b00add666odb9");
 		appDatabase.setDbDisplayName("运行系统通用数据库(内置)");
 		appDatabase.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
@@ -282,8 +282,8 @@ public class InitCfgSystemService extends AbstractService{
 		List<ComTabledata> tables = getAllTables();
 		String tableId;
 		List<ComColumndata> columns = null;
-		ComHibernateHbm hbm;
-		ComSysResource resource;
+		SysHibernateHbm hbm;
+		SysResource resource;
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : tables) {
 			// 插入表和列信息
@@ -299,7 +299,7 @@ public class InitCfgSystemService extends AbstractService{
 				continue;
 			}
 			// 创建对应的hbm文件，并保存
-			hbm = new ComHibernateHbm();
+			hbm = new SysHibernateHbm();
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.tableTurnToHbm(table);
 			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, true));
@@ -317,7 +317,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * @param adminAccountId 
 	 */
 	private void insertBasicDataDictionary(String adminAccountId) {
-		// ComDatabase.dbType 数据库类型
+		// CfgDatabase.dbType 数据库类型
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
 		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
 		
@@ -345,7 +345,7 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "启用", "1", 1, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "禁用", "2", 2, ISysResource.COMMON_PLATFORM);
 		
-		// ComSysResource.resourceType 资源类型
+		// SysResource.resourceType 资源类型
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "表资源", "1", 1, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "sql脚本资源", "2", 2, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "代码资源", "3", 3, ISysResource.COMMON_PLATFORM);
@@ -471,10 +471,10 @@ public class InitCfgSystemService extends AbstractService{
 			
 			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的核心hbm加载进对应的sessionFactory中
 			// 同时建立数据库和项目的关联关系，为之后的发布操作做准备
-			List<ComDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(ComDatabase.class, null, null, "from ComDatabase where isEnabled = 1 and belongPlatformType = 2 and isCreated =1");
+			List<CfgDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(CfgDatabase.class, null, null, "from CfgDatabase where isEnabled = 1 and belongPlatformType = 2 and isCreated =1");
 			if(databases != null && databases.size()> 0){
 				// 查询获取核心表的hbm资源
-				List<String> coreTableHbmContents = HibernateUtil.executeListQueryByHql(null, null, "select h.hbmContent from ComHibernateHbm h, ComTabledata t where h.refTableId = t."+ResourceNameConstants.ID+" and t.isCore=1 and t.isEnabled=1 and h.isEnabled=1", null);
+				List<String> coreTableHbmContents = HibernateUtil.executeListQueryByHql(null, null, "select h.hbmContent from SysHibernateHbm h, ComTabledata t where h.refTableId = t."+ResourceNameConstants.ID+" and t.isCore=1 and t.isEnabled=1 and h.isEnabled=1", null);
 				HibernateUtil.closeCurrentThreadSession();
 				if(coreTableHbmContents == null || coreTableHbmContents.size() == 0){
 					throw new NullPointerException("没有查询到核心表的hbm资源，请检查配置系统数据库中的数据是否正确");
@@ -483,7 +483,7 @@ public class InitCfgSystemService extends AbstractService{
 				
 				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled=1 and isCreated=1 and refDatabaseId= ?";
 				String testLinkResult;
-				for (ComDatabase database : databases) {
+				for (CfgDatabase database : databases) {
 					database.analysisResourceProp();
 					testLinkResult = database.testDbLink();
 					if(testLinkResult.startsWith("err")){
@@ -512,7 +512,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * @param database
 	 * @return
 	 */
-	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, ComDatabase database) {
+	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, CfgDatabase database) {
 		// 加载数据库和项目的关联关系映射
 		CurrentThreadContext.setDatabaseId(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
 		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
@@ -546,11 +546,11 @@ public class InitCfgSystemService extends AbstractService{
 	 * @throws IOException 
 	 */
 	private void loadCurrentSysDatabaseHbms() throws SQLException, IOException {
-		ComDatabase database = BuiltinInstance.currentSysBuiltinDatabaseInstance;
+		CfgDatabase database = BuiltinInstance.currentSysBuiltinDatabaseInstance;
 		
 		CurrentThreadContext.setDatabaseId(database.getId());
 		// 获取当前系统的ComHibernateHbm映射文件对象
-		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'ComHibernateHbm' and is_enabled = 1";
+		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'SysHibernateHbm' and is_enabled = 1";
 		String hbmContent = null;
 		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
@@ -574,7 +574,7 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateUtil.appendNewConfig(hbmContent);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
-		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from ComHibernateHbm where isEnabled = 1 and hbmResourceName != 'ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
+		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from SysHibernateHbm where isEnabled = 1 and hbmResourceName != 'SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
 		if(count == 0){
 			return;
 		}
@@ -582,7 +582,7 @@ public class InitCfgSystemService extends AbstractService{
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", (i+1)+"", "select hbmContent from ComHibernateHbm where isEnabled = 1 and hbmResourceName !='ComHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
+			hbmContents = HibernateUtil.executeListQueryByHql("100", (i+1)+"", "select hbmContent from SysHibernateHbm where isEnabled = 1 and hbmResourceName !='SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");
@@ -611,7 +611,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * @param database 指定数据库
 	 * @param coreTableHbmContents
 	 */
-	private void loadCoreHbmContentsToDatabase(ComDatabase database, List<String> coreTableHbmContents){
+	private void loadCoreHbmContentsToDatabase(CfgDatabase database, List<String> coreTableHbmContents){
 		CurrentThreadContext.setDatabaseId(database.getId());
 		HibernateUtil.appendNewConfig(coreTableHbmContents);
 	}

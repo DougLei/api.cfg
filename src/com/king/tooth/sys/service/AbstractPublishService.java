@@ -16,9 +16,9 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
-import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.cfg.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -42,11 +42,11 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param database
 	 * @return
 	 */
-	protected String getAppSysDatabaseId(ComDatabase database){
+	protected String getAppSysDatabaseId(CfgDatabase database){
 		if(database != null && database.getIsBuiltin() == 1){
 			return database.getId();
 		}
-		return (String) HibernateUtil.executeUniqueQueryByHql("select "+ResourceNameConstants.ID+" from ComDatabase where isBuiltin=1", null);
+		return (String) HibernateUtil.executeUniqueQueryByHql("select "+ResourceNameConstants.ID+" from CfgDatabase where isBuiltin=1", null);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public abstract class AbstractPublishService extends AbstractService{
 			}
 			
 			if(processSysResource == 1){ // 标识需要处理资源
-				ComSysResource csr = ((ISysResource)publish).turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
+				SysResource csr = ((ISysResource)publish).turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
 				session.save(csr.getEntityName(), csr.toEntityJson());
 			}
 			session.getTransaction().commit();
@@ -164,7 +164,7 @@ public abstract class AbstractPublishService extends AbstractService{
 			ComPublishInfo publishInfo;
 			JSONObject dataLink;
 			JSONObject publishEntityJson;
-			ComSysResource csr;
+			SysResource csr;
 			ISysResource sysResource;
 			int orderCode = 1;
 			for (IPublish entity : publishs) {

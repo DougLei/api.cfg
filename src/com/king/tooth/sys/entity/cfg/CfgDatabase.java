@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.cfg;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,21 +15,19 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.database.DBFile;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 数据库数据信息资源对象
+ * 数据库信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDatabase extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
+public class CfgDatabase extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
 	
 	/**
 	 * 数字库名
@@ -149,9 +147,9 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_DATABASE", 0);
-		table.setName("数据库数据信息资源对象表");
-		table.setComments("数据库数据信息资源对象表");
+		ComTabledata table = new ComTabledata("CFG_DATABASE", 0);
+		table.setName("数据库信息表");
+		table.setComments("数据库信息表");
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
@@ -226,12 +224,12 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	}
 
 	public String toDropTable() {
-		return "COM_DATABASE";
+		return "CFG_DATABASE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComDatabase";
+		return "CfgDatabase";
 	}
 	
 	/**
@@ -272,7 +270,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 			int connectSeconds = (int) ((System.currentTimeMillis()-start)/1000);
 			return "ok:连接成功，耗时["+connectSeconds+"]秒";
 		} catch (Exception e) {
-			return "测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg("ComDatabase", "testDbLink", e)+"]";
+			return "测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg("CfgDatabase", "testDbLink", e)+"]";
 		} finally{
 			CloseUtil.closeDBConn(conn);
 		}
@@ -322,11 +320,11 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 		return result;
 	}
 	
-	public ComSysResource turnToResource() {
+	public SysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
+	public SysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	
@@ -336,7 +334,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	 * @param database
 	 * @return
 	 */
-	public boolean compareLinkInfoIsSame(ComDatabase database){
+	public boolean compareLinkInfoIsSame(CfgDatabase database){
 		if(StrUtils.compareIsSame(dbInstanceName, database.getDbInstanceName())
 				&& StrUtils.compareIsSame(loginUserName, database.getLoginUserName())
 				&& StrUtils.compareIsSame(loginPassword, database.getLoginPassword())
@@ -353,7 +351,7 @@ public class ComDatabase extends AbstractSysResource implements ITable, IEntityP
 	 * @param database
 	 * @return
 	 */
-	public boolean compareIsSameDatabase(ComDatabase database){
+	public boolean compareIsSameDatabase(CfgDatabase database){
 		if(database.getDbType().equals(BuiltinDatabaseData.DB_TYPE_ORACLE)){
 			if(StrUtils.compareIsSameIgnoreCase(dbInstanceName, database.getDbInstanceName())
 					&& StrUtils.compareIsSame(dbIp, database.getDbIp())

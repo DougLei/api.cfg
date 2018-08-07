@@ -11,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -26,13 +26,13 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComDatabase> databases = getDataInstanceList(ijson, ComDatabase.class);
+		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
 				resultObject = BuiltinInstance.databaseService.saveDatabase(databases.get(0));
 			}else{
-				for (ComDatabase database : databases) {
+				for (CfgDatabase database : databases) {
 					resultObject = BuiltinInstance.databaseService.saveDatabase(database);
 					if(resultObject instanceof String){
 						break;
@@ -50,13 +50,13 @@ public class ComDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComDatabase> databases = getDataInstanceList(ijson, ComDatabase.class);
+		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
 				resultObject = BuiltinInstance.databaseService.updateDatabase(databases.get(0));
 			}else{
-				for (ComDatabase database : databases) {
+				for (CfgDatabase database : databases) {
 					resultObject = BuiltinInstance.databaseService.updateDatabase(database);
 					if(resultObject instanceof String){
 						break;

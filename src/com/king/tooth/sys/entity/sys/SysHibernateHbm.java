@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +16,11 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
- * hibernate的hbm内容对象
+ * hibernate的hbm内容表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComHibernateHbm extends AbstractSysResource implements ITable, IPublish{
+public class SysHibernateHbm extends AbstractSysResource implements ITable, IPublish{
 	
 	/**
 	 * 关联的数据库主键
@@ -82,9 +82,9 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 	
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_HIBERNATE_HBM", 0);
-		table.setName("hibernate的hbm内容对象表");
-		table.setComments("hibernate的hbm内容对象表");
+		ComTabledata table = new ComTabledata("SYS_HIBERNATE_HBM", 0);
+		table.setName("hibernate的hbm内容表");
+		table.setComments("hibernate的hbm内容表");
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
@@ -130,15 +130,15 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 	}
 	
 	public String toDropTable() {
-		return "COM_HIBERNATE_HBM";
+		return "SYS_HIBERNATE_HBM";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComHibernateHbm";
+		return "SysHibernateHbm";
 	}
 	
-	public ComSysResource turnToResource() {
+	public SysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
@@ -189,8 +189,8 @@ public class ComHibernateHbm extends AbstractSysResource implements ITable, IPub
 		return json;
 	}
 	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
-		ComSysResource resource = super.turnToResource();
+	public SysResource turnToPublishResource(String projectId, String refResourceId) {
+		SysResource resource = super.turnToResource();
 		resource.setId(ResourceHandlerUtil.getIdentity());
 		resource.setRefDataId(refTableId);
 		resource.setResourceType(TABLE);

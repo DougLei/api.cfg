@@ -35,7 +35,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validProjectRefDatabaseIsExists(ComProject project) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComDatabase where id = ?", project.getRefDatabaseId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from CfgDatabase where id = ?", project.getRefDatabaseId());
 		if(count != 1){
 			return "关联的id=["+project.getRefDatabaseId()+"]的数据库信息不存在";
 		}

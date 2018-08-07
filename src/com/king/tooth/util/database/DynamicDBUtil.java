@@ -10,7 +10,7 @@ import org.hibernate.internal.SessionFactoryImpl;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.king.tooth.plugins.datasource.dynamic.druid.DynamicDruidDataSourceHandler;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.SpringContextHelper;
 import com.king.tooth.util.StrUtils;
 
@@ -41,7 +41,7 @@ public class DynamicDBUtil {
 	 * </pre>
 	 * @param database
 	 */
-	public static void addDataSource(ComDatabase database){
+	public static void addDataSource(CfgDatabase database){
 		if(StrUtils.isEmpty(database)){
 			throw new NullPointerException("添加数据源和对应sessionFactory时，database参数不能为空!");
 		}

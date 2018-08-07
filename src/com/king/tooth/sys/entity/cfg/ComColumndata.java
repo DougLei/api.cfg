@@ -10,7 +10,7 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -359,7 +359,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		return result;
 	}
 	
-	public ComSysResource turnToResource() {
+	public SysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 }

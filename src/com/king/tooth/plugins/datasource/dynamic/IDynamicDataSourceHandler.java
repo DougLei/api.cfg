@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 
 /**
  * 动态数据源操作接口
@@ -22,7 +22,7 @@ public interface IDynamicDataSourceHandler {
 	 * @param database
 	 * @return 添加的数据源对象
 	 */
-	public DataSource addDataSource(ComDatabase database);
+	public DataSource addDataSource(CfgDatabase database);
 	
 	/**
 	 * 动态删除数据源

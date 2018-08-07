@@ -321,7 +321,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			executeRemoteUpdate(null, projectId, 
 					"delete ComProjectComSqlScriptLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+sqlScript.getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"')",
 					"delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and refDataId='"+sqlScriptId+"'",
-					"delete ComSysResource where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"'");
+					"delete SysResource where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"'");
 			publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		}
 		return result;

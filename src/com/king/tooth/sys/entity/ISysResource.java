@@ -1,6 +1,6 @@
 package com.king.tooth.sys.entity;
 
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysResource;
 
 /**
  * 系统资源接口
@@ -84,14 +84,14 @@ public interface ISysResource {
 	/**
 	 * 转换为资源对象
 	 */
-	public ComSysResource turnToResource();
+	public SysResource turnToResource();
 	/**
 	 * 转换为要发布的资源对象
 	 * <p>主要是针对hbm和sql脚本资源</p>
 	 * @param projectId
 	 * @param refResourceId
 	 */
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId);
+	public SysResource turnToPublishResource(String projectId, String refResourceId);
 	
 	/**
 	 * 获取资源类型

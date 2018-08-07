@@ -1,7 +1,7 @@
 package com.king.tooth.plugins.jdbc.database.impl.oracle;
 
 import com.king.tooth.plugins.jdbc.database.AbstractDatabaseHandler;
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -10,7 +10,7 @@ import com.king.tooth.util.StrUtils;
  */
 public class DatabaseImpl extends AbstractDatabaseHandler{
 	
-	public String installCreateDatabaseSql(ComDatabase database) {
+	public String installCreateDatabaseSql(CfgDatabase database) {
 		operDatabaseSql.setLength(0);
 		// 如果有，先创建临时表空间
 		if(database.getTmpLogFile() != null && StrUtils.notEmpty(database.getTmpLogFile().getName())){
@@ -45,7 +45,7 @@ public class DatabaseImpl extends AbstractDatabaseHandler{
 		return operDatabaseSql.toString();
 	}
 
-	public String installDropDatabaseSql(ComDatabase database) {
+	public String installDropDatabaseSql(CfgDatabase database) {
 		// 删除用户
 		operDatabaseSql.append("drop user ").append(database.getLoginUserName()).append(" cascade;");
 		// 删除表空间

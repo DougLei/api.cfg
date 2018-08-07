@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
@@ -74,8 +74,8 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	/**
 	 * 转换为资源对象
 	 */
-	public ComSysResource turnToResource(){
-		ComSysResource resource = new ComSysResource();
+	public SysResource turnToResource(){
+		SysResource resource = new SysResource();
 		resource.setRefResourceId(id);
 		resource.setIsEnabled(isEnabled);
 		resource.setReqResourceMethod(reqResourceMethod);

@@ -3,7 +3,7 @@ package com.king.tooth.sys.service.common;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -20,7 +20,7 @@ public class ComSysResourceService extends AbstractService{
 	 * @param resource
 	 */
 	public void saveSysResource(ISysResource iresource){
-		ComSysResource resource = iresource.turnToResource();
+		SysResource resource = iresource.turnToResource();
 		HibernateUtil.saveObject(resource , null);
 	}
 
@@ -37,12 +37,12 @@ public class ComSysResourceService extends AbstractService{
 	 * @param resourceName
 	 * @return
 	 */
-	public ComSysResource findResourceByResourceName(String resourceName) {
+	public SysResource findResourceByResourceName(String resourceName) {
 		if(StrUtils.isEmpty(resourceName)){
 			throw new NullPointerException("请求的资源名不能为空");
 		}
 		
-		ComSysResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComSysResource.class, "from ComSysResource where resourceName = ? and projectId = ? and customerId = ?", resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		SysResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysResource.class, "from SysResource where resourceName = ? and projectId = ? and customerId = ?", resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(resource == null){
 			throw new IllegalArgumentException("不存在请求的资源：" + resourceName);
 		}

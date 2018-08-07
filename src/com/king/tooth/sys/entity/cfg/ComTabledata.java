@@ -9,7 +9,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
@@ -372,8 +372,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return result;
 	}
 	
-	public ComSysResource turnToResource() {
-		ComSysResource resource = super.turnToResource();
+	public SysResource turnToResource() {
+		SysResource resource = super.turnToResource();
 		resource.setResourceType(TABLE);
 		resource.setResourceName(resourceName);
 		if(isDatalinkTable == 1){
@@ -382,7 +382,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		return resource;
 	}
 	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
+	public SysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	

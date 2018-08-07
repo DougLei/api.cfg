@@ -16,13 +16,13 @@ import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.common.ComDatabase;
-import com.king.tooth.sys.entity.common.ComHibernateHbm;
 import com.king.tooth.sys.entity.common.ComProject;
-import com.king.tooth.sys.entity.common.ComSysResource;
+import com.king.tooth.sys.entity.sys.SysHibernateHbm;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.sys.service.common.ComSysResourceService;
 import com.king.tooth.util.ExceptionUtil;
@@ -74,7 +74,7 @@ public class ComTabledataService extends AbstractPublishService {
 	private String validTableIsExistsInDatabase(String projectId, String tableName) {
 		ComProject project = getObjectById(projectId, ComProject.class);
 		String hql = "select count(tb."+ResourceNameConstants.ID+") from " + 
-				"ComDatabase d, ComProject p, ComProjectComTabledataLinks pt, ComTabledata tb " +
+				"CfgDatabase d, ComProject p, ComProjectComTabledataLinks pt, ComTabledata tb " +
 				"where d.id = '"+project.getRefDatabaseId()+"' and d.id = p.refDatabaseId and p.id=pt.leftId and tb.id=pt.rightId and tb.tableName='"+tableName + "'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
 		if(count > 0){
@@ -232,7 +232,7 @@ public class ComTabledataService extends AbstractPublishService {
 				hbmContents.add(hbmHandler.createHbmMappingContent(tb, false));
 				
 				// 2、插入hbm
-				ComHibernateHbm hbm = new ComHibernateHbm();
+				SysHibernateHbm hbm = new SysHibernateHbm();
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 				hbm.tableTurnToHbm(tb);
 				hbm.setHbmContent(hbmContents.get(i++));
@@ -292,7 +292,7 @@ public class ComTabledataService extends AbstractPublishService {
 		modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
 		
 		// 删除hbm信息
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 		// 删除资源
 		new ComSysResourceService().deleteSysResource(table.getId());
 	}
@@ -353,7 +353,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		// 远程过去create表
-		ComDatabase database = getObjectById(project.getRefDatabaseId(), ComDatabase.class);
+		CfgDatabase database = getObjectById(project.getRefDatabaseId(), CfgDatabase.class);
 		table.setDbType(database.getDbType());
 		String validResult = table.analysisResourceProp();
 		if(validResult != null){
@@ -364,10 +364,10 @@ public class ComTabledataService extends AbstractPublishService {
 		table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 		List<ComTabledata> tables = tableHandler.createTable(table, true);
 		
-		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(tables.size());
+		List<SysHibernateHbm> hbms = new ArrayList<SysHibernateHbm>(tables.size());
 		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
 		for (ComTabledata tb : tables) {
-			ComHibernateHbm hbm = new ComHibernateHbm();
+			SysHibernateHbm hbm = new SysHibernateHbm();
 			if(tb.getIsDatalinkTable() == 0){
 				hbm.setId(tableId);
 			}else{
@@ -395,7 +395,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param hbms
 	 * @param comProjectComHibernateHbmLinkResourceName
 	 */
-	private void executeRemotePublishTable(String databaseId, String projectId, List<ComHibernateHbm> hbms, String comProjectComHibernateHbmLinkResourceName){
+	private void executeRemotePublishTable(String databaseId, String projectId, List<SysHibernateHbm> hbms, String comProjectComHibernateHbmLinkResourceName){
 		if(databaseId == null){
 			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
 		}
@@ -410,7 +410,7 @@ public class ComTabledataService extends AbstractPublishService {
 			int orderCode = 1;
 			JSONObject datalink;
 			JSONObject publishEntityJson;
-			for (ComHibernateHbm hbm : hbms) {
+			for (SysHibernateHbm hbm : hbms) {
 				if(hbm == null){
 					break;
 				}
@@ -422,7 +422,7 @@ public class ComTabledataService extends AbstractPublishService {
 				datalink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(comProjectComHibernateHbmLinkResourceName, datalink);
 				
-				ComSysResource csr = hbm.turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
+				SysResource csr = hbm.turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
 				session.save(csr.getEntityName(), csr.toEntityJson());
 			}
 			session.getTransaction().commit();
@@ -438,7 +438,7 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		// 添加新的发布信息数据
 		ComPublishInfo publishInfo;
-		for (ComHibernateHbm hbm : hbms) {
+		for (SysHibernateHbm hbm : hbms) {
 			publishInfo = hbm.turnToPublish();
 			if(errMsg == null){
 				publishInfo.setIsSuccess(1);
@@ -471,14 +471,14 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		// 远程过去drop表
 		ComProject project = getObjectById(projectId, ComProject.class);
-		ComDatabase database = getObjectById(project.getRefDatabaseId(), ComDatabase.class);
+		CfgDatabase database = getObjectById(project.getRefDatabaseId(), CfgDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		String deleteTableResourceNames = tableHandler.dropTable(table);
 		
 		executeRemoteUpdate(null, projectId, 
-				"delete ComProjectComHibernateHbmLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+new ComHibernateHbm().getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+tableId+"')",
-				"delete " + new ComHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and refDataId = '"+tableId+"'",
-				"delete ComSysResource where projectId='"+projectId+"' and refDataId = '"+tableId+"'");
+				"delete ComProjectComHibernateHbmLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+new SysHibernateHbm().getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+tableId+"')",
+				"delete " + new SysHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and refDataId = '"+tableId+"'",
+				"delete SysResource where projectId='"+projectId+"' and refDataId = '"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);
 		
 		return usePublishResourceApi(deleteTableResourceNames, projectId, "table", "-1", projectId);
@@ -492,7 +492,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	public void batchPublishTable(String databaseId, String projectId, List<Object> tableIds) {
 		List<ComTabledata> tables = new ArrayList<ComTabledata>(tableIds.size()*2);
-		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		CfgDatabase database = getObjectById(databaseId, CfgDatabase.class);
 		ComTabledata table;
 		String validResult;
 		for (Object tableId : tableIds) {
@@ -519,7 +519,7 @@ public class ComTabledataService extends AbstractPublishService {
 		publishInfoService.batchDeletePublishedData(null, tableIds);
 		
 		int limitSize = 40;
-		List<ComHibernateHbm> hbms = new ArrayList<ComHibernateHbm>(limitSize);// 记录表对应的hbm内容，要发布的是这个
+		List<SysHibernateHbm> hbms = new ArrayList<SysHibernateHbm>(limitSize);// 记录表对应的hbm内容，要发布的是这个
 		
 		// 准备远程过去create表
 		DBTableHandler tableHandler = new DBTableHandler(database);
@@ -527,7 +527,7 @@ public class ComTabledataService extends AbstractPublishService {
 		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
 		
 		List<ComTabledata> tmpTables;// 在创建表的时候，记录每次创建表的数据
-		ComHibernateHbm hbm = null;
+		SysHibernateHbm hbm = null;
 		StringBuilder tableIdStr = new StringBuilder();
 		for(ComTabledata tb : tables){
 			if(tb == null){
@@ -539,7 +539,7 @@ public class ComTabledataService extends AbstractPublishService {
 			tmpTables = tableHandler.createTable(tb, true);
 			
 			for(ComTabledata tempTb : tmpTables) {
-				hbm = new ComHibernateHbm();
+				hbm = new SysHibernateHbm();
 				if(tempTb.getIsDatalinkTable() == 0){
 					hbm.setId(tb.getId());
 				}else{
@@ -596,7 +596,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		// 远程过去drop表
-		ComDatabase database = getObjectById(databaseId, ComDatabase.class);
+		CfgDatabase database = getObjectById(databaseId, CfgDatabase.class);
 		DBTableHandler tableHandler = new DBTableHandler(database);
 		String deleteTableResourceNames = tableHandler.dropTable(tables);
 		tables.clear();
@@ -613,8 +613,8 @@ public class ComTabledataService extends AbstractPublishService {
 	public void publishCommonTableResource(String databaseId, String projectId) {
 		List<ComTabledata> tables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
 				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=1 ");
-		List<ComSysResource> resources = new ArrayList<ComSysResource>(tables.size());
-		ComSysResource resource;
+		List<SysResource> resources = new ArrayList<SysResource>(tables.size());
+		SysResource resource;
 		Date currentDate = new Date();
 		String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		for (ComTabledata table : tables) {
@@ -640,7 +640,7 @@ public class ComTabledataService extends AbstractPublishService {
 		try {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			for (ComSysResource csr : resources) {
+			for (SysResource csr : resources) {
 				session.save(csr.getEntityName(), csr.toEntityJson());
 			}
 			session.getTransaction().commit();

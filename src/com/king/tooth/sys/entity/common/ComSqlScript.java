@@ -24,6 +24,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
 import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -404,15 +405,15 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		this.finalSqlScript = SqlStatementParserUtil.getFinalSqlScript(sqlScriptResource, sqlParameterValues);
 	}
 	
-	public ComSysResource turnToResource() {
-		ComSysResource resource = super.turnToResource();
+	public SysResource turnToResource() {
+		SysResource resource = super.turnToResource();
 		resource.setResourceType(SQLSCRIPT);
 		resource.setResourceName(sqlScriptResourceName);
 		return resource;
 	}
 	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
-		ComSysResource resource = turnToResource();
+	public SysResource turnToPublishResource(String projectId, String refResourceId) {
+		SysResource resource = turnToResource();
 		resource.setId(ResourceHandlerUtil.getIdentity());
 		resource.setRefDataId(id);
 		resource.setProjectId(projectId);

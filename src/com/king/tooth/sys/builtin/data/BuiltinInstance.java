@@ -15,7 +15,7 @@ import com.king.tooth.sys.controller.common.ComSqlScriptController;
 import com.king.tooth.sys.controller.common.ComSqlScriptParameterController;
 import com.king.tooth.sys.controller.common.ComSysAccountController;
 import com.king.tooth.sys.controller.common.ComUserController;
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.common.ComPermissionPriority;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.service.app.ComDeptService;
@@ -43,7 +43,7 @@ public class BuiltinInstance {
 	/**
 	 * 当前系统的数据库对象实例
 	 */
-	public transient static final ComDatabase currentSysBuiltinDatabaseInstance = new ComDatabase();
+	public transient static final CfgDatabase currentSysBuiltinDatabaseInstance = new CfgDatabase();
 	static{
 		currentSysBuiltinDatabaseInstance.setId(SysConfig.getSystemConfig("current.sys.database.id"));
 		currentSysBuiltinDatabaseInstance.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));

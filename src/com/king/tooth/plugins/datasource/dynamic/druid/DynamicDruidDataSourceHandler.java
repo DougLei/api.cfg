@@ -8,7 +8,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.plugins.datasource.dynamic.DynamicDataSourceHolder;
 import com.king.tooth.plugins.datasource.dynamic.IDynamicDataSourceHandler;
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -31,7 +31,7 @@ public class DynamicDruidDataSourceHandler implements IDynamicDataSourceHandler 
 	 * @param database
 	 * @return
 	 */
-	private DruidDataSource getDruidDataSource(ComDatabase database){
+	private DruidDataSource getDruidDataSource(CfgDatabase database){
 		DruidDataSource dataSource = new DruidDataSource();
 		
 		dataSource.setUrl(database.getUrl());
@@ -68,7 +68,7 @@ public class DynamicDruidDataSourceHandler implements IDynamicDataSourceHandler 
 		return dataSource;
 	}
 	
-	public DataSource addDataSource(ComDatabase database) {
+	public DataSource addDataSource(CfgDatabase database) {
 		DruidDataSource dataSource = getDruidDataSource(database);
 		dataSourceHolder.addDataSource(database.getId(), dataSource);
 		return dataSource;

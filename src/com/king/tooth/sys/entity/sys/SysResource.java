@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,11 @@ import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 系统资源对象
+ * 资源信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysResource extends AbstractSysResource implements ITable{
+public class SysResource extends AbstractSysResource implements ITable{
 	
 	/**
 	 * 引用的资源主键
@@ -55,9 +55,9 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_SYS_RESOURCE", 0);
-		table.setName("系统资源对象表");
-		table.setComments("系统资源对象表");
+		ComTabledata table = new ComTabledata("SYS_RESOURCE", 0);
+		table.setName("资源信息表");
+		table.setComments("资源信息表");
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
@@ -90,22 +90,22 @@ public class ComSysResource extends AbstractSysResource implements ITable{
 	}
 
 	public String toDropTable() {
-		return "COM_SYS_RESOURCE";
+		return "SYS_RESOURCE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComSysResource";
+		return "SysResource";
 	}
 	
 	public void analysisResourceData() {
 	}
 	
-	public ComSysResource turnToResource() {
+	public SysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
 	
-	public ComSysResource turnToPublishResource(String projectId, String refResourceId) {
+	public SysResource turnToPublishResource(String projectId, String refResourceId) {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	

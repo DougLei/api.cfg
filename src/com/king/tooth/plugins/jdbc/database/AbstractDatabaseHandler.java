@@ -1,6 +1,6 @@
 package com.king.tooth.plugins.jdbc.database;
 
-import com.king.tooth.sys.entity.common.ComDatabase;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 
 
 /**
@@ -20,12 +20,12 @@ public abstract class AbstractDatabaseHandler {
 	 * @param database
 	 * @return
 	 */
-	public abstract String installCreateDatabaseSql(ComDatabase database);
+	public abstract String installCreateDatabaseSql(CfgDatabase database);
 	
 	/**
 	 * 组装删除数据库的sql语句
 	 * @param database
 	 * @return
 	 */
-	public abstract String installDropDatabaseSql(ComDatabase database);
+	public abstract String installDropDatabaseSql(CfgDatabase database);
 }
