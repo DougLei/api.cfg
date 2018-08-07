@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.sys;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
@@ -9,10 +9,10 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 系统资源服务处理器
+ * 资源信息表Service
  * @author DougLei
  */
-public class ComSysResourceService extends AbstractService{
+public class SysResourceService extends AbstractService{
 	
 	/**
 	 * 保存资源信息

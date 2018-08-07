@@ -14,7 +14,7 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.jdbc.Work;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.sql.SqlQueryResultColumn;
 import com.king.tooth.util.CloseUtil;
@@ -281,7 +281,7 @@ public abstract class GetProcesser extends RequestProcesser{
 		List<SqlQueryResultColumn> sqlQueryResultColumns = sqlScriptResource.getSqlQueryResultColumnList();
 		boolean unIncludeIdColumn = true;// 是否不包含id字段，如果不包括，则该处理器无法使用
 		for (SqlQueryResultColumn sqrs : sqlQueryResultColumns) {
-			if(sqrs.getResultPropName().equalsIgnoreCase(ResourceNameConstants.ID)){
+			if(sqrs.getResultPropName().equalsIgnoreCase(ResourcePropNameConstants.ID)){
 				unIncludeIdColumn = false;
 				break;
 			}

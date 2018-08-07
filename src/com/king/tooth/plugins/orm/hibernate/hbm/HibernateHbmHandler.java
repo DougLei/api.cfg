@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -43,7 +43,7 @@ public class HibernateHbmHandler {
 		Map<String, Object> dataModel = new HashMap<String, Object>(3);
 		dataModel.put("table", table);
 		dataModel.put("columns", table.getColumns());
-		dataModel.put("id", ResourceNameConstants.ID);
+		dataModel.put("id", ResourcePropNameConstants.ID);
 		String hbmMappingContent = FreemarkerUtil.process(HBM_FTL_FILE_PATH, dataModel);
 		return hbmMappingContent;
 	}

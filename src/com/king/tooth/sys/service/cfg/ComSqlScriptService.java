@@ -1,23 +1,24 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * sql脚本资源服务处理器
+ * sql脚本信息表Service
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
@@ -48,7 +49,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validSqlScriptResourceNameIsExists(ComSqlScript sqlScript) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 		if(count > 0){
 			return "您已经创建过相同sql脚本资源名["+sqlScript.getSqlScriptResourceName()+"]的数据";
 		}
@@ -61,7 +62,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validSqlScriptRefProjIsExists(String projectId) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where id = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComProject where id = ?", projectId);
 		if(count != 1){
 			return "sql脚本关联的，id为["+projectId+"]的项目信息不存在";
 		}
@@ -75,7 +76,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	private String validSameResourceNameSqlScriptInProject(String sqlScriptResourceName, String projectId) {
-		String hql = "select count(cs."+ResourceNameConstants.ID+") from " +
+		String hql = "select count(cs."+ResourcePropNameConstants.ID+") from " +
 				"ComProject p, CfgProjectSqlLinks ps, ComSqlScript cs " +
 				"where p.id = '"+projectId+"' and p.id = ps.leftId and cs.id = ps.rightId and cs.sqlScriptResourceName = '"+sqlScriptResourceName+"'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
@@ -126,7 +127,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			if(operResult == null){
 				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
 				
-				String sqlScriptId = sqlScriptJsonObject.getString(ResourceNameConstants.ID);
+				String sqlScriptId = sqlScriptJsonObject.getString(ResourcePropNameConstants.ID);
 				if(sqlScript.getSqlScriptParameterList() != null && sqlScript.getSqlScriptParameterList().size() >0 ){
 					saveSqlScriptParameter(false, sqlScript.getSqlScriptParameterList(), sqlScriptId);
 				}
@@ -135,7 +136,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 //				if(isPlatformDeveloper){
 					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
 					sqlScript.setId(sqlScriptId);
-					new ComSysResourceService().saveSysResource(sqlScript);
+					new SysResourceService().saveSysResource(sqlScript);
 //				}
 				
 				// TODO 单项目，取消是否平台开发者的判断
@@ -186,7 +187,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 //			if(isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 				// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
-				new ComSysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
+				new SysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
 				if(sqlScript.getIsAnalysisParameters() == 1 && sqlScript.getSqlScriptParameterList() != null && sqlScript.getSqlScriptParameterList().size() >0){
@@ -231,14 +232,14 @@ public class ComSqlScriptService extends AbstractPublishService {
 			projectIds.clear();
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where "+ResourceNameConstants.ID+" = '"+sqlScriptId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where "+ResourcePropNameConstants.ID+" = '"+sqlScriptId+"'");
 		HibernateUtil.deleteDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		// TODO 单项目，取消是否平台开发者的判断
 //		if(isPlatformDeveloper){
-			new ComSysResourceService().deleteSysResource(sqlScriptId);
+			new SysResourceService().deleteSysResource(sqlScriptId);
 //		}
 		return null;
 	}
@@ -319,7 +320,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		String result = validSqlScriptRefProjIsExists(projectId);
 		if(result == null){
 			executeRemoteUpdate(null, projectId, 
-					"delete CfgProjectSqlLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+sqlScript.getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"')",
+					"delete CfgProjectSqlLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourcePropNameConstants.ID+" from "+sqlScript.getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"')",
 					"delete " + sqlScript.getEntityName() + " where projectId='"+projectId+"' and refDataId='"+sqlScriptId+"'",
 					"delete SysResource where projectId='"+projectId+"' and refDataId = '"+sqlScriptId+"'");
 			publishInfoService.deletePublishedData(projectId, sqlScriptId);

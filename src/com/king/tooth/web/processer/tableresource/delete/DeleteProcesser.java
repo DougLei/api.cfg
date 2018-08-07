@@ -3,7 +3,7 @@ package com.king.tooth.web.processer.tableresource.delete;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
 
@@ -53,7 +53,7 @@ public abstract class DeleteProcesser extends RequestProcesser {
 	 */
 	protected final void installResponseBodyForDeleteData(List<Object> deleteIds, boolean isSuccess){
 		JSONObject json = new JSONObject(1);
-		json.put(ResourceNameConstants.IDS, deleteIds.toString().replace("[", "").replace("]", ""));
+		json.put(BuiltinParameterKeys._IDS, deleteIds.toString().replace("[", "").replace("]", ""));
 		setResponseBody(new ResponseBody(json, isSuccess));
 	}
 }

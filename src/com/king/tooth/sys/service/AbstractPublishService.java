@@ -12,14 +12,14 @@ import org.hibernate.internal.SessionFactoryImpl;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.service.cfg.ComPublishInfoService;
+import com.king.tooth.sys.service.dm.DmPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -35,7 +35,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	/**
 	 * 发布信息的服务层
 	 */
-	protected ComPublishInfoService publishInfoService = new ComPublishInfoService();
+	protected DmPublishInfoService publishInfoService = new DmPublishInfoService();
 	
 	/**
 	 * 获得运行系统的数据库id
@@ -46,7 +46,7 @@ public abstract class AbstractPublishService extends AbstractService{
 		if(database != null && database.getIsBuiltin() == 1){
 			return database.getId();
 		}
-		return (String) HibernateUtil.executeUniqueQueryByHql("select "+ResourceNameConstants.ID+" from CfgDatabase where isBuiltin=1", null);
+		return (String) HibernateUtil.executeUniqueQueryByHql("select "+ResourcePropNameConstants.ID+" from CfgDatabase where isBuiltin=1", null);
 	}
 	
 	/**
@@ -75,14 +75,14 @@ public abstract class AbstractPublishService extends AbstractService{
 			session.save(publish.getEntityName(), publishEntityJson);
 			
 			if(datalinkResourceName != null){
-				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), "1", null, null);
+				JSONObject dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID), "1", null, null);
 				dataLink.put("projectId", projectId);
-				dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+				dataLink.put(ResourcePropNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(datalinkResourceName, dataLink);
 			}
 			
 			if(processSysResource == 1){ // 标识需要处理资源
-				SysResource csr = ((ISysResource)publish).turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
+				SysResource csr = ((ISysResource)publish).turnToPublishResource(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID));
 				session.save(csr.getEntityName(), csr.toEntityJson());
 			}
 			session.getTransaction().commit();
@@ -178,9 +178,9 @@ public abstract class AbstractPublishService extends AbstractService{
 				session.save(entity.getEntityName(), publishEntityJson);
 				
 				if(datalinkResourceName != null){
-					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), ""+(orderCode++), null, null);
+					dataLink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID), ""+(orderCode++), null, null);
 					dataLink.put("projectId", projectId);
-					dataLink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+					dataLink.put(ResourcePropNameConstants.ID, ResourceHandlerUtil.getIdentity());
 					session.save(datalinkResourceName, dataLink);
 				}
 				
@@ -189,7 +189,7 @@ public abstract class AbstractPublishService extends AbstractService{
 					if(sysResource.getBatchPublishMsg() != null){
 						continue;
 					}
-					csr = sysResource.turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
+					csr = sysResource.turnToPublishResource(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID));
 					session.save(csr.getEntityName(), csr.toEntityJson());
 				}
 			}
@@ -265,7 +265,7 @@ public abstract class AbstractPublishService extends AbstractService{
 	 * @param entityId
 	 */
 	protected void modifyIsCreatedPropVal(String entityName, int isCreated, String entityId){
-		String hql = "update " + entityName + " set isCreated ="+isCreated + " where "+ResourceNameConstants.ID+" = '"+entityId+"'";
+		String hql = "update " + entityName + " set isCreated ="+isCreated + " where "+ResourcePropNameConstants.ID+" = '"+entityId+"'";
 		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, hql, null);
 	}
 	/**

@@ -1,9 +1,10 @@
 package com.king.tooth.plugins.thread.log;
 
 import org.hibernate.Session;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -40,7 +41,7 @@ public class RecordLogThread extends Thread{
 			JSONObject log;
 			for(int i=0; i<size; i++){
 				log = logs.getJSONObject(i);
-				logSession.save(log.remove(ResourceNameConstants.ENTITY_NAME).toString(), log);
+				logSession.save(log.remove(BuiltinParameterKeys.ENTITY_NAME).toString(), log);
 			}
 			
 			logSession.flush();

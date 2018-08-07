@@ -2,7 +2,7 @@ package com.king.tooth.web.processer.tableresource.get;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.web.entity.resulttype.TextResultEntity;
 
 /**
@@ -25,7 +25,7 @@ public final class SingleResourceCounterProcesser extends GetProcesser {
 	}
 	
 	protected StringBuilder getFromHql() {
-		StringBuilder hql = new StringBuilder(" select count(").append(ResourceNameConstants.ID).append(") ");
+		StringBuilder hql = new StringBuilder(" select count(").append(ResourcePropNameConstants.ID).append(") ");
 		hql.append(" from ").append(requestBody.getRouteBody().getResourceName())
 			.append(builtinQueryCondMethodProcesser.getHql());
 		return hql;

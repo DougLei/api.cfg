@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
@@ -54,8 +54,8 @@ public class ResourceHandlerUtil {
 		data.put("customerId", CurrentThreadContext.getCustomerId());
 		
 		// 当没有id值的时候，再赋予id值
-		if(StrUtils.isEmpty(data.get(ResourceNameConstants.ID))){
-			data.put(ResourceNameConstants.ID, getIdentity());
+		if(StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
+			data.put(ResourcePropNameConstants.ID, getIdentity());
 		}
 		if(!entityName.endsWith("Links")){// 不是关系表，才要这些值
 			Date currentDate = new Date();

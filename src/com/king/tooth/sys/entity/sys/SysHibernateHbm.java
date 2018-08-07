@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IPublish;
@@ -183,7 +183,7 @@ public class SysHibernateHbm extends AbstractSysResource implements ITable, IPub
 		JSONObject json = toEntityJson();
 		json.put("isCreated", "0");
 		json.put("refDataId", refTableId);
-		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+		json.put(ResourcePropNameConstants.ID, ResourceHandlerUtil.getIdentity());
 		json.put("projectId", projectId);
 		processPublishEntityJson(json);
 		return json;

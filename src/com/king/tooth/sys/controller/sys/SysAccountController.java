@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller.sys;
 
 import java.util.List;
 import java.util.Map;
@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
@@ -19,10 +19,10 @@ import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 系统账户资源对象控制器
+ * 账户表Controller
  * @author DougLei
  */
-public class ComSysAccountController extends AbstractController{
+public class SysAccountController extends AbstractController{
 	
 	/**
 	 * 登录
@@ -124,7 +124,7 @@ public class ComSysAccountController extends AbstractController{
 	 * @return
 	 */
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		String accountIds = request.getParameter(ResourceNameConstants.IDS);
+		String accountIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(accountIds)){
 			return "要删除的账户id不能为空";
 		}
@@ -136,7 +136,7 @@ public class ComSysAccountController extends AbstractController{
 				break;
 			}
 		}
-		processResultObject(ResourceNameConstants.IDS, accountIds);
+		processResultObject(BuiltinParameterKeys._IDS, accountIds);
 		return getResultObject();
 	}
 	
@@ -147,13 +147,13 @@ public class ComSysAccountController extends AbstractController{
 	 */
 	public Object updatePassword(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要修改密码的账户id不能为空";
 		}
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = BuiltinInstance.accountService.uploadAccounLoginPwd(null, jsonObject.getString(ResourceNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinInstance.accountService.uploadAccounLoginPwd(null, jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

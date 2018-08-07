@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.init.cfg;
+package com.king.tooth.sys.service;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -50,7 +50,6 @@ import com.king.tooth.sys.entity.sys.datalinks.SysAccountRoleLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
-import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -209,7 +208,7 @@ public class InitCfgSystemService extends AbstractService{
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(BuiltinInstance.validDate);
-		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourceNameConstants.ID);
+		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourcePropNameConstants.ID);
 	
 		// 添加普通账户【2.普通账户】
 		SysAccount normal = new SysAccount();
@@ -218,7 +217,7 @@ public class InitCfgSystemService extends AbstractService{
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		normal.setValidDate(BuiltinInstance.validDate);
-		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourceNameConstants.ID);
+		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
 		// 添加平台开发账户【3.平台开发账户】
 		SysAccount developer = new SysAccount();
@@ -227,7 +226,7 @@ public class InitCfgSystemService extends AbstractService{
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		developer.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
 		developer.setValidDate(BuiltinInstance.validDate);
-		HibernateUtil.saveObject(developer, adminAccountId).getString(ResourceNameConstants.ID);
+		HibernateUtil.saveObject(developer, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加数据库信息【运行平台数据库信息】
@@ -285,7 +284,7 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : tables) {
 			// 插入表和列信息
-			tableId = HibernateUtil.saveObject(table, adminAccountId).getString(ResourceNameConstants.ID);
+			tableId = HibernateUtil.saveObject(table, adminAccountId).getString(ResourcePropNameConstants.ID);
 			table.setId(tableId);
 			columns = table.getColumns();
 			for (ComColumndata column : columns) {
@@ -472,14 +471,14 @@ public class InitCfgSystemService extends AbstractService{
 			List<CfgDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(CfgDatabase.class, null, null, "from CfgDatabase where isEnabled = 1 and belongPlatformType = 2 and isCreated =1");
 			if(databases != null && databases.size()> 0){
 				// 查询获取核心表的hbm资源
-				List<String> coreTableHbmContents = HibernateUtil.executeListQueryByHql(null, null, "select h.hbmContent from SysHibernateHbm h, ComTabledata t where h.refTableId = t."+ResourceNameConstants.ID+" and t.isCore=1 and t.isEnabled=1 and h.isEnabled=1", null);
+				List<String> coreTableHbmContents = HibernateUtil.executeListQueryByHql(null, null, "select h.hbmContent from SysHibernateHbm h, ComTabledata t where h.refTableId = t."+ResourcePropNameConstants.ID+" and t.isCore=1 and t.isEnabled=1 and h.isEnabled=1", null);
 				HibernateUtil.closeCurrentThreadSession();
 				if(coreTableHbmContents == null || coreTableHbmContents.size() == 0){
 					throw new NullPointerException("没有查询到核心表的hbm资源，请检查配置系统数据库中的数据是否正确");
 				}
 				addOtherCoreTableHbmContents(coreTableHbmContents);
 				
-				String projDatabaseRelationQueryHql = "select "+ResourceNameConstants.ID+" from ComProject where isEnabled=1 and isCreated=1 and refDatabaseId= ?";
+				String projDatabaseRelationQueryHql = "select "+ResourcePropNameConstants.ID+" from ComProject where isEnabled=1 and isCreated=1 and refDatabaseId= ?";
 				String testLinkResult;
 				for (CfgDatabase database : databases) {
 					database.analysisResourceProp();
@@ -572,7 +571,7 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateUtil.appendNewConfig(hbmContent);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
-		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourceNameConstants.ID+") from SysHibernateHbm where isEnabled = 1 and hbmResourceName != 'SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
+		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourcePropNameConstants.ID+") from SysHibernateHbm where isEnabled = 1 and hbmResourceName != 'SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
 		if(count == 0){
 			return;
 		}

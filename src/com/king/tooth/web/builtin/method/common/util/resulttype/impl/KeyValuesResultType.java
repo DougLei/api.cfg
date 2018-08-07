@@ -3,7 +3,7 @@ package com.king.tooth.web.builtin.method.common.util.resulttype.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DBUtil;
 import com.king.tooth.web.builtin.method.common.util.resulttype.IResultType;
@@ -40,7 +40,7 @@ public class KeyValuesResultType implements IResultType{
 	}
 	
 	public boolean toHql(String[] propArr, String[] propArrCopyOnlyPropName, String split, StringBuilder hql) {
-		String prop1 = ResourceNameConstants.ID, prop2 = ResourceNameConstants.ID;
+		String prop1 = ResourcePropNameConstants.ID, prop2 = ResourcePropNameConstants.ID;
 		if(propArrCopyOnlyPropName != null && propArrCopyOnlyPropName.length > 0){
 			prop1 = propArrCopyOnlyPropName[0];
 			if(propArrCopyOnlyPropName.length >= 2){

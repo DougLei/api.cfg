@@ -1,6 +1,6 @@
 package com.king.tooth.sys.entity.cfg.sql;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.NamingTurnUtil;
 
 /**
@@ -21,7 +21,7 @@ public class SqlQueryResultColumn {
 	public SqlQueryResultColumn(String resultColumnName) {
 		this.resultColumnName = resultColumnName;
 		if("id".equalsIgnoreCase(resultColumnName)){
-			this.resultPropName = ResourceNameConstants.ID;
+			this.resultPropName = ResourcePropNameConstants.ID;
 		}else{
 			this.resultPropName = NamingTurnUtil.columnNameTurnPropName(resultColumnName);
 		}

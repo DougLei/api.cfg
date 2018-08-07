@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.cfg;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
@@ -17,13 +17,12 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.service.AbstractPublishService;
-import com.king.tooth.sys.service.cfg.ComTabledataService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 项目信息资源对象处理器
+ * 项目信息表Service
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
@@ -35,7 +34,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validProjectRefDatabaseIsExists(ComProject project) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from CfgDatabase where id = ?", project.getRefDatabaseId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgDatabase where id = ?", project.getRefDatabaseId());
 		if(count != 1){
 			return "关联的id=["+project.getRefDatabaseId()+"]的数据库信息不存在";
 		}
@@ -48,7 +47,7 @@ public class ComProjectService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validProjectCodeIsExists(ComProject project) {
-		String hql = "select count("+ResourceNameConstants.ID+") from ComProject where projCode = ?";
+		String hql = "select count("+ResourcePropNameConstants.ID+") from ComProject where projCode = ?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, project.getProjCode());
 		if(count > 0){
 			return "编码为["+project.getProjCode()+"]项目信息已存在";
@@ -111,15 +110,15 @@ public class ComProjectService extends AbstractPublishService {
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from CfgProjectTableLinks where leftId = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProjectTableLinks where leftId = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[表信息]，无法删除，请先取消他们的关联信息";
 		}
-		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from CfgProjectSqlLinks where leftId = ?", projectId);
+		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProjectSqlLinks where leftId = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProject where "+ResourceNameConstants.ID+" = '"+projectId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProject where "+ResourcePropNameConstants.ID+" = '"+projectId+"'");
 		return null;
 	}
 
@@ -194,7 +193,7 @@ public class ComProjectService extends AbstractPublishService {
 				List<Object> publishDataIds;
 				// 发布项目模块
 				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-						"select "+ResourceNameConstants.ID+" from ComProjectModule where isEnabled =1 and isNeedDeploy=1 and refProjectId = '"+projectId+"'");
+						"select "+ResourcePropNameConstants.ID+" from ComProjectModule where isEnabled =1 and isNeedDeploy=1 and refProjectId = '"+projectId+"'");
 				if(publishDataIds != null && publishDataIds.size() > 0){
 					new ComProjectModuleService().batchPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
 					publishDataIds.clear();
@@ -206,7 +205,7 @@ public class ComProjectService extends AbstractPublishService {
 				
 				// 发布项目关联的表
 				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-						"select table."+ResourceNameConstants.ID+" from ComTabledata table, CfgProjectTableLinks pt where pt.rightId = table.id" +
+						"select table."+ResourcePropNameConstants.ID+" from ComTabledata table, CfgProjectTableLinks pt where pt.rightId = table.id" +
 								" and table.isEnabled =1 and table.isNeedDeploy=1" +
 								" and pt.leftId='"+projectId+"'");
 				if(publishDataIds != null && publishDataIds.size() > 0){
@@ -216,7 +215,7 @@ public class ComProjectService extends AbstractPublishService {
 				
 				// 发布项目关联的sql脚本或通用的sql脚本
 				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-						"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, CfgProjectSqlLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
+						"select sqlScript."+ResourcePropNameConstants.ID+" from ComSqlScript sqlScript, CfgProjectSqlLinks ps where ps.rightId = sqlScript."+ResourcePropNameConstants.ID +
 								" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1" +
 								" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 				if(publishDataIds != null && publishDataIds.size() > 0){
@@ -248,7 +247,7 @@ public class ComProjectService extends AbstractPublishService {
 		ProjectIdRefDatabaseIdMapping.removeMapping(projectId);
 		
 		// 远程删除运行系统中的数据库信息
-		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete " + project.getEntityName() + " where "+ResourceNameConstants.ID+" = '"+projectId+"'");
+		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete " + project.getEntityName() + " where "+ResourcePropNameConstants.ID+" = '"+projectId+"'");
 		publishInfoService.deletePublishedData(null, projectId);
 		
 		modifyIsCreatedPropVal(project.getEntityName(), 0, project.getId());
@@ -272,7 +271,7 @@ public class ComProjectService extends AbstractPublishService {
 			List<Object> publishDataIds;
 			// 取消发布项目模块
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select "+ResourceNameConstants.ID+" from ComProjectModule where refProjectId = '"+projectId+"'");
+					"select "+ResourcePropNameConstants.ID+" from ComProjectModule where refProjectId = '"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
 				new ComProjectModuleService().batchCancelPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
@@ -280,7 +279,7 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select table."+ResourceNameConstants.ID+" from ComTabledata table, CfgProjectTableLinks pt where pt.rightId = table.id" +
+					"select table."+ResourcePropNameConstants.ID+" from ComTabledata table, CfgProjectTableLinks pt where pt.rightId = table.id" +
 							" and table.isNeedDeploy=1 and table.isBuiltin=0" +
 							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
@@ -290,7 +289,7 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, CfgProjectSqlLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
+					"select sqlScript."+ResourcePropNameConstants.ID+" from ComSqlScript sqlScript, CfgProjectSqlLinks ps where ps.rightId = sqlScript."+ResourcePropNameConstants.ID +
 							" and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
 							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 			if(publishDataIds != null && publishDataIds.size() > 0){

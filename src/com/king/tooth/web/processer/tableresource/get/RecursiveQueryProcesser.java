@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**
@@ -33,7 +33,7 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 				// 移除上一个查询的parentId的值
 				hqlParameterValues.remove(0);
 				// 将本次查询用的parentId的值传入
-				hqlParameterValues.add(0, map.get(ResourceNameConstants.ID).toString());
+				hqlParameterValues.add(0, map.get(ResourcePropNameConstants.ID).toString());
 				
 				// 执行查询
 				recursiveQuery = createQuery(recursiveQueryHql);

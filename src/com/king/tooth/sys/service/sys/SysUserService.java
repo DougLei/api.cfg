@@ -1,8 +1,8 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.sys;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
@@ -15,13 +15,13 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 人员资源服务处理器
+ * 人员信息表Service
  * @author DougLei
  */
-public class ComUserService extends AbstractService{
+public class SysUserService extends AbstractService{
 	
-	private static final String comUserComDeptLinks = "SysUserDeptLinks";
-	private static final String comUserComPositionLinks = "SysUserPositionLinks";
+	private static final String sysUserDeptLinks = "SysUserDeptLinks";
+	private static final String sysUserPositionLinks = "SysUserPositionLinks";
 	
 	/**
 	 * 修改用户关联的账户密码
@@ -46,14 +46,14 @@ public class ComUserService extends AbstractService{
 		String workNo = user.getWorkNo();
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysUser where workNo=? and customerId=?", workNo, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where workNo=? and customerId=?", workNo, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在工号为["+workNo+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的loginName
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where loginName=? and customerId=?", workNo, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=?", workNo, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在登录名为["+workNo+"]的账户";
 			}
@@ -73,14 +73,14 @@ public class ComUserService extends AbstractService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysUser where email=? and customerId=?", email, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where email=? and customerId=?", email, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的email
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where email=? and customerId=?", email, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=?", email, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在邮箱为["+email+"]的账户";
 			}
@@ -100,14 +100,14 @@ public class ComUserService extends AbstractService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysUser where tel=? and customerId=?", tel, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where tel=? and customerId=?", tel, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的tel
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在手机号为["+tel+"]的账户";
 			}
@@ -137,23 +137,23 @@ public class ComUserService extends AbstractService{
 				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
-				accountId = HibernateUtil.saveObject(account, null).getString(ResourceNameConstants.ID);
+				accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
 			}
 			user.setAccountId(accountId);
 			JSONObject userJsonObject = HibernateUtil.saveObject(user, null);
-			String userId = userJsonObject.getString(ResourceNameConstants.ID);
+			String userId = userJsonObject.getString(ResourcePropNameConstants.ID);
 			
 			// 保存部门
 			if(StrUtils.notEmpty(user.getDeptId())){
 				JSONObject udLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getDeptId(), "1", null, null);
 				udLink.put("isMain", "1");
-				HibernateUtil.saveObject(comUserComDeptLinks, udLink, null);
+				HibernateUtil.saveObject(sysUserDeptLinks, udLink, null);
 			}
 			// 保存岗位
 			if(StrUtils.notEmpty(user.getPositionId())){
 				JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
 				upLink.put("isMain", "1");
-				HibernateUtil.saveObject(comUserComPositionLinks, upLink, null);
+				HibernateUtil.saveObject(sysUserPositionLinks, upLink, null);
 			}
 			
 			return userJsonObject;
@@ -207,7 +207,7 @@ public class ComUserService extends AbstractService{
 				}else{
 					account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 					account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
-					accountId = HibernateUtil.saveObject(account, null).getString(ResourceNameConstants.ID);
+					accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
 					user.setAccountId(accountId);
 				}
 			}
@@ -217,26 +217,26 @@ public class ComUserService extends AbstractService{
 			// 可能修改部门
 			if((StrUtils.notEmpty(oldUser.getDeptId()) && !oldUser.getDeptId().equals(user.getDeptId())) || (StrUtils.isEmpty(oldUser.getDeptId()) && StrUtils.notEmpty(user.getDeptId()))){
 				if(StrUtils.notEmpty(oldUser.getDeptId())){
-					HibernateUtil.deleteDataLinks(comUserComDeptLinks, userId, oldUser.getDeptId());
+					HibernateUtil.deleteDataLinks(sysUserDeptLinks, userId, oldUser.getDeptId());
 				}
 				
 				if(StrUtils.notEmpty(user.getDeptId())){
 					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
 					upLink.put("isMain", "1");
-					HibernateUtil.saveObject(comUserComDeptLinks, upLink, null);
+					HibernateUtil.saveObject(sysUserDeptLinks, upLink, null);
 				}
 			}
 			
 			// 可能修改岗位
 			if((StrUtils.notEmpty(oldUser.getPositionId()) && !oldUser.getPositionId().equals(user.getPositionId())) || (StrUtils.isEmpty(oldUser.getPositionId()) && StrUtils.notEmpty(user.getPositionId()))){
 				if(StrUtils.notEmpty(oldUser.getPositionId())){
-					HibernateUtil.deleteDataLinks(comUserComPositionLinks, userId, oldUser.getPositionId());
+					HibernateUtil.deleteDataLinks(sysUserPositionLinks, userId, oldUser.getPositionId());
 				}
 				
 				if(StrUtils.notEmpty(user.getPositionId())){
 					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
 					upLink.put("isMain", "1");
-					HibernateUtil.saveObject(comUserComPositionLinks, upLink, null);
+					HibernateUtil.saveObject(sysUserPositionLinks, upLink, null);
 				}
 			}
 			return userJsonObject;
@@ -258,12 +258,12 @@ public class ComUserService extends AbstractService{
 		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 		account.setTel(user.getTel());
 		account.setEmail(user.getEmail());
-		String accountId = HibernateUtil.saveObject(account, null).getString(ResourceNameConstants.ID);
+		String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
 		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId=? where "+ResourceNameConstants.ID+"=?", accountId, user.getId());
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId=? where "+ResourcePropNameConstants.ID+"=?", accountId, user.getId());
 		
 		JSONObject jsonObject = new JSONObject(1);
-		jsonObject.put(ResourceNameConstants.ID, user.getId());
+		jsonObject.put(ResourcePropNameConstants.ID, user.getId());
 		return jsonObject;
 	}
 	
@@ -274,18 +274,18 @@ public class ComUserService extends AbstractService{
 	 */
 	public String deleteUser(String userId) {
 		SysUser oldUser = getObjectById(userId, SysUser.class);
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUser where "+ResourceNameConstants.ID+" = '"+oldUser.getId()+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUser where "+ResourcePropNameConstants.ID+" = '"+oldUser.getId()+"'");
 		
 		if(StrUtils.notEmpty(oldUser.getAccountId())){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where "+ResourceNameConstants.ID+" = '"+oldUser.getAccountId()+"'");
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where "+ResourcePropNameConstants.ID+" = '"+oldUser.getAccountId()+"'");
 		}
 		
 		if(StrUtils.notEmpty(oldUser.getDeptId())){
-			HibernateUtil.deleteDataLinks(comUserComDeptLinks, oldUser.getId(), oldUser.getDeptId());
+			HibernateUtil.deleteDataLinks(sysUserDeptLinks, oldUser.getId(), oldUser.getDeptId());
 		}
 		
 		if(StrUtils.notEmpty(oldUser.getPositionId())){
-			HibernateUtil.deleteDataLinks(comUserComPositionLinks, oldUser.getId(), oldUser.getPositionId());
+			HibernateUtil.deleteDataLinks(sysUserPositionLinks, oldUser.getId(), oldUser.getPositionId());
 		}
 		
 		return null;

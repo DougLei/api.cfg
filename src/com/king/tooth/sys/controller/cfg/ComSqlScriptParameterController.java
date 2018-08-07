@@ -1,19 +1,19 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller.cfg;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.util.StrUtils;
 
 /**
- * sql脚本资源对象控制器
+ * sql脚本参数信息表Controller
  * @author DougLei
  */
 public class ComSqlScriptParameterController extends AbstractPublishController{
@@ -52,12 +52,12 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		String sqlScriptParameterIds = request.getParameter(ResourceNameConstants.IDS);
+		String sqlScriptParameterIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(sqlScriptParameterIds)){
 			return "要删除的sql脚本参数id不能为空";
 		}
 		resultObject = BuiltinInstance.sqlScriptService.deleteSqlScriptParameter(sqlScriptParameterIds);
-		processResultObject(ResourceNameConstants.IDS, sqlScriptParameterIds);
+		processResultObject(BuiltinParameterKeys._IDS, sqlScriptParameterIds);
 		return getResultObject();
 	}
 }

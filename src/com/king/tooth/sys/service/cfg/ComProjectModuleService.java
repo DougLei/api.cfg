@@ -1,9 +1,9 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -13,7 +13,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 项目模块信息资源对象处理器
+ * 项目模块信息表Service
  * @author DougLei
  */
 public class ComProjectModuleService extends AbstractPublishService {
@@ -25,7 +25,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validProjectModuleCodeIsExists(ComProjectModule projectModule) {
-		String hql = "select count("+ResourceNameConstants.ID+") from ComProjectModule where code = ? and refProjectId = ?";
+		String hql = "select count("+ResourcePropNameConstants.ID+") from ComProjectModule where code = ? and refProjectId = ?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), CurrentThreadContext.getConfProjectId());
 		if(count > 0){
 			return "编码为["+projectModule.getCode()+"]的模块信息已存在";
@@ -85,7 +85,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			return "["+oldProjectModule.getName()+"]模块已经发布，无法删除，请先取消发布";
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectModule where "+ResourceNameConstants.ID+" = '"+projectModuleId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectModule where "+ResourcePropNameConstants.ID+" = '"+projectModuleId+"'");
 		return null;
 	}
 	

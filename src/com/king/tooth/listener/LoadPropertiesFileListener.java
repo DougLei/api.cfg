@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 import com.king.tooth.cache.CodeResourceMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.service.init.cfg.InitCfgSystemService;
+import com.king.tooth.sys.service.InitCfgSystemService;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;

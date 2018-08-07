@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.cfg;
+package com.king.tooth.sys.service.dm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +9,10 @@ import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 系统发布信息资源对象处理器
+ * 发布信息表Service
  * @author DougLei
  */
-public class ComPublishInfoService extends AbstractService{
+public class DmPublishInfoService extends AbstractService{
 	
 	/**
 	 * 验证指定的资源是否发布

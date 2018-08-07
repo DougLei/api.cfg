@@ -17,7 +17,7 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.jdbc.Work;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
@@ -245,7 +245,7 @@ public class HibernateUtil {
 	 */
 	public static JSONObject updateObjectByHql(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntityJson();
-		String updateId = data.getString(ResourceNameConstants.ID);
+		String updateId = data.getString(ResourcePropNameConstants.ID);
 		if(StrUtils.isEmpty(updateId)){
 			throw new NullPointerException("要修改的数据id值不能为空");
 		}
@@ -258,7 +258,7 @@ public class HibernateUtil {
 			
 			Set<String> propNames = data.keySet();
 			for (String pn : propNames) {
-				if(pn.equalsIgnoreCase(ResourceNameConstants.ID) || (data.get(pn) == null)){
+				if(pn.equalsIgnoreCase(ResourcePropNameConstants.ID) || (data.get(pn) == null)){
 					continue;
 				}
 				
@@ -273,7 +273,7 @@ public class HibernateUtil {
 			}
 			
 			updateHql.setLength(updateHql.length()-1);
-			updateHql.append(" where ").append(ResourceNameConstants.ID).append(" =?");
+			updateHql.append(" where ").append(ResourcePropNameConstants.ID).append(" =?");
 			parameters.add(updateId);
 			
 			executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), parameters);

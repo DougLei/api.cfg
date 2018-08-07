@@ -7,16 +7,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 表数据信息资源对象控制器
+ * 表信息表Controller
  * @author DougLei
  */
 public class ComTabledataController extends AbstractPublishController{
@@ -75,7 +76,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		String tableIds = request.getParameter(ResourceNameConstants.IDS);
+		String tableIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(tableIds)){
 			return "要删除的表id不能为空";
 		}
@@ -87,7 +88,7 @@ public class ComTabledataController extends AbstractPublishController{
 				break;
 			}
 		}
-		processResultObject(ResourceNameConstants.IDS, tableIds);
+		processResultObject(BuiltinParameterKeys._IDS, tableIds);
 		return getResultObject();
 	}
 	
@@ -106,7 +107,7 @@ public class ComTabledataController extends AbstractPublishController{
 		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id
 		String tableId;
 		if(len == 1){
-			tableId = ijson.get(0).getString(ResourceNameConstants.ID);
+			tableId = ijson.get(0).getString(ResourcePropNameConstants.ID);
 			if(StrUtils.isEmpty(tableId)){
 				return "要建模的表id不能为空";
 			}
@@ -114,7 +115,7 @@ public class ComTabledataController extends AbstractPublishController{
 			resultObject = BuiltinInstance.tabledataService.buildModel(tableId);
 		}else{
 			for(int i=0;i<len ;i++){
-				tableId = ijson.get(i).getString(ResourceNameConstants.ID);
+				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
 				if(StrUtils.isEmpty(tableId)){
 					resultObject = "要建模的表id不能为空";
 					continue;
@@ -145,10 +146,10 @@ public class ComTabledataController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的表id不能为空";
 		}
-		resultObject = BuiltinInstance.tabledataService.addProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.tabledataService.addProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -165,10 +166,10 @@ public class ComTabledataController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的表id不能为空";
 		}
-		resultObject = BuiltinInstance.tabledataService.cancelProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.tabledataService.cancelProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -187,10 +188,10 @@ public class ComTabledataController extends AbstractPublishController{
 		}
 		
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的表id不能为空";
 		}
-		resultObject = BuiltinInstance.tabledataService.publishTable(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.tabledataService.publishTable(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -208,10 +209,10 @@ public class ComTabledataController extends AbstractPublishController{
 		}
 		
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要取消发布的表id不能为空";
 		}
-		resultObject = BuiltinInstance.tabledataService.cancelPublishTable(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.tabledataService.cancelPublishTable(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

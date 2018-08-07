@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.sql.SqlQueryResultColumn;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -36,7 +36,7 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 				// 移除上一个查询的parent_id的值
 				sqlParameterValues.get(0).remove(sqlParameterValues.get(0).size()-1);
 				// 将本次查询用的parent_id的值传入
-				sqlParameterValues.get(0).add(map.get(ResourceNameConstants.ID).toString());
+				sqlParameterValues.get(0).add(map.get(ResourcePropNameConstants.ID).toString());
 				
 				// 执行查询
 				recursiveQuery = createQuery(0, recursiveQuerySql);

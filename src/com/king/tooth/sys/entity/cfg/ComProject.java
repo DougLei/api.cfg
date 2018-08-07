@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -160,7 +160,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 	
 	public JSONObject toPublishEntityJson(String projectId) {
 		JSONObject json = toEntityJson();
-		json.put("refDataId", json.getString(ResourceNameConstants.ID));
+		json.put("refDataId", json.getString(ResourcePropNameConstants.ID));
 		processPublishEntityJson(json);
 		return json;
 	}

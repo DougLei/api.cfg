@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -41,7 +41,7 @@ public class ReqLogData implements Serializable{
 		
 		// 获得请求日志json对象
 		JSONObject reqLogJson = reqLog.toEntityJson();
-		reqLogJson.put(ResourceNameConstants.ENTITY_NAME, reqLog.getEntityName());
+		reqLogJson.put(BuiltinParameterKeys.ENTITY_NAME, reqLog.getEntityName());
 		ResourceHandlerUtil.initBasicPropValsForSave(reqLog.getEntityName(), reqLogJson, null);
 		logs.add(reqLogJson);// 记录请求日志json
 		
@@ -52,7 +52,7 @@ public class ReqLogData implements Serializable{
 			for (SysOperSqlLog operSqlLog : operSqlLogs) {
 				operSqlLog.setOrderCode(orderCode++);
 				operSqlLogJson = operSqlLog.toEntityJson();
-				operSqlLogJson.put(ResourceNameConstants.ENTITY_NAME, operSqlLog.getEntityName());
+				operSqlLogJson.put(BuiltinParameterKeys.ENTITY_NAME, operSqlLog.getEntityName());
 				ResourceHandlerUtil.initBasicPropValsForSave(operSqlLog.getEntityName(), operSqlLogJson, null);
 				logs.add(operSqlLogJson);// 记录操作sql日志json
 			}

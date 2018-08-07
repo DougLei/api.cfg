@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.query.BuiltinQueryMethodProcesser;
@@ -146,7 +146,7 @@ public abstract class GetProcesser extends RequestProcesser {
 			String parentId;
 			List<Map<String, Object>> nullSubList = null;
 			for (Map<String, Object> map : dataList) {
-				parentId = (String) map.get(ResourceNameConstants.ID);
+				parentId = (String) map.get(ResourcePropNameConstants.ID);
 				if(parentId == null){
 					map.put("children", nullSubList);
 				}else{

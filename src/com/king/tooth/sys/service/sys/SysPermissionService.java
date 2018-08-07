@@ -1,9 +1,9 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.sys;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.builtin.data.BuiltinPermissionType;
@@ -14,10 +14,10 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 权限资源服务处理器
+ * 权限信息表service
  * @author DougLei
  */
-public class ComPermissionService extends AbstractService{
+public class SysPermissionService extends AbstractService{
 	
 	/**
 	 * 得到系统权限的优先级集合
@@ -37,11 +37,11 @@ public class ComPermissionService extends AbstractService{
 	// 后续递归查询权限信息集合的hql语句
 	private static final String recursiveQueryPermissionHql = "from SysPermission where refParentResourceId = ? and refParentResourceId = ? and projectId = ? and customerId = ?";
 	// 按照orderCode asc，查询账户所属的角色所有的权限【orderCode越低的，优先级越高】
-	private static final String queryAccountOfRolesHql = "select r."+ResourceNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourceNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
+	private static final String queryAccountOfRolesHql = "select r."+ResourcePropNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourcePropNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
 	// 按照orderCode asc，查询账户所属的部门所有的权限【orderCode越低的，优先级越高】
-	private static final String queryAccountOfDeptsHql = "select d."+ResourceNameConstants.ID+" from SysDept d, SysUserDeptLinks l, SysUser u where d."+ResourceNameConstants.ID+"=l.rightId and u."+ResourceNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc";
+	private static final String queryAccountOfDeptsHql = "select d."+ResourcePropNameConstants.ID+" from SysDept d, SysUserDeptLinks l, SysUser u where d."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc";
 	// 按照orderCode asc，查询账户所属的职务所有的权限【orderCode越低的，优先级越高】
-	private static final String queryAccountOfPositionsHql = "select p."+ResourceNameConstants.ID+" from SysPosition p, SysUserPositionLinks l, SysUser u where p."+ResourceNameConstants.ID+"=l.rightId and u."+ResourceNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc";
+	private static final String queryAccountOfPositionsHql = "select p."+ResourcePropNameConstants.ID+" from SysPosition p, SysUserPositionLinks l, SysUser u where p."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc";
 	
 	/**
 	 * 根据账户id，获取对应的的权限集合

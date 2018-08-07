@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -66,7 +66,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		if(isSimpleParentSubQueryModel){
 			hql.append(" where s_.").append(refPropName);
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
-				hql.append(" in( select p_.").append(ResourceNameConstants.ID)
+				hql.append(" in( select p_.").append(ResourcePropNameConstants.ID)
 				   .append(" from ").append(parentResourceName).append(" p_ where ");
 				Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
 				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
@@ -77,9 +77,9 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 			}
 		}else{
 			String dataLinkResourceName = HibernateUtil.getDataLinkResourceName(parentResourceName, resourceName);
-			hql.append(" where s_.").append(ResourceNameConstants.ID).append(" in ( select d_.rightId from ")
+			hql.append(" where s_.").append(ResourcePropNameConstants.ID).append(" in ( select d_.rightId from ")
 			   .append(dataLinkResourceName).append(" d_,")
-			   .append(parentResourceName).append(" p_ where p_.").append(ResourceNameConstants.ID)
+			   .append(parentResourceName).append(" p_ where p_.").append(ResourcePropNameConstants.ID)
 			   .append("=d_.leftId and ");
 			
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
@@ -87,7 +87,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
 			}else{ // 否则就直接查询
 				hql.append("p_.")
-				   .append(ResourceNameConstants.ID)
+				   .append(ResourcePropNameConstants.ID)
 				   .append(" =?");
 				hqlParameterValues.add(parentResourceId);
 			}
@@ -112,7 +112,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 			Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
 			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, alias);
 		}else{// 否则就直接查询
-			hql.append(alias).append(".").append(ResourceNameConstants.ID).append(" = ?");
+			hql.append(alias).append(".").append(ResourcePropNameConstants.ID).append(" = ?");
 			hqlParameterValues.add(parentResourceId);
 		}
 		return hql;

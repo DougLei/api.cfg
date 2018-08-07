@@ -1,6 +1,5 @@
 package com.king.tooth.sys.builtin.data;
 
-
 /**
  * 系统内置的参数key
  * @author DougLei
@@ -46,4 +45,10 @@ public class BuiltinParameterKeys {
 	 * <p>目前只有在下载文件的时候，是不需要打印responseBody</p>
 	 */
 	public static final String _IS_PRINT_RESPONSEBODY = "_isPrintResponseBody";
+	
+	//------------------------------------------------------------------------------------
+	/**
+	 * 要保存的数据的实体名
+	 */
+	public static final String ENTITY_NAME = "__entityName";
 }

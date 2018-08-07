@@ -2,7 +2,7 @@ package com.king.tooth.web.builtin.method.common.util.querycondfunc.entity;
 
 import java.io.Serializable;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.NamingTurnUtil;
 
@@ -66,13 +66,13 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 		// 1.如果propName为_ids，则必须把propName改为SystemConstants.ID
 		// key=_ids是客户端请求传递过来的，属于平台内置处理的功能
 		if(this.propName.equals(BuiltinParameterKeys._IDS)){
-			modifyPropName(ResourceNameConstants.ID);
+			modifyPropName(ResourcePropNameConstants.ID);
 		}
 		
 		// 2.如果propName为_resourceid，则必须把propName改为SystemConstants.ID
 		// 这个key值来自      @see PlatformServlet.processSpecialData()
 		if(this.propName.equals(BuiltinParameterKeys.RESOURCE_ID)){
-			modifyPropName(ResourceNameConstants.ID);
+			modifyPropName(ResourcePropNameConstants.ID);
 		}
 		
 		// 3.如果ne方法，有多个值，则改为调用!in的方法，这个可以提高效率

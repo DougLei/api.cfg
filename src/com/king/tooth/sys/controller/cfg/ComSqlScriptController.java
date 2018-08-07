@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller.cfg;
 
 import java.util.List;
 import java.util.Map;
@@ -6,16 +6,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.util.StrUtils;
 
 /**
- * sql脚本资源对象控制器
+ * sql脚本信息表Controller
  * @author DougLei
  */
 public class ComSqlScriptController extends AbstractPublishController{
@@ -74,7 +75,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		String sqlScriptIds = request.getParameter(ResourceNameConstants.IDS);
+		String sqlScriptIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(sqlScriptIds)){
 			return "要删除的sql脚本id不能为空";
 		}
@@ -86,7 +87,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 				break;
 			}
 		}
-		processResultObject(ResourceNameConstants.IDS, sqlScriptIds);
+		processResultObject(BuiltinParameterKeys._IDS, sqlScriptIds);
 		return getResultObject();
 	}
 	
@@ -100,10 +101,10 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的sql脚本id不能为空";
 		}
-		resultObject = BuiltinInstance.sqlScriptService.addProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.addProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -120,10 +121,10 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
 		}
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的sql脚本id不能为空";
 		}
-		resultObject = BuiltinInstance.sqlScriptService.cancelProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.cancelProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -142,10 +143,10 @@ public class ComSqlScriptController extends AbstractPublishController{
 		}
 		
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的sql脚本id不能为空";
 		}
-		resultObject = BuiltinInstance.sqlScriptService.publishSqlScript(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.publishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -163,10 +164,10 @@ public class ComSqlScriptController extends AbstractPublishController{
 		}
 		
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要取消发布的sql脚本id不能为空";
 		}
-		resultObject = BuiltinInstance.sqlScriptService.cancelPublishSqlScript(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.sqlScriptService.cancelPublishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

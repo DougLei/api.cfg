@@ -3,7 +3,7 @@ package com.king.tooth.web.builtin.method;
 import java.util.Map;
 import java.util.Set;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
@@ -100,7 +100,7 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 			for (String k : keys) {
 				if(k.startsWith(parentResourceId)){
 					tmpKey = k.replace(parentResourceId, "");
-					if(tmpKey.equals(ResourceNameConstants.ID)){
+					if(tmpKey.equals(ResourcePropNameConstants.ID)){
 						pid = requestUrlParams.get(k);
 					}else{
 						parentResourceQueryCond.put(k.replace(parentResourceId, ""), requestUrlParams.get(k));
@@ -117,7 +117,7 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 			}
 			
 			if(pid != null){
-				requestUrlParams.remove(parentResourceId+ResourceNameConstants.ID);
+				requestUrlParams.remove(parentResourceId+ResourcePropNameConstants.ID);
 				parentResourceId = pid;
 			}
 		}

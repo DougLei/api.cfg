@@ -15,8 +15,8 @@ import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.service.common.ComSysAccountOnlineStatusService;
-import com.king.tooth.sys.service.common.ComSysAccountService;
+import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
+import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -59,13 +59,13 @@ public class VarifyReqValidFilter extends AbstractFilter{
 			return "请先登录";
 		}
 		
-		ComSysAccountOnlineStatusService accountOnlineStatusService = new ComSysAccountOnlineStatusService();
+		SysAccountOnlineStatusService accountOnlineStatusService = new SysAccountOnlineStatusService();
 		SysAccountOnlineStatus onlineStatus = accountOnlineStatusService.validAccountOfOnLineStatus(request, token);
 		if(onlineStatus.getMessage() != null){
 			return onlineStatus.getMessage();
 		}
 		
-		ComSysAccountService accountService = new ComSysAccountService();
+		SysAccountService accountService = new SysAccountService();
 		SysAccount currentAccount = accountService.validAccountOfStatus(onlineStatus.getAccountId());
 		if(currentAccount.getMessage() != null){
 			return currentAccount.getMessage();

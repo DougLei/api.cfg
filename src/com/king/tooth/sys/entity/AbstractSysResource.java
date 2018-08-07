@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -88,8 +88,8 @@ public abstract class AbstractSysResource extends BasicEntity implements ISysRes
 	
 	public JSONObject toPublishEntityJson(String projectId) {
 		JSONObject json = toEntityJson();
-		json.put("refDataId", json.getString(ResourceNameConstants.ID));
-		json.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+		json.put("refDataId", json.getString(ResourcePropNameConstants.ID));
+		json.put(ResourcePropNameConstants.ID, ResourceHandlerUtil.getIdentity());
 		json.put("projectId", projectId);
 		processPublishEntityJson(json);
 		return json;

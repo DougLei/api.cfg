@@ -1,6 +1,6 @@
 package com.king.tooth.sys.service.cfg;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -9,7 +9,7 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 字段数据信息资源对象处理器
+ * 字段信息表Service
  * @author DougLei
  */
 public class ComColumndataService extends AbstractService{
@@ -23,7 +23,7 @@ public class ComColumndataService extends AbstractService{
 		if(StrUtils.isEmpty(column.getTableId())){
 			return "关联的表id不能为空";
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where id = ?", column.getTableId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where id = ?", column.getTableId());
 		if(count != 1){
 			return "关联的id=["+column.getTableId()+"]的表信息不存在";
 		}
@@ -36,7 +36,7 @@ public class ComColumndataService extends AbstractService{
 	 * @return operResult
 	 */
 	private String validColumnNameIsExists(ComColumndata column) {
-		String hql = "select count("+ResourceNameConstants.ID+") from ComColumndata where columnName = ? and tableId = ?";
+		String hql = "select count("+ResourcePropNameConstants.ID+") from ComColumndata where columnName = ? and tableId = ?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, column.getColumnName(), column.getTableId());
 		if(count > 0){
 			return "列名为["+column.getColumnName()+"]的信息已存在";
@@ -81,7 +81,7 @@ public class ComColumndataService extends AbstractService{
 		if(operResult == null){
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
-				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated = 0 where "+ResourceNameConstants.ID+" = '"+column.getTableId()+"'");
+				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated = 0 where "+ResourcePropNameConstants.ID+" = '"+column.getTableId()+"'");
 			}
 			return HibernateUtil.updateObjectByHql(column, null);
 		}

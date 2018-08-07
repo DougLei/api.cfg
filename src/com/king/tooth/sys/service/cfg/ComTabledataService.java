@@ -10,7 +10,7 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
@@ -24,7 +24,7 @@ import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractPublishService;
-import com.king.tooth.sys.service.common.ComSysResourceService;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -33,7 +33,7 @@ import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 表数据信息资源对象处理器
+ * 表信息表Service
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
@@ -45,7 +45,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validTableNameIsExists(ComTabledata table) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
 		if(count > 0){
 			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
@@ -58,7 +58,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validTableRefProjIsExists(String projectId) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where id = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComProject where id = ?", projectId);
 		if(count != 1){
 			return "表关联的，id为["+projectId+"]的项目信息不存在";
 		}
@@ -73,7 +73,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	private String validTableIsExistsInDatabase(String projectId, String tableName) {
 		ComProject project = getObjectById(projectId, ComProject.class);
-		String hql = "select count(tb."+ResourceNameConstants.ID+") from " + 
+		String hql = "select count(tb."+ResourcePropNameConstants.ID+") from " + 
 				"CfgDatabase d, ComProject p, CfgProjectTableLinks pt, ComTabledata tb " +
 				"where d.id = '"+project.getRefDatabaseId()+"' and d.id = p.refDatabaseId and p.id=pt.leftId and tb.id=pt.rightId and tb.tableName='"+tableName + "'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
@@ -102,7 +102,7 @@ public class ComTabledataService extends AbstractPublishService {
 			}
 			if(operResult == null){
 				JSONObject tableJsonObject = HibernateUtil.saveObject(table, null);
-				String tableId = tableJsonObject.getString(ResourceNameConstants.ID);
+				String tableId = tableJsonObject.getString(ResourcePropNameConstants.ID);
 				
 				// 保存表和项目的关联关系
 				// TODO 单项目，取消是否平台开发者的判断
@@ -200,7 +200,7 @@ public class ComTabledataService extends AbstractPublishService {
 			cancelBuildModel(oldTable);
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourceNameConstants.ID+" = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
 		HibernateUtil.deleteDataLinks("CfgProjectTableLinks", null, tableId);
 		return null;
@@ -239,7 +239,7 @@ public class ComTabledataService extends AbstractPublishService {
 				HibernateUtil.saveObject(hbm, null);
 				
 				// 3、插入资源数据
-				new ComSysResourceService().saveSysResource(tb);
+				new SysResourceService().saveSysResource(tb);
 				
 			}
 			// 4、将hbm配置内容，加入到sessionFactory中
@@ -294,7 +294,7 @@ public class ComTabledataService extends AbstractPublishService {
 		// 删除hbm信息
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 		// 删除资源
-		new ComSysResourceService().deleteSysResource(table.getId());
+		new SysResourceService().deleteSysResource(table.getId());
 	}
 	
 	/**
@@ -417,12 +417,12 @@ public class ComTabledataService extends AbstractPublishService {
 				publishEntityJson = hbm.toPublishEntityJson(projectId);
 				session.save(hbm.getEntityName(), publishEntityJson);
 				
-				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourceNameConstants.ID), ""+(orderCode++), null, null);
+				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID), ""+(orderCode++), null, null);
 				datalink.put("projectId", projectId);
-				datalink.put(ResourceNameConstants.ID, ResourceHandlerUtil.getIdentity());
+				datalink.put(ResourcePropNameConstants.ID, ResourceHandlerUtil.getIdentity());
 				session.save(comProjectComHibernateHbmLinkResourceName, datalink);
 				
-				SysResource csr = hbm.turnToPublishResource(projectId, publishEntityJson.getString(ResourceNameConstants.ID));
+				SysResource csr = hbm.turnToPublishResource(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID));
 				session.save(csr.getEntityName(), csr.toEntityJson());
 			}
 			session.getTransaction().commit();
@@ -476,7 +476,7 @@ public class ComTabledataService extends AbstractPublishService {
 		String deleteTableResourceNames = tableHandler.dropTable(table);
 		
 		executeRemoteUpdate(null, projectId, 
-				"delete CfgProjectHbmLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+new SysHibernateHbm().getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+tableId+"')",
+				"delete CfgProjectHbmLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourcePropNameConstants.ID+" from "+new SysHibernateHbm().getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+tableId+"')",
 				"delete " + new SysHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and refDataId = '"+tableId+"'",
 				"delete SysResource where projectId='"+projectId+"' and refDataId = '"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);

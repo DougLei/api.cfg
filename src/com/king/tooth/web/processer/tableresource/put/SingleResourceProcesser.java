@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -63,8 +63,8 @@ public final class SingleResourceProcesser extends PutProcesser {
 		Set<String> propsNames = updatedJsonObj.keySet();
 		
 		for (String pn : propsNames) {
-			if(pn.equalsIgnoreCase(ResourceNameConstants.ID)){
-				whereIdHql = " where " + ResourceNameConstants.ID + " = ?";
+			if(pn.equalsIgnoreCase(ResourcePropNameConstants.ID)){
+				whereIdHql = " where " + ResourcePropNameConstants.ID + " = ?";
 				idValue = updatedJsonObj.getString(pn);
 				continue;
 			}

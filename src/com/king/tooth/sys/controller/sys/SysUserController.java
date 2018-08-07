@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller.sys;
 
 import java.util.List;
 import java.util.Map;
@@ -6,18 +6,19 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 人员资源对象控制器
+ * 人员信息表Controller
  * @author DougLei
  */
-public class ComUserController extends AbstractController{
+public class SysUserController extends AbstractController{
 
 	/**
 	 * 添加用户
@@ -73,7 +74,7 @@ public class ComUserController extends AbstractController{
 	 * @return
 	 */
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		String userIds = request.getParameter(ResourceNameConstants.IDS);
+		String userIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(userIds)){
 			return "要删除的用户id不能为空";
 		}
@@ -85,7 +86,7 @@ public class ComUserController extends AbstractController{
 				break;
 			}
 		}
-		processResultObject(ResourceNameConstants.IDS, userIds);
+		processResultObject(BuiltinParameterKeys._IDS, userIds);
 		return getResultObject();
 	}
 	
@@ -117,13 +118,13 @@ public class ComUserController extends AbstractController{
 	 */
 	public Object updatePassword(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要修改密码的用户id不能为空";
 		}
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = BuiltinInstance.userService.uploadUserLoginPwd(jsonObject.getString(ResourceNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinInstance.userService.uploadUserLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

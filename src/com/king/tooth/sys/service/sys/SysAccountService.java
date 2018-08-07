@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.sys;
 
 import java.util.Date;
 import java.util.List;
@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
@@ -21,10 +21,10 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 系统账户资源服务处理器
+ * 账户表Service
  * @author DougLei
  */
-public class ComSysAccountService extends AbstractService{
+public class SysAccountService extends AbstractService{
 	
 	/**
 	 * 验证账户的状态
@@ -32,7 +32,7 @@ public class ComSysAccountService extends AbstractService{
 	 */
 	public SysAccount validAccountOfStatus(String accountId) {
 		// 再验证帐号状态是否正常
-		String hql = "from SysAccount where "+ResourceNameConstants.ID+" = ?";
+		String hql = "from SysAccount where "+ResourcePropNameConstants.ID+" = ?";
 		SysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccount.class, hql, accountId);
 		if(account.getAccountStatus() == 2){
 			account.setMessage("您的账号已被禁用，请联系管理员");
@@ -237,13 +237,13 @@ public class ComSysAccountService extends AbstractService{
 		if(newPwd.equals(account.getLoginPwd())){
 			return "新密码不能和旧密码相同";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set loginPwd=? where "+ ResourceNameConstants.ID +"=?", newPwd, accountId);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPwd, accountId);
 		
 		JSONObject json = new JSONObject(2);
 		if(StrUtils.notEmpty(userId)){
-			json.put(ResourceNameConstants.ID, userId);
+			json.put(ResourcePropNameConstants.ID, userId);
 		}else if(StrUtils.notEmpty(accountId)){
-			json.put(ResourceNameConstants.ID, accountId);
+			json.put(ResourcePropNameConstants.ID, accountId);
 		}
 		json.put("password", newPwd);
 		return json;
@@ -257,7 +257,7 @@ public class ComSysAccountService extends AbstractService{
 	 * @return 
 	 */
 	private String validWorkNoIsExists(String loginName) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where loginName=? and customerId=?", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=?", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在登录名为["+loginName+"]的账户";
 		}
@@ -273,7 +273,7 @@ public class ComSysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(email)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的账户";
 		}
@@ -289,7 +289,7 @@ public class ComSysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的账户";
 		}
@@ -346,7 +346,7 @@ public class ComSysAccountService extends AbstractService{
 	 */
 	@SuppressWarnings("unchecked")
 	public Object deleteAccount(String accountId) {
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where " + ResourceNameConstants.ID+"=?", accountId);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where " + ResourcePropNameConstants.ID+"=?", accountId);
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "update SysUser set accountId =null  where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
 		
 		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr("select token from SysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());

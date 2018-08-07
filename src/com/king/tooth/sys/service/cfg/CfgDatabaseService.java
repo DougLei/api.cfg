@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.cfg;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -11,7 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
@@ -29,10 +29,10 @@ import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 数据库数据信息资源对象处理器
+ * 数据库信息表Service
  * @author DougLei
  */
-public class ComDatabaseService extends AbstractPublishService {
+public class CfgDatabaseService extends AbstractPublishService {
 	
 	/**
 	 * 验证数据库数据是否存在
@@ -40,7 +40,7 @@ public class ComDatabaseService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validDatabaseDataIsExists(CfgDatabase database) {
-		String hql = "select count("+ResourceNameConstants.ID+") from CfgDatabase where dbType=? and dbInstanceName=? and loginUserName=? and loginPassword=? and dbIp=? and dbPort=?";
+		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgDatabase where dbType=? and dbInstanceName=? and loginUserName=? and loginPassword=? and dbIp=? and dbPort=?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, database.getDbType(), database.getDbInstanceName(), database.getLoginUserName(), database.getLoginPassword(), database.getDbIp(), database.getDbPort()+"");
 		if(count > 0){
 			return "[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库连接信息已存在";
@@ -99,11 +99,11 @@ public class ComDatabaseService extends AbstractPublishService {
 		if(oldDatabase.getIsCreated() == 1){
 			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，无法删除，请先取消发布";
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgDatabase where "+ResourceNameConstants.ID+" = '"+databaseId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgDatabase where "+ResourcePropNameConstants.ID+" = '"+databaseId+"'");
 		return null;
 	}
 	
@@ -230,7 +230,7 @@ public class ComDatabaseService extends AbstractPublishService {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			return ExceptionUtil.getErrMsg("ComDatabaseService", "publishDatabase", e);
+			return ExceptionUtil.getErrMsg("CfgDatabaseService", "publishDatabase", e);
 		}finally{
 			if(session != null){
 				session.flush();
@@ -297,7 +297,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		// 删除该库下，所有发布的信息
 		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete DmPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		// 远程删除运行系统中的数据库信息
-		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where "+ResourceNameConstants.ID+" = '"+database.getId()+"'");
+		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where "+ResourcePropNameConstants.ID+" = '"+database.getId()+"'");
 		
 		modifyIsCreatedPropVal(database.getEntityName(), 0, database.getId());
 		

@@ -1,6 +1,6 @@
 package com.king.tooth.web.builtin.method.common.pager;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.AbstractBuiltinCommonMethod;
@@ -46,7 +46,7 @@ public class BuiltinPagerMethodProcesser extends AbstractBuiltinCommonMethod{
 	}
 	
 	public String getHql() {
-		return " select count(" + ResourceNameConstants.ID + ") ";
+		return " select count(" + ResourcePropNameConstants.ID + ") ";
 	}
 
 	public String getSql() {

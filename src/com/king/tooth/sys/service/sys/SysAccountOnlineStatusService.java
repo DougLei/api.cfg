@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.common;
+package com.king.tooth.sys.service.sys;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,10 +10,10 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 系统账户在线状态资源服务处理器
+ * 账户在线状态信息表Service
  * @author DougLei
  */
-public class ComSysAccountOnlineStatusService extends AbstractService{
+public class SysAccountOnlineStatusService extends AbstractService{
 	
 	/**
 	 * 根据token值，验证账户的在线状态

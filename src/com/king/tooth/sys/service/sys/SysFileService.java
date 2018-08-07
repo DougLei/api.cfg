@@ -26,7 +26,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.EncodingConstants;
-import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -40,7 +39,7 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 文件service
+ * 文件表service
  * @author DougLei
  */
 public class SysFileService extends AbstractService{
@@ -289,10 +288,10 @@ public class SysFileService extends AbstractService{
 	 * @throws FileNotFoundException 
 	 */
 	public Object download(HttpServletRequest request, HttpServletResponse response){
-		String fileIds = request.getParameter(ResourceNameConstants.IDS);
+		String fileIds = request.getParameter(BuiltinParameterKeys._IDS);
 		
 		JSONObject jsonObject = new JSONObject(1);
-		jsonObject.put(ResourceNameConstants.IDS, fileIds);
+		jsonObject.put(BuiltinParameterKeys._IDS, fileIds);
 		CurrentThreadContext.getReqLogData().getReqLog().setReqData(jsonObject.toString());// 记录请求体
 		
 		if(StrUtils.isEmpty(fileIds)){
@@ -381,10 +380,10 @@ public class SysFileService extends AbstractService{
 	 * @return
 	 */
 	public Object delete(HttpServletRequest request){
-		String fileIds = request.getParameter(ResourceNameConstants.IDS);
+		String fileIds = request.getParameter(BuiltinParameterKeys._IDS);
 		
 		JSONObject jsonObject = new JSONObject(1);
-		jsonObject.put(ResourceNameConstants.IDS, fileIds);
+		jsonObject.put(BuiltinParameterKeys._IDS, fileIds);
 		CurrentThreadContext.getReqLogData().getReqLog().setReqData(jsonObject.toString());// 记录请求体
 		
 		if(StrUtils.isEmpty(fileIds)){

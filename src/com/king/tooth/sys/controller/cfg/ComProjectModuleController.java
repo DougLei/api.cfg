@@ -1,4 +1,4 @@
-package com.king.tooth.sys.controller.common;
+package com.king.tooth.sys.controller.cfg;
 
 import java.util.List;
 import java.util.Map;
@@ -6,16 +6,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 项目模块信息资源对象控制器
+ * 项目模块信息表Controller
  * @author DougLei
  */
 public class ComProjectModuleController extends AbstractPublishController{
@@ -74,7 +75,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * @return
 	 */
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		String projectModuleIds = request.getParameter(ResourceNameConstants.IDS);
+		String projectModuleIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(projectModuleIds)){
 			return "要删除的项目模块id不能为空";
 		}
@@ -86,7 +87,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 				break;
 			}
 		}
-		processResultObject(ResourceNameConstants.IDS, projectModuleIds);
+		processResultObject(BuiltinParameterKeys._IDS, projectModuleIds);
 		return getResultObject();
 	}
 	
@@ -102,10 +103,10 @@ public class ComProjectModuleController extends AbstractPublishController{
 		}
 		
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的项目模块id不能为空";
 		}
-		resultObject = BuiltinInstance.projectModuleService.publishProjectModule(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.projectModuleService.publishProjectModule(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -123,10 +124,10 @@ public class ComProjectModuleController extends AbstractPublishController{
 		}
 		
 		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourceNameConstants.ID))){
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要取消发布的项目模块id不能为空";
 		}
-		resultObject = BuiltinInstance.projectModuleService.cancelPublishProjectModule(jsonObject.getString(ResourceNameConstants.ID));
+		resultObject = BuiltinInstance.projectModuleService.cancelPublishProjectModule(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

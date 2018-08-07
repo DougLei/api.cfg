@@ -2,7 +2,7 @@ package com.king.tooth.web.builtin.method.common.util.querycondfunc.entity;
 
 import java.io.Serializable;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 
 /**
@@ -71,7 +71,7 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 		      这个key值来自      @see PlatformServlet.processSpecialData()
 		*/
 		if(this.propName.equals(BuiltinParameterKeys._IDS) || this.propName.equals(BuiltinParameterKeys.RESOURCE_ID)){
-			this.propName = ResourceNameConstants.ID;
+			this.propName = ResourcePropNameConstants.ID;
 		}
 		
 		// 3.如果ne方法，有多个值，则改为调用!in的方法，这个可以提高效率

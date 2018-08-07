@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 
-import com.king.tooth.constants.ResourceNameConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.web.entity.resulttype.TextResultEntity;
 
 /**
@@ -25,7 +25,7 @@ public final class RecursiveParentResourceByIdToSubResourceCounterProcesser exte
 		
 		Query query = null;
 		if(firstRecursiveQueryhqlParameterValues.size() > 0){ // 证明第一次查询，有条件筛选
-			hql.insert(0, "select count("+ResourceNameConstants.ID+") ");
+			hql.insert(0, "select count("+ResourcePropNameConstants.ID+") ");
 			query = createQuery(hql.toString(), firstRecursiveQueryhqlParameterValues);
 		}else{// 否则走正常查询逻辑
 			query = createQuery(hql.toString());
@@ -38,7 +38,7 @@ public final class RecursiveParentResourceByIdToSubResourceCounterProcesser exte
 	}
 	
 	protected StringBuilder getFromHql() {
-		StringBuilder hql = new StringBuilder(" select count(").append(ResourceNameConstants.ID).append(") ");
+		StringBuilder hql = new StringBuilder(" select count(").append(ResourcePropNameConstants.ID).append(") ");
 		
 		hql.append(" from ")
 		   .append(requestBody.getRouteBody().getResourceName())
