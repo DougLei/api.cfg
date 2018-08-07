@@ -120,9 +120,9 @@ public class ResourceHandlerUtil {
 	/**
 	 * 可以忽略登录验证的请求url集合
 	 */
-	private static final String[] ignoreLoginValidRequrl;
+	private static final String[] ignoreLoginValidUri;
 	static{
-		ignoreLoginValidRequrl = SysConfig.getSystemConfig("ignore.loginvalid.requrl").split(",");
+		ignoreLoginValidUri = SysConfig.getSystemConfig("ignore.loginvalid.uri").split(",");
 	}
 	/**
 	 * 是否需要忽略登录验证
@@ -130,8 +130,8 @@ public class ResourceHandlerUtil {
 	 * @return
 	 */
 	public static boolean isIgnoreLoginValid(HttpServletRequest request) {
-		for (String ignore : ignoreLoginValidRequrl) {
-			if(request.getRequestURI().equals(ignore)){
+		for (String ignoreUri : ignoreLoginValidUri) {
+			if(request.getRequestURI().endsWith(ignoreUri)){
 				return true;
 			}
 		}
