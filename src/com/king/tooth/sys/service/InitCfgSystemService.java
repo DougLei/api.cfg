@@ -547,7 +547,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		CurrentThreadContext.setDatabaseId(database.getId());
 		// 获取当前系统的SysHibernateHbm映射文件对象
-		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'SysHibernateHbm' and is_enabled = 1";
+		String sql = "select hbm_content from sys_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'SysHibernateHbm' and is_enabled = 1";
 		String hbmContent = null;
 		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
