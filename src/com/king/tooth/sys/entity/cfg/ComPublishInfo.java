@@ -100,7 +100,7 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
 		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.CONFIG_PLATFORM);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		

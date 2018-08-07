@@ -16,8 +16,8 @@ import com.king.tooth.sys.controller.common.ComSqlScriptParameterController;
 import com.king.tooth.sys.controller.common.ComSysAccountController;
 import com.king.tooth.sys.controller.common.ComUserController;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.entity.common.ComPermissionPriority;
 import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.service.app.ComDeptService;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.sys.service.cfg.ComPublishInfoService;
@@ -71,12 +71,12 @@ public class BuiltinInstance {
 	/**
 	 * 权限优先级集合
 	 */
-	public static final List<ComPermissionPriority> permissionPriorities = new ArrayList<ComPermissionPriority>(4); 
+	public static final List<SysPermissionPriority> permissionPriorities = new ArrayList<SysPermissionPriority>(4); 
 	static{
-		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.ACCOUNT, 4));
-		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.ROLE, 3));
-		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.DEPT, 2));
-		permissionPriorities.add(new ComPermissionPriority(BuiltinPermissionType.POSITION, 1));
+		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.ACCOUNT, 4));
+		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.ROLE, 3));
+		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.DEPT, 2));
+		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.POSITION, 1));
 	}
 	
 	//---------------------------------------------------------

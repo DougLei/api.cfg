@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,11 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 角色资源对象
+ * 角色表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComRole extends BasicEntity implements ITable, IEntity{
+public class SysRole extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 角色名称
@@ -80,9 +80,9 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 	
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_ROLE", 0);
-		table.setName("角色资源对象表");
-		table.setComments("角色资源对象表");
+		ComTabledata table = new ComTabledata("SYS_ROLE", 0);
+		table.setName("角色表");
+		table.setComments("角色表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -127,11 +127,11 @@ public class ComRole extends BasicEntity implements ITable, IEntity{
 	}
 
 	public String toDropTable() {
-		return "COM_ROLE";
+		return "SYS_ROLE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComRole";
+		return "SysRole";
 	}
 }

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 权限资源对象
+ * 权限信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComPermission extends BasicEntity implements ITable, IEntity{
+public class SysPermission extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 关联的数据id：比如角色id，帐号id，部门id，岗位id，帐号组id等
@@ -64,7 +64,7 @@ public class ComPermission extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 子权限集合
 	 */
-	private List<ComPermission> children;
+	private List<SysPermission> children;
 	
 	public String getRefResourceId() {
 		return refResourceId;
@@ -126,17 +126,17 @@ public class ComPermission extends BasicEntity implements ITable, IEntity{
 	public void setRefResourceType(String refResourceType) {
 		this.refResourceType = refResourceType;
 	}
-	public List<ComPermission> gainChildren() {
+	public List<SysPermission> gainChildren() {
 		return children;
 	}
-	public void setChildren(List<ComPermission> children) {
+	public void setChildren(List<SysPermission> children) {
 		this.children = children;
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PERMISSION", 0);
-		table.setName("权限资源对象表");
-		table.setComments("权限资源对象表");
+		ComTabledata table = new ComTabledata("SYS_PERMISSION", 0);
+		table.setName("权限信息表");
+		table.setComments("权限信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -209,11 +209,11 @@ public class ComPermission extends BasicEntity implements ITable, IEntity{
 	}
 
 	public String toDropTable() {
-		return "COM_PERMISSION";
+		return "SYS_PERMISSION";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComPermission";
+		return "SysPermission";
 	}
 }

@@ -6,8 +6,8 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
-import com.king.tooth.sys.entity.common.ComSysAccount;
-import com.king.tooth.sys.entity.common.ComUser;
+import com.king.tooth.sys.entity.sys.SysAccount;
+import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -20,8 +20,8 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 public class ComUserService extends AbstractService{
 	
-	private static final String comUserComDeptLinks = "ComUserComDeptLinks";
-	private static final String comUserComPositionLinks = "ComUserComPositionLinks";
+	private static final String comUserComDeptLinks = "SysUserDeptLinks";
+	private static final String comUserComPositionLinks = "SysUserPositionLinks";
 	
 	/**
 	 * 修改用户关联的账户密码
@@ -30,7 +30,7 @@ public class ComUserService extends AbstractService{
 	 * @return
 	 */
 	public Object uploadUserLoginPwd(String userId, String newLoginPwd){
-		ComUser user = getObjectById(userId, ComUser.class);
+		SysUser user = getObjectById(userId, SysUser.class);
 		if(StrUtils.isEmpty(user.getAccountId())){
 			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
 		}
@@ -42,18 +42,18 @@ public class ComUserService extends AbstractService{
 	 * @param user
 	 * @return 
 	 */
-	private String validWorkNoIsExists(ComUser user) {
+	private String validWorkNoIsExists(SysUser user) {
 		String workNo = user.getWorkNo();
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where workNo=? and customerId=?", workNo, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysUser where workNo=? and customerId=?", workNo, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在工号为["+workNo+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的loginName
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where loginName=? and customerId=?", workNo, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where loginName=? and customerId=?", workNo, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在登录名为["+workNo+"]的账户";
 			}
@@ -66,21 +66,21 @@ public class ComUserService extends AbstractService{
 	 * @param user
 	 * @return 
 	 */
-	private String validEmailIsExists(ComUser user) {
+	private String validEmailIsExists(SysUser user) {
 		String email = user.getEmail();
 		if(StrUtils.isEmpty(email)){
 			return null;
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where email=? and customerId=?", email, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysUser where email=? and customerId=?", email, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的email
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where email=? and customerId=?", email, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where email=? and customerId=?", email, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在邮箱为["+email+"]的账户";
 			}
@@ -93,21 +93,21 @@ public class ComUserService extends AbstractService{
 	 * @param user
 	 * @return 
 	 */
-	private String validTelIsExists(ComUser user) {
+	private String validTelIsExists(SysUser user) {
 		String tel = user.getTel();
 		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComUser where tel=? and customerId=?", tel, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysUser where tel=? and customerId=?", tel, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的tel
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComSysAccount where tel=? and customerId=?", tel, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在手机号为["+tel+"]的账户";
 			}
@@ -120,7 +120,7 @@ public class ComUserService extends AbstractService{
 	 * @param user
 	 * @return
 	 */
-	public Object saveUser(ComUser user){
+	public Object saveUser(SysUser user){
 		String result = validWorkNoIsExists(user);
 		if(result == null){
 			result = validEmailIsExists(user);
@@ -131,7 +131,7 @@ public class ComUserService extends AbstractService{
 		if(result == null){
 			String accountId = null;
 			if(user.getIsCreateAccount() == 1){
-				ComSysAccount account = new ComSysAccount();
+				SysAccount account = new SysAccount();
 				account.setLoginName(user.getWorkNo());
 				account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
@@ -166,16 +166,16 @@ public class ComUserService extends AbstractService{
 	 * @param user
 	 * @return
 	 */
-	public Object updateUser(ComUser user){
-		ComUser oldUser = getObjectById(user.getId(), ComUser.class);
+	public Object updateUser(SysUser user){
+		SysUser oldUser = getObjectById(user.getId(), SysUser.class);
 		
 		String accountId = oldUser.getAccountId();
 		boolean modifyAccountInfo = false;// 标识是否修改账户信息
-		ComSysAccount account = null;
+		SysAccount account = null;
 		if(StrUtils.notEmpty(accountId)){
-			account = getObjectById(oldUser.getAccountId(), ComSysAccount.class);
+			account = getObjectById(oldUser.getAccountId(), SysAccount.class);
 		}else if(user.getIsCreateAccount() == 1){
-			account = new ComSysAccount();
+			account = new SysAccount();
 		}
 		
 		String result = null;
@@ -249,10 +249,10 @@ public class ComUserService extends AbstractService{
 	 * @param user
 	 * @return
 	 */
-	public Object openAccount(ComUser user) {
-		user = getObjectById(user.getId(), ComUser.class);
+	public Object openAccount(SysUser user) {
+		user = getObjectById(user.getId(), SysUser.class);
 		
-		ComSysAccount account = new ComSysAccount();
+		SysAccount account = new SysAccount();
 		account.setLoginName(user.getWorkNo());
 		account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
@@ -260,7 +260,7 @@ public class ComUserService extends AbstractService{
 		account.setEmail(user.getEmail());
 		String accountId = HibernateUtil.saveObject(account, null).getString(ResourceNameConstants.ID);
 		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComUser set accountId=? where "+ResourceNameConstants.ID+"=?", accountId, user.getId());
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId=? where "+ResourceNameConstants.ID+"=?", accountId, user.getId());
 		
 		JSONObject jsonObject = new JSONObject(1);
 		jsonObject.put(ResourceNameConstants.ID, user.getId());
@@ -273,11 +273,11 @@ public class ComUserService extends AbstractService{
 	 * @return
 	 */
 	public String deleteUser(String userId) {
-		ComUser oldUser = getObjectById(userId, ComUser.class);
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComUser where "+ResourceNameConstants.ID+" = '"+oldUser.getId()+"'");
+		SysUser oldUser = getObjectById(userId, SysUser.class);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUser where "+ResourceNameConstants.ID+" = '"+oldUser.getId()+"'");
 		
 		if(StrUtils.notEmpty(oldUser.getAccountId())){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSysAccount where "+ResourceNameConstants.ID+" = '"+oldUser.getAccountId()+"'");
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where "+ResourceNameConstants.ID+" = '"+oldUser.getAccountId()+"'");
 		}
 		
 		if(StrUtils.notEmpty(oldUser.getDeptId())){

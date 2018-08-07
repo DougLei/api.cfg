@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.datalinks;
+package com.king.tooth.sys.entity.sys.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,23 +11,23 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 系统账户和角色的关联关系资源对象
+ * 人员和职务的关联关系表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysAccountComRoleLinks implements Serializable, ITable {
+public class SysUserPositionLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_ACCOUNT_ROLE_LINKS", 0);
-		table.setResourceName("ComSysAccountComRoleLinks");
-		table.setName("系统账户和角色的关联关系资源对象表");
-		table.setComments("系统账户和角色的关联关系资源对象表");
+		ComTabledata table = new ComTabledata("SYS_USER_POSITION_LINKS", 0);
+		table.setResourceName("SysUserPositionLinks");
+		table.setName("人员和职务的关联关系表");
+		table.setComments("人员和职务的关联关系表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(6);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", BuiltinCodeDataType.STRING, 32);
 		leftIdColumn.setName("左资源id");
@@ -48,11 +48,18 @@ public class ComSysAccountComRoleLinks implements Serializable, ITable {
 		orderCodeColumn.setOrderCode(3);
 		columns.add(orderCodeColumn);
 		
+		ComColumndata isMainColumn = new ComColumndata("is_main", BuiltinCodeDataType.INTEGER, 1);
+		isMainColumn.setName("是否是主要岗位");
+		isMainColumn.setComments("是否是主要岗位：即默认岗位，其他的都属于兼职岗位，默认值是0");
+		isMainColumn.setDefaultValue("0");
+		isMainColumn.setOrderCode(4);
+		columns.add(isMainColumn);
+		
 		table.setColumns(columns);
 		return table;
 	}
 
 	public String toDropTable() {
-		return "COM_ACCOUNT_ROLE_LINKS";
+		return "SYS_USER_POSITION_LINKS";
 	}
 }

@@ -13,7 +13,7 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractController;
-import com.king.tooth.sys.entity.common.ComSysAccount;
+import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
@@ -34,7 +34,7 @@ public class ComSysAccountController extends AbstractController{
 	public Object login(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		CurrentThreadContext.getReqLogData().getReqLog().setType(1);// 标识为登陆日志
 		
-		ComSysAccount account = JsonUtil.toJavaObject(ijson.get(0), ComSysAccount.class);
+		SysAccount account = JsonUtil.toJavaObject(ijson.get(0), SysAccount.class);
 		SysAccountOnlineStatus accountOnlineStatus = BuiltinInstance.accountService.modifyAccountOfOnLineStatus(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
@@ -76,13 +76,13 @@ public class ComSysAccountController extends AbstractController{
 	 * @return
 	 */
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComSysAccount> accounts = getDataInstanceList(ijson, ComSysAccount.class);
+		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
 				resultObject = BuiltinInstance.accountService.saveAccount(accounts.get(0));
 			}else{
-				for (ComSysAccount account : accounts) {
+				for (SysAccount account : accounts) {
 					resultObject = BuiltinInstance.accountService.saveAccount(account);
 					if(resultObject instanceof String){
 						break;
@@ -100,13 +100,13 @@ public class ComSysAccountController extends AbstractController{
 	 * @return
 	 */
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComSysAccount> accounts = getDataInstanceList(ijson, ComSysAccount.class);
+		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
 				resultObject = BuiltinInstance.accountService.updateAccount(accounts.get(0));
 			}else{
-				for (ComSysAccount account : accounts) {
+				for (SysAccount account : accounts) {
 					resultObject = BuiltinInstance.accountService.updateAccount(account);
 					if(resultObject instanceof String){
 						break;

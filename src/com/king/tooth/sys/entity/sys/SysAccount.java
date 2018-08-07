@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,11 +22,11 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 系统账户资源对象
+ * 账户表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSysAccount extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 
 	/**
 	 * 登录名
@@ -144,9 +144,9 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity, IEnti
 	}
 
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_SYS_ACCOUNT", 0);
-		table.setName("系统账户资源对象表");
-		table.setComments("系统账户资源对象表");
+		ComTabledata table = new ComTabledata("SYS_ACCOUNT", 0);
+		table.setName("账户表");
+		table.setComments("账户表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -210,12 +210,12 @@ public class ComSysAccount extends BasicEntity implements ITable, IEntity, IEnti
 	}
 
 	public String toDropTable() {
-		return "COM_SYS_ACCOUNT";
+		return "SYS_ACCOUNT";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComSysAccount";
+		return "SysAccount";
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 权限优先级资源对象
+ * 权限优先级信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComPermissionPriority extends BasicEntity implements ITable, IEntity{
+public class SysPermissionPriority extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 权限类型
@@ -56,17 +56,17 @@ public class ComPermissionPriority extends BasicEntity implements ITable, IEntit
 		this.samePermissionTypeLv = samePermissionTypeLv;
 	}
 	
-	public ComPermissionPriority() {
+	public SysPermissionPriority() {
 	}
-	public ComPermissionPriority(String permissionType, Integer lv) {
+	public SysPermissionPriority(String permissionType, Integer lv) {
 		this.permissionType = permissionType;
 		this.lv = lv;
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PERMISSION_PRIORITY", 0);
-		table.setName("权限优先级资源对象表");
-		table.setComments("权限优先级资源对象表");
+		ComTabledata table = new ComTabledata("SYS_PERMISSION_PRIORITY", 0);
+		table.setName("权限优先级信息表");
+		table.setComments("权限优先级信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -75,14 +75,14 @@ public class ComPermissionPriority extends BasicEntity implements ITable, IEntit
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
 		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", BuiltinCodeDataType.STRING, 20);
-		permissionTypeColumn.setName("优先等级");
-		permissionTypeColumn.setComments("优先等级，越高越优先");
+		permissionTypeColumn.setName("权限类型");
+		permissionTypeColumn.setComments("权限类型：比如角色role，帐号account，部门dept，岗位position，帐号组accountGroup等");
 		permissionTypeColumn.setOrderCode(1);
 		columns.add(permissionTypeColumn);
 		
 		ComColumndata lvColumn = new ComColumndata("lv", BuiltinCodeDataType.INTEGER, 2);
-		lvColumn.setName("关联的数据id");
-		lvColumn.setComments("关联的数据id：比如角色id，帐号id，部门id，岗位id，帐号组id等");
+		lvColumn.setName("优先等级");
+		lvColumn.setComments("优先等级，越高越优先");
 		lvColumn.setOrderCode(2);
 		columns.add(lvColumn);
 		
@@ -97,11 +97,11 @@ public class ComPermissionPriority extends BasicEntity implements ITable, IEntit
 	}
 
 	public String toDropTable() {
-		return "COM_PERMISSION_PRIORITY";
+		return "SYS_PERMISSION_PRIORITY";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComPermissionPriority";
+		return "SysPermissionPriority";
 	}
 }

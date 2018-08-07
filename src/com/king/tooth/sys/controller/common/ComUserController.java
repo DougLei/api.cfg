@@ -10,7 +10,7 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractController;
-import com.king.tooth.sys.entity.common.ComUser;
+import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -25,13 +25,13 @@ public class ComUserController extends AbstractController{
 	 * @return
 	 */
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComUser> users = getDataInstanceList(ijson, ComUser.class);
+		List<SysUser> users = getDataInstanceList(ijson, SysUser.class);
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
 				resultObject = BuiltinInstance.userService.saveUser(users.get(0));
 			}else{
-				for (ComUser user : users) {
+				for (SysUser user : users) {
 					resultObject = BuiltinInstance.userService.saveUser(user);
 					if(resultObject instanceof String){
 						break;
@@ -49,13 +49,13 @@ public class ComUserController extends AbstractController{
 	 * @return
 	 */
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComUser> users = getDataInstanceList(ijson, ComUser.class);
+		List<SysUser> users = getDataInstanceList(ijson, SysUser.class);
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
 				resultObject = BuiltinInstance.userService.updateUser(users.get(0));
 			}else{
-				for (ComUser user : users) {
+				for (SysUser user : users) {
 					resultObject = BuiltinInstance.userService.updateUser(user);
 					if(resultObject instanceof String){
 						break;
@@ -95,11 +95,11 @@ public class ComUserController extends AbstractController{
 	 * @return
 	 */
 	public Object openAccount(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComUser> users = getDataInstanceList(ijson, ComUser.class);
+		List<SysUser> users = getDataInstanceList(ijson, SysUser.class);
 		if(users.size() == 1){
 			resultObject = BuiltinInstance.userService.openAccount(users.get(0));
 		}else{
-			for (ComUser user : users) {
+			for (SysUser user : users) {
 				resultObject = BuiltinInstance.userService.openAccount(user);
 				if(resultObject instanceof String){
 					break;

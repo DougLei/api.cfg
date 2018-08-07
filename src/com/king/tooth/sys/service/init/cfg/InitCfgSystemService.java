@@ -26,31 +26,30 @@ import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
-import com.king.tooth.sys.entity.common.ComDept;
-import com.king.tooth.sys.entity.common.ComOrg;
-import com.king.tooth.sys.entity.common.ComPermission;
-import com.king.tooth.sys.entity.common.ComPermissionPriority;
-import com.king.tooth.sys.entity.common.ComPosition;
 import com.king.tooth.sys.entity.common.ComProject;
 import com.king.tooth.sys.entity.common.ComProjectModule;
-import com.king.tooth.sys.entity.common.ComRole;
 import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.ComSysAccount;
-import com.king.tooth.sys.entity.common.ComUser;
-import com.king.tooth.sys.entity.common.ComVerifyCode;
-import com.king.tooth.sys.entity.common.datalinks.ComDataLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComProjectComHibernateHbmLinks;
 import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
-import com.king.tooth.sys.entity.common.datalinks.ComSysAccountComRoleLinks;
-import com.king.tooth.sys.entity.common.datalinks.ComUserComDeptLinks;
-import com.king.tooth.sys.entity.common.datalinks.ComUserComPositionLinks;
+import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
+import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
+import com.king.tooth.sys.entity.sys.SysOrg;
+import com.king.tooth.sys.entity.sys.SysPermission;
+import com.king.tooth.sys.entity.sys.SysPermissionPriority;
+import com.king.tooth.sys.entity.sys.SysPosition;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.sys.SysRole;
+import com.king.tooth.sys.entity.sys.SysUser;
+import com.king.tooth.sys.entity.sys.datalinks.SysAccountRoleLinks;
+import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
+import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
+import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -108,16 +107,15 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComSqlScript().toCreateTable());
 		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
 		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
-		tables.add(new ComSysAccount().toCreateTable());
+		tables.add(new SysAccount().toCreateTable());
 		tables.add(new SysDataDictionary().toCreateTable());
 		tables.add(new SysResource().toCreateTable());
 		
-		tables.add(new ComDataLinks().toCreateTable());
+		tables.add(new SysDataLinks().toCreateTable());
 		tables.add(new SysReqLog().toCreateTable());
 		tables.add(new SysOperSqlLog().toCreateTable());
 		tables.add(new SysAccountOnlineStatus().toCreateTable());
-		tables.add(new ComUser().toCreateTable());
-		tables.add(new ComVerifyCode().toCreateTable());
+		tables.add(new SysUser().toCreateTable());
 		
 		tables.add(new ComColumndata().toCreateTable());
 		tables.add(new ComTabledata().toCreateTable());
@@ -126,16 +124,16 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComSqlScriptParameter().toCreateTable());
 		tables.add(new ComProjectComTabledataLinks().toCreateTable());
 		
-		tables.add(new ComRole().toCreateTable());
-		tables.add(new ComPermission().toCreateTable());
-		tables.add(new ComPermissionPriority().toCreateTable());
+		tables.add(new SysRole().toCreateTable());
+		tables.add(new SysPermission().toCreateTable());
+		tables.add(new SysPermissionPriority().toCreateTable());
 		tables.add(new SysFile().toCreateTable());
-		tables.add(new ComOrg().toCreateTable());
-		tables.add(new ComDept().toCreateTable());
-		tables.add(new ComPosition().toCreateTable());
-		tables.add(new ComSysAccountComRoleLinks().toCreateTable());
-		tables.add(new ComUserComDeptLinks().toCreateTable());
-		tables.add(new ComUserComPositionLinks().toCreateTable());
+		tables.add(new SysOrg().toCreateTable());
+		tables.add(new SysDept().toCreateTable());
+		tables.add(new SysPosition().toCreateTable());
+		tables.add(new SysAccountRoleLinks().toCreateTable());
+		tables.add(new SysUserDeptLinks().toCreateTable());
+		tables.add(new SysUserPositionLinks().toCreateTable());
 		return tables;
 	}
 	
@@ -205,7 +203,7 @@ public class InitCfgSystemService extends AbstractService{
 	private void insertBasicDatas() {
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加管理账户【1.管理账户】
-		ComSysAccount admin = new ComSysAccount();
+		SysAccount admin = new SysAccount();
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
@@ -214,7 +212,7 @@ public class InitCfgSystemService extends AbstractService{
 		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourceNameConstants.ID);
 	
 		// 添加普通账户【2.普通账户】
-		ComSysAccount normal = new ComSysAccount();
+		SysAccount normal = new SysAccount();
 		normal.setAccountType(2);
 		normal.setLoginName("normal");
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
@@ -223,7 +221,7 @@ public class InitCfgSystemService extends AbstractService{
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourceNameConstants.ID);
 		
 		// 添加平台开发账户【3.平台开发账户】
-		ComSysAccount developer = new ComSysAccount();
+		SysAccount developer = new SysAccount();
 		developer.setAccountType(3);
 		developer.setLoginName("developer");
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
@@ -336,12 +334,12 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "修改", "update", 3, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "删除", "delete", 4, ISysResource.COMMON_PLATFORM);
 		
-		// ComSysAccount.accountType 账户类型
+		// SysAccount.accountType 账户类型
 		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "1", 1, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "2", 2, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "平台开发账户", "3", 3, ISysResource.COMMON_PLATFORM);
 		
-		// ComSysAccount.accountStatus 账户状态
+		// SysAccount.accountStatus 账户状态
 		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "启用", "1", 1, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "禁用", "2", 2, ISysResource.COMMON_PLATFORM);
 		
@@ -426,7 +424,7 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void insertPublishBasicData(String adminAccountId) {
 		// 添加一条要发布的管理员账户信息
-		ComSysAccount admin = new ComSysAccount();
+		SysAccount admin = new SysAccount();
 		admin.setId(ResourceHandlerUtil.getIdentity());
 		admin.setAccountType(1);
 		admin.setLoginName("admin");

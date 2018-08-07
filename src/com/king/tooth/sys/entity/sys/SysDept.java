@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +13,11 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 部门资源对象
+ * 部门表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComDept extends BasicEntity implements ITable, IEntity{
+public class SysDept extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 所属组织主键
@@ -86,9 +86,9 @@ public class ComDept extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_DEPT", 0);
-		table.setName("部门资源对象表");
-		table.setComments("部门资源对象表");
+		ComTabledata table = new ComTabledata("SYS_DEPT", 0);
+		table.setName("部门表");
+		table.setComments("部门表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -137,11 +137,11 @@ public class ComDept extends BasicEntity implements ITable, IEntity{
 	}
 
 	public String toDropTable() {
-		return "COM_DEPT";
+		return "SYS_DEPT";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComDept";
+		return "SysDept";
 	}
 }

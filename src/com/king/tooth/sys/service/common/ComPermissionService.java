@@ -7,8 +7,8 @@ import com.king.tooth.constants.ResourceNameConstants;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.builtin.data.BuiltinPermissionType;
-import com.king.tooth.sys.entity.common.ComPermission;
-import com.king.tooth.sys.entity.common.ComPermissionPriority;
+import com.king.tooth.sys.entity.sys.SysPermission;
+import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -23,9 +23,9 @@ public class ComPermissionService extends AbstractService{
 	 * 得到系统权限的优先级集合
 	 * @return
 	 */
-	private List<ComPermissionPriority> getPermissionPriorities(){
-		String hql = "from ComPermissionPriority where projectId=? and customerId=? order by lv desc";
-		List<ComPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(ComPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+	private List<SysPermissionPriority> getPermissionPriorities(){
+		String hql = "from SysPermissionPriority where projectId=? and customerId=? order by lv desc";
+		List<SysPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(permissionPriorities == null || permissionPriorities.size() == 0){
 			permissionPriorities = BuiltinInstance.permissionPriorities;
 		}
@@ -33,15 +33,15 @@ public class ComPermissionService extends AbstractService{
 	}
 	
 	// 第一次查询权限信息集合的hql语句
-	private static final String queryPermissionHql = "from ComPermission where refDataType = ? and refDataId = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
+	private static final String queryPermissionHql = "from SysPermission where refDataType = ? and refDataId = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
 	// 后续递归查询权限信息集合的hql语句
-	private static final String recursiveQueryPermissionHql = "from ComPermission where refParentResourceId = ? and refParentResourceId = ? and projectId = ? and customerId = ?";
+	private static final String recursiveQueryPermissionHql = "from SysPermission where refParentResourceId = ? and refParentResourceId = ? and projectId = ? and customerId = ?";
 	// 按照orderCode asc，查询账户所属的角色所有的权限【orderCode越低的，优先级越高】
-	private static final String queryAccountOfRolesHql = "select r."+ResourceNameConstants.ID+" from ComRole r, ComSysAccountComRoleLinks l where r.isEnabled=1 and r."+ResourceNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
+	private static final String queryAccountOfRolesHql = "select r."+ResourceNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourceNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
 	// 按照orderCode asc，查询账户所属的部门所有的权限【orderCode越低的，优先级越高】
-	private static final String queryAccountOfDeptsHql = "select d."+ResourceNameConstants.ID+" from ComDept d, ComUserComDeptLinks l, ComUser u where d."+ResourceNameConstants.ID+"=l.rightId and u."+ResourceNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc";
+	private static final String queryAccountOfDeptsHql = "select d."+ResourceNameConstants.ID+" from SysDept d, SysUserDeptLinks l, SysUser u where d."+ResourceNameConstants.ID+"=l.rightId and u."+ResourceNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc";
 	// 按照orderCode asc，查询账户所属的职务所有的权限【orderCode越低的，优先级越高】
-	private static final String queryAccountOfPositionsHql = "select p."+ResourceNameConstants.ID+" from ComPosition p, ComUserComPositionLinks l, ComUser u where p."+ResourceNameConstants.ID+"=l.rightId and u."+ResourceNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc";
+	private static final String queryAccountOfPositionsHql = "select p."+ResourceNameConstants.ID+" from SysPosition p, SysUserPositionLinks l, SysUser u where p."+ResourceNameConstants.ID+"=l.rightId and u."+ResourceNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc";
 	
 	/**
 	 * 根据账户id，获取对应的的权限集合
@@ -49,16 +49,16 @@ public class ComPermissionService extends AbstractService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public ComPermission findAccountOfPermissions(String accountId){
+	public SysPermission findAccountOfPermissions(String accountId){
 		String projectId = CurrentThreadContext.getProjectId();
 		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		List<ComPermission> permissions = new ArrayList<ComPermission>();
-		List<ComPermission> newPermissions = new ArrayList<ComPermission>();
-		List<ComPermission> tmpPermissions = null;
+		List<SysPermission> permissions = new ArrayList<SysPermission>();
+		List<SysPermission> newPermissions = new ArrayList<SysPermission>();
+		List<SysPermission> tmpPermissions = null;
 		
-		List<ComPermissionPriority> permissionPriorities = getPermissionPriorities();
-		for (ComPermissionPriority permissionPriority : permissionPriorities) {
+		List<SysPermissionPriority> permissionPriorities = getPermissionPriorities();
+		for (SysPermissionPriority permissionPriority : permissionPriorities) {
 			// 帐号
 			if(BuiltinPermissionType.ACCOUNT.equals(permissionPriority.getPermissionType())){
 				newPermissions = getRootPermissionsByData(BuiltinPermissionType.ACCOUNT, accountId, projectId, customerId);
@@ -110,7 +110,7 @@ public class ComPermissionService extends AbstractService{
 		}
 		
 		if(permissions.size() > 0){
-			ComPermission permission = new ComPermission();
+			SysPermission permission = new SysPermission();
 			permission.setRefResourceCode("ROOT");
 			permission.setRefResourceId("ROOT");
 			permission.setRefResourceType("ROOT");
@@ -154,8 +154,8 @@ public class ComPermissionService extends AbstractService{
 	 * @param customerId
 	 * @return
 	 */
-	private List<ComPermission> getRootPermissionsByData(String refDataType, Object refDataId, String projectId, String customerId){
-		return HibernateUtil.extendExecuteListQueryByHqlArr(ComPermission.class, null, null, queryPermissionHql, 
+	private List<SysPermission> getRootPermissionsByData(String refDataType, Object refDataId, String projectId, String customerId){
+		return HibernateUtil.extendExecuteListQueryByHqlArr(SysPermission.class, null, null, queryPermissionHql, 
 				refDataType, refDataId, projectId, customerId);
 	}
 	/**
@@ -164,12 +164,12 @@ public class ComPermissionService extends AbstractService{
 	 * @param projectId
 	 * @param customerId
 	 */
-	private void setSubPermissionsByData(List<ComPermission> permissions, String projectId, String customerId) {
+	private void setSubPermissionsByData(List<SysPermission> permissions, String projectId, String customerId) {
 		if(permissions == null || permissions.size() == 0){
 			return;
 		}
-		for (ComPermission p : permissions) {
-			p.setChildren(HibernateUtil.extendExecuteListQueryByHqlArr(ComPermission.class, null, null, recursiveQueryPermissionHql, 
+		for (SysPermission p : permissions) {
+			p.setChildren(HibernateUtil.extendExecuteListQueryByHqlArr(SysPermission.class, null, null, recursiveQueryPermissionHql, 
 					p.getRefResourceId(), p.getRefResourceCode(), projectId, customerId));
 			setSubPermissionsByData(p.gainChildren(), projectId, customerId);
 		}
@@ -184,7 +184,7 @@ public class ComPermissionService extends AbstractService{
 	 * @param newPermissions
 	 * @return
 	 */
-	private void mergePermissions(List<ComPermission> permissions, List<ComPermission> newPermissions){
+	private void mergePermissions(List<SysPermission> permissions, List<SysPermission> newPermissions){
 		if(newPermissions == null || newPermissions.size() == 0){
 			return;
 		}
@@ -200,7 +200,7 @@ public class ComPermissionService extends AbstractService{
 	 * @param permissions
 	 * @param newPermissions
 	 */
-	private void doMerge(List<ComPermission> permissions, List<ComPermission> newPermissions){
+	private void doMerge(List<SysPermission> permissions, List<SysPermission> newPermissions){
 		if(newPermissions == null || newPermissions.size() == 0){
 			return;
 		}
@@ -210,9 +210,9 @@ public class ComPermissionService extends AbstractService{
 				return;
 			}
 			
-			for (ComPermission np : newPermissions) {
+			for (SysPermission np : newPermissions) {
 				boolean unExists = true;
-				for (ComPermission p : permissions) {
+				for (SysPermission p : permissions) {
 					if(np.getRefResourceId().equals(p.getRefResourceId()) || np.getRefResourceCode().equals(p.getRefResourceCode())){
 						unExists = false;
 						
@@ -224,7 +224,7 @@ public class ComPermissionService extends AbstractService{
 						}
 						
 						if(p.gainChildren() == null){
-							p.setChildren(new ArrayList<ComPermission>());
+							p.setChildren(new ArrayList<SysPermission>());
 						}
 						doMerge(p.gainChildren(), np.gainChildren());
 						break;

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.datalinks;
+package com.king.tooth.sys.entity.sys.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,23 +11,23 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 人员和部门的关联关系资源对象
+ * 数据关联关系信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComUserComDeptLinks implements Serializable, ITable {
+public class SysDataLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_USER_DEPT_LINKS", 0);
-		table.setResourceName("ComUserComDeptLinks");
-		table.setName("人员和部门的关联关系资源对象表");
-		table.setComments("人员和部门的关联关系资源对象表");
+		ComTabledata table = new ComTabledata("SYS_DATA_LINKS", 0);
+		table.setResourceName("SysDataLinks");
+		table.setName("数据关联关系信息表");
+		table.setComments("数据关联关系信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(8);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", BuiltinCodeDataType.STRING, 32);
 		leftIdColumn.setName("左资源id");
@@ -48,18 +48,23 @@ public class ComUserComDeptLinks implements Serializable, ITable {
 		orderCodeColumn.setOrderCode(3);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isMainColumn = new ComColumndata("is_main", BuiltinCodeDataType.INTEGER, 1);
-		isMainColumn.setName("是否是主要部门");
-		isMainColumn.setComments("是否是主要部门：即默认部门，其他的都属于兼职部门，默认值是0");
-		isMainColumn.setDefaultValue("0");
-		isMainColumn.setOrderCode(4);
-		columns.add(isMainColumn);
+		ComColumndata leftResourceNameColumn = new ComColumndata("left_resource_name", BuiltinCodeDataType.STRING, 60);
+		leftResourceNameColumn.setName("左资源名");
+		leftResourceNameColumn.setComments("左资源名(默认即主表、主资源)");
+		leftResourceNameColumn.setOrderCode(4);
+		columns.add(leftResourceNameColumn);
+		
+		ComColumndata rightResourceNameColumn = new ComColumndata("right_resource_name", BuiltinCodeDataType.STRING, 60);
+		rightResourceNameColumn.setName("右资源名");
+		rightResourceNameColumn.setComments("右资源名(默认即子表、子资源)");
+		rightResourceNameColumn.setOrderCode(5);
+		columns.add(rightResourceNameColumn);
 		
 		table.setColumns(columns);
 		return table;
 	}
 
 	public String toDropTable() {
-		return "COM_USER_DEPT_LINKS";
+		return "SYS_DATA_LINKS";
 	}
 }

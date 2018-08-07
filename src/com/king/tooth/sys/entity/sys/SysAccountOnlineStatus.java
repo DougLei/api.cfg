@@ -12,7 +12,6 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.common.ComPermission;
 
 /**
  * 账户在线状态信息表
@@ -101,7 +100,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	/**
 	 * 当前账户的权限
 	 */
-	private ComPermission permission;
+	private SysPermission permission;
 	
 	public String getToken() {
 		return token;
@@ -205,10 +204,10 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	public void setPositionId(String positionId) {
 		this.positionId = positionId;
 	}
-	public ComPermission gainPermission() {
+	public SysPermission gainPermission() {
 		return permission;
 	}
-	public void setPermission(ComPermission permission) {
+	public void setPermission(SysPermission permission) {
 		this.permission = permission;
 	}
 	

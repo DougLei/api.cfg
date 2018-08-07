@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.entity.common.ComSysAccount;
+import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.service.common.ComSysAccountOnlineStatusService;
 import com.king.tooth.sys.service.common.ComSysAccountService;
@@ -66,7 +66,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		}
 		
 		ComSysAccountService accountService = new ComSysAccountService();
-		ComSysAccount currentAccount = accountService.validAccountOfStatus(onlineStatus.getAccountId());
+		SysAccount currentAccount = accountService.validAccountOfStatus(onlineStatus.getAccountId());
 		if(currentAccount.getMessage() != null){
 			return currentAccount.getMessage();
 		}

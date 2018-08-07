@@ -8,6 +8,7 @@ import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.Log4jUtil;
@@ -246,7 +247,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
 		table.setIsCreated(1);
-		table.setBelongPlatformType(CONFIG_PLATFORM);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(26);
 		

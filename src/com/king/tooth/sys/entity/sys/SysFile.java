@@ -157,6 +157,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		table.setComments("文件表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
