@@ -103,7 +103,7 @@ public class PrepareFilter extends AbstractFilter{
 			CurrentThreadContext.getReqLogData().getReqLog().setRespDate(new Date());
 			CurrentThreadContext.getReqLogData().recordLogs();
 			
-			// 请求本次请求的线程数据
+			// 清除本次请求的线程数据
 			CurrentThreadContext.clearCurrentThreadData();
 		}
 	}

@@ -17,4 +17,9 @@ public class ResourceNameConstants {
 	 * <p>和 @BuiltinParameterKeys._IDS 保持一直</p>
 	 */
 	public static final String IDS = "_ids";
+	
+	/**
+	 * 实体名
+	 */
+	public static final String ENTITY_NAME = "__entityName";
 }

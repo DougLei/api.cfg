@@ -152,7 +152,7 @@ public class JsonUtil {
 		if(jsonArray == null || jsonArray.size() == 0){
 			return;
 		}
-		for(int i=0;i<jsonArray.size();i++){
+		for(int i = 0; i < jsonArray.size(); i++){
 			jsonArray.getJSONObject(i).clear();
 		}
 		jsonArray.clear();

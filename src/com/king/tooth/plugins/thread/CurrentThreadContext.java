@@ -3,6 +3,7 @@ package com.king.tooth.plugins.thread;
 import org.hibernate.Session;
 
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
+import com.king.tooth.plugins.thread.log.ReqLogData;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 
