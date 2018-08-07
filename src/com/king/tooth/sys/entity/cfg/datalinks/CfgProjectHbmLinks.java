@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.datalinks;
+package com.king.tooth.sys.entity.cfg.datalinks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,15 +11,15 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 项目和hbm的关系
+ * 项目和hbm的关系表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProjectComHibernateHbmLinks implements Serializable, ITable {
+public class CfgProjectHbmLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PROJECT_HBM_LINKS", 0);
-		table.setResourceName("ComProjectComHibernateHbmLinks");
+		ComTabledata table = new ComTabledata("CFG_PROJECT_HBM_LINKS", 0);
+		table.setResourceName("CfgProjectHbmLinks");
 		table.setName("项目和hbm的关系表");
 		table.setComments("项目和hbm的关系表");
 		table.setIsBuiltin(1);
@@ -54,6 +54,6 @@ public class ComProjectComHibernateHbmLinks implements Serializable, ITable {
 	}
 
 	public String toDropTable() {
-		return "COM_PROJECT_HBM_LINKS";
+		return "CFG_PROJECT_HBM_LINKS";
 	}
 }

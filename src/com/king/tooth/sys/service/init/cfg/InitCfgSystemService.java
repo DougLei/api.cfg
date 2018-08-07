@@ -21,16 +21,16 @@ import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComProject;
+import com.king.tooth.sys.entity.cfg.ComProjectModule;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.cfg.datalinks.ComProjectComTabledataLinks;
-import com.king.tooth.sys.entity.common.ComProject;
-import com.king.tooth.sys.entity.common.ComProjectModule;
-import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.datalinks.ComProjectComHibernateHbmLinks;
-import com.king.tooth.sys.entity.common.datalinks.ComProjectComSqlScriptLinks;
+import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectHbmLinks;
+import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
+import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
+import com.king.tooth.sys.entity.dm.DmPublishBasicData;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
@@ -105,8 +105,8 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new ComProjectModule().toCreateTable());
 		tables.add(new SysHibernateHbm().toCreateTable());
 		tables.add(new ComSqlScript().toCreateTable());
-		tables.add(new ComProjectComSqlScriptLinks().toCreateTable());
-		tables.add(new ComProjectComHibernateHbmLinks().toCreateTable());
+		tables.add(new CfgProjectSqlLinks().toCreateTable());
+		tables.add(new CfgProjectHbmLinks().toCreateTable());
 		tables.add(new SysAccount().toCreateTable());
 		tables.add(new SysDataDictionary().toCreateTable());
 		tables.add(new SysResource().toCreateTable());
@@ -119,10 +119,10 @@ public class InitCfgSystemService extends AbstractService{
 		
 		tables.add(new ComColumndata().toCreateTable());
 		tables.add(new ComTabledata().toCreateTable());
-		tables.add(new ComPublishInfo().toCreateTable());
-		tables.add(new ComPublishBasicData().toCreateTable());
+		tables.add(new DmPublishInfo().toCreateTable());
+		tables.add(new DmPublishBasicData().toCreateTable());
 		tables.add(new ComSqlScriptParameter().toCreateTable());
-		tables.add(new ComProjectComTabledataLinks().toCreateTable());
+		tables.add(new CfgProjectTableLinks().toCreateTable());
 		
 		tables.add(new SysRole().toCreateTable());
 		tables.add(new SysPermission().toCreateTable());
@@ -600,7 +600,7 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void addOtherCoreTableHbmContents(List<String> coreTableHbmContents) {
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-		ComTabledata comProjectComHibernateHbmLinksTable = new ComProjectComHibernateHbmLinks().toCreateTable();
+		ComTabledata comProjectComHibernateHbmLinksTable = new CfgProjectHbmLinks().toCreateTable();
 		coreTableHbmContents.add(hibernateHbmHandler.createHbmMappingContent(comProjectComHibernateHbmLinksTable, true));
 	}
 	

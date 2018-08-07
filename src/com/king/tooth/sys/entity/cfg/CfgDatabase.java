@@ -15,7 +15,8 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.common.database.DBFile;
+import com.king.tooth.sys.entity.cfg.database.DBFile;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -371,8 +372,8 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		return DATABASE;
 	}
 	
-	public ComPublishInfo turnToPublish() {
-		ComPublishInfo publish = new ComPublishInfo();
+	public DmPublishInfo turnToPublish() {
+		DmPublishInfo publish = new DmPublishInfo();
 		publish.setPublishDatabaseId(id);
 		publish.setPublishResourceId(id);
 		publish.setPublishResourceName(dbInstanceName);

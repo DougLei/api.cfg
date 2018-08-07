@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.sqlscript;
+package com.king.tooth.sys.entity.cfg.sql;
 
 import java.util.ArrayList;
 import java.util.List;

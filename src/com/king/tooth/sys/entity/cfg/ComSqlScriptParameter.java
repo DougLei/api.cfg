@@ -19,7 +19,7 @@ import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
- * sql脚本的参数资源对象
+ * sql脚本参数信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -209,8 +209,8 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT_PARAMETER", 0);
-		table.setName("sql脚本的参数资源对象表");
-		table.setComments("sql脚本的参数资源对象表");
+		table.setName("sql脚本参数信息表");
+		table.setComments("sql脚本参数信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0); 
 		table.setIsCreated(1);

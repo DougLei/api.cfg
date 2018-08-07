@@ -14,8 +14,8 @@ import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
-import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.sys.entity.cfg.ComProject;
+import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.sys.service.cfg.ComTabledataService;
 import com.king.tooth.util.ExceptionUtil;
@@ -111,11 +111,11 @@ public class ComProjectService extends AbstractPublishService {
 			return "["+oldProject.getProjName()+"]项目已经发布，无法删除，请先取消发布";
 		}
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComTabledataLinks where leftId = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from CfgProjectTableLinks where leftId = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[表信息]，无法删除，请先取消他们的关联信息";
 		}
-		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from ComProjectComSqlScriptLinks where leftId = ?", projectId);
+		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourceNameConstants.ID+") from CfgProjectSqlLinks where leftId = ?", projectId);
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
@@ -131,12 +131,12 @@ public class ComProjectService extends AbstractPublishService {
 	 */
 	public String cancelRelation(String projectId, String relationType) {
 		if("all".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectTableLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectSqlLinks where leftId = ?", projectId);
 		}else if("table".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComTabledataLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectTableLinks where leftId = ?", projectId);
 		}else if("sql".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectComSqlScriptLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectSqlLinks where leftId = ?", projectId);
 		}else{
 			return "请传入正确的realtionType";
 		}
@@ -206,7 +206,7 @@ public class ComProjectService extends AbstractPublishService {
 				
 				// 发布项目关联的表
 				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-						"select table."+ResourceNameConstants.ID+" from ComTabledata table, ComProjectComTabledataLinks pt where pt.rightId = table.id" +
+						"select table."+ResourceNameConstants.ID+" from ComTabledata table, CfgProjectTableLinks pt where pt.rightId = table.id" +
 								" and table.isEnabled =1 and table.isNeedDeploy=1" +
 								" and pt.leftId='"+projectId+"'");
 				if(publishDataIds != null && publishDataIds.size() > 0){
@@ -216,7 +216,7 @@ public class ComProjectService extends AbstractPublishService {
 				
 				// 发布项目关联的sql脚本或通用的sql脚本
 				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-						"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, ComProjectComSqlScriptLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
+						"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, CfgProjectSqlLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
 								" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1" +
 								" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 				if(publishDataIds != null && publishDataIds.size() > 0){
@@ -280,7 +280,7 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布表
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select table."+ResourceNameConstants.ID+" from ComTabledata table, ComProjectComTabledataLinks pt where pt.rightId = table.id" +
+					"select table."+ResourceNameConstants.ID+" from ComTabledata table, CfgProjectTableLinks pt where pt.rightId = table.id" +
 							" and table.isNeedDeploy=1 and table.isBuiltin=0" +
 							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
@@ -290,7 +290,7 @@ public class ComProjectService extends AbstractPublishService {
 			
 			// 取消发布sql脚本
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
-					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, ComProjectComSqlScriptLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
+					"select sqlScript."+ResourceNameConstants.ID+" from ComSqlScript sqlScript, CfgProjectSqlLinks ps where ps.rightId = sqlScript."+ResourceNameConstants.ID +
 							" and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
 							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 			if(publishDataIds != null && publishDataIds.size() > 0){
@@ -318,8 +318,8 @@ public class ComProjectService extends AbstractPublishService {
 			
 			String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 			Date currentDate = new Date();
-			List<ComPublishBasicData> basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(ComPublishBasicData.class, null, null, "from ComPublishBasicData where belongPlatformType != "+ISysResource.CONFIG_PLATFORM);// 获取要发布的基础信息集合
-			for (ComPublishBasicData basicData : basicDatas) {
+			List<DmPublishBasicData> basicDatas = HibernateUtil.extendExecuteListQueryByHqlArr(DmPublishBasicData.class, null, null, "from DmPublishBasicData where belongPlatformType != "+ISysResource.CONFIG_PLATFORM);// 获取要发布的基础信息集合
+			for (DmPublishBasicData basicData : basicDatas) {
 				session.save(basicData.getBasicDataResourceName(), basicData.getBasicDataJsonObject(projectId, currentUserId, currentDate));
 			}
 			basicDatas.clear();

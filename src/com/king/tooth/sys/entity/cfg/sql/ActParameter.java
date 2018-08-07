@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common.sqlscript;
+package com.king.tooth.sys.entity.cfg.sql;
 
 /**
  * 在替换sql语句的时候，存储参数名和实际值的对象

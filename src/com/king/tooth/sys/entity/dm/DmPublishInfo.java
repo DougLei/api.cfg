@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.cfg;
+package com.king.tooth.sys.entity.dm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +9,15 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 系统发布信息资源对象
+ * 发布信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
+public class DmPublishInfo extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 发布的数据库主键
@@ -94,9 +96,9 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 	
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PUBLISH_INFO", 0);
-		table.setName("系统发布信息资源对象表");
-		table.setComments("系统发布信息资源对象表");
+		ComTabledata table = new ComTabledata("DM_PUBLISH_INFO", 0);
+		table.setName("发布信息表");
+		table.setComments("发布信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
 		table.setIsCreated(1);
@@ -153,11 +155,11 @@ public class ComPublishInfo extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public String toDropTable() {
-		return "COM_PUBLISH_INFO";
+		return "DM_PUBLISH_INFO";
 	}
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComPublishInfo";
+		return "DmPublishInfo";
 	}
 }

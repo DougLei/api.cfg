@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.cfg;
 
 import gudusoft.gsqlparser.TGSqlParser;
 
@@ -17,13 +17,10 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
-import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
+import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
+import com.king.tooth.sys.entity.cfg.sql.SqlQueryResultColumn;
+import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -33,7 +30,7 @@ import com.king.tooth.util.sqlparser.SqlParameterParserUtil;
 import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
 
 /**
- * sql脚本资源对象
+ * sql脚本信息表
  * @author StoneKing
  */
 @SuppressWarnings("serial")
@@ -245,8 +242,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT", 0);
-		table.setName("sql脚本资源对象表");
-		table.setComments("sql脚本资源对象表");
+		table.setName("sql脚本信息表");
+		table.setComments("sql脚本信息表");
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
@@ -426,8 +423,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return SQLSCRIPT;
 	}
 	
-	public ComPublishInfo turnToPublish() {
-		ComPublishInfo publish = new ComPublishInfo();
+	public DmPublishInfo turnToPublish() {
+		DmPublishInfo publish = new DmPublishInfo();
 		publish.setPublishDatabaseId(refDatabaseId);
 		publish.setPublishProjectId(projectId);
 		publish.setPublishResourceId(id);

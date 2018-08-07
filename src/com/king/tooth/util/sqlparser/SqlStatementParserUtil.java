@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.sqlscript.ActParameter;
-import com.king.tooth.sys.entity.common.sqlscript.FinalSqlScriptStatement;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
+import com.king.tooth.sys.entity.cfg.sql.ActParameter;
+import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
+import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 

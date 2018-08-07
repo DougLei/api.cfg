@@ -10,13 +10,14 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 表数据信息资源对象
+ * 表信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -241,8 +242,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_TABLEDATA", 0);
-		table.setName("表数据信息资源对象表");
-		table.setComments("表数据信息资源对象表");
+		table.setName("表信息表");
+		table.setComments("表信息表");
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
@@ -395,8 +396,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	/**
 	 * 目前只在ComTabledataService类的batchPublishTable()中用到
 	 */
-	public ComPublishInfo turnToPublish() {
-		ComPublishInfo publish = new ComPublishInfo();
+	public DmPublishInfo turnToPublish() {
+		DmPublishInfo publish = new DmPublishInfo();
 		publish.setPublishDatabaseId(refDatabaseId);
 		publish.setPublishProjectId(projectId);
 		publish.setPublishResourceId(id);

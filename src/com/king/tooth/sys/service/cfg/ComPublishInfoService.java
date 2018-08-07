@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -22,7 +22,7 @@ public class ComPublishInfoService extends AbstractService{
 	 * @return
 	 */
 	public boolean validResourceIsPublished(String databaseId, String projectId, String resourceId){
-		String hql = "from ComPublishInfo where";
+		String hql = "from DmPublishInfo where";
 		List<Object> params = new ArrayList<Object>(3);
 		if(databaseId != null){
 			hql += " publishDatabaseId=?";
@@ -43,7 +43,7 @@ public class ComPublishInfoService extends AbstractService{
 			params.add(resourceId);
 		}
 		
-		ComPublishInfo publishInfo = HibernateUtil.extendExecuteUniqueQueryByHql(ComPublishInfo.class, hql, params);
+		DmPublishInfo publishInfo = HibernateUtil.extendExecuteUniqueQueryByHql(DmPublishInfo.class, hql, params);
 		params.clear();
 		if(publishInfo == null){
 			return false;
@@ -60,7 +60,7 @@ public class ComPublishInfoService extends AbstractService{
 	 * @param publishResourceId 
 	 */
 	public void deletePublishedData(String publishProjectId, String publishResourceId) {
-		String hql = "delete ComPublishInfo where";
+		String hql = "delete DmPublishInfo where";
 		List<Object> params = new ArrayList<Object>(2);
 		if(publishProjectId != null){
 			hql += " publishProjectId = ?";
@@ -82,7 +82,7 @@ public class ComPublishInfoService extends AbstractService{
 	 * @param publishResourceIds 
 	 */
 	public void batchDeletePublishedData(String publishProjectId, List<Object> publishResourceIds) {
-		StringBuilder hql = new StringBuilder("delete ComPublishInfo where");
+		StringBuilder hql = new StringBuilder("delete DmPublishInfo where");
 		List<Object> params = new ArrayList<Object>(publishResourceIds.size()+1);
 		if(publishProjectId != null){
 			hql.append(" publishProjectId = ?");

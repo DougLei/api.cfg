@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.sys.entity.common.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**

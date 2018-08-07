@@ -11,8 +11,8 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 
 /**
  * 数据字典表
@@ -169,8 +169,8 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	 * 转换为要发布的基础数据资源对象
 	 * @return
 	 */
-	public ComPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
-		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+	public DmPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
+		DmPublishBasicData publishBasicData = new DmPublishBasicData();
 		publishBasicData.setBasicDataResourceName(getEntityName());
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
 		publishBasicData.setBelongPlatformType(belongPlatformType);

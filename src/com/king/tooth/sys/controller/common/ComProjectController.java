@@ -11,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
-import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.util.StrUtils;
 
 /**

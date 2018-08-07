@@ -6,10 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.common.ComSqlScript;
-import com.king.tooth.sys.entity.common.sqlscript.ActParameter;
-import com.king.tooth.sys.entity.common.sqlscript.SqlScriptParameterNameRecord;
+import com.king.tooth.sys.entity.cfg.sql.ActParameter;
+import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 
 /**
  * sql参数解析工具类

@@ -7,8 +7,8 @@ import java.util.Set;
 
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.common.ComSqlScript;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.AbstractCommonBuiltinBMProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.query.BuiltinQueryMethodProcesser;

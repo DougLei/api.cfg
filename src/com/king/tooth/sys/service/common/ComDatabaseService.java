@@ -295,7 +295,7 @@ public class ComDatabaseService extends AbstractPublishService {
 		}
 		
 		// 删除该库下，所有发布的信息
-		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete ComPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
+		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete DmPublishInfo where publishDatabaseId = '"+databaseId+"'", null);
 		// 远程删除运行系统中的数据库信息
 		executeRemoteUpdate(getAppSysDatabaseId(null), null, "delete "+database.getEntityName()+" where "+ResourceNameConstants.ID+" = '"+database.getId()+"'");
 		

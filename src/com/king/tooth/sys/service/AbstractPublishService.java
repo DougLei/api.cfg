@@ -17,7 +17,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.cfg.ComPublishInfoService;
 import com.king.tooth.util.ExceptionUtil;
@@ -63,7 +63,7 @@ public abstract class AbstractPublishService extends AbstractService{
 		}
 		
 		// 获取发布信息对象
-		ComPublishInfo publishInfo = publish.turnToPublish();
+		DmPublishInfo publishInfo = publish.turnToPublish();
 		
 		// 获取远程sessionFactory
 		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
@@ -152,7 +152,7 @@ public abstract class AbstractPublishService extends AbstractService{
 		// 记录发布时的错误信息
 		String errMsg = null;
 		// 获取发布信息对象
-		List<ComPublishInfo> publishInfos = new ArrayList<ComPublishInfo>(publishs.size());
+		List<DmPublishInfo> publishInfos = new ArrayList<DmPublishInfo>(publishs.size());
 		
 		// 获取远程sessionFactory
 		SessionFactoryImpl sessionFactory = DynamicDBUtil.getSessionFactory(databaseId);
@@ -161,7 +161,7 @@ public abstract class AbstractPublishService extends AbstractService{
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			
-			ComPublishInfo publishInfo;
+			DmPublishInfo publishInfo;
 			JSONObject dataLink;
 			JSONObject publishEntityJson;
 			SysResource csr;
@@ -205,7 +205,7 @@ public abstract class AbstractPublishService extends AbstractService{
 		}
 		
 		// 添加新的发布信息数据
-		for (ComPublishInfo publishInfo : publishInfos) {
+		for (DmPublishInfo publishInfo : publishInfos) {
 			if(publishInfo.getErrMsg() == null && errMsg == null){
 				publishInfo.setIsSuccess(1);
 			}else{

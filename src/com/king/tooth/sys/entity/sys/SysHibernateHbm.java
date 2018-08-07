@@ -11,8 +11,8 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
@@ -165,8 +165,8 @@ public class SysHibernateHbm extends AbstractSysResource implements ITable, IPub
 		return TABLE;
 	}
 	
-	public ComPublishInfo turnToPublish() {
-		ComPublishInfo publish = new ComPublishInfo();
+	public DmPublishInfo turnToPublish() {
+		DmPublishInfo publish = new DmPublishInfo();
 		publish.setPublishDatabaseId(refDatabaseId);
 		publish.setPublishProjectId(projectId);
 		if(isDataLinkTableHbm != null && isDataLinkTableHbm == 1){

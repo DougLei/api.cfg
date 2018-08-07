@@ -1,7 +1,7 @@
 package com.king.tooth.sys.entity;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 
 /**
  * 发布信息接口
@@ -12,7 +12,7 @@ public interface IPublish extends IEntity{
 	/**
 	 * 转换为发布信息对象
 	 */
-	public ComPublishInfo turnToPublish();
+	public DmPublishInfo turnToPublish();
 	
 	/**
 	 * 获的批量发布时的消息

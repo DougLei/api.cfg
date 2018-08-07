@@ -2,7 +2,7 @@ package com.king.tooth.web.processer.sqlresource.get;
 
 import org.hibernate.Query;
 
-import com.king.tooth.sys.entity.common.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.web.entity.resulttype.TextResultEntity;
 
 /**

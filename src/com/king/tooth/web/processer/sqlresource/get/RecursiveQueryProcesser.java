@@ -6,7 +6,7 @@ import java.util.Map;
 import org.hibernate.Query;
 
 import com.king.tooth.constants.ResourceNameConstants;
-import com.king.tooth.sys.entity.common.sqlscript.SqlQueryResultColumn;
+import com.king.tooth.sys.entity.cfg.sql.SqlQueryResultColumn;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;

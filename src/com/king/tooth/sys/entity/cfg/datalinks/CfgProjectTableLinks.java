@@ -11,15 +11,15 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 项目和表的关系
+ * 项目和表的关系表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComProjectComTabledataLinks implements Serializable, ITable {
+public class CfgProjectTableLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PROJECT_TABLE_LINKS", 0);
-		table.setResourceName("ComProjectComTabledataLinks");
+		ComTabledata table = new ComTabledata("CFG_PROJECT_TABLE_LINKS", 0);
+		table.setResourceName("CfgProjectTableLinks");
 		table.setName("项目和表的关系表");
 		table.setComments("项目和表的关系表");
 		table.setIsBuiltin(1);
@@ -53,6 +53,6 @@ public class ComProjectComTabledataLinks implements Serializable, ITable {
 	}
 
 	public String toDropTable() {
-		return "COM_PROJECT_TABLE_LINKS";
+		return "CFG_PROJECT_TABLE_LINKS";
 	}
 }

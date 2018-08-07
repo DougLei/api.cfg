@@ -16,7 +16,7 @@ import com.king.tooth.sys.controller.common.ComSqlScriptParameterController;
 import com.king.tooth.sys.controller.common.ComSysAccountController;
 import com.king.tooth.sys.controller.common.ComUserController;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.service.app.ComDeptService;
 import com.king.tooth.sys.service.cfg.ComColumndataService;

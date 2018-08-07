@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.common;
+package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +11,12 @@ import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 项目信息资源对象
+ * 项目信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -74,8 +72,8 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_PROJECT", 0);
-		table.setName("项目信息资源对象表");
-		table.setComments("项目信息资源对象表");
+		table.setName("项目信息表表");
+		table.setComments("项目信息表表");
 		table.setIsResource(1);
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
@@ -150,8 +148,8 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		return PROJECT;
 	}
 	
-	public ComPublishInfo turnToPublish() {
-		ComPublishInfo publish = new ComPublishInfo();
+	public DmPublishInfo turnToPublish() {
+		DmPublishInfo publish = new DmPublishInfo();
 		publish.setPublishDatabaseId(refDatabaseId);
 		publish.setPublishProjectId(id);
 		publish.setPublishResourceId(id);

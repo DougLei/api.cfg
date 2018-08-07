@@ -9,9 +9,9 @@ import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishBasicData;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.dm.DmPublishBasicData;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 
 /**
  * 资源信息表
@@ -109,7 +109,7 @@ public class SysResource extends AbstractSysResource implements ITable{
 		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
 	}
 	
-	public ComPublishInfo turnToPublish() {
+	public DmPublishInfo turnToPublish() {
 		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
 	}
 	
@@ -117,8 +117,8 @@ public class SysResource extends AbstractSysResource implements ITable{
 	 * 转换为要发布的基础数据资源对象
 	 * @return
 	 */
-	public ComPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
-		ComPublishBasicData publishBasicData = new ComPublishBasicData();
+	public DmPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
+		DmPublishBasicData publishBasicData = new DmPublishBasicData();
 		publishBasicData.setBasicDataResourceName(getEntityName());
 		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
 		publishBasicData.setBelongPlatformType(belongPlatformType);

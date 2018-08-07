@@ -18,9 +18,9 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinInstance;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComPublishInfo;
+import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.common.ComProject;
+import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractPublishService;
@@ -74,7 +74,7 @@ public class ComTabledataService extends AbstractPublishService {
 	private String validTableIsExistsInDatabase(String projectId, String tableName) {
 		ComProject project = getObjectById(projectId, ComProject.class);
 		String hql = "select count(tb."+ResourceNameConstants.ID+") from " + 
-				"CfgDatabase d, ComProject p, ComProjectComTabledataLinks pt, ComTabledata tb " +
+				"CfgDatabase d, ComProject p, CfgProjectTableLinks pt, ComTabledata tb " +
 				"where d.id = '"+project.getRefDatabaseId()+"' and d.id = p.refDatabaseId and p.id=pt.leftId and tb.id=pt.rightId and tb.tableName='"+tableName + "'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
 		if(count > 0){
@@ -107,9 +107,9 @@ public class ComTabledataService extends AbstractPublishService {
 				// 保存表和项目的关联关系
 				// TODO 单项目，取消是否平台开发者的判断
 //				if(isPlatformDeveloper){
-//					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", CurrentThreadContext.getProjectId(), tableId);
+//					HibernateUtil.saveDataLinks("CfgProjectTableLinks", CurrentThreadContext.getProjectId(), tableId);
 //				}else{
-					HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
+					HibernateUtil.saveDataLinks("CfgProjectTableLinks", projectId, tableId);
 //				}
 				return tableJsonObject;
 			}
@@ -177,7 +177,7 @@ public class ComTabledataService extends AbstractPublishService {
 //			}
 //		}
 		
-		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("ComProjectComTabledataLinks", null, tableId);
+		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("CfgProjectTableLinks", null, tableId);
 		if(datalinks.size() > 1){
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
 			StringBuilder hql = new StringBuilder("select projName from ComProject where id in (");
@@ -202,7 +202,7 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourceNameConstants.ID+" = '"+tableId+"'");
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
-		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", null, tableId);
+		HibernateUtil.deleteDataLinks("CfgProjectTableLinks", null, tableId);
 		return null;
 	}
 	
@@ -307,7 +307,7 @@ public class ComTabledataService extends AbstractPublishService {
 		ComTabledata table = getObjectById(tableId, ComTabledata.class);
 		String operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 		if(operResult == null){
-			HibernateUtil.saveDataLinks("ComProjectComTabledataLinks", projectId, tableId);
+			HibernateUtil.saveDataLinks("CfgProjectTableLinks", projectId, tableId);
 		}
 		return operResult;
 	}
@@ -319,7 +319,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelProjTableRelation(String projectId, String tableId) {
-		HibernateUtil.deleteDataLinks("ComProjectComTabledataLinks", projectId, tableId);
+		HibernateUtil.deleteDataLinks("CfgProjectTableLinks", projectId, tableId);
 		return null;
 	}
 	
@@ -382,7 +382,7 @@ public class ComTabledataService extends AbstractPublishService {
 		ResourceHandlerUtil.clearTables(tables);
 		
 		publishInfoService.deletePublishedData(projectId, tableId);
-		executeRemotePublishTable(project.getRefDatabaseId(), projectId, hbms, "ComProjectComHibernateHbmLinks");
+		executeRemotePublishTable(project.getRefDatabaseId(), projectId, hbms, "CfgProjectHbmLinks");
 		hbms.clear();
 		
 		return usePublishResourceApi(tableId, projectId, "table", "1", projectId);
@@ -437,7 +437,7 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		// 添加新的发布信息数据
-		ComPublishInfo publishInfo;
+		DmPublishInfo publishInfo;
 		for (SysHibernateHbm hbm : hbms) {
 			publishInfo = hbm.turnToPublish();
 			if(errMsg == null){
@@ -476,7 +476,7 @@ public class ComTabledataService extends AbstractPublishService {
 		String deleteTableResourceNames = tableHandler.dropTable(table);
 		
 		executeRemoteUpdate(null, projectId, 
-				"delete ComProjectComHibernateHbmLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+new SysHibernateHbm().getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+tableId+"')",
+				"delete CfgProjectHbmLinks where projectId='"+projectId+"' and leftId='"+projectId+"' and rightId in (select "+ResourceNameConstants.ID+" from "+new SysHibernateHbm().getEntityName()+" where projectId='"+projectId+"' and refDataId = '"+tableId+"')",
 				"delete " + new SysHibernateHbm().getEntityName() + " where projectId='"+projectId+"' and refDataId = '"+tableId+"'",
 				"delete SysResource where projectId='"+projectId+"' and refDataId = '"+tableId+"'");
 		publishInfoService.deletePublishedData(projectId, tableId);
@@ -555,13 +555,13 @@ public class ComTabledataService extends AbstractPublishService {
 			tb.clear();
 			
 			if(hbms.size() == (limitSize-1)){
-				executeRemotePublishTable(databaseId, projectId, hbms, "ComProjectComHibernateHbmLinks");
+				executeRemotePublishTable(databaseId, projectId, hbms, "CfgProjectHbmLinks");
 				hbms.clear();
 			}
 		}
 		
 		if(hbms.size() > 0){
-			executeRemotePublishTable(databaseId, projectId, hbms, "ComProjectComHibernateHbmLinks");
+			executeRemotePublishTable(databaseId, projectId, hbms, "CfgProjectHbmLinks");
 			hbms.clear();
 		}
 		tables.clear();

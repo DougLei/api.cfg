@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.sys.entity.common.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 
 /**
  * 处理这种请求路径格式的处理器：/{resourceType}/{resourceId}

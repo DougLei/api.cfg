@@ -15,7 +15,7 @@ import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 字段数据信息资源对象
+ * 字段信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -207,8 +207,8 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_COLUMNDATA", 0);
-		table.setName("字段数据信息资源对象表");
-		table.setComments("字段数据信息资源对象表");
+		table.setName("字段信息表表");
+		table.setComments("字段信息表表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0); 
 		table.setIsCreated(1);

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.cfg;
+package com.king.tooth.sys.entity.dm;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,13 +12,15 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 要发布的基础数据资源对象
+ * 发布的基础数据信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
+public class DmPublishBasicData extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 基础数据所对应的资源名
@@ -89,9 +91,9 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PUBLISH_BASIC_DATA", 0);
-		table.setName("要发布的基础数据资源对象表");
-		table.setComments("要发布的基础数据资源对象表");
+		ComTabledata table = new ComTabledata("DM_PUBLISH_BASIC_DATA", 0);
+		table.setName("发布的基础数据信息表");
+		table.setComments("发布的基础数据信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(0);
 		table.setIsCreated(1);
@@ -123,11 +125,11 @@ public class ComPublishBasicData extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public String toDropTable() {
-		return "COM_PUBLISH_BASIC_DATA";
+		return "DM_PUBLISH_BASIC_DATA";
 	}
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComPublishBasicData";
+		return "DmPublishBasicData";
 	}
 }
