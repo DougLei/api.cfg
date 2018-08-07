@@ -1,6 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +23,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, IJson ijson){
+	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
@@ -36,7 +37,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, IJson ijson){
+	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
@@ -50,7 +51,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, IJson ijson){
+	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String sqlScriptParameterIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(sqlScriptParameterIds)){
 			return "要删除的sql脚本参数id不能为空";

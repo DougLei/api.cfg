@@ -1,6 +1,7 @@
 package com.king.tooth.sys.controller.common;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +25,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, IJson ijson) {
+	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams) {
 		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class);
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
@@ -48,7 +49,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, IJson ijson) {
+	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams) {
 		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class);
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
@@ -72,7 +73,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, IJson ijson){
+	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String projectModuleIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(projectModuleIds)){
 			return "要删除的项目模块id不能为空";
@@ -95,7 +96,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object publish(HttpServletRequest request, IJson ijson){
+	public Object publish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
@@ -116,7 +117,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelPublish(HttpServletRequest request, IJson ijson){
+	public Object cancelPublish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.cache.CodeResourceMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.web.servlet.route.RouteBody;
 
@@ -67,7 +68,15 @@ public class RequestBody implements Serializable{
 		 */
 		String requestUri = request.getRequestURI().replace(
 				request.getContextPath() + request.getServletPath() + "/", "");
-		this.routeBody = new RouteBody(requestUri);
+		
+		String codeUri = "/" + requestUri + "/" + request.getMethod().toLowerCase();
+		if(CodeResourceMapping.isCodeResource(codeUri)){
+			this.routeBody = new RouteBody();
+			routeBody.setResourceName(codeUri);
+			routeBody.setIsAction(true);
+		}else{
+			this.routeBody = new RouteBody(requestUri);
+		}
 	}
 	
 	/**

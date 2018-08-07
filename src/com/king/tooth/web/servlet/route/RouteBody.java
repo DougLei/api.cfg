@@ -14,6 +14,8 @@ public class RouteBody implements Serializable{
 	
 	private static final RouteBodyAnalysis analysis = new RouteBodyAnalysis();
 	
+	public RouteBody() {
+	}
 	public RouteBody(String requestUri) {
 		analysis.doAnalysis(requestUri, this);
 		

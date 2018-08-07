@@ -1,6 +1,7 @@
 package com.king.tooth.cache.entity;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,7 +18,7 @@ public class CodeResourceEntity {
 	/**
 	 * 方法参数的类型数组
 	 */
-	private Class[] methodParameterClassTypeArr = {HttpServletRequest.class, IJson.class};
+	private static final Class[] methodParameterClassTypeArr = {HttpServletRequest.class, IJson.class, Map.class};
 	
 	/**
 	 * 代码对应的实例
@@ -37,15 +38,19 @@ public class CodeResourceEntity {
 	 * 调用代码资源的方法
 	 * @param request
 	 * @param ijson
+	 * @param urlParams
 	 * @return
 	 */
-	 public Object invokeMethodForCodeResource(HttpServletRequest request, IJson ijson){
+	 public Object invokeMethodForCodeResource(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		Object object = null;
 		try {
 			Log4jUtil.debug(" ========================> 此次请求调用的类为：{}", instance.getClass());
 			Log4jUtil.debug(" ========================> 此次请求调用的方法为：{}", methodName);
+			Log4jUtil.debug(" ========================> 此次请求调用的ijson为：{}", ijson);
+			Log4jUtil.debug(" ========================> 此次请求调用的urlParams为：{}", urlParams);
+			
 			Method method = instance.getClass().getDeclaredMethod(methodName, methodParameterClassTypeArr);
-			object = method.invoke(instance, new Object[]{request, ijson});
+			object = method.invoke(instance, new Object[]{request, ijson, urlParams});
 		} catch (Exception e) {
 			object = ExceptionUtil.getErrMsg("CodeResourceEntity", "invokeMethodForCodeResource", e);
 			Log4jUtil.debug("[CodeResourceEntity.invokeMethodForCodeResource]方法出现异常信息:{}", object);

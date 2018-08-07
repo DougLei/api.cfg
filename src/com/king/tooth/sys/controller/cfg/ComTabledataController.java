@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +26,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, IJson ijson){
+	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
@@ -49,7 +50,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, IJson ijson){
+	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
@@ -73,7 +74,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, IJson ijson){
+	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String tableIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(tableIds)){
 			return "要删除的表id不能为空";
@@ -96,7 +97,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object buildModel(HttpServletRequest request, IJson ijson){
+	public Object buildModel(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 //		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 //			return "建模功能目前只提供给平台开发人员使用";
 //		}
@@ -139,7 +140,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object addProjTableRelation(HttpServletRequest request, IJson ijson){
+	public Object addProjTableRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
@@ -159,7 +160,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelProjTableRelation(HttpServletRequest request, IJson ijson){
+	public Object cancelProjTableRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
@@ -180,7 +181,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object publish(HttpServletRequest request, IJson ijson){
+	public Object publish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
@@ -201,7 +202,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelPublish(HttpServletRequest request, IJson ijson){
+	public Object cancelPublish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}

@@ -28,7 +28,7 @@ public class CommonDispatcherServlet extends HttpServlet implements Serializable
 		
 		ResponseBody responseBody = null;
 		if(requestBody.getResourceInfo().isCodeResource()){
-			Object object = CodeResourceMapping.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData());
+			Object object = CodeResourceMapping.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData(), requestBody.getRequestUrlParams());
 			if(object instanceof String){
 				responseBody = new ResponseBody(object.toString());
 			}else{

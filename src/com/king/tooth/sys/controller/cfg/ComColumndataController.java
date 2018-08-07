@@ -1,6 +1,7 @@
 package com.king.tooth.sys.controller.cfg;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,7 +24,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object add(HttpServletRequest request, IJson ijson){
+	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
@@ -47,7 +48,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
-	public Object update(HttpServletRequest request, IJson ijson){
+	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
@@ -71,7 +72,7 @@ public class ComColumndataController extends AbstractController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
-	public Object delete(HttpServletRequest request, IJson ijson){
+	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String columnIds = request.getParameter(ResourceNameConstants.IDS);
 		if(StrUtils.isEmpty(columnIds)){
 			return "要删除的列id不能为空";
