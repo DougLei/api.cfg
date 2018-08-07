@@ -186,7 +186,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			// TODO 单项目，取消是否平台开发者的判断
 //			if(isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
-				// 如果修改了sql脚本的资源名，也要同步修改ComSysResource表中的资源名
+				// 如果修改了sql脚本的资源名，也要同步修改SysResource表中的资源名
 				new SysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){

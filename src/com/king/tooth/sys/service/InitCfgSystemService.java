@@ -546,7 +546,7 @@ public class InitCfgSystemService extends AbstractService{
 		CfgDatabase database = BuiltinInstance.currentSysBuiltinDatabaseInstance;
 		
 		CurrentThreadContext.setDatabaseId(database.getId());
-		// 获取当前系统的ComHibernateHbm映射文件对象
+		// 获取当前系统的SysHibernateHbm映射文件对象
 		String sql = "select hbm_content from com_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'SysHibernateHbm' and is_enabled = 1";
 		String hbmContent = null;
 		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
@@ -554,7 +554,7 @@ public class InitCfgSystemService extends AbstractService{
 		}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
 			if(clob == null){
-				throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到ComHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
+				throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到SysHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
 			}
 			
 			Reader reader = clob.getCharacterStream();
@@ -594,13 +594,13 @@ public class InitCfgSystemService extends AbstractService{
 	
 	/**
 	 * 添加其他核心表的hbm资源
-	 * <p>主要针对只在运行系统中会存在的资源，例如ComProjectComHibernateHbmLinks关系表等</p>
+	 * <p>主要针对只在运行系统中会存在的资源，例如ComProjectSysHibernateHbmLinks关系表等</p>
 	 * @param coreTableHbmContents
 	 */
 	private void addOtherCoreTableHbmContents(List<String> coreTableHbmContents) {
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
-		ComTabledata comProjectComHibernateHbmLinksTable = new CfgProjectHbmLinks().toCreateTable();
-		coreTableHbmContents.add(hibernateHbmHandler.createHbmMappingContent(comProjectComHibernateHbmLinksTable, true));
+		ComTabledata comProjectSysHibernateHbmLinksTable = new CfgProjectHbmLinks().toCreateTable();
+		coreTableHbmContents.add(hibernateHbmHandler.createHbmMappingContent(comProjectSysHibernateHbmLinksTable, true));
 	}
 	
 	/**

@@ -393,9 +393,9 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @param databaseId  
 	 * @param projectId  
 	 * @param hbms
-	 * @param comProjectComHibernateHbmLinkResourceName
+	 * @param comProjectSysHibernateHbmLinkResourceName
 	 */
-	private void executeRemotePublishTable(String databaseId, String projectId, List<SysHibernateHbm> hbms, String comProjectComHibernateHbmLinkResourceName){
+	private void executeRemotePublishTable(String databaseId, String projectId, List<SysHibernateHbm> hbms, String comProjectSysHibernateHbmLinkResourceName){
 		if(databaseId == null){
 			databaseId = ProjectIdRefDatabaseIdMapping.getDbId(projectId);
 		}
@@ -420,7 +420,7 @@ public class ComTabledataService extends AbstractPublishService {
 				datalink = ResourceHandlerUtil.getDataLinksObject(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID), ""+(orderCode++), null, null);
 				datalink.put("projectId", projectId);
 				datalink.put(ResourcePropNameConstants.ID, ResourceHandlerUtil.getIdentity());
-				session.save(comProjectComHibernateHbmLinkResourceName, datalink);
+				session.save(comProjectSysHibernateHbmLinkResourceName, datalink);
 				
 				SysResource csr = hbm.turnToPublishResource(projectId, publishEntityJson.getString(ResourcePropNameConstants.ID));
 				session.save(csr.getEntityName(), csr.toEntityJson());
@@ -606,7 +606,7 @@ public class ComTabledataService extends AbstractPublishService {
 
 	/**
 	 * 发布公用的表资源
-	 * <p>公用的表一般在发布数据库的时候就已经完成，这里主要是将表和项目关联起来，在远程数据库的ComSysResource资源中插入数据</p>
+	 * <p>公用的表一般在发布数据库的时候就已经完成，这里主要是将表和项目关联起来，在远程数据库的SysResource资源中插入数据</p>
 	 * @param databaseId
 	 * @param projectId
 	 */

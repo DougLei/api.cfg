@@ -199,7 +199,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 			coreTableOfHbmInputstreams.clear();
 		}
 		
-		// 将这些运行系统的基础表的hbm保存到远程数据库的ComHibernateHbm表中
+		// 将这些运行系统的基础表的hbm保存到远程数据库的SysHibernateHbm表中
 		List<SysHibernateHbm> hbms = new ArrayList<SysHibernateHbm>(appSystemCoreTables.size());// 记录表对应的hbm内容，要发布的是这个
 		SysHibernateHbm hbm = null;
 		Date currentDate = new Date();

@@ -23,13 +23,13 @@ class CurrentThreadData implements Serializable{
 	/**
 	 * 当前线程的租户id
 	 * <p>记录每个线程请求的租户主键</p>
-	 * <p>和ComSysAccountOnlineStatus中的currentCustomerId值一致</p>
+	 * <p>和SysAccountOnlineStatus中的currentCustomerId值一致</p>
 	 */
 	private String customerId;
 	/**
 	 * 当前线程的项目id
 	 * <p>记录每个线程请求的项目主键</p>
-	 * <p>和ComSysAccountOnlineStatus中的currentProjectId值一致</p>
+	 * <p>和SysAccountOnlineStatus中的currentProjectId值一致</p>
 	 */
 	private String projectId;
 	/**

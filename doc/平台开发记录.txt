@@ -30,8 +30,8 @@
 
 **************************************************************
 暂时屏蔽的代码：
-1.ComSysAccountService.findAccountOnlineStatus()
-2.ComSysAccountOnlineStatusService.validAccountOfOnLineStatus()
+1.SysAccountService.findAccountOnlineStatus()
+2.SysAccountOnlineStatusService.validAccountOfOnLineStatus()
 **************************************************************
 部署到正式环境后，有几个要改的地方：
 1.log4j.properties的等级改为INFO

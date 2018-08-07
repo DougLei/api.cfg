@@ -236,7 +236,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		
 		ComColumndata accountTypeColumn = new ComColumndata("account_type", BuiltinCodeDataType.INTEGER, 1);
 		accountTypeColumn.setName("当前账户类型");
-		accountTypeColumn.setComments("当前账户类型：冗余ComSysAccount表的accountType值");
+		accountTypeColumn.setComments("当前账户类型：冗余SysAccount表的accountType值");
 		accountTypeColumn.setOrderCode(5);
 		columns.add(accountTypeColumn);
 		

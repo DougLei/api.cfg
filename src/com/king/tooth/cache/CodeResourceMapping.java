@@ -42,9 +42,9 @@ public class CodeResourceMapping {
 	 */
 	private static void initActionCodeResource() {
 		// 数据库操作
-		put("ComDatabase_post_testLink", BuiltinInstance.databaseController, "testLink");
-		put("ComDatabase_post_publish", BuiltinInstance.databaseController, "publish");
-		put("ComDatabase_post_cancelPublish", BuiltinInstance.databaseController, "cancelPublish");
+		put("CfgDatabase_post_testLink", BuiltinInstance.databaseController, "testLink");
+		put("CfgDatabase_post_publish", BuiltinInstance.databaseController, "publish");
+		put("CfgDatabase_post_cancelPublish", BuiltinInstance.databaseController, "cancelPublish");
 		put("/database/test_link/post", BuiltinInstance.databaseController, "testLink");
 		put("/database/publish/add/post", BuiltinInstance.databaseController, "publish");
 		put("/database/publish/cancel/post", BuiltinInstance.databaseController, "cancelPublish");
@@ -84,15 +84,15 @@ public class CodeResourceMapping {
 		put("/sql/publish/cancel/post", BuiltinInstance.sqlController, "cancelPublish");
 		
 		// 用户操作
-		put("ComUser_post_openAccount", BuiltinInstance.userController, "openAccount");
-		put("ComUser_post_updatePassword", BuiltinInstance.userController, "updatePassword");
+		put("SysUser_post_openAccount", BuiltinInstance.userController, "openAccount");
+		put("SysUser_post_updatePassword", BuiltinInstance.userController, "updatePassword");
 		put("/user/open_account/post", BuiltinInstance.userController, "openAccount");
 		put("/user/update_pwd/post", BuiltinInstance.userController, "updatePassword");
 		
 		// 账户操作
-		put("ComSysAccount_post_login", BuiltinInstance.accountController, "login");
-		put("ComSysAccount_post_loginOut", BuiltinInstance.accountController, "loginOut");
-		put("ComSysAccount_post_updatePassword", BuiltinInstance.accountController, "updatePassword");
+		put("SysAccount_post_login", BuiltinInstance.accountController, "login");
+		put("SysAccount_post_loginOut", BuiltinInstance.accountController, "loginOut");
+		put("SysAccount_post_updatePassword", BuiltinInstance.accountController, "updatePassword");
 		put("/login/post", BuiltinInstance.accountController, "login");
 		put("/login_out/post", BuiltinInstance.accountController, "loginOut");
 		put("/account/update_pwd/post", BuiltinInstance.accountController, "updatePassword");
@@ -104,9 +104,9 @@ public class CodeResourceMapping {
 	 */
 	private static void initNormalCodeResource() {
 		// 数据库操作
-		put("ComDatabase_post", BuiltinInstance.databaseController, "add");
-		put("ComDatabase_put", BuiltinInstance.databaseController, "update");
-		put("ComDatabase_delete", BuiltinInstance.databaseController, "delete");
+		put("CfgDatabase_post", BuiltinInstance.databaseController, "add");
+		put("CfgDatabase_put", BuiltinInstance.databaseController, "update");
+		put("CfgDatabase_delete", BuiltinInstance.databaseController, "delete");
 		put("/database/add/post", BuiltinInstance.databaseController, "add");
 		put("/database/update/put", BuiltinInstance.databaseController, "update");
 		put("/database/delete/delete", BuiltinInstance.databaseController, "delete");
@@ -160,17 +160,17 @@ public class CodeResourceMapping {
 		put("/sql_parameter/delete/delete", BuiltinInstance.sqlParamController, "delete");
 		
 		// 用户操作
-		put("ComUser_post", BuiltinInstance.userController, "add");
-		put("ComUser_put", BuiltinInstance.userController, "update");
-		put("ComUser_delete", BuiltinInstance.userController, "delete");
+		put("SysUser_post", BuiltinInstance.userController, "add");
+		put("SysUser_put", BuiltinInstance.userController, "update");
+		put("SysUser_delete", BuiltinInstance.userController, "delete");
 		put("/user/add/post", BuiltinInstance.userController, "add");
 		put("/user/update/put", BuiltinInstance.userController, "update");
 		put("/user/delete/delete", BuiltinInstance.userController, "delete");
 		
 		// 账户操作
-		put("ComSysAccount_post", BuiltinInstance.accountController, "add");
-		put("ComSysAccount_put", BuiltinInstance.accountController, "update");
-		put("ComSysAccount_delete", BuiltinInstance.accountController, "delete");
+		put("SysAccount_post", BuiltinInstance.accountController, "add");
+		put("SysAccount_put", BuiltinInstance.accountController, "update");
+		put("SysAccount_delete", BuiltinInstance.accountController, "delete");
 		put("/account/add/post", BuiltinInstance.accountController, "add");
 		put("/account/update/put", BuiltinInstance.accountController, "update");
 		put("/account/delete/delete", BuiltinInstance.accountController, "delete");
