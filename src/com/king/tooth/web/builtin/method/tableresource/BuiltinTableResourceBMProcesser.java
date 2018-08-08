@@ -41,7 +41,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 */
 	private BuiltinParentsubQueryMethodProcesser parentsubQueryMethodProcesser;
 	/**
-	 * 内置子资源数据集合查询函数处理器实例
+	 * 内置子列表资源查询函数处理器实例 
 	 */
 	private BuiltinSublistMethodProcesser sublistMethodProcesser;
 	
@@ -94,7 +94,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		}
 	}
 	/**
-	 * 内置父子资源链接查询函数处理器实例 
+	 * 内置子列表资源查询函数处理器实例 
 	 * @param requestUrlParams
 	 * @param hqlParameterValues hql参数值集合
 	 */

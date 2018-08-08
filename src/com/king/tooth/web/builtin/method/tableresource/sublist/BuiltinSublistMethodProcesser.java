@@ -10,7 +10,7 @@ import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.tableresource.AbstractTableResourceBuiltinMethodProcesser;
 
 /**
- * 内置子资源数据集合查询函数处理器
+ * 内置子列表资源查询函数处理器
  * @author DougLei
  */
 public class BuiltinSublistMethodProcesser extends AbstractTableResourceBuiltinMethodProcesser{
