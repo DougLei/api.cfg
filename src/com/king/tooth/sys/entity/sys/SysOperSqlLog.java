@@ -81,13 +81,13 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 		reqLogIdColumn.setOrderCode(1);
 		columns.add(reqLogIdColumn);
 		
-		ComColumndata sqlScriptColumn = new ComColumndata("sql_script", BuiltinCodeDataType.STRING, 2000);
+		ComColumndata sqlScriptColumn = new ComColumndata("sql_script", BuiltinCodeDataType.STRING, 9999);
 		sqlScriptColumn.setName("操作的sql语句");
 		sqlScriptColumn.setComments("操作的sql语句");
 		sqlScriptColumn.setOrderCode(2);
 		columns.add(sqlScriptColumn);
 		
-		ComColumndata sqlParamsColumn = new ComColumndata("sql_params", BuiltinCodeDataType.STRING, 1200);
+		ComColumndata sqlParamsColumn = new ComColumndata("sql_params", BuiltinCodeDataType.STRING, 9999);
 		sqlParamsColumn.setName("对应的参数");
 		sqlParamsColumn.setComments("对应的参数");
 		sqlParamsColumn.setOrderCode(3);
