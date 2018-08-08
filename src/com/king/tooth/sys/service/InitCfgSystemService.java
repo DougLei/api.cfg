@@ -203,6 +203,7 @@ public class InitCfgSystemService extends AbstractService{
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加管理账户【1.管理账户】
 		SysAccount admin = new SysAccount();
+		admin.setId("16ed21bd7a7a41f5bea2ebaa258908cf");/* 在同步数据的时候，为了和服务器数据库中的id一致，这里写成固定值，即服务器数据库中，账户admin的id */
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
