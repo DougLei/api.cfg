@@ -115,11 +115,11 @@
 		
 		<!-- 名为common的servlet通用控制器 -->
 		<servlet>
-			<servlet-name>commonDispatcherServlet</servlet-name>
-			<servlet-class>com.king.tooth.web.servlet.CommonDispatcherServlet</servlet-class>
+			<servlet-name>commonServlet</servlet-name>
+			<servlet-class>com.king.tooth.web.servlet.CommonServlet</servlet-class>
 		</servlet>
 		<servlet-mapping>
-			<servlet-name>commonDispatcherServlet</servlet-name>
+			<servlet-name>commonServlet</servlet-name>
 			<url-pattern>/common/*</url-pattern>
 		</servlet-mapping>
 		

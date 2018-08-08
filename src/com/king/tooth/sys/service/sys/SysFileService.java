@@ -338,7 +338,7 @@ public class SysFileService extends AbstractService{
 					return "系统目前不支持从数据库中下载文件";
 				}
 			}else{
-				response.setHeader("Content-Disposition", "attachment;filename="+FileUtil.getFileCode()+".zip");
+				response.setHeader("Content-Disposition", "attachment;filename=【批量下载】["+FileUtil.getFileCode()+"].zip");
 				
 				out = response.getOutputStream();
 				zos = new ZipOutputStream(out);

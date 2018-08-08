@@ -21,7 +21,7 @@ import com.king.tooth.web.processer.ProcesserConfig;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class CommonDispatcherServlet extends HttpServlet implements Serializable{
+public class CommonServlet extends HttpServlet implements Serializable{
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		RequestBody requestBody = (RequestBody) request.getAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY);
