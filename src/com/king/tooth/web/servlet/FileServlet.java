@@ -31,18 +31,26 @@ public class FileServlet extends HttpServlet{
 				String method = request.getMethod().toLowerCase();
 				
 				Object result = null;
-				if("get".equals(method)){
+				
+				// 下载
+				if("get".equals(method) && "download".equals(uri[3])){
 					result = BuiltinInstance.fileService.download(request, response);
 					if(result instanceof String){// 如果下载出现问题，则最后需要打印responseBody
 						response.setHeader("Content-Type", "application/json;charset="+ EncodingConstants.UTF_8);
 						request.setAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY, true);
 					}
-				}else if("post".equals(method)){
+				}
+				// 上传
+				else if("post".equals(method) && "upload".equals(uri[3])){
 					result = BuiltinInstance.fileService.upload(request);
-				}else if("delete".equals(method)){
+				}
+				// 删除
+				else if("delete".equals(method) && "delete".equals(uri[3])){
 					result = BuiltinInstance.fileService.delete(request);
-				}else{
-					result = "操作文件接口，目前还不支持处理["+method+"]方式的请求";
+				}
+				// 暂不支持
+				else{
+					result = "操作文件接口，目前还不支持处理["+method+"]方式["+uri[3]+"]的请求";
 				}
 				
 				if(result == null){

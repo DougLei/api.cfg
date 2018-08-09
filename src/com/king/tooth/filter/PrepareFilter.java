@@ -76,7 +76,7 @@ public class PrepareFilter extends AbstractFilter{
 				HibernateUtil.rollbackTransaction();
 			}
 			
-			boolean isPrintResponseBody = (boolean) request.getAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY);
+			Boolean isPrintResponseBody = (Boolean) request.getAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY);
 			if(isPrintResponseBody){
 				printResult(resp, responseBody);
 			}

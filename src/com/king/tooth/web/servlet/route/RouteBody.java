@@ -3,6 +3,7 @@ package com.king.tooth.web.servlet.route;
 import java.io.Serializable;
 
 import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 请求的资源体对象
@@ -18,14 +19,6 @@ public class RouteBody implements Serializable{
 	}
 	public RouteBody(String requestUri) {
 		analysis.doAnalysis(requestUri, this);
-		
-		// 记录日志，请求的资源名
-		if(resourceName != null){
-			CurrentThreadContext.getReqLogData().getReqLog().setResourceName(resourceName);
-		}
-		if(parentResourceName != null){
-			CurrentThreadContext.getReqLogData().getReqLog().setParentResourceName(parentResourceName);
-		}
 	}
 	
 	/**
@@ -97,9 +90,15 @@ public class RouteBody implements Serializable{
 	}
 	public void setParentResourceName(String parentResourceName) {
 		this.parentResourceName = parentResourceName;
+		if(StrUtils.notEmpty(parentResourceName)){
+			CurrentThreadContext.getReqLogData().getReqLog().setParentResourceName(parentResourceName);
+		}
 	}
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
+		if(StrUtils.notEmpty(resourceName)){
+			CurrentThreadContext.getReqLogData().getReqLog().setResourceName(resourceName);
+		}
 	}
 	public boolean isAction() {
 		return isAction;
