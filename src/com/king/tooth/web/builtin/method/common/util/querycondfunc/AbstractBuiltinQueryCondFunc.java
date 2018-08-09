@@ -60,20 +60,13 @@ public abstract class AbstractBuiltinQueryCondFunc{
 	 * @param parameterValues
 	 */
 	private void preProcessValues(Object[] values, List<Object> parameterValues) {
-		boolean isLikeQuery = "like".equals(getMethodName());
-		
 		for (Object val : values) {
 			if(StrUtils.isNullStr((val+""))){// 如果查询的值是null，则查询条件为(is null/is not null)
 				valueIsNullStr = true;
 				parameterValues.add("");
 				continue;
 			}
-			
-			if(isLikeQuery){
-				parameterValues.add("%"+val+"%");
-			}else{
-				parameterValues.add(val);
-			}
+			parameterValues.add(val);
 		}
 	}
 	

@@ -14,7 +14,7 @@ public class ResultTypeUtil {
 	/**
 	 * 内置的resultType类型
 	 */
-	private transient static final String[] builtinResultType= {"KeyValues", "Strings", "Text"};
+	private transient static final String[] builtinResultType= {"Anonymous", "KeyValues", "Strings", "Text"};
 	
 	/**
 	 * 获取内置的resultType类型，给resultType属性
@@ -24,7 +24,7 @@ public class ResultTypeUtil {
 	private static String getBuiltinResultType(String resultType) {
 		String tmp = resultType.trim().toLowerCase();
 		for (String rt : builtinResultType) {
-			if(rt.toLowerCase().equals(tmp)){
+			if(rt.equalsIgnoreCase(tmp)){
 				return rt;
 			}
 		}
