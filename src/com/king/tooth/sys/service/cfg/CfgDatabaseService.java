@@ -15,14 +15,14 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
@@ -157,7 +157,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 	 * @return
 	 */
 	public String publishDatabase(String databaseId){
-		if(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
+		if(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
 			return "不能发布配置系统数据库";
 		}
 		CfgDatabase database = getObjectById(databaseId, CfgDatabase.class);
@@ -172,8 +172,8 @@ public class CfgDatabaseService extends AbstractPublishService {
 		}
 		
 		// 如果是自己的库，要创建
-		if(database.compareIsSameDatabase(BuiltinInstance.currentSysBuiltinDatabaseInstance)){
-			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
+		if(database.compareIsSameDatabase(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance)){
+			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
 			databaseHandler.createDatabase(database);
 		}
 		// 还要测试库能不能正常连接上
@@ -250,7 +250,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 		}
 
 		return usePublishResourceApi(database.getId(), "null", "db", "1", 
-				BuiltinInstance.currentSysBuiltinProjectInstance.getId());
+				BuiltinObjectInstance.currentSysBuiltinProjectInstance.getId());
 	}
 	
 	/**
@@ -259,7 +259,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 	 * @return
 	 */
 	public String cancelPublishDatabase(String databaseId){
-		if(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
+		if(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId().equals(databaseId)){
 			return "不能取消发布配置系统数据库";
 		}
 		CfgDatabase database = getObjectById(databaseId, CfgDatabase.class);
@@ -289,8 +289,8 @@ public class CfgDatabaseService extends AbstractPublishService {
 		DynamicDBUtil.removeDataSource(databaseId);
 		
 		// 如果是自己的库，要删除
-		if(database.compareIsSameDatabase(BuiltinInstance.currentSysBuiltinDatabaseInstance)){
-			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
+		if(database.compareIsSameDatabase(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance)){
+			DatabaseHandler databaseHandler = new DatabaseHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
 			databaseHandler.dropDatabase(database);
 		}
 		
@@ -302,6 +302,6 @@ public class CfgDatabaseService extends AbstractPublishService {
 		modifyIsCreatedPropVal(database.getEntityName(), 0, database.getId());
 		
 		return usePublishResourceApi(database.getId(), "null", "db", "-1", 
-				BuiltinInstance.currentSysBuiltinProjectInstance.getId());
+				BuiltinObjectInstance.currentSysBuiltinProjectInstance.getId());
 	}
 }

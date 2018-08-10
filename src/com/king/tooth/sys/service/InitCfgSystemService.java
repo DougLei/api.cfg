@@ -15,9 +15,8 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -50,6 +49,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysAccountRoleLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -88,8 +88,8 @@ public class InitCfgSystemService extends AbstractService{
 	private void processCurrentSysOfPorjDatabaseRelation() {
 		// 添加本系统和本数据库的映射关系
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
-				BuiltinInstance.currentSysBuiltinProjectInstance.getId(), 
-				BuiltinInstance.currentSysBuiltinDatabaseInstance.getId());
+				BuiltinObjectInstance.currentSysBuiltinProjectInstance.getId(), 
+				BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class InitCfgSystemService extends AbstractService{
 	private void initDatabaseInfo() {
 		try {
 			// 设置当前操作的项目，获得对应的sessionFactory
-			CurrentThreadContext.setProjectId(BuiltinInstance.currentSysBuiltinProjectInstance.getId());
+			CurrentThreadContext.setProjectId(BuiltinObjectInstance.currentSysBuiltinProjectInstance.getId());
 			createTables();
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
@@ -164,7 +164,7 @@ public class InitCfgSystemService extends AbstractService{
 	private void createTables(){
 		List<ComTabledata> tables = getAllTables();
 		List<ComTabledata> tmpTables = new ArrayList<ComTabledata>();
-		DBTableHandler dbHandler = new DBTableHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
+		DBTableHandler dbHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
 		for (ComTabledata table : tables) {
 			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
 				continue;
@@ -208,7 +208,7 @@ public class InitCfgSystemService extends AbstractService{
 		admin.setLoginName("admin");
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
-		admin.setValidDate(BuiltinInstance.validDate);
+		admin.setValidDate(BuiltinObjectInstance.validDate);
 		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourcePropNameConstants.ID);
 	
 		// 添加普通账户【2.普通账户】
@@ -217,7 +217,7 @@ public class InitCfgSystemService extends AbstractService{
 		normal.setLoginName("normal");
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
-		normal.setValidDate(BuiltinInstance.validDate);
+		normal.setValidDate(BuiltinObjectInstance.validDate);
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
 		// 添加平台开发账户【3.平台开发账户】
@@ -226,7 +226,7 @@ public class InitCfgSystemService extends AbstractService{
 		developer.setLoginName("developer");
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		developer.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
-		developer.setValidDate(BuiltinInstance.validDate);
+		developer.setValidDate(BuiltinObjectInstance.validDate);
 		HibernateUtil.saveObject(developer, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -258,8 +258,8 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateUtil.saveObject(project, normalAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 将表信息插入的comcolumndata表中，同时把列的信息插入到comcolumndata表中
-		insertAllTables(adminAccountId);
+		// 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
+		insertHbm(adminAccountId);
 		// 添加数据字典基础数据
 		insertBasicDataDictionary(adminAccountId);
 		// 添加要发布的基础数据
@@ -271,28 +271,15 @@ public class InitCfgSystemService extends AbstractService{
 	}
 	
 	/**
-	 * 将表信息插入的comcolumndata表中
-	 * <p>同时把列的信息插入到comcolumndata表中</p>
-	 * <p>再根据表创建hbm文件，并将其加入到CfgHibernateHbm表中</p>
+	 * 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
 	 * @param adminAccountId 
 	 */
-	private void insertAllTables(String adminAccountId) {
+	private void insertHbm(String adminAccountId) {
 		List<ComTabledata> tables = getAllTables();
-		String tableId;
-		List<ComColumndata> columns = null;
 		SysHibernateHbm hbm;
 		SysResource resource;
 		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : tables) {
-			// 插入表和列信息
-			tableId = HibernateUtil.saveObject(table, adminAccountId).getString(ResourcePropNameConstants.ID);
-			table.setId(tableId);
-			columns = table.getColumns();
-			for (ComColumndata column : columns) {
-				column.setTableId(tableId);
-				HibernateUtil.saveObject(column, adminAccountId);
-			}
-			
 			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
 				continue;
 			}
@@ -429,7 +416,7 @@ public class InitCfgSystemService extends AbstractService{
 		admin.setAccountType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
-		admin.setValidDate(BuiltinInstance.validDate);
+		admin.setValidDate(BuiltinObjectInstance.validDate);
 		HibernateUtil.saveObject(admin.turnToPublishBasicData(ISysResource.APP_PLATFORM), adminAccountId);
 	}
 	
@@ -512,7 +499,7 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, CfgDatabase database) {
 		// 加载数据库和项目的关联关系映射
-		CurrentThreadContext.setDatabaseId(BuiltinInstance.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
+		CurrentThreadContext.setDatabaseId(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
 		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
 		HibernateUtil.closeCurrentThreadSession();
 		Log4jUtil.info("数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库，是否存在发布的项目："+ isExists );
@@ -544,7 +531,7 @@ public class InitCfgSystemService extends AbstractService{
 	 * @throws IOException 
 	 */
 	private void loadCurrentSysDatabaseHbms() throws SQLException, IOException {
-		CfgDatabase database = BuiltinInstance.currentSysBuiltinDatabaseInstance;
+		CfgDatabase database = BuiltinObjectInstance.currentSysBuiltinDatabaseInstance;
 		
 		CurrentThreadContext.setDatabaseId(database.getId());
 		// 获取当前系统的SysHibernateHbm映射文件对象

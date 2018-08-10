@@ -2,7 +2,7 @@ package com.king.tooth.web.servlet.route;
 
 import java.io.Serializable;
 
-import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**

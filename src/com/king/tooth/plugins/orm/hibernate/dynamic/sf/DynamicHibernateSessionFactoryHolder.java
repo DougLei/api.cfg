@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.hibernate.SessionFactory;
 
-import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 

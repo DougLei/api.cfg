@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -245,7 +245,7 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 			}
 			loginPwdKey = ResourceHandlerUtil.getLoginPwdKey();
 			loginPwd = CryptographyUtil.encodeMd5(loginPwd, loginPwdKey);
-			validDate = BuiltinInstance.validDate;
+			validDate = BuiltinObjectInstance.validDate;
 		}
 		return result;
 	}

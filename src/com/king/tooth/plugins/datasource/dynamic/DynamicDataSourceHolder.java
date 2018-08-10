@@ -6,7 +6,7 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 
 /**

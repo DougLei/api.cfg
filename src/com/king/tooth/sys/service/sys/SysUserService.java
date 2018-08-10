@@ -3,12 +3,12 @@ package com.king.tooth.sys.service.sys;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -34,7 +34,7 @@ public class SysUserService extends AbstractService{
 		if(StrUtils.isEmpty(user.getAccountId())){
 			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
 		}
-		return BuiltinInstance.accountService.uploadAccounLoginPwd(user.getId(), user.getAccountId(), newLoginPwd);
+		return BuiltinObjectInstance.accountService.uploadAccounLoginPwd(user.getId(), user.getAccountId(), newLoginPwd);
 	}
 	
 	/**

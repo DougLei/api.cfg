@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -29,10 +29,10 @@ public class ComColumndataController extends AbstractController{
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
-				resultObject = BuiltinInstance.columndataService.saveColumn(columns.get(0));
+				resultObject = BuiltinObjectInstance.columnService.saveColumn(columns.get(0));
 			}else{
 				for (ComColumndata column : columns) {
-					resultObject = BuiltinInstance.columndataService.saveColumn(column);
+					resultObject = BuiltinObjectInstance.columnService.saveColumn(column);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -53,10 +53,10 @@ public class ComColumndataController extends AbstractController{
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
-				resultObject = BuiltinInstance.columndataService.updateColumn(columns.get(0));
+				resultObject = BuiltinObjectInstance.columnService.updateColumn(columns.get(0));
 			}else{
 				for (ComColumndata column : columns) {
-					resultObject = BuiltinInstance.columndataService.updateColumn(column);
+					resultObject = BuiltinObjectInstance.columnService.updateColumn(column);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -77,7 +77,7 @@ public class ComColumndataController extends AbstractController{
 		if(StrUtils.isEmpty(columnIds)){
 			return "要删除的列id不能为空";
 		}
-		resultObject = BuiltinInstance.columndataService.deleteColumn(columnIds);
+		resultObject = BuiltinObjectInstance.columnService.deleteColumn(columnIds);
 		processResultObject(BuiltinParameterKeys._IDS, columnIds);
 		return getResultObject();
 	}

@@ -6,9 +6,9 @@ import java.util.List;
 import org.hibernate.Query;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.sqlresource.BuiltinSqlResourceBMProcesser;

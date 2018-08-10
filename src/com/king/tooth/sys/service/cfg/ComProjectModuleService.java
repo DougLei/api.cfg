@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 

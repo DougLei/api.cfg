@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 
-import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.tableresource.BuiltinTableResourceBMProcesser;

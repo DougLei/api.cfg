@@ -1,11 +1,11 @@
 package com.king.tooth.web.entity.request;
 
 import com.king.tooth.cache.CodeResourceMapping;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
 
@@ -54,17 +54,17 @@ public class ResourceInfo {
 			}
 			resourceType = ISysResource.CODE;
 		}else{
-			SysResource resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
+			SysResource resource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
 			resourceType = resource.getResourceType();
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ISysResource.SQLSCRIPT == resourceType){
-				sqlScriptResource = BuiltinInstance.sqlScriptService.findSqlScriptResourceById(resource.getRefResourceId());
+				sqlScriptResource = BuiltinObjectInstance.sqlScriptService.findSqlScriptResourceById(resource.getRefResourceId());
 			}
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				resource = BuiltinInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
+				resource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
 				
 				if(resource.getResourceType() != resourceType){
 					throw new IllegalArgumentException("平台目前不支持处理不同类型的资源混合调用");

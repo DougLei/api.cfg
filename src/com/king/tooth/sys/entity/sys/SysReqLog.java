@@ -1,5 +1,6 @@
 package com.king.tooth.sys.entity.sys;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 
@@ -171,7 +173,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	}
 
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_REQ_LOG", 0);
+		ComTabledata table = new ComTabledata("SYS_REQ_LOG" + "_" + yyyyMM, 0);
 		table.setName("请求日志信息表");
 		table.setComments("请求日志信息表");
 		table.setIsBuiltin(1);
@@ -259,12 +261,12 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	}
 
 	public String toDropTable() {
-		return "SYS_REQ_LOG";
+		return "SYS_REQ_LOG" +"_"+ yyyyMM;
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysReqLog";
+		return "SysReqLog" + yyyyMM;
 	}
 	
 	/**
@@ -281,5 +283,36 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		operSqlLog.setSqlScript(sqlScript);
 		operSqlLog.setSqlParams(JsonUtil.toJsonString(sqlParams, false));
 		operSqlLogs.add(operSqlLog);
+	}
+	
+	// ------------------------------------------------------------------------------------
+	/**
+	 * 日志表的年月后缀
+	 */
+	public static String yyyyMM = getYearMonth(new Date());
+	
+	/**
+	 * 格式化日期中的年月
+	 */
+	private transient static final SimpleDateFormat ym = new SimpleDateFormat("yyyyMM");
+	/**
+	 * 格式化出日期中的天
+	 */
+	private transient static final SimpleDateFormat d = new SimpleDateFormat("dd");
+	/**
+	 * 获取日期中的天
+	 * @param currentDate
+	 * @return
+	 */
+	public static String getDay(Date currentDate){
+		return DateUtil.formatDate(currentDate, d);
+	}
+	/**
+	 * 获取日期中的年月
+	 * @param currentDate
+	 * @return
+	 */
+	public static String getYearMonth(Date currentDate){
+		return DateUtil.formatDate(currentDate, ym);
 	}
 }

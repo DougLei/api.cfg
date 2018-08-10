@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComProject;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -31,10 +31,10 @@ public class ComProjectController extends AbstractPublishController{
 		analysisResourceProp(projects);
 		if(analysisResult == null){
 			if(projects.size() == 1){
-				resultObject = BuiltinInstance.projectService.saveProject(projects.get(0));
+				resultObject = BuiltinObjectInstance.projectService.saveProject(projects.get(0));
 			}else{
 				for (ComProject project : projects) {
-					resultObject = BuiltinInstance.projectService.saveProject(project);
+					resultObject = BuiltinObjectInstance.projectService.saveProject(project);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -55,10 +55,10 @@ public class ComProjectController extends AbstractPublishController{
 		analysisResourceProp(projects);
 		if(analysisResult == null){
 			if(projects.size() == 1){
-				resultObject = BuiltinInstance.projectService.updateProject(projects.get(0));
+				resultObject = BuiltinObjectInstance.projectService.updateProject(projects.get(0));
 			}else{
 				for (ComProject project : projects) {
-					resultObject = BuiltinInstance.projectService.updateProject(project);
+					resultObject = BuiltinObjectInstance.projectService.updateProject(project);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -82,7 +82,7 @@ public class ComProjectController extends AbstractPublishController{
 
 		String[] projectIdArr = projectIds.split(",");
 		for (String projectId : projectIdArr) {
-			resultObject = BuiltinInstance.projectService.deleteProject(projectId);
+			resultObject = BuiltinObjectInstance.projectService.deleteProject(projectId);
 			if(resultObject != null){
 				break;
 			}
@@ -107,7 +107,7 @@ public class ComProjectController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的项目id不能为空";
 		}
-		resultObject = BuiltinInstance.projectService.publishProjectAll(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinObjectInstance.projectService.publishProjectAll(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -129,7 +129,7 @@ public class ComProjectController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要取消发布的项目id不能为空";
 		}
-		resultObject = BuiltinInstance.projectService.cancelPublishProjectAll(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinObjectInstance.projectService.cancelPublishProjectAll(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

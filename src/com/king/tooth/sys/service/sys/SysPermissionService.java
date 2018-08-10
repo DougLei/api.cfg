@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinPermissionType;
 import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -27,7 +27,7 @@ public class SysPermissionService extends AbstractService{
 		String hql = "from SysPermissionPriority where projectId=? and customerId=? order by lv desc";
 		List<SysPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(permissionPriorities == null || permissionPriorities.size() == 0){
-			permissionPriorities = BuiltinInstance.permissionPriorities;
+			permissionPriorities = BuiltinObjectInstance.permissionPriorities;
 		}
 		return permissionPriorities;
 	}

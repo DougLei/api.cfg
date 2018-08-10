@@ -1,4 +1,4 @@
-package com.king.tooth.plugins.thread.log;
+package com.king.tooth.thread.log;
 
 import java.io.Serializable;
 import java.util.List;

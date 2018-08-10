@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
@@ -27,7 +27,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = BuiltinInstance.sqlScriptService.saveSqlScriptParameter(sqlScriptParameters);
+			resultObject = BuiltinObjectInstance.sqlScriptService.saveSqlScriptParameter(sqlScriptParameters);
 		}
 		return getResultObject();
 	}
@@ -41,7 +41,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = BuiltinInstance.sqlScriptService.updateSqlScriptParameter(sqlScriptParameters);
+			resultObject = BuiltinObjectInstance.sqlScriptService.updateSqlScriptParameter(sqlScriptParameters);
 		}
 		return getResultObject();
 	}
@@ -56,7 +56,7 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 		if(StrUtils.isEmpty(sqlScriptParameterIds)){
 			return "要删除的sql脚本参数id不能为空";
 		}
-		resultObject = BuiltinInstance.sqlScriptService.deleteSqlScriptParameter(sqlScriptParameterIds);
+		resultObject = BuiltinObjectInstance.sqlScriptService.deleteSqlScriptParameter(sqlScriptParameterIds);
 		processResultObject(BuiltinParameterKeys._IDS, sqlScriptParameterIds);
 		return getResultObject();
 	}

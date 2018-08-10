@@ -103,4 +103,32 @@ public class DateUtil {
 	public static Timestamp parseTimestamp(Date date){
 		return new Timestamp(date.getTime());
 	}
+	
+	// -----------------------------------------------------------------
+	/**
+	 * 自定义格式化日期对象为字符串
+	 * @param date
+	 * @param pattern
+	 * @return
+	 */
+	public static String formatDate(Date date, SimpleDateFormat sdf){
+		if(date == null){
+			return null;
+		}
+		return sdf.format(date);
+	}
+	
+	/**
+	 * 自定义格式化日期对象为字符串
+	 * @param date
+	 * @param pattern
+	 * @return
+	 */
+	public static String formatDate(Date date, String pattern){
+		if(date == null){
+			return null;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		return sdf.format(date);
+	}
 }

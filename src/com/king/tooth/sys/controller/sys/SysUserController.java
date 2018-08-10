@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.SysUser;
@@ -30,10 +30,10 @@ public class SysUserController extends AbstractController{
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
-				resultObject = BuiltinInstance.userService.saveUser(users.get(0));
+				resultObject = BuiltinObjectInstance.userService.saveUser(users.get(0));
 			}else{
 				for (SysUser user : users) {
-					resultObject = BuiltinInstance.userService.saveUser(user);
+					resultObject = BuiltinObjectInstance.userService.saveUser(user);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -54,10 +54,10 @@ public class SysUserController extends AbstractController{
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
-				resultObject = BuiltinInstance.userService.updateUser(users.get(0));
+				resultObject = BuiltinObjectInstance.userService.updateUser(users.get(0));
 			}else{
 				for (SysUser user : users) {
-					resultObject = BuiltinInstance.userService.updateUser(user);
+					resultObject = BuiltinObjectInstance.userService.updateUser(user);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -81,7 +81,7 @@ public class SysUserController extends AbstractController{
 		
 		String[] userIdArr = userIds.split(",");
 		for (String userId : userIdArr) {
-			resultObject = BuiltinInstance.userService.deleteUser(userId);
+			resultObject = BuiltinObjectInstance.userService.deleteUser(userId);
 			if(resultObject != null){
 				break;
 			}
@@ -98,10 +98,10 @@ public class SysUserController extends AbstractController{
 	public Object openAccount(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class);
 		if(users.size() == 1){
-			resultObject = BuiltinInstance.userService.openAccount(users.get(0));
+			resultObject = BuiltinObjectInstance.userService.openAccount(users.get(0));
 		}else{
 			for (SysUser user : users) {
-				resultObject = BuiltinInstance.userService.openAccount(user);
+				resultObject = BuiltinObjectInstance.userService.openAccount(user);
 				if(resultObject instanceof String){
 					break;
 				}
@@ -124,7 +124,7 @@ public class SysUserController extends AbstractController{
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = BuiltinInstance.userService.uploadUserLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinObjectInstance.userService.uploadUserLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

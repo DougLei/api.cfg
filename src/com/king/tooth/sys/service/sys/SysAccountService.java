@@ -8,13 +8,13 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -67,7 +67,7 @@ public class SysAccountService extends AbstractService{
 		
 		// TODO 暂时不要
 		// 获取当前登陆帐号的权限
-		accountOnlineStatus.setPermission(BuiltinInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId()));
+		accountOnlineStatus.setPermission(BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId()));
 		return accountOnlineStatus;
 	}
 	

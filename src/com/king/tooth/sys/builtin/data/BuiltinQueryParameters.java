@@ -2,7 +2,7 @@ package com.king.tooth.sys.builtin.data;
 
 import java.sql.Date;
 
-import com.king.tooth.plugins.thread.CurrentThreadContext;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**

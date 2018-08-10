@@ -9,12 +9,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -35,7 +35,7 @@ public class SysAccountController extends AbstractController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(1);// 标识为登陆日志
 		
 		SysAccount account = JsonUtil.toJavaObject(ijson.get(0), SysAccount.class);
-		SysAccountOnlineStatus accountOnlineStatus = BuiltinInstance.accountService.modifyAccountOfOnLineStatus(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinObjectInstance.accountService.modifyAccountOfOnLineStatus(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{
@@ -60,7 +60,7 @@ public class SysAccountController extends AbstractController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(2);// 标识为退出登陆日志
 		
 		String token = request.getHeader("_token");
-		BuiltinInstance.accountService.loginOut(token);
+		BuiltinObjectInstance.accountService.loginOut(token);
 		
 		JSONObject jsonObject = new JSONObject(1);
 		jsonObject.put("_token", token);
@@ -80,10 +80,10 @@ public class SysAccountController extends AbstractController{
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
-				resultObject = BuiltinInstance.accountService.saveAccount(accounts.get(0));
+				resultObject = BuiltinObjectInstance.accountService.saveAccount(accounts.get(0));
 			}else{
 				for (SysAccount account : accounts) {
-					resultObject = BuiltinInstance.accountService.saveAccount(account);
+					resultObject = BuiltinObjectInstance.accountService.saveAccount(account);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -104,10 +104,10 @@ public class SysAccountController extends AbstractController{
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
-				resultObject = BuiltinInstance.accountService.updateAccount(accounts.get(0));
+				resultObject = BuiltinObjectInstance.accountService.updateAccount(accounts.get(0));
 			}else{
 				for (SysAccount account : accounts) {
-					resultObject = BuiltinInstance.accountService.updateAccount(account);
+					resultObject = BuiltinObjectInstance.accountService.updateAccount(account);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -131,7 +131,7 @@ public class SysAccountController extends AbstractController{
 		
 		String[] accountIdArr = accountIds.split(",");
 		for (String accountId : accountIdArr) {
-			resultObject = BuiltinInstance.accountService.deleteAccount(accountId);
+			resultObject = BuiltinObjectInstance.accountService.deleteAccount(accountId);
 			if(resultObject != null){
 				break;
 			}
@@ -153,7 +153,7 @@ public class SysAccountController extends AbstractController{
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = BuiltinInstance.accountService.uploadAccounLoginPwd(null, jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinObjectInstance.accountService.uploadAccounLoginPwd(null, jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

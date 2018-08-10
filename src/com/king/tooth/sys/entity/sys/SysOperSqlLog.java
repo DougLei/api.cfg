@@ -65,7 +65,7 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_OPER_SQL_LOG", 0);
+		ComTabledata table = new ComTabledata("SYS_OPER_SQL_LOG" + "_" + SysReqLog.yyyyMM, 0);
 		table.setName("操作sql日志信息表");
 		table.setComments("操作sql日志信息表");
 		table.setIsBuiltin(1);
@@ -104,11 +104,11 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 	}
 
 	public String toDropTable() {
-		return "SYS_OPER_SQL_LOG";
+		return "SYS_OPER_SQL_LOG" + "_" + SysReqLog.yyyyMM;
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysOperSqlLog";
+		return "SysOperSqlLog" + SysReqLog.yyyyMM;
 	}
 }

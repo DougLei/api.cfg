@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -31,10 +31,10 @@ public class CfgDatabaseController extends AbstractPublishController{
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
-				resultObject = BuiltinInstance.databaseService.saveDatabase(databases.get(0));
+				resultObject = BuiltinObjectInstance.databaseService.saveDatabase(databases.get(0));
 			}else{
 				for (CfgDatabase database : databases) {
-					resultObject = BuiltinInstance.databaseService.saveDatabase(database);
+					resultObject = BuiltinObjectInstance.databaseService.saveDatabase(database);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -55,10 +55,10 @@ public class CfgDatabaseController extends AbstractPublishController{
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
-				resultObject = BuiltinInstance.databaseService.updateDatabase(databases.get(0));
+				resultObject = BuiltinObjectInstance.databaseService.updateDatabase(databases.get(0));
 			}else{
 				for (CfgDatabase database : databases) {
-					resultObject = BuiltinInstance.databaseService.updateDatabase(database);
+					resultObject = BuiltinObjectInstance.databaseService.updateDatabase(database);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -82,7 +82,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 		
 		String[] databaseIdArr = databaseIds.split(",");
 		for (String databaseId : databaseIdArr) {
-			resultObject = BuiltinInstance.databaseService.deleteDatabase(databaseId);
+			resultObject = BuiltinObjectInstance.databaseService.deleteDatabase(databaseId);
 			if(resultObject != null){
 				break;
 			}
@@ -101,7 +101,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "测试连接的数据库id不能为空";
 		}
-		resultObject = BuiltinInstance.databaseService.databaseLinkTest(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinObjectInstance.databaseService.databaseLinkTest(jsonObject.getString(ResourcePropNameConstants.ID));
 		String linkMsg = resultObject.toString();
 		if(linkMsg.startsWith("ok:")){
 			jsonObject.put("linkMsg", linkMsg.replaceAll("ok:", ""));
@@ -127,7 +127,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的数据库id不能为空";
 		}
-		resultObject = BuiltinInstance.databaseService.publishDatabase(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinObjectInstance.databaseService.publishDatabase(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -149,7 +149,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 			return "要取消发布的数据库id不能为空";
 		}
 		
-		resultObject = BuiltinInstance.databaseService.cancelPublishDatabase(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinObjectInstance.databaseService.cancelPublishDatabase(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

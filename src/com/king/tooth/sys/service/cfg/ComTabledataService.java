@@ -13,9 +13,8 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinInstance;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -25,6 +24,7 @@ import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.sys.service.sys.SysResourceService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -222,7 +222,7 @@ public class ComTabledataService extends AbstractPublishService {
 			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 			
 			// 1、建表
-			DBTableHandler dbTableHandler = new DBTableHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
+			DBTableHandler dbTableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
 			List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 			
 			HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
@@ -277,7 +277,7 @@ public class ComTabledataService extends AbstractPublishService {
 	 */
 	private void cancelBuildModel(ComTabledata table){
 		// drop表
-		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinInstance.currentSysBuiltinDatabaseInstance);
+		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
 		String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
 		
 		// 从sessionFactory中移除映射

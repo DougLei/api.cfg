@@ -1,10 +1,10 @@
 package com.king.tooth.sys.service.sys;
 
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 

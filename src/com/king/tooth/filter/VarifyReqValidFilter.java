@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
-import com.king.tooth.plugins.thread.CurrentThreadContext;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
 import com.king.tooth.sys.service.sys.SysAccountService;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
