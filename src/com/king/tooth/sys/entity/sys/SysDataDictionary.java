@@ -27,15 +27,15 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 父编码编号(可为空)
 	 */
-	private String parentCodeId;
+	private String parentId;
 	/**
 	 * 显示的文本
 	 */
-	private String codeCaption;
+	private String caption;
 	/**
-	 * 操作的值(value)
+	 * 后台操作的值(value)
 	 */
-	private String codeValue;
+	private String val;
 	/**
 	 * 排序值
 	 */
@@ -59,23 +59,23 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public String getParentCodeId() {
-		return parentCodeId;
+	public String getParentId() {
+		return parentId;
 	}
-	public void setParentCodeId(String parentCodeId) {
-		this.parentCodeId = parentCodeId;
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
-	public String getCodeCaption() {
-		return codeCaption;
+	public String getCaption() {
+		return caption;
 	}
-	public void setCodeCaption(String codeCaption) {
-		this.codeCaption = codeCaption;
+	public void setCaption(String caption) {
+		this.caption = caption;
 	}
-	public String getCodeValue() {
-		return codeValue;
+	public String getVal() {
+		return val;
 	}
-	public void setCodeValue(String codeValue) {
-		this.codeValue = codeValue;
+	public void setVal(String val) {
+		this.val = val;
 	}
 	public Integer getOrderCode() {
 		return orderCode;
@@ -114,23 +114,23 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 		codeColumn.setOrderCode(1);
 		columns.add(codeColumn);
 		
-		ComColumndata parentCodeIdColumn = new ComColumndata("parent_code_id", BuiltinCodeDataType.STRING, 32);
-		parentCodeIdColumn.setName("父编码编号(可为空)");
-		parentCodeIdColumn.setComments("父编码编号(可为空)");
-		parentCodeIdColumn.setOrderCode(2);
-		columns.add(parentCodeIdColumn);
+		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinCodeDataType.STRING, 32);
+		parentIdColumn.setName("父编码主键");
+		parentIdColumn.setComments("父编码主键(可为空)");
+		parentIdColumn.setOrderCode(2);
+		columns.add(parentIdColumn);
 		
-		ComColumndata codeCaptionColumn = new ComColumndata("code_caption", BuiltinCodeDataType.STRING, 50);
-		codeCaptionColumn.setName("显示的文本");
-		codeCaptionColumn.setComments("显示的文本");
-		codeCaptionColumn.setOrderCode(3);
-		columns.add(codeCaptionColumn);
+		ComColumndata captionColumn = new ComColumndata("caption", BuiltinCodeDataType.STRING, 200);
+		captionColumn.setName("显示的文本");
+		captionColumn.setComments("显示的文本");
+		captionColumn.setOrderCode(3);
+		columns.add(captionColumn);
 		
-		ComColumndata codeValueColumn = new ComColumndata("code_value", BuiltinCodeDataType.STRING, 30);
-		codeValueColumn.setName("操作的值(value)");
-		codeValueColumn.setComments("操作的值(value)");
-		codeValueColumn.setOrderCode(4);
-		columns.add(codeValueColumn);
+		ComColumndata valColumn = new ComColumndata("val", BuiltinCodeDataType.STRING, 400);
+		valColumn.setName("后台操作的值");
+		valColumn.setComments("后台操作的值(value)");
+		valColumn.setOrderCode(4);
+		columns.add(valColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");

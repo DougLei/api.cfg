@@ -42,31 +42,20 @@ public class CodeResourceMapping {
 	 */
 	private static void initActionCodeResource() {
 		// 数据库操作
-		put("CfgDatabase_post_testLink", BuiltinInstance.databaseController, "testLink");
-		put("CfgDatabase_post_publish", BuiltinInstance.databaseController, "publish");
-		put("CfgDatabase_post_cancelPublish", BuiltinInstance.databaseController, "cancelPublish");
 		put("/database/test_link/post", BuiltinInstance.databaseController, "testLink");
 		put("/database/publish/add/post", BuiltinInstance.databaseController, "publish");
 		put("/database/publish/cancel/post", BuiltinInstance.databaseController, "cancelPublish");
 		
 		// 项目操作
-		put("ComProject_post_publish", BuiltinInstance.projectController, "publish");
-		put("ComProject_post_cancelPublish", BuiltinInstance.projectController, "cancelPublish");
 		put("/project/publish/add/post", BuiltinInstance.projectController, "publish");
 		put("/project/publish/cancel/post", BuiltinInstance.projectController, "cancelPublish");
 		
 		// 项目模块操作
-		put("ComProjectModule_post_publish", BuiltinInstance.projectModuleController, "publish");
-		put("ComProjectModule_post_cancelPublish", BuiltinInstance.projectModuleController, "cancelPublish");
 		put("/project_module/publish/add/post", BuiltinInstance.projectModuleController, "publish");
 		put("/project_module/publish/cancel/post", BuiltinInstance.projectModuleController, "cancelPublish");
 		
 		// 表操作
 		put("ComTabledata_post_buildModel", BuiltinInstance.tabledataController, "buildModel");
-		put("ComTabledata_post_addProjTableRelation", BuiltinInstance.tabledataController, "addProjTableRelation");
-		put("ComTabledata_post_cancelProjTableRelation", BuiltinInstance.tabledataController, "cancelProjTableRelation");
-		put("ComTabledata_post_publish", BuiltinInstance.tabledataController, "publish");
-		put("ComTabledata_post_cancelPublish", BuiltinInstance.tabledataController, "cancelPublish");
 		put("/table/build_model/post", BuiltinInstance.tabledataController, "buildModel");
 		put("/table/publish/add/post", BuiltinInstance.tabledataController, "publish");
 		put("/table/publish/cancel/post", BuiltinInstance.tabledataController, "cancelPublish");
@@ -74,25 +63,16 @@ public class CodeResourceMapping {
 		put("/project/table/relation/cancel/post", BuiltinInstance.tabledataController, "cancelProjTableRelation");
 		
 		// sql脚本操作
-		put("ComSqlScript_post_addProjSqlScriptRelation", BuiltinInstance.sqlController, "addProjSqlScriptRelation");
-		put("ComSqlScript_post_cancelProjSqlScriptRelation", BuiltinInstance.sqlController, "cancelProjSqlScriptRelation");
-		put("ComSqlScript_post_publish", BuiltinInstance.sqlController, "publish");
-		put("ComSqlScript_post_cancelPublish", BuiltinInstance.sqlController, "cancelPublish");
 		put("/project/sql/relation/add/post", BuiltinInstance.sqlController, "addProjSqlScriptRelation");
 		put("/project/sql/relation/cancel/post", BuiltinInstance.sqlController, "cancelProjSqlScriptRelation");
 		put("/sql/publish/add/post", BuiltinInstance.sqlController, "publish");
 		put("/sql/publish/cancel/post", BuiltinInstance.sqlController, "cancelPublish");
 		
 		// 用户操作
-		put("SysUser_post_openAccount", BuiltinInstance.userController, "openAccount");
-		put("SysUser_post_updatePassword", BuiltinInstance.userController, "updatePassword");
 		put("/user/open_account/post", BuiltinInstance.userController, "openAccount");
 		put("/user/update_pwd/post", BuiltinInstance.userController, "updatePassword");
 		
 		// 账户操作
-		put("SysAccount_post_login", BuiltinInstance.accountController, "login");
-		put("SysAccount_post_loginOut", BuiltinInstance.accountController, "loginOut");
-		put("SysAccount_post_updatePassword", BuiltinInstance.accountController, "updatePassword");
 		put("/login/post", BuiltinInstance.accountController, "login");
 		put("/login_out/post", BuiltinInstance.accountController, "loginOut");
 		put("/account/update_pwd/post", BuiltinInstance.accountController, "updatePassword");

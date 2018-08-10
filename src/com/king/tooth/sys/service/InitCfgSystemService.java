@@ -406,8 +406,8 @@ public class InitCfgSystemService extends AbstractService{
 	private void insertDataDictionary(String adminAccountId, String code, String codeCaption, String codeValue, int orderCode, int belongPlatformType){
 		SysDataDictionary dataDictionary = new SysDataDictionary();
 		dataDictionary.setCode(code.toLowerCase());
-		dataDictionary.setCodeCaption(codeCaption);
-		dataDictionary.setCodeValue(codeValue);
+		dataDictionary.setCaption(codeCaption);
+		dataDictionary.setVal(codeValue);
 		dataDictionary.setOrderCode(orderCode);
 		HibernateUtil.saveObject(dataDictionary, adminAccountId);
 		

@@ -33,7 +33,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 */
 	private String parameterName;
 	/**
-	 * 参数长度
+	 * 参数的值长度
 	 * <p>默认值为32</p>
 	 */
 	private Integer length;
@@ -231,8 +231,8 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		columns.add(parameterNameColumn);
 		
 		ComColumndata lengthColumn = new ComColumndata("length", BuiltinCodeDataType.INTEGER, 4);
-		lengthColumn.setName("参数长度");
-		lengthColumn.setComments("参数长度：默认值为32");
+		lengthColumn.setName("参数的值长度");
+		lengthColumn.setComments("默认值为32");
 		lengthColumn.setDefaultValue("32");
 		lengthColumn.setOrderCode(30);
 		columns.add(lengthColumn);
