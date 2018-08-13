@@ -41,9 +41,9 @@ public class CfgDatabaseService extends AbstractPublishService {
 	 */
 	private String validDatabaseDataIsExists(CfgDatabase database) {
 		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgDatabase where dbType=? and dbInstanceName=? and loginUserName=? and loginPassword=? and dbIp=? and dbPort=?";
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, database.getDbType(), database.getDbInstanceName(), database.getLoginUserName(), database.getLoginPassword(), database.getDbIp(), database.getDbPort()+"");
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, database.getType(), database.getInstanceName(), database.getLoginUserName(), database.getLoginPassword(), database.getIp(), database.getPort()+"");
 		if(count > 0){
-			return "[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库连接信息已存在";
+			return "[dbType="+database.getType()+" ， dbInstanceName="+database.getInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getIp()+" ， dbPort="+database.getPort()+"]的数据库连接信息已存在";
 		}
 		return null;
 	}
@@ -72,7 +72,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 			return "禁止修改内置的数据库信息";
 		}
 		if(oldDatabase.getIsCreated() == 1){ // 如果已发布，则发出提示信息
-			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，不能修改数据库信息，或取消发布后再修改";
+			return "["+oldDatabase.getDisplayName()+"]数据库已经发布，不能修改数据库信息，或取消发布后再修改";
 		}
 		
 		String operResult = null;
@@ -97,7 +97,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 			return "禁止删除内置的数据库信息";
 		}
 		if(oldDatabase.getIsCreated() == 1){
-			return "["+oldDatabase.getDbDisplayName()+"]数据库已经发布，无法删除，请先取消发布";
+			return "["+oldDatabase.getDisplayName()+"]数据库已经发布，无法删除，请先取消发布";
 		}
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
 		if(count > 0){
@@ -181,7 +181,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 		if(testLinkResult.startsWith("err")){
 			return testLinkResult;
 		}
-		Log4jUtil.debug("连接数据库测试[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
+		Log4jUtil.debug("连接数据库测试[dbType="+database.getType()+" ， dbInstanceName="+database.getInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getIp()+" ， dbPort="+database.getPort()+"]：" + testLinkResult);
 		
 		// 创建运行系统所有需要的基础表
 		DBTableHandler dbTableHandler = new DBTableHandler(database);

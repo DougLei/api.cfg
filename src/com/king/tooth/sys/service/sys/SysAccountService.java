@@ -34,7 +34,7 @@ public class SysAccountService extends AbstractService{
 		// 再验证帐号状态是否正常
 		String hql = "from SysAccount where "+ResourcePropNameConstants.ID+" = ?";
 		SysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccount.class, hql, accountId);
-		if(account.getAccountStatus() == 2){
+		if(account.getStatus() == 2){
 			account.setMessage("您的账号已被禁用，请联系管理员");
 			return account;
 		}
@@ -100,7 +100,7 @@ public class SysAccountService extends AbstractService{
 			accountOnlineStatus.setMessage("账号或密码错误，请重新输入");
 			return accountOnlineStatus;
 		}
-		if(loginAccount.getAccountStatus() == 2){
+		if(loginAccount.getStatus() == 2){
 			accountOnlineStatus.setMessage("您的账号已被禁用，请联系管理员");
 			return accountOnlineStatus;
 		}
@@ -139,7 +139,7 @@ public class SysAccountService extends AbstractService{
 		accountOnlineStatus.setProjectId(CurrentThreadContext.getProjectId());
 		
 		accountOnlineStatus.setAccountId(loginAccount.getId());
-		accountOnlineStatus.setAccountType(loginAccount.getAccountType());
+		accountOnlineStatus.setAccountType(loginAccount.getType());
 		
 		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ?", loginAccount.getId());
 		if(loginUser == null){

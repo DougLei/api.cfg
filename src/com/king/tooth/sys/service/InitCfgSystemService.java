@@ -204,7 +204,7 @@ public class InitCfgSystemService extends AbstractService{
 		// 添加管理账户【1.管理账户】
 		SysAccount admin = new SysAccount();
 		admin.setId("16ed21bd7a7a41f5bea2ebaa258908cf");/* 在同步数据的时候，为了和服务器数据库中的id一致，这里写成固定值，即服务器数据库中，账户admin的id */
-		admin.setAccountType(1);
+		admin.setType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
@@ -213,7 +213,7 @@ public class InitCfgSystemService extends AbstractService{
 	
 		// 添加普通账户【2.普通账户】
 		SysAccount normal = new SysAccount();
-		normal.setAccountType(2);
+		normal.setType(2);
 		normal.setLoginName("normal");
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
@@ -222,7 +222,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		// 添加平台开发账户【3.平台开发账户】
 		SysAccount developer = new SysAccount();
-		developer.setAccountType(3);
+		developer.setType(3);
 		developer.setLoginName("developer");
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		developer.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
@@ -233,13 +233,13 @@ public class InitCfgSystemService extends AbstractService{
 		// 添加数据库信息【运行平台数据库信息】
 		CfgDatabase appDatabase = new CfgDatabase();
 		appDatabase.setId("05fb6ef9c3ackfccb91b00add666odb9");
-		appDatabase.setDbDisplayName("运行系统通用数据库(内置)");
-		appDatabase.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
-		appDatabase.setDbInstanceName("SmartOneApp");
+		appDatabase.setDisplayName("运行系统通用数据库(内置)");
+		appDatabase.setType(SysConfig.getSystemConfig("jdbc.dbType"));
+		appDatabase.setInstanceName("SmartOneApp");
 		appDatabase.setLoginUserName("SmartOneApp");
 		appDatabase.setLoginPassword(SysConfig.getSystemConfig("db.default.password"));
-		appDatabase.setDbIp(SysConfig.getSystemConfig("db.default.ip"));
-		appDatabase.setDbPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
+		appDatabase.setIp(SysConfig.getSystemConfig("db.default.ip"));
+		appDatabase.setPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
 		appDatabase.analysisResourceProp();
 		appDatabase.setIsBuiltin(1);
 		appDatabase.setIsNeedDeploy(1);
@@ -322,7 +322,7 @@ public class InitCfgSystemService extends AbstractService{
 		insertDataDictionary(adminAccountId, "comoperlog.opertype", "删除", "delete", 4, ISysResource.COMMON_PLATFORM);
 		
 		// SysAccount.accountType 账户类型
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理账户", "1", 1, ISysResource.COMMON_PLATFORM);
+		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理员", "1", 1, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "2", 2, ISysResource.COMMON_PLATFORM);
 		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "平台开发账户", "3", 3, ISysResource.COMMON_PLATFORM);
 		
@@ -413,7 +413,7 @@ public class InitCfgSystemService extends AbstractService{
 		// 添加一条要发布的管理员账户信息
 		SysAccount admin = new SysAccount();
 		admin.setId(ResourceHandlerUtil.getIdentity());
-		admin.setAccountType(1);
+		admin.setType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(BuiltinObjectInstance.validDate);
@@ -475,7 +475,7 @@ public class InitCfgSystemService extends AbstractService{
 						Log4jUtil.error(testLinkResult);
 						continue;
 					}
-					Log4jUtil.info("测试连接数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]：" + testLinkResult);
+					Log4jUtil.info("测试连接数据库[dbType="+database.getType()+" ， dbInstanceName="+database.getInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getIp()+" ， dbPort="+database.getPort()+"]：" + testLinkResult);
 					Log4jUtil.info("给该数据库的连接数据源，添加核心的hbm内容");
 					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
 					loadCoreHbmContentsToDatabase(database, coreTableHbmContents);// 加载当前数据库中的hbm到sessionFactory中
@@ -502,7 +502,7 @@ public class InitCfgSystemService extends AbstractService{
 		CurrentThreadContext.setDatabaseId(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
 		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
 		HibernateUtil.closeCurrentThreadSession();
-		Log4jUtil.info("数据库[dbType="+database.getDbType()+" ， dbInstanceName="+database.getDbInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getDbIp()+" ， dbPort="+database.getDbPort()+"]的数据库，是否存在发布的项目："+ isExists );
+		Log4jUtil.info("数据库[dbType="+database.getType()+" ， dbInstanceName="+database.getInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getIp()+" ， dbPort="+database.getPort()+"]的数据库，是否存在发布的项目："+ isExists );
 	}
 	/**
 	 * 加载项目id和数据库id的关联关系
@@ -542,7 +542,7 @@ public class InitCfgSystemService extends AbstractService{
 		}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
 			if(clob == null){
-				throw new NullPointerException("数据库名为["+database.getDbDisplayName()+"]，实例名为["+database.getDbInstanceName()+"]，ip为["+database.getDbIp()+"]，端口为["+database.getDbPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到SysHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
+				throw new NullPointerException("数据库名为["+database.getDisplayName()+"]，实例名为["+database.getInstanceName()+"]，ip为["+database.getIp()+"]，端口为["+database.getPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到SysHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
 			}
 			
 			Reader reader = clob.getCharacterStream();

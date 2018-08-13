@@ -33,16 +33,16 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	/**
 	 * 数字库名
 	 */
-	private String dbDisplayName;
+	private String displayName;
 	/**
 	 * 数据库类型
 	 */
-	private String dbType;
+	private String type;
 	/**
 	 * 数据库实例名
 	 * <p>oracle中是实例名、sqlserver中就是数据库名</p>
 	 */
-	private String dbInstanceName;
+	private String instanceName;
 	/**
 	 * 数据库登录名
 	 */
@@ -54,11 +54,11 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	/**
 	 * 数据库ip
 	 */
-	private String dbIp;
+	private String ip;
 	/**
 	 * 数据库端口
 	 */
-	private Integer dbPort;
+	private Integer port;
 	/**
 	 * 数据库文件配置内容(json串)
 	 */
@@ -86,21 +86,35 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		}
 		return cfgTmplogFileContent;
 	}
-	public String getDbType() {
-		return dbType;
+	public String getType() {
+		return type;
 	}
-	public String getDbIp() {
-		return dbIp;
+	public void setType(String type) {
+		this.type = type;
 	}
-	public Integer getDbPort() {
-		return dbPort;
+	public String getInstanceName() {
+		return instanceName;
+	}
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
+	public String getIp() {
+		return ip;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+	public Integer getPort() {
+		return port;
+	}
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 	public String getLoginPassword() {
 		return loginPassword;
-	}
-	
-	public String getDbInstanceName() {
-		return dbInstanceName;
 	}
 	public void setCfgMainFileContent(String cfgMainFileContent) {
 		this.cfgMainFileContent = cfgMainFileContent;
@@ -110,32 +124,17 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		this.cfgTmplogFileContent = cfgTmplogFileContent;
 		this.tmpLogFile = JsonUtil.parseObject(cfgTmplogFileContent, DBFile.class);
 	}
-	public String getDbDisplayName() {
-		if(StrUtils.isEmpty(dbDisplayName)){
-			dbDisplayName = dbInstanceName;
+	public String getDisplayName() {
+		if(StrUtils.isEmpty(displayName)){
+			displayName = instanceName;
 		}
-		return dbDisplayName;
-	}
-	public void setDbType(String dbType) {
-		this.dbType = dbType;
+		return displayName;
 	}
 	public String getLoginUserName() {
 		return loginUserName;
 	}
 	public void setLoginPassword(String loginPassword) {
 		this.loginPassword = loginPassword;
-	}
-	public void setDbIp(String dbIp) {
-		this.dbIp = dbIp;
-	}
-	public void setDbPort(Integer dbPort) {
-		this.dbPort = dbPort;
-	}
-	public void setDbDisplayName(String dbDisplayName) {
-		this.dbDisplayName = dbDisplayName;
-	}
-	public void setDbInstanceName(String dbInstanceName) {
-		this.dbInstanceName = dbInstanceName;
 	}
 	public void setLoginUserName(String loginUserName) {
 		this.loginUserName = loginUserName;
@@ -160,25 +159,25 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
-		ComColumndata dbDisplayNameColumn = new ComColumndata("db_display_name", BuiltinCodeDataType.STRING, 100);
-		dbDisplayNameColumn.setName("数字库名");
-		dbDisplayNameColumn.setComments("数字库名");
-		dbDisplayNameColumn.setOrderCode(2);
-		columns.add(dbDisplayNameColumn);
+		ComColumndata displayNameColumn = new ComColumndata("display_name", BuiltinCodeDataType.STRING, 100);
+		displayNameColumn.setName("数字库名");
+		displayNameColumn.setComments("数字库名");
+		displayNameColumn.setOrderCode(2);
+		columns.add(displayNameColumn);
 		
-		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinCodeDataType.STRING, 10);
-		dbTypeColumn.setName("数据库类型");
-		dbTypeColumn.setComments("数据库类型");
-		dbTypeColumn.setIsNullabled(0);
-		dbTypeColumn.setOrderCode(3);
-		columns.add(dbTypeColumn);
+		ComColumndata typeColumn = new ComColumndata("type", BuiltinCodeDataType.STRING, 10);
+		typeColumn.setName("数据库类型");
+		typeColumn.setComments("数据库类型");
+		typeColumn.setIsNullabled(0);
+		typeColumn.setOrderCode(3);
+		columns.add(typeColumn);
 		
-		ComColumndata dbInstanceNameColumn = new ComColumndata("db_instance_name", BuiltinCodeDataType.STRING, 20);
-		dbInstanceNameColumn.setName("数据库实例名");
-		dbInstanceNameColumn.setComments("数据库实例名：oracle中是实例名、sqlserver中就是数据库名");
-		dbInstanceNameColumn.setIsNullabled(0);
-		dbInstanceNameColumn.setOrderCode(4);
-		columns.add(dbInstanceNameColumn);
+		ComColumndata instanceNameColumn = new ComColumndata("instance_name", BuiltinCodeDataType.STRING, 20);
+		instanceNameColumn.setName("数据库实例名");
+		instanceNameColumn.setComments("数据库实例名：oracle中是实例名、sqlserver中就是数据库名");
+		instanceNameColumn.setIsNullabled(0);
+		instanceNameColumn.setOrderCode(4);
+		columns.add(instanceNameColumn);
 		
 		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name", BuiltinCodeDataType.STRING, 20);
 		loginUserNameColumn.setName("数据库登录名");
@@ -194,19 +193,19 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		loginPasswordColumn.setOrderCode(6);
 		columns.add(loginPasswordColumn);
 		
-		ComColumndata dbIpColumn = new ComColumndata("db_ip", BuiltinCodeDataType.STRING, 20);
-		dbIpColumn.setName("数据库ip");
-		dbIpColumn.setComments("数据库ip");
-		dbIpColumn.setIsNullabled(0);
-		dbIpColumn.setOrderCode(7);
-		columns.add(dbIpColumn);
+		ComColumndata ipColumn = new ComColumndata("ip", BuiltinCodeDataType.STRING, 20);
+		ipColumn.setName("数据库ip");
+		ipColumn.setComments("数据库ip");
+		ipColumn.setIsNullabled(0);
+		ipColumn.setOrderCode(7);
+		columns.add(ipColumn);
 		
-		ComColumndata dbPortColumn = new ComColumndata("db_port", BuiltinCodeDataType.INTEGER, 5);
-		dbPortColumn.setName("数据库端口");
-		dbPortColumn.setComments("数据库端口");
-		dbPortColumn.setIsNullabled(0);
-		dbPortColumn.setOrderCode(8);
-		columns.add(dbPortColumn);
+		ComColumndata portColumn = new ComColumndata("port", BuiltinCodeDataType.INTEGER, 5);
+		portColumn.setName("数据库端口");
+		portColumn.setComments("数据库端口");
+		portColumn.setIsNullabled(0);
+		portColumn.setOrderCode(8);
+		columns.add(portColumn);
 		
 		ComColumndata cfgMainFileContentColumn = new ComColumndata("cfg_main_file_content", BuiltinCodeDataType.STRING, 800);
 		cfgMainFileContentColumn.setName("数据库文件配置内容");
@@ -239,7 +238,7 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	 */
 	@JSONField(serialize = false)
 	public String getUrl() {
-		return BuiltinDatabaseData.getDataBaseLinkUrl(getDbType(), getDbIp(), getDbPort(), getDbInstanceName());
+		return BuiltinDatabaseData.getDataBaseLinkUrl(getType(), getIp(), getPort(), getInstanceName());
 	}
 	/**
 	 * 获取数据库驱动
@@ -247,7 +246,7 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	 */
 	@JSONField(serialize = false)
 	public String getDriverClass() {
-		return BuiltinDatabaseData.getDataBaseDriver(getDbType());
+		return BuiltinDatabaseData.getDataBaseDriver(getType());
 	}
 	/**
 	 * 获取数据库连接方言
@@ -255,7 +254,7 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	 */
 	@JSONField(serialize = false)
 	public String getDialect(){
-		return BuiltinDatabaseData.getDataBaseDialect(getDbType());
+		return BuiltinDatabaseData.getDataBaseDialect(getType());
 	}
 	
 	/**
@@ -278,13 +277,13 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	}
 	
 	public String validNotNullProps() {
-		if(StrUtils.isEmpty(dbType)){
+		if(StrUtils.isEmpty(type)){
 			return "数据库类型不能为空！";
 		}
-		if(!dbType.equals(BuiltinDatabaseData.DB_TYPE_ORACLE) && !dbType.equals(BuiltinDatabaseData.DB_TYPE_SQLSERVER)){
+		if(!type.equals(BuiltinDatabaseData.DB_TYPE_ORACLE) && !type.equals(BuiltinDatabaseData.DB_TYPE_SQLSERVER)){
 			return "系统目前只支持oracle和sqlserver数据库！";
 		}
-		if(StrUtils.isEmpty(dbInstanceName)){
+		if(StrUtils.isEmpty(instanceName)){
 			return "数据库实例名不能为空！";
 		}
 		if(StrUtils.isEmpty(loginUserName)){
@@ -293,10 +292,10 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		if(StrUtils.isEmpty(loginPassword)){
 			return "数据库登录密码不能为空！";
 		}
-		if(StrUtils.isEmpty(dbIp)){
+		if(StrUtils.isEmpty(ip)){
 			return "数据库ip不能为空！";
 		}
-		if(dbPort == null || dbPort < 1){
+		if(port == null || port < 1){
 			return "数据库端口不能为空！";
 		}
 		return null;
@@ -306,12 +305,12 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		String result = validNotNullProps();
 		if(result == null){
 			// 验证数据库实例名
-			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)
-					&& SysConfig.getSystemConfig("db.default.ip").equals(dbIp)
-					&& SysConfig.getSystemConfig("db.default.port").equals(getDbPort()+"")){
+			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(type)
+					&& SysConfig.getSystemConfig("db.default.ip").equals(ip)
+					&& SysConfig.getSystemConfig("db.default.port").equals(getPort()+"")){
 				// 如果数据库类型是oracle数据库
 				// 如果和jdbc中配置的ip和端口一样，就说明是使用的是当前库，则使用jdbc中配置的oracle数据库实例名
-				this.dbInstanceName = SysConfig.getSystemConfig("db.default.instancename");
+				this.instanceName = SysConfig.getSystemConfig("db.default.instancename");
 			}
 			
 			// 创建数据库文件对象
@@ -336,11 +335,11 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	 * @return
 	 */
 	public boolean compareLinkInfoIsSame(CfgDatabase database){
-		if(StrUtils.compareIsSame(dbInstanceName, database.getDbInstanceName())
+		if(StrUtils.compareIsSame(instanceName, database.getInstanceName())
 				&& StrUtils.compareIsSame(loginUserName, database.getLoginUserName())
 				&& StrUtils.compareIsSame(loginPassword, database.getLoginPassword())
-				&& StrUtils.compareIsSame(dbIp, database.getDbIp())
-				&& dbPort.equals(database.getDbPort())){
+				&& StrUtils.compareIsSame(ip, database.getIp())
+				&& port.equals(database.getPort())){
 			return true;
 		}
 		return false;
@@ -353,14 +352,14 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	 * @return
 	 */
 	public boolean compareIsSameDatabase(CfgDatabase database){
-		if(database.getDbType().equals(BuiltinDatabaseData.DB_TYPE_ORACLE)){
-			if(StrUtils.compareIsSameIgnoreCase(dbInstanceName, database.getDbInstanceName())
-					&& StrUtils.compareIsSame(dbIp, database.getDbIp())
-					&& dbPort.equals(database.getDbPort())){
+		if(database.getType().equals(BuiltinDatabaseData.DB_TYPE_ORACLE)){
+			if(StrUtils.compareIsSameIgnoreCase(instanceName, database.getInstanceName())
+					&& StrUtils.compareIsSame(ip, database.getIp())
+					&& port.equals(database.getPort())){
 				return true;
 			}
-		}else if(database.getDbType().equals(BuiltinDatabaseData.DB_TYPE_SQLSERVER)){
-			if(StrUtils.compareIsSame(dbIp, database.getDbIp()) && dbPort.equals(database.getDbPort())){
+		}else if(database.getType().equals(BuiltinDatabaseData.DB_TYPE_SQLSERVER)){
+			if(StrUtils.compareIsSame(ip, database.getIp()) && port.equals(database.getPort())){
 				return true;
 			}
 		}
@@ -376,7 +375,7 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		DmPublishInfo publish = new DmPublishInfo();
 		publish.setPublishDatabaseId(id);
 		publish.setPublishResourceId(id);
-		publish.setPublishResourceName(dbInstanceName);
+		publish.setPublishResourceName(instanceName);
 		publish.setResourceType(DATABASE);
 		return publish;
 	}

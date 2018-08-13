@@ -71,7 +71,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	private Date employedDate;
 	/**
 	 * 人员状态
-	 * <p>1.在职、2.离职、3.休假</p>
+	 * <p>0:其他(默认)、1.在职、2.离职、3.休假</p>
 	 */
 	private Integer userStatus;
 	/**
@@ -326,7 +326,8 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		
 		ComColumndata userStatusColumn = new ComColumndata("user_status", BuiltinCodeDataType.INTEGER, 1);
 		userStatusColumn.setName("人员状态");
-		userStatusColumn.setComments("人员状态:1.在职、2.离职、3.休假");
+		userStatusColumn.setComments("人员状态:0:其他(默认)、1.在职、2.离职、3.休假");
+		userStatusColumn.setDefaultValue("0");
 		userStatusColumn.setOrderCode(13);
 		columns.add(userStatusColumn);
 		

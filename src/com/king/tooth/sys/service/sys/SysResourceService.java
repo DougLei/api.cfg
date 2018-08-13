@@ -29,7 +29,7 @@ public class SysResourceService extends AbstractService{
 	 * @param resourceId
 	 */
 	public void deleteSysResource(String resourceId){
-		HibernateUtil.executeUpdateBySqlArr(BuiltinDatabaseData.DELETE, "delete com_sys_resource where ref_resource_id = ? and project_id = ?", resourceId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateBySqlArr(BuiltinDatabaseData.DELETE, "delete sys_resource where ref_resource_id = ? and project_id = ?", resourceId, CurrentThreadContext.getProjectId());
 	}
 	
 	/**
@@ -58,6 +58,6 @@ public class SysResourceService extends AbstractService{
 	 * @param resourceName
 	 */
 	public void updateResourceName(String refResourceId, String resourceName) {
-		HibernateUtil.executeUpdateBySqlArr(BuiltinDatabaseData.UPDATE, "update com_sys_resource set resource_name = ? where ref_resource_id = ? and project_id = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateBySqlArr(BuiltinDatabaseData.UPDATE, "update sys_resource set resource_name = ? where ref_resource_id = ? and project_id = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
 	}
 }

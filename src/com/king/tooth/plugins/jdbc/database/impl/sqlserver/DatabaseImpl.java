@@ -13,7 +13,7 @@ public class DatabaseImpl extends AbstractDatabaseHandler{
 	public String installCreateDatabaseSql(CfgDatabase database) {
 		operDatabaseSql.setLength(0);
 		// 创建数据库文件
-		operDatabaseSql.append("create database ").append(database.getDbInstanceName())
+		operDatabaseSql.append("create database ").append(database.getInstanceName())
 				       .append(" on primary (")
 				       .append("name='").append(database.getMainFile().getName()).append("',")
 				       .append("filename='").append(database.getMainFile().getFilepath()).append(database.getMainFile().getName()).append(".mdf',")
@@ -38,12 +38,12 @@ public class DatabaseImpl extends AbstractDatabaseHandler{
 		}
 		
 		// 切换到刚刚创建的数据库
-		operDatabaseSql.append(";use ").append(database.getDbInstanceName()).append(";");
+		operDatabaseSql.append(";use ").append(database.getInstanceName()).append(";");
 		// 创建登录账户
 		operDatabaseSql.append("create login ")
 		               .append(database.getLoginUserName())
 		               .append(" with password='").append(database.getLoginPassword()).append("', default_database=")
-		               .append(database.getDbInstanceName()).append(";");
+		               .append(database.getInstanceName()).append(";");
 		// 创建数据库用户
 		operDatabaseSql.append("create user ")
 					   .append("u_").append(database.getLoginUserName()).append(" for login ")
@@ -61,7 +61,7 @@ public class DatabaseImpl extends AbstractDatabaseHandler{
 		// 删除登录账户：在master数据库下，删除了登录账户和数据库，用户也就被删除了，因为用户是被绑定到数据库中的
 		operDatabaseSql.append("drop login ").append(database.getLoginUserName()).append(";");
 		// 删除数据库
-		operDatabaseSql.append("drop database ").append(database.getDbInstanceName());
+		operDatabaseSql.append("drop database ").append(database.getInstanceName());
 		return operDatabaseSql.toString();
 	}
 }

@@ -78,12 +78,12 @@ public class BuiltinObjectInstance {
 	public transient static final CfgDatabase currentSysBuiltinDatabaseInstance = new CfgDatabase();
 	static{
 		currentSysBuiltinDatabaseInstance.setId(SysConfig.getSystemConfig("current.sys.database.id"));
-		currentSysBuiltinDatabaseInstance.setDbType(SysConfig.getSystemConfig("jdbc.dbType"));
-		currentSysBuiltinDatabaseInstance.setDbInstanceName(SysConfig.getSystemConfig("db.default.instancename"));
+		currentSysBuiltinDatabaseInstance.setType(SysConfig.getSystemConfig("jdbc.dbType"));
+		currentSysBuiltinDatabaseInstance.setInstanceName(SysConfig.getSystemConfig("db.default.instancename"));
 		currentSysBuiltinDatabaseInstance.setLoginUserName(SysConfig.getSystemConfig("jdbc.username"));
 		currentSysBuiltinDatabaseInstance.setLoginPassword(SysConfig.getSystemConfig("jdbc.password"));
-		currentSysBuiltinDatabaseInstance.setDbIp(SysConfig.getSystemConfig("db.default.ip"));
-		currentSysBuiltinDatabaseInstance.setDbPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
+		currentSysBuiltinDatabaseInstance.setIp(SysConfig.getSystemConfig("db.default.ip"));
+		currentSysBuiltinDatabaseInstance.setPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
 	}
 	
 	/**

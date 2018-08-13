@@ -354,7 +354,7 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		// 远程过去create表
 		CfgDatabase database = getObjectById(project.getRefDatabaseId(), CfgDatabase.class);
-		table.setDbType(database.getDbType());
+		table.setDbType(database.getType());
 		String validResult = table.analysisResourceProp();
 		if(validResult != null){
 			return validResult;
@@ -502,7 +502,7 @@ public class ComTabledataService extends AbstractPublishService {
 				continue;
 			}
 			
-			table.setDbType(database.getDbType());
+			table.setDbType(database.getType());
 			validResult = table.analysisResourceProp();
 			if(validResult != null){
 				Log4jUtil.info("["+table.getTableName()+"]表发布时验证失败：" + validResult);

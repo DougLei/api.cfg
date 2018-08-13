@@ -51,19 +51,19 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	private String email;
 	/**
 	 * 账户类型
-	 * 		1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)
+	 * 		1.管理员
 	 * 		2.普通账户
 	 * 		3.平台开发账户(配置系统使用)
 	 * <p>默认值是：2</p>
 	 */
-	private Integer accountType;
+	private Integer type;
 	/**
 	 * 账户状态
 	 * 		1.启用
 	 * 		2.禁用
 	 * <p>默认值是：1</p>
 	 */
-	private Integer accountStatus;
+	private Integer status;
 	/**
 	 * 账户有效期限
 	 */
@@ -106,12 +106,6 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	public void setTel(String tel) {
 		this.tel = tel;
 	}
-	public Integer getAccountStatus() {
-		return accountStatus;
-	}
-	public void setAccountStatus(Integer accountStatus) {
-		this.accountStatus = accountStatus;
-	}
 	public Date getValidDate() {
 		return validDate;
 	}
@@ -130,11 +124,17 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public Integer getAccountType() {
-		return accountType;
+	public Integer getType() {
+		return type;
 	}
-	public void setAccountType(Integer accountType) {
-		this.accountType = accountType;
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 	public String getVerifyCode() {
 		return verifyCode;
@@ -185,19 +185,19 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		emailColumn.setOrderCode(5);
 		columns.add(emailColumn);
 
-		ComColumndata accountTypeColumn = new ComColumndata("account_type", BuiltinCodeDataType.INTEGER, 1);
-		accountTypeColumn.setName("账户类型");
-		accountTypeColumn.setComments("账户类型:1.管理账户(超级账户，每个项目只有一个，由发布系统时内置进去)、2.普通账户、3.平台开发账户(配置系统使用)，默认值是：2");
-		accountTypeColumn.setDefaultValue("2");
-		accountTypeColumn.setOrderCode(6);
-		columns.add(accountTypeColumn);
+		ComColumndata typeColumn = new ComColumndata("type", BuiltinCodeDataType.INTEGER, 1);
+		typeColumn.setName("账户类型");
+		typeColumn.setComments("账户类型:1.管理员、2.普通账户、3.平台开发账户(配置系统使用)，默认值是：2");
+		typeColumn.setDefaultValue("2");
+		typeColumn.setOrderCode(6);
+		columns.add(typeColumn);
 		
-		ComColumndata accountStatusColumn = new ComColumndata("account_status", BuiltinCodeDataType.INTEGER, 1);
-		accountStatusColumn.setName("账户状态");
-		accountStatusColumn.setComments("账户状态:1.启用、2.禁用，默认值是：1");
-		accountStatusColumn.setDefaultValue("1");
-		accountStatusColumn.setOrderCode(7);
-		columns.add(accountStatusColumn);
+		ComColumndata statusColumn = new ComColumndata("status", BuiltinCodeDataType.INTEGER, 1);
+		statusColumn.setName("账户状态");
+		statusColumn.setComments("账户状态:1.启用、2.禁用，默认值是：1");
+		statusColumn.setDefaultValue("1");
+		statusColumn.setOrderCode(7);
+		columns.add(statusColumn);
 		
 		ComColumndata validDateColumn = new ComColumndata("valid_date", BuiltinCodeDataType.DATE, 0);
 		validDateColumn.setName("账户有效期限");

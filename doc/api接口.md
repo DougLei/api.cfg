@@ -61,7 +61,7 @@
   "liveAddr":"",                             --居住地点
   "idCardNo":"",                             --身份证号码
   "employedDate":"",                         --入职时间
-  "userStatus":"",                           --人员状态
+  "userStatus":"",                           --人员状态:0:其他(默认)、1.在职、2.离职、3.休假
   "monthSalar":"",                           --月薪
   "workNo":"",                               --工号
   "secretLevel":"",                          --密级
@@ -100,7 +100,7 @@
   "liveAddr":"",                             --居住地点
   "idCardNo":"",                             --身份证号码
   "employedDate":"",                         --入职时间
-  "userStatus":"",                           --人员状态
+  "userStatus":"",                           --人员状态:0:其他(默认)、1.在职、2.离职、3.休假
   "monthSalar":"",                           --月薪
   "workNo":"",                               --工号
   "secretLevel":"",                          --密级
@@ -186,13 +186,13 @@
 - 请求体: 
 ```
 {
-  "loginName":"",                                     --登录名
-  "loginPwd":"",                                      --登陆密码
-  "tel":"",                                           --电话号码
-  "email":"",                                         --邮箱
-  "accountType":"",                                   --账户类型
-  "accountStatus":"",                                 --账户状态
-  "validDate":""                                      --有效期
+  "loginName":"",                                    --登录名
+  "loginPwd":"",                                     --登陆密码
+  "tel":"",                                          --电话号码
+  "email":"",                                        --邮箱
+  "type":"",                                         --账户类型: 1.管理员、2.普通(默认)、3.开发者
+  "status":"",                                       --账户状态: 1.启用(默认)、2.禁用
+  "validDate":""                                     --有效期
 }
 ```
 
@@ -211,13 +211,13 @@
 - 请求体: 
 ```
 {
-  "Id":"",                                            --主键
-  "loginName":"",                                     --登录名
-  "tel":"",                                           --电话号码
-  "email":"",                                         --邮箱
-  "accountType":"",                                   --账户类型
-  "accountStatus":"",                                 --账户状态
-  "validDate":""                                      --有效期
+  "Id":"",                                           --主键
+  "loginName":"",                                    --登录名
+  "tel":"",                                          --电话号码
+  "email":"",                                        --邮箱
+  "type":"",                                         --账户类型: 1.管理员、2.普通(默认)、3.开发者
+  "status":"",                                       --账户状态: 1.启用(默认)、2.禁用
+  "validDate":""                                     --有效期
 }
 ```
 
@@ -281,7 +281,7 @@
   "code":"",                                            --角色编码
   "descs":"",                                           --角色描述
   "orderCode":1,                                        --排序
-  "isEnabled":""                                        --是否启用，1是0否
+  "isEnabled":""                                        --是否启用: 1是0否
 }
 ```
 
@@ -305,7 +305,7 @@
   "code":"",                                            --角色编码
   "descs":"",                                           --角色描述
   "orderCode":1,                                        --排序
-  "isEnabled":""                                        --是否启用，1是0否
+  "isEnabled":""                                        --是否启用: 1是0否
 }
 ```
 
@@ -345,15 +345,15 @@
 - 请求体: 
 ```
 {
-  "refDataId":"",                                       --关联的数据id
-  "refDataType":"",                                     --关联的数据类型
-  "refResourceId":"",                                   --关联的资源id
-  "refResourceCode":"",                                 --关联的资源code，全项目唯一
-  "refParentResourceId":"",                             --关联的父资源id
-  "refParentResourceCode":"",                           --关联的父资源code
-  "refResourceType":"",                                 --关联的资源类型
-  "isVisibility":"",                                    --是否可见(是否可读)，1是0否
-  "isOper":""                                           --是否可操作(是否可写)，1是0否
+  "refDataId":"",                --关联的数据id：比如角色id，帐号id，部门id，岗位id等
+  "refDataType":"",              --关联的数据类型：角色role，帐号account，部门dept，岗位position
+  "refResourceId":"",            --关联的资源id: 比如某个模块的id，某个功能的id等
+  "refResourceCode":"",          --关联的资源code，与refResourceId数据对应的code，是全项目唯一
+  "refParentResourceId":"",      --关联的父资源id，同refResourceId
+  "refParentResourceCode":"",    --关联的父资源code，同refResourceCode
+  "refResourceType":"",          --关联的资源类型：1:模块module、2:tab、3:功能oper  等
+  "isVisibility":"",             --是否可见(是否可读): 1是0否
+  "isOper":""                    --是否可操作(是否可写): 1是0否
 }
 ```
 
@@ -372,16 +372,16 @@
 - 请求体: 
 ```
 {
-  "Id":"",                                              --主键
-  "refDataId":"",                                       --关联的数据id
-  "refDataType":"",                                     --关联的数据类型
-  "refResourceId":"",                                   --关联的资源id
-  "refResourceCode":"",                                 --关联的资源code，全项目唯一
-  "refParentResourceId":"",                             --关联的父资源id
-  "refParentResourceCode":"",                           --关联的父资源code
-  "refResourceType":"",                                 --关联的资源类型
-  "isVisibility":"",                                    --是否可见(是否可读)，1是0否
-  "isOper":""                                           --是否可操作(是否可写)，1是0否
+  "Id":"",                       --主键
+  "refDataId":"",                --关联的数据id：比如角色id，帐号id，部门id，岗位id等
+  "refDataType":"",              --关联的数据类型：角色role，帐号account，部门dept，岗位position
+  "refResourceId":"",            --关联的资源id: 比如某个模块的id，某个功能的id等
+  "refResourceCode":"",          --关联的资源code，与refResourceId数据对应的code，是全项目唯一
+  "refParentResourceId":"",      --关联的父资源id，同refResourceId
+  "refParentResourceCode":"",    --关联的父资源code，同refResourceCode
+  "refResourceType":"",          --关联的资源类型：1:模块module、2:tab、3:功能oper  等
+  "isVisibility":"",             --是否可见(是否可读): 1是0否
+  "isOper":""                    --是否可操作(是否可写): 1是0否
 }
 ```
 
@@ -489,7 +489,7 @@
 - 请求体: 
 ```
 {
-  "orgId":"",                                          --所属组织主键
+  "orgId":"",                                          --所属组织主键，可为空
   "parentId":"",                                       --父部门主键
   "name":"",                                           --部门名
   "shortName":"",                                      --部门简称
@@ -514,7 +514,7 @@
 ```
 {
   "Id":"",                                             --主键
-  "orgId":"",                                          --所属组织主键
+  "orgId":"",                                          --所属组织主键，可为空
   "parentId":"",                                       --父部门主键
   "name":"",                                           --部门名
   "shortName":"",                                      --部门简称
@@ -694,7 +694,7 @@
   "caption":"",                                         --显示的文本
   "val":"",                                             --后台操作的值(value)
   "orderCode":1,                                        --排序值
-  "isEnabled":1,                                        --是否有效，1是0否
+  "isEnabled":1,                                        --是否有效: 1是0否
   "comments":""                                         --备注
 }
 ```
@@ -720,7 +720,7 @@
   "caption":"",                                         --显示的文本
   "val":"",                                             --后台操作的值(value)
   "orderCode":1,                                        --排序值
-  "isEnabled":1,                                        --是否有效，1是0否
+  "isEnabled":1,                                        --是否有效: 1是0否
   "comments":""                                         --备注
 }
 ```
@@ -763,13 +763,13 @@
 - 请求体: 
 ```
 {
-  "dbDisplayName":"",                                   --数据库汉字名
-  "dbType":"",                                          --数据库类型
-  "dbInstanceName":"",                                  --数据库实例名
+  "displayName":"",                                     --数据库汉字名
+  "type":"",                                            --数据库类型
+  "instanceName":"",                                    --数据库实例名
   "loginUserName":"",                                   --数据库登陆帐号
   "loginPassword":"",                                   --数据库登陆密码
-  "dbIp":"",                                            --数据库ip
-  "dbPort":""                                           --数据库端口
+  "ip":"",                                              --数据库ip
+  "port":""                                             --数据库端口
 }
 ```
 
@@ -789,13 +789,13 @@
 ```
 {
   "Id":"",                                              --主键
-  "dbDisplayName":"",                                   --数据库汉字名
-  "dbType":"",                                          --数据库类型
-  "dbInstanceName":"",                                  --数据库实例名
+  "displayName":"",                                     --数据库汉字名
+  "type":"",                                            --数据库类型
+  "instanceName":"",                                    --数据库实例名
   "loginUserName":"",                                   --数据库登陆帐号
   "loginPassword":"",                                   --数据库登陆密码
-  "dbIp":"",                                            --数据库ip
-  "dbPort":""                                           --数据库端口
+  "ip":"",                                              --数据库ip
+  "port":""                                             --数据库端口
 }
 ```
 
@@ -1076,13 +1076,15 @@
   "tableId":"",                                          --关联的表主键
   "name":"",                                             --列的汉字名
   "columnName":"",                                       --列名
-  "columnType":"",                                       --字段数据类型
+  "columnType":"",                                       --字段数据类型:
+                        字符串: string、布尔值: boolean、整型: integer、浮点型: double
+                        日期: date、字符大字段: clob、二进制大字段: blob
   "length":"",                                           --字段长度
   "precision":"",                                        --数据精度
   "defaultValue":"",                                     --默认值
-  "isUnique":"",                                         --是否唯一
-  "isNullabled":"",                                      --是否可为空
-  "isDataDictionary":"",                                 --是否数据字典
+  "isUnique":"",                                         --是否唯一: 1是0否
+  "isNullabled":"",                                      --是否可为空: 1是0否
+  "isDataDictionary":"",                                 --是否数据字典: 1是0否
   "dataDictionaryCode":"",                               --数据字典编码
   "orderCode":1,                                         --排序
   "comments":""                                          --注释
@@ -1108,13 +1110,15 @@
   "tableId":"",                                          --关联的表主键
   "name":"",                                             --列的汉字名
   "columnName":"",                                       --列名
-  "columnType":"",                                       --字段数据类型
+  "columnType":"",                                       --字段数据类型:
+                        字符串: string、布尔值: boolean、整型: integer、浮点型: double
+                        日期: date、字符大字段: clob、二进制大字段: blob
   "length":"",                                           --字段长度
   "precision":"",                                        --数据精度
   "defaultValue":"",                                     --默认值
-  "isUnique":"",                                         --是否唯一
-  "isNullabled":"",                                      --是否可为空
-  "isDataDictionary":"",                                 --是否数据字典
+  "isUnique":"",                                         --是否唯一: 1是0否
+  "isNullabled":"",                                      --是否可为空: 1是0否
+  "isDataDictionary":"",                                 --是否数据字典: 1是0否
   "dataDictionaryCode":"",                               --数据字典编码
   "orderCode":1,                                         --排序
   "comments":""                                          --注释
@@ -1160,7 +1164,7 @@
   "sqlScriptCaption": "",                               --sql脚本汉字名
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
-  "isAnalysisParameters":""                             --是否解析参数，1是0否
+  "isAnalysisParameters":""                             --是否解析参数: 1是0否
 }
 ```
 
@@ -1183,7 +1187,7 @@
   "sqlScriptCaption": "",                               --sql脚本汉字名
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
-  "isAnalysisParameters":""                             --是否解析参数，1是0否
+  "isAnalysisParameters":""                             --是否解析参数: 1是0否
 }
 ```
 
@@ -1226,6 +1230,7 @@
   "parameterName":"",                                   --参数名
   "length":"",                                          --参数的值长度
   "parameterDataType":"",                               --参数值的数据类型
+                字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }
@@ -1250,6 +1255,7 @@
   "parameterName":"",                                   --参数名
   "length":"",                                          --参数的值长度
   "parameterDataType":"",                               --参数值的数据类型
+                字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }
