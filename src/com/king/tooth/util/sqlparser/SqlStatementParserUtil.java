@@ -6,6 +6,7 @@ import gudusoft.gsqlparser.TCustomSqlStatement;
 import gudusoft.gsqlparser.TGSqlParser;
 import gudusoft.gsqlparser.TStatementList;
 import gudusoft.gsqlparser.nodes.TParameterDeclaration;
+import gudusoft.gsqlparser.stmt.TCreateViewSqlStatement;
 import gudusoft.gsqlparser.stmt.TSelectSqlStatement;
 import gudusoft.gsqlparser.stmt.mssql.TMssqlCreateProcedure;
 import gudusoft.gsqlparser.stmt.oracle.TPlsqlCreateProcedure;
@@ -144,10 +145,6 @@ public class SqlStatementParserUtil {
 	        	 typeMap.put("type", BuiltinDatabaseData.VIEW);
 	        	 typeMap.put("isUnique", "true");
 	        	 break;
-	         case sstmssqlexec:
-	        	 typeMap.put("type", BuiltinDatabaseData.VIEW);
-	        	 typeMap.put("isUnique", "true");
-	        	 break;
 	         default:
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
 	        	 typeMap.put("type", sqlStatementType.toString());
@@ -182,7 +179,7 @@ public class SqlStatementParserUtil {
 	 */
 	private static void analysisOracleProcedure(TPlsqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
 		// 解析出存储过程名
-		sqlScript.setProcedureName(procedureSqlStatement.getProcedureName().toString());
+		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
 
 		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
 		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
@@ -218,7 +215,7 @@ public class SqlStatementParserUtil {
 	 */
 	private static void analysisSqlServerProcedure(TMssqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
 		// 解析出存储过程名
-		sqlScript.setProcedureName(procedureSqlStatement.getProcedureName().toString());
+		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
 
 		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
 		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
@@ -250,6 +247,16 @@ public class SqlStatementParserUtil {
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
 	}
+	
+	/**
+	 * 解析出视图名
+	 * @param sqlScript
+	 */
+	public static void analysisViewSqlScriptParam(ComSqlScript sqlScript) {
+		TCustomSqlStatement sqlStatement = sqlScript.getGsqlParser().sqlstatements.get(0);
+		sqlScript.setObjectName(((TCreateViewSqlStatement) sqlStatement).getViewName().toString());
+	}
+	
 	
 	/**
 	 * 根据sql脚本参数，获取最终的sql脚本对象
@@ -456,7 +463,6 @@ public class SqlStatementParserUtil {
 		finalSqlScript.setFinalModifySqlArr(otherSqlArr);
 	}
 
-	
 //	下面的代码，是为了解析sql语句，分析出参数中，哪些是在调用的时候，通过?方式传值的，以及获取select语句，最终查询的结果列名集合
 //	/**
 //	 * 获取select的sql语句，执行后的查询字段名集合

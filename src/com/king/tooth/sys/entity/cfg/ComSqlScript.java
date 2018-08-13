@@ -65,10 +65,10 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	private List<ComSqlScriptParameter> sqlScriptParameterList;
 	
 	/**
-	 * 存储过程名称
-	 * <p>[该属性针对存储过程的sql语句]</p>
+	 * sql对象名称
+	 * <p>[存储过程、视图等]</p>
 	 */
-	private String procedureName;
+	private String objectName;
 	
 	/**
 	 * 备注
@@ -192,12 +192,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public String getParameterNameRecords() {
 		return parameterNameRecords;
 	}
-	public String getProcedureName() {
-		return procedureName;
-	}
-	public void setProcedureName(String procedureName) {
-		this.procedureName = procedureName;
-	}
 	public List<ComSqlScriptParameter> getSqlScriptParameterList() {
 		return sqlScriptParameterList;
 	}
@@ -221,6 +215,12 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	public String getDbType() {
 		return dbType;
+	}
+	public String getObjectName() {
+		return objectName;
+	}
+	public void setObjectName(String objectName) {
+		this.objectName = objectName.toUpperCase();
 	}
 	public void setDbType(String dbType) {
 		this.dbType = dbType;
@@ -304,28 +304,28 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlScriptParametersColumn.setOrderCode(6);
 		columns.add(sqlScriptParametersColumn);
 		
-		ComColumndata procedureNameColumn = new ComColumndata("procedure_name", BuiltinCodeDataType.STRING, 80);
-		procedureNameColumn.setName("存储过程名称");
-		procedureNameColumn.setComments("存储过程名称");
-		procedureNameColumn.setOrderCode(7);
-		columns.add(procedureNameColumn);
+		ComColumndata objectNameColumn = new ComColumndata("object_name", BuiltinCodeDataType.STRING, 80);
+		objectNameColumn.setName("sql对象名称");
+		objectNameColumn.setComments("存储过程、视图等");
+		objectNameColumn.setOrderCode(7);
+		columns.add(objectNameColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinCodeDataType.STRING, 200);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
-		commentsColumn.setOrderCode(8);
+		commentsColumn.setOrderCode(9);
 		columns.add(commentsColumn);
 		
 		ComColumndata sqlQueryResultColumnsColumn = new ComColumndata("sql_query_result_columns", BuiltinCodeDataType.STRING, 9999);
 		sqlQueryResultColumnsColumn.setName("sql查询结果的列名对象集合");
 		sqlQueryResultColumnsColumn.setComments("sql查询结果的列名对象集合(json串)：该属性针对查询的sql语句，程序内部使用，不开放给用户");
-		sqlQueryResultColumnsColumn.setOrderCode(9);
+		sqlQueryResultColumnsColumn.setOrderCode(10);
 		columns.add(sqlQueryResultColumnsColumn);
 		
 		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinCodeDataType.STRING, 9999);
 		parameterNameRecordsColumn.setName("sql参数名的记录对象集合");
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
-		parameterNameRecordsColumn.setOrderCode(10);
+		parameterNameRecordsColumn.setOrderCode(11);
 		columns.add(parameterNameRecordsColumn);
 		
 		table.setColumns(columns);
@@ -367,16 +367,24 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 				// 如果是存储过程，则用另一个方法处理，解析出参数
 				if(BuiltinDatabaseData.PROCEDURE.equals(this.sqlScriptType)){ 
 					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this);
-				} 
+				}
+				// 如果是视图，则不用解析参数
+				else if(BuiltinDatabaseData.VIEW.equals(this.sqlScriptType)){ 
+					SqlStatementParserUtil.analysisViewSqlScriptParam(this);
+				}
 				// 否则是一般sql脚本，解析[$xxx$]的参数
 				else{ 
 					SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this);// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
+					this.isCreated = 1;
 				}
 			}
 			
 			if(isImmediateCreate == 1 
 					&& (BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType))){
-				HibernateUtil.createObject(sqlScriptContent);
+				List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
+				sqls.add(this);
+				HibernateUtil.createObject(sqls);
+				this.isCreated = 1;
 			}
 		}
 		return result;

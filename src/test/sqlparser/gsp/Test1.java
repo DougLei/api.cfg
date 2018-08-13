@@ -2,16 +2,21 @@ package test.sqlparser.gsp;
 
 import gudusoft.gsqlparser.EDbVendor;
 import gudusoft.gsqlparser.TGSqlParser;
+import gudusoft.gsqlparser.stmt.TCreateViewSqlStatement;
 
 public class Test1 {
 	// update
 	public static void main(String[] args) {
-		EDbVendor dbDialect = EDbVendor.dbvmssql;
+		EDbVendor dbDialect = EDbVendor.dbvoracle;
 		TGSqlParser sqlParser = new TGSqlParser(dbDialect);
-		sqlParser.sqltext = "create or replace view a as select * from COM_COLUMNDATA ";
+		sqlParser.sqltext = "create or replace view viewNames as select * from COM_COLUMNDATA ";
 		sqlParser.parse();
 		
 		System.out.println(sqlParser.sqlstatements.get(0).sqlstatementtype);
+		
+		
+		TCreateViewSqlStatement tvss = (TCreateViewSqlStatement) sqlParser.sqlstatements.get(0);
+		System.out.println(tvss.getViewName().toString());
 	}
 	
 	

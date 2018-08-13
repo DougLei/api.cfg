@@ -120,4 +120,18 @@ public class BuiltinDatabaseData {
 	 * procedure
 	 */
 	public static final String PROCEDURE = "procedure";
+	
+	// -----------------------------------------------------------------------------
+	// 查询数据是否存在的sql语句
+	/**
+	 * sqlserver查询对象是否存在
+	 * <p>目前主要是查询表、存储过程、视图</p>
+	 */
+	public static final String sqlserver_queryObjectIsExistsSql = "select count(1) from  sysobjects where id = object_id(?) and type = ?";
+	
+	/**
+	 * oracle查询对象是否存在
+	 * <p>目前主要是查询表、存储过程、视图</p>
+	 */
+	public static final String oracle_queryObjectIsExistsSql = "select count(1) from user_objects where object_name = ? and object_type = ?";
 }

@@ -64,10 +64,6 @@ public class SysAccountService extends AbstractService{
 		}else{
 			HibernateUtil.updateObjectByHql(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}
-		
-		// TODO 暂时不要
-		// 获取当前登陆帐号的权限
-		accountOnlineStatus.setPermission(BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId()));
 		return accountOnlineStatus;
 	}
 	
@@ -113,6 +109,8 @@ public class SysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
+		// 处理权限
+		processPermission(loginAccount, accountOnlineStatus);
 		// 处理基本信息
 		processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
 		accountOnlineStatus.setLastOperDate(new Date());
@@ -127,6 +125,22 @@ public class SysAccountService extends AbstractService{
 		return accountOnlineStatus;
 	}
 	
+	/**
+	 * 处理权限
+	 * @param loginAccount
+	 * @param accountOnlineStatus
+	 */
+	private void processPermission(SysAccount loginAccount, SysAccountOnlineStatus accountOnlineStatus) {
+		if(StrUtils.isEmpty(loginAccount.getPermission())){
+			loginAccount.setPermissionJson(BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId()));
+		}
+		
+		
+		// 获取当前登陆帐号的权限
+		accountOnlineStatus.setPermission();
+	}
+
+
 	/**
 	 * 处理账户在线状态对象的基础数据
 	 * <p>包括当前账户id，当前用户id等等基础信息</p>

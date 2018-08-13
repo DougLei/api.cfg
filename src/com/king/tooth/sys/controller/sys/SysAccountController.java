@@ -41,7 +41,8 @@ public class SysAccountController extends AbstractController{
 		}else{
 			// 登录成功时，记录token和项目id的关系
 			TokenRefProjectIdMapping.setTokenRefProjMapping(accountOnlineStatus.getToken(), CurrentThreadContext.getProjectId());
-			// 组装到结果json中
+			
+			// 将(模块)权限信息组装到结果json中
 			JSONObject json = JsonUtil.toJsonObject(accountOnlineStatus);
 			json.put("permissions", accountOnlineStatus.gainPermission());
 			resultObject = json;

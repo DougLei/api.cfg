@@ -6,6 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -13,6 +14,7 @@ import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -247,19 +249,36 @@ public class ComSqlScriptService extends AbstractPublishService {
 	/**
 	 * 创建sql脚本对象
 	 * <p>存储过程、视图等</p>
-	 * @param sqlScriptId
+	 * @param ijson
 	 * @return
 	 */
-	public Object immediateCreate(String sqlScriptId) {
-		ComSqlScript sql = getObjectById(sqlScriptId, ComSqlScript.class);
-		try {
-			if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType()) || BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
-				HibernateUtil.createObject(sql.getSqlScriptContent());
+	public Object immediateCreate(IJson ijson) {
+		int len = ijson.size();
+		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(len);
+		
+		StringBuilder updateHql = new StringBuilder("update ComSqlScript set isCreated=1 where id in (");
+		ComSqlScript tmpSql;
+		for(int i=0;i<len ;i++){
+			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), ComSqlScript.class);
+			if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType()) || BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
+				sqls.add(tmpSql);
+				updateHql.append("'").append(tmpSql.getId()).append("',");
 			}else{
-				return "创建资源名为["+sql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中创建 [存储过程] 和 [视图]";
+				return "创建资源名为["+tmpSql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中创建 [存储过程] 和 [视图]";
 			}
-		} finally{
-			sql.clear();
+		}
+		updateHql.setLength(updateHql.length()-1);
+		updateHql.append(")");
+		
+		try {
+			HibernateUtil.createObject(sqls);
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), null);
+		} catch (Exception e) {
+			return ExceptionUtil.getErrMsg("ComSqlScriptService", "immediateCreate", e);
+		} finally {
+			for (ComSqlScript sql : sqls) {
+				sql.clear();
+			}
 		}
 		return null;
 	}

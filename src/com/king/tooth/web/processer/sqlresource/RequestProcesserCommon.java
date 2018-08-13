@@ -88,7 +88,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
 		
 		if(sqlScript.getSqlScriptType().equals(BuiltinDatabaseData.PROCEDURE)){// 是存储过程
-			JSONObject json = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getProcedureName(), sqlScript.getSqlScriptParameterList());
+			JSONObject json = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getObjectName(), sqlScript.getSqlScriptParameterList());
 			setResponseBody(new ResponseBody(json, true));
 			return;
 		}

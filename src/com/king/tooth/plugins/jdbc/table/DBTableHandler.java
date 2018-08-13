@@ -74,8 +74,8 @@ public class DBTableHandler {
 	
 	/**
 	 * 创建表
-	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @param tabledatas
+	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 */
 	public void createTable(List<ComTabledata> tabledatas, boolean isNeedInitBasicColumns){
 		String tmpSql = getCreateTableSql(tabledatas, isNeedInitBasicColumns);
@@ -183,9 +183,13 @@ public class DBTableHandler {
 		try {
 			conn = dblink.getConnection();
 			if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dblink.getDBType())){
-				pst = conn.prepareStatement(sqlserver_queryTableIsExistsSql);
+				pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
+				pst.setString(2, "U");
 			}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dblink.getDBType())){
-				pst = conn.prepareStatement(oracle_queryTableIsExistsSql);
+				pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
+				pst.setString(2, "TABLE");
+			}else{
+				throw new IllegalArgumentException("系统目前不支持["+dblink.getDBType()+"]类型的数据库操作");
 			}
 			for (ComTabledata table : tabledatas) {
 				pst.setString(1, table.getTableName());
@@ -201,8 +205,6 @@ public class DBTableHandler {
 		}
 		return tableNames;
 	}
-	private static final String sqlserver_queryTableIsExistsSql = "select count(1) from  sysobjects where id = object_id(?) and type = 'U'";
-	private static final String oracle_queryTableIsExistsSql = "select count(1) from user_tables where table_name = ?";
 
 	/**
 	 * 执行操作数据表的ddlsql语句

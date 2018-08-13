@@ -1038,7 +1038,7 @@
 #### 4. 表建模
 
 - 功能描述: 在数据库中create表，并根据表的信息，在系统中自动生成相应的增删改查api 【支持批量操作】
-- api地址: /common/table/build_model
+- api地址: /common/table/model/create
 - 请求类型: POST
 - 请求头:
 ```
@@ -1213,7 +1213,7 @@
 #### 4. 创建sql脚本对象
 
 - 功能描述: 在数据库中创建存储过程、视图等 【支持批量操作】
-- api地址: /common/sql/create_object
+- api地址: /common/sql/object/create
 - 请求类型: POST
 - 请求头:
 ```

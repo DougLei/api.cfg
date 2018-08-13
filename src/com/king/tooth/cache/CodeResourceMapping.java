@@ -56,14 +56,14 @@ public class CodeResourceMapping {
 		
 		// 表操作
 		put("ComTabledata_post_buildModel", BuiltinObjectInstance.tableController, "buildModel");
-		put("/table/build_model/post", BuiltinObjectInstance.tableController, "buildModel");
+		put("/table/model/create/post", BuiltinObjectInstance.tableController, "buildModel");
 		put("/table/publish/add/post", BuiltinObjectInstance.tableController, "publish");
 		put("/table/publish/cancel/post", BuiltinObjectInstance.tableController, "cancelPublish");
 		put("/project/table/relation/add/post", BuiltinObjectInstance.tableController, "addProjTableRelation");
 		put("/project/table/relation/cancel/post", BuiltinObjectInstance.tableController, "cancelProjTableRelation");
 		
 		// sql脚本操作
-		put("/sql/create_object/post", BuiltinObjectInstance.sqlController, "immediateCreate");
+		put("/sql/object/create/post", BuiltinObjectInstance.sqlController, "immediateCreate");
 		put("/project/sql/relation/add/post", BuiltinObjectInstance.sqlController, "addProjSqlScriptRelation");
 		put("/project/sql/relation/cancel/post", BuiltinObjectInstance.sqlController, "cancelProjSqlScriptRelation");
 		put("/sql/publish/add/post", BuiltinObjectInstance.sqlController, "publish");

@@ -50,7 +50,14 @@ public class DatabaseTest extends Parent{
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
 			Statement st = conn.createStatement();
+			
+			st.executeUpdate("drop view a");
+			st.executeUpdate("drop view b");
+			
 			st.executeUpdate("create view a as select * from COM_COLUMNDATA");
+			st.executeUpdate("create view b as select * from COM_COLUMNDATA");
+			
+			
 			
 			st.close();
 			conn.close();

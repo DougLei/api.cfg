@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -450,21 +453,66 @@ public class HibernateUtil {
 	/**
 	 * 创建对象
 	 * <p>存储过程、视图等</p>
-	 * @param sqlContent
+	 * @param sqls
 	 */
-	public static void createObject(final String sqlContent) {
+	public static void createObject(final List<ComSqlScript> sqls) {
+		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
+		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqls.get(0).getDbType());
+		if(!isSqlServler && !isOracle){
+			throw new IllegalArgumentException("系统目前不支持["+sqls.get(0).getDbType()+"]类型的数据库操作");
+		}
+		
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection conn) throws SQLException {
 				Statement st = null;
+				PreparedStatement pst = null;
+				ResultSet rs = null;
 				try {
 					st = conn.createStatement();
-					st.executeUpdate(sqlContent);
+					
+					if(isSqlServler){
+						pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
+					}else if(isOracle){
+						pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
+					}
+					
+					for (ComSqlScript sql : sqls) {
+						pst.setString(1, sql.getObjectName());
+						
+						if(isSqlServler){
+							if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
+								pst.setString(2, "P");
+							}else if(BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
+								pst.setString(2, "V");
+							}else{
+								throw new IllegalArgumentException("系统目前不支持在sqlserver数据库中创建["+sql.getSqlScriptType()+"]类型的sql对象");
+							}
+						}else if(isOracle){
+							if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
+								pst.setString(2, "PROCEDURE");
+							}else if(BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
+								pst.setString(2, "VIEW");
+							}else{
+								throw new IllegalArgumentException("系统目前不支持在oracle数据库中创建["+sql.getSqlScriptType()+"]类型的sql对象");
+							}
+						}
+						
+						// 如果已经存在对象，则删除
+						rs = pst.executeQuery();
+						if(rs.next() && (rs.getInt(1) > 0)){
+							st.executeUpdate("drop " + sql.getSqlScriptType() + " " + sql.getObjectName());
+						}
+						
+						// 再创建对象
+						st.executeUpdate(sql.getSqlScriptContent());
+					}
 				} finally{
-					CloseUtil.closeDBConn(st);
+					CloseUtil.closeDBConn(rs, st, pst);
 				}
 			}
 		});
-	}	
+	}
+	
 	
 	/**
 	 * 执行存储过程

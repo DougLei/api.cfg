@@ -99,7 +99,9 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	private boolean isSave;
 	/**
 	 * 当前账户的权限
+	 * <p>到模块</p>
 	 */
+	@JSONField(serialize = false)
 	private SysPermission permission;
 	
 	public String getToken() {
