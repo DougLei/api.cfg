@@ -63,6 +63,7 @@ public class CodeResourceMapping {
 		put("/project/table/relation/cancel/post", BuiltinObjectInstance.tableController, "cancelProjTableRelation");
 		
 		// sql脚本操作
+		put("/sql/create_object/post", BuiltinObjectInstance.sqlController, "immediateCreate");
 		put("/project/sql/relation/add/post", BuiltinObjectInstance.sqlController, "addProjSqlScriptRelation");
 		put("/project/sql/relation/cancel/post", BuiltinObjectInstance.sqlController, "cancelProjSqlScriptRelation");
 		put("/sql/publish/add/post", BuiltinObjectInstance.sqlController, "publish");

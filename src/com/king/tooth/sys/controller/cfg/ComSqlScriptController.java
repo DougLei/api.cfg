@@ -92,6 +92,33 @@ public class ComSqlScriptController extends AbstractPublishController{
 	}
 	
 	/**
+	 * 创建sql脚本对象
+	 * <p>存储过程、视图等</p>
+	 * @param request
+	 * @param ijson
+	 * @param urlParams
+	 * @return
+	 */
+	public Object immediateCreate(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+		int len = ijson.size();
+		if(len == 1){
+			resultObject = BuiltinObjectInstance.sqlScriptService.immediateCreate(ijson.get(0).getString(ResourcePropNameConstants.ID));
+		}else{
+			for(int i=0;i<len ;i++){
+				resultObject = BuiltinObjectInstance.sqlScriptService.immediateCreate(ijson.get(i).getString(ResourcePropNameConstants.ID));
+				if(resultObject != null){
+					break;
+				}
+			}
+		}
+		
+		if(resultObject == null){
+			resultObject = ijson.getJson();
+		}
+		return getResultObject();
+	}
+	
+	/**
 	 * 建立项目和sql脚本的关联关系
 	 * <p>请求方式：POST</p>
 	 * @return

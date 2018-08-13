@@ -24,9 +24,11 @@ public class CreateLogTableJob implements Job, Serializable{
 		if("01".equals(firstDay)){
 			SysReqLog.yyyyMM = SysReqLog.getYearMonth(currentDate);
 			
-			
 			ComTabledata sysReqLog = BuiltinObjectInstance.sysReqLog.toCreateTable();
 			ComTabledata sysOperSqlLog = BuiltinObjectInstance.sysOperSqlLog.toCreateTable();
+			
+			
+			
 			
 			
 		}

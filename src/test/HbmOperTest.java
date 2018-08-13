@@ -21,7 +21,7 @@ public class HbmOperTest {
 		ComTabledata table2 = new ComTabledata();
 		table2.setId("123121111");
 		table2.setColumns(columns);
-//		table2.setTableName("Sub");
+//		table2.setTableName("DatabaseTest");
 		table2.setTableType(BuiltinDatabaseData.PARENT_SUB_TABLE);
 		table2.setParentTableName("Parent");
 		table2.setParentTableId("12312");

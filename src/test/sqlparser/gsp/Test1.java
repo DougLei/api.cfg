@@ -8,19 +8,10 @@ public class Test1 {
 	public static void main(String[] args) {
 		EDbVendor dbDialect = EDbVendor.dbvmssql;
 		TGSqlParser sqlParser = new TGSqlParser(dbDialect);
-		sqlParser.sqltext = returnSql();
+		sqlParser.sqltext = "create or replace view a as select * from COM_COLUMNDATA ";
 		sqlParser.parse();
 		
 		System.out.println(sqlParser.sqlstatements.get(0).sqlstatementtype);
-	}
-	private static String returnSql() {
-		String sqls = "";sqls += "  declare @var_a int = 10\n"; 
-		sqls += "  while( @var_a > 0)\n"; 
-		sqls += "  begin\n"; 
-		sqls += "      select @var_a\n"; 
-		sqls += "      set @var_a=@var_a-1\n"; 
-		sqls += "  end\n"; 
-		return sqls;
 	}
 	
 	

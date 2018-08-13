@@ -245,6 +245,26 @@ public class ComSqlScriptService extends AbstractPublishService {
 	}
 	
 	/**
+	 * 创建sql脚本对象
+	 * <p>存储过程、视图等</p>
+	 * @param sqlScriptId
+	 * @return
+	 */
+	public Object immediateCreate(String sqlScriptId) {
+		ComSqlScript sql = getObjectById(sqlScriptId, ComSqlScript.class);
+		try {
+			if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType()) || BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
+				HibernateUtil.createObject(sql.getSqlScriptContent());
+			}else{
+				return "创建资源名为["+sql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中创建 [存储过程] 和 [视图]";
+			}
+		} finally{
+			sql.clear();
+		}
+		return null;
+	}
+	
+	/**
 	 * 建立项目和sql脚本的关联关系
 	 * @param projectId
 	 * @param sqlScriptId

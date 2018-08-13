@@ -140,6 +140,14 @@ public class SqlStatementParserUtil {
 	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
 	        	 typeMap.put("isUnique", "true");
 	        	 break;
+	         case sstcreateview:
+	        	 typeMap.put("type", BuiltinDatabaseData.VIEW);
+	        	 typeMap.put("isUnique", "true");
+	        	 break;
+	         case sstmssqlexec:
+	        	 typeMap.put("type", BuiltinDatabaseData.VIEW);
+	        	 typeMap.put("isUnique", "true");
+	        	 break;
 	         default:
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
 	        	 typeMap.put("type", sqlStatementType.toString());

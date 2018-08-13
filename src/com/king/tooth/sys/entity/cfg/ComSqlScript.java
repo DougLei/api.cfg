@@ -102,6 +102,14 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	private int isAnalysisParameters;
 	
 	/**
+	 * 是否立即创建
+	 * <p>针对存储过程、视图等，需要在数据库中创建的对象</p>
+	 * <p>为1时，会在立即在数据库中执行脚本，创建对应的存储过程、视图等对象</p>
+	 */
+	@JSONField(serialize = false)
+	private int isImmediateCreate;
+	
+	/**
 	 * 解析对象
 	 */
 	@JSONField(serialize = false)
@@ -238,7 +246,12 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public List<SqlScriptParameterNameRecord> getParameterNameRecordList() {
 		return parameterNameRecordList;
 	}
-	
+	public int getIsImmediateCreate() {
+		return isImmediateCreate;
+	}
+	public void setIsImmediateCreate(int isImmediateCreate) {
+		this.isImmediateCreate = isImmediateCreate;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT", 0);
@@ -359,6 +372,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 				else{ 
 					SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this);// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
 				}
+			}
+			
+			if(isImmediateCreate == 1 
+					&& (BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType))){
+				HibernateUtil.createObject(sqlScriptContent);
 			}
 		}
 		return result;
@@ -486,5 +504,17 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			return parameterNameRecordMap;
 		}
 		return null;
+	}
+	
+	public void clear(){
+		if(sqlScriptParameterList != null){
+			sqlScriptParameterList.clear();
+		}
+		if(sqlQueryResultColumnList != null){
+			sqlQueryResultColumnList.clear();
+		}
+		if(parameterNameRecordList != null){
+			parameterNameRecordList.clear();
+		}
 	}
 }

@@ -1164,7 +1164,8 @@
   "sqlScriptCaption": "",                               --sql脚本汉字名
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
-  "isAnalysisParameters":""                             --是否解析参数: 1是0否
+  "isAnalysisParameters":"",                            --是否解析参数: 1是0否
+  "isImmediateCreate":""                                --是否立即创建存储过程、视图等
 }
 ```
 
@@ -1187,7 +1188,8 @@
   "sqlScriptCaption": "",                               --sql脚本汉字名
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
-  "isAnalysisParameters":""                             --是否解析参数: 1是0否
+  "isAnalysisParameters":"",                            --是否解析参数: 1是0否
+  "isImmediateCreate":""                                --是否立即创建存储过程、视图等
 }
 ```
 
@@ -1207,6 +1209,25 @@
 ?_ids=5k7f1ef06728y6016f9d10e91dcr1d39, ...             --主键，多个用,分隔
 ```
 - 请求体: 无
+
+#### 4. 创建sql脚本对象
+
+- 功能描述: 在数据库中创建存储过程、视图等 【支持批量操作】
+- api地址: /common/sql/create_object
+- 请求类型: POST
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "Id":""                                               --主键
+}
+```
 
 ### (七)、sql脚本参数管理
 

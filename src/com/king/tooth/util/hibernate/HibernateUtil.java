@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -383,44 +384,6 @@ public class HibernateUtil {
 		executeUpdateByHql(hqlDes, modifyHql, parameters);
 	}
 	
-	/**
-	 * 修改数据
-	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param sqlDes @see BuiltinDatabaseData
-	 * @param modifySql
-	 * @param parameters
-	 */
-	public static void executeUpdateBySql(String sqlDes, String modifySql, List<Object> parameters) {
-		Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]要{}数据的hql为：{}", sqlDes, modifySql);
-		Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]要{}数据的hql所带的参数值集合为：{}", sqlDes, parameters);
-		
-		try {
-			Query query = getCurrentThreadSession().createSQLQuery(modifySql);
-			
-			// 日志记录发出的hql/sql语句
-			CurrentThreadContext.toReqLogDataAddOperSqlLog(modifySql, parameters);
-			
-			setParamters(query, parameters);
-			int modifyCount = query.executeUpdate();
-			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}了{}条数据", sqlDes, modifyCount);
-		} catch (HibernateException e) {
-			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}数据的时候出现了异常信息：{}", sqlDes, ExceptionUtil.getErrMsg("HibernateUtil", "executeUpdateBySql", e));
-			throw e;
-		}
-	}
-	
-	/**
-	 * 修改数据
-	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param sqlDes @see BuiltinDatabaseData
-	 * @param modifySql
-	 * @param parameterArr
-	 */
-	public static void executeUpdateBySqlArr(String sqlDes, String modifySql, Object... parameterArr){
-		List<Object> parameters = processParameterArr(parameterArr);
-		executeUpdateBySql(sqlDes, modifySql, parameters);
-	}
-	
 	//------------------------------------------------------------------------------------------------------
 	
 	/**
@@ -482,68 +445,26 @@ public class HibernateUtil {
 		return query.uniqueResult();
 	}
 	
-	//------------------------------------------------
-	
-	/**
-	 * sql查询多条数据
-	 * @param rows 一页显示多少行，可为null，为null则不分页
-	 * @param pageNo 显示第几页，可为null，为null则不分页
-	 * @param querySql
-	 * @param parameterArr
-	 * @return
-	 */
-	public static List executeListQueryBySqlArr(String rows, String pageNo, String querySql, Object... parameterArr){
-		List<Object> parameters = processParameterArr(parameterArr);
-		return executeListQueryBySql(rows, pageNo, querySql, parameters);
-	}
-	
-	/**
-	 * sql查询多条数据
-	 * @param rows 一页显示多少行，可为null，为null则不分页
-	 * @param pageNo 显示第几页，可为null，为null则不分页
-	 * @param querySql
-	 * @param parameters
-	 * @return
-	 */
-	public static List executeListQueryBySql(String rows, String pageNo, String querySql, List<Object> parameters){
-		Query query = getCurrentThreadSession().createSQLQuery(querySql);
-		
-		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
-		
-		setParamters(query, parameters);
-		setPageQuery(query, rows, pageNo);
-		return query.list();
-	}
-	
-	/**
-	 * sql查询一条数据
-	 * @param querySql
-	 * @param parameterArr
-	 * @return
-	 */
-	public static Object executeUniqueQueryBySqlArr(String querySql, Object... parameterArr){
-		List<Object> parameters = processParameterArr(parameterArr);
-		return executeUniqueQueryBySql(querySql, parameters);
-	}
-	
-	/**
-	 * sql查询一条数据
-	 * @param querySql
-	 * @param parameters
-	 * @return
-	 */
-	public static Object executeUniqueQueryBySql(String querySql, List<Object> parameters){
-		Query query = getCurrentThreadSession().createSQLQuery(querySql);
-		
-		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
-		
-		setParamters(query, parameters);
-		return query.uniqueResult();
-	}
-	
 	//------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * 创建对象
+	 * <p>存储过程、视图等</p>
+	 * @param sqlContent
+	 */
+	public static void createObject(final String sqlContent) {
+		getCurrentThreadSession().doWork(new Work() {
+			public void execute(Connection conn) throws SQLException {
+				Statement st = null;
+				try {
+					st = conn.createStatement();
+					st.executeUpdate(sqlContent);
+				} finally{
+					CloseUtil.closeDBConn(st);
+				}
+			}
+		});
+	}	
 	
 	/**
 	 * 执行存储过程
@@ -743,5 +664,32 @@ public class HibernateUtil {
 	public static <T> T extendExecuteUniqueQueryByHql(Class<T> clazz, String queryHql, List<Object> parameters){
 		Map<String, Object> map = (Map<String, Object>) executeUniqueQueryByHql(queryHql, parameters);
 		return JsonUtil.turnMapToJavaEntity(map, clazz);
+	}
+	
+	//------------------------------------------------
+	/**
+	 * sql查询一条数据
+	 * @param querySql
+	 * @param parameterArr
+	 * @return
+	 */
+	public static Object executeUniqueQueryBySqlArr(String querySql, Object... parameterArr){
+		List<Object> parameters = processParameterArr(parameterArr);
+		return executeUniqueQueryBySql(querySql, parameters);
+	}
+	/**
+	 * sql查询一条数据
+	 * @param querySql
+	 * @param parameters
+	 * @return
+	 */
+	public static Object executeUniqueQueryBySql(String querySql, List<Object> parameters){
+		Query query = getCurrentThreadSession().createSQLQuery(querySql);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
+		
+		setParamters(query, parameters);
+		return query.uniqueResult();
 	}
 }

@@ -60,6 +60,6 @@ public class ReqLogData implements Serializable{
 		}
 		
 		// 新线程保存日志数据
-//		new RecordLogThread(HibernateUtil.getCurrentThreadLogSession(), logs).start();
+		new RecordLogThread(HibernateUtil.getCurrentThreadLogSession(), logs).start();
 	}
 }

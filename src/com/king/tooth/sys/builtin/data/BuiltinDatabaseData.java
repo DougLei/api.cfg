@@ -113,6 +113,10 @@ public class BuiltinDatabaseData {
 	 */
 	public static final String DELETE = "delete";
 	/**
+	 * view
+	 */
+	public static final String VIEW = "view";
+	/**
 	 * procedure
 	 */
 	public static final String PROCEDURE = "procedure";
