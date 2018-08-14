@@ -343,8 +343,7 @@ public class SysPermissionService extends AbstractService{
 			return "您还未分配系统功能权限，请联系系统管理员";
 		}
 		
-		String[] codeArr = code.split("_");
-		SysPermissionExtend finalPermission = calcPermissionByCode(0, codeArr, permission.getChildren());
+		SysPermissionExtend finalPermission = calcPermissionByCode(code, permission.getChildren());
 		if(finalPermission == null){
 			return "您不具有code为["+code+"]的操作权限，请联系系统管理员";
 		}
@@ -363,16 +362,22 @@ public class SysPermissionService extends AbstractService{
 	
 	/**
 	 * 计算获取当前用户，指定code的功能权限以及子权限集合
-	 * @param index
-	 * @param codeArr
+	 * @param code
 	 * @param permissions
 	 * @return
 	 */
-	private SysPermissionExtend calcPermissionByCode(int index, String[] codeArr, List<SysPermissionExtend> permissions) {
-		
-		
-		
-		
+	private SysPermissionExtend calcPermissionByCode(String code, List<SysPermissionExtend> permissions) {
+		if(permissions != null && permissions.size() > 0){
+			for (SysPermissionExtend p : permissions) {
+				if(code.startsWith(p.getRefResourceCode())){
+					if(code.equals(p.getRefResourceCode())){
+						return p;
+					}else{
+						return calcPermissionByCode(code, p.getChildren());
+					}
+				}
+			}
+		}
 		return null;
 	}
 	
