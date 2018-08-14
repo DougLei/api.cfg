@@ -402,6 +402,25 @@
 ```
 - 请求体: 无
 
+#### 4. 根据code计算权限
+
+- 功能描述: 计算当前用户，指定code的功能权限以及子权限集合
+- api地址: /common/permission
+- 请求类型: GET
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 
+```
+?code = sysManager                   --要计算权限的code值
+&recursive = true [true/false]       --是否递归，计算其子权限集合，值为true或false，默认为false
+&deep = -1 [-1/任意数字]              --递归计算子权限的深度，默认为0，-1表示查询到底
+```
+- 请求体: 无
+
 ### (七)、组织管理
 
 > 资源名: SysOrg

@@ -91,10 +91,10 @@ public class ComTabledataService extends AbstractPublishService {
 	public Object saveTable(ComTabledata table) {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
+			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
-			if(!isPlatformDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
+			if(!isDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
 				operResult = validTableRefProjIsExists(projectId);
 				if(operResult == null){
 					operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
@@ -106,7 +106,7 @@ public class ComTabledataService extends AbstractPublishService {
 				
 				// 保存表和项目的关联关系
 				// TODO 单项目，取消是否平台开发者的判断
-//				if(isPlatformDeveloper){
+//				if(isDeveloper){
 //					HibernateUtil.saveDataLinks("CfgProjectTableLinks", CurrentThreadContext.getProjectId(), tableId);
 //				}else{
 					HibernateUtil.saveDataLinks("CfgProjectTableLinks", projectId, tableId);
@@ -133,10 +133,10 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
+			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
-			if(!isPlatformDeveloper){
+			if(!isDeveloper){
 				if(StrUtils.isEmpty(projectId)){
 					return "表关联的项目id不能为空！";
 				}
@@ -170,8 +170,8 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		// TODO 单项目，取消是否平台开发者的判断
-//		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
-//		if(!isPlatformDeveloper){
+//		boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+//		if(!isDeveloper){
 //			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldTable.getId())){
 //				return "该表已经发布，无法删除，请先取消发布";
 //			}
@@ -195,7 +195,7 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
 		// TODO 单项目，取消是否平台开发者的判断
-//		if(isPlatformDeveloper && oldTable.getIsCreated() == 1){
+//		if(isDeveloper && oldTable.getIsCreated() == 1){
 		if(oldTable.getIsCreated() == 1){
 			cancelBuildModel(oldTable);
 		}

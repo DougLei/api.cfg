@@ -344,7 +344,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	 * @return
 	 */
 	@JSONField(serialize = false)
-	public boolean isPlatformDeveloper(){
+	public boolean isDeveloper(){
 		return (accountType == 3);
 	}
 }

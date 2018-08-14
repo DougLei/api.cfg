@@ -11,6 +11,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 
 /**
  * 账户权限缓存表
@@ -31,6 +32,12 @@ public class SysAccountPermissionCache extends BasicEntity implements ITable, IE
 	
 	//-------------------------------------------------------------------------
 	
+	/**
+	 * 权限对象
+	 */
+	@JSONField(serialize = false)
+	private SysPermissionExtend permissionObject;
+	
 	public String getPermission() {
 		return permission;
 	}
@@ -42,6 +49,12 @@ public class SysAccountPermissionCache extends BasicEntity implements ITable, IE
 	}
 	public void setPermission(String permission) {
 		this.permission = permission;
+	}
+	public SysPermissionExtend getPermissionObject() {
+		return permissionObject;
+	}
+	public void setPermissionObject(SysPermissionExtend permissionObject) {
+		this.permissionObject = permissionObject;
 	}
 	
 	public ComTabledata toCreateTable() {

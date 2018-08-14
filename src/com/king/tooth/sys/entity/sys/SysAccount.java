@@ -249,4 +249,17 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		}
 		return result;
 	}
+	
+	/**
+	 * 账户类型:1.管理员
+	 */
+	public static final Integer ADMIN = 1;
+	/**
+	 * 账户类型:2.普通账户
+	 */
+	public static final Integer NORMAL = 2;
+	/**
+	 * 账户类型:3.平台开发账户(配置系统使用)
+	 */
+	public static final Integer DEVELOPER = 3;
 }

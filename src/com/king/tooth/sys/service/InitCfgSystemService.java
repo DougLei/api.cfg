@@ -211,6 +211,7 @@ public class InitCfgSystemService extends AbstractService{
 	
 		// 添加普通账户【2.普通账户】
 		SysAccount normal = new SysAccount();
+		normal.setId("59c2c378b845447d8f675ef29b55cb63");
 		normal.setType(2);
 		normal.setLoginName("normal");
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
@@ -220,6 +221,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		// 添加平台开发账户【3.平台开发账户】
 		SysAccount developer = new SysAccount();
+		developer.setId("93d02915eb764d978e3cae6987b5fc7a");
 		developer.setType(3);
 		developer.setLoginName("developer");
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());

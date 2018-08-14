@@ -41,8 +41,8 @@ public class ComProjectModuleService extends AbstractPublishService {
 	public Object saveProjectModule(ComProjectModule projectModule) {
 		String operResult = validProjectModuleCodeIsExists(projectModule);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
-			if(isPlatformDeveloper){
+			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+			if(isDeveloper){
 				projectModule.setRefProjectId(CurrentThreadContext.getProjectId());
 			}else{
 				projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());

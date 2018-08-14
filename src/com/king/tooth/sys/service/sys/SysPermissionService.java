@@ -3,13 +3,17 @@ package com.king.tooth.sys.service.sys;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
-import com.king.tooth.sys.builtin.data.BuiltinPermissionType;
+import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
+import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -24,13 +28,14 @@ public class SysPermissionService extends AbstractService{
 	 * @return
 	 */
 	private List<SysPermissionPriority> getPermissionPriorities(){
-		String hql = "from SysPermissionPriority where projectId=? and customerId=? order by lv desc";
 		List<SysPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(permissionPriorities == null || permissionPriorities.size() == 0){
 			permissionPriorities = BuiltinObjectInstance.permissionPriorities;
 		}
 		return permissionPriorities;
 	}
+	private static final String hql = "from SysPermissionPriority where projectId=? and customerId=? order by lv desc";
+	
 	
 	// 第一次查询权限信息集合的hql语句
 	private static final String queryPermissionHql = "from SysPermission where refDataType = ? and refDataId = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
@@ -60,18 +65,18 @@ public class SysPermissionService extends AbstractService{
 		List<SysPermissionPriority> permissionPriorities = getPermissionPriorities();
 		for (SysPermissionPriority permissionPriority : permissionPriorities) {
 			// 帐号
-			if(BuiltinPermissionType.ACCOUNT.equals(permissionPriority.getPermissionType())){
-				newPermissions = getRootPermissionsByData(BuiltinPermissionType.ACCOUNT, accountId, projectId, customerId);
+			if(SysPermission.DT_ACCOUNT.equals(permissionPriority.getPermissionType())){
+				newPermissions = getRootPermissionsByData(SysPermission.DT_ACCOUNT, accountId, projectId, customerId);
 				setSubPermissionsByData(newPermissions, projectId, customerId);
 			}
 			// 角色
-			else if(BuiltinPermissionType.ROLE.equals(permissionPriority.getPermissionType())){
+			else if(SysPermission.DT_ROLE.equals(permissionPriority.getPermissionType())){
 				List<Object> roleIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfRolesHql, accountId);
 				if(roleIds != null && roleIds.size() > 0){
 					roleIds = processSamePermissionTypeLevel(roleIds, permissionPriority.getSamePermissionTypeLv());
 					
 					for (Object roleId : roleIds) {
-						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, roleId, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, roleId, projectId, customerId);
 						setSubPermissionsByData(tmpPermissions, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
@@ -79,13 +84,13 @@ public class SysPermissionService extends AbstractService{
 				}
 			}
 			// 部门
-			else if(BuiltinPermissionType.DEPT.equals(permissionPriority.getPermissionType())){
+			else if(SysPermission.DT_DEPT.equals(permissionPriority.getPermissionType())){
 				List<Object> deptIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfDeptsHql, accountId);
 				if(deptIds != null && deptIds.size() > 0){
 					deptIds = processSamePermissionTypeLevel(deptIds, permissionPriority.getSamePermissionTypeLv());		
 					
 					for (Object deptId : deptIds) {
-						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, deptId, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, deptId, projectId, customerId);
 						setSubPermissionsByData(newPermissions, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
@@ -93,13 +98,13 @@ public class SysPermissionService extends AbstractService{
 				}
 			}
 			// 岗位
-			else if(BuiltinPermissionType.POSITION.equals(permissionPriority.getPermissionType())){
+			else if(SysPermission.DT_POSITION.equals(permissionPriority.getPermissionType())){
 				List<Object> positionIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfPositionsHql, accountId);
 				if(positionIds != null && positionIds.size() > 0){
 					positionIds = processSamePermissionTypeLevel(positionIds, permissionPriority.getSamePermissionTypeLv());	
 					
 					for (Object positionId : positionIds) {
-						tmpPermissions = getRootPermissionsByData(BuiltinPermissionType.ROLE, positionId, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, positionId, projectId, customerId);
 						setSubPermissionsByData(newPermissions, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
@@ -236,6 +241,159 @@ public class SysPermissionService extends AbstractService{
 			}
 		} finally{
 			newPermissions.clear();
+		}
+	}
+	// ----------------------------------------------------------------------------------------------------
+
+	/**
+	 * 过滤出指定资源类型的权限
+	 * @param permission
+	 * @param refResourceType
+	 * @return
+	 */
+	public void filterPermission(SysPermissionExtend permission, String refResourceType) {
+		if(permission == null || permission.getChildren() == null || permission.getChildren().size() == 0){
+			recursiveFilterPermission(permission.getChildren(), refResourceType);
+		}
+	}
+
+	/**
+	 * 递归过滤出指定资源类型的权限
+	 * @param permissions
+	 * @param refResourceType
+	 * @return
+	 */
+	private void recursiveFilterPermission(List<SysPermissionExtend> permissions, String refResourceType) {
+		if(permissions != null && permissions.size() > 0){
+			for (SysPermissionExtend p : permissions) {
+				if(p.getRefResourceType().equals(refResourceType)){
+					recursiveClearPermission(p.getChildren());
+				}else{
+					recursiveFilterPermission(p.getChildren(), refResourceType);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 递归清空权限集合
+	 * @param permissions
+	 */
+	private void recursiveClearPermission(List<SysPermissionExtend> permissions) {
+		if(permissions != null && permissions.size() > 0){
+			for (SysPermissionExtend p : permissions) {
+				recursiveClearPermission(p.getChildren());
+			}
+			permissions.clear();
+		}
+	}
+	// --------------------------------------------------------------------------------------
+	private static final String queryAccountPermissionCacheHql = "from SysAccountPermissionCache where accountId = ? and customerId =?";
+	/**
+	 * 获取账户的权限缓存对象
+	 * @param accountId
+	 * @return
+	 */
+	public SysAccountPermissionCache getSysAccountPermissionCache(String accountId){
+		SysAccountPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountPermissionCache.class, queryAccountPermissionCacheHql, accountId, CurrentThreadContext.getCustomerId());
+		
+		SysPermissionExtend permission = null;
+		if(sapc == null){
+			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountId);
+			
+			sapc = new SysAccountPermissionCache();
+			sapc.setAccountId(accountId);
+			sapc.setPermission(JsonUtil.toJsonString(permission, false));
+			HibernateUtil.saveObject(sapc, null);
+		}else if(StrUtils.isEmpty(sapc.getPermission())){
+			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountId);
+			
+			sapc.setPermission(JsonUtil.toJsonString(permission, false));
+			HibernateUtil.updateObject(sapc, null);
+		}else{
+			permission = JsonUtil.parseObject(sapc.getPermission(), SysPermissionExtend.class);
+		}
+		
+		sapc.setPermissionObject(permission);
+		return sapc;
+	}
+	
+	// --------------------------------------------------------------------------------------
+	
+	/**
+	 * 计算获取当前用户，指定code的功能权限以及子权限集合
+	 * @param code
+	 * @param recursive
+	 * @param deep
+	 * @return
+	 */
+	public Object calcPermissionByCode(String code, boolean recursive, int deep) {
+		SysAccountOnlineStatus accountOnlineStatus = CurrentThreadContext.getCurrentAccountOnlineStatus();
+		
+		// 管理员或系统开发人员，不做权限控制，返回ALL，标识可以访问所有功能
+		if(accountOnlineStatus.isAdministrator() || accountOnlineStatus.isDeveloper()){
+			return JsonUtil.toJsonObject(BuiltinObjectInstance.allPermission);
+		}
+		
+		SysAccountPermissionCache sapc = getSysAccountPermissionCache(accountOnlineStatus.getAccountId());
+		SysPermissionExtend permission = sapc.getPermissionObject();
+		
+		if((accountOnlineStatus.isNormal())
+				&& (permission == null || permission.getChildren() == null || permission.getChildren().size() == 0)){
+			return "您还未分配系统功能权限，请联系系统管理员";
+		}
+		
+		String[] codeArr = code.split("_");
+		SysPermissionExtend finalPermission = calcPermissionByCode(0, codeArr, permission.getChildren());
+		if(finalPermission == null){
+			return "您不具有code为["+code+"]的操作权限，请联系系统管理员";
+		}
+		
+		if(recursive && (deep > 0 || deep == -1)){
+			if(deep > 0){
+				recursiveClearPermission(finalPermission.getChildren(), deep);
+			}
+		}else{
+			recursiveClearPermission(finalPermission.getChildren());
+		}
+		JSONObject json = JsonUtil.toJsonObject(finalPermission);
+		recursiveClearPermission(permission.getChildren());
+		return json;
+	}
+	
+	/**
+	 * 计算获取当前用户，指定code的功能权限以及子权限集合
+	 * @param index
+	 * @param codeArr
+	 * @param permissions
+	 * @return
+	 */
+	private SysPermissionExtend calcPermissionByCode(int index, String[] codeArr, List<SysPermissionExtend> permissions) {
+		
+		
+		
+		
+		return null;
+	}
+	
+	/**
+	 * 指定递归深度，清空深度外的权限集合
+	 * @param permissions
+	 * @param deep
+	 */
+	private void recursiveClearPermission(List<SysPermissionExtend> permissions, int deep) {
+		if(permissions != null && permissions.size() > 0){
+			if(deep <= 0){
+				for (SysPermissionExtend p : permissions) {
+					recursiveClearPermission(p.getChildren());
+				}
+				permissions.clear();
+			}else{
+				deep--;
+				for (SysPermissionExtend p : permissions) {
+					recursiveClearPermission(p.getChildren(), deep);
+				}
+			}
 		}
 	}
 }

@@ -13,12 +13,12 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
+import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -113,51 +113,51 @@ public class SysAccountService extends AbstractService{
 		}
 		
 		// 处理权限
-		processPermission(loginAccount.getId(), accountOnlineStatus);
-		// 处理基本信息
-		processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
-		accountOnlineStatus.setLastOperDate(new Date());
-		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
-		accountOnlineStatus.setLoginDate(new Date());
-		accountOnlineStatus.setTryLoginTimes(0);
-		accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
-		if(SysConfig.isConfSys){
-			// TODO 这里暂时写成固定值
-			accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
+		if(processPermission(loginAccount.getId(), loginAccount.getType(), accountOnlineStatus)){
+			// 处理基本信息
+			processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
+			accountOnlineStatus.setLastOperDate(new Date());
+			accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
+			accountOnlineStatus.setLoginDate(new Date());
+			accountOnlineStatus.setTryLoginTimes(0);
+			if(SysConfig.isConfSys){
+				// TODO 这里暂时写成固定值
+				accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
+			}
+			
+			accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
 		}
 		return accountOnlineStatus;
 	}
 	
 	/**
-	 * 处理权限
+	 * 登陆时处理权限
 	 * @param accountId
+	 * @param accountType
 	 * @param accountOnlineStatus
+	 * @return 是否有权限，如果没有权限，则也属于登陆失败
 	 */
-	private void processPermission(String accountId, SysAccountOnlineStatus accountOnlineStatus) {
-		SysPermissionExtend permission = null;
-		
-		String hql = "from SysAccountPermissionCache where accountId = ? and customerId =?";
-		SysAccountPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountPermissionCache.class, hql, accountId, CurrentThreadContext.getCustomerId());
-		
-		if(sapc == null){
-			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId());
-			
-			sapc = new SysAccountPermissionCache();
-			sapc.setAccountId(accountId);
-			sapc.setPermission(JsonUtil.toJsonString(permission, false));
-			HibernateUtil.saveObject(sapc, null);
-		}else if(StrUtils.isEmpty(sapc.getPermission())){
-			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId());
-			
-			sapc.setPermission(JsonUtil.toJsonString(permission, false));
-			HibernateUtil.updateObject(sapc, null);
-		}else{
-			permission = JsonUtil.parseObject(sapc.getPermission(), SysPermissionExtend.class);
+	public boolean processPermission(String accountId, Integer accountType, SysAccountOnlineStatus accountOnlineStatus) {
+		// 管理员或系统开发人员，不做权限控制，返回ALL，标识可以访问所有功能
+		if(accountOnlineStatus.isAdministrator() || accountOnlineStatus.isDeveloper()){
+			accountOnlineStatus.setPermission(BuiltinObjectInstance.allPermission);
+			return true;
 		}
+		
+		SysAccountPermissionCache sapc = BuiltinObjectInstance.permissionService.getSysAccountPermissionCache(accountId);
+		SysPermissionExtend permission = sapc.getPermissionObject();
+		
+		if((accountOnlineStatus.isNormal())
+				&& (permission == null || permission.getChildren() == null || permission.getChildren().size() == 0)){
+			accountOnlineStatus.setMessage("您还未分配系统功能权限，请联系系统管理员");
+			return false;
+		}
+		
+		BuiltinObjectInstance.permissionService.filterPermission(permission, SysPermission.RT_MODULE);
 		accountOnlineStatus.setPermission(permission);
+		return true;
 	}
-
-
+	
 	/**
 	 * 处理账户在线状态对象的基础数据
 	 * <p>包括当前账户id，当前用户id等等基础信息</p>

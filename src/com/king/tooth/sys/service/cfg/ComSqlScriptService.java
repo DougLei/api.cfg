@@ -113,10 +113,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public Object saveSqlScript(ComSqlScript sqlScript) {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
+			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
-			if(!isPlatformDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
+			if(!isDeveloper){// 非平台开发者，建的sql脚本一开始，一定要和一个项目关联起来
 				if(StrUtils.isEmpty(projectId)){
 					return "sql脚本关联的项目id不能为空！";
 				}
@@ -135,7 +135,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 				}
 				
 				// TODO 单项目，取消是否平台开发者的判断
-//				if(isPlatformDeveloper){
+//				if(isDeveloper){
 					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
 					sqlScript.setId(sqlScriptId);
 					new SysResourceService().saveSysResource(sqlScript);
@@ -143,7 +143,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 				
 				// TODO 单项目，取消是否平台开发者的判断
 				// 保存sql脚本和项目的关联关系
-//				if(isPlatformDeveloper){
+//				if(isDeveloper){
 //					HibernateUtil.saveDataLinks("CfgProjectSqlLinks", CurrentThreadContext.getProjectId(), sqlScriptId);
 //				}else{
 					HibernateUtil.saveDataLinks("CfgProjectSqlLinks", projectId, sqlScriptId);
@@ -167,10 +167,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
+			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
-			if(!isPlatformDeveloper){
+			if(!isDeveloper){
 				if(StrUtils.isEmpty(projectId)){
 					return "sql脚本关联的项目id不能为空！";
 				}
@@ -186,7 +186,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 			
 			// TODO 单项目，取消是否平台开发者的判断
-//			if(isPlatformDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+//			if(isDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 				// 如果修改了sql脚本的资源名，也要同步修改SysResource表中的资源名
 				new SysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
@@ -212,8 +212,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 		
 		// TODO 单项目，取消是否平台开发者的判断
 //		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-//		boolean isPlatformDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper();
-//		if(!isPlatformDeveloper){
+//		boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+//		if(!isDeveloper){
 //			if(publishInfoService.validResourceIsPublished(null, CurrentThreadContext.getConfProjectId(), oldSqlScript.getId())){
 //				return "该sql脚本已经发布，无法删除，请先取消发布";
 //			}
@@ -240,7 +240,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		// TODO 单项目，取消是否平台开发者的判断
-//		if(isPlatformDeveloper){
+//		if(isDeveloper){
 			new SysResourceService().deleteSysResource(sqlScriptId);
 //		}
 		return null;

@@ -44,7 +44,7 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 	 */
 	private String refParentResourceCode;
 	/**
-	 * 关联的资源类型：1:模块module、2:tab、3:功能oper  等
+	 * 关联的资源类型：模块module、页签tab、功能oper、字段field  等
 	 */
 	private String refResourceType;
 	/**
@@ -172,7 +172,7 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata refResourceTypeColumn = new ComColumndata("ref_resource_type", BuiltinCodeDataType.STRING, 20);
 		refResourceTypeColumn.setName("关联的资源类型");
-		refResourceTypeColumn.setComments("关联的资源类型：1:模块module、2:tab、3:功能oper  等");
+		refResourceTypeColumn.setComments("关联的资源类型：模块module、页签tab、功能oper、字段field  等");
 		refResourceTypeColumn.setOrderCode(7);
 		columns.add(refResourceTypeColumn);
 		
@@ -206,4 +206,41 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "SysPermissionExtend";
 	}
+	
+	
+	// -----------------------------------------------------------
+	/**
+	 * 权限关联的数据类型: account
+	 */
+	public static final String DT_ACCOUNT = "account";
+	/**
+	 * 权限关联的数据类型: role
+	 */
+	public static final String DT_ROLE = "role";
+	/**
+	 * 权限关联的数据类型: dept
+	 */
+	public static final String DT_DEPT = "dept";
+	/**
+	 * 权限关联的数据类型: position
+	 */
+	public static final String DT_POSITION = "position";
+	
+	// -----------------------------------------------------------
+	/**
+	 * 权限关联的资源类型: 模块module
+	 */
+	public static final String RT_MODULE = "module";
+	/**
+	 * 权限关联的资源类型: 页签tab
+	 */
+	public static final String RT_TAB = "tab";
+	/**
+	 * 权限关联的资源类型: 功能oper
+	 */
+	public static final String RT_OPER = "oper";
+	/**
+	 * 权限关联的资源类型: 字段field
+	 */
+	public static final String RT_FIELD = "field";
 }

@@ -77,6 +77,9 @@ public class CodeResourceMapping {
 		put("/login/post", BuiltinObjectInstance.accountController, "login");
 		put("/login_out/post", BuiltinObjectInstance.accountController, "loginOut");
 		put("/account/update_pwd/post", BuiltinObjectInstance.accountController, "updatePassword");
+		
+		// 账户操作
+		put("/permission/get", BuiltinObjectInstance.permissionController, "calcPermissionByCode");
 	}
 	
 	/**

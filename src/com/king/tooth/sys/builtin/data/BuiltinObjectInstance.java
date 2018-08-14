@@ -13,6 +13,7 @@ import com.king.tooth.sys.controller.cfg.ComSqlScriptController;
 import com.king.tooth.sys.controller.cfg.ComSqlScriptParameterController;
 import com.king.tooth.sys.controller.cfg.ComTabledataController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
+import com.king.tooth.sys.controller.sys.SysPermissionController;
 import com.king.tooth.sys.controller.sys.SysUserController;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -46,6 +47,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysAccountRoleLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
+import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.cfg.CfgDatabaseService;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.sys.service.cfg.ComProjectModuleService;
@@ -101,10 +103,20 @@ public class BuiltinObjectInstance {
 	 */
 	public static final List<SysPermissionPriority> permissionPriorities = new ArrayList<SysPermissionPriority>(4); 
 	static{
-		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.ACCOUNT, 4));
-		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.ROLE, 3));
-		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.DEPT, 2));
-		permissionPriorities.add(new SysPermissionPriority(BuiltinPermissionType.POSITION, 1));
+		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_ACCOUNT, 4));
+		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_ROLE, 3));
+		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_DEPT, 2));
+		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_POSITION, 1));
+	}
+	
+	/**
+	 * 所有权限的对象实例
+	 */
+	public static final SysPermissionExtend allPermission = new SysPermissionExtend();
+	static{
+		allPermission.setRefResourceCode("ALL");
+		allPermission.setRefResourceId("ALL");
+		allPermission.setRefResourceType("ALL");
 	}
 	
 	// -------------------------------------------------------
@@ -118,6 +130,7 @@ public class BuiltinObjectInstance {
 	public static final ComSqlScriptParameterController sqlParamController = new ComSqlScriptParameterController();
 	public static final SysAccountController accountController = new SysAccountController();
 	public static final SysUserController userController = new SysUserController();
+	public static final SysPermissionController permissionController = new SysPermissionController();
 	
 	//service
 	public static final ComColumndataService columnService = new ComColumndataService();
@@ -136,7 +149,7 @@ public class BuiltinObjectInstance {
 	
 	
 	// -------------------------------------------------------
-	/* 内置表对象 */
+	/* 内置表对象，用来建表建模用到的 */
 	
 	// cfg
 	public static final CfgDatabase cfgDatabase = new CfgDatabase();
