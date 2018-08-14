@@ -28,7 +28,7 @@ public class SysPermissionService extends AbstractService{
 	 * @return
 	 */
 	private List<SysPermissionPriority> getPermissionPriorities(){
-		List<SysPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		List<SysPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(permissionPriorities == null || permissionPriorities.size() == 0){
 			permissionPriorities = BuiltinObjectInstance.permissionPriorities;
 		}
@@ -56,7 +56,7 @@ public class SysPermissionService extends AbstractService{
 	@SuppressWarnings("unchecked")
 	public SysPermissionExtend findAccountOfPermissions(String accountId){
 		String projectId = CurrentThreadContext.getProjectId();
-		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
+		String customerId = CurrentThreadContext.getCustomerId();
 		
 		List<SysPermissionExtend> permissions = new ArrayList<SysPermissionExtend>();
 		List<SysPermissionExtend> newPermissions = new ArrayList<SysPermissionExtend>();
