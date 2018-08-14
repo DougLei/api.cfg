@@ -32,6 +32,7 @@ import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
@@ -98,7 +99,6 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private List<ComTabledata> getAllTables(){
 		List<ComTabledata> tables = new ArrayList<ComTabledata>(50);
-		
 		tables.add(new CfgDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
 		tables.add(new ComProjectModule().toCreateTable());
@@ -109,20 +109,17 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new SysAccount().toCreateTable());
 		tables.add(new SysDataDictionary().toCreateTable());
 		tables.add(new SysResource().toCreateTable());
-		
 		tables.add(new SysDataLinks().toCreateTable());
 		tables.add(new SysReqLog().toCreateTable());
 		tables.add(new SysOperSqlLog().toCreateTable());
 		tables.add(new SysAccountOnlineStatus().toCreateTable());
 		tables.add(new SysUser().toCreateTable());
-		
 		tables.add(new ComColumndata().toCreateTable());
 		tables.add(new ComTabledata().toCreateTable());
 		tables.add(new DmPublishInfo().toCreateTable());
 		tables.add(new DmPublishBasicData().toCreateTable());
 		tables.add(new ComSqlScriptParameter().toCreateTable());
 		tables.add(new CfgProjectTableLinks().toCreateTable());
-		
 		tables.add(new SysRole().toCreateTable());
 		tables.add(new SysPermission().toCreateTable());
 		tables.add(new SysPermissionPriority().toCreateTable());
@@ -133,6 +130,7 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new SysAccountRoleLinks().toCreateTable());
 		tables.add(new SysUserDeptLinks().toCreateTable());
 		tables.add(new SysUserPositionLinks().toCreateTable());
+		tables.add(new SysAccountPermissionCache().toCreateTable());
 		return tables;
 	}
 	

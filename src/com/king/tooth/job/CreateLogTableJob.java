@@ -22,6 +22,7 @@ import com.king.tooth.sys.entity.sys.SysReqLog;
 @SuppressWarnings("serial")
 public class CreateLogTableJob implements Job, Serializable{
 	
+	@SuppressWarnings("unused")
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		Date currentDate = new Date();
 		String firstDay = SysReqLog.getDay(currentDate);

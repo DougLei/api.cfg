@@ -28,6 +28,7 @@ import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
@@ -164,6 +165,7 @@ public class BuiltinObjectInstance {
 	public static final SysPosition sysPosition = new SysPosition();
 	public static final SysRole sysRole = new SysRole();
 	public static final SysPermission sysPermission = new SysPermission();
+	public static final SysAccountPermissionCache sysAccountPermissionCache = new SysAccountPermissionCache();
 	public static final SysPermissionPriority sysPermissionPriority = new SysPermissionPriority();
 	public static final SysReqLog sysReqLog = new SysReqLog();
 	public static final SysOperSqlLog sysOperSqlLog = new SysOperSqlLog();

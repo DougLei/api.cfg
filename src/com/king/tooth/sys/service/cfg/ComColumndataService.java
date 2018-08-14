@@ -83,7 +83,7 @@ public class ComColumndataService extends AbstractService{
 			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isPlatformDeveloper()){
 				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated = 0 where "+ResourcePropNameConstants.ID+" = '"+column.getTableId()+"'");
 			}
-			return HibernateUtil.updateObjectByHql(column, null);
+			return HibernateUtil.updateObject(column, null);
 		}
 		return operResult;
 	}

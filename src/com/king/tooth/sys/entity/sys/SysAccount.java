@@ -69,13 +69,6 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	 */
 	private Date validDate;
 	
-	/**
-	 * 账户所拥有的权限json
-	 */
-	private String permission;
-	@JSONField(serialize = false)
-	private JSONObject permissionJson;
-	
 	//-------------------------------------------------------------------------
 	
 	/**
@@ -149,20 +142,7 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	public void setVerifyCode(String verifyCode) {
 		this.verifyCode = verifyCode;
 	}
-	public String getPermission() {
-		return permission;
-	}
-	public void setPermission(String permission) {
-		this.permission = permission;
-	}
-	public JSONObject getPermissionJson() {
-		return permissionJson;
-	}
-	public void setPermissionJson(JSONObject permissionJson) {
-		this.permissionJson = permissionJson;
-	}
-	
-	
+
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_ACCOUNT", 0);
 		table.setName("账户表");
@@ -173,7 +153,7 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
 		
 		ComColumndata loginNameColumn = new ComColumndata("login_name", BuiltinCodeDataType.STRING, 30);
 		loginNameColumn.setName("登录名");
@@ -224,12 +204,6 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		validDateColumn.setComments("账户有效期限");
 		validDateColumn.setOrderCode(8);
 		columns.add(validDateColumn);
-		
-		ComColumndata permissionColumn = new ComColumndata("permission", BuiltinCodeDataType.CLOB, 0);
-		permissionColumn.setName("账户所拥有的权限json");
-		permissionColumn.setComments("账户所拥有的权限json");
-		permissionColumn.setOrderCode(9);
-		columns.add(permissionColumn);
 		
 		table.setColumns(columns);
 		return table;

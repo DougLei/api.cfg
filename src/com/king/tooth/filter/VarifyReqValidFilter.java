@@ -80,7 +80,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		
 		// 修改最后的操作时间
 		onlineStatus.setLastOperDate(new Date());
-		HibernateUtil.updateObjectByHql(onlineStatus, null);
+		HibernateUtil.updateObject(onlineStatus, null);
 		return null;
 	}
 

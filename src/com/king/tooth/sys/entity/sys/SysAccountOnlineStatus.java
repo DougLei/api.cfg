@@ -12,6 +12,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 
 /**
  * 账户在线状态信息表
@@ -80,6 +81,12 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	private String confProjectId;
 
 	//-------------------------------------------------------------------------
+
+	/**
+	 * 权限信息对象
+	 */
+	@JSONField(serialize = false)
+	private SysPermissionExtend permission;
 	
 	/**
 	 * 登录或验证登录时，传递的信息
@@ -97,12 +104,6 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	 */
 	@JSONField(serialize = false)
 	private boolean isSave;
-	/**
-	 * 当前账户的权限
-	 * <p>到模块</p>
-	 */
-	@JSONField(serialize = false)
-	private SysPermission permission;
 	
 	public String getToken() {
 		return token;
@@ -206,10 +207,10 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	public void setPositionId(String positionId) {
 		this.positionId = positionId;
 	}
-	public SysPermission gainPermission() {
+	public SysPermissionExtend getPermission() {
 		return permission;
 	}
-	public void setPermission(SysPermission permission) {
+	public void setPermission(SysPermissionExtend permission) {
 		this.permission = permission;
 	}
 	

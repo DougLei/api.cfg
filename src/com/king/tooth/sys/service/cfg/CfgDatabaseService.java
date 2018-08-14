@@ -81,7 +81,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 			operResult = validDatabaseDataIsExists(database);
 		}
 		if(operResult == null){
-			return HibernateUtil.updateObjectByHql(database, null);
+			return HibernateUtil.updateObject(database, null);
 		}
 		return operResult;
 	}

@@ -247,7 +247,7 @@ public class HibernateUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 * @return JSONObject
 	 */
-	public static JSONObject updateObjectByHql(IEntity entity, String shortDesc){
+	public static JSONObject updateObject(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntityJson();
 		String updateId = data.getString(ResourcePropNameConstants.ID);
 		if(StrUtils.isEmpty(updateId)){

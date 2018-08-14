@@ -12,10 +12,13 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
 import com.king.tooth.sys.entity.sys.SysUser;
+import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -62,7 +65,7 @@ public class SysAccountService extends AbstractService{
 		if(accountOnlineStatus.getIsSave()){
 			HibernateUtil.saveObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}else{
-			HibernateUtil.updateObjectByHql(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
+			HibernateUtil.updateObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}
 		return accountOnlineStatus;
 	}
@@ -110,7 +113,7 @@ public class SysAccountService extends AbstractService{
 		}
 		
 		// 处理权限
-		processPermission(loginAccount, accountOnlineStatus);
+		processPermission(loginAccount.getId(), accountOnlineStatus);
 		// 处理基本信息
 		processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
 		accountOnlineStatus.setLastOperDate(new Date());
@@ -127,17 +130,31 @@ public class SysAccountService extends AbstractService{
 	
 	/**
 	 * 处理权限
-	 * @param loginAccount
+	 * @param accountId
 	 * @param accountOnlineStatus
 	 */
-	private void processPermission(SysAccount loginAccount, SysAccountOnlineStatus accountOnlineStatus) {
-		if(StrUtils.isEmpty(loginAccount.getPermission())){
-			loginAccount.setPermissionJson(BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId()));
+	private void processPermission(String accountId, SysAccountOnlineStatus accountOnlineStatus) {
+		SysPermissionExtend permission = null;
+		
+		String hql = "from SysAccountPermissionCache where accountId = ? and customerId =?";
+		SysAccountPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountPermissionCache.class, hql, accountId, CurrentThreadContext.getCustomerId());
+		
+		if(sapc == null){
+			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId());
+			
+			sapc = new SysAccountPermissionCache();
+			sapc.setAccountId(accountId);
+			sapc.setPermission(JsonUtil.toJsonString(permission, false));
+			HibernateUtil.saveObject(sapc, null);
+		}else if(StrUtils.isEmpty(sapc.getPermission())){
+			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus.getAccountId());
+			
+			sapc.setPermission(JsonUtil.toJsonString(permission, false));
+			HibernateUtil.updateObject(sapc, null);
+		}else{
+			permission = JsonUtil.parseObject(sapc.getPermission(), SysPermissionExtend.class);
 		}
-		
-		
-		// 获取当前登陆帐号的权限
-		accountOnlineStatus.setPermission();
+		accountOnlineStatus.setPermission(permission);
 	}
 
 
@@ -348,7 +365,7 @@ public class SysAccountService extends AbstractService{
 			result = validTelIsExists(account.getTel());
 		}
 		if(result == null){
-			return HibernateUtil.updateObjectByHql(account, null);
+			return HibernateUtil.updateObject(account, null);
 		}
 		return result;
 	}

@@ -152,7 +152,7 @@ public class ComTabledataService extends AbstractPublishService {
 			}
 			
 			if(operResult == null){
-				return HibernateUtil.updateObjectByHql(table, null);
+				return HibernateUtil.updateObject(table, null);
 			}
 		}
 		return operResult;

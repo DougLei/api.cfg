@@ -6,8 +6,8 @@ import java.util.List;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinPermissionType;
-import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
+import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
@@ -49,13 +49,13 @@ public class SysPermissionService extends AbstractService{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public SysPermission findAccountOfPermissions(String accountId){
+	public SysPermissionExtend findAccountOfPermissions(String accountId){
 		String projectId = CurrentThreadContext.getProjectId();
 		String customerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		List<SysPermission> permissions = new ArrayList<SysPermission>();
-		List<SysPermission> newPermissions = new ArrayList<SysPermission>();
-		List<SysPermission> tmpPermissions = null;
+		List<SysPermissionExtend> permissions = new ArrayList<SysPermissionExtend>();
+		List<SysPermissionExtend> newPermissions = new ArrayList<SysPermissionExtend>();
+		List<SysPermissionExtend> tmpPermissions = null;
 		
 		List<SysPermissionPriority> permissionPriorities = getPermissionPriorities();
 		for (SysPermissionPriority permissionPriority : permissionPriorities) {
@@ -110,7 +110,7 @@ public class SysPermissionService extends AbstractService{
 		}
 		
 		if(permissions.size() > 0){
-			SysPermission permission = new SysPermission();
+			SysPermissionExtend permission = new SysPermissionExtend();
 			permission.setRefResourceCode("ROOT");
 			permission.setRefResourceId("ROOT");
 			permission.setRefResourceType("ROOT");
@@ -154,8 +154,8 @@ public class SysPermissionService extends AbstractService{
 	 * @param customerId
 	 * @return
 	 */
-	private List<SysPermission> getRootPermissionsByData(String refDataType, Object refDataId, String projectId, String customerId){
-		return HibernateUtil.extendExecuteListQueryByHqlArr(SysPermission.class, null, null, queryPermissionHql, 
+	private List<SysPermissionExtend> getRootPermissionsByData(String refDataType, Object refDataId, String projectId, String customerId){
+		return HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionExtend.class, null, null, queryPermissionHql, 
 				refDataType, refDataId, projectId, customerId);
 	}
 	/**
@@ -164,14 +164,14 @@ public class SysPermissionService extends AbstractService{
 	 * @param projectId
 	 * @param customerId
 	 */
-	private void setSubPermissionsByData(List<SysPermission> permissions, String projectId, String customerId) {
+	private void setSubPermissionsByData(List<SysPermissionExtend> permissions, String projectId, String customerId) {
 		if(permissions == null || permissions.size() == 0){
 			return;
 		}
-		for (SysPermission p : permissions) {
-			p.setChildren(HibernateUtil.extendExecuteListQueryByHqlArr(SysPermission.class, null, null, recursiveQueryPermissionHql, 
+		for (SysPermissionExtend p : permissions) {
+			p.setChildren(HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionExtend.class, null, null, recursiveQueryPermissionHql, 
 					p.getRefResourceId(), p.getRefResourceCode(), projectId, customerId));
-			setSubPermissionsByData(p.gainChildren(), projectId, customerId);
+			setSubPermissionsByData(p.getChildren(), projectId, customerId);
 		}
 	}
 
@@ -184,7 +184,7 @@ public class SysPermissionService extends AbstractService{
 	 * @param newPermissions
 	 * @return
 	 */
-	private void mergePermissions(List<SysPermission> permissions, List<SysPermission> newPermissions){
+	private void mergePermissions(List<SysPermissionExtend> permissions, List<SysPermissionExtend> newPermissions){
 		if(newPermissions == null || newPermissions.size() == 0){
 			return;
 		}
@@ -200,7 +200,7 @@ public class SysPermissionService extends AbstractService{
 	 * @param permissions
 	 * @param newPermissions
 	 */
-	private void doMerge(List<SysPermission> permissions, List<SysPermission> newPermissions){
+	private void doMerge(List<SysPermissionExtend> permissions, List<SysPermissionExtend> newPermissions){
 		if(newPermissions == null || newPermissions.size() == 0){
 			return;
 		}
@@ -210,9 +210,9 @@ public class SysPermissionService extends AbstractService{
 				return;
 			}
 			
-			for (SysPermission np : newPermissions) {
+			for (SysPermissionExtend np : newPermissions) {
 				boolean unExists = true;
-				for (SysPermission p : permissions) {
+				for (SysPermissionExtend p : permissions) {
 					if(np.getRefResourceId().equals(p.getRefResourceId()) || np.getRefResourceCode().equals(p.getRefResourceCode())){
 						unExists = false;
 						
@@ -223,10 +223,10 @@ public class SysPermissionService extends AbstractService{
 							p.setIsOper(1);
 						}
 						
-						if(p.gainChildren() == null){
-							p.setChildren(new ArrayList<SysPermission>());
+						if(p.getChildren() == null){
+							p.setChildren(new ArrayList<SysPermissionExtend>());
 						}
-						doMerge(p.gainChildren(), np.gainChildren());
+						doMerge(p.getChildren(), np.getChildren());
 						break;
 					}
 				}

@@ -197,7 +197,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 					saveSqlScriptParameter(true, sqlScript.getSqlScriptParameterList(), sqlScriptId);
 				}
 				sqlScript.setSqlQueryResultColumns("");
-				return HibernateUtil.updateObjectByHql(sqlScript, null);
+				return HibernateUtil.updateObject(sqlScript, null);
 			}
 		}
 		return operResult;
@@ -450,7 +450,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		
 		JSONArray jsonArray = new JSONArray(sqlScriptParameters.size());
 		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
-			jsonArray.add(HibernateUtil.updateObjectByHql(comSqlScriptParameter, null));
+			jsonArray.add(HibernateUtil.updateObject(comSqlScriptParameter, null));
 		}
 		return jsonArray;
 	}

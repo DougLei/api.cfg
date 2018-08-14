@@ -61,11 +61,7 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 	private String secretLevels;
 	
 	// ---------------------------------------------------------------------------
-	/**
-	 * 子权限集合
-	 */
-	private List<SysPermission> children;
-	
+
 	public String getRefResourceId() {
 		return refResourceId;
 	}
@@ -125,12 +121,6 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 	}
 	public void setRefResourceType(String refResourceType) {
 		this.refResourceType = refResourceType;
-	}
-	public List<SysPermission> gainChildren() {
-		return children;
-	}
-	public void setChildren(List<SysPermission> children) {
-		this.children = children;
 	}
 	
 	public ComTabledata toCreateTable() {
@@ -214,6 +204,6 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysPermission";
+		return "SysPermissionExtend";
 	}
 }

@@ -44,7 +44,7 @@ public class SysAccountController extends AbstractController{
 			
 			// 将(模块)权限信息组装到结果json中
 			JSONObject json = JsonUtil.toJsonObject(accountOnlineStatus);
-			json.put("permissions", accountOnlineStatus.gainPermission());
+			json.put("permissions", accountOnlineStatus.getPermission());
 			resultObject = json;
 		}
 		return getResultObject();

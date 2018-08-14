@@ -308,7 +308,7 @@ public abstract class GetProcesser extends RequestProcesser{
 				querySql += " where 1=2";
 			}
 			sqlScriptResource.doSetSqlQueryResultColumns(getQueryResultColumns(querySql, queryCondParameters));
-			HibernateUtil.updateObjectByHql(sqlScriptResource, null);
+			HibernateUtil.updateObject(sqlScriptResource, null);
 		}
 	}
 	

@@ -69,7 +69,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			return HibernateUtil.updateObjectByHql(projectModule, null);
+			return HibernateUtil.updateObject(projectModule, null);
 		}
 		return operResult;
 	}

@@ -91,7 +91,7 @@ public class ComProjectService extends AbstractPublishService {
 			operResult = validProjectRefDatabaseIsExists(project);
 		}
 		if(operResult == null){
-			return HibernateUtil.updateObjectByHql(project, null);
+			return HibernateUtil.updateObject(project, null);
 		}
 		return operResult;
 	}

@@ -203,7 +203,7 @@ public class SysUserService extends AbstractService{
 		if(result == null){
 			if(account != null && modifyAccountInfo){
 				if(StrUtils.notEmpty(oldUser.getAccountId())){
-					HibernateUtil.updateObjectByHql(account, null);
+					HibernateUtil.updateObject(account, null);
 				}else{
 					account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 					account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
@@ -211,7 +211,7 @@ public class SysUserService extends AbstractService{
 					user.setAccountId(accountId);
 				}
 			}
-			JSONObject userJsonObject = HibernateUtil.updateObjectByHql(user, null);
+			JSONObject userJsonObject = HibernateUtil.updateObject(user, null);
 			String userId = oldUser.getId();
 			
 			// 可能修改部门
