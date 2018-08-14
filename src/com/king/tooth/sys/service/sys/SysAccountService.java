@@ -112,6 +112,8 @@ public class SysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
+		accountOnlineStatus.setAccountType(loginAccount.getType());
+		
 		// 处理权限
 		if(processPermission(loginAccount.getId(), loginAccount.getType(), accountOnlineStatus)){
 			// 处理基本信息
@@ -166,11 +168,7 @@ public class SysAccountService extends AbstractService{
 	 * @param accountName
 	 */
 	private void processOnlineStatusBasicData(SysAccountOnlineStatus accountOnlineStatus, SysAccount loginAccount, String accountName) {
-		accountOnlineStatus.setCustomerId(CurrentThreadContext.getCustomerId());
-		accountOnlineStatus.setProjectId(CurrentThreadContext.getProjectId());
-		
 		accountOnlineStatus.setAccountId(loginAccount.getId());
-		accountOnlineStatus.setAccountType(loginAccount.getType());
 		
 		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ?", loginAccount.getId());
 		if(loginUser == null){

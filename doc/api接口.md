@@ -16,6 +16,49 @@
   "loginPwd":"1"					  --登陆密码
 }
 ```
+返回值: 
+```
+管理员或系统开发人员会返回   ALL标识具有权限
+  {
+      "data": {
+          "token": "c14582c5551f4ae093c54ecdb07a6764",
+          "permissions": {
+              "refResourceCode": "ALL",
+              "refResourceId": "ALL",
+              "refResourceType": "ALL",
+              ...
+          },
+          ...
+      },
+      "isSuccess": true,
+      "message": null,
+      "status": 200
+  }
+一般用户会返回   具体的权限对象集合，主要是到模块的权限
+  {
+      "data": {
+          "token": "c14582c5551f4ae093c54ecdb07a6764",
+          "permissions": {
+              "refDataId": "xxx",
+              "refResourceId": "xxx",
+              "isOper": 1,
+              "refResourceType": "xxx",
+              "refParentResourceId": "xxx",
+              "secretLevels": 1,
+              "refDataType": "xxx",
+              "isVisibility": 1,
+              "Id": "xxx",
+              "refResourceCode": "xxx",
+              "children": [...],
+              ...
+          },
+          ...
+      },
+      "isSuccess": true,
+      "message": null,
+      "status": 200
+  }
+```
 
 ### (二)、退出
 
@@ -420,6 +463,41 @@
 &deep = -1 [-1/任意数字]              --递归计算子权限的深度，默认为0，-1表示查询到底
 ```
 - 请求体: 无
+- 返回值: 
+```
+管理员或系统开发人员会返回   ALL标识具有权限
+  {
+      "data": {
+          "refResourceId": "ALL",           
+          "refResourceType": "ALL",         
+          "refResourceCode": "ALL",         
+          ...
+      },
+      "isSuccess": true,
+      "message": null,
+      "status": 200
+  }
+一般用户会返回   具体的权限对象集合
+  {
+      "data": {
+          "refDataId": "xxx",
+          "refResourceId": "xxx",
+          "isOper": 1,
+          "refResourceType": "xxx",
+          "refParentResourceId": "xxx",
+          "secretLevels": 1,
+          "refDataType": "xxx",
+          "isVisibility": 1,
+          "Id": "xxx",
+          "refResourceCode": "xxx",
+          "children": [...],
+          ...
+      },
+      "isSuccess": true,
+      "message": null,
+      "status": 200
+  }
+```
 
 ### (七)、组织管理
 
