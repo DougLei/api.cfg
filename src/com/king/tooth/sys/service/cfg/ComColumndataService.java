@@ -4,7 +4,6 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.AbstractService;
-import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -80,9 +79,10 @@ public class ComColumndataService extends AbstractService{
 		}
 		if(operResult == null){
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
-			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
+			// TODO 单项目，取消是否平台开发者的判断
+//			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated = 0 where "+ResourcePropNameConstants.ID+" = '"+column.getTableId()+"'");
-			}
+//			}
 			return HibernateUtil.updateObject(column, null);
 		}
 		return operResult;

@@ -91,15 +91,18 @@ public class ComTabledataService extends AbstractPublishService {
 	public Object saveTable(ComTabledata table) {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
-			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+			// TODO 单项目，取消是否平台开发者的判断
+//			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+			
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
-			if(!isDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
+			// TODO 单项目，取消是否平台开发者的判断
+//			if(!isDeveloper){// 非平台开发者，建的表一开始，一定要和一个项目关联起来
 				operResult = validTableRefProjIsExists(projectId);
 				if(operResult == null){
 					operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 				}
-			}
+//			}
 			if(operResult == null){
 				JSONObject tableJsonObject = HibernateUtil.saveObject(table, null);
 				String tableId = tableJsonObject.getString(ResourcePropNameConstants.ID);
@@ -133,10 +136,13 @@ public class ComTabledataService extends AbstractPublishService {
 		}
 		
 		if(operResult == null){
-			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+			// TODO 单项目，取消是否平台开发者的判断
+//			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+			
 			String projectId = CurrentThreadContext.getConfProjectId();
 			
-			if(!isDeveloper){
+			// TODO 单项目，取消是否平台开发者的判断
+//			if(!isDeveloper){
 				if(StrUtils.isEmpty(projectId)){
 					return "表关联的项目id不能为空！";
 				}
@@ -149,7 +155,7 @@ public class ComTabledataService extends AbstractPublishService {
 //				if(operResult == null && publishInfoService.validResourceIsPublished(null, projectId, oldTable.getId())){
 //					return "该表已经发布，不能修改表信息，或取消发布后再修改";
 //				}
-			}
+//			}
 			
 			if(operResult == null){
 				return HibernateUtil.updateObject(table, null);

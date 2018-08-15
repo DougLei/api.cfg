@@ -41,12 +41,14 @@ public class ComProjectModuleService extends AbstractPublishService {
 	public Object saveProjectModule(ComProjectModule projectModule) {
 		String operResult = validProjectModuleCodeIsExists(projectModule);
 		if(operResult == null){
-			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
-			if(isDeveloper){
+			// TODO 单项目，取消是否平台开发者的判断
+//			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
+			
+//			if(isDeveloper){
 				projectModule.setRefProjectId(CurrentThreadContext.getProjectId());
-			}else{
-				projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
-			}
+//			}else{
+//				projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
+//			}
 			return HibernateUtil.saveObject(projectModule, null);
 		}
 		return operResult;
