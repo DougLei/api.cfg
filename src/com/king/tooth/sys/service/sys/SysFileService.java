@@ -67,6 +67,8 @@ public class SysFileService extends AbstractService{
 				}else if(uploadFileInfo.errMsg != null){
 					return uploadFileInfo.errMsg;
 				}else{
+					System.setProperty("sun.jnu.encoding","utf-8"); //设置系统对文件名编码的字符集
+					
 					String uploadDir = validUploadDirIsExists();
 					filePathList = new ArrayList<String>(uploadFileInfo.count);
 					Map<Integer, SysFile> sysfileMap = new HashMap<Integer, SysFile>(uploadFileInfo.count);
@@ -306,7 +308,7 @@ public class SysFileService extends AbstractService{
 		InputStream input = null;
 		
 		Object[] fileIdArr = fileIds.split(",");
-		List<SysFile> sysFileList = new ArrayList<SysFile>(fileIdArr.length);;
+		List<SysFile> sysFileList = new ArrayList<SysFile>(fileIdArr.length);
 		try {
 			StringBuffer updateDownloadCountHql = new StringBuffer("update SysFile set downloadCount = downloadCount+1 where id in (");
 			for (Object fileId : fileIdArr) {

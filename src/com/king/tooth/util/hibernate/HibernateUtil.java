@@ -173,21 +173,21 @@ public class HibernateUtil {
 	 * @param entityName
 	 */
 	public static void removeConfig(String entityName){
-		List<String> entityNames = new ArrayList<String>(1);
-		entityNames.add(entityName);
-		removeConfig(entityNames);
-		entityNames.clear();
+		if(StrUtils.isEmpty(entityName)){
+			return;
+		}
+		getSessionFactory().removeHbmConfig(entityName);
 	}
 	
-	/**
-	 * 删除配置
-	 * @param entityNames
-	 */
-	public static void removeConfig(List<String> entityNames){
-		if(entityNames != null && entityNames.size() > 0){
-			getSessionFactory().removeHbmConfig(entityNames);
-		}
-	}
+//	/**
+//	 * 删除配置
+//	 * @param entityNames
+//	 */
+//	public static void removeConfig(List<String> entityNames){
+//		if(entityNames != null && entityNames.size() > 0){
+//			getSessionFactory().removeHbmConfig(entityNames);
+//		}
+//	}
 	
 	//------------------------------------------------------------------------------------------------------
 	/**

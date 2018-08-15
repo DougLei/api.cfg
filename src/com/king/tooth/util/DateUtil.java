@@ -105,6 +105,20 @@ public class DateUtil {
 	}
 	
 	// -----------------------------------------------------------------
+	private transient static final SimpleDateFormat daySdf = new SimpleDateFormat("dd");
+	/**
+	 * 当前日期是否是当月第一天
+	 * @param currentDate
+	 * @return
+	 */
+	public static boolean isFirstDayOfMonth(Date currentDate) {
+		if("01".equals(daySdf.format(currentDate))){
+			return true;
+		}
+		return false;
+	}
+	
+	// -----------------------------------------------------------------
 	/**
 	 * 自定义格式化日期对象为字符串
 	 * @param date

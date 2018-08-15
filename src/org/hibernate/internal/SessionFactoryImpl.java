@@ -2204,15 +2204,24 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 
 	/**
 	 * 从sessionFactory中删除对应表的所有hbm映射信息
+	 * @param entityName
+	 */
+	public void removeHbmConfig(String entityName) {
+		classMetadata.remove(entityName);
+		hibernateDataLinkResourceNameList.remove(entityName);
+	}
+	
+	/**
+	 * 从sessionFactory中删除对应表的所有hbm映射信息
 	 * @param entityNames
 	 */
 	public void removeHbmConfig(List<String> entityNames) {
-		for (String resourceName : entityNames) {
-			if(resourceName == null){
+		for (String entityName : entityNames) {
+			if(StrUtils.isEmpty(entityName)){
 				break;
 			}
-			classMetadata.remove(resourceName);
-			hibernateDataLinkResourceNameList.remove(resourceName);
+			classMetadata.remove(entityName);
+			hibernateDataLinkResourceNameList.remove(entityName);
 		}
 	}
 }

@@ -154,11 +154,13 @@ public class SysHibernateHbm extends AbstractSysResource implements ITable, IPub
 		}
 		this.setHbmResourceName(table.getResourceName());
 		this.setIsDataLinkTableHbm(table.getIsDatalinkTable());
+		
 		this.setIsEnabled(table.getIsEnabled());
+		this.setReqResourceMethod(table.getReqResourceMethod());
 		this.setIsBuiltin(table.getIsBuiltin());
 		this.setIsNeedDeploy(table.getIsNeedDeploy());
-		this.setReqResourceMethod(table.getReqResourceMethod());
-		this.setIsCreated(1);
+		this.setBelongPlatformType(table.getBelongPlatformType());
+		this.setIsCreated(table.getIsCreated());
 	}
 
 	@JSONField(serialize = false)

@@ -43,6 +43,8 @@ import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.SysRole;
 import com.king.tooth.sys.entity.sys.SysUser;
+import com.king.tooth.sys.entity.sys.SysUserGroup;
+import com.king.tooth.sys.entity.sys.SysUserGroupDetail;
 import com.king.tooth.sys.entity.sys.datalinks.SysAccountRoleLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
@@ -185,6 +187,8 @@ public class BuiltinObjectInstance {
 	public static final SysResource sysResource = new SysResource();
 	public static final SysFile sysFile = new SysFile();
 	public static final SysHibernateHbm sysHibernateHbm = new SysHibernateHbm();
+	public static final SysUserGroup sysUserGroup = new SysUserGroup();
+	public static final SysUserGroupDetail sysUserGroupDetail = new SysUserGroupDetail();
 	
 	public static final SysDataLinks sysDataLinks = new SysDataLinks();
 	public static final SysAccountRoleLinks sysAccountRoleLinks = new SysAccountRoleLinks();

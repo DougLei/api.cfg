@@ -21,6 +21,12 @@
 			<param-value>classpath:log4j.properties</param-value>
 		</context-param>
 		
+		<!-- 配置系统类型：(1)配置系统/(2)运行系统 【注意：这里只能配置1或2这两个值，且必须配置！】 -->
+		<context-param>
+			<param-name>currentSysType</param-name>
+			<param-value>1</param-value>
+		</context-param>
+		
 <!-- ****************************************************************************************************  -->		
 		
 		<!-- 配置spring的listener，加载其核心组建 -->
@@ -32,13 +38,13 @@
 		<listener>
 			<listener-class>com.king.tooth.listener.LoadPropertiesFileListener</listener-class>
 		</listener>
+		<listener>
+			<listener-class>com.king.tooth.listener.InitSysDataListener</listener-class>
+		</listener>
+		<listener>
+			<listener-class>com.king.tooth.listener.InitSysJobListener</listener-class>
+		</listener>
 		
-		<!-- 配置系统类型：(1)配置系统/(2)运行系统 【注意：这里只能配置1或2这两个值，且必须配置！】 -->
-		<context-param>
-			<param-name>currentSysType</param-name>
-			<param-value>1</param-value>
-		</context-param>
-
 <!-- ****************************************************************************************************  -->		
 		
 		<!-- 配置跨域请求过滤器，解决跨域请求问题 -->

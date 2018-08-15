@@ -731,6 +731,37 @@
   "secretLevel_x":""                                    --上传第x个文件的密级
 }
 ```
+返回值: 
+```
+{
+    "data": [
+        {
+            "refDataId": "fdsafewcadsfqwefwq",
+            "downloadCount": null,
+            "code": "ddd85d62cbf540f3aa019d7570cfbab8",
+            "projectId": "90621e37b806o6fe8538c5eb782901bb",
+            "suffix": "txt",
+            "saveType": "service",
+            "size": "1796",
+            "lastUpdateDate": "2018-08-15 11:37:46",
+            "savePath": "D:\\uploadFile\\2018-08-15\\ddd85d62cbf540f3aa019d7570cfbab8.txt",
+            "content": null,
+            "lastUpdateUserId": "16ed21bd7a7a41f5bea2ebaa258908cf",
+            "customerId": "unknow",
+            "batch": "b7ed3f39797e45ee800ddcaf9e33093f",
+            "Id": "93560c231ce343f5a0c828c53a1d1da6",
+            "secretLevel": 4,
+            "createDate": "2018-08-15 11:37:46",
+            "actName": "测试上传的文本文件.txt",
+            "createUserId": "16ed21bd7a7a41f5bea2ebaa258908cf"
+        },
+        ...
+    ],
+    "isSuccess": true,
+    "message": null,
+    "status": 200
+}
+```
 
 #### 2. 删除文件
 

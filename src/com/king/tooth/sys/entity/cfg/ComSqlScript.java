@@ -220,7 +220,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		return objectName;
 	}
 	public void setObjectName(String objectName) {
-		this.objectName = objectName.toUpperCase();
+		if(objectName == null){
+			this.objectName = null;
+		}else{
+			this.objectName = objectName.toUpperCase();
+		}
 	}
 	public void setDbType(String dbType) {
 		this.dbType = dbType;

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
@@ -103,6 +104,9 @@ public class ComTabledataController extends AbstractPublishController{
 //			return "建模功能目前只提供给平台开发人员使用";
 //		}
 		
+		// 获取数据库连接对象，准备进行create表、drop表的操作
+		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
+		
 		int len = ijson.size();
 		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id
 		String tableId;
@@ -111,8 +115,7 @@ public class ComTabledataController extends AbstractPublishController{
 			if(StrUtils.isEmpty(tableId)){
 				return "要建模的表id不能为空";
 			}
-			deleteTableIds.add(tableId);
-			resultObject = BuiltinObjectInstance.tableService.buildModel(tableId);
+			resultObject = BuiltinObjectInstance.tableService.buildModel(tableId, deleteTableIds, dbTableHandler);
 		}else{
 			for(int i=0;i<len ;i++){
 				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
@@ -120,8 +123,7 @@ public class ComTabledataController extends AbstractPublishController{
 					resultObject = "要建模的表id不能为空";
 					continue;
 				}
-				deleteTableIds.add(tableId);
-				resultObject = BuiltinObjectInstance.tableService.buildModel(tableId);
+				resultObject = BuiltinObjectInstance.tableService.buildModel(tableId, deleteTableIds, dbTableHandler);
 				if(resultObject != null){
 					break;
 				}
@@ -129,10 +131,8 @@ public class ComTabledataController extends AbstractPublishController{
 		}
 		if(resultObject == null){
 			resultObject = ijson.getJson();
-		}else{
-			// 如果建模出现异常，要将一起建模操作且成功的表都删除掉
-			BuiltinObjectInstance.tableService.batchCancelBuildModel(deleteTableIds);
 		}
+		deleteTableIds.clear();
 		return getResultObject();
 	}
 	

@@ -290,24 +290,12 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	 * 格式化日期中的年月
 	 */
 	private transient static final SimpleDateFormat ymSdf = new SimpleDateFormat("yyyyMM");
-	/**
-	 * 格式化出日期中的天
-	 */
-	private transient static final SimpleDateFormat daySdf = new SimpleDateFormat("dd");
 	
 	/**
 	 * 日志表的年月后缀
 	 */
 	public static String yyyyMM = getYearMonth(new Date());
 	
-	/**
-	 * 获取日期中的天
-	 * @param currentDate
-	 * @return
-	 */
-	public static String getDay(Date currentDate){
-		return DateUtil.formatDate(currentDate, daySdf);
-	}
 	/**
 	 * 获取日期中的年月
 	 * @param currentDate

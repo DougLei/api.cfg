@@ -73,7 +73,7 @@ public class HbmOperTest {
 		
 		
 		
-//		HibernateHbmHandler hbm = new HibernateHbmHandler();
+//		HibernateHbmUtil hbm = new HibernateHbmUtil();
 //		hbm.createHbmMappingContent(tabledatas );
 //		hbm.dropHbmMappingContent(tabledatas );
 	}

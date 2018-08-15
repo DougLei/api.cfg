@@ -66,6 +66,8 @@ public class QuartzUtil implements Serializable{
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void addJob(String jobName, String groupName, Class clz, String cronExpression, boolean executeNow){
+		Log4jUtil.debug("添加定时任务：jobName={}, groupName={}, clz={}, cornExpression={}, executeNow={}", jobName, groupName, clz.toString(), cronExpression, executeNow);
+		
 		Scheduler scheduler = getScheduler(jobName, groupName);
 		JobDetail job = JobBuilder.newJob(clz).withIdentity(jobName, groupName).build();
 		Trigger trigger = TriggerBuilder.newTrigger()

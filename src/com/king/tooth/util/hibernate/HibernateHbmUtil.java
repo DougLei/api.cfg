@@ -1,4 +1,4 @@
-package com.king.tooth.plugins.orm.hibernate.hbm;
+package com.king.tooth.util.hibernate;
 
 import java.io.File;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import com.king.tooth.util.freemarker.FreemarkerUtil;
  * 对hibernate的hbm映射文件操作
  * @author DougLei
  */
-public class HibernateHbmHandler {
+public class HibernateHbmUtil {
 
 	/**
 	 * hibernate hbm映射文件模版所在的路径
@@ -36,7 +36,7 @@ public class HibernateHbmHandler {
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @return hbm content
 	 */
-	public String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns){
+	public static String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns){
 		if(isNeedInitBasicColumns){
 			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
 		}

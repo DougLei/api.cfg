@@ -14,7 +14,6 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.ISysResource;
@@ -46,6 +45,8 @@ import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.SysRole;
 import com.king.tooth.sys.entity.sys.SysUser;
+import com.king.tooth.sys.entity.sys.SysUserGroup;
+import com.king.tooth.sys.entity.sys.SysUserGroupDetail;
 import com.king.tooth.sys.entity.sys.datalinks.SysAccountRoleLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
@@ -58,6 +59,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
+import com.king.tooth.util.hibernate.HibernateHbmUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -131,6 +133,8 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new SysUserDeptLinks().toCreateTable());
 		tables.add(new SysUserPositionLinks().toCreateTable());
 		tables.add(new SysAccountPermissionCache().toCreateTable());
+		tables.add(new SysUserGroup().toCreateTable());
+		tables.add(new SysUserGroupDetail().toCreateTable());
 		return tables;
 	}
 	
@@ -180,13 +184,12 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void insertHbmContentsToSessionFactory() {
 		List<ComTabledata> tables = getAllTables();
-		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
 		for (ComTabledata table : tables) {
 			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
 				continue;
 			}
-			hbmContents.add(hibernateHbmHandler.createHbmMappingContent(table, true));// 记录hbm内容
+			hbmContents.add(HibernateHbmUtil.createHbmMappingContent(table, true));// 记录hbm内容
 		}
 		// 将hbmContents加入到hibernate sessionFactory中
 		HibernateUtil.appendNewConfig(hbmContents);
@@ -278,7 +281,6 @@ public class InitCfgSystemService extends AbstractService{
 		List<ComTabledata> tables = getAllTables();
 		SysHibernateHbm hbm;
 		SysResource resource;
-		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : tables) {
 			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
 				continue;
@@ -287,7 +289,7 @@ public class InitCfgSystemService extends AbstractService{
 			hbm = new SysHibernateHbm();
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.tableTurnToHbm(table);
-			hbm.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, true));
+			hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
 			// 保存到资源表中
@@ -586,9 +588,8 @@ public class InitCfgSystemService extends AbstractService{
 	 * @param coreTableHbmContents
 	 */
 	private void addOtherCoreTableHbmContents(List<String> coreTableHbmContents) {
-		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		ComTabledata comProjectSysHibernateHbmLinksTable = new CfgProjectHbmLinks().toCreateTable();
-		coreTableHbmContents.add(hibernateHbmHandler.createHbmMappingContent(comProjectSysHibernateHbmLinksTable, true));
+		coreTableHbmContents.add(HibernateHbmUtil.createHbmMappingContent(comProjectSysHibernateHbmLinksTable, true));
 	}
 	
 	/**

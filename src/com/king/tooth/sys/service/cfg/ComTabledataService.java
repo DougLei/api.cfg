@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
@@ -30,6 +29,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
+import com.king.tooth.util.hibernate.HibernateHbmUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -203,7 +203,7 @@ public class ComTabledataService extends AbstractPublishService {
 		// TODO 单项目，取消是否平台开发者的判断
 //		if(isDeveloper && oldTable.getIsCreated() == 1){
 		if(oldTable.getIsCreated() == 1){
-			cancelBuildModel(oldTable);
+			cancelBuildModel(new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance), oldTable, true);
 		}
 		
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
@@ -214,31 +214,33 @@ public class ComTabledataService extends AbstractPublishService {
 	
 	/**
 	 * 建模
-	 * <p>如果是平台开发者账户，则需要添加资源信息，建表，以及映射文件数据，并添加到当前的sessionFacotry中</p>
 	 * @param tableId
+	 * @param deleteTableIds 如果建模失败，要将这些数据删除，主要是drop表
+	 * @param dbTableHandler
 	 * @return
 	 */
-	public String buildModel(String tableId){
+	public String buildModel(String tableId, List<String> deleteTableIds, DBTableHandler dbTableHandler){
+		deleteTableIds.add(tableId);
+		
 		try {
 			ComTabledata table = getObjectById(tableId, ComTabledata.class);
 			if(table.getIsCreated() == 1){
-				cancelBuildModel(table);
+				cancelBuildModel(dbTableHandler, table, true);
 			}
 				
 			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
 			
 			// 1、建表
-			DBTableHandler dbTableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
 			List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 			
-			HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
 			List<String> hbmContents = new ArrayList<String>(tables.size());
+			SysHibernateHbm hbm;
 			int i = 0;
 			for (ComTabledata tb : tables) {
-				hbmContents.add(hbmHandler.createHbmMappingContent(tb, false));
+				hbmContents.add(HibernateHbmUtil.createHbmMappingContent(tb, false));
 				
 				// 2、插入hbm
-				SysHibernateHbm hbm = new SysHibernateHbm();
+				hbm = new SysHibernateHbm();
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 				hbm.tableTurnToHbm(tb);
 				hbm.setHbmContent(hbmContents.get(i++));
@@ -257,6 +259,7 @@ public class ComTabledataService extends AbstractPublishService {
 			
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {
+			batchCancelBuildModel(dbTableHandler, deleteTableIds, false);// 如果建模出现异常，要将一起建模操作过的表都删除掉
 			return ExceptionUtil.getErrMsg("ComTabledataService", "buildModel", e);
 		}
 		return null;
@@ -265,42 +268,45 @@ public class ComTabledataService extends AbstractPublishService {
 	/**
 	 * 批量取消建模
 	 * <p>目前用在建模失败的时候，要进行的批量撤销，且忽略所有异常</p>
+	 * @param dbTableHandler
 	 * @param deleteTableIds
+	 * @param modifyRelationDatas 是否修改相关数据，例如资源数据，SysHibernateHbm数据；如果是在建模的时候，这个值应该是false，因为相关数据会被rollback；其他时候，这个值应该是true
 	 */
-	public void batchCancelBuildModel(List<String> deleteTableIds) {
+	private void batchCancelBuildModel(DBTableHandler dbTableHandler, List<String> deleteTableIds, boolean modifyRelationDatas) {
 		if(deleteTableIds != null && deleteTableIds.size() > 0){
 			ComTabledata table;
 			for (String tableId : deleteTableIds) {
 				table = getObjectById(tableId, ComTabledata.class);
-				cancelBuildModel(table);
+				cancelBuildModel(dbTableHandler, table, modifyRelationDatas);
 			}
 		}
 	}
 	
 	/**
 	 * 取消建模
+	 * @param dbTableHandler 
 	 * @param table
+	 * @param modifyRelationDatas 是否修改相关数据，例如资源数据，SysHibernateHbm数据；如果是在建模的时候，这个值应该是false，因为相关数据会被rollback；其他时候，这个值应该是true
 	 */
-	private void cancelBuildModel(ComTabledata table){
+	public void cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, boolean modifyRelationDatas){
 		// drop表
-		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
 		String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
 		
 		// 从sessionFactory中移除映射
-		List<String> resourceNames = new ArrayList<String>(tableResourceNames.length);
 		for (String tableResourceName : tableResourceNames) {
-			resourceNames.add(tableResourceName);
+			HibernateUtil.removeConfig(tableResourceName);
 		}
-		HibernateUtil.removeConfig(resourceNames);
-		resourceNames.clear();
 		
-		// 修改表是否创建的状态
-		modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
-		
-		// 删除hbm信息
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
-		// 删除资源
-		new SysResourceService().deleteSysResource(table.getId());
+		if(modifyRelationDatas){
+			// 修改表是否创建的状态
+			modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
+			
+			// 删除hbm信息
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+			
+			// 删除资源
+			new SysResourceService().deleteSysResource(table.getId());
+		}
 	}
 	
 	/**
@@ -371,7 +377,6 @@ public class ComTabledataService extends AbstractPublishService {
 		List<ComTabledata> tables = tableHandler.createTable(table, true);
 		
 		List<SysHibernateHbm> hbms = new ArrayList<SysHibernateHbm>(tables.size());
-		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
 		for (ComTabledata tb : tables) {
 			SysHibernateHbm hbm = new SysHibernateHbm();
 			if(tb.getIsDatalinkTable() == 0){
@@ -382,7 +387,7 @@ public class ComTabledataService extends AbstractPublishService {
 			hbm.tableTurnToHbm(tb);
 			hbm.setRefDatabaseId(project.getRefDatabaseId());
 			hbm.setProjectId(projectId);
-			hbm.setHbmContent(hbmHandler.createHbmMappingContent(tb, false));
+			hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(tb, false));
 			hbms.add(hbm);
 		}
 		ResourceHandlerUtil.clearTables(tables);
@@ -529,8 +534,6 @@ public class ComTabledataService extends AbstractPublishService {
 		
 		// 准备远程过去create表
 		DBTableHandler tableHandler = new DBTableHandler(database);
-		// 准备创建hbm
-		HibernateHbmHandler hbmHandler = new HibernateHbmHandler();
 		
 		List<ComTabledata> tmpTables;// 在创建表的时候，记录每次创建表的数据
 		SysHibernateHbm hbm = null;
@@ -554,7 +557,7 @@ public class ComTabledataService extends AbstractPublishService {
 				hbm.tableTurnToHbm(tempTb);
 				hbm.setRefDatabaseId(databaseId);
 				hbm.setProjectId(projectId);
-				hbm.setHbmContent(hbmHandler.createHbmMappingContent(tempTb, false));
+				hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(tempTb, false));
 				hbms.add(hbm);
 			}
 			ResourceHandlerUtil.clearTables(tmpTables);

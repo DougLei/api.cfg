@@ -14,7 +14,6 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.plugins.orm.hibernate.hbm.HibernateHbmHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
@@ -26,6 +25,7 @@ import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
+import com.king.tooth.util.hibernate.HibernateHbmUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -126,13 +126,12 @@ public class CfgDatabaseService extends AbstractPublishService {
 	private List<ComTabledata> getBuiltinAppBasicTables(){
 		List<ComTabledata> builtinAppBasicTables = HibernateUtil.extendExecuteListQueryByHqlArr(ComTabledata.class, null, null, 
 				"from ComTabledata where isEnabled =1 and isNeedDeploy=1 and isBuiltin=1 ");
-		HibernateHbmHandler hibernateHbmHandler = new HibernateHbmHandler();
 		for (ComTabledata table : builtinAppBasicTables) {
 			if(table.getIsCore() == 1){
 				coreTableCount++;
 			}
 			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId ='"+table.getId()+"'"));
-			table.setHbmContent(hibernateHbmHandler.createHbmMappingContent(table, true));
+			table.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 		}
 		return builtinAppBasicTables;
 	}
