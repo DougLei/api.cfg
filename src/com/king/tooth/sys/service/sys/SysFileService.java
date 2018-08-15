@@ -67,8 +67,6 @@ public class SysFileService extends AbstractService{
 				}else if(uploadFileInfo.errMsg != null){
 					return uploadFileInfo.errMsg;
 				}else{
-					System.setProperty("sun.jnu.encoding","utf-8"); //设置系统对文件名编码的字符集
-					
 					String uploadDir = validUploadDirIsExists();
 					filePathList = new ArrayList<String>(uploadFileInfo.count);
 					Map<Integer, SysFile> sysfileMap = new HashMap<Integer, SysFile>(uploadFileInfo.count);
