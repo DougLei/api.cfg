@@ -40,12 +40,12 @@ public class SysPermissionService extends AbstractService{
 	// 第一次查询权限信息集合的hql语句
 	private static final String queryPermissionHql = "from SysPermission where refDataType = ? and refDataId = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
 	// 后续递归查询权限信息集合的hql语句
-	private static final String recursiveQueryPermissionHql = "from SysPermission where refParentResourceId = ? and refParentResourceId = ? and projectId = ? and customerId = ?";
-	// 按照orderCode asc，查询账户所属的角色所有的权限【orderCode越低的，优先级越高】
+	private static final String recursiveQueryPermissionHql = "from SysPermission where refParentResourceId = ? and refParentResourceCode = ? and projectId = ? and customerId = ?";
+	// 按照orderCode asc，查询账户所属的角色【orderCode越低的，优先级越高】
 	private static final String queryAccountOfRolesHql = "select r."+ResourcePropNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourcePropNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
-	// 按照orderCode asc，查询账户所属的部门所有的权限【orderCode越低的，优先级越高】
+	// 按照orderCode asc，查询账户所属的部门【orderCode越低的，优先级越高】
 	private static final String queryAccountOfDeptsHql = "select d."+ResourcePropNameConstants.ID+" from SysDept d, SysUserDeptLinks l, SysUser u where d."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc";
-	// 按照orderCode asc，查询账户所属的职务所有的权限【orderCode越低的，优先级越高】
+	// 按照orderCode asc，查询账户所属的职务【orderCode越低的，优先级越高】
 	private static final String queryAccountOfPositionsHql = "select p."+ResourcePropNameConstants.ID+" from SysPosition p, SysUserPositionLinks l, SysUser u where p."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc";
 	
 	/**
@@ -66,8 +66,9 @@ public class SysPermissionService extends AbstractService{
 		for (SysPermissionPriority permissionPriority : permissionPriorities) {
 			// 帐号
 			if(SysPermission.DT_ACCOUNT.equals(permissionPriority.getPermissionType())){
-				newPermissions = getRootPermissionsByData(SysPermission.DT_ACCOUNT, accountId, projectId, customerId);
-				setSubPermissionsByData(newPermissions, projectId, customerId);
+				tmpPermissions = getRootPermissionsByData(SysPermission.DT_ACCOUNT, accountId, projectId, customerId);
+				setSubPermissionsByData(tmpPermissions, projectId, customerId);
+				mergePermissions(newPermissions, tmpPermissions);
 			}
 			// 角色
 			else if(SysPermission.DT_ROLE.equals(permissionPriority.getPermissionType())){
@@ -248,11 +249,11 @@ public class SysPermissionService extends AbstractService{
 	/**
 	 * 过滤出指定资源类型的权限
 	 * @param permission
-	 * @param refResourceType
+	 * @param refResourceType 过滤到哪种资源类型停止，以下的子权限信息都舍去
 	 * @return
 	 */
 	public void filterPermission(SysPermissionExtend permission, String refResourceType) {
-		if(permission == null || permission.getChildren() == null || permission.getChildren().size() == 0){
+		if(permission != null && permission.getChildren() != null && permission.getChildren().size() > 0){
 			recursiveFilterPermission(permission.getChildren(), refResourceType);
 		}
 	}
@@ -266,13 +267,25 @@ public class SysPermissionService extends AbstractService{
 	private void recursiveFilterPermission(List<SysPermissionExtend> permissions, String refResourceType) {
 		if(permissions != null && permissions.size() > 0){
 			for (SysPermissionExtend p : permissions) {
-				if(p.getRefResourceType().equals(refResourceType)){
+				if(p.getRefResourceType().equals(refResourceType) && !childrenResourceTypeIsSameWithResourceType(p.getChildren(), refResourceType)){
 					recursiveClearPermission(p.getChildren());
 				}else{
 					recursiveFilterPermission(p.getChildren(), refResourceType);
 				}
 			}
 		}
+	}
+	/**
+	 * 子[权限]的资源类型和指定的资源类型是否相同
+	 * @param childrenPermissions
+	 * @param refResourceType
+	 * @return
+	 */
+	private boolean childrenResourceTypeIsSameWithResourceType(List<SysPermissionExtend> childrenPermissions, String refResourceType) {
+		if(childrenPermissions == null || childrenPermissions.size() == 0){
+			return false;
+		}
+		return refResourceType.equals(childrenPermissions.get(0).getRefResourceType());
 	}
 
 	/**
