@@ -166,10 +166,9 @@ public class SysFileService extends AbstractService{
 			}
 		}
 
-		// TODO 因为前端在上传文件时，是和表单分开提交的，所以一开始是没有refDataId的，所以这里的约束取消
-//		if(StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
-//			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id格式错误，即参数名为refDataId的值格式错误：不能为空，或长度不符合要求";
-//		}
+		if(StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
+			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id格式错误，即参数名为refDataId的值格式错误：不能为空，或长度不符合要求";
+		}
 		if(StrUtils.isEmpty(uploadFileInfo.batch) || uploadFileInfo.batch.length() != 32){
 			uploadFileInfo.batch = ResourceHandlerUtil.getIdentity();
 		}
