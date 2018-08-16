@@ -22,7 +22,6 @@ import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractPublishService;
-import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -247,8 +246,7 @@ public class ComTabledataService extends AbstractPublishService {
 				HibernateUtil.saveObject(hbm, null);
 				
 				// 3、插入资源数据
-				new SysResourceService().saveSysResource(tb);
-				
+				BuiltinObjectInstance.resourceService.saveSysResource(tb);
 			}
 			// 4、将hbm配置内容，加入到sessionFactory中
 			HibernateUtil.appendNewConfig(hbmContents);
@@ -305,7 +303,7 @@ public class ComTabledataService extends AbstractPublishService {
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 			
 			// 删除资源
-			new SysResourceService().deleteSysResource(table.getId());
+			BuiltinObjectInstance.resourceService.deleteSysResource(table.getId());
 		}
 	}
 	

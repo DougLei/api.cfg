@@ -14,7 +14,6 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysReqLog;
-import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -102,7 +101,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			HibernateUtil.saveObject(hbm, null);
 			
 			// 3、插入资源数据
-			new SysResourceService().saveSysResource(logTable);
+			BuiltinObjectInstance.resourceService.saveSysResource(logTable);
 		}
 		
 		// 4、将hbm配置内容，加入到sessionFactory中

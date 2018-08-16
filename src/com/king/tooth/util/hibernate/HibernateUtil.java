@@ -179,15 +179,17 @@ public class HibernateUtil {
 		getSessionFactory().removeHbmConfig(entityName);
 	}
 	
-//	/**
-//	 * 删除配置
-//	 * @param entityNames
-//	 */
-//	public static void removeConfig(List<String> entityNames){
-//		if(entityNames != null && entityNames.size() > 0){
-//			getSessionFactory().removeHbmConfig(entityNames);
-//		}
-//	}
+	/**
+	 * 是否存在指定的hbm映射信息
+	 * @param entityName
+	 */
+	public static boolean hbmConfigIsExists(String entityName){
+		if(StrUtils.isEmpty(entityName)){
+			return false;
+		}
+		return getSessionFactory().hbmConfigIsExists(entityName);
+	}
+	
 	
 	//------------------------------------------------------------------------------------------------------
 	/**

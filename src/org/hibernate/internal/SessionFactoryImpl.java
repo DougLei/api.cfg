@@ -2224,4 +2224,13 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 			hibernateDataLinkResourceNameList.remove(entityName);
 		}
 	}
+	
+	/**
+	 * 判断sessionFactory中是否存在指定的hbm映射信息
+	 * @param entityName
+	 * @return
+	 */
+	public boolean hbmConfigIsExists(String entityName) {
+		return classMetadata.containsKey(entityName);
+	}
 }

@@ -158,7 +158,7 @@ public class DBTableHandler {
 			StringBuilder dropSql = new StringBuilder();
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, false);
-			List<String> tableNames = filterExistsTables(tabledatas);
+			List<String> tableNames = filterTableIsExists(tabledatas);
 			if(tableNames!= null && tableNames.size() > 0){
 				for (String tn: tableNames) {
 					dropSql.append(" drop table ").append(tn).append(";");
@@ -169,13 +169,13 @@ public class DBTableHandler {
 		}
 		return null;
 	}
-	
 	/**
-	 * 筛选出存在的表，再删除
+	 * 筛选出存在的表
+	 * <p>目前这个方法配合getDropTableSql(List<ComTabledata> tabledatas)方法使用，防止删除不存在的表</p>
 	 * @param tabledatas
 	 * @return tableNames
 	 */
-	private List<String> filterExistsTables(List<ComTabledata> tabledatas) {
+	private List<String> filterTableIsExists(List<ComTabledata> tabledatas) {
 		List<String> tableNames = new ArrayList<String>(tabledatas.size());
 		Connection conn = null;
 		PreparedStatement pst = null;
@@ -196,6 +196,53 @@ public class DBTableHandler {
 				rs = pst.executeQuery();
 				if(rs.next() && (rs.getInt(1) > 0)){
 					tableNames.add(table.getTableName());
+				}
+			}
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}finally{
+			CloseUtil.closeDBConn(rs, pst, conn);
+		}
+		return tableNames;
+	}
+	
+	/**
+	 * 筛选表在库中是否存在
+	 * @param isExists true:筛选出在库中存在的表的表名、false:反之
+	 * @param tableNameArr
+	 * @return 表名集合
+	 */
+	public List<String> filterTable(boolean isExists, String... tableNameArr) {
+		if(tableNameArr == null || tableNameArr.length == 0){
+			return null;
+		}
+		
+		List<String> tableNames = new ArrayList<String>(tableNameArr.length);
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			conn = dblink.getConnection();
+			if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dblink.getDBType())){
+				pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
+				pst.setString(2, "U");
+			}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dblink.getDBType())){
+				pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
+				pst.setString(2, "TABLE");
+			}else{
+				throw new IllegalArgumentException("系统目前不支持["+dblink.getDBType()+"]类型的数据库操作");
+			}
+			for (String tableName : tableNameArr) {
+				pst.setString(1, tableName);
+				rs = pst.executeQuery();
+				if(isExists){
+					if(rs.next() && (rs.getInt(1) > 0)){
+						tableNames.add(tableName);
+					}
+				}else{
+					if(!rs.next() || (rs.getInt(1) == 0)){
+						tableNames.add(tableName);
+					}
 				}
 			}
 		} catch (Exception e) {

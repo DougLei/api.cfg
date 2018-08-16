@@ -578,8 +578,63 @@ public class InitCfgSystemService extends AbstractService{
 			hbmContents.clear();
 			hcs.clear();
 		}
+		
+		// 初始化日志表
+		initLogTables();
+		
 		// 关闭session
 		HibernateUtil.closeCurrentThreadSession();
+	}
+	
+	/**
+	 * 初始化日志表
+	 * <p>如果不存在日志表，则要创建</p>
+	 * <p>这个要判断4个东西，reqLog表、reqLog的hbm、operSqlLog表、operSqlLog的hbm</p>
+	 */
+	private void initLogTables() {
+		// 判断是否存在日志表table
+		DBTableHandler tableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
+		List<String> logTableNames = tableHandler.filterTable(false, BuiltinObjectInstance.sysReqLog.toDropTable(), BuiltinObjectInstance.sysOperSqlLog.toDropTable());
+		if(logTableNames != null && logTableNames.size() > 0){
+			// 不存在，则create
+			for (String logTableName : logTableNames) {
+				if(logTableName.equals(BuiltinObjectInstance.sysReqLog.toDropTable())){
+					tableHandler.createTable(BuiltinObjectInstance.sysReqLog.toCreateTable(), true);
+				}else if(logTableName.equals(BuiltinObjectInstance.sysOperSqlLog.toDropTable())){
+					tableHandler.createTable(BuiltinObjectInstance.sysOperSqlLog.toCreateTable(), true);
+				}
+			}
+		}
+		
+		// 判断是否存在日志表的hbm
+		if(!HibernateUtil.hbmConfigIsExists(BuiltinObjectInstance.sysReqLog.getEntityName())){
+			createHbm(BuiltinObjectInstance.sysReqLog.toCreateTable());
+		}
+		if(!HibernateUtil.hbmConfigIsExists(BuiltinObjectInstance.sysOperSqlLog.getEntityName())){
+			createHbm(BuiltinObjectInstance.sysOperSqlLog.toCreateTable());
+		}
+	}
+	
+	/**
+	 * 创建hbm对象
+	 * @param table
+	 */
+	private void createHbm(ComTabledata table){
+		// 插入hbm
+		SysHibernateHbm hbm = new SysHibernateHbm(); 
+		hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
+		hbm.tableTurnToHbm(table);
+		hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, true));
+		HibernateUtil.saveObject(hbm, null);
+		
+		// 插入资源数据
+		BuiltinObjectInstance.resourceService.saveSysResource(table);
+		
+		// 将hbm配置内容，加入到sessionFactory中
+		HibernateUtil.appendNewConfig(hbm.getHbmContent());
+		
+		// 清空缓存
+		table.clear();
 	}
 	
 	/**

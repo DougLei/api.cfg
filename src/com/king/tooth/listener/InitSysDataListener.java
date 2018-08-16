@@ -47,19 +47,8 @@ public class InitSysDataListener implements ServletContextListener {
 		
 		// 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
 		initGSqlParser();
-		
-		// 初始化日志表
-		initLogTables();
 	}
 	
-	/**
-	 * 初始化日志表
-	 * <p>如果不存在日志表，则要创建</p>
-	 */
-	private void initLogTables() {
-		
-	}
-
 	/**
 	 * 初始化是配置系统核心数据信息
 	 */
