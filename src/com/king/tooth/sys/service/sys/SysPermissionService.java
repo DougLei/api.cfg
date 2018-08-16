@@ -29,7 +29,7 @@ public class SysPermissionService extends AbstractService{
 	 */
 	private List<SysPermissionPriority> getPermissionPriorities(){
 		List<SysPermissionPriority> permissionPriorities = HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionPriority.class, null, null, hql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		if(permissionPriorities == null || permissionPriorities.size() == 0){
+		if(permissionPriorities == null || permissionPriorities.size() != BuiltinObjectInstance.permissionPriorities.size()){
 			permissionPriorities = BuiltinObjectInstance.permissionPriorities;
 		}
 		return permissionPriorities;
@@ -40,7 +40,7 @@ public class SysPermissionService extends AbstractService{
 	// 第一次查询权限信息集合的hql语句
 	private static final String queryPermissionHql = "from SysPermission where refDataType = ? and refDataId = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
 	// 后续递归查询权限信息集合的hql语句
-	private static final String recursiveQueryPermissionHql = "from SysPermission where refParentResourceId = ? and refParentResourceCode = ? and projectId = ? and customerId = ?";
+	private static final String recursiveQueryPermissionHql = "from SysPermission where refDataType = ? and (refParentResourceId = ? or refParentResourceCode = ?) and projectId = ? and customerId = ?";
 	// 按照orderCode asc，查询账户所属的角色【orderCode越低的，优先级越高】
 	private static final String queryAccountOfRolesHql = "select r."+ResourcePropNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourcePropNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
 	// 按照orderCode asc，查询账户所属的部门【orderCode越低的，优先级越高】
@@ -67,7 +67,7 @@ public class SysPermissionService extends AbstractService{
 			// 帐号
 			if(SysPermission.DT_ACCOUNT.equals(permissionPriority.getPermissionType())){
 				tmpPermissions = getRootPermissionsByData(SysPermission.DT_ACCOUNT, accountId, projectId, customerId);
-				setSubPermissionsByData(tmpPermissions, projectId, customerId);
+				setSubPermissionsByData(tmpPermissions, SysPermission.DT_ACCOUNT, projectId, customerId);
 				mergePermissions(newPermissions, tmpPermissions);
 			}
 			// 角色
@@ -78,7 +78,7 @@ public class SysPermissionService extends AbstractService{
 					
 					for (Object roleId : roleIds) {
 						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, roleId, projectId, customerId);
-						setSubPermissionsByData(tmpPermissions, projectId, customerId);
+						setSubPermissionsByData(tmpPermissions, SysPermission.DT_ROLE, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					roleIds.clear();
@@ -91,8 +91,8 @@ public class SysPermissionService extends AbstractService{
 					deptIds = processSamePermissionTypeLevel(deptIds, permissionPriority.getSamePermissionTypeLv());		
 					
 					for (Object deptId : deptIds) {
-						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, deptId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(SysPermission.DT_DEPT, deptId, projectId, customerId);
+						setSubPermissionsByData(newPermissions, SysPermission.DT_DEPT, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					deptIds.clear();
@@ -105,8 +105,8 @@ public class SysPermissionService extends AbstractService{
 					positionIds = processSamePermissionTypeLevel(positionIds, permissionPriority.getSamePermissionTypeLv());	
 					
 					for (Object positionId : positionIds) {
-						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, positionId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(SysPermission.DT_POSITION, positionId, projectId, customerId);
+						setSubPermissionsByData(newPermissions, SysPermission.DT_POSITION, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					positionIds.clear();
@@ -167,17 +167,18 @@ public class SysPermissionService extends AbstractService{
 	/**
 	 * 获取引用的数据权限子数据集合
 	 * @param permissions
+	 * @param refDataType
 	 * @param projectId
 	 * @param customerId
 	 */
-	private void setSubPermissionsByData(List<SysPermissionExtend> permissions, String projectId, String customerId) {
+	private void setSubPermissionsByData(List<SysPermissionExtend> permissions, String refDataType, String projectId, String customerId) {
 		if(permissions == null || permissions.size() == 0){
 			return;
 		}
 		for (SysPermissionExtend p : permissions) {
 			p.setChildren(HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionExtend.class, null, null, recursiveQueryPermissionHql, 
-					p.getRefResourceId(), p.getRefResourceCode(), projectId, customerId));
-			setSubPermissionsByData(p.getChildren(), projectId, customerId);
+					refDataType, p.getRefResourceId(), p.getRefResourceCode(), projectId, customerId));
+			setSubPermissionsByData(p.getChildren(), refDataType, projectId, customerId);
 		}
 	}
 
@@ -222,12 +223,15 @@ public class SysPermissionService extends AbstractService{
 					if(np.getRefResourceId().equals(p.getRefResourceId()) || np.getRefResourceCode().equals(p.getRefResourceCode())){
 						unExists = false;
 						
+						// 现在是只要配置了相应的权限，就能访问和操作，没有体现出优先级
 						if(np.getIsVisibility()==1){
 							p.setIsVisibility(1);
 						}
 						if(np.getIsOper()==1){
 							p.setIsOper(1);
 						}
+						// 如果注释掉上面两行if代码块，则可以体现出优先级
+						// 例如A角色和B角色都对同一个功能C有权限控制，A角色可以操作C，B角色不可以操作C。如果A的优先级高，则最后可以操作功能C；如果B的优先级高，则最终权限不能操作功能C
 						
 						if(p.getChildren() == null){
 							p.setChildren(new ArrayList<SysPermissionExtend>());
