@@ -56,6 +56,8 @@ public class SysFileService extends AbstractService{
 		
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload servletUpload = new ServletFileUpload(factory);
+		servletUpload.setHeaderEncoding(EncodingConstants.UTF_8);// 设置头的编码格式
+		
 		List<FileItem> fileList = null;
 		List<String> filePathList = null;// 记录文件在服务器上的路径，如果上传出现错误，要删除已经上传的数据
 		try {
@@ -153,13 +155,12 @@ public class SysFileService extends AbstractService{
 					fileList.remove(i--);
 				}
 			}else{
-				fileSizeKB = fi.getSize()/1024;
-				
-				logJsonObject.put(fi.getFieldName(), new FileInfo(fi.getName(), (fileSizeKB + " KB")));
+				logJsonObject.put(fi.getFieldName(), new FileInfo(fi.getName(), (fi.getSize() + " B")));
 				
 				uploadFileInfo.isEmpty = false;
 				uploadFileInfo.count++;
 				
+				fileSizeKB = fi.getSize()/1024;// 由B转换为KB
 				if(fileSizeKB > FileUtil.fileMaxSize){
 					uploadFileInfo.errMsg = "文件的大小为"+(fileSizeKB/1024)+"M，系统限制单个文件的大小不能超过"+(FileUtil.fileMaxSize/1024)+"M，请修改后再上传";
 				}
