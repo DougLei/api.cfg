@@ -882,6 +882,138 @@
 ```
 - 请求体: 无
 
+### (十二)、用户组管理
+
+> 资源名: SysUserGroup
+
+#### 1. 添加用户组
+
+- 功能描述: 添加一条用户组信息 【支持批量操作】
+- api地址: /common/SysUserGroup
+- 请求类型: POST
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "name":"",                                            --用户组名称
+  "code":"",                                            --用户组编码
+  "orderCode":1,                                        --排序值
+  "descs":"",                                           --描述
+  "isEnabled":1                                         --是否有效: 1是0否
+}
+```
+
+#### 2. 修改用户组
+
+- 功能描述: 修改一条用户组信息
+- api地址: /common/SysUserGroup
+- 请求类型: PUT
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "Id":"",                                              --主键
+  "name":"",                                            --用户组名称
+  "code":"",                                            --用户组编码
+  "orderCode":1,                                        --排序值
+  "descs":"",                                           --描述
+  "isEnabled":1                                         --是否有效: 1是0否
+}
+```
+
+#### 3. 删除用户组
+
+- 功能描述: 删除一条用户组信息 【支持批量操作】
+- api地址: /common/SysUserGroup
+- 请求类型: DELETE
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 
+```
+?_ids=5k7f1ef06728y6016f9d10e91dcr1d39, ...             --主键，多个用,分隔
+```
+- 请求体: 无
+
+### (十三)、用户组明细管理
+
+> 资源名: SysUserGroupDetail
+
+#### 1. 添加用户组明细
+
+- 功能描述: 添加一条用户组明细信息 【支持批量操作】
+- api地址: /common/SysUserGroupDetail
+- 请求类型: POST
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "userGroupId":"",                                     --用户组主键
+  "userId":"",                                          --人员主键
+  "accountId":""                                        --账户主键(人员信息中的accountId)，可为空
+}
+```
+
+#### 2. 修改用户组明细
+
+- 功能描述: 修改一条用户组明细信息
+- api地址: /common/SysUserGroupDetail
+- 请求类型: PUT
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "Id":"",                                              --主键
+  "userGroupId":"",                                     --用户组主键
+  "userId":"",                                          --人员主键
+  "accountId":""                                        --账户主键(人员信息中的accountId)，可为空
+}
+```
+
+#### 3. 删除用户组明细
+
+- 功能描述: 删除一条用户组明细信息 【支持批量操作】
+- api地址: /common/SysUserGroupDetail
+- 请求类型: DELETE
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 
+```
+?_ids=5k7f1ef06728y6016f9d10e91dcr1d39, ...             --主键，多个用,分隔
+```
+- 请求体: 无
+
 ## 二、配置系统管理
 
 ### (一)、数据库信息管理
@@ -1439,7 +1571,23 @@
 ```
 - 请求体: 无
 
+----
 
+## 系统内置参数名
+
+### (一)、sql脚本的内置参数
+```
+_Id                                                    主键
+_currentDate                                           当前时间
+_currentCustomerId                                     当前租户id
+_currentProjectId                                      当前项目id
+_currentAccountId                                      当前账户id
+_currentAccountName                                    当前账户名
+_currentUserId                                         当前用户id
+_currentOrgId                                          当前用户所属组织id
+_currentDeptId                                         当前用户所属部门id
+_currentPositionId                                     当前用户所属岗位id
+```
 
 
 

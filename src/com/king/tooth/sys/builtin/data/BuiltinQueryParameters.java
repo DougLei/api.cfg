@@ -30,11 +30,11 @@ public class BuiltinQueryParameters {
 	/**
 	 * 当前账户id
 	 */
-	private static final String accountId = "_accountId";
+	private static final String currentAccountId = "_currentAccountId";
 	/**
 	 * 当前账户名
 	 */
-	private static final String accountName = "_accountName";
+	private static final String currentAccountName = "_currentAccountName";
 	/**
 	 * 当前用户id
 	 */
@@ -62,8 +62,8 @@ public class BuiltinQueryParameters {
 				|| currentDate.equals(parameterName)
 				|| currentCustomerId.equals(parameterName) 
 				|| currentProjectId.equals(parameterName)
-				|| accountId.equals(parameterName)
-				|| accountName.equals(parameterName)
+				|| currentAccountId.equals(parameterName)
+				|| currentAccountName.equals(parameterName)
 				|| currentUserId.equals(parameterName)
 				|| currentOrgId.equals(parameterName)
 				|| currentDeptId.equals(parameterName)
@@ -91,10 +91,10 @@ public class BuiltinQueryParameters {
 		if(currentProjectId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getProjectId();
 		}
-		if(accountId.equals(parameterName)){
+		if(currentAccountId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
 		}
-		if(accountName.equals(parameterName)){
+		if(currentAccountName.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName();
 		}
 		if(currentUserId.equals(parameterName)){
