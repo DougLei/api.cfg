@@ -125,9 +125,8 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 			urlParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, routeBody.getParentId());
 		}
 		
-		// 加入两个基础数据条件
+		// 加入一个基础数据条件
 		urlParams.put("customerId", CurrentThreadContext.getCustomerId());// 客户主键
-		urlParams.put("projectId", CurrentThreadContext.getProjectId());// 项目主键
 	}
 
 	public void init(FilterConfig arg0) throws ServletException {

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.sys.controller.cfg.CfgDatabaseController;
 import com.king.tooth.sys.controller.cfg.ComColumndataController;
 import com.king.tooth.sys.controller.cfg.ComProjectController;
@@ -105,10 +106,10 @@ public class BuiltinObjectInstance {
 	 */
 	public static final List<SysPermissionPriority> permissionPriorities = new ArrayList<SysPermissionPriority>(4); 
 	static{
-		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_ACCOUNT, 4));
-		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_ROLE, 3));
-		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_DEPT, 2));
-		permissionPriorities.add(new SysPermissionPriority(SysPermission.DT_POSITION, 1));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_ACCOUNT, 4));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_ROLE, 3));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_DEPT, 2));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_POSITION, 1));
 	}
 	
 	/**

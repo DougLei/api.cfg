@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
-import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
@@ -41,12 +41,12 @@ public class SysPermissionService extends AbstractService{
 	private static final String queryPermissionHql = "from SysPermission where refDataId = ? and refDataType = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
 	// 后续递归查询权限信息集合的hql语句
 	private static final String recursiveQueryPermissionHql = "from SysPermission where refDataId = ? and refDataType = ? and (refParentResourceId = ? or refParentResourceCode = ?) and projectId = ? and customerId = ?";
-	// 按照orderCode asc，查询账户所属的角色【orderCode越低的，优先级越高】
+	// 按照orderCode asc，查询账户所有有效的角色【orderCode越低的，优先级越高】
 	private static final String queryAccountOfRolesHql = "select r."+ResourcePropNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourcePropNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
 	// 按照orderCode asc，查询账户所属的部门【orderCode越低的，优先级越高】
-	private static final String queryAccountOfDeptsHql = "select d."+ResourcePropNameConstants.ID+" from SysDept d, SysUserDeptLinks l, SysUser u where d."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc";
+	private static final String queryAccountOfDeptsHql = "select d."+ResourcePropNameConstants.ID+" from SysDept d, SysUserDeptLinks l, SysUser u where d."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc, l.isMain desc";
 	// 按照orderCode asc，查询账户所属的职务【orderCode越低的，优先级越高】
-	private static final String queryAccountOfPositionsHql = "select p."+ResourcePropNameConstants.ID+" from SysPosition p, SysUserPositionLinks l, SysUser u where p."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc";
+	private static final String queryAccountOfPositionsHql = "select p."+ResourcePropNameConstants.ID+" from SysPosition p, SysUserPositionLinks l, SysUser u where p."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc, l.isMain desc";
 	
 	/**
 	 * 根据账户id，获取对应的的权限集合
@@ -65,48 +65,48 @@ public class SysPermissionService extends AbstractService{
 		List<SysPermissionPriority> permissionPriorities = getPermissionPriorities();
 		for (SysPermissionPriority permissionPriority : permissionPriorities) {
 			// 帐号
-			if(SysPermission.DT_ACCOUNT.equals(permissionPriority.getPermissionType())){
-				tmpPermissions = getRootPermissionsByData(SysPermission.DT_ACCOUNT, accountId, projectId, customerId);
-				setSubPermissionsByData(tmpPermissions, accountId, SysPermission.DT_ACCOUNT, projectId, customerId);
+			if(PermissionConstants.DT_ACCOUNT.equals(permissionPriority.getPermissionType())){
+				tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_ACCOUNT, accountId, projectId, customerId);
+				setSubPermissionsByData(tmpPermissions, accountId, PermissionConstants.DT_ACCOUNT, projectId, customerId);
 				mergePermissions(newPermissions, tmpPermissions);
 			}
 			// 角色
-			else if(SysPermission.DT_ROLE.equals(permissionPriority.getPermissionType())){
+			else if(PermissionConstants.DT_ROLE.equals(permissionPriority.getPermissionType())){
 				List<Object> roleIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfRolesHql, accountId);
 				if(roleIds != null && roleIds.size() > 0){
 					roleIds = processSamePermissionTypeLevel(roleIds, permissionPriority.getSamePermissionTypeLv());
 					
 					for (Object roleId : roleIds) {
-						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, roleId, projectId, customerId);
-						setSubPermissionsByData(tmpPermissions, roleId, SysPermission.DT_ROLE, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_ROLE, roleId, projectId, customerId);
+						setSubPermissionsByData(tmpPermissions, roleId, PermissionConstants.DT_ROLE, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					roleIds.clear();
 				}
 			}
 			// 部门
-			else if(SysPermission.DT_DEPT.equals(permissionPriority.getPermissionType())){
+			else if(PermissionConstants.DT_DEPT.equals(permissionPriority.getPermissionType())){
 				List<Object> deptIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfDeptsHql, accountId);
 				if(deptIds != null && deptIds.size() > 0){
 					deptIds = processSamePermissionTypeLevel(deptIds, permissionPriority.getSamePermissionTypeLv());		
 					
 					for (Object deptId : deptIds) {
-						tmpPermissions = getRootPermissionsByData(SysPermission.DT_DEPT, deptId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, deptId, SysPermission.DT_DEPT, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_DEPT, deptId, projectId, customerId);
+						setSubPermissionsByData(newPermissions, deptId, PermissionConstants.DT_DEPT, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					deptIds.clear();
 				}
 			}
 			// 岗位
-			else if(SysPermission.DT_POSITION.equals(permissionPriority.getPermissionType())){
+			else if(PermissionConstants.DT_POSITION.equals(permissionPriority.getPermissionType())){
 				List<Object> positionIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfPositionsHql, accountId);
 				if(positionIds != null && positionIds.size() > 0){
 					positionIds = processSamePermissionTypeLevel(positionIds, permissionPriority.getSamePermissionTypeLv());	
 					
 					for (Object positionId : positionIds) {
-						tmpPermissions = getRootPermissionsByData(SysPermission.DT_POSITION, positionId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, positionId, SysPermission.DT_POSITION, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_POSITION, positionId, projectId, customerId);
+						setSubPermissionsByData(newPermissions, positionId, PermissionConstants.DT_POSITION, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					positionIds.clear();

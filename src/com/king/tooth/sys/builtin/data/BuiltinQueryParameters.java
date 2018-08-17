@@ -51,6 +51,10 @@ public class BuiltinQueryParameters {
 	 * 当前用户所属岗位id
 	 */
 	private static final String currentPositionId = "_currentPositionId";
+	/**
+	 * 当前用户所属角色id
+	 */
+	private static final String currentRoleId = "_currentRoleId";
 	
 	/**
 	 * 判断参数是否是系统内置参数
@@ -67,7 +71,8 @@ public class BuiltinQueryParameters {
 				|| currentUserId.equals(parameterName)
 				|| currentOrgId.equals(parameterName)
 				|| currentDeptId.equals(parameterName)
-				|| currentPositionId.equals(parameterName)){
+				|| currentPositionId.equals(parameterName)
+				|| currentRoleId.equals(parameterName)){
 			return true;
 		}
 		return false;
@@ -108,6 +113,9 @@ public class BuiltinQueryParameters {
 		}
 		if(currentPositionId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getPositionId();
+		}
+		if(currentRoleId.equals(parameterName)){
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getRoleId();
 		}
 		throw new IllegalArgumentException("没有匹配到内置参数["+parameterName+"]");
 	}

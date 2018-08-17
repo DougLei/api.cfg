@@ -7,13 +7,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
+import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
-import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
@@ -118,15 +118,10 @@ public class SysAccountService extends AbstractService{
 		if(processPermission(loginAccount.getId(), loginAccount.getType(), accountOnlineStatus)){
 			// 处理基本信息
 			processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
-			accountOnlineStatus.setLastOperDate(new Date());
-			accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
-			accountOnlineStatus.setLoginDate(new Date());
-			accountOnlineStatus.setTryLoginTimes(0);
 			if(SysConfig.isConfSys){
 				// TODO 这里暂时写成固定值
 				accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
 			}
-			
 			accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
 		}
 		return accountOnlineStatus;
@@ -155,7 +150,7 @@ public class SysAccountService extends AbstractService{
 			return false;
 		}
 		
-		BuiltinObjectInstance.permissionService.filterPermission(permission, SysPermission.RT_MODULE);
+		BuiltinObjectInstance.permissionService.filterPermission(permission, PermissionConstants.RT_MODULE);
 		accountOnlineStatus.setPermission(permission);
 		return true;
 	}
@@ -168,9 +163,17 @@ public class SysAccountService extends AbstractService{
 	 * @param accountName
 	 */
 	private void processOnlineStatusBasicData(SysAccountOnlineStatus accountOnlineStatus, SysAccount loginAccount, String accountName) {
-		accountOnlineStatus.setAccountId(loginAccount.getId());
+		StringBuilder idBuffer = new StringBuilder();
+		String accountId = loginAccount.getId();
 		
-		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ?", loginAccount.getId());
+		accountOnlineStatus.setLastOperDate(new Date());
+		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
+		accountOnlineStatus.setLoginDate(new Date());
+		accountOnlineStatus.setTryLoginTimes(0);
+		accountOnlineStatus.setAccountId(accountId);
+		accountOnlineStatus.setRoleId(getIds(idBuffer, queryRoleId, accountId));
+		
+		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ? and customerId=?", loginAccount.getId(), CurrentThreadContext.getCustomerId());
 		if(loginUser == null){
 			accountOnlineStatus.setAccountName(accountName);
 			accountOnlineStatus.setUserId("unknow");
@@ -178,11 +181,45 @@ public class SysAccountService extends AbstractService{
 			accountOnlineStatus.setDeptId("unknow");
 			accountOnlineStatus.setOrgId("unknow");
 		}else{
+			String userId = loginUser.getId();
 			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
-			accountOnlineStatus.setUserId(loginUser.getId());
-			accountOnlineStatus.setPositionId(loginUser.getPositionId());
-			accountOnlineStatus.setDeptId(loginUser.getDeptId());
-			accountOnlineStatus.setOrgId(loginUser.getOrgId());
+			accountOnlineStatus.setUserId(userId);
+			accountOnlineStatus.setPositionId(getIds(idBuffer, queryPositionId, userId));
+			accountOnlineStatus.setDeptId(getIds(idBuffer, queryDeptId, userId));
+			accountOnlineStatus.setOrgId("暂不支持");
+		}
+	}
+	
+	// 查询账户所有有效的角色信息
+	private static final String queryRoleId = "select l.rightId from SysAccountRoleLinks l, SysRole r where l.rightId=r."+ResourcePropNameConstants.ID+" and l.leftId=? and r.isEnabled=1 order by r.orderCode asc";
+	// 查询用户所有的职务信息
+	private static final String queryPositionId = "select l.rightId from SysUserPositionLinks l, SysPosition p where l.rightId=p."+ResourcePropNameConstants.ID+" and l.isMain=0 and l.leftId=? order by p.orderCode asc, l.isMain desc";
+	// 查询用户所有的部门信息
+	private static final String queryDeptId = "select l.rightId from SysUserDeptLinks l, SysDept d where l.rightId=d."+ResourcePropNameConstants.ID+" and l.isMain=0 and l.leftId=? order by d.orderCode asc, l.isMain desc";
+	/**
+	 * 获取hql执行查询后的结果id
+	 * @param idBuffer
+	 * @param hql
+	 * @param paramValues
+	 */
+	@SuppressWarnings("unchecked")
+	private String getIds(StringBuilder idBuffer, String hql, Object...paramValues){
+		idBuffer.setLength(0);
+		try {
+			List<Object> ids = HibernateUtil.executeListQueryByHqlArr(null, null, hql, paramValues);
+			if(ids != null && ids.size() > 0){
+				for (Object id : ids) {
+					idBuffer.append(id).append(",");
+				}
+				ids.clear();
+				idBuffer.setLength(idBuffer.length()-1);
+				return idBuffer.toString();
+			}
+			return null;
+		} finally{
+			if(idBuffer.length() > 0){
+				idBuffer.setLength(0);
+			}
 		}
 	}
 	
