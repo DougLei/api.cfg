@@ -399,6 +399,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		return validNotNullProps();
 	}
 	
+	@JSONField(serialize = false)
 	public String getName(){
 		if(StrUtils.notEmpty(realName)){
 			return realName;
