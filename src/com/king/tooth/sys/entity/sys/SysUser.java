@@ -331,7 +331,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		userStatusColumn.setOrderCode(13);
 		columns.add(userStatusColumn);
 		
-		ComColumndata monthSalarColumn = new ComColumndata("month_salar", BuiltinCodeDataType.DOUBLE, 6);
+		ComColumndata monthSalarColumn = new ComColumndata("month_salar", BuiltinCodeDataType.DOUBLE, 10);
 		monthSalarColumn.setName("月薪");
 		monthSalarColumn.setComments("月薪");
 		monthSalarColumn.setPrecision(2);
