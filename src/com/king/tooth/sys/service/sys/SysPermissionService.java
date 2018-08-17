@@ -38,9 +38,9 @@ public class SysPermissionService extends AbstractService{
 	
 	
 	// 第一次查询权限信息集合的hql语句
-	private static final String queryPermissionHql = "from SysPermission where refDataType = ? and refDataId = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
+	private static final String queryPermissionHql = "from SysPermission where refDataId = ? and refDataType = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
 	// 后续递归查询权限信息集合的hql语句
-	private static final String recursiveQueryPermissionHql = "from SysPermission where refDataType = ? and (refParentResourceId = ? or refParentResourceCode = ?) and projectId = ? and customerId = ?";
+	private static final String recursiveQueryPermissionHql = "from SysPermission where refDataId = ? and refDataType = ? and (refParentResourceId = ? or refParentResourceCode = ?) and projectId = ? and customerId = ?";
 	// 按照orderCode asc，查询账户所属的角色【orderCode越低的，优先级越高】
 	private static final String queryAccountOfRolesHql = "select r."+ResourcePropNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourcePropNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
 	// 按照orderCode asc，查询账户所属的部门【orderCode越低的，优先级越高】
@@ -67,7 +67,7 @@ public class SysPermissionService extends AbstractService{
 			// 帐号
 			if(SysPermission.DT_ACCOUNT.equals(permissionPriority.getPermissionType())){
 				tmpPermissions = getRootPermissionsByData(SysPermission.DT_ACCOUNT, accountId, projectId, customerId);
-				setSubPermissionsByData(tmpPermissions, SysPermission.DT_ACCOUNT, projectId, customerId);
+				setSubPermissionsByData(tmpPermissions, accountId, SysPermission.DT_ACCOUNT, projectId, customerId);
 				mergePermissions(newPermissions, tmpPermissions);
 			}
 			// 角色
@@ -78,7 +78,7 @@ public class SysPermissionService extends AbstractService{
 					
 					for (Object roleId : roleIds) {
 						tmpPermissions = getRootPermissionsByData(SysPermission.DT_ROLE, roleId, projectId, customerId);
-						setSubPermissionsByData(tmpPermissions, SysPermission.DT_ROLE, projectId, customerId);
+						setSubPermissionsByData(tmpPermissions, roleId, SysPermission.DT_ROLE, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					roleIds.clear();
@@ -92,7 +92,7 @@ public class SysPermissionService extends AbstractService{
 					
 					for (Object deptId : deptIds) {
 						tmpPermissions = getRootPermissionsByData(SysPermission.DT_DEPT, deptId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, SysPermission.DT_DEPT, projectId, customerId);
+						setSubPermissionsByData(newPermissions, deptId, SysPermission.DT_DEPT, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					deptIds.clear();
@@ -106,7 +106,7 @@ public class SysPermissionService extends AbstractService{
 					
 					for (Object positionId : positionIds) {
 						tmpPermissions = getRootPermissionsByData(SysPermission.DT_POSITION, positionId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, SysPermission.DT_POSITION, projectId, customerId);
+						setSubPermissionsByData(newPermissions, positionId, SysPermission.DT_POSITION, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					positionIds.clear();
@@ -162,23 +162,24 @@ public class SysPermissionService extends AbstractService{
 	 */
 	private List<SysPermissionExtend> getRootPermissionsByData(String refDataType, Object refDataId, String projectId, String customerId){
 		return HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionExtend.class, null, null, queryPermissionHql, 
-				refDataType, refDataId, projectId, customerId);
+				refDataId, refDataType, projectId, customerId);
 	}
 	/**
 	 * 获取引用的数据权限子数据集合
 	 * @param permissions
+	 * @param refDataId
 	 * @param refDataType
 	 * @param projectId
 	 * @param customerId
 	 */
-	private void setSubPermissionsByData(List<SysPermissionExtend> permissions, String refDataType, String projectId, String customerId) {
+	private void setSubPermissionsByData(List<SysPermissionExtend> permissions, Object refDataId, String refDataType, String projectId, String customerId) {
 		if(permissions == null || permissions.size() == 0){
 			return;
 		}
 		for (SysPermissionExtend p : permissions) {
 			p.setChildren(HibernateUtil.extendExecuteListQueryByHqlArr(SysPermissionExtend.class, null, null, recursiveQueryPermissionHql, 
-					refDataType, p.getRefResourceId(), p.getRefResourceCode(), projectId, customerId));
-			setSubPermissionsByData(p.getChildren(), refDataType, projectId, customerId);
+					refDataId, refDataType, p.getRefResourceId(), p.getRefResourceCode(), projectId, customerId));
+			setSubPermissionsByData(p.getChildren(), refDataId, refDataType, projectId, customerId);
 		}
 	}
 
