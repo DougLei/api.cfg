@@ -27,7 +27,7 @@ import com.king.tooth.web.servlet.route.RouteBody;
  * 请求数据的预处理过滤器
  * @author DougLei
  */
-public class ReqDataPreProcesser extends AbstractFilter{
+public class ReqDataPreProcesserFilter extends AbstractFilter{
 
 	public void destroy() {
 	}
@@ -36,7 +36,7 @@ public class ReqDataPreProcesser extends AbstractFilter{
 		HttpServletRequest request = (HttpServletRequest) req;
 		RequestBody requestBody = analysisRequestBody(request);
 		if(requestBody == null){
-			installFailResponseBody(req, "[ReqDataPreProcesser]解析请求体(requestBody)解析结果为null，请联系系统开发人员");
+			installFailResponseBody(req, "[ReqDataPreProcesserFilter]解析请求体(requestBody)解析结果为null，请联系系统开发人员");
 		}else{
 			request.setAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY, requestBody);
 			chain.doFilter(req, resp);
@@ -124,6 +124,10 @@ public class ReqDataPreProcesser extends AbstractFilter{
 		if(StrUtils.notEmpty(routeBody.getParentId())){
 			urlParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, routeBody.getParentId());
 		}
+		
+		// 加入两个基础数据条件
+		urlParams.put("customerId", CurrentThreadContext.getCustomerId());// 客户主键
+		urlParams.put("projectId", CurrentThreadContext.getProjectId());// 项目主键
 	}
 
 	public void init(FilterConfig arg0) throws ServletException {
