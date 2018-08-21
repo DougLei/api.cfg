@@ -39,8 +39,5 @@ public class CommonServlet extends HttpServlet implements Serializable{
 			responseBody = process.doRequestProcess();
 		}
 		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
-		
-		
-		
 	}
 }
