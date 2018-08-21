@@ -86,6 +86,10 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 * <p>这个字段由开发人员控制，不开放给用户</p>
 	 */
 	private Integer isResource;
+	/**
+	 * 是否建模
+	 */
+	private Integer isBuildModel;
 	
 	//-----------------------------------------------------------------------
 	
@@ -239,6 +243,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setHbmContent(String hbmContent) {
 		this.hbmContent = hbmContent;
 	}
+	public Integer getIsBuildModel() {
+		return isBuildModel;
+	}
+	public void setIsBuildModel(Integer isBuildModel) {
+		this.isBuildModel = isBuildModel;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_TABLEDATA", 0);
@@ -250,7 +260,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(26);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(27);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
@@ -334,6 +344,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		isResourceColumn.setDefaultValue("0");
 		isResourceColumn.setOrderCode(12);
 		columns.add(isResourceColumn);
+		
+		ComColumndata isBuildModelColumn = new ComColumndata("is_build_model", BuiltinCodeDataType.INTEGER, 1);
+		isBuildModelColumn.setName("是否建模");
+		isBuildModelColumn.setComments("是否建模");
+		isBuildModelColumn.setDefaultValue("0");
+		columns.add(isBuildModelColumn);
 		
 		table.setColumns(columns);
 		return table;

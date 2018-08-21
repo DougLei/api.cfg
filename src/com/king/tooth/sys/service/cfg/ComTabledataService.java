@@ -252,8 +252,9 @@ public class ComTabledataService extends AbstractPublishService {
 			HibernateUtil.appendNewConfig(hbmContents);
 			hbmContents.clear();
 			
-			// 5、修改表是否创建的状态
+			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1
 			modifyIsCreatedPropVal(table.getEntityName(), 1, table.getId());
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, "update ComTabledata set isBuildModel =1 where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'", null);
 			
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {

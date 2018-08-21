@@ -54,6 +54,7 @@ public class ComColumndataService extends AbstractService{
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
+			modifyTableIsBuildModel(column.getTableId(), null, 0);
 			return HibernateUtil.saveObject(column, null);
 		}
 		return operResult;
@@ -81,7 +82,7 @@ public class ComColumndataService extends AbstractService{
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
 			// TODO 单项目，取消是否平台开发者的判断
 //			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated = 0 where "+ResourcePropNameConstants.ID+" = '"+column.getTableId()+"'");
+				modifyTableIsBuildModel(column.getTableId(), null, 0);
 //			}
 			return HibernateUtil.updateObject(column, null);
 		}
@@ -94,6 +95,20 @@ public class ComColumndataService extends AbstractService{
 	 * @return
 	 */
 	public String deleteColumn(String columnIds) {
+		modifyTableIsBuildModel(null, columnIds.split(",")[0], 0);
 		return deleteDataById("ComColumndata", columnIds);
+	}
+	
+	/**
+	 * 修改表是否建模的状态
+	 * @param tableId
+	 * @param columnId
+	 * @param isBuildModel
+	 */
+	private void modifyTableIsBuildModel(String tableId, String columnId, Integer isBuildModel){
+		if(StrUtils.isEmpty(tableId)){
+			tableId = getObjectById(columnId, ComColumndata.class).getTableId();
+		}
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isBuildModel = "+isBuildModel+" where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
 	}
 }
