@@ -39,13 +39,13 @@
       "data": {
           "token": "c14582c5551f4ae093c54ecdb07a6764",
           "permissions": {
-              "refDataId": "xxx",
+              "objId": "xxx",
               "refResourceId": "xxx",
               "isOper": 1,
               "refResourceType": "xxx",
               "refParentResourceId": "xxx",
               "secretLevels": 1,
-              "refDataType": "xxx",
+              "objType": "xxx",
               "isVisibility": 1,
               "Id": "xxx",
               "refResourceCode": "xxx",
@@ -388,8 +388,8 @@
 - 请求体: 
 ```
 {
-  "refDataId":"",                --关联的数据id：比如角色id，帐号id，部门id，岗位id等
-  "refDataType":"",              --关联的数据类型：角色role，帐号account，部门dept，岗位position
+  "objId":"",                    --主体id：比如角色id，帐号id，部门id，岗位id等
+  "objType":"",                  --主体类型：角色role，帐号account，部门dept，岗位position
   "refResourceId":"",            --关联的资源id: 比如某个模块的id，某个功能的id等
   "refResourceCode":"",          --关联的资源code，与refResourceId数据对应的code，是全项目唯一
   "refParentResourceId":"",      --关联的父资源id，同refResourceId
@@ -416,8 +416,8 @@
 ```
 {
   "Id":"",                       --主键
-  "refDataId":"",                --关联的数据id：比如角色id，帐号id，部门id，岗位id等
-  "refDataType":"",              --关联的数据类型：角色role，帐号account，部门dept，岗位position
+  "objId":"",                    --主体id：比如角色id，帐号id，部门id，岗位id等
+  "objType":"",                  --主体类型：角色role，帐号account，部门dept，岗位position
   "refResourceId":"",            --关联的资源id: 比如某个模块的id，某个功能的id等
   "refResourceCode":"",          --关联的资源code，与refResourceId数据对应的code，是全项目唯一
   "refParentResourceId":"",      --关联的父资源id，同refResourceId
@@ -458,7 +458,7 @@
 ```
 - 请求url参数: 
 ```
-?code = sysManager                   --要计算权限的code值
+?objcode = sysManager                   --要计算权限的code值
 &recursive = true [true/false]       --是否递归，计算其子权限集合，值为true或false，默认为false
 &deep = -1 [-1/任意数字]              --递归计算子权限的深度，默认为0，-1表示查询到底
 ```
@@ -480,13 +480,13 @@
 一般用户会返回: 具体的权限对象集合
   {
       "data": {
-          "refDataId": "xxx",
+          "objId": "xxx",
           "refResourceId": "xxx",
           "isOper": 1,
           "refResourceType": "xxx",
           "refParentResourceId": "xxx",
           "secretLevels": 1,
-          "refDataType": "xxx",
+          "objType": "xxx",
           "isVisibility": 1,
           "Id": "xxx",
           "refResourceCode": "xxx",

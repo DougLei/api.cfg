@@ -20,13 +20,13 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 public class SysPermission extends BasicEntity implements ITable, IEntity{
 	
 	/**
-	 * 关联的数据id：比如角色id，帐号id，部门id，岗位id，帐号组id等
+	 * 主体id：比如角色id，帐号id，部门id，岗位id，帐号组id等
 	 */
-	private String refDataId;
+	private String objId;
 	/**
-	 * 关联的数据类型：比如角色role，帐号account，部门dept，岗位position，帐号组accountGroup等
+	 * 主体类型：比如角色role，帐号account，部门dept，岗位position，帐号组accountGroup等
 	 */
-	private String refDataType;
+	private String objType;
 	/**
 	 * 关联的资源id，比如某个模块的id，某个功能的id等
 	 */
@@ -86,17 +86,17 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 	public void setSecretLevels(String secretLevels) {
 		this.secretLevels = secretLevels;
 	}
-	public String getRefDataId() {
-		return refDataId;
+	public String getObjId() {
+		return objId;
 	}
-	public void setRefDataId(String refDataId) {
-		this.refDataId = refDataId;
+	public void setObjId(String objId) {
+		this.objId = objId;
 	}
-	public String getRefDataType() {
-		return refDataType;
+	public String getObjType() {
+		return objType;
 	}
-	public void setRefDataType(String refDataType) {
-		this.refDataType = refDataType;
+	public void setObjType(String objType) {
+		this.objType = objType;
 	}
 	public String getRefResourceCode() {
 		return refResourceCode;
@@ -134,17 +134,15 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
-		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinCodeDataType.STRING, 32);
-		refDataIdColumn.setName("关联的数据id");
-		refDataIdColumn.setComments("关联的数据id：比如角色id，帐号id，部门id，岗位id，帐号组id等");
-		refDataIdColumn.setOrderCode(1);
-		columns.add(refDataIdColumn);
+		ComColumndata objIdColumn = new ComColumndata("obj_id", BuiltinCodeDataType.STRING, 32);
+		objIdColumn.setName("主体id");
+		objIdColumn.setComments("主体id：比如角色id，帐号id，部门id，岗位id，帐号组id等");
+		columns.add(objIdColumn);
 		
-		ComColumndata refDataTypeColumn = new ComColumndata("ref_data_type", BuiltinCodeDataType.STRING, 20);
-		refDataTypeColumn.setName("关联的数据类型");
-		refDataTypeColumn.setComments("关联的数据类型：比如角色role，帐号account，部门dept，岗位position，帐号组accountGroup等");
-		refDataTypeColumn.setOrderCode(2);
-		columns.add(refDataTypeColumn);
+		ComColumndata objTypeColumn = new ComColumndata("obj_type", BuiltinCodeDataType.STRING, 20);
+		objTypeColumn.setName("主体类型");
+		objTypeColumn.setComments("主体类型：比如角色role，帐号account，部门dept，岗位position，帐号组accountGroup等");
+		columns.add(objTypeColumn);
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", BuiltinCodeDataType.STRING, 32);
 		refResourceIdColumn.setName("关联的资源id");

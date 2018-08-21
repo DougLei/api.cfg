@@ -20,7 +20,7 @@ public class SysPermissionController extends AbstractController{
 	 * @return
 	 */
 	public Object calcPermissionByCode(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		String code = request.getParameter("code");
+		String code = request.getParameter("objcode");
 		if(StrUtils.isEmpty(code)){
 			return "计算权限的code值不能为空";
 		}
