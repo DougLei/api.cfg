@@ -6,9 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -17,8 +15,6 @@ import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.dm.DmPublishBasicData;
-import com.king.tooth.util.CryptographyUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -240,12 +236,6 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
-			if(StrUtils.isEmpty(loginPwd)){
-				loginPwd = SysConfig.getSystemConfig("account.default.pwd");
-			}
-			loginPwdKey = ResourceHandlerUtil.getLoginPwdKey();
-			loginPwd = CryptographyUtil.encodeMd5(loginPwd, loginPwdKey);
-			validDate = BuiltinObjectInstance.validDate;
 		}
 		return result;
 	}

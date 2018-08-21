@@ -376,6 +376,15 @@ public class SysAccountService extends AbstractService{
 			result = validTelIsExists(account.getTel());
 		}
 		if(result == null){
+			if(StrUtils.isEmpty(account.getLoginPwd())){
+				account.setLoginPwd(SysConfig.getSystemConfig("account.default.pwd"));
+			}
+			account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
+			account.setLoginPwd(CryptographyUtil.encodeMd5(account.getLoginPwd(), account.getLoginPwdKey()));
+			if(account.getValidDate() == null){
+				account.setValidDate(BuiltinObjectInstance.validDate);
+			}
+			
 			JSONObject accountJsonObject = HibernateUtil.saveObject(account, null);
 			return accountJsonObject;
 		}

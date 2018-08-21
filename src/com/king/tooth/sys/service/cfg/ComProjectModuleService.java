@@ -45,9 +45,9 @@ public class ComProjectModuleService extends AbstractPublishService {
 //			boolean isDeveloper = CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper();
 			
 //			if(isDeveloper){
-				projectModule.setRefProjectId(CurrentThreadContext.getProjectId());
+//				projectModule.setRefProjectId(CurrentThreadContext.getProjectId());
 //			}else{
-//				projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
+				projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
 //			}
 			return HibernateUtil.saveObject(projectModule, null);
 		}
