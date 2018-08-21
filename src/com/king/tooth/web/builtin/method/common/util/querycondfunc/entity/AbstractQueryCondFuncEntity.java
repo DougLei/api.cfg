@@ -2,6 +2,7 @@ package com.king.tooth.web.builtin.method.common.util.querycondfunc.entity;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -9,6 +10,21 @@ import java.util.regex.Matcher;
  * @author DougLei
  */
 public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntity{
+	
+	/**
+	 * 正则表达式获取值
+	 * <p>ne(xxxx)的时候，获取xxxx</p>
+	 * <p>xxxx的时候，直接获取xxxx</p>
+	 */
+	protected static final Pattern VALUES_PATTERN = Pattern.compile("(?<=\\().*(?=\\))");
+	/**
+	 * 正则表达式获取注释
+	 */
+	protected static final Pattern COMMENTS_PATTERN = Pattern.compile("(/\\*([^*]|[\r\n]|(\\*+([^*/]|[\r\n])))*\\*+/)|(//.*)");
+	/**
+	 * 正则表达式获取方法名
+	 */
+	protected static final Pattern METHOD_PATTERN = Pattern.compile("(?<=!?)\\w+(?=\\()");
 	
 	/**
 	 * 通用的正则表达匹配器

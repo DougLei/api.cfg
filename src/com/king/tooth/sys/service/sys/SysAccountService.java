@@ -412,15 +412,17 @@ public class SysAccountService extends AbstractService{
 	 */
 	@SuppressWarnings("unchecked")
 	public Object deleteAccount(String accountId) {
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where " + ResourcePropNameConstants.ID+"=?", accountId);
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "update SysUser set accountId =null  where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where " + ResourcePropNameConstants.ID+"=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId =null  where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
 		
-		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr("select token from SysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where accountId=? and projectId=?", accountId, CurrentThreadContext.getProjectId());
-		
-		// 移除传递的token和对应项目id的映射缓存
-		for (Object token : tokens) {
-			TokenRefProjectIdMapping.removeMapping(token+"");
+		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr(null, null, "select token from SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
+		if(tokens != null && tokens.size() > 0){
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
+			// 移除传递的token和对应项目id的映射缓存
+			for (Object token : tokens) {
+				TokenRefProjectIdMapping.removeMapping(token+"");
+			}
+			tokens.clear();
 		}
 		return null;
 	}

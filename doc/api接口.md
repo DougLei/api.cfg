@@ -1573,20 +1573,34 @@
 
 ----
 
-## 系统内置参数名
+## End、系统内置参数名
 
 ### (一)、sql脚本的内置参数
 ```
-_Id                                                    主键
-_currentDate                                           当前时间
-_currentCustomerId                                     当前租户id
-_currentProjectId                                      当前项目id
-_currentAccountId                                      当前账户id
-_currentAccountName                                    当前账户名
-_currentUserId                                         当前用户id
-_currentOrgId                                          当前用户所属组织id
-_currentDeptId                                         当前用户所属部门id
-_currentPositionId                                     当前用户所属岗位id
+_Id                                                     --主键
+_currentSqlDate                                         --当前时间  (注意这个是特有的内置参数)
+_currentCustomerId                                      --当前租户id
+_currentProjectId                                       --当前项目id
+_currentAccountId                                       --当前账户id
+_currentAccountName                                     --当前账户名
+_currentUserId                                          --当前用户id
+_currentOrgId                                           --当前用户所属组织id
+_currentDeptId                                          --当前用户所属部门id
+_currentPositionId                                      --当前用户所属岗位id
+```
+
+### (二)、表资源的内置参数
+```
+_Id                                                     --主键
+_currentDate                                            --当前时间  (注意这个是特有的内置参数)
+_currentCustomerId                                      --当前租户id
+_currentProjectId                                       --当前项目id
+_currentAccountId                                       --当前账户id
+_currentAccountName                                     --当前账户名
+_currentUserId                                          --当前用户id
+_currentOrgId                                           --当前用户所属组织id
+_currentDeptId                                          --当前用户所属部门id
+_currentPositionId                                      --当前用户所属岗位id
 ```
 
 

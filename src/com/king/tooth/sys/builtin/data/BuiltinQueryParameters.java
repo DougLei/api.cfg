@@ -1,7 +1,5 @@
 package com.king.tooth.sys.builtin.data;
 
-import java.sql.Date;
-
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 
@@ -19,6 +17,10 @@ public class BuiltinQueryParameters {
 	 * 当前时间
 	 */
 	private static final String currentDate = "_currentDate";
+	/**
+	 * 当前sql时间
+	 */
+	private static final String currentSqlDate = "_currentSqlDate";
 	/**
 	 * 当前租户id
 	 */
@@ -64,6 +66,7 @@ public class BuiltinQueryParameters {
 	public static boolean isBuiltinQueryParams(String parameterName) {
 		if(id.equals(parameterName)
 				|| currentDate.equals(parameterName)
+				|| currentSqlDate.equals(parameterName)
 				|| currentCustomerId.equals(parameterName) 
 				|| currentProjectId.equals(parameterName)
 				|| currentAccountId.equals(parameterName)
@@ -88,7 +91,10 @@ public class BuiltinQueryParameters {
 			return ResourceHandlerUtil.getIdentity();
 		}
 		if(currentDate.equals(parameterName)){
-			return new Date(new java.util.Date().getTime());
+			return new java.util.Date();
+		}
+		if(currentSqlDate.equals(parameterName)){
+			return new java.sql.Date(new java.util.Date().getTime());
 		}
 		if(currentCustomerId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
