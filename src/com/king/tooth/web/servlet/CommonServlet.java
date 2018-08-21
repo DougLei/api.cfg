@@ -38,6 +38,6 @@ public class CommonServlet extends HttpServlet implements Serializable{
 			IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
 			responseBody = process.doRequestProcess();
 		}
-		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
+		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody); 
 	}
 }
