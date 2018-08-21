@@ -96,7 +96,7 @@ public class PrepareFilter extends AbstractFilter{
 				requestBody.clear();
 			}
 			
-			// 记录日志
+			// 记录日志，get请求返回的是查询的结果集合，量比较大，这里就不记录到日志中
 			if(!"get".equals(CurrentThreadContext.getReqLogData().getReqLog().getMethod())){
 				CurrentThreadContext.getReqLogData().getReqLog().setRespData(responseBody.toStrings());
 			}
