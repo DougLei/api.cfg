@@ -4,6 +4,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.king.tooth.job.CreateLogTableJob;
+import com.king.tooth.job.ProcessCurrentDateJob;
 import com.king.tooth.util.QuartzUtil;
 
 /**
@@ -15,6 +16,7 @@ public class InitSysJobListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent sc) {
 		// 添加【创建log信息表的任务】
 		QuartzUtil.addJob("创建log信息表的任务", "system", CreateLogTableJob.class, "0 0 0 * * ?", false);
+		QuartzUtil.addJob("创建处理当前日期的任务", "system", ProcessCurrentDateJob.class, "0 0 0 * * ?", false);
 	}
 	
 	public void contextDestroyed(ServletContextEvent sc) {

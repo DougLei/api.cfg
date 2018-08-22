@@ -17,6 +17,8 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
+import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -135,6 +137,8 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new SysAccountPermissionCache().toCreateTable());
 		tables.add(new SysUserGroup().toCreateTable());
 		tables.add(new SysUserGroupDetail().toCreateTable());
+		tables.add(new CfgColumnCodeRule().toCreateTable());
+		tables.add(new CfgColumnCodeRuleDetail().toCreateTable());
 		return tables;
 	}
 	

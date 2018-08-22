@@ -356,8 +356,9 @@ public class HibernateUtil {
 	 * @param modifyHql
 	 * @param parameters
 	 * @return 
+	 * @throws IllegalArgumentException 
 	 */
-	public static int executeUpdateByHql(String hqlDes, String modifyHql, List<Object> parameters) {
+	public static int executeUpdateByHql(String hqlDes, String modifyHql, List<Object> parameters) throws IllegalArgumentException {
 		Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]要{}数据的hql为：{}", hqlDes, modifyHql);
 		Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]要{}数据的hql所带的参数值集合为：{}", hqlDes, parameters);
 		
@@ -372,8 +373,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}了{}条数据", hqlDes, modifyCount);
 			return modifyCount;
 		} catch (HibernateException e) {
-			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}数据的时候出现了异常信息：{}", hqlDes, ExceptionUtil.getErrMsg("HibernateUtil", "executeUpdateByHql", e));
-			return -1;
+			throw new IllegalArgumentException("[HibernateUtil.executeUpdateByHql]["+hqlDes+"]数据的时候出现了异常信息：" + ExceptionUtil.getErrMsg("HibernateUtil", "executeUpdateByHql", e));
 		}
 	}
 	

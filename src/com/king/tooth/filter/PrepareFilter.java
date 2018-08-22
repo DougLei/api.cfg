@@ -81,9 +81,11 @@ public class PrepareFilter extends AbstractFilter{
 				printResult(resp, responseBody);
 			}
 		} catch (Exception err) {
-			Log4jUtil.error("请求处理出现异常，异常信息为:{}", ExceptionUtil.getErrMsg("PrepareFilter", "doFilter", err));
+			String errMsg = ExceptionUtil.getErrMsg("PrepareFilter", "doFilter", err);
+			Log4jUtil.error("请求处理出现异常，异常信息为:{}", errMsg);
 			HibernateUtil.rollbackTransaction();
-			responseBody = new ResponseBody("后端系统出现异常，请查看系统日志排查问题");
+			responseBody = new ResponseBody(errMsg);
+//			responseBody = new ResponseBody("后端系统出现异常，请查看系统日志排查问题");
 			printResult(resp, responseBody);
 		}finally{
 			// 关闭连接

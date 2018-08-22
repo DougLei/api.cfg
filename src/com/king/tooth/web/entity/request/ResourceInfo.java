@@ -76,6 +76,7 @@ public class ResourceInfo {
 		}
 		
 		// 记录日志，请求的资源类型
+		CurrentThreadContext.getReqLogData().getReqLog().setType(resourceType);
 		CurrentThreadContext.getReqLogData().getReqLog().setResourceType(resourceType);
 	}
 	
