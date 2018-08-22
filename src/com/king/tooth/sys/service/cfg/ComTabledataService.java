@@ -44,9 +44,13 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validTableNameIsExists(ComTabledata table) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ? and customerId=?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
 			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
+		}
+		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysResource where resourceName = ? and projectId = ? and customerId = ?", table.getResourceName(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(count > 0){
+			return "系统中已经存在相同的资源名["+table.getResourceName()+"]的数据，请修改表名";
 		}
 		return null;
 	}

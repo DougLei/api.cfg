@@ -1,15 +1,13 @@
 package test;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class TestMain {
 	public static void main(String[] args) {
-	
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		System.out.println(sdf.format(new Date()));
 		
-		String a = "sysManager";
-		String b = "sysManager_user";
-		
-		System.out.println(b.startsWith(a));
-		System.out.println(b.startsWith(b));
-		System.out.println(b.equals(b));
 	}
 }

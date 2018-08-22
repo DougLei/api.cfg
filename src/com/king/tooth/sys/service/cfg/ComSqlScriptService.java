@@ -51,9 +51,13 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return operResult
 	 */
 	private String validSqlScriptResourceNameIsExists(ComSqlScript sqlScript) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ? and customerId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
 			return "您已经创建过相同sql脚本资源名["+sqlScript.getSqlScriptResourceName()+"]的数据";
+		}
+		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysResource where resourceName = ? and projectId = ? and customerId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(count > 0){
+			return "系统中已经存在相同的资源名["+sqlScript.getSqlScriptResourceName()+"]的数据，请修sql脚本资源名";
 		}
 		return null;
 	}
