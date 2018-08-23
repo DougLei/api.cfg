@@ -31,11 +31,6 @@ public abstract class PutProcesser extends RequestProcesser {
 	 */
 	public final boolean doProcess() {
 		json = requestBody.getFormData();
-		if(json == null){
-			installResponseBodyForUpdateData(getProcesserName()+"处理器要保存的formData数据值为null", null, false);
-			return false;
-		}
-		
 		initBuiltinMethods();
 		
 		boolean isKeepOn = doPutProcess();

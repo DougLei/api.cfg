@@ -91,6 +91,12 @@ public class RequestBody implements Serializable{
 	private void analysisResource() {
 		resourceInfo = new ResourceInfo(this);
 		resourceMetadataInfo = new ResourceMetadataInfo(this);
+	}
+	
+	/**
+	 * 解析资源字段的编码规则，并获取结果值
+	 */
+	public void analysisResourcePropCodeRule() {
 		resourcePropCodeRule = new ResourcePropCodeRule(this);
 	}
 	
@@ -117,6 +123,19 @@ public class RequestBody implements Serializable{
 	 */
 	public String getSubResourceName(){
 		return requestUrlParams.get("_subResourceName");
+	}
+	
+	public boolean isGetRequest(){
+		return "get".equals(getRequestMethod());
+	}
+	public boolean isPostRequest(){
+		return "post".equals(getRequestMethod());
+	}
+	public boolean isPutRequest(){
+		return "put".equals(getRequestMethod());
+	}
+	public boolean isDeleteRequest(){
+		return "delete".equals(getRequestMethod());
 	}
 	
 	/**

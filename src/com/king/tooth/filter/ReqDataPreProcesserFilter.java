@@ -34,9 +34,12 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
-		RequestBody requestBody = analysisRequestBody(request);
+		Object requestBody = analysisRequestBody(request);
+		
 		if(requestBody == null){
 			installFailResponseBody(req, "[ReqDataPreProcesserFilter]解析请求体(requestBody)解析结果为null，请联系系统开发人员");
+		}else if(requestBody instanceof String){
+			installFailResponseBody(req, requestBody.toString());
 		}else{
 			request.setAttribute(BuiltinParameterKeys._REQUEST_BODY_KEY, requestBody);
 			chain.doFilter(req, resp);
@@ -47,10 +50,15 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 	 * 根据reqeust，解析请求体
 	 * @return
 	 */
-	private RequestBody analysisRequestBody(HttpServletRequest request) {
+	private Object analysisRequestBody(HttpServletRequest request) {
 		RequestBody requestBody = new RequestBody(request);
 		requestBody.setFormData(analysisFormData(request));
+		if((requestBody.isPostRequest() || requestBody.isPutRequest()) && (requestBody.getFormData()==null || requestBody.getFormData().size()==0)){
+			return "系统要保存[POST]或修改[PUT]的formData数据不能为空";
+		}
+		
 		requestBody.setRequestUrlParams(analysisUrlParams(request, requestBody));
+		requestBody.analysisResourcePropCodeRule();
 		return requestBody;
 	}
 	

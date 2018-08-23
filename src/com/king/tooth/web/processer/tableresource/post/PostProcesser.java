@@ -30,11 +30,6 @@ public abstract class PostProcesser extends RequestProcesser {
 	 */
 	public final boolean doProcess() {
 		json = requestBody.getFormData();
-		if(json == null){
-			installResponseBodyForSaveData(getProcesserName()+"处理器要保存的formData数据值为null", null, false);
-			return false;
-		}
-		
 		initBuiltinMethods();
 		
 		boolean isKeepOn = doPostProcess();

@@ -419,4 +419,17 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		}
 		return result;
 	}
+	
+	/**
+	 * 得到当前段的编码值
+	 * @return
+	 */
+	public String getCurrentStageCodeVal() {
+		
+		
+		// TODO   
+		
+		
+		return null;
+	}
 }

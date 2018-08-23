@@ -30,16 +30,18 @@ public class ResourcePropCodeRule {
 	 * @param requestBody
 	 */
 	private void analysisResourcePropCodeRule(RequestBody requestBody) {
-		if(!requestBody.getResourceInfo().getIsParentSubResourceRelation() && requestBody.getResourceInfo().isTableResource()){
+		if(!requestBody.getResourceInfo().getIsParentSubResourceRelation() && requestBody.getResourceInfo().isTableResource() 
+				&& requestBody.isPostRequest()){
 			rules = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumnCodeRule.class, null, null, queryColumnCodeRuleHql, requestBody.getResourceInfo().getReqResource().getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 			if(rules == null || rules.size() == 0){
 				return;
 			}
 			for (CfgColumnCodeRule rule : rules) {
-				rule.doProcessFinalCodeVal();
+				rule.doProcessFinalCodeVal(requestBody.getFormData().size());
 			}
 		}
 	}
+	// 查询字段编码规则集合的hql
 	private static final String queryColumnCodeRuleHql = "from CfgColumnCodeRule where refTableId=? and projectId=? and customerId=?";
 
 	/**

@@ -10,7 +10,9 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 字段编码规则表
@@ -152,8 +154,33 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	/**
 	 * 处理并获取最终的字段编码值
 	 * <p>将值set到finalCodeVal属性中</p>
+	 * @param codeValCount 要生成编码值的数量 
 	 */
-	public void doProcessFinalCodeVal() {
-		
+	public void doProcessFinalCodeVal(int codeValCount) {
+		ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumnCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(ruleDetails != null && ruleDetails.size() > 0){
+			this.finalCodeVals = new ArrayList<String>(codeValCount);
+			finalCodeValBuffer = new StringBuilder();
+			int len = ruleDetails.size();
+			int lastIndex = len-1;
+			
+			for(int j=0;j<codeValCount;j++){
+				for(int i=0;i<len;i++){
+					if(i>0 && i<lastIndex){
+						finalCodeValBuffer.append(ruleDetails.get(i-1).getLinkNextSymbol());
+					}
+					finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal());
+				}
+				this.finalCodeVals.add(finalCodeValBuffer.toString());
+				finalCodeValBuffer.setLength(0);
+			}
+			ruleDetails.clear();
+		}
 	}
+	// 最终编码值得缓存
+	private StringBuilder finalCodeValBuffer;
+	// 字段编码规则明细集合
+	private List<CfgColumnCodeRuleDetail> ruleDetails;
+	// 查询字段编码规则明细集合的hql
+	private static final String queryRuleDetailsHql = "from CfgColumnCodeRuleDetail where columnCodeRuleId=? and projectId=? and customerId=?";
 }
