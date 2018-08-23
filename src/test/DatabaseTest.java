@@ -41,7 +41,7 @@ public class DatabaseTest extends Parent{
 			
 			
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.252:1433;DatabaseName=SmartOneCfg", "sa", "root");
+			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.108:1433;DatabaseName=SmartOneCfg", "sa", "root");
 			System.out.println(conn);
 			
 			
