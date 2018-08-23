@@ -34,6 +34,19 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	
 	//-------------------------------------------------------------------------
 	
+	/**
+	 * 关联规则的列的属性名
+	 */
+	@JSONField(serialize = false)
+	private String refPropName;
+	
+	/**
+	 * 最终的字段编码值
+	 * <p>因为可以批量添加数据，这个时候就会有多个结果值，所以用集合</p>
+	 */
+	@JSONField(serialize = false)
+	private List<String> finalCodeVals;
+	
 	public String getRefTableId() {
 		return refTableId;
 	}
@@ -51,6 +64,12 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	}
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	public String getRefPropName() {
+		return refPropName;
+	}
+	public void setRefPropName(String refPropName) {
+		this.refPropName = refPropName;
 	}
 
 	public ComTabledata toCreateTable() {
@@ -107,5 +126,34 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 		if(result == null){
 		}
 		return result;
+	}
+	
+	/**
+	 * 清空
+	 */
+	public void clear() {
+		if(finalCodeVals != null){
+			finalCodeVals.clear();
+		}
+	}
+	
+	/**
+	 * 获取指定下标的最终的字段编码值
+	 * @param index
+	 * @return
+	 */
+	public String getFinalCodeVal(int index) {
+		if(finalCodeVals == null || finalCodeVals.size() < (index+1)){
+			return null;
+		}
+		return finalCodeVals.get(index);
+	}
+	
+	/**
+	 * 处理并获取最终的字段编码值
+	 * <p>将值set到finalCodeVal属性中</p>
+	 */
+	public void doProcessFinalCodeVal() {
+		
 	}
 }

@@ -137,15 +137,7 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 			sqlScriptParams.clear();
 		}
 		if(sqlScriptResource != null){
-			if(sqlScriptResource.getSqlQueryResultColumnList() != null && sqlScriptResource.getSqlQueryResultColumnList().size() > 0){
-				sqlScriptResource.getSqlQueryResultColumnList().clear();
-			}
-			if(sqlScriptResource.getSqlScriptParameterList() != null && sqlScriptResource.getSqlScriptParameterList().size() > 0){
-				sqlScriptResource.getSqlScriptParameterList().clear();
-			}
-			if(sqlScriptResource.getParameterNameRecordList() != null && sqlScriptResource.getParameterNameRecordList().size() > 0){
-				sqlScriptResource.getParameterNameRecordList().clear();
-			}
+			sqlScriptResource.clear();
 		}
 	}
 }

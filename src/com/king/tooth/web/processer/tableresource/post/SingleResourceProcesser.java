@@ -1,6 +1,7 @@
 package com.king.tooth.web.processer.tableresource.post;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.util.ColumnCodeRuleUtil;
 
 /**
  * 处理这种请求路径格式的处理器：/{resourceType}
@@ -12,6 +13,7 @@ public final class SingleResourceProcesser extends PostProcesser {
 		JSONObject data = null;
 		for(int i=0; i < json.size(); i++){
 			data = json.get(i);
+			ColumnCodeRuleUtil.setFinalCodeVal(data, i, requestBody.getResourcePropCodeRule().getRules());
 			saveData(requestBody.getRouteBody().getResourceName(), data);
 		}
 		

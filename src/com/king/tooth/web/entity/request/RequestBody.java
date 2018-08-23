@@ -123,7 +123,7 @@ public class RequestBody implements Serializable{
 	 * 清空数据
 	 */
 	public void clear() {
-		
+		resourcePropCodeRule.clear();
 	}
 	
 	public Map<String, String> getRequestUrlParams() {

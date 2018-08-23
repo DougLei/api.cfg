@@ -29,6 +29,16 @@ public class ResourceInfo {
 	 */
 	private ComSqlScript sqlScriptResource;
 	
+	/**
+	 * 请求的资源对象
+	 */
+	private SysResource reqResource;
+	
+	/**
+	 * 是否是主子资源关系
+	 */
+	private boolean isParentSubResourceRelation;
+	
 	//------------------------------------------------------------------
 	public ResourceInfo() {
 	}
@@ -54,22 +64,24 @@ public class ResourceInfo {
 			}
 			resourceType = ISysResource.CODE;
 		}else{
-			SysResource resource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
-			resourceType = resource.getResourceType();
+			reqResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
+			resourceType = reqResource.getResourceType();
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ISysResource.SQLSCRIPT == resourceType){
-				sqlScriptResource = BuiltinObjectInstance.sqlScriptService.findSqlScriptResourceById(resource.getRefResourceId());
+				sqlScriptResource = BuiltinObjectInstance.sqlScriptService.findSqlScriptResourceById(reqResource.getRefResourceId());
 			}
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				resource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
+				isParentSubResourceRelation = true;
 				
-				if(resource.getResourceType() != resourceType){
+				reqResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
+				
+				if(reqResource.getResourceType() != resourceType){
 					throw new IllegalArgumentException("平台目前不支持处理不同类型的资源混合调用");
 				}
-				if(resource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
+				if(reqResource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
 					throw new IllegalArgumentException("平台目前不支持处理[主子]方式调用sql资源");
 				}
 			}
@@ -113,5 +125,11 @@ public class ResourceInfo {
 	}
 	public ComSqlScript getSqlScriptResource() {
 		return sqlScriptResource;
+	}
+	public SysResource getReqResource() {
+		return reqResource;
+	}
+	public boolean getIsParentSubResourceRelation() {
+		return isParentSubResourceRelation;
 	}
 }
