@@ -3,7 +3,6 @@ package test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 
 
@@ -41,27 +40,22 @@ public class DatabaseTest extends Parent{
 //			System.out.println("不存在！！！！！");
 			
 			
-//			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-//			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.0.100:1433;DatabaseName=SmartOneCfg", "sa", "123_abc");
-//			System.out.println(conn);
-			
-			
-			
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
-			Statement st = conn.createStatement();
-			
-			st.executeUpdate("drop view a");
-			st.executeUpdate("drop view b");
-			
-			st.executeUpdate("create view a as select * from COM_COLUMNDATA");
-			st.executeUpdate("create view b as select * from COM_COLUMNDATA");
+			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.252:1433;DatabaseName=SmartOneCfg", "sa", "root");
+			System.out.println(conn);
 			
 			
 			
-			st.close();
-			conn.close();
-			System.out.println("ok");
+//			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.252:1433;DatabaseName=SmartOneCfg", "sa", "root");
+//			Statement st = conn.createStatement();
+//			st.executeUpdate("drop view a");
+//			st.executeUpdate("drop view b");
+//			st.executeUpdate("create view a as select * from COM_COLUMNDATA");
+//			st.executeUpdate("create view b as select * from COM_COLUMNDATA");
+//			st.close();
+//			conn.close();
+//			System.out.println("ok");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
