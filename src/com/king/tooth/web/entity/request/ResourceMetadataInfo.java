@@ -1,6 +1,5 @@
 package com.king.tooth.web.entity.request;
 
-import java.util.List;
 
 /**
  * 请求的资源元数据信息
@@ -8,47 +7,39 @@ import java.util.List;
  */
 public class ResourceMetadataInfo {
 	
-	/**
-	 * 资源的元数据集合
-	 */
-	private List<ResourceMetadataEntity> resourceMetadataList;
-	
-	/**
-	 * 资源的元数据集合
-	 */
-	private List<ResourceMetadataEntity> parentResourceMetadataList;
-	
-	/**
-	 * 子资源的元数据集合
-	 * <p>_subResourceName指定的资源</p>
-	 */
-	private List<ResourceMetadataEntity> subResourceMetadataList;
-	
-	//------------------------------------------------------------------
 	public ResourceMetadataInfo() {
 	}
 	public ResourceMetadataInfo(RequestBody requestBody) {
-		analysisResourceMetadata(requestBody);
+		validResourceMetadata(requestBody);
 	}
 	
 	//------------------------------------------------------------------
 	/**
-	 * 解析资源的元数据
+	 * 验证资源的元数据
 	 * @param requestBody
 	 */
-	private void analysisResourceMetadata(RequestBody requestBody) {
+	private void validResourceMetadata(RequestBody requestBody) {
 		if(requestBody.getResourceInfo().isTableResource()){
+			validTableResourceMetadata(requestBody);
+			return;
+		}
+		if(requestBody.getResourceInfo().isSqlResource()){
+			validSqlResourceMetadata(requestBody);
+			return;
 		}
 	}
 	
-	//------------------------------------------------------------------
-	public List<ResourceMetadataEntity> getResourceMetadataList() {
-		return resourceMetadataList;
+	/**
+	 * 验证表资源的元数据
+	 * @param requestBody
+	 */
+	private void validTableResourceMetadata(RequestBody requestBody) {
 	}
-	public List<ResourceMetadataEntity> getParentResourceMetadataList() {
-		return parentResourceMetadataList;
-	}
-	public List<ResourceMetadataEntity> getSubResourceMetadataList() {
-		return subResourceMetadataList;
+	
+	/**
+	 * 验证sql资源的元数据
+	 * @param requestBody
+	 */
+	private void validSqlResourceMetadata(RequestBody requestBody) {
 	}
 }

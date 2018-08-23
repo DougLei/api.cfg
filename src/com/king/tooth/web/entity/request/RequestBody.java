@@ -48,6 +48,12 @@ public class RequestBody implements Serializable{
 	private ResourceMetadataInfo resourceMetadataInfo;
 	
 	// -------------------------------------------------------------------------------------------------------------------------
+	/**
+	 * 请求资源的属性(字段、列)值编码规范
+	 */
+	private ResourcePropCodeRule resourcePropCodeRule;
+	
+	// -------------------------------------------------------------------------------------------------------------------------
 	public RequestBody() {
 	}
 	public RequestBody(HttpServletRequest request) {
@@ -80,11 +86,12 @@ public class RequestBody implements Serializable{
 	}
 	
 	/**
-	 * 解析请求的资源信息
+	 * 解析请求的资源的各种信息
 	 */
 	private void analysisResource() {
 		resourceInfo = new ResourceInfo(this);
 		resourceMetadataInfo = new ResourceMetadataInfo(this);
+		resourcePropCodeRule = new ResourcePropCodeRule(this);
 	}
 	
 	/**
@@ -154,5 +161,8 @@ public class RequestBody implements Serializable{
 	}
 	public ResourceMetadataInfo getResourceMetadataInfo() {
 		return resourceMetadataInfo;
+	}
+	public ResourcePropCodeRule getResourcePropCodeRule() {
+		return resourcePropCodeRule;
 	}
 }

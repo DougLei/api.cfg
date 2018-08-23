@@ -129,7 +129,6 @@ public class SysUserService extends AbstractService{
 			result = validTelIsExists(user);
 		}
 		if(result == null){
-			String accountId = null;
 			if(user.getIsCreateAccount() == 1){
 				SysAccount account = new SysAccount();
 				account.setLoginName(user.getWorkNo());
@@ -137,9 +136,9 @@ public class SysUserService extends AbstractService{
 				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
-				accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
+				String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
+				user.setAccountId(accountId);
 			}
-			user.setAccountId(accountId);
 			JSONObject userJsonObject = HibernateUtil.saveObject(user, null);
 			String userId = userJsonObject.getString(ResourcePropNameConstants.ID);
 			
