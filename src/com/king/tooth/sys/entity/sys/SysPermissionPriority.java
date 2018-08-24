@@ -21,18 +21,18 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 	
 	/**
 	 * 权限类型
-	 * <p>权限类型：比如角色role，帐号account，部门dept，岗位position，帐号组accountGroup等</p>
+	 * <p>比如用户user，角色role，部门dept，岗位position，用户组userGroup等</p>
 	 * @see BuiltinPermissionType
 	 */
 	private String permissionType;
 	/**
 	 * 优先等级
-	 * <p>优先等级，越高越优先</p>
+	 * <p>越低越优先</p>
 	 */
 	private Integer lv;
 	/**
 	 * 相同权限类型的优先级
-	 * <p>相同权限类型的优先级：这里可以按照等级顺序，存储多个id，用,分割，越前面的，优先级越高；第一个优先级最高；如果这个字段没有值，则默认以对应权限类型的orderCode来决定优先级，orderCode越低的，优先级越高</p>
+	 * <p>这里可以按照等级顺序，存储多个id，用,分割，越前面的，优先级越高；第一个优先级最高；如果这个字段没有值，则默认以对应权限类型的orderCode来决定优先级，orderCode越低的，优先级越高</p>
 	 */
 	private String samePermissionTypeLv;
 	
@@ -76,19 +76,19 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 		
 		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", BuiltinCodeDataType.STRING, 20);
 		permissionTypeColumn.setName("权限类型");
-		permissionTypeColumn.setComments("权限类型：比如角色role，帐号account，部门dept，岗位position，帐号组accountGroup等");
+		permissionTypeColumn.setComments("比如用户user，角色role，部门dept，岗位position，用户组userGroup等");
 		permissionTypeColumn.setOrderCode(1);
 		columns.add(permissionTypeColumn);
 		
 		ComColumndata lvColumn = new ComColumndata("lv", BuiltinCodeDataType.INTEGER, 2);
 		lvColumn.setName("优先等级");
-		lvColumn.setComments("优先等级，越高越优先");
+		lvColumn.setComments("越低越优先");
 		lvColumn.setOrderCode(2);
 		columns.add(lvColumn);
 		
 		ComColumndata samePermissionTypeLvColumn = new ComColumndata("same_permission_type_lv", BuiltinCodeDataType.CLOB, 0);
 		samePermissionTypeLvColumn.setName("相同权限类型的优先级");
-		samePermissionTypeLvColumn.setComments("相同权限类型的优先级：这里可以按照等级顺序，存储多个id，用,分割，越前面的，优先级越高；第一个优先级最高；如果这个字段没有值，则默认以对应权限类型的orderCode来决定优先级，orderCode越低的，优先级越高");
+		samePermissionTypeLvColumn.setComments("这里可以按照等级顺序，存储多个id，用,分割，越前面的，优先级越高；第一个优先级最高；如果这个字段没有值，则默认以对应权限类型的orderCode来决定优先级，orderCode越低的，优先级越高");
 		samePermissionTypeLvColumn.setOrderCode(3);
 		columns.add(samePermissionTypeLvColumn);
 		

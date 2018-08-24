@@ -5,11 +5,10 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.PermissionConstants;
-import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
+import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
@@ -34,27 +33,20 @@ public class SysPermissionService extends AbstractService{
 		}
 		return permissionPriorities;
 	}
-	private static final String hql = "from SysPermissionPriority where projectId=? and customerId=? order by lv desc";
+	private static final String hql = "from SysPermissionPriority where projectId=? and customerId=? order by lv asc";
 	
 	
 	// 第一次查询权限信息集合的hql语句
 	private static final String queryPermissionHql = "from SysPermission where objId = ? and objType = ? and (refParentResourceId is null or refParentResourceId = '') and projectId = ? and customerId = ?";
 	// 后续递归查询权限信息集合的hql语句
 	private static final String recursiveQueryPermissionHql = "from SysPermission where objId = ? and objType = ? and (refParentResourceId = ? or refParentResourceCode = ?) and projectId = ? and customerId = ?";
-	// 按照orderCode asc，查询账户所有有效的角色【orderCode越低的，优先级越高】
-	private static final String queryAccountOfRolesHql = "select r."+ResourcePropNameConstants.ID+" from SysRole r, SysAccountRoleLinks l where r.isEnabled=1 and r."+ResourcePropNameConstants.ID+"=l.rightId and l.leftId = ? order by r.orderCode asc";
-	// 按照orderCode asc，查询账户所属的部门【orderCode越低的，优先级越高】
-	private static final String queryAccountOfDeptsHql = "select d."+ResourcePropNameConstants.ID+" from SysDept d, SysUserDeptLinks l, SysUser u where d."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by d.orderCode asc, l.isMain desc";
-	// 按照orderCode asc，查询账户所属的职务【orderCode越低的，优先级越高】
-	private static final String queryAccountOfPositionsHql = "select p."+ResourcePropNameConstants.ID+" from SysPosition p, SysUserPositionLinks l, SysUser u where p."+ResourcePropNameConstants.ID+"=l.rightId and u."+ResourcePropNameConstants.ID+"=l.leftId and u.accountId=? order by p.orderCode asc, l.isMain desc";
 	
 	/**
-	 * 根据账户id，获取对应的的权限集合
-	 * @param accountId
+	 * 根据用戶id，获取对应的的权限集合
+	 * @param accountOnlineStatus
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public SysPermissionExtend findAccountOfPermissions(String accountId){
+	public SysPermissionExtend findAccountOfPermissions(SysAccountOnlineStatus accountOnlineStatus){
 		String projectId = CurrentThreadContext.getProjectId();
 		String customerId = CurrentThreadContext.getCustomerId();
 		
@@ -64,15 +56,15 @@ public class SysPermissionService extends AbstractService{
 		
 		List<SysPermissionPriority> permissionPriorities = getPermissionPriorities();
 		for (SysPermissionPriority permissionPriority : permissionPriorities) {
-			// 帐号
-			if(PermissionConstants.DT_ACCOUNT.equals(permissionPriority.getPermissionType())){
-				tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_ACCOUNT, accountId, projectId, customerId);
-				setSubPermissionsByData(tmpPermissions, accountId, PermissionConstants.DT_ACCOUNT, projectId, customerId);
+			// 用戶
+			if(PermissionConstants.DT_USER.equals(permissionPriority.getPermissionType())){
+				tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_USER, accountOnlineStatus.getUserId(), projectId, customerId);
+				setSubPermissionsByData(tmpPermissions, accountOnlineStatus.getUserId(), PermissionConstants.DT_USER, projectId, customerId);
 				mergePermissions(newPermissions, tmpPermissions);
 			}
 			// 角色
 			else if(PermissionConstants.DT_ROLE.equals(permissionPriority.getPermissionType())){
-				List<Object> roleIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfRolesHql, accountId);
+				List<Object> roleIds = accountOnlineStatus.getRoleIds();
 				if(roleIds != null && roleIds.size() > 0){
 					roleIds = processSamePermissionTypeLevel(roleIds, permissionPriority.getSamePermissionTypeLv());
 					
@@ -86,7 +78,7 @@ public class SysPermissionService extends AbstractService{
 			}
 			// 部门
 			else if(PermissionConstants.DT_DEPT.equals(permissionPriority.getPermissionType())){
-				List<Object> deptIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfDeptsHql, accountId);
+				List<Object> deptIds = accountOnlineStatus.getDeptIds();
 				if(deptIds != null && deptIds.size() > 0){
 					deptIds = processSamePermissionTypeLevel(deptIds, permissionPriority.getSamePermissionTypeLv());		
 					
@@ -100,7 +92,7 @@ public class SysPermissionService extends AbstractService{
 			}
 			// 岗位
 			else if(PermissionConstants.DT_POSITION.equals(permissionPriority.getPermissionType())){
-				List<Object> positionIds = HibernateUtil.executeListQueryByHqlArr(null, null, queryAccountOfPositionsHql, accountId);
+				List<Object> positionIds = accountOnlineStatus.getPositionIds();
 				if(positionIds != null && positionIds.size() > 0){
 					positionIds = processSamePermissionTypeLevel(positionIds, permissionPriority.getSamePermissionTypeLv());	
 					
@@ -306,25 +298,25 @@ public class SysPermissionService extends AbstractService{
 		}
 	}
 	// --------------------------------------------------------------------------------------
-	private static final String queryAccountPermissionCacheHql = "from SysAccountPermissionCache where accountId = ? and customerId =?";
+	private static final String queryUserPermissionCacheHql = "from SysUserPermissionCache where userId = ? and customerId =?";
 	/**
-	 * 获取账户的权限缓存对象
-	 * @param accountId
+	 * 获取用户的权限缓存对象
+	 * @param accountOnlineStatus
 	 * @return
 	 */
-	public SysAccountPermissionCache getSysAccountPermissionCache(String accountId){
-		SysAccountPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountPermissionCache.class, queryAccountPermissionCacheHql, accountId, CurrentThreadContext.getCustomerId());
+	public SysUserPermissionCache getSysUserPermissionCache(SysAccountOnlineStatus accountOnlineStatus){
+		SysUserPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUserPermissionCache.class, queryUserPermissionCacheHql, accountOnlineStatus.getUserId(), CurrentThreadContext.getCustomerId());
 		
 		SysPermissionExtend permission = null;
 		if(sapc == null){
-			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountId);
+			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus);
 			
-			sapc = new SysAccountPermissionCache();
-			sapc.setAccountId(accountId);
+			sapc = new SysUserPermissionCache();
+			sapc.setUserId(accountOnlineStatus.getUserId());
 			sapc.setPermission(JsonUtil.toJsonString(permission, false));
 			HibernateUtil.saveObject(sapc, null);
 		}else if(StrUtils.isEmpty(sapc.getPermission())){
-			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountId);
+			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus);
 			
 			sapc.setPermission(JsonUtil.toJsonString(permission, false));
 			HibernateUtil.updateObject(sapc, null);
@@ -353,7 +345,7 @@ public class SysPermissionService extends AbstractService{
 			return JsonUtil.toJsonObject(BuiltinObjectInstance.allPermission);
 		}
 		
-		SysAccountPermissionCache sapc = getSysAccountPermissionCache(accountOnlineStatus.getAccountId());
+		SysUserPermissionCache sapc = getSysUserPermissionCache(accountOnlineStatus);
 		SysPermissionExtend permission = sapc.getPermissionObject();
 		
 		if((accountOnlineStatus.isNormal())

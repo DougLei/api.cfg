@@ -1,7 +1,6 @@
 package com.king.tooth.job;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -15,7 +14,7 @@ import org.quartz.JobExecutionException;
 public class ProcessCurrentDateJob implements Job, Serializable{
 
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-		Date currentDate = new Date();
+//		Date currentDate = new Date();
 		
 		
 	}

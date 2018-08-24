@@ -182,5 +182,5 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	// 字段编码规则明细集合
 	private List<CfgColumnCodeRuleDetail> ruleDetails;
 	// 查询字段编码规则明细集合的hql
-	private static final String queryRuleDetailsHql = "from CfgColumnCodeRuleDetail where columnCodeRuleId=? and projectId=? and customerId=?";
+	private static final String queryRuleDetailsHql = "from CfgColumnCodeRuleDetail where columnCodeRuleId=? and projectId=? and customerId=? order by orderCode asc";
 }

@@ -16,7 +16,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 人员信息表
+ * 用户信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -243,8 +243,8 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_USER", 0);
-		table.setName("人员信息表表");
-		table.setComments("人员信息表表");
+		table.setName("用户信息表");
+		table.setComments("用户信息表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);

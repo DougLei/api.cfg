@@ -7,9 +7,9 @@ package com.king.tooth.constants;
 public class PermissionConstants {
 
 	/**
-	 * 权限关联的数据类型: account
+	 * 权限关联的数据类型: user
 	 */
-	public static final String DT_ACCOUNT = "account";
+	public static final String DT_USER = "user";
 	/**
 	 * 权限关联的数据类型: role
 	 */
@@ -22,6 +22,10 @@ public class PermissionConstants {
 	 * 权限关联的数据类型: position
 	 */
 	public static final String DT_POSITION = "position";
+	/**
+	 * 权限关联的数据类型: userGroup
+	 */
+	public static final String DT_USER_GROUP = "userGroup";
 	
 	// -----------------------------------------------------------
 	/**

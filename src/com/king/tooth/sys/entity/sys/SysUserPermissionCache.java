@@ -14,19 +14,19 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 
 /**
- * 账户权限缓存表
+ * 系统用户权限缓存表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class SysAccountPermissionCache extends BasicEntity implements ITable, IEntity{
+public class SysUserPermissionCache extends BasicEntity implements ITable, IEntity{
 
 	/**
-	 * 账户主键
+	 * 用户主键
 	 */
-	private String accountId;
+	private String userId;
 	
 	/**
-	 * 账户所拥有的权限json
+	 * 用户所拥有的权限json
 	 */
 	private String permission;
 	
@@ -41,11 +41,11 @@ public class SysAccountPermissionCache extends BasicEntity implements ITable, IE
 	public String getPermission() {
 		return permission;
 	}
-	public String getAccountId() {
-		return accountId;
+	public String getUserId() {
+		return userId;
 	}
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public void setPermission(String permission) {
 		this.permission = permission;
@@ -58,9 +58,9 @@ public class SysAccountPermissionCache extends BasicEntity implements ITable, IE
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ACCOUNT_PERMISSION_CACHE", 0);
-		table.setName("账户权限缓存表");
-		table.setComments("账户权限缓存表");
+		ComTabledata table = new ComTabledata("SYS_USER_PERMISSION_CACHE", 0);
+		table.setName("系统用户权限缓存表");
+		table.setComments("系统用户权限缓存表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -68,16 +68,14 @@ public class SysAccountPermissionCache extends BasicEntity implements ITable, IE
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
-		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinCodeDataType.STRING, 32);
-		accountIdColumn.setName("账户主键");
-		accountIdColumn.setComments("账户主键");
-		accountIdColumn.setOrderCode(1);
-		columns.add(accountIdColumn);
+		ComColumndata userIdColumn = new ComColumndata("user_id", BuiltinCodeDataType.STRING, 32);
+		userIdColumn.setName("用户主键");
+		userIdColumn.setComments("用户主键");
+		columns.add(userIdColumn);
 		
 		ComColumndata permissionColumn = new ComColumndata("permission", BuiltinCodeDataType.CLOB, 0);
-		permissionColumn.setName("账户所拥有的权限json");
-		permissionColumn.setComments("账户所拥有的权限json");
-		permissionColumn.setOrderCode(2);
+		permissionColumn.setName("用户所拥有的权限json");
+		permissionColumn.setComments("用户所拥有的权限json");
 		columns.add(permissionColumn);
 		
 		table.setColumns(columns);
@@ -85,11 +83,11 @@ public class SysAccountPermissionCache extends BasicEntity implements ITable, IE
 	}
 
 	public String toDropTable() {
-		return "SYS_ACCOUNT_PERMISSION_CACHE";
+		return "SYS_USER_PERMISSION_CACHE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysAccountPermissionCache";
+		return "SysUserPermissionCache";
 	}
 }

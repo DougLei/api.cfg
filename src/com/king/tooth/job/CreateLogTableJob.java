@@ -31,9 +31,10 @@ public class CreateLogTableJob implements Job, Serializable{
 	private static final int logTableSize = 2;
 	
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+		Log4jUtil.info(CreateLogTableJob.class, "execute", "执行创建log信息表的任务，任务的cron表达式为：0 0 0 * * ?");
 		Date currentDate = new Date();
 		if(DateUtil.isFirstDayOfMonth(currentDate)){
-			Log4jUtil.debug("月初，创建新的日志表");
+			Log4jUtil.info("月初，创建新的日志表");
 			
 			// 准备和数据库连接
 			CurrentThreadContext.setDatabaseId(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());
@@ -72,7 +73,7 @@ public class CreateLogTableJob implements Job, Serializable{
 				ResourceHandlerUtil.clearTables(logTables);
 			}
 		}else{
-			Log4jUtil.debug("不是月初，无需创建新的日志表");
+			Log4jUtil.info("不是月初，无需创建新的日志表");
 		}
 	}
 	

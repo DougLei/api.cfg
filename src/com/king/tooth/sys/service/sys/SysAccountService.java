@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.sys;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
+import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
@@ -112,12 +113,13 @@ public class SysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
-		accountOnlineStatus.setAccountType(loginAccount.getType());
+		// 处理账户和用户的关系
+		processAccountAndUserRelation(accountOnlineStatus, loginAccount.getId(), accountName);
 		
 		// 处理权限
-		if(processPermission(loginAccount.getId(), loginAccount.getType(), accountOnlineStatus)){
+		if(processPermission(accountOnlineStatus)){
 			// 处理基本信息
-			processOnlineStatusBasicData(accountOnlineStatus, loginAccount, accountName);
+			processOnlineStatusBasicData(accountOnlineStatus, loginAccount);
 			if(SysConfig.isConfSys){
 				// TODO 这里暂时写成固定值
 				accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
@@ -128,20 +130,104 @@ public class SysAccountService extends AbstractService{
 	}
 	
 	/**
-	 * 登陆时处理权限
+	 * 处理账户和用户的关系
+	 * <p>获取账户对应的用户的信息，包括用户id，用户所属的角色、职务、部门、组织机构id</p>
+	 * @param accountOnlineStatus
 	 * @param accountId
-	 * @param accountType
+	 * @param accountName
+	 */
+	private void processAccountAndUserRelation(SysAccountOnlineStatus accountOnlineStatus, String accountId, String accountName) {
+		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
+		
+		if(loginUser == null){
+			accountOnlineStatus.setAccountName(accountName);
+			accountOnlineStatus.setUserId("unknow");
+			accountOnlineStatus.setPositionId("unknow");
+			accountOnlineStatus.setDeptId("unknow");
+			accountOnlineStatus.setOrgId("unknow");
+		}else{
+			accountOnlineStatus.setIsExistsUserObj(true);
+			String userId = loginUser.getId();
+			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
+			accountOnlineStatus.setUserId(userId);
+			
+			StringBuilder idBuffer = new StringBuilder();
+			
+			// 获取用户所有有效的角色id
+			List<Object> roleIds = new ArrayList<Object>(10);
+			accountOnlineStatus.setRoleId(getIds(idBuffer, roleIds, queryUserOfRolesHql, userId));
+			accountOnlineStatus.setRoleIds(roleIds);
+			
+			// 获取用户所属的职务id
+			List<Object> positionIds = new ArrayList<Object>(10);
+			accountOnlineStatus.setPositionId(getIds(idBuffer, positionIds, queryUserOfPositionsHql, userId));
+			accountOnlineStatus.setPositionIds(positionIds);
+			
+			// 获取用户所属的部门id
+			List<Object> deptIds = new ArrayList<Object>(10);
+			accountOnlineStatus.setDeptId(getIds(idBuffer, deptIds, queryUserOfDeptsHql, userId));
+			accountOnlineStatus.setDeptIds(deptIds);
+			
+			// 获取用户所属的组织id
+//			List<Object> orgIds = new ArrayList<Object>(10);
+			accountOnlineStatus.setOrgId("暂不支持");
+//			accountOnlineStatus.setOrgIds(orgIds);
+		}
+	}
+	
+	// 按照orderCode asc，查询用户所有有效的角色【orderCode越低的，优先级越高】
+	private static final String queryUserOfRolesHql = "select l.rightId from SysUserRoleLinks l, SysRole r where l.rightId=r."+ResourcePropNameConstants.ID+" and l.leftId=? and r.isEnabled=1 order by r.orderCode asc";
+	// 按照orderCode asc，查询用户所属的职务【orderCode越低的，优先级越高】
+	private static final String queryUserOfPositionsHql = "select l.rightId from SysUserPositionLinks l, SysPosition p where l.rightId=p."+ResourcePropNameConstants.ID+" and l.leftId=? order by p.orderCode asc, l.isMain desc";
+	// 按照orderCode asc，查询用户所属的部门【orderCode越低的，优先级越高】
+	private static final String queryUserOfDeptsHql = "select l.rightId from SysUserDeptLinks l, SysDept d where l.rightId=d."+ResourcePropNameConstants.ID+" and l.leftId=? order by d.orderCode asc, l.isMain desc";
+	/**
+	 * 获取hql执行查询后的结果id
+	 * @param idBuffer
+	 * @param hql
+	 * @param paramValues
+	 */
+	@SuppressWarnings("unchecked")
+	private String getIds(StringBuilder idBuffer, List<Object> ids, String hql, Object...paramValues){
+		idBuffer.setLength(0);
+		try {
+			List<Object> tmpIds = HibernateUtil.executeListQueryByHqlArr(null, null, hql, paramValues);
+			if(tmpIds != null && tmpIds.size() > 0){
+				for (Object id : tmpIds) {
+					ids.add(id);
+					idBuffer.append(id).append(",");
+				}
+				tmpIds.clear();
+				idBuffer.setLength(idBuffer.length()-1);
+				return idBuffer.toString();
+			}
+			return null;
+		} finally{
+			if(idBuffer.length() > 0){
+				idBuffer.setLength(0);
+			}
+		}
+	}
+
+
+	/**
+	 * 登陆时处理权限
 	 * @param accountOnlineStatus
 	 * @return 是否有权限，如果没有权限，则也属于登陆失败
 	 */
-	public boolean processPermission(String accountId, Integer accountType, SysAccountOnlineStatus accountOnlineStatus) {
+	private boolean processPermission(SysAccountOnlineStatus accountOnlineStatus) {
 		// 管理员或系统开发人员，不做权限控制，返回ALL，标识可以访问所有功能
 		if(accountOnlineStatus.isAdministrator() || accountOnlineStatus.isDeveloper()){
 			accountOnlineStatus.setPermission(BuiltinObjectInstance.allPermission);
 			return true;
 		}
 		
-		SysAccountPermissionCache sapc = BuiltinObjectInstance.permissionService.getSysAccountPermissionCache(accountId);
+		if(!accountOnlineStatus.getIsExistsUserObj()){
+			accountOnlineStatus.setMessage("您账户的用户信息还未完善，请联系系统管理员，给您创建用户信息，并分配系统功能权限");
+			return false;
+		}
+		
+		SysUserPermissionCache sapc = BuiltinObjectInstance.permissionService.getSysUserPermissionCache(accountOnlineStatus);
 		SysPermissionExtend permission = sapc.getPermissionObject();
 		
 		if((accountOnlineStatus.isNormal())
@@ -157,70 +243,16 @@ public class SysAccountService extends AbstractService{
 	
 	/**
 	 * 处理账户在线状态对象的基础数据
-	 * <p>包括当前账户id，当前用户id等等基础信息</p>
 	 * @param accountOnlineStatus
 	 * @param loginAccount
-	 * @param accountName
 	 */
-	private void processOnlineStatusBasicData(SysAccountOnlineStatus accountOnlineStatus, SysAccount loginAccount, String accountName) {
-		StringBuilder idBuffer = new StringBuilder();
-		String accountId = loginAccount.getId();
-		
+	private void processOnlineStatusBasicData(SysAccountOnlineStatus accountOnlineStatus, SysAccount loginAccount) {
 		accountOnlineStatus.setLastOperDate(new Date());
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
 		accountOnlineStatus.setLoginDate(new Date());
 		accountOnlineStatus.setTryLoginTimes(0);
-		accountOnlineStatus.setAccountId(accountId);
-		accountOnlineStatus.setRoleId(getIds(idBuffer, queryRoleId, accountId));
-		
-		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ? and customerId=?", loginAccount.getId(), CurrentThreadContext.getCustomerId());
-		if(loginUser == null){
-			accountOnlineStatus.setAccountName(accountName);
-			accountOnlineStatus.setUserId("unknow");
-			accountOnlineStatus.setPositionId("unknow");
-			accountOnlineStatus.setDeptId("unknow");
-			accountOnlineStatus.setOrgId("unknow");
-		}else{
-			String userId = loginUser.getId();
-			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
-			accountOnlineStatus.setUserId(userId);
-			accountOnlineStatus.setPositionId(getIds(idBuffer, queryPositionId, userId));
-			accountOnlineStatus.setDeptId(getIds(idBuffer, queryDeptId, userId));
-			accountOnlineStatus.setOrgId("暂不支持");
-		}
-	}
-	
-	// 查询账户所有有效的角色信息
-	private static final String queryRoleId = "select l.rightId from SysAccountRoleLinks l, SysRole r where l.rightId=r."+ResourcePropNameConstants.ID+" and l.leftId=? and r.isEnabled=1 order by r.orderCode asc";
-	// 查询用户所有的职务信息
-	private static final String queryPositionId = "select l.rightId from SysUserPositionLinks l, SysPosition p where l.rightId=p."+ResourcePropNameConstants.ID+" and l.isMain=0 and l.leftId=? order by p.orderCode asc, l.isMain desc";
-	// 查询用户所有的部门信息
-	private static final String queryDeptId = "select l.rightId from SysUserDeptLinks l, SysDept d where l.rightId=d."+ResourcePropNameConstants.ID+" and l.isMain=0 and l.leftId=? order by d.orderCode asc, l.isMain desc";
-	/**
-	 * 获取hql执行查询后的结果id
-	 * @param idBuffer
-	 * @param hql
-	 * @param paramValues
-	 */
-	@SuppressWarnings("unchecked")
-	private String getIds(StringBuilder idBuffer, String hql, Object...paramValues){
-		idBuffer.setLength(0);
-		try {
-			List<Object> ids = HibernateUtil.executeListQueryByHqlArr(null, null, hql, paramValues);
-			if(ids != null && ids.size() > 0){
-				for (Object id : ids) {
-					idBuffer.append(id).append(",");
-				}
-				ids.clear();
-				idBuffer.setLength(idBuffer.length()-1);
-				return idBuffer.toString();
-			}
-			return null;
-		} finally{
-			if(idBuffer.length() > 0){
-				idBuffer.setLength(0);
-			}
-		}
+		accountOnlineStatus.setAccountId(loginAccount.getId());
+		accountOnlineStatus.setAccountType(loginAccount.getType());
 	}
 	
 	/**

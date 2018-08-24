@@ -11,17 +11,17 @@ import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
- * 系统账户和角色的关联关系表
+ * 系统用戶和角色的关联关系表
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class SysAccountRoleLinks implements Serializable, ITable {
+public class SysUserRoleLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ACCOUNT_ROLE_LINKS", 0);
-		table.setResourceName("SysAccountRoleLinks");
-		table.setName("系统账户和角色的关联关系表");
-		table.setComments("系统账户和角色的关联关系表");
+		ComTabledata table = new ComTabledata("SYS_USER_ROLE_LINKS", 0);
+		table.setResourceName("SysUserRoleLinks");
+		table.setName("系统用戶和角色的关联关系表");
+		table.setComments("系统用戶和角色的关联关系表");
 		table.setIsBuiltin(1);
 		table.setIsNeedDeploy(1);
 		table.setIsCreated(1);
@@ -53,6 +53,6 @@ public class SysAccountRoleLinks implements Serializable, ITable {
 	}
 
 	public String toDropTable() {
-		return "SYS_ACCOUNT_ROLE_LINKS";
+		return "SYS_USER_ROLE_LINKS";
 	}
 }

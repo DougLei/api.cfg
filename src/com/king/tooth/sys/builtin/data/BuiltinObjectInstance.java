@@ -32,7 +32,7 @@ import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.entity.sys.SysAccountPermissionCache;
+import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
@@ -48,7 +48,7 @@ import com.king.tooth.sys.entity.sys.SysRole;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserGroup;
 import com.king.tooth.sys.entity.sys.SysUserGroupDetail;
-import com.king.tooth.sys.entity.sys.datalinks.SysAccountRoleLinks;
+import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
@@ -106,12 +106,13 @@ public class BuiltinObjectInstance {
 	/**
 	 * 权限优先级集合
 	 */
-	public static final List<SysPermissionPriority> permissionPriorities = new ArrayList<SysPermissionPriority>(4); 
+	public static final List<SysPermissionPriority> permissionPriorities = new ArrayList<SysPermissionPriority>(5); 
 	static{
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_ACCOUNT, 4));
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_ROLE, 3));
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_DEPT, 2));
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_POSITION, 1));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_USER, 1));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_ROLE, 2));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_DEPT, 3));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_POSITION, 4));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_USER_GROUP, 5));
 	}
 	
 	/**
@@ -185,7 +186,7 @@ public class BuiltinObjectInstance {
 	public static final SysPosition sysPosition = new SysPosition();
 	public static final SysRole sysRole = new SysRole();
 	public static final SysPermission sysPermission = new SysPermission();
-	public static final SysAccountPermissionCache sysAccountPermissionCache = new SysAccountPermissionCache();
+	public static final SysUserPermissionCache sysUserPermissionCache = new SysUserPermissionCache();
 	public static final SysPermissionPriority sysPermissionPriority = new SysPermissionPriority();
 	public static final SysReqLog sysReqLog = new SysReqLog();
 	public static final SysOperSqlLog sysOperSqlLog = new SysOperSqlLog();
@@ -196,7 +197,7 @@ public class BuiltinObjectInstance {
 	public static final SysUserGroupDetail sysUserGroupDetail = new SysUserGroupDetail();
 	
 	public static final SysDataLinks sysDataLinks = new SysDataLinks();
-	public static final SysAccountRoleLinks sysAccountRoleLinks = new SysAccountRoleLinks();
+	public static final SysUserRoleLinks sysUserRoleLinks = new SysUserRoleLinks();
 	public static final SysUserDeptLinks sysUserDeptLinks = new SysUserDeptLinks();
 	public static final SysUserPositionLinks sysUserPositionLinks = new SysUserPositionLinks();
 }

@@ -1,6 +1,8 @@
 package com.king.tooth.sys.entity.cfg;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -425,11 +427,79 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	public String getCurrentStageCodeVal() {
-		
-		
-		// TODO   
-		
-		
+		switch(ruleType){
+			case 0: // 0:default(默认固定值)
+				return getDefaultVal();
+			case 1: // 1:date(日期)
+				return getDate();
+			case 2: // 2:seq(序列)
+				return getSeq();
+			case 3: // 3:serialNumber(流水号)
+				return getSerialNumber();
+			case 4: // 4:random(随机数)
+				return getRandom();
+			case 5: // 5:column(其他列值)
+				return getColumn();
+			case 6: // 6:type(类型值)
+				return getType();
+			default: // 默认值为0，0:default(默认固定值)
+				return getDefaultVal();
+		}
+	}
+	
+	/**
+	 * 获取【6:type(类型值)】
+	 * @return
+	 */
+	private String getType() {
 		return null;
+	}
+	
+	/**
+	 * 获取【5:column(其他列值)】
+	 * @return
+	 */
+	private String getColumn() {
+		return null;
+	}
+	
+	/**
+	 * 获取【4:random(随机数)】
+	 * @return
+	 */
+	private String getRandom() {
+		return null;
+	}
+	
+	/**
+	 * 获取【3:serialNumber(流水号)】
+	 * @return
+	 */
+	private String getSerialNumber() {
+		return null;
+	}
+	
+	/**
+	 * 获取【2:seq(序列)】
+	 * @return
+	 */
+	private String getSeq() {
+		return null;
+	}
+	
+	/**
+	 * 获取【1:date(日期)】
+	 * @return
+	 */
+	private String getDate() {
+		return new SimpleDateFormat(dateFormate).format(new Date());
+	}
+	
+	/**
+	 * 获取【0:default(默认固定值)】
+	 * @return
+	 */
+	private String getDefaultVal() {
+		return defValue;
 	}
 }

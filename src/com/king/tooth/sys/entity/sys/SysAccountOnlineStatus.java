@@ -40,20 +40,32 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	private String userId;
 	/**
 	 * 当前用户所属组织id
+	 * <p>多个用,隔开</p>
 	 */
 	private String orgId;
+	@JSONField(serialize = false)
+	private List<Object> orgIds;
 	/**
 	 * 当前用户所属部门id
+	 * <p>多个用,隔开</p>
 	 */
 	private String deptId;
+	@JSONField(serialize = false)
+	private List<Object> deptIds;
 	/**
 	 * 当前用户所属岗位id
+	 * <p>多个用,隔开</p>
 	 */
 	private String positionId;
+	@JSONField(serialize = false)
+	private List<Object> positionIds;
 	/**
 	 * 当前用户所属角色id
+	 * <p>多个用,隔开</p>
 	 */
 	private String roleId;
+	@JSONField(serialize = false)
+	private List<Object> roleIds;
 	/**
 	 * token值
 	 */
@@ -108,6 +120,12 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	 */
 	@JSONField(serialize = false)
 	private boolean isSave;
+	
+	/**
+	 * 是否有存在关联的用户对象
+	 */
+	@JSONField(serialize = false)
+	private boolean isExistsUserObj;
 	
 	public String getToken() {
 		return token;
@@ -222,6 +240,36 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	}
 	public void setPermission(SysPermissionExtend permission) {
 		this.permission = permission;
+	}
+	public List<Object> getOrgIds() {
+		return orgIds;
+	}
+	public void setOrgIds(List<Object> orgIds) {
+		this.orgIds = orgIds;
+	}
+	public List<Object> getDeptIds() {
+		return deptIds;
+	}
+	public void setDeptIds(List<Object> deptIds) {
+		this.deptIds = deptIds;
+	}
+	public List<Object> getPositionIds() {
+		return positionIds;
+	}
+	public void setPositionIds(List<Object> positionIds) {
+		this.positionIds = positionIds;
+	}
+	public List<Object> getRoleIds() {
+		return roleIds;
+	}
+	public void setRoleIds(List<Object> roleIds) {
+		this.roleIds = roleIds;
+	}
+	public boolean getIsExistsUserObj() {
+		return isExistsUserObj;
+	}
+	public void setIsExistsUserObj(boolean isExistsUserObj) {
+		this.isExistsUserObj = isExistsUserObj;
 	}
 	
 	public ComTabledata toCreateTable() {
