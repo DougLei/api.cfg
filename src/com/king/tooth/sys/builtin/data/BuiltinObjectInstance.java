@@ -106,13 +106,14 @@ public class BuiltinObjectInstance {
 	/**
 	 * 权限优先级集合
 	 */
-	public static final List<SysPermissionPriority> permissionPriorities = new ArrayList<SysPermissionPriority>(5); 
+	public static final List<SysPermissionPriority> permissionPriorities = new ArrayList<SysPermissionPriority>(6); 
 	static{
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_USER, 1));
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_ROLE, 2));
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_DEPT, 3));
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_POSITION, 4));
-		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.DT_USER_GROUP, 5));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.OBJ_TYPE_USER, 1));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.OBJ_TYPE_ACCOUNT, 2));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.OBJ_TYPE_ROLE, 3));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.OBJ_TYPE_DEPT, 4));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.OBJ_TYPE_POSITION, 5));
+		permissionPriorities.add(new SysPermissionPriority(PermissionConstants.OBJ_TYPE_USERGROUP, 6));
 	}
 	
 	/**

@@ -132,7 +132,7 @@ public class SysAccountService extends AbstractService{
 	
 	/**
 	 * 处理账户和用户的关系
-	 * <p>获取账户对应的用户的信息，包括用户id，用户所属的角色、职务、部门、组织机构id</p>
+	 * <p>获取账户对应的用户的信息，包括用户id，用户所属的角色、职务、部门、组织机构id，并保存到账户在线状态对象中</p>
 	 * @param accountOnlineStatus
 	 * @param accountId
 	 * @param accountName
@@ -151,23 +151,29 @@ public class SysAccountService extends AbstractService{
 			String userId = loginUser.getId();
 			accountOnlineStatus.setAccountName(getCurrentAccountName(loginUser, accountName));
 			accountOnlineStatus.setUserId(userId);
+			accountOnlineStatus.setUserSecretLevel(loginUser.getSecretLevel());
 			
 			StringBuilder idBuffer = new StringBuilder();
 			
 			// 获取用户所有有效的角色id
 			List<Object> roleIds = new ArrayList<Object>(10);
-			accountOnlineStatus.setRoleId(getIds(idBuffer, roleIds, queryUserOfRolesHql, userId));
+			accountOnlineStatus.setRoleId(getIds(idBuffer, roleIds, queryUserOfRoleIdsHql, userId));
 			accountOnlineStatus.setRoleIds(roleIds);
 			
 			// 获取用户所属的职务id
 			List<Object> positionIds = new ArrayList<Object>(10);
-			accountOnlineStatus.setPositionId(getIds(idBuffer, positionIds, queryUserOfPositionsHql, userId));
+			accountOnlineStatus.setPositionId(getIds(idBuffer, positionIds, queryUserOfPositionIdsHql, userId));
 			accountOnlineStatus.setPositionIds(positionIds);
 			
 			// 获取用户所属的部门id
 			List<Object> deptIds = new ArrayList<Object>(10);
-			accountOnlineStatus.setDeptId(getIds(idBuffer, deptIds, queryUserOfDeptsHql, userId));
+			accountOnlineStatus.setDeptId(getIds(idBuffer, deptIds, queryUserOfDeptIdsHql, userId));
 			accountOnlineStatus.setDeptIds(deptIds);
+			
+			// 获取用户所有的用户组id
+			List<Object> userGroupIds = new ArrayList<Object>(10);
+			accountOnlineStatus.setUserGroupId(getIds(idBuffer, userGroupIds, queryUserOfUserGroupIdsHql, userId));
+			accountOnlineStatus.setUserGroupIds(userGroupIds);
 			
 			// 获取用户所属的组织id
 //			List<Object> orgIds = new ArrayList<Object>(10);
@@ -176,12 +182,14 @@ public class SysAccountService extends AbstractService{
 		}
 	}
 	
-	// 按照orderCode asc，查询用户所有有效的角色【orderCode越低的，优先级越高】
-	private static final String queryUserOfRolesHql = "select l.rightId from SysUserRoleLinks l, SysRole r where l.rightId=r."+ResourcePropNameConstants.ID+" and l.leftId=? and r.isEnabled=1 order by r.orderCode asc";
-	// 按照orderCode asc，查询用户所属的职务【orderCode越低的，优先级越高】
-	private static final String queryUserOfPositionsHql = "select l.rightId from SysUserPositionLinks l, SysPosition p where l.rightId=p."+ResourcePropNameConstants.ID+" and l.leftId=? order by p.orderCode asc, l.isMain desc";
-	// 按照orderCode asc，查询用户所属的部门【orderCode越低的，优先级越高】
-	private static final String queryUserOfDeptsHql = "select l.rightId from SysUserDeptLinks l, SysDept d where l.rightId=d."+ResourcePropNameConstants.ID+" and l.leftId=? order by d.orderCode asc, l.isMain desc";
+	// 按照orderCode asc，查询用户所有有效的角色id【orderCode越低的，优先级越高】
+	private static final String queryUserOfRoleIdsHql = "select l.rightId from SysUserRoleLinks l, SysRole r where l.rightId=r."+ResourcePropNameConstants.ID+" and l.leftId=? and r.isEnabled=1 order by r.orderCode asc";
+	// 按照orderCode asc，查询用户所属的职务id【orderCode越低的，优先级越高】
+	private static final String queryUserOfPositionIdsHql = "select l.rightId from SysUserPositionLinks l, SysPosition p where l.rightId=p."+ResourcePropNameConstants.ID+" and l.leftId=? order by p.orderCode asc, l.isMain desc";
+	// 按照orderCode asc，查询用户所属的部门id【orderCode越低的，优先级越高】
+	private static final String queryUserOfDeptIdsHql = "select l.rightId from SysUserDeptLinks l, SysDept d where l.rightId=d."+ResourcePropNameConstants.ID+" and l.leftId=? order by d.orderCode asc, l.isMain desc";
+	// 按照orderCode asc，查询用户所有有效的用户组id【orderCode越低的，优先级越高】
+	private static final String queryUserOfUserGroupIdsHql = "select "+ResourcePropNameConstants.ID+" from SysUserGroup where isEnabled=1 and "+ResourcePropNameConstants.ID+" in(select distinct userGroupId from SysUserGroupDetail where userId=?) order by orderCode asc";
 	/**
 	 * 获取hql执行查询后的结果id
 	 * @param idBuffer

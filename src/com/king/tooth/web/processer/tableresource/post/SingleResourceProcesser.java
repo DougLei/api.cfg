@@ -13,7 +13,7 @@ public final class SingleResourceProcesser extends PostProcesser {
 		JSONObject data = null;
 		for(int i=0; i < json.size(); i++){
 			data = json.get(i);
-			ColumnCodeRuleUtil.setFinalCodeVal(data, i, requestBody.getResourcePropCodeRule().getRules());
+			ColumnCodeRuleUtil.setFinalCodeVal(data, i, requestBody.getResourcePropCodeRule());
 			saveData(requestBody.getRouteBody().getResourceName(), data);
 		}
 		

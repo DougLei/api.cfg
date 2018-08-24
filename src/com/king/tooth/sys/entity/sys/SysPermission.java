@@ -20,11 +20,11 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 public class SysPermission extends BasicEntity implements ITable, IEntity{
 	
 	/**
-	 * 主体id：比如用户id，角色id，部门id，岗位id，用户组id等
+	 * 主体id：比如用户id，账户id，角色id，部门id，岗位id，用户组id等
 	 */
 	private String objId;
 	/**
-	 * 主体类型：比如用户user，角色role，部门dept，岗位position，用户组userGroup等
+	 * 主体类型：比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等
 	 */
 	private String objType;
 	/**
@@ -136,12 +136,12 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata objIdColumn = new ComColumndata("obj_id", BuiltinCodeDataType.STRING, 32);
 		objIdColumn.setName("主体id");
-		objIdColumn.setComments("比如用户id，角色id，部门id，岗位id，用户组id等");
+		objIdColumn.setComments("比如用户id，账户id，角色id，部门id，岗位id，用户组id等");
 		columns.add(objIdColumn);
 		
-		ComColumndata objTypeColumn = new ComColumndata("obj_type", BuiltinCodeDataType.STRING, 20);
+		ComColumndata objTypeColumn = new ComColumndata("obj_type", BuiltinCodeDataType.STRING, 12);
 		objTypeColumn.setName("主体类型");
-		objTypeColumn.setComments("比如用户user，角色role，部门dept，岗位position，用户组userGroup等");
+		objTypeColumn.setComments("比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等");
 		columns.add(objTypeColumn);
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", BuiltinCodeDataType.STRING, 32);

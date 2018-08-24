@@ -21,7 +21,7 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 	
 	/**
 	 * 权限类型
-	 * <p>比如用户user，角色role，部门dept，岗位position，用户组userGroup等</p>
+	 * <p>比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等</p>
 	 * @see BuiltinPermissionType
 	 */
 	private String permissionType;
@@ -76,7 +76,7 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 		
 		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", BuiltinCodeDataType.STRING, 20);
 		permissionTypeColumn.setName("权限类型");
-		permissionTypeColumn.setComments("比如用户user，角色role，部门dept，岗位position，用户组userGroup等");
+		permissionTypeColumn.setComments("比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等");
 		permissionTypeColumn.setOrderCode(1);
 		columns.add(permissionTypeColumn);
 		

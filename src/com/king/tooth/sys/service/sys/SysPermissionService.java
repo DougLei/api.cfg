@@ -57,53 +57,74 @@ public class SysPermissionService extends AbstractService{
 		List<SysPermissionPriority> permissionPriorities = getPermissionPriorities();
 		for (SysPermissionPriority permissionPriority : permissionPriorities) {
 			// 用戶
-			if(PermissionConstants.DT_USER.equals(permissionPriority.getPermissionType())){
-				tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_USER, accountOnlineStatus.getUserId(), projectId, customerId);
-				setSubPermissionsByData(tmpPermissions, accountOnlineStatus.getUserId(), PermissionConstants.DT_USER, projectId, customerId);
+			if(PermissionConstants.OBJ_TYPE_USER.equals(permissionPriority.getPermissionType())){
+				tmpPermissions = getRootPermissionsByData(PermissionConstants.OBJ_TYPE_USER, accountOnlineStatus.getUserId(), projectId, customerId);
+				setSubPermissionsByData(tmpPermissions, accountOnlineStatus.getUserId(), PermissionConstants.OBJ_TYPE_USER, projectId, customerId);
+				mergePermissions(newPermissions, tmpPermissions);
+			}
+			// 账户
+			else if(PermissionConstants.OBJ_TYPE_ACCOUNT.equals(permissionPriority.getPermissionType())){
+				tmpPermissions = getRootPermissionsByData(PermissionConstants.OBJ_TYPE_ACCOUNT, accountOnlineStatus.getAccountId(), projectId, customerId);
+				setSubPermissionsByData(tmpPermissions, accountOnlineStatus.getAccountId(), PermissionConstants.OBJ_TYPE_ACCOUNT, projectId, customerId);
 				mergePermissions(newPermissions, tmpPermissions);
 			}
 			// 角色
-			else if(PermissionConstants.DT_ROLE.equals(permissionPriority.getPermissionType())){
+			else if(PermissionConstants.OBJ_TYPE_ROLE.equals(permissionPriority.getPermissionType())){
 				List<Object> roleIds = accountOnlineStatus.getRoleIds();
 				if(roleIds != null && roleIds.size() > 0){
 					roleIds = processSamePermissionTypeLevel(roleIds, permissionPriority.getSamePermissionTypeLv());
 					
 					for (Object roleId : roleIds) {
-						tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_ROLE, roleId, projectId, customerId);
-						setSubPermissionsByData(tmpPermissions, roleId, PermissionConstants.DT_ROLE, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(PermissionConstants.OBJ_TYPE_ROLE, roleId, projectId, customerId);
+						setSubPermissionsByData(tmpPermissions, roleId, PermissionConstants.OBJ_TYPE_ROLE, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					roleIds.clear();
 				}
 			}
 			// 部门
-			else if(PermissionConstants.DT_DEPT.equals(permissionPriority.getPermissionType())){
+			else if(PermissionConstants.OBJ_TYPE_DEPT.equals(permissionPriority.getPermissionType())){
 				List<Object> deptIds = accountOnlineStatus.getDeptIds();
 				if(deptIds != null && deptIds.size() > 0){
 					deptIds = processSamePermissionTypeLevel(deptIds, permissionPriority.getSamePermissionTypeLv());		
 					
 					for (Object deptId : deptIds) {
-						tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_DEPT, deptId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, deptId, PermissionConstants.DT_DEPT, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(PermissionConstants.OBJ_TYPE_DEPT, deptId, projectId, customerId);
+						setSubPermissionsByData(newPermissions, deptId, PermissionConstants.OBJ_TYPE_DEPT, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					deptIds.clear();
 				}
 			}
 			// 岗位
-			else if(PermissionConstants.DT_POSITION.equals(permissionPriority.getPermissionType())){
+			else if(PermissionConstants.OBJ_TYPE_POSITION.equals(permissionPriority.getPermissionType())){
 				List<Object> positionIds = accountOnlineStatus.getPositionIds();
 				if(positionIds != null && positionIds.size() > 0){
 					positionIds = processSamePermissionTypeLevel(positionIds, permissionPriority.getSamePermissionTypeLv());	
 					
 					for (Object positionId : positionIds) {
-						tmpPermissions = getRootPermissionsByData(PermissionConstants.DT_POSITION, positionId, projectId, customerId);
-						setSubPermissionsByData(newPermissions, positionId, PermissionConstants.DT_POSITION, projectId, customerId);
+						tmpPermissions = getRootPermissionsByData(PermissionConstants.OBJ_TYPE_POSITION, positionId, projectId, customerId);
+						setSubPermissionsByData(newPermissions, positionId, PermissionConstants.OBJ_TYPE_POSITION, projectId, customerId);
 						mergePermissions(newPermissions, tmpPermissions);
 					}
 					positionIds.clear();
 				}
 			}
+			// 用户组
+			else if(PermissionConstants.OBJ_TYPE_USERGROUP.equals(permissionPriority.getPermissionType())){
+				List<Object> userGroupIds = accountOnlineStatus.getUserGroupIds();
+				if(userGroupIds != null && userGroupIds.size() > 0){
+					userGroupIds = processSamePermissionTypeLevel(userGroupIds, permissionPriority.getSamePermissionTypeLv());	
+					
+					for (Object userGroupId : userGroupIds) {
+						tmpPermissions = getRootPermissionsByData(PermissionConstants.OBJ_TYPE_USERGROUP, userGroupId, projectId, customerId);
+						setSubPermissionsByData(newPermissions, userGroupId, PermissionConstants.OBJ_TYPE_USERGROUP, projectId, customerId);
+						mergePermissions(newPermissions, tmpPermissions);
+					}
+					userGroupIds.clear();
+				}
+			}
+			
 			mergePermissions(permissions, newPermissions);
 		}
 		

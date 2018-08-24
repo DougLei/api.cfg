@@ -388,8 +388,8 @@
 - 请求体: 
 ```
 {
-  "objId":"",                    --主体id：比如用户id，角色id，部门id，岗位id，用户组id等
-  "objType":"",                  --主体类型：比如用户user，角色role，部门dept，岗位position，用户组userGroup等
+  "objId":"",                    --主体id：比如用户id，账户id，角色id，部门id，岗位id，用户组id等
+  "objType":"",                  --主体类型：比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等
   "refResourceId":"",            --关联的资源id: 比如某个模块的id，某个功能的id等
   "refResourceCode":"",          --关联的资源code，与refResourceId数据对应的code，是全项目唯一
   "refParentResourceId":"",      --关联的父资源id，同refResourceId
@@ -416,8 +416,8 @@
 ```
 {
   "Id":"",                       --主键
-  "objId":"",                    --主体id：比如用户id，角色id，部门id，岗位id，用户组id等
-  "objType":"",                  --主体类型：比如用户user，角色role，部门dept，岗位position，用户组userGroup等
+  "objId":"",                    --主体id：比如用户id，账户id，角色id，部门id，岗位id，用户组id等
+  "objType":"",                  --主体类型：比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等
   "refResourceId":"",            --关联的资源id: 比如某个模块的id，某个功能的id等
   "refResourceCode":"",          --关联的资源code，与refResourceId数据对应的code，是全项目唯一
   "refParentResourceId":"",      --关联的父资源id，同refResourceId

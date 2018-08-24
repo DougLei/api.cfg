@@ -97,7 +97,8 @@ public class RequestBody implements Serializable{
 	 * 解析资源字段的编码规则，并获取结果值
 	 */
 	public void analysisResourcePropCodeRule() {
-		resourcePropCodeRule = new ResourcePropCodeRule(this);
+		// TODO 暂时不要处理字段编码规则
+//		resourcePropCodeRule = new ResourcePropCodeRule(this);
 	}
 	
 	/**
@@ -142,7 +143,9 @@ public class RequestBody implements Serializable{
 	 * 清空数据
 	 */
 	public void clear() {
-		resourcePropCodeRule.clear();
+		if(resourcePropCodeRule != null){
+			resourcePropCodeRule.clear();
+		}
 	}
 	
 	public Map<String, String> getRequestUrlParams() {

@@ -7,25 +7,29 @@ package com.king.tooth.constants;
 public class PermissionConstants {
 
 	/**
-	 * 权限关联的数据类型: user
+	 * 权限关联的主体类型: user
 	 */
-	public static final String DT_USER = "user";
+	public static final String OBJ_TYPE_USER = "user";
 	/**
-	 * 权限关联的数据类型: role
+	 * 权限关联的主体类型: account
 	 */
-	public static final String DT_ROLE = "role";
+	public static final String OBJ_TYPE_ACCOUNT = "account";
 	/**
-	 * 权限关联的数据类型: dept
+	 * 权限关联的主体类型: role
 	 */
-	public static final String DT_DEPT = "dept";
+	public static final String OBJ_TYPE_ROLE = "role";
 	/**
-	 * 权限关联的数据类型: position
+	 * 权限关联的主体类型: dept
 	 */
-	public static final String DT_POSITION = "position";
+	public static final String OBJ_TYPE_DEPT = "dept";
 	/**
-	 * 权限关联的数据类型: userGroup
+	 * 权限关联的主体类型: position
 	 */
-	public static final String DT_USER_GROUP = "userGroup";
+	public static final String OBJ_TYPE_POSITION = "position";
+	/**
+	 * 权限关联的主体类型: userGroup
+	 */
+	public static final String OBJ_TYPE_USERGROUP = "userGroup";
 	
 	// -----------------------------------------------------------
 	/**
