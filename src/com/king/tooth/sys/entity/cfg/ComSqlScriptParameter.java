@@ -17,6 +17,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * sql脚本参数信息表
@@ -174,6 +175,11 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public void setLength(Integer length) {
 		this.length = length;
 	}
+	public void setLengthStr(String length) {
+		if(StrUtils.notEmpty(length)){
+			this.length = Integer.valueOf(length);
+		}
+	}
 	public Integer getParameterFrom() {
 		return parameterFrom;
 	}
@@ -237,7 +243,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		lengthColumn.setOrderCode(30);
 		columns.add(lengthColumn);
 		
-		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinCodeDataType.STRING, 10);
+		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinCodeDataType.STRING, 20);
 		parameterDataTypeColumn.setName("参数数据类型");
 		parameterDataTypeColumn.setComments("参数数据类型:默认值为string");
 		parameterDataTypeColumn.setDefaultValue(BuiltinCodeDataType.STRING);
@@ -316,26 +322,26 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	@JSONField(serialize = false)
 	public int getDatabaseDataTypeCode(String dbType){
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
-			if("varchar2".equalsIgnoreCase(parameterDataType)){
+			if("varchar2".equals(parameterDataType)){
 				return OracleTypes.VARCHAR;
-			}else if("char".equalsIgnoreCase(parameterDataType)){
+			}else if("char".equals(parameterDataType)){
 				return OracleTypes.CHAR;
-			}else if("number".equalsIgnoreCase(parameterDataType)){
+			}else if("number".equals(parameterDataType)){
 				return OracleTypes.NUMBER;
-			}else if("date".equalsIgnoreCase(parameterDataType)){
+			}else if("date".equals(parameterDataType)){
 				return OracleTypes.TIMESTAMP;
 			}
 			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+parameterDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
 		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
-			if("varchar".equalsIgnoreCase(parameterDataType)){
+			if("varchar".equals(parameterDataType)){
 				return Types.VARCHAR;
-			}else if("char".equalsIgnoreCase(parameterDataType)){
+			}else if("char".equals(parameterDataType)){
 				return Types.CHAR;
-			}else if("int".equalsIgnoreCase(parameterDataType)){
+			}else if("int".equals(parameterDataType)){
 				return Types.INTEGER;
-			}else if("decimal".equalsIgnoreCase(parameterDataType)){
+			}else if("decimal".equals(parameterDataType)){
 				return Types.DECIMAL;
-			}else if("datetime".equalsIgnoreCase(parameterDataType)){
+			}else if("datetime".equals(parameterDataType)){
 				return Types.TIMESTAMP;
 			}
 			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+parameterDataType+"]数据类型转换，请联系管理员");

@@ -194,13 +194,20 @@ public class SqlStatementParserUtil {
 			
 			TParameterDeclaration param = null;
 			String parameterName;
+			String dataType;
+			String length = null;
 			for(int i=0;i<len;i++){
 				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
 				parameterName = param.getParameterName().toString();
-				if(parameterName.indexOf("(") != -1){
-					parameterName = parameterName.substring(0, parameterName.indexOf("("));
+				
+				dataType = param.getDataType().toString().toLowerCase();
+				if(dataType.indexOf("(") != -1){
+					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
+					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter(parameterName, param.getDataType().toString(), param.getMode(), (i+1), true);
+				
+				parameter = new ComSqlScriptParameter(parameterName, dataType, param.getMode(), (i+1), true);
+				parameter.setLengthStr(length);
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
 			}
@@ -230,16 +237,23 @@ public class SqlStatementParserUtil {
 			
 			TParameterDeclaration param = null;
 			String parameterName;
+			String dataType;
+			String length = null;
 			for(int i=0;i<len;i++){
 				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
 				parameterName = param.getParameterName().toString();
 				if(parameterName.startsWith("@")){
 					parameterName = parameterName.substring(1);
 				}
-				if(parameterName.indexOf("(") != -1){
-					parameterName = parameterName.substring(0, parameterName.indexOf("("));
+				
+				dataType = param.getDataType().toString().toLowerCase();
+				if(dataType.indexOf("(") != -1){
+					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
+					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
-				parameter = new ComSqlScriptParameter(parameterName , param.getDataType().toString(), param.getMode(), (i+1), true);
+				
+				parameter = new ComSqlScriptParameter(parameterName , dataType, param.getMode(), (i+1), true);
+				parameter.setLengthStr(length);
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
 			}
