@@ -112,6 +112,7 @@ public class SysAccountService extends AbstractService{
 			accountOnlineStatus.setMessage("帐号或密码错误，请重新输入");
 			return accountOnlineStatus;
 		}
+		accountOnlineStatus.setAccountType(loginAccount.getType());
 		
 		// 处理账户和用户的关系
 		processAccountAndUserRelation(accountOnlineStatus, loginAccount.getId(), accountName);
@@ -252,7 +253,6 @@ public class SysAccountService extends AbstractService{
 		accountOnlineStatus.setLoginDate(new Date());
 		accountOnlineStatus.setTryLoginTimes(0);
 		accountOnlineStatus.setAccountId(loginAccount.getId());
-		accountOnlineStatus.setAccountType(loginAccount.getType());
 	}
 	
 	/**
