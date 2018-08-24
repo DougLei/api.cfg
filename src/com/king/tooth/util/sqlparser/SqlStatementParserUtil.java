@@ -329,8 +329,6 @@ public class SqlStatementParserUtil {
 			ActParameter actParam;
 			
 			// 记录系统内置参数和值
-			Object builtinQuerParamValue;
-			String[] bqpvTmp;
 			StringBuilder placeHolder = new StringBuilder();
 			
 			for (String parameterName : parameterNames) {
@@ -340,35 +338,7 @@ public class SqlStatementParserUtil {
 						actParam.setParameterName(parameterName);
 						actParams.add(actParam);
 						
-						if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){
-							builtinQuerParamValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
-							
-							if(ssp.getIsPlaceholder() == 1){
-								if(builtinQuerParamValue instanceof String){
-									bqpvTmp = ((String)builtinQuerParamValue).split(",");
-									for (String bt : bqpvTmp) {
-										placeHolder.append("?,");
-										queryCondParameters.add(bt);
-									}
-									placeHolder.setLength(placeHolder.length()-1);
-									actParam.setActualValue(placeHolder.toString());
-									placeHolder.setLength(0);
-								}else{
-									actParam.setActualValue("?");
-									queryCondParameters.add(builtinQuerParamValue);
-								}
-							}else{
-								actParam.setActualValue(getSimpleSqlParameterValue(builtinQuerParamValue));
-							}
-						}else{
-							// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
-							if(ssp.getIsPlaceholder() == 1){
-								actParam.setActualValue("?");
-								queryCondParameters.add(ssp.getActualInValue());
-							}else{
-								actParam.setActualValue(ssp.getActualInValue());
-							}
-						}
+						processActualParameter(parameterName, ssp, placeHolder, queryCondParameters, actParam);
 						break;
 					}
 				}
@@ -431,9 +401,8 @@ public class SqlStatementParserUtil {
 					for (ComSqlScriptParameter ssp : sqlScriptParameters) {
 						if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
 							actParam = new ActParameter();
-							actParams.add(actParam);
-							
 							actParam.setParameterName(parameterName);
+							actParams.add(actParam);
 							
 							// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
 							if(ssp.getIsPlaceholder() == 1){
@@ -477,21 +446,17 @@ public class SqlStatementParserUtil {
 			List<ActParameter> actParams = new ArrayList<ActParameter>(size);
 			ActParameter actParam;
 			
+			// 记录系统内置参数和值
+			StringBuilder placeHolder = new StringBuilder();
+			
 			for (String parameterName : parameterNames) {
 				for (ComSqlScriptParameter ssp : sqlScriptParameters) {
 					if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
 						actParam = new ActParameter();
+						actParam.setParameterName(parameterName);
 						actParams.add(actParam);
 						
-						actParam.setParameterName(parameterName);
-						
-						// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
-						if(ssp.getIsPlaceholder() == 1){
-							actParam.setActualValue("?");
-							sqlParamValues.add(ssp.getActualInValue());
-						}else{
-							actParam.setActualValue(ssp.getActualInValue());
-						}
+						processActualParameter(parameterName, ssp, placeHolder, sqlParamValues, actParam);
 						break;
 					}
 				}
@@ -504,6 +469,56 @@ public class SqlStatementParserUtil {
 		finalSqlScript.setFinalModifySqlArr(otherSqlArr);
 	}
 	
+	/**
+	 * 处理实际的sql脚本参数
+	 * <p>目前主要是在[setFinalSelectSqlHandler]和[setFinalOtherSqlHandler]方法中用到</p>
+	 * @param parameterName
+	 * @param ssp
+	 * @param placeHolder
+	 * @param sqlParamValues
+	 * @param actParam
+	 */
+	private static void processActualParameter(String parameterName, ComSqlScriptParameter ssp, StringBuilder placeHolder, List<Object> sqlParamValues, ActParameter actParam) {
+		if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){ // 如果参数是内置的，则要获取内置值
+			Object builtinQuerParamValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
+			
+			// 如果是条件参数，将值加入到sqlParamValues中，并将实际值改为?
+			if(ssp.getIsPlaceholder() == 1){
+				
+				// 如果是String类型，则证明是id，则要用,分割，可能会出现多个id
+				if(builtinQuerParamValue instanceof String){
+					String[] bqpvTmp = ((String)builtinQuerParamValue).split(",");
+					for (String bt : bqpvTmp) {
+						placeHolder.append("?,");
+						sqlParamValues.add(bt);
+					}
+					placeHolder.setLength(placeHolder.length()-1);
+					actParam.setActualValue(placeHolder.toString());
+					placeHolder.setLength(0);
+				}
+				// 否则就是一个值，则直接处理
+				else{
+					actParam.setActualValue("?");
+					sqlParamValues.add(builtinQuerParamValue);
+				}
+			}
+			// 否则直接添加值
+			else{
+				actParam.setActualValue(getSimpleSqlParameterValue(builtinQuerParamValue));
+			}
+		}else{
+			// 如果是条件参数，将值加入到sqlParamValues中，并将实际值改为?
+			if(ssp.getIsPlaceholder() == 1){
+				actParam.setActualValue("?");
+				sqlParamValues.add(ssp.getActualInValue());
+			}
+			// 否则直接添加值
+			else{
+				actParam.setActualValue(ssp.getActualInValue());
+			}
+		}		
+	}
+
 	/**
 	 * 获取简单的sql参数值
 	 * <p>目前就是对值加上''</p>
