@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
@@ -327,20 +328,46 @@ public class SqlStatementParserUtil {
 			List<ActParameter> actParams = new ArrayList<ActParameter>(parameterNames.size());
 			ActParameter actParam;
 			
+			// 记录系统内置参数和值
+			Object builtinQuerParamValue;
+			String[] bqpvTmp;
+			StringBuilder placeHolder = new StringBuilder();
+			
 			for (String parameterName : parameterNames) {
 				for (ComSqlScriptParameter ssp : sqlScriptParameters) {
 					if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
 						actParam = new ActParameter();
+						actParam.setParameterName(parameterName);
 						actParams.add(actParam);
 						
-						actParam.setParameterName(parameterName);
-						
-						// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
-						if(ssp.getIsPlaceholder() == 1){
-							actParam.setActualValue("?");
-							queryCondParameters.add(ssp.getActualInValue());
+						if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){
+							builtinQuerParamValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
+							
+							if(ssp.getIsPlaceholder() == 1){
+								if(builtinQuerParamValue instanceof String){
+									bqpvTmp = ((String)builtinQuerParamValue).split(",");
+									for (String bt : bqpvTmp) {
+										placeHolder.append("?,");
+										queryCondParameters.add(bt);
+									}
+									placeHolder.setLength(placeHolder.length()-1);
+									actParam.setActualValue(placeHolder.toString());
+									placeHolder.setLength(0);
+								}else{
+									actParam.setActualValue("?");
+									queryCondParameters.add(builtinQuerParamValue);
+								}
+							}else{
+								actParam.setActualValue(getSimpleSqlParameterValue(builtinQuerParamValue));
+							}
 						}else{
-							actParam.setActualValue(ssp.getActualInValue());
+							// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
+							if(ssp.getIsPlaceholder() == 1){
+								actParam.setActualValue("?");
+								queryCondParameters.add(ssp.getActualInValue());
+							}else{
+								actParam.setActualValue(ssp.getActualInValue());
+							}
 						}
 						break;
 					}
@@ -476,6 +503,21 @@ public class SqlStatementParserUtil {
 		sqlParameterValues.add(sqlParamValues);
 		finalSqlScript.setFinalModifySqlArr(otherSqlArr);
 	}
+	
+	/**
+	 * 获取简单的sql参数值
+	 * <p>目前就是对值加上''</p>
+	 * @param sqlParameterValue
+	 * @return
+	 */
+	public static String getSimpleSqlParameterValue(Object sqlParameterValue){
+		if(sqlParameterValue == null){
+			Log4jUtil.warn(SqlStatementParserUtil.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
+			return "";
+		}
+		return "'"+sqlParameterValue.toString()+"'";
+	}
+	
 
 //	下面的代码，是为了解析sql语句，分析出参数中，哪些是在调用的时候，通过?方式传值的，以及获取select语句，最终查询的结果列名集合
 //	/**

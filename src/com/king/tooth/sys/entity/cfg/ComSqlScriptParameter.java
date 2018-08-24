@@ -18,6 +18,7 @@ import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
 
 /**
  * sql脚本参数信息表
@@ -123,7 +124,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 					return actualInValue.toString();
 				}
 			}else{
-				return "'"+actualInValue+"'";
+				return SqlStatementParserUtil.getSimpleSqlParameterValue(actualInValue);
 			}
 		}else if(parameterFrom == 1){
 			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
