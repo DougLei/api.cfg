@@ -67,6 +67,13 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	@JSONField(serialize = false)
 	private List<Object> roleIds;
 	/**
+	 * 当前用户所属用户组id
+	 * <p>多个用,隔开</p>
+	 */
+	private String userGroupId;
+	@JSONField(serialize = false)
+	private List<Object> userGroupIds;
+	/**
 	 * token值
 	 */
 	private String token;
@@ -235,6 +242,18 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
 	}
+	public String getUserGroupId() {
+		return userGroupId;
+	}
+	public void setUserGroupId(String userGroupId) {
+		this.userGroupId = userGroupId;
+	}
+	public List<Object> getUserGroupIds() {
+		return userGroupIds;
+	}
+	public void setUserGroupIds(List<Object> userGroupIds) {
+		this.userGroupIds = userGroupIds;
+	}
 	public SysPermissionExtend getPermission() {
 		return permission;
 	}
@@ -281,7 +300,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinCodeDataType.STRING, 32);
 		accountIdColumn.setName("当前账户id");
@@ -322,6 +341,11 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		roleIdColumn.setName("当前用户所属角色id");
 		roleIdColumn.setComments("当前用户所属角色id，可以有多个，用,隔开");
 		columns.add(roleIdColumn);
+		
+		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", BuiltinCodeDataType.STRING, 400);
+		userGroupIdColumn.setName("当前用户所属用户组id");
+		userGroupIdColumn.setComments("当前用户所属用户组id，可以有多个，用,隔开");
+		columns.add(userGroupIdColumn);
 		
 		ComColumndata tokenColumn = new ComColumndata("token", BuiltinCodeDataType.STRING, 32);
 		tokenColumn.setName("token值");
