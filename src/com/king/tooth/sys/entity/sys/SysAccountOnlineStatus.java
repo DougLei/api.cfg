@@ -39,6 +39,10 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	 */
 	private String userId;
 	/**
+	 * 当前用户密级
+	 */
+	private Integer userSecretLevel;
+	/**
 	 * 当前用户所属组织id
 	 * <p>多个用,隔开</p>
 	 */
@@ -176,6 +180,12 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	public void setIsError(int isError) {
 		this.isError = isError;
 	}
+	public Integer getUserSecretLevel() {
+		return userSecretLevel;
+	}
+	public void setUserSecretLevel(Integer userSecretLevel) {
+		this.userSecretLevel = userSecretLevel;
+	}
 	public Date getLoginDate() {
 		return loginDate;
 	}
@@ -300,7 +310,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinCodeDataType.STRING, 32);
 		accountIdColumn.setName("当前账户id");
@@ -321,6 +331,11 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		userIdColumn.setName("当前用户id");
 		userIdColumn.setComments("当前用户id");
 		columns.add(userIdColumn);
+		
+		ComColumndata userSecretLevelColumn = new ComColumndata("user_secret_level", BuiltinCodeDataType.INTEGER, 1);
+		userSecretLevelColumn.setName("当前用户密级");
+		userSecretLevelColumn.setComments("当前用户密级");
+		columns.add(userSecretLevelColumn);
 		
 		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinCodeDataType.STRING, 200);
 		orgIdColumn.setName("当前用户所属组织id");

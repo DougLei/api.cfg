@@ -1584,9 +1584,11 @@ _currentProjectId                                       --当前项目id
 _currentAccountId                                       --当前账户id
 _currentAccountName                                     --当前账户名
 _currentUserId                                          --当前用户id
+_currentSecretLevel                                     --当前用户密级
 _currentOrgId                                           --当前用户所属组织id，如果是在sql脚本中使用该参数时，请使用in操作符，并用()括起来，例org_id in ($_currentOrgId$)
 _currentDeptId                                          --当前用户所属部门id，同上
 _currentPositionId                                      --当前用户所属岗位id，同上
+_currentUserGroupId                                     --当前用户所属用户组id，同上
 ```
 
 ### (二)、表资源的内置参数
@@ -1598,9 +1600,11 @@ _currentProjectId                                       --当前项目id
 _currentAccountId                                       --当前账户id
 _currentAccountName                                     --当前账户名
 _currentUserId                                          --当前用户id
+_currentSecretLevel                                     --当前用户密级
 _currentOrgId                                           --当前用户所属组织id
 _currentDeptId                                          --当前用户所属部门id
 _currentPositionId                                      --当前用户所属岗位id
+_currentUserGroupId                                     --当前用户所属用户组id，同上
 ```
 
 

@@ -57,6 +57,14 @@ public class BuiltinQueryParameters {
 	 * 当前用户所属角色id
 	 */
 	private static final String currentRoleId = "_currentRoleId";
+	/**
+	 * 当前用户所属用户组id
+	 */
+	private static final String currentUserGroupId = "_currentUserGroupId";
+	/**
+	 * 当前用户密级
+	 */
+	private static final String currentSecretLevel = "_currentSecretLevel";
 	
 	/**
 	 * 判断参数是否是系统内置参数
@@ -75,7 +83,9 @@ public class BuiltinQueryParameters {
 				|| currentOrgId.equals(parameterName)
 				|| currentDeptId.equals(parameterName)
 				|| currentPositionId.equals(parameterName)
-				|| currentRoleId.equals(parameterName)){
+				|| currentRoleId.equals(parameterName)
+				|| currentUserGroupId.equals(parameterName)
+				|| currentSecretLevel.equals(parameterName)){
 			return true;
 		}
 		return false;
@@ -122,6 +132,12 @@ public class BuiltinQueryParameters {
 		}
 		if(currentRoleId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getRoleId();
+		}
+		if(currentUserGroupId.equals(parameterName)){
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getUserGroupId();
+		}
+		if(currentSecretLevel.equals(parameterName)){
+			return CurrentThreadContext.getCurrentAccountOnlineStatus().getUserSecretLevel();
 		}
 		throw new IllegalArgumentException("没有匹配到内置参数["+parameterName+"]");
 	}
