@@ -11,12 +11,13 @@ import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.util.hibernate.HibernateHbmUtil;
 
 /**
  * 同步表到服务器数据库的工具类
  * @author DougLei
  */
-public class SyncTableToServerDBTool extends AbstractService{
+public final class SyncTableToServerDBTool extends AbstractService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
@@ -42,11 +43,13 @@ public class SyncTableToServerDBTool extends AbstractService{
 		
 		// 数据库表处理对象【根据服务器数据库对象获取】
 		DBTableHandler dbTableHandler = new DBTableHandler(serviceDatabaseInstance);
+		// 数据库数据处理对象【根据服务器数据库对象获取】
+		DBLink dblink = new DBLink(serviceDatabaseInstance);
 		
-		String[] insertSqlArr = new String[tables.length*2];
-		int index = 0;
+		String hbmId;
 		SysHibernateHbm hbm;
 		SysResource resource;
+		StringBuilder insertSql = new StringBuilder();
 		for (ComTabledata table : tables) {
 			if(dbTableHandler.filterTable(true, table.getTableName()).size() == 1){
 				System.err.println("表名为["+table.getTableName()+"]的表，在服务器数据库中已经存在，不能能再进行操作");
@@ -60,34 +63,53 @@ public class SyncTableToServerDBTool extends AbstractService{
 			hbm = new SysHibernateHbm();
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.tableTurnToHbm(table);
-//			hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, false));
-			insertSqlArr[index++] = getInsertSysHibernateHbmSql(hbm);
+			hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, false, "C:\\devlopment\\api\\projects\\api.cfg\\resources\\hibernateMapping\\template\\hibernate.hbm.xml.ftl"));
+			hbmId = getInsertSysHibernateHbmSql(hbm, insertSql);
+			
+			// 两个sql语句加一个分隔符
+			insertSql.append(";");
 			
 			// 3、获取插入资源数据的sql
 			resource = table.turnToResource();
-			insertSqlArr[index++] = getInsertSysResourceSql(resource);
+			getInsertSysResourceSql(resource, insertSql);
 			
-			// 4.清除
+			// 4.执行插入sql语句
+			dblink.executeUpdate(insertSql.toString().split(";"));
+			
+			// 5.将hbm的内存也保存到对应数据的hbmContent字段中
+//			hbmId
+//			hbm.getHbmContent();
+			
+			// 6.清除不用的数据
 			table.clear();
 		}
-
-		// 数据库数据处理对象【根据服务器数据库对象获取】
-		DBLink dblink = new DBLink(serviceDatabaseInstance);
-		dblink.executeUpdate(insertSqlArr);
-		
 		System.out.println("******同步表到服务器数据库完成******");
 	}
-	// 获取插入SysHibernateHbm表的sql语句
-	private static String getInsertSysHibernateHbmSql(SysHibernateHbm hbm) {
-		String insertSysResourceSql = "insert into sys_hibernate_hbm(ref_database_id, hbm_resource_name, id, customer_id, project_id, is_enabled, req_resource_method, is_builtin, is_need_deploy, belong_platform_type, is_created, create_date, last_update_date, create_user_id, last_update_user_id) ";
-		insertSysResourceSql += "values('5k7f1ef02728y7018f9df0e9edcr8d37','"+hbm.getHbmResourceName()+"','"+ResourceHandlerUtil.getIdentity()+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, "+hbm.getIsNeedDeploy()+", "+hbm.getBelongPlatformType()+", "+hbm.getIsCreated()+", getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')";
-		return insertSysResourceSql;
+	
+	/**
+	 * 获取插入SysHibernateHbm表的sql语句
+	 * @param hbm
+	 * @param insertSql
+	 * @return
+	 */
+	private static String getInsertSysHibernateHbmSql(SysHibernateHbm hbm, StringBuilder insertSql) {
+		String id = ResourceHandlerUtil.getIdentity();
+		insertSql.append("insert into sys_hibernate_hbm(ref_database_id, hbm_resource_name, id, customer_id, project_id, is_enabled, req_resource_method, is_builtin, is_need_deploy, belong_platform_type, is_created, create_date, last_update_date, create_user_id, last_update_user_id) ");
+		insertSql.append("values('5k7f1ef02728y7018f9df0e9edcr8d37','"+hbm.getHbmResourceName()+"','"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, "+hbm.getIsNeedDeploy()+", "+hbm.getBelongPlatformType()+", "+hbm.getIsCreated()+", getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
+		return id;
 	}
-	// 获取插入SysResource表的sql语句
-	private static String getInsertSysResourceSql(SysResource resource) {
-		String insertSysResourceSql = "insert into sys_resource(resource_name, resource_type, id, customer_id, project_id, is_enabled, req_resource_method, is_builtin, is_need_deploy, belong_platform_type, is_created, create_date, last_update_date, create_user_id, last_update_user_id) ";
-		insertSysResourceSql += "values('"+resource.getResourceName()+"',1,'"+ResourceHandlerUtil.getIdentity()+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, "+resource.getIsNeedDeploy()+", "+resource.getBelongPlatformType()+", "+resource.getIsCreated()+", getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')";
-		return insertSysResourceSql;
+	
+	/**
+	 * 获取插入SysResource表的sql语句
+	 * @param resource
+	 * @param insertSql
+	 * @return
+	 */
+	private static String getInsertSysResourceSql(SysResource resource, StringBuilder insertSql) {
+		String id = ResourceHandlerUtil.getIdentity();
+		insertSql.append("insert into sys_resource(resource_name, resource_type, id, customer_id, project_id, is_enabled, req_resource_method, is_builtin, is_need_deploy, belong_platform_type, is_created, create_date, last_update_date, create_user_id, last_update_user_id) ");
+		insertSql.append("values('"+resource.getResourceName()+"',1,'"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, "+resource.getIsNeedDeploy()+", "+resource.getBelongPlatformType()+", "+resource.getIsCreated()+", getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
+		return id;
 	}
 	
 	

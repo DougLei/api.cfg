@@ -78,7 +78,7 @@ public class DBLink {
 	 * @param updateSqlArr update-sql语句数组
 	 * @return 
 	 */
-	public String executeUpdate(final String[] updateSqlArr){
+	public String executeUpdate(final String... updateSqlArr){
 		if(updateSqlArr == null || updateSqlArr.length == 0){
 			Log4jUtil.debug("没有要执行的update-sql语句");
 			return "没有要执行的update-sql语句";

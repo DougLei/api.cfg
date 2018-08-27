@@ -21,7 +21,6 @@ public class HibernateHbmUtil {
 	 * hibernate hbm映射文件模版所在的路径
 	 */
 	private static final String HBM_FTL_FILE_PATH;
-	
 	/**
 	 * 静态块，从配置文件读取，并初始化属性值
 	 */
@@ -37,6 +36,17 @@ public class HibernateHbmUtil {
 	 * @return hbm content
 	 */
 	public static String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns){
+		return createHbmMappingContent(table, isNeedInitBasicColumns, HBM_FTL_FILE_PATH);
+	}
+	
+	/**
+	 * 根据表数据，创建hbm映射文件
+	 * @param table
+	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
+	 * @param freemarkerFtlPath freemarker ftl模版文件的路径
+	 * @return hbm content
+	 */
+	public static String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns, String freemarkerFtlPath){
 		if(isNeedInitBasicColumns){
 			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
 		}
@@ -44,7 +54,7 @@ public class HibernateHbmUtil {
 		dataModel.put("table", table);
 		dataModel.put("columns", table.getColumns());
 		dataModel.put("id", ResourcePropNameConstants.ID);
-		String hbmMappingContent = FreemarkerUtil.process(HBM_FTL_FILE_PATH, dataModel);
+		String hbmMappingContent = FreemarkerUtil.process(freemarkerFtlPath, dataModel);
 		return hbmMappingContent;
 	}
 }
