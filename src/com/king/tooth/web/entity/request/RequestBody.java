@@ -15,6 +15,12 @@ import com.king.tooth.web.servlet.route.RouteBody;
  */
 @SuppressWarnings("serial")
 public class RequestBody implements Serializable{
+	
+	/**
+	 * 是否继续解析
+	 */
+	private boolean isStopAnalysis;
+	
 	/**
 	 * httpServletRequest请求对象
 	 */
