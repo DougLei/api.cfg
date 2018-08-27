@@ -52,6 +52,10 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 	 */
 	private Object analysisRequestBody(HttpServletRequest request) {
 		RequestBody requestBody = new RequestBody(request);
+		if(requestBody.getIsStopAnalysis()){
+			return requestBody.getAnalysisErrMsg();
+		}
+		
 		requestBody.setFormData(analysisFormData(request));
 		if((requestBody.isPostRequest() || requestBody.isPutRequest()) && (requestBody.getFormData()==null || requestBody.getFormData().size()==0)){
 			return "系统要保存[POST]或修改[PUT]的formData数据不能为空";

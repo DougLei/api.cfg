@@ -17,9 +17,14 @@ import com.king.tooth.web.servlet.route.RouteBody;
 public class RequestBody implements Serializable{
 	
 	/**
-	 * 是否继续解析
+	 * 是否停止解析
 	 */
 	private boolean isStopAnalysis;
+	
+	/**
+	 * 解析过程中的错误信息
+	 */
+	private String analysisErrMsg;
 	
 	/**
 	 * httpServletRequest请求对象
@@ -87,7 +92,7 @@ public class RequestBody implements Serializable{
 			routeBody.setResourceName(codeUri);
 			routeBody.setIsAction(true);
 		}else{
-			this.routeBody = new RouteBody(requestUri);
+			this.routeBody = new RouteBody(requestUri, this);
 		}
 	}
 	
@@ -95,16 +100,22 @@ public class RequestBody implements Serializable{
 	 * 解析请求的资源的各种信息
 	 */
 	private void analysisResource() {
-		resourceInfo = new ResourceInfo(this);
-		resourceMetadataInfo = new ResourceMetadataInfo(this);
+		if(!isStopAnalysis){
+			resourceInfo = new ResourceInfo(this);
+		}
+		if(!isStopAnalysis){
+			resourceMetadataInfo = new ResourceMetadataInfo(this);
+		}
 	}
 	
 	/**
 	 * 解析资源字段的编码规则，并获取结果值
 	 */
 	public void analysisResourcePropCodeRule() {
-		// TODO 暂时不要处理字段编码规则
-//		resourcePropCodeRule = new ResourcePropCodeRule(this);
+		if(!isStopAnalysis){
+			// TODO 暂时不要处理字段编码规则
+//			resourcePropCodeRule = new ResourcePropCodeRule(this);
+		}
 	}
 	
 	/**
@@ -192,5 +203,15 @@ public class RequestBody implements Serializable{
 	}
 	public ResourcePropCodeRule getResourcePropCodeRule() {
 		return resourcePropCodeRule;
+	}
+	public void setAnalysisErrMsg(String analysisErrMsg) {
+		this.isStopAnalysis = true;
+		this.analysisErrMsg = analysisErrMsg;
+	}
+	public String getAnalysisErrMsg() {
+		return analysisErrMsg;
+	}
+	public boolean getIsStopAnalysis() {
+		return isStopAnalysis;
 	}
 }

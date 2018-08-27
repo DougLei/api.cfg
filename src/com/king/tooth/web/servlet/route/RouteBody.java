@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.web.entity.request.RequestBody;
 
 /**
  * 请求的资源体对象
@@ -17,8 +18,8 @@ public class RouteBody implements Serializable{
 	
 	public RouteBody() {
 	}
-	public RouteBody(String requestUri) {
-		analysis.doAnalysis(requestUri, this);
+	public RouteBody(String requestUri, RequestBody requestBody) {
+		analysis.doAnalysis(requestUri, this, requestBody);
 	}
 	
 	/**

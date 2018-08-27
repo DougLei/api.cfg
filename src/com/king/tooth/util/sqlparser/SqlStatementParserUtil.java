@@ -87,7 +87,7 @@ public class SqlStatementParserUtil {
 	 * @param comSqlScript
 	 * @return 返回解析的sql脚本内容数组
 	 */
-	public static String[] parseSqlScript(TGSqlParser gsqlParser, ComSqlScript comSqlScript) {
+	public static String[] parseSqlScript(TGSqlParser gsqlParser, ComSqlScript sql) {
 		TStatementList sqlList = gsqlParser.sqlstatements;
 		int len = sqlList.size();
 		
@@ -95,7 +95,8 @@ public class SqlStatementParserUtil {
 		if(len > 1 &&  ("true".equals(typeMap.get("isUnique")))){
 			throw new ArrayIndexOutOfBoundsException("目前系统只支持一次处理一条["+typeMap.get("type")+"]类型的sql脚本语句");
 		}
-		comSqlScript.setSqlScriptType(typeMap.get("type"));
+		sql.setSqlScriptType(typeMap.get("type"));
+		sql.setReqResourceMethod(typeMap.get("reqMethod"));
 		
 		String[] sqlScriptArr;
 		if("true".equals(typeMap.get("other"))){
@@ -107,6 +108,8 @@ public class SqlStatementParserUtil {
 				sqlScriptArr[i] = sqlList.get(i).toString();
 			}
 		}
+		
+		typeMap.clear();
 		return sqlScriptArr;
 	}
 	
@@ -116,7 +119,7 @@ public class SqlStatementParserUtil {
 	 * @return
 	 */
 	private static Map<String, String> getSqlScriptTypeMap(ESqlStatementType sqlStatementType) {
-		 Map<String, String> typeMap = new HashMap<String, String>(3);
+		 Map<String, String> typeMap = new HashMap<String, String>(4);
 		 typeMap.put("other", "false");
 		 typeMap.put("isUnique", "false");
 		 
@@ -124,32 +127,40 @@ public class SqlStatementParserUtil {
 	         case sstselect:
 	        	 typeMap.put("type", BuiltinDatabaseData.SELECT);
 	        	 typeMap.put("isUnique", "true");
+	        	 typeMap.put("reqMethod", "get");
 	        	 break;
 	         case sstupdate:
 	        	 typeMap.put("type", BuiltinDatabaseData.UPDATE);
+	        	 typeMap.put("reqMethod", "put");
 	        	 break;
 	         case sstinsert:
 	        	 typeMap.put("type", BuiltinDatabaseData.INSERT);
+	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	         case sstdelete:
 	        	 typeMap.put("type", BuiltinDatabaseData.DELETE);
+	        	 typeMap.put("reqMethod", "delete");
 	        	 break;
 	         case sstplsql_createprocedure:
 	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
 	        	 typeMap.put("isUnique", "true");
+	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	         case sstmssqlcreateprocedure:
 	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
 	        	 typeMap.put("isUnique", "true");
+	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	         case sstcreateview:
 	        	 typeMap.put("type", BuiltinDatabaseData.VIEW);
 	        	 typeMap.put("isUnique", "true");
+	        	 typeMap.put("reqMethod", "get");
 	        	 break;
 	         default:
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
 	        	 typeMap.put("type", sqlStatementType.toString());
 	        	 typeMap.put("other", "true");
+	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	     }
 		 return typeMap;
