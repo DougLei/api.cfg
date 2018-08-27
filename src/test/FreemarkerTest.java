@@ -25,7 +25,7 @@ public class FreemarkerTest {
 //		Template t = cfg.getTemplate("C:\\devlopment\\GitRepository\\api_platform\\resources\\hello.ftl");
 //		Map dataModel = new HashMap();
 //		dataModel.put("classPath", "com.king.tooth");
-//		dataModel.put("className", "ComTabledataController");
+//		dataModel.put("className", "DevToolController");
 //		t.process(dataModel , new OutputStreamWriter(System.out));
 		
 		Map dataModel = new HashMap();

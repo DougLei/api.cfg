@@ -114,7 +114,7 @@ public class RequestBody implements Serializable{
 	public void analysisResourcePropCodeRule() {
 		if(!isStopAnalysis){
 			// TODO 暂时不要处理字段编码规则
-//			resourcePropCodeRule = new ResourcePropCodeRule(this);
+			resourcePropCodeRule = new ResourcePropCodeRule(this);
 		}
 	}
 	

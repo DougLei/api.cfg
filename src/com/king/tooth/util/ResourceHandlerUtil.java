@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
@@ -117,27 +115,6 @@ public class ResourceHandlerUtil {
 		return dataLinks;
 	}
 
-	/**
-	 * 可以忽略登录验证的请求url集合
-	 */
-	private static final String[] ignoreLoginValidUri;
-	static{
-		ignoreLoginValidUri = SysConfig.getSystemConfig("ignore.loginvalid.uri").split(",");
-	}
-	/**
-	 * 是否需要忽略登录验证
-	 * @param request
-	 * @return
-	 */
-	public static boolean isIgnoreLoginValid(HttpServletRequest request) {
-		for (String ignoreUri : ignoreLoginValidUri) {
-			if(request.getRequestURI().endsWith(ignoreUri)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	/**
 	 * 初始化配置参数值
 	 * @param configKey

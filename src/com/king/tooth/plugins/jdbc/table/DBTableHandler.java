@@ -208,7 +208,7 @@ public class DBTableHandler {
 	
 	/**
 	 * 筛选表在库中是否存在
-	 * @param isExists true:筛选出在库中存在的表的表名、false:反之
+	 * @param isExists true:筛选参数tableNameArr传入的表名数组，在数据库中已经存在的都有哪些，返回回来、false:反之
 	 * @param tableNameArr
 	 * @return 表名集合
 	 */
@@ -265,5 +265,4 @@ public class DBTableHandler {
 			Log4jUtil.debug("[DBTableHandler.executeDDL]操作数据表失败，异常信息为：{}", result);
 		}
 	}
-	
 }

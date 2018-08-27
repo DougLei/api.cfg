@@ -17,7 +17,6 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
 import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.thread.CurrentThreadContext;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -52,7 +51,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 	 * @throws IOException
 	 */
 	private String varifyRequestIsValid(HttpServletRequest request, String token) throws IOException{
-		if(ResourceHandlerUtil.isIgnoreLoginValid(request)){
+		if(isIgnoreLoginValid(request)){
 			return null;
 		}
 		if(StrUtils.isEmpty(token)){
@@ -84,6 +83,27 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		return null;
 	}
 
+	/**
+	 * 可以忽略登录验证的请求url集合
+	 */
+	private static final String[] ignoreLoginValidUri;
+	static{
+		ignoreLoginValidUri = SysConfig.getSystemConfig("ignore.loginvalid.uri").split(",");
+	}
+	/**
+	 * 是否需要忽略登录验证
+	 * @param request
+	 * @return
+	 */
+	private boolean isIgnoreLoginValid(HttpServletRequest request) {
+		for (String ignoreUri : ignoreLoginValidUri) {
+			if(request.getRequestURI().endsWith(ignoreUri)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void init(FilterConfig arg0) throws ServletException {
 	}
 }

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service;
+package com.king.tooth.sys.service.other;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -53,6 +53,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
+import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -65,7 +66,7 @@ import com.king.tooth.util.hibernate.HibernateHbmUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 初始化配置系统的服务器
+ * 初始化系统的Service
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
