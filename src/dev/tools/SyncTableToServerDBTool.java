@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.other;
+package dev.tools;
 
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
@@ -13,10 +13,10 @@ import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
- * 开发工具的Service
+ * 同步表到服务器数据库的工具类
  * @author DougLei
  */
-public class DevToolService extends AbstractService{
+public class SyncTableToServerDBTool extends AbstractService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
