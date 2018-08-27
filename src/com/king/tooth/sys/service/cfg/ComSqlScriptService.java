@@ -219,6 +219,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @return
 	 */
 	public String deleteSqlScript(String sqlScriptId) {
+		ComSqlScript sql = getObjectById(sqlScriptId, ComSqlScript.class);
 		
 		// TODO 单项目，取消是否平台开发者的判断
 //		ComSqlScript oldSqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
@@ -244,18 +245,23 @@ public class ComSqlScriptService extends AbstractPublishService {
 			projectIds.clear();
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where "+ResourcePropNameConstants.ID+" = '"+sqlScriptId+"'");
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where "+ResourcePropNameConstants.ID+" = ?", sql.getId());
 		HibernateUtil.deleteDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sql.getId());
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		// TODO 单项目，取消是否平台开发者的判断
 //		if(isDeveloper){
 			new SysResourceService().deleteSysResource(sqlScriptId);
 //		}
+			
+		// 删除sql脚本资源时，如果是视图、存储过程等，还需要drop对应的对象【删除数据库对象】
+		HibernateUtil.dropObject(sql);
+			
+		sql.clear();
 		return null;
 	}
-	
+
 	/**
 	 * 创建sql脚本对象
 	 * <p>存储过程、视图等</p>
@@ -281,7 +287,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		updateHql.append(")");
 		
 		try {
-			HibernateUtil.createObject(sqls);
+			HibernateUtil.createObjects(sqls);
 			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), null);
 		} catch (Exception e) {
 			return ExceptionUtil.getErrMsg("ComSqlScriptService", "immediateCreate", e);

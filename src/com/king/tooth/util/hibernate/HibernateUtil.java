@@ -453,51 +453,80 @@ public class HibernateUtil {
 	//------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * 创建对象
+	 * 创建数据库对象
 	 * <p>存储过程、视图等</p>
 	 * @param sqls
 	 */
-	public static void createObject(final List<ComSqlScript> sqls) {
+	public static void createObjects(List<ComSqlScript> sqls) {
 		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
 		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqls.get(0).getDbType());
 		if(!isSqlServler && !isOracle){
 			throw new IllegalArgumentException("系统目前不支持["+sqls.get(0).getDbType()+"]类型的数据库操作");
 		}
-		
+		processDBObjects(sqls, true, isSqlServler, isOracle);
+	}
+	
+	/**
+	 * 删除数据库对象
+	 * <p>存储过程、视图等</p>
+	 * @param sqls
+	 */
+	public static void dropObject(ComSqlScript sql){
+		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
+		sqls.add(sql);
+		dropObjects(sqls);
+		sqls.clear();
+	}
+	
+	/**
+	 * 删除数据库对象
+	 * <p>存储过程、视图等</p>
+	 * @param sqls
+	 */
+	public static void dropObjects(List<ComSqlScript> sqls){
+		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
+		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqls.get(0).getDbType());
+		if(!isSqlServler && !isOracle){
+			throw new IllegalArgumentException("系统目前不支持["+sqls.get(0).getDbType()+"]类型的数据库操作");
+		}
+		processDBObjects(sqls, false, isSqlServler, isOracle);
+	}
+	
+	/**
+	 * 处理数据库对象，如果存在则删除，再根据参数(isCreate)决定是否重新创建
+	 * <p>存储过程、视图等</p>
+	 */
+	private static void processDBObjects(final List<ComSqlScript> sqls, final boolean isCreate, final boolean isSqlServler, final boolean isOracle) {
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection conn) throws SQLException {
 				Statement st = null;
 				PreparedStatement pst = null;
 				ResultSet rs = null;
 				try {
-					st = conn.createStatement();
-					
+					ComSqlScript tmpSql = sqls.get(0);
 					if(isSqlServler){
 						pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
+						if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType())){
+							pst.setString(2, "P");
+						}else if(BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
+							pst.setString(2, "V");
+						}else{
+							throw new IllegalArgumentException("系统目前不支持在sqlserver数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");
+						}
 					}else if(isOracle){
 						pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
+						if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType())){
+							pst.setString(2, "PROCEDURE");
+						}else if(BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
+							pst.setString(2, "VIEW");
+						}else{
+							throw new IllegalArgumentException("系统目前不支持在oracle数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");
+						}
 					}
 					
+					st = conn.createStatement();
 					for (ComSqlScript sql : sqls) {
 						pst.setString(1, sql.getObjectName());
-						
-						if(isSqlServler){
-							if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
-								pst.setString(2, "P");
-							}else if(BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
-								pst.setString(2, "V");
-							}else{
-								throw new IllegalArgumentException("系统目前不支持在sqlserver数据库中创建["+sql.getSqlScriptType()+"]类型的sql对象");
-							}
-						}else if(isOracle){
-							if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
-								pst.setString(2, "PROCEDURE");
-							}else if(BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
-								pst.setString(2, "VIEW");
-							}else{
-								throw new IllegalArgumentException("系统目前不支持在oracle数据库中创建["+sql.getSqlScriptType()+"]类型的sql对象");
-							}
-						}
 						
 						// 如果已经存在对象，则删除
 						rs = pst.executeQuery();
@@ -505,14 +534,16 @@ public class HibernateUtil {
 							st.executeUpdate("drop " + sql.getSqlScriptType() + " " + sql.getObjectName());
 						}
 						
-						// 再创建对象
-						st.executeUpdate(sql.getSqlScriptContent());
+						if(isCreate){
+							st.executeUpdate(sql.getSqlScriptContent());// 创建对象
+						}
 					}
 				} finally{
 					CloseUtil.closeDBConn(rs, st, pst);
 				}
 			}
 		});
+		
 	}
 	
 	

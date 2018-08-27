@@ -387,7 +387,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 					&& (BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType))){
 				List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
 				sqls.add(this);
-				HibernateUtil.createObject(sqls);
+				HibernateUtil.createObjects(sqls);
 				this.isCreated = 1;
 			}
 		}
