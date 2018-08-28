@@ -59,8 +59,7 @@ public class ResourceInfo {
 		codeResourceKey = CodeResourceMapping.getCodeResourceKey(routeBody.getResourceName(), requestMethod, routeBody.getActionName());
 		if(routeBody.isAction() || CodeResourceMapping.isCodeResource(codeResourceKey)){
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				requestBody.setAnalysisErrMsg("平台目前不支持处理[主子/递归]方式调用code资源");
-				return;
+				throw new IllegalArgumentException("平台目前不支持处理[主子/递归]方式调用code资源");
 			}
 			resourceType = ISysResource.CODE;
 		}else{
@@ -72,8 +71,7 @@ public class ResourceInfo {
 				sqlScriptResource = BuiltinObjectInstance.sqlScriptService.findSqlScriptResourceById(reqResource.getRefResourceId());
 				
 				if(!requestMethod.equals(sqlScriptResource.getReqResourceMethod())){
-					requestBody.setAnalysisErrMsg("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，只支持["+sqlScriptResource.getReqResourceMethod()+"]方式的请求");
-					return;
+					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，只支持["+sqlScriptResource.getReqResourceMethod()+"]方式的请求");
 				}
 			}
 			
@@ -83,12 +81,10 @@ public class ResourceInfo {
 				reqResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
 				
 				if(reqResource.getResourceType() != resourceType){
-					requestBody.setAnalysisErrMsg("平台目前不支持处理不同类型的资源混合调用");
-					return;
+					throw new IllegalArgumentException("平台目前不支持处理不同类型的资源混合调用");
 				}
 				if(reqResource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
-					requestBody.setAnalysisErrMsg("平台目前不支持处理[主子]方式调用sql资源");
-					return;
+					throw new IllegalArgumentException("平台目前不支持处理[主子]方式调用sql资源");
 				}
 			}
 		}

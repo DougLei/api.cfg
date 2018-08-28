@@ -63,6 +63,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	private String sqlScriptParameters;
 	@JSONField(serialize = false)
 	private List<ComSqlScriptParameter> sqlScriptParameterList;
+	@JSONField(serialize = false)
+	private List<List<ComSqlScriptParameter>> sqlParamsList;
 	
 	/**
 	 * sql对象名称
@@ -119,7 +121,22 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * 在调用sql资源时，保存被处理过的，可以执行的最终查询的sql脚本语句对象
 	 */
 	@JSONField(serialize = false)
-	private FinalSqlScriptStatement finalSqlScript;
+	private List<FinalSqlScriptStatement> finalSqlScriptList;
+	
+	/**
+	 * 脚本参数记录的map
+	 * <p>
+	 * 	key=sqlIndex
+	 *  value=参数名集合
+	 * </p>
+	 */
+	@JSONField(serialize = false)
+	private Map<Integer, List<String>> parameterNameRecordMap;
+	/**
+	 * 是否解析脚本参数记录map
+	 */
+	@JSONField(serialize = false)
+	private boolean isAnalysisParameterNameRecordMap;
 	
 	/**
 	 * 关联的数据库id
@@ -201,8 +218,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	public FinalSqlScriptStatement getFinalSqlScript() {
-		return finalSqlScript;
+	public List<FinalSqlScriptStatement> getFinalSqlScriptList() {
+		return finalSqlScriptList;
 	}
 	public void setRefDatabaseId(String refDatabaseId) {
 		this.refDatabaseId = refDatabaseId;
@@ -255,6 +272,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	public void setIsImmediateCreate(int isImmediateCreate) {
 		this.isImmediateCreate = isImmediateCreate;
+	}
+	public List<List<ComSqlScriptParameter>> getSqlParamsList() {
+		return sqlParamsList;
 	}
 	
 	public ComTabledata toCreateTable() {
@@ -429,7 +449,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * @param sqlParameterValues
 	 */
 	public void analysisFinalSqlScript(ComSqlScript sqlScriptResource, List<List<Object>> sqlParameterValues) {
-		this.finalSqlScript = SqlStatementParserUtil.getFinalSqlScript(sqlScriptResource, sqlParameterValues);
+		this.finalSqlScriptList = SqlStatementParserUtil.getFinalSqlScriptList(sqlScriptResource, sqlParameterValues);
 	}
 	
 	public SysResource turnToResource() {
@@ -467,66 +487,86 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * 将调用sql资源时，实际传过来的值存到参数集合中(sql参数集合/procedure sql参数集合)
 	 * @param sqlScriptActualParameters
 	 */
-	public void setActualParams(List<ComSqlScriptParameter> sqlScriptActualParameters) {
-		if(sqlScriptActualParameters == null || sqlScriptActualParameters.size() == 0){
+	public void setActualParams(List<List<ComSqlScriptParameter>> actualParamsList) {
+		if(actualParamsList == null || actualParamsList.size() == 0){
 			return;
 		}
 		
 		if(this.sqlScriptParameterList == null || this.sqlScriptParameterList.size() == 0){
-			throw new IllegalArgumentException("在调用sql资源时，传入的实际参数集合为：["+sqlScriptActualParameters+"]，但是被调用的sql资源["+this.sqlScriptResourceName+"]却不存在任何sql脚本的参数对象集合。请检查该sql资源是否确实有参数配置，并确认合法调用sql资源，或联系管理员");
+			throw new IllegalArgumentException("在调用sql资源时，传入的实际参数集合为：["+JsonUtil.toJsonString(actualParamsList, false)+"]，但是被调用的sql资源["+this.sqlScriptResourceName+"]却不存在任何sql脚本的参数对象集合。请检查该sql资源是否确实有参数配置，并确认合法调用sql资源，或联系管理员");
 		}
 		
-		int count = 0;
-		for (ComSqlScriptParameter ssp : sqlScriptParameterList) {
-			if(ssp.getParameterFrom() == 1){// 参数值来源为系统内置
-				ssp.setActualInValue(ssp.analysisActualInValue());
-				count++;
-			}else if(ssp.getParameterFrom() == 0){// 参数值来源为用户输入
-				for (ComSqlScriptParameter ssap : sqlScriptActualParameters) {
-					if(ssp.getParameterName().equalsIgnoreCase(ssap.getParameterName())){
-						ssp.setActualInValue(ssap.getActualInValue());
-						ssp.setActualInValue(ssp.analysisActualInValue());
-						count++;
-						break;
+		sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(actualParamsList.size());
+		List<ComSqlScriptParameter> sqlParams;
+		for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
+			sqlParams = copySqlParams(sqlScriptParameterList);
+			for (ComSqlScriptParameter ssp : sqlParams) {
+				if(ssp.getParameterFrom() == 1){// 参数值来源为系统内置
+					ssp.analysisActualInValue();
+				}else if(ssp.getParameterFrom() == 0){// 参数值来源为用户输入
+					for (ComSqlScriptParameter ssap : actualParams) {
+						if(ssp.getParameterName().equals(ssap.getParameterName())){
+							ssp.setActualInValue(ssap.getActualInValue());
+							ssp.analysisActualInValue();
+							break;
+						}
 					}
 				}
 			}
+			sqlParamsList.add(sqlParams);
 		}
-		if(count != sqlScriptParameterList.size()){
-			throw new IllegalArgumentException("调用sql脚本时，传入的参数值数量和配置的参数数量不匹配，请检查");
-		}
+		sqlScriptParameterList.clear();
 	}
 	
 	/**
-	 * 获取脚本参数记录的map
-	 * <p>
-	 * 	key=sqlIndex
-	 *  value=参数名集合
-	 * </p>
+	 * 复制sql参数集合
+	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	@JSONField(serialize = false)
+	private List<ComSqlScriptParameter> copySqlParams(List<ComSqlScriptParameter> sqlScriptParameterList) {
+		List<ComSqlScriptParameter> sqlParams = new ArrayList<ComSqlScriptParameter>(sqlScriptParameterList.size());
+		sqlParams.addAll(sqlScriptParameterList);
+		return sqlParams;
+	}
+	
 	public Map<Integer, List<String>> getParameterNameRecordMap() {
-		if(parameterNameRecordList != null && parameterNameRecordList.size() > 0){
-			Map<Integer, List<String>> parameterNameRecordMap = new HashMap<Integer, List<String>>(parameterNameRecordList.size());
-			for (SqlScriptParameterNameRecord pnr : parameterNameRecordList) {
-				parameterNameRecordMap.put(pnr.getSqlIndex(), pnr.getParameterNames());
+		analysisParameterNameRecordMap();
+		return parameterNameRecordMap;
+	}
+	/**
+	 * 解析脚本参数记录的map
+	 */
+	private void analysisParameterNameRecordMap(){
+		if(!isAnalysisParameterNameRecordMap){
+			isAnalysisParameterNameRecordMap = true;
+			
+			if(parameterNameRecordList != null && parameterNameRecordList.size() > 0){
+				parameterNameRecordMap = new HashMap<Integer, List<String>>(parameterNameRecordList.size());
+				for (SqlScriptParameterNameRecord pnr : parameterNameRecordList) {
+					parameterNameRecordMap.put(pnr.getSqlIndex(), pnr.getParameterNames());
+				}
+				parameterNameRecordList.clear();
 			}
-			parameterNameRecordList.clear();
-			return parameterNameRecordMap;
 		}
-		return null;
 	}
 	
 	public void clear(){
-		if(sqlScriptParameterList != null){
-			sqlScriptParameterList.clear();
-		}
 		if(sqlQueryResultColumnList != null){
 			sqlQueryResultColumnList.clear();
 		}
-		if(parameterNameRecordList != null){
-			parameterNameRecordList.clear();
+		if(finalSqlScriptList != null){
+			finalSqlScriptList.clear();
+		}
+		if(parameterNameRecordMap != null){
+			parameterNameRecordMap.clear();
+		}
+		if(sqlParamsList != null){
+			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
+				if(sqlParams != null){
+					sqlParams.clear();
+				}
+			}
+			sqlParamsList.clear();
 		}
 	}
 }

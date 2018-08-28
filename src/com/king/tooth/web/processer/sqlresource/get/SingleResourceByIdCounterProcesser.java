@@ -21,7 +21,7 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 			validIdColumnIsExists(sqlScriptResource);
 		}
 		
-		String querySql = sqlScriptResource.getFinalSqlScript().getFinalCteSql() + 
+		String querySql = sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql() + 
 						  getFromSql().toString();
 		Query query = createQuery(0, querySql);
 		long totalCount = (long) query.uniqueResult();
@@ -32,7 +32,7 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 	
 	protected StringBuilder getFromSql() {
 		StringBuilder sql = new StringBuilder(" select count(1) from (");
-		sql.append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalSelectSqlScript())
+		sql.append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
 		   .append(" ) s_ ")
 		   .append(builtinQueryCondMethodProcesser.getSql());
 		return sql;

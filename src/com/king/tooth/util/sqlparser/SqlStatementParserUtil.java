@@ -283,44 +283,57 @@ public class SqlStatementParserUtil {
 		sqlScript.setObjectName(((TCreateViewSqlStatement) sqlStatement).getViewName().toString());
 	}
 	
-	
 	/**
-	 * 根据sql脚本参数，获取最终的sql脚本对象
+	 * 根据sql脚本参数，获取最终的sql脚本对象集合
 	 * @param sqlScript
 	 * @param sqlParameterValues 
 	 * @param 
 	 */
-	public static FinalSqlScriptStatement getFinalSqlScript(ComSqlScript sqlScript, List<List<Object>> sqlParameterValues) {
-		if(sqlScript.getSqlScriptType().equals(BuiltinDatabaseData.PROCEDURE)){// 是存储过程，不解析最终的sql语句
-			return null;
+	public static List<FinalSqlScriptStatement> getFinalSqlScriptList(ComSqlScript sqlScript, List<List<Object>> sqlParameterValues) {
+		// 获取sql脚本参数集合
+		List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
+		// 初始化最终的sql脚本对象集合
+		List<FinalSqlScriptStatement> finalSqlScriptList = new ArrayList<FinalSqlScriptStatement>(sqlParamsList.size());
+		FinalSqlScriptStatement finalSqlScript;
+		
+		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType()) || BuiltinDatabaseData.VIEW.equals(sqlScript.getSqlScriptType())){// 存储过程、视图，不解析最终的sql语句
+			finalSqlScript = new FinalSqlScriptStatement();
+			finalSqlScriptList.add(finalSqlScript);
+			finalSqlScript.setIsProcedure(true);
+		}else{
+			// 获取sql脚本对象，以及sql类型
+			TStatementList sqlStatementList = sqlScript.getGsqlParser().sqlstatements;
+			ESqlStatementType sqlStatementType = sqlStatementList.get(0).sqlstatementtype;
+			
+			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
+				finalSqlScript = new FinalSqlScriptStatement();
+				finalSqlScriptList.add(finalSqlScript);
+				
+				switch(sqlStatementType){
+					case sstselect:
+						finalSqlScript.setIsSelectSqlScript(true);
+						setFinalSelectSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList.get(0), sqlParameterValues);
+						break;
+					case sstinsert:
+						finalSqlScript.setIsInsertSqlScript(true);
+						setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
+						break;
+					case sstupdate:
+						finalSqlScript.setIsUpdateSqlScript(true);
+						setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
+						break;
+					case sstdelete:
+						finalSqlScript.setIsDeleteSqlScript(true);
+						setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
+						break;
+					default:
+						finalSqlScript.setIsOther(true);
+						setFinalOtherSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlScript.getGsqlParser().sqltext, sqlParameterValues);
+						break;
+				}
+			}
 		}
-		TStatementList sqlStatementList = sqlScript.getGsqlParser().sqlstatements;
-		FinalSqlScriptStatement finalSqlScript = new FinalSqlScriptStatement();
-		List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
-		TCustomSqlStatement sqlStatement = sqlStatementList.get(0);
-		switch(sqlStatement.sqlstatementtype){
-			case sstselect:
-				finalSqlScript.setIsSelectSqlScript(true);
-				setFinalSelectSqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatement, sqlParameterValues);
-				break;
-			case sstinsert:
-				finalSqlScript.setIsInsertSqlScript(true);
-				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
-				break;
-			case sstupdate:
-				finalSqlScript.setIsUpdateSqlScript(true);
-				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
-				break;
-			case sstdelete:
-				finalSqlScript.setIsDeleteSqlScript(true);
-				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlStatementList, sqlParameterValues);
-				break;
-			default:
-				finalSqlScript.setIsOther(true);
-				setFinalOtherSqlHandler(sqlScript.getParameterNameRecordMap(), sqlScriptParameters, finalSqlScript, sqlScript.getGsqlParser().sqltext, sqlParameterValues);
-				break;
-		}
-		return finalSqlScript;
+		return finalSqlScriptList;
 	}
 	
 	/**

@@ -2,12 +2,10 @@ package com.king.tooth.web.processer.sqlresource;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.hibernate.Query;
-
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -86,25 +84,30 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 */
 	protected final void doModifyProcess(String sqlDesc){
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
-		if(sqlScript.getSqlScriptType().equals(BuiltinDatabaseData.PROCEDURE)){// 是存储过程
+		if(finalSqlScriptList.get(0).getIsProcedure()){// 是存储过程
 			JSONObject json = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getObjectName(), sqlScript.getSqlScriptParameterList());
 			setResponseBody(new ResponseBody(json, true));
 			return;
 		}
 		
-		String[] modifySqlArr = sqlScript.getFinalSqlScript().getFinalModifySqlArr();
-		int len = modifySqlArr.length;
+		String[] modifySqlArr;
 		Query query;
-		for (int i = 0; i < len; i++) {
-			query = createQuery(i, modifySqlArr[i].replace(";", ""));
-			query.executeUpdate();
+		int index = 0;
+		for (FinalSqlScriptStatement finalSqlScript : finalSqlScriptList) {
+			modifySqlArr = finalSqlScript.getFinalModifySqlArr();
+			int len = modifySqlArr.length;
+			for (int i = 0; i < len; i++) {
+				query = createQuery(index++, modifySqlArr[i].replace(";", ""));
+				query.executeUpdate();
+			}
 		}
 		
 		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
 			setResponseBody(new ResponseBody(null, true));
 		}else{
-			setResponseBody(new ResponseBody(requestBody.getFormData().get(0), true));
+			setResponseBody(new ResponseBody(requestBody.getFormData(), true));
 		}
 	}
 	
@@ -115,7 +118,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		// 清除sql语句中的参数值集合
 		if(sqlParameterValues.size() > 0){
 			for(List<Object> list : sqlParameterValues){
-				if(list.size() > 0){
+				if(list != null){
 					list.clear();
 				}
 			}

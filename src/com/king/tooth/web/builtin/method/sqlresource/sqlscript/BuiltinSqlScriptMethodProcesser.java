@@ -47,18 +47,21 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	}
 	
 	/**
-	 * 根据实际值的map集合，创建对应的sql脚本参数集合
+	 * 获取实际的参数集合
 	 * @return
 	 */
-	private List<ComSqlScriptParameter> getActualParameters() {
+	private List<List<ComSqlScriptParameter>> getActualParamsList() {
+		List<List<ComSqlScriptParameter>> actualParamsList = null;
 		List<ComSqlScriptParameter> sqlScriptActualParameters = null;
 		ComSqlScriptParameter ssp = null;
 		
 		// 请求体为空，那么是从url传参，则是get请求select sql资源
 		if((formData == null || formData.size() == 0)){
 			if(sqlScriptParams != null && sqlScriptParams.size() > 0){
+				actualParamsList = new ArrayList<List<ComSqlScriptParameter>>(1);
 				// 解析sql脚本的参数
 				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(sqlScriptParams.size());
+				actualParamsList.add(sqlScriptActualParameters);
 				
 				Set<String> parameterNames = sqlScriptParams.keySet();
 				for (String parameterName : parameterNames) {
@@ -66,25 +69,33 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 					ssp.setActualInValue(processActualValue(sqlScriptParams.get(parameterName).trim()));
 					sqlScriptActualParameters.add(ssp);
 				}
-				
 				sqlScriptParams.clear();
 			}
 		}
 		// 否则就是通过请求体传参，则是post/put/delete insert/update/delete 等sql资源
 		else{
-			JSONObject json = formData.get(0);
-			if(json != null && json.size()>0){
-				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(json.size());
-				
-				Set<String> parameterNames = json.keySet();
-				for (String parameterName : parameterNames) {
-					ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
-					ssp.setActualInValue(json.getString(parameterName).trim());
-					sqlScriptActualParameters.add(ssp);
+			int len = formData.size();
+			actualParamsList = new ArrayList<List<ComSqlScriptParameter>>(len);
+			
+			JSONObject json;
+			for(int i=0;i<len;i++){
+				json = formData.get(i);
+				if(json != null && json.size()>0){
+					sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(json.size());
+					actualParamsList.add(sqlScriptActualParameters);
+					
+					Set<String> parameterNames = json.keySet();
+					for (String parameterName : parameterNames) {
+						ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
+						ssp.setActualInValue(json.getString(parameterName).trim());
+						sqlScriptActualParameters.add(ssp);
+					}
+				}else{
+					actualParamsList.add(null);
 				}
 			}
 		}
-		return sqlScriptActualParameters;
+		return actualParamsList;
 	}
 	
 	/**
@@ -104,13 +115,17 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 	protected void execAnalysisParam() {
 		// 获取从调用方传过来的脚本参数对象，通过url传入的，现在默认是第一个sql语句的参数，即sqlIndex=1
 		// 现在考虑是能通过url传值的，应该都是get请求，调用的select sql资源
-		List<ComSqlScriptParameter> sqlScriptActualParameters = getActualParameters();
+		List<List<ComSqlScriptParameter>> actualParamsList = getActualParamsList();
 		// 获取sql脚本资源对象
-		sqlScriptResource.setActualParams(sqlScriptActualParameters);
+		sqlScriptResource.setActualParams(actualParamsList);
 		sqlScriptResource.analysisFinalSqlScript(sqlScriptResource, sqlParameterValues);
 		
-		if(sqlScriptActualParameters != null && sqlScriptActualParameters.size() > 0){
-			sqlScriptActualParameters.clear();
+		// 最后清空实际传入的参数值集合
+		if(actualParamsList != null && actualParamsList.size() > 0){
+			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
+				actualParams.clear();
+			}
+			actualParamsList.clear();
 		}
 	}
 

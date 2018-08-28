@@ -15,7 +15,7 @@ public final class SingleResourceCounterProcesser extends GetProcesser {
 	}
 	
 	protected boolean doGetProcess() {
-		String querySql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalCteSql() + 
+		String querySql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalCteSql() + 
 						  getFromSql().toString();
 		Query query = createQuery(0, querySql);
 		long totalCount = (long) query.uniqueResult();
@@ -26,7 +26,7 @@ public final class SingleResourceCounterProcesser extends GetProcesser {
 
 	protected StringBuilder getFromSql() {
 		StringBuilder sql = new StringBuilder(" select count(1) from (");
-		sql.append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalSelectSqlScript())
+		sql.append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
 		   .append(" ) s_ ")
 		   .append(builtinQueryCondMethodProcesser.getSql());
 		return sql;

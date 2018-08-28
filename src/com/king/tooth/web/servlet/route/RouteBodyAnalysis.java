@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.util.ReflectUtil;
-import com.king.tooth.web.entity.request.RequestBody;
 
 /**
  * 路由资源体的解析器
@@ -55,17 +54,13 @@ public class RouteBodyAnalysis implements Serializable{
 	 * 开始解析
 	 * @param requestUri
 	 * @param routeBody
-	 * @param requestBody 
 	 */
-	public void doAnalysis(String requestUri, RouteBody routeBody, RequestBody requestBody) {
+	public void doAnalysis(String requestUri, RouteBody routeBody) {
 		String[] routeArr = requestUri.split("/");
 		int routeArrLen = routeArr.length; 
 		int index = 0;
 		String specialWord = routeArr[index];// 下标为0的:或为特殊标示符，或为第一个路由属性值
-		RouteRule rule = getRouteRule(specialWord, routeArrLen, requestUri, requestBody);
-		if(rule == null || requestBody.getIsStopAnalysis()){
-			return;
-		}
+		RouteRule rule = getRouteRule(specialWord, routeArrLen, requestUri);
 		if(rule.getSpecialWord() != null){
 			index++;// 若是特殊标示符，则值要从数组下标为1开始提取
 		}
@@ -84,10 +79,9 @@ public class RouteBodyAnalysis implements Serializable{
 	 * @param specialWord
 	 * @param routeArrLen
 	 * @param requestUri
-	 * @param requestBody 
 	 * @return 
 	 */
-	private RouteRule getRouteRule(String specialWord, int routeArrLen, String requestUri, RequestBody requestBody) {
+	private RouteRule getRouteRule(String specialWord, int routeArrLen, String requestUri) {
 		boolean includeSpecialWord = false;
 		for (String sw : specialWords) {
 			if(sw.equalsIgnoreCase(specialWord)){
@@ -106,8 +100,7 @@ public class RouteBodyAnalysis implements Serializable{
 		
 		// 如果不存在配置的内容
 		if(!ruleMap.containsKey(key)){
-			requestBody.setAnalysisErrMsg("平台目前不支持您请求的路由格式：" + requestUri);
-			return null;
+			throw new IllegalArgumentException("平台目前不支持您请求的路由格式：" + requestUri);
 		}
 		return ruleMap.get(key);
 	}

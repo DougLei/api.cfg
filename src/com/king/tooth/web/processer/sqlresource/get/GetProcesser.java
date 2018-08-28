@@ -213,7 +213,7 @@ public abstract class GetProcesser extends RequestProcesser{
 			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
 			
 			// 获得查询总数量的hql语句
-			String countSql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScript().getFinalCteSql() + builtinPagerMethodProcesser.getSql() + getFromSql();
+			String countSql = builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalCteSql() + builtinPagerMethodProcesser.getSql() + getFromSql();
 			Query countQuery = createQuery(0, countSql);
 			long totalCount = Long.valueOf(countQuery.uniqueResult()+"");// 查询获得数据总数
 			pageResultEntity.setTotalCount(totalCount);
