@@ -298,6 +298,7 @@ public class SqlStatementParserUtil {
 		List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
 		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
 		
+		// 初始化最终的sql脚本对象集合
 		List<FinalSqlScriptStatement> finalSqlScriptList = new ArrayList<FinalSqlScriptStatement>(sqlScriptHavaParams?sqlParamsList.size():1);
 		FinalSqlScriptStatement finalSqlScript;
 		
@@ -309,58 +310,50 @@ public class SqlStatementParserUtil {
 			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
 				finalSqlScript = new FinalSqlScriptStatement();
 				finalSqlScriptList.add(finalSqlScript);
-				
-				switch(sqlStatementType){
-					case sstselect:
-						finalSqlScript.setIsSelectSqlScript(true);
-						setFinalSelectSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList.get(0), sqlParameterValues);
-						break;
-					case sstinsert:
-						finalSqlScript.setIsInsertSqlScript(true);
-						setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
-						break;
-					case sstupdate:
-						finalSqlScript.setIsUpdateSqlScript(true);
-						setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
-						break;
-					case sstdelete:
-						finalSqlScript.setIsDeleteSqlScript(true);
-						setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
-						break;
-					default:
-						finalSqlScript.setIsOther(true);
-						setFinalOtherSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlScript.getGsqlParser().sqltext, sqlParameterValues);
-						break;
-				}
+				setFinalSqlHandler(sqlStatementType, finalSqlScript, sqlScript, sqlParams, sqlStatementList, sqlParameterValues);
 			}
 		}else{
 			finalSqlScript = new FinalSqlScriptStatement();
 			finalSqlScriptList.add(finalSqlScript);
 			
-			switch(sqlStatementType){
-				case sstselect:
-					finalSqlScript.setIsSelectSqlScript(true);
-					setFinalSelectSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList.get(0), sqlParameterValues);
-					break;
-				case sstinsert:
-					finalSqlScript.setIsInsertSqlScript(true);
-					setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
-					break;
-				case sstupdate:
-					finalSqlScript.setIsUpdateSqlScript(true);
-					setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
-					break;
-				case sstdelete:
-					finalSqlScript.setIsDeleteSqlScript(true);
-					setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
-					break;
-				default:
-					finalSqlScript.setIsOther(true);
-					setFinalOtherSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlScript.getGsqlParser().sqltext, sqlParameterValues);
-					break;
-			}
+			List<ComSqlScriptParameter> sqlParams = new ArrayList<ComSqlScriptParameter>(1);
+			setFinalSqlHandler(sqlStatementType, finalSqlScript, sqlScript, sqlParams, sqlStatementList, sqlParameterValues);
 		}
 		return finalSqlScriptList;
+	}
+	
+	/**
+	 * 最终的sql语句处理
+	 * @param sqlStatementType
+	 * @param finalSqlScript
+	 * @param sqlScript
+	 * @param sqlParams
+	 * @param sqlStatementList
+	 * @param sqlParameterValues
+	 */
+	private static void setFinalSqlHandler(ESqlStatementType sqlStatementType, FinalSqlScriptStatement finalSqlScript, ComSqlScript sqlScript, List<ComSqlScriptParameter> sqlParams, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues){
+		switch(sqlStatementType){
+			case sstselect:
+				finalSqlScript.setIsSelectSqlScript(true);
+				setFinalSelectSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList.get(0), sqlParameterValues);
+				break;
+			case sstinsert:
+				finalSqlScript.setIsInsertSqlScript(true);
+				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
+				break;
+			case sstupdate:
+				finalSqlScript.setIsUpdateSqlScript(true);
+				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
+				break;
+			case sstdelete:
+				finalSqlScript.setIsDeleteSqlScript(true);
+				setFinalModifySqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlStatementList, sqlParameterValues);
+				break;
+			default:
+				finalSqlScript.setIsOther(true);
+				setFinalOtherSqlHandler(sqlScript.getParameterNameRecordMap(), sqlParams, finalSqlScript, sqlScript.getGsqlParser().sqltext, sqlParameterValues);
+				break;
+		}
 	}
 	
 	/**
