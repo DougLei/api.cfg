@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Query;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.thread.CurrentThreadContext;
@@ -86,7 +87,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
-		if(finalSqlScriptList.get(0).getIsProcedure()){// 是存储过程
+		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程
 			JSONObject json = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getObjectName(), sqlScript.getSqlParamsList());
 			setResponseBody(new ResponseBody(json, true));
 			return;
