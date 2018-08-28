@@ -16,6 +16,7 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.entity.HibernateClassMetadata;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.jdbc.Work;
 
@@ -190,6 +191,14 @@ public class HibernateUtil {
 		return getSessionFactory().hbmConfigIsExists(entityName);
 	}
 	
+	/**
+	 * 获取hibernate类元数据
+	 * @param resourceNameArr
+	 * @return
+	 */
+	public static List<HibernateClassMetadata> getHibernateClassMetadatas(String... resourceNameArr) {
+		return getSessionFactory().getClassMetadatas(resourceNameArr);
+	}
 	
 	//------------------------------------------------------------------------------------------------------
 	/**

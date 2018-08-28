@@ -13,6 +13,7 @@ import com.king.tooth.sys.controller.cfg.ComProjectModuleController;
 import com.king.tooth.sys.controller.cfg.ComSqlScriptController;
 import com.king.tooth.sys.controller.cfg.ComSqlScriptParameterController;
 import com.king.tooth.sys.controller.cfg.ComTabledataController;
+import com.king.tooth.sys.controller.other.SystemToolsController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
 import com.king.tooth.sys.controller.sys.SysPermissionController;
 import com.king.tooth.sys.controller.sys.SysUserController;
@@ -32,7 +33,6 @@ import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
@@ -48,10 +48,11 @@ import com.king.tooth.sys.entity.sys.SysRole;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserGroup;
 import com.king.tooth.sys.entity.sys.SysUserGroupDetail;
-import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
+import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
+import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.cfg.CfgDatabaseService;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
@@ -60,6 +61,7 @@ import com.king.tooth.sys.service.cfg.ComProjectService;
 import com.king.tooth.sys.service.cfg.ComSqlScriptService;
 import com.king.tooth.sys.service.cfg.ComTabledataService;
 import com.king.tooth.sys.service.dm.DmPublishInfoService;
+import com.king.tooth.sys.service.other.SystemToolsService;
 import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
 import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.sys.service.sys.SysFileService;
@@ -138,6 +140,7 @@ public class BuiltinObjectInstance {
 	public static final SysAccountController accountController = new SysAccountController();
 	public static final SysUserController userController = new SysUserController();
 	public static final SysPermissionController permissionController = new SysPermissionController();
+	public static final SystemToolsController systemToolsController = new SystemToolsController();
 	
 	//service
 	public static final ComColumndataService columnService = new ComColumndataService();
@@ -153,6 +156,7 @@ public class BuiltinObjectInstance {
 	public static final SysUserService userService = new SysUserService();
 	public static final SysPermissionService permissionService = new SysPermissionService();
 	public static final SysFileService fileService = new SysFileService();
+	public static final SystemToolsService systemToolsService = new SystemToolsService();
 	
 	
 	// -------------------------------------------------------

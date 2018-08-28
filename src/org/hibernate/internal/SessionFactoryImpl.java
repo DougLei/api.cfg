@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,6 +89,7 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionOwner;
 import org.hibernate.engine.transaction.internal.TransactionCoordinatorImpl;
 import org.hibernate.engine.transaction.spi.TransactionEnvironment;
+import org.hibernate.entity.HibernateClassMetadata;
 import org.hibernate.exception.spi.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.UUIDGenerator;
@@ -1808,7 +1810,7 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 * @author DougLei
 	 * @param cfg
 	 * @return 新添加的映射文件集合 
-	 *         Map<String,ClassMetadata>  classMeta
+	 *         Map<String,HibernateClassMetadata>  classMeta
 	 */
 	private void appendNewHbmConfig(Configuration cfg){
 		Log4jUtil.debug("add new config .....");
@@ -2081,7 +2083,7 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 * @author DougLei
 	 * @param input
 	 * @return 新添加的映射文件集合
-	 *         Map<String,ClassMetadata>  classMeta
+	 *         Map<String,HibernateClassMetadata>  classMeta
 	 */
 	public void appendNewHbmConfig(List<InputStream> input){
 		if(input == null || input.size() == 0){
@@ -2232,5 +2234,32 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 */
 	public boolean hbmConfigIsExists(String entityName) {
 		return classMetadata.containsKey(entityName);
+	}
+
+	/**
+	 * 获取hibernate类元数据
+	 * @param resourceNameArr
+	 */
+	public List<HibernateClassMetadata> getClassMetadatas(String[] resourceNameArr) {
+		List<HibernateClassMetadata> hibernateClassMetadatas;
+		if(resourceNameArr == null || resourceNameArr.length == 0){
+			hibernateClassMetadatas = new ArrayList<HibernateClassMetadata>(classMetadata.size());
+			Set<Entry<String, ClassMetadata>> cms = classMetadata.entrySet();
+			for (Entry<String, ClassMetadata> entry : cms) {
+				hibernateClassMetadatas.add(new HibernateClassMetadata(entry.getValue().getEntityName(), entry.getValue().getPropertyNames()));
+			}
+		}else{
+			hibernateClassMetadatas = new ArrayList<HibernateClassMetadata>(resourceNameArr.length);
+			ClassMetadata cm;
+			for (String resourceName : resourceNameArr) {
+				cm = classMetadata.get(resourceName);
+				if(cm == null){
+					hibernateClassMetadatas.add(new HibernateClassMetadata(resourceName));
+				}else{
+					hibernateClassMetadatas.add(new HibernateClassMetadata(resourceName, cm.getEntityName(), cm.getPropertyNames()));
+				}
+			}
+		}
+		return hibernateClassMetadatas;
 	}
 }
