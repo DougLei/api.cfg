@@ -560,24 +560,27 @@ public class HibernateUtil {
 	 * 执行存储过程
 	 * @param dbType
 	 * @param procedureName
-	 * @param sqlScriptParameterList
+	 * @param sqlParamsList
 	 * @return
 	 */
-	public static JSONObject executeProcedure(final String dbType, final String procedureName, final List<ComSqlScriptParameter> sqlScriptParameterList) {
-		final JSONObject json = new JSONObject(sqlScriptParameterList.size());
+	public static JSONObject executeProcedure(final String dbType, final String procedureName, final List<List<ComSqlScriptParameter>> sqlParamsList) {
+		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() == 1);
+		final JSONObject json = sqlScriptHavaParams?new JSONObject(sqlParamsList.get(0).size()):null;
+		final List<ComSqlScriptParameter> sqlParams = sqlScriptHavaParams?sqlParamsList.get(0):null;
+		
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
-				String procedure = callProcedure(procedureName, sqlScriptParameterList);
+				String procedure = callProcedure(procedureName, sqlParams);
 				CallableStatement cs = null;
 				try {
 					cs = connection.prepareCall(procedure);
-					setParameters(cs, sqlScriptParameterList);
+					setParameters(cs, sqlParams);
 					cs.execute();
-					setOutputValues(cs, sqlScriptParameterList);
+					setOutputValues(cs, sqlParams);
 				} finally {
 					CloseUtil.closeDBConn(cs);
-					if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-						sqlScriptParameterList.clear();
+					if(sqlParams != null && sqlParams.size() > 0){
+						sqlParams.clear();
 					}
 				}
 			}
@@ -585,12 +588,12 @@ public class HibernateUtil {
 			/**
 			 * 设置值
 			 * @param cs
-			 * @param sqlScriptParameterList
+			 * @param sqlParams
 			 * @throws SQLException 
 			 */
-			private void setParameters(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
-				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-					for (ComSqlScriptParameter parameter : sqlScriptParameterList) {
+			private void setParameters(CallableStatement cs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
+				if(sqlParams != null && sqlParams.size() > 0){
+					for (ComSqlScriptParameter parameter : sqlParams) {
 						if(parameter.getInOut() == 1){//in
 							cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
 						}else if(parameter.getInOut() == 2){//out
@@ -606,14 +609,16 @@ public class HibernateUtil {
 			/**
 			 * 设置output类型的值
 			 * @param cs
-			 * @param sqlScriptParameterList
+			 * @param sqlParams
 			 * @throws SQLException 
 			 */
-			private void setOutputValues(CallableStatement cs, List<ComSqlScriptParameter> sqlScriptParameterList) throws SQLException {
-				if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-					for (ComSqlScriptParameter pssp : sqlScriptParameterList) {
+			private void setOutputValues(CallableStatement cs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
+				if(json == null){
+					return;
+				}
+				if(sqlParams != null && sqlParams.size() > 0){
+					for (ComSqlScriptParameter pssp : sqlParams) {
 						if(pssp.getInOut() == 2 || pssp.getInOut() == 3){
-//							pssp.setAcutalOutValue(cs.getObject(pssp.getSqlIndex()));
 							json.put(pssp.getParameterName(), cs.getObject(pssp.getOrderCode()));
 						}
 					}
@@ -621,10 +626,10 @@ public class HibernateUtil {
 			}
 		});
 		Log4jUtil.debug("执行procedure名为：{}", procedureName);
-		Log4jUtil.debug("执行procedure的条件参数集合为：{}", JsonUtil.toJsonString(sqlScriptParameterList, false));
+		Log4jUtil.debug("执行procedure的条件参数集合为：{}", JsonUtil.toJsonString(sqlParams, false));
 		
-		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-			sqlScriptParameterList.clear();
+		if(sqlScriptHavaParams){
+			sqlParamsList.clear();
 		}
 		return json;
 	}
@@ -635,11 +640,11 @@ public class HibernateUtil {
 	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	private static String callProcedure(final String procedureName, final List<ComSqlScriptParameter> sqlScriptParameterList) {
+	private static String callProcedure(final String procedureName, final List<ComSqlScriptParameter> sqlParams) {
 		StringBuilder procedure = new StringBuilder();
 		procedure.append("{call ").append(procedureName).append("(");
-		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-			int len = sqlScriptParameterList.size();
+		if(sqlParams != null && sqlParams.size() > 0){
+			int len = sqlParams.size();
 			for (int i=0;i<len ;i++) {
 				procedure.append("?,");
 			}
@@ -649,7 +654,7 @@ public class HibernateUtil {
 		Log4jUtil.debug("调用的procedure为：{}", procedure);
 		
 		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(procedure.toString(), sqlScriptParameterList);
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(procedure.toString(), sqlParams);
 		
 		return procedure.toString();
 	}

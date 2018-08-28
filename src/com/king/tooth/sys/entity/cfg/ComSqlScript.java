@@ -22,6 +22,7 @@ import com.king.tooth.sys.entity.cfg.sql.SqlQueryResultColumn;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -499,7 +500,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(actualParamsList.size());
 		List<ComSqlScriptParameter> sqlParams;
 		for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
-			sqlParams = copySqlParams(sqlScriptParameterList);
+			sqlParams = cloneSqlParams(sqlScriptParameterList);
 			for (ComSqlScriptParameter ssp : sqlParams) {
 				if(ssp.getParameterFrom() == 1){// 参数值来源为系统内置
 					ssp.analysisActualInValue();
@@ -519,13 +520,19 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	/**
-	 * 复制sql参数集合
+	 * 克隆sql参数集合
 	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	private List<ComSqlScriptParameter> copySqlParams(List<ComSqlScriptParameter> sqlScriptParameterList) {
+	public static List<ComSqlScriptParameter> cloneSqlParams(List<ComSqlScriptParameter> sqlScriptParameterList) {
 		List<ComSqlScriptParameter> sqlParams = new ArrayList<ComSqlScriptParameter>(sqlScriptParameterList.size());
-		sqlParams.addAll(sqlScriptParameterList);
+		try {
+			for (ComSqlScriptParameter sqlParam : sqlScriptParameterList) {
+				sqlParams.add((ComSqlScriptParameter)sqlParam.clone());
+			}
+		} catch (CloneNotSupportedException e) {
+			throw new IllegalArgumentException(ExceptionUtil.getErrMsg("ComSqlScript", "cloneSqlParams", e));
+		}
 		return sqlParams;
 	}
 	

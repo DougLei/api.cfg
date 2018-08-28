@@ -25,7 +25,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis, Cloneable{
 	/**
 	 * 关联的sql脚本id
 	 */
@@ -348,5 +348,9 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+parameterDataType+"]数据类型转换，请联系管理员");
 		}
 		throw new IllegalArgumentException("系统目前不支持["+dbType+"]数据库的数据类型转换，请联系管理员");
+	}
+	
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 }

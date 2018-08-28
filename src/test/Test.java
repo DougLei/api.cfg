@@ -1,25 +1,28 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+
 
 
 public class Test {
-	public static void main(String[] args) {
-		StringBuilder idBuffer = new StringBuilder();
+	public static void main(String[] args) throws CloneNotSupportedException {
+		List<ComSqlScriptParameter> origin = new ArrayList<ComSqlScriptParameter>();
+		origin.add(new ComSqlScriptParameter());
+		origin.add(new ComSqlScriptParameter());
 		
-		System.out.println(dob(idBuffer));;
+		System.out.println(origin);
 		
-		System.out.println(idBuffer);
-	}
-
-	private static String dob(StringBuilder idBuffer) {
-		try {
-			idBuffer.append("dddd");
-			return idBuffer.toString();
-		} finally{
-			idBuffer.setLength(0);
-			idBuffer.append("1");
+		
+		List<ComSqlScriptParameter> to = new ArrayList<ComSqlScriptParameter>();
+		for (ComSqlScriptParameter p : origin) {
+			to.add((ComSqlScriptParameter) p.clone());
 		}
 		
+		System.out.println(to);
 	}
+
 }
  
