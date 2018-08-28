@@ -28,10 +28,6 @@ public class FinalSqlScriptStatement implements Serializable{
 	 */
 	private boolean isSelectSqlScript;
 	/**
-	 * 是否是存储过程
-	 */
-	private boolean isProcedure;
-	/**
 	 * 是否是其他
 	 */
 	private boolean isOther;
@@ -98,12 +94,6 @@ public class FinalSqlScriptStatement implements Serializable{
 	}
 	public void setIsDeleteSqlScript(boolean isDeleteSqlScript) {
 		this.isDeleteSqlScript = isDeleteSqlScript;
-	}
-	public boolean getIsProcedure() {
-		return isProcedure;
-	}
-	public void setIsProcedure(boolean isProcedure) {
-		this.isProcedure = isProcedure;
 	}
 	public String[] getFinalModifySqlArr() {
 		return finalModifySqlArr;
