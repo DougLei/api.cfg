@@ -1348,9 +1348,7 @@
   "tableId":"",                                          --关联的表主键
   "name":"",                                             --列的汉字名
   "columnName":"",                                       --列名
-  "columnType":"",                                       --字段数据类型:
-                        字符串: string、布尔值: boolean、整型: integer、浮点型: double
-                        日期: date、字符大字段: clob、二进制大字段: blob
+  "columnType":"",                                       --字段数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date、字符大字段: clob、二进制大字段: blob
   "length":"",                                           --字段长度
   "precision":"",                                        --数据精度
   "defaultValue":"",                                     --默认值
@@ -1382,9 +1380,7 @@
   "tableId":"",                                          --关联的表主键
   "name":"",                                             --列的汉字名
   "columnName":"",                                       --列名
-  "columnType":"",                                       --字段数据类型:
-                        字符串: string、布尔值: boolean、整型: integer、浮点型: double
-                        日期: date、字符大字段: clob、二进制大字段: blob
+  "columnType":"",                                       --字段数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date、字符大字段: clob、二进制大字段: blob
   "length":"",                                           --字段长度
   "precision":"",                                        --数据精度
   "defaultValue":"",                                     --默认值
@@ -1522,8 +1518,7 @@
 {
   "parameterName":"",                                   --参数名
   "length":"",                                          --参数的值长度
-  "parameterDataType":"",                               --参数值的数据类型
-                字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
+  "parameterDataType":"",                               --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }
@@ -1547,8 +1542,7 @@
   "Id":"",                                              --主键
   "parameterName":"",                                   --参数名
   "length":"",                                          --参数的值长度
-  "parameterDataType":"",                               --参数值的数据类型
-                字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
+  "parameterDataType":"",                               --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }
@@ -1573,39 +1567,26 @@
 
 ----
 
-## End、系统内置参数名
+## 三、系统其他接口
 
-### (一)、sql脚本的内置参数
-```
-_Id                                                     --主键
-_currentSqlDate                                         --当前时间 *
-_currentCustomerId                                      --当前租户id
-_currentProjectId                                       --当前项目id
-_currentAccountId                                       --当前账户id
-_currentAccountName                                     --当前账户名
-_currentUserId                                          --当前用户id
-_currentSecretLevel                                     --当前用户密级
-_currentOrgId                                           --当前用户所属组织id，如果是在sql脚本中使用该参数时，请使用in操作符，并用()括起来，例org_id in ($_currentOrgId$)
-_currentDeptId                                          --当前用户所属部门id，同上
-_currentPositionId                                      --当前用户所属岗位id，同上
-_currentUserGroupId                                     --当前用户所属用户组id，同上
-```
+### (一)、工具类接口
 
-### (二)、表资源的内置参数
+#### 1. 监听hibernate类元数据
+
+- 功能描述: 监听hibernate类元数据
+- api地址: /common/hibernate_classmetadata/monitor
+- 请求类型: GET
+- 请求头:
 ```
-_Id                                                     --主键
-_currentDate                                            --当前时间 *
-_currentCustomerId                                      --当前租户id
-_currentProjectId                                       --当前项目id
-_currentAccountId                                       --当前账户id
-_currentAccountName                                     --当前账户名
-_currentUserId                                          --当前用户id
-_currentSecretLevel                                     --当前用户密级
-_currentOrgId                                           --当前用户所属组织id
-_currentDeptId                                          --当前用户所属部门id
-_currentPositionId                                      --当前用户所属岗位id
-_currentUserGroupId                                     --当前用户所属用户组id，同上
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
 ```
+- 请求url参数: 
+```
+?resourceNames=SysUser, ...                             --资源名，多个用,分隔；如果不传资源名，则默认查询hibernate中的所有类的元数据
+```
+- 请求体: 无
 
 
 

@@ -81,8 +81,8 @@ public class CodeResourceMapping {
 		// 账户操作
 		put("/permission/get", BuiltinObjectInstance.permissionController, "calcPermissionByCode");
 		
-		// 监听hibernate类元数据操作
-		put("/hibernate_classmetadata/monitor", BuiltinObjectInstance.systemToolsController, "monitorHibernateClassMetadata");
+		// 监听hibernate类元数据
+		put("/hibernate_classmetadata/monitor/get", BuiltinObjectInstance.systemToolsController, "monitorHibernateClassMetadata");
 	}
 	
 	/**
