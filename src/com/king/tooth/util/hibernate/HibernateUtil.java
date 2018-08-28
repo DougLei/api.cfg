@@ -564,7 +564,11 @@ public class HibernateUtil {
 	 * @return
 	 */
 	public static JSONObject executeProcedure(final String dbType, final String procedureName, final List<List<ComSqlScriptParameter>> sqlParamsList) {
-		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() == 1);
+		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
+		if(sqlScriptHavaParams && sqlParamsList.size() >1){
+			throw new IllegalArgumentException("系统目前不支持批量处理存储过程，如有需要，请联系系统管理员");
+		}
+		
 		final JSONObject json = sqlScriptHavaParams?new JSONObject(sqlParamsList.get(0).size()):null;
 		final List<ComSqlScriptParameter> sqlParams = sqlScriptHavaParams?sqlParamsList.get(0):null;
 		

@@ -107,7 +107,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
 			setResponseBody(new ResponseBody(null, true));
 		}else{
-			setResponseBody(new ResponseBody(requestBody.getFormData(), true));
+			setResponseBody(new ResponseBody(requestBody.getFormData().getJson(), true));
 		}
 	}
 	
