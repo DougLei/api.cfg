@@ -28,7 +28,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	/**
 	 * hql语句中的参数值集合
 	 */
-	protected final List<Object> hqlParameterValues = new ArrayList<Object>(16);
+	protected final List<Object> hqlParameterValues = new ArrayList<Object>(15);
 	
 	/**
 	 * where

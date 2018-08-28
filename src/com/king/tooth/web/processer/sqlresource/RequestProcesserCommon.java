@@ -30,7 +30,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * sql语句中的参数值集合
 	 * <p>可能有多个sql语句，所有用集合的集合封装参数</p>
 	 */
-	protected final List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>();
+	protected final List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>(20);
 	
 	/**
 	 * 内置sql脚本处理器
