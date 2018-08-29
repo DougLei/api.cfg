@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.king.tooth.annotation.Entity;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -25,6 +26,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
+@Entity
 public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	
 	/**

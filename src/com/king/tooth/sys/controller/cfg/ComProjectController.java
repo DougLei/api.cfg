@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.annotation.Controller;
+import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
@@ -19,6 +21,7 @@ import com.king.tooth.util.StrUtils;
  * 项目信息表Controller
  * @author DougLei
  */
+@Controller
 public class ComProjectController extends AbstractPublishController{
 	
 	/**
@@ -26,6 +29,7 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComProject> projects = getDataInstanceList(ijson, ComProject.class);
 		analysisResourceProp(projects);
@@ -50,6 +54,7 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComProject> projects = getDataInstanceList(ijson, ComProject.class);
 		analysisResourceProp(projects);
@@ -74,6 +79,7 @@ public class ComProjectController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String projectIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(projectIds)){

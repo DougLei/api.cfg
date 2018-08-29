@@ -7,6 +7,7 @@ import java.util.List;
 import oracle.jdbc.OracleTypes;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.king.tooth.annotation.Entity;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
@@ -25,6 +26,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
+@Entity
 public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis, Cloneable{
 	/**
 	 * 关联的sql脚本id

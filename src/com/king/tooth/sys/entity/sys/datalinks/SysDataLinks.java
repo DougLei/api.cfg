@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.king.tooth.annotation.Entity;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
@@ -15,6 +16,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
  * @author DougLei
  */
 @SuppressWarnings("serial")
+@Entity
 public class SysDataLinks implements Serializable, ITable {
 	
 	public ComTabledata toCreateTable() {

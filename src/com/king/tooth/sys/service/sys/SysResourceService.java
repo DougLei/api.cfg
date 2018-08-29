@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.sys;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.sys.SysResource;
@@ -12,6 +13,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 资源信息表Service
  * @author DougLei
  */
+@Service
 public class SysResourceService extends AbstractService{
 	
 	/**

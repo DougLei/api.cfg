@@ -2,6 +2,9 @@ package com.king.tooth.sys.controller.sys;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
+import com.king.tooth.annotation.Controller;
+import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.controller.AbstractController;
@@ -11,6 +14,7 @@ import com.king.tooth.util.StrUtils;
  * 权限信息表Controller
  * @author DougLei
  */
+@Controller
 public class SysPermissionController extends AbstractController{
 	
 	/**
@@ -19,6 +23,7 @@ public class SysPermissionController extends AbstractController{
 	 * <p>/permission</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object calcPermissionByCode(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String code = request.getParameter("objcode");
 		if(StrUtils.isEmpty(code)){

@@ -3,6 +3,7 @@ package com.king.tooth.sys.service.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -16,6 +17,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 项目模块信息表Service
  * @author DougLei
  */
+@Service
 public class ComProjectModuleService extends AbstractPublishService {
 
 	/**

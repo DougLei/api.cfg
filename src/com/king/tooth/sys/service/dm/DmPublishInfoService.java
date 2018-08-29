@@ -3,6 +3,7 @@ package com.king.tooth.sys.service.dm;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.service.AbstractService;
@@ -12,6 +13,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 发布信息表Service
  * @author DougLei
  */
+@Service
 public class DmPublishInfoService extends AbstractService{
 	
 	/**

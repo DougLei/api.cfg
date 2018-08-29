@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
@@ -20,6 +21,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 权限信息表service
  * @author DougLei
  */
+@Service
 public class SysPermissionService extends AbstractService{
 	
 	/**

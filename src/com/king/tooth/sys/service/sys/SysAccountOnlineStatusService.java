@@ -2,6 +2,7 @@ package com.king.tooth.sys.service.sys;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
@@ -13,6 +14,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 账户在线状态信息表Service
  * @author DougLei
  */
+@Service
 public class SysAccountOnlineStatusService extends AbstractService{
 	
 	/**

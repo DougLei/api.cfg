@@ -1,6 +1,7 @@
 package com.king.tooth.sys.service.sys;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
@@ -18,6 +19,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 人员信息表Service
  * @author DougLei
  */
+@Service
 public class SysUserService extends AbstractService{
 	
 	private static final String sysUserDeptLinks = "SysUserDeptLinks";

@@ -10,6 +10,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.database.DatabaseHandler;
@@ -32,6 +33,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 数据库信息表Service
  * @author DougLei
  */
+@Service
 public class CfgDatabaseService extends AbstractPublishService {
 	
 	/**

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
@@ -28,6 +29,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 账户表Service
  * @author DougLei
  */
+@Service
 public class SysAccountService extends AbstractService{
 	
 	/**

@@ -1,11 +1,13 @@
 package com.king.tooth.sys.service.other;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 系统工具类的Service
  * @author DougLei
  */
+@Service
 public class SystemToolsService {
 	
 	/**

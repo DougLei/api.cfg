@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.annotation.Controller;
+import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
@@ -21,6 +23,7 @@ import com.king.tooth.util.StrUtils;
  * 表信息表Controller
  * @author DougLei
  */
+@Controller
 public class ComTabledataController extends AbstractPublishController{
 	
 	/**
@@ -28,6 +31,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
 		analysisResourceProp(tables);
@@ -52,6 +56,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
 		analysisResourceProp(tables);
@@ -76,6 +81,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：DELETE</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String tableIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(tableIds)){
@@ -99,6 +105,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object buildModel(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 //		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 //			return "建模功能目前只提供给平台开发人员使用";
@@ -141,6 +148,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object addProjTableRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
@@ -161,6 +169,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
+	@RequestMapping
 	public Object cancelProjTableRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){

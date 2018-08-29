@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
@@ -26,6 +27,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
+@Service
 public class ComProjectService extends AbstractPublishService {
 	
 	/**

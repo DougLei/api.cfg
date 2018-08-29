@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.cfg;
 
+import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -11,6 +12,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 字段信息表Service
  * @author DougLei
  */
+@Service
 public class ComColumndataService extends AbstractService{
 
 	/**

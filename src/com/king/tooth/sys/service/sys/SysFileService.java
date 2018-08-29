@@ -25,6 +25,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -42,6 +43,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 文件表service
  * @author DougLei
  */
+@Service
 public class SysFileService extends AbstractService{
 	
 	/**

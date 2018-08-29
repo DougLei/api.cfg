@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
@@ -36,6 +37,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @SuppressWarnings("unchecked")
+@Service
 public class ComTabledataService extends AbstractPublishService {
 	
 	/**
