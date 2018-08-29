@@ -35,4 +35,20 @@ public class SystemToolsController extends AbstractController{
 		resultObject = BuiltinObjectInstance.systemToolsService.monitorHibernateClassMetadata(resourceNameArr);
 		return getResultObject();
 	}
+	
+	/**
+	 * 获取指定资源的信息
+	 * <p>请求方式：GET</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object getResourceInfo(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+		String name = request.getParameter("name");
+		if(StrUtils.isEmpty(name)){
+			return "获取指定资源信息接口的url参数[name]的值不能为空";
+		}
+		
+		resultObject = BuiltinObjectInstance.systemToolsService.getResourceInfo(name);
+		return getResultObject();
+	}
 }

@@ -83,6 +83,8 @@ public class CodeResourceMapping {
 		
 		// 监听hibernate类元数据
 		put("/hibernate_classmetadata/monitor/get", BuiltinObjectInstance.systemToolsController, "monitorHibernateClassMetadata");
+		// 获取指定资源信息
+		put("/resource_info/get/get", BuiltinObjectInstance.systemToolsController, "getResourceInfo");
 	}
 	
 	/**
