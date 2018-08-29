@@ -42,6 +42,7 @@ public class SystemToolsService {
 		ResourceInfoEntity resourceInfo = new ResourceInfoEntity();
 		resourceInfo.setResourceName(resource.getResourceName());
 		resourceInfo.setResourceType(resourceType);
+		resourceInfo.setReqResourceMethod(resource.getReqResourceMethod().toUpperCase());
 		
 		if(resourceType == ISysResource.TABLE){
 			setTableResourceStruct(resource.getRefResourceId(), resourceInfo);

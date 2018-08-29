@@ -20,6 +20,10 @@ public class ResourceInfoEntity {
 	 */
 	private String resourceType;
 	/**
+	 * 请求的方法
+	 */
+	private String reqResourceMethod;
+	/**
 	 * 资源结构
 	 */
 	private Map<String, String> struct;
@@ -72,5 +76,11 @@ public class ResourceInfoEntity {
 	}
 	public void setStructJsonStr(String structJsonStr) {
 		this.structJsonStr = structJsonStr;
+	}
+	public String getReqResourceMethod() {
+		return reqResourceMethod;
+	}
+	public void setReqResourceMethod(String reqResourceMethod) {
+		this.reqResourceMethod = reqResourceMethod;
 	}
 }
