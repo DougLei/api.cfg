@@ -141,4 +141,14 @@ public class BuiltinQueryParameters {
 		}
 		throw new IllegalArgumentException("没有匹配到内置参数["+parameterName+"]");
 	}
+	
+	/**
+	 * 参数名是否是_Id
+	 * <p>如果是id，则每次的id值都要不一样</p>
+	 * @param parameterName
+	 * @return
+	 */
+	public static boolean isBuiltinIdParameter(String parameterName) {
+		return id.equals(parameterName);
+	}
 }

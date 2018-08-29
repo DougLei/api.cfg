@@ -16,9 +16,9 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
 
 /**
  * sql脚本参数信息表
@@ -105,7 +105,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 * 解析实际传入的参数值
 	 * @return
 	 */
-	public Object analysisActualInValue() {
+	public void analysisActualInValue() {
 		if(parameterFrom == 0){
 			if(actualInValue == null){
 				actualInValue = defaultValue;
@@ -115,26 +115,44 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			}
 			if(isPlaceholder == 1){
 				if(BuiltinCodeDataType.INTEGER.equals(parameterDataType)){
-					return Integer.valueOf(actualInValue.toString());
+					actualInValue = Integer.valueOf(actualInValue.toString());
 				}else if(BuiltinCodeDataType.DOUBLE.equals(parameterDataType)){
-					return Double.valueOf(actualInValue.toString());
+					actualInValue = Double.valueOf(actualInValue.toString());
 				}else if(BuiltinCodeDataType.DATE.equals(parameterDataType)){
-					return DateUtil.parseSqlDate(actualInValue.toString());
+					actualInValue = DateUtil.parseSqlDate(actualInValue.toString());
 				}else{
-					return actualInValue.toString();
+					actualInValue = actualInValue.toString();
 				}
 			}else{
-				return SqlStatementParserUtil.getSimpleSqlParameterValue(actualInValue);
+				actualInValue = getSimpleSqlParameterValue(actualInValue);
 			}
 		}else if(parameterFrom == 1){
 			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
 			if(actualInValue == null){
 				throw new NullPointerException("调用sql脚本时，内置参数["+parameterName+"]的值为空，请联系开发人员");
 			}
-			return actualInValue;
+			if(isPlaceholder == 0){
+				
+			}else{
+				actualInValue = getSimpleSqlParameterValue(actualInValue);
+			}
 		}else{
 			throw new IllegalArgumentException("parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)]");
 		}
+	}
+	
+	/**
+	 * 获取简单的sql参数值
+	 * <p>目前就是对值加上''</p>
+	 * @param sqlParameterValue
+	 * @return
+	 */
+	private String getSimpleSqlParameterValue(Object sqlParameterValue){
+		if(sqlParameterValue == null){
+			Log4jUtil.warn(ComSqlScriptParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
+			return "";
+		}
+		return "'"+sqlParameterValue.toString()+"'";
 	}
 	
 	public String getParameterName() {
@@ -156,6 +174,10 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		this.defaultValue = defaultValue;
 	}
 	public Object getActualInValue() {
+		// 如果是id，则每次的id值都要不一样
+		if(parameterFrom == 1 && BuiltinQueryParameters.isBuiltinIdParameter(parameterName)){
+			return ResourceHandlerUtil.getIdentity();
+		}
 		return actualInValue;
 	}
 	public void setActualInValue(Object actualInValue) {

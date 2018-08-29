@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
@@ -315,9 +314,7 @@ public class SqlStatementParserUtil {
 		}else{
 			finalSqlScript = new FinalSqlScriptStatement();
 			finalSqlScriptList.add(finalSqlScript);
-			
-			List<ComSqlScriptParameter> sqlParams = new ArrayList<ComSqlScriptParameter>(1);
-			setFinalSqlHandler(sqlStatementType, finalSqlScript, sqlScript, sqlParams, sqlStatementList, sqlParameterValues);
+			setFinalSqlHandler(sqlStatementType, finalSqlScript, sqlScript, null, sqlStatementList, sqlParameterValues);
 		}
 		return finalSqlScriptList;
 	}
@@ -359,12 +356,12 @@ public class SqlStatementParserUtil {
 	/**
 	 * 最终的select sql语句处理
 	 * @param parameterNameRecordMap 
-	 * @param sqlScriptParameters
+	 * @param sqlParams
 	 * @param finalSelect
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalSelectSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
+	private static void setFinalSelectSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlParams, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
 		List<String> parameterNames = parameterNameRecordMap.get(0);
 		if(parameterNames!=null && parameterNames.size()>0){
 			List<Object> queryCondParameters = new ArrayList<Object>(parameterNames.size());
@@ -372,21 +369,23 @@ public class SqlStatementParserUtil {
 			List<ActParameter> actParams = new ArrayList<ActParameter>(parameterNames.size());
 			ActParameter actParam;
 			
-			// 记录系统内置参数和值
-			StringBuilder placeHolder = new StringBuilder();
-			
-			for (String parameterName : parameterNames) {
-				for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-					if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
-						actParam = new ActParameter();
-						actParam.setParameterName(parameterName);
-						actParams.add(actParam);
-						
-						processActualParameter(parameterName, ssp, placeHolder, queryCondParameters, actParam);
-						break;
+			if(sqlParams != null && sqlParams.size()>0){
+				// 记录系统内置参数和值
+				StringBuilder placeHolder = new StringBuilder();
+				for (String parameterName : parameterNames) {
+					for (ComSqlScriptParameter ssp : sqlParams) {
+						if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+							actParam = new ActParameter();
+							actParam.setParameterName(parameterName);
+							actParams.add(actParam);
+							
+							processActualParameter(parameterName, ssp, placeHolder, queryCondParameters, actParam);
+							break;
+						}
 					}
 				}
 			}
+			
 			// 将该条select sql的条件值对象加到最终的参数集合中
 			sqlParameterValues.add(queryCondParameters);
 			analysisSelectSqlScript(SqlParameterParserUtil.replaceSqlScriptParams(sqlStatement.toString(), actParams), finalSelect);
@@ -420,12 +419,12 @@ public class SqlStatementParserUtil {
 	/**
 	 * 最终的insert/update/delete sql语句处理
 	 * @param parameterNameRecordMap 
-	 * @param sqlScriptParameters
+	 * @param sqlParams
 	 * @param finalSelect
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalModifySqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
+	private static void setFinalModifySqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlParams, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
 		int sqlLen = sqlStatementList.size();
 		String[] modifySqlArr = new String[sqlLen];
 		
@@ -441,21 +440,23 @@ public class SqlStatementParserUtil {
 				sqlParamValues = new ArrayList<Object>(size);
 				actParams = new ArrayList<ActParameter>(size);
 				
-				for (String parameterName : parameterNames) {
-					for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-						if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
-							actParam = new ActParameter();
-							actParam.setParameterName(parameterName);
-							actParams.add(actParam);
-							
-							// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
-							if(ssp.getIsPlaceholder() == 1){
-								actParam.setActualValue("?");
-								sqlParamValues.add(ssp.getActualInValue());
-							}else{
-								actParam.setActualValue(ssp.getActualInValue());
+				if(sqlParams != null && sqlParams.size()>0){
+					for (String parameterName : parameterNames) {
+						for (ComSqlScriptParameter ssp : sqlParams) {
+							if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+								actParam = new ActParameter();
+								actParam.setParameterName(parameterName);
+								actParams.add(actParam);
+								
+								// 如果是条件参数，将值加入到queryCondParameters中，并将实际值改为?
+								if(ssp.getIsPlaceholder() == 1){
+									actParam.setActualValue("?");
+									sqlParamValues.add(ssp.getActualInValue());
+								}else{
+									actParam.setActualValue(ssp.getActualInValue());
+								}
+								break;
 							}
-							break;
 						}
 					}
 				}
@@ -472,12 +473,12 @@ public class SqlStatementParserUtil {
 	/**
 	 * 最终的other类型的 sql语句处理
 	 * @param parameterNameRecordMap
-	 * @param sqlScriptParameters
+	 * @param sqlParams
 	 * @param finalSqlScript
 	 * @param otherSql
 	 * @param sqlParameterValues
 	 */
-	private static void setFinalOtherSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlScriptParameters, FinalSqlScriptStatement finalSqlScript, String otherSql, List<List<Object>> sqlParameterValues) {
+	private static void setFinalOtherSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlParams, FinalSqlScriptStatement finalSqlScript, String otherSql, List<List<Object>> sqlParameterValues) {
 		List<String> parameterNames = parameterNameRecordMap.get(0);
 		String[] otherSqlArr = new String[1];
 		
@@ -489,19 +490,20 @@ public class SqlStatementParserUtil {
 			
 			List<ActParameter> actParams = new ArrayList<ActParameter>(size);
 			ActParameter actParam;
-			
-			// 记录系统内置参数和值
-			StringBuilder placeHolder = new StringBuilder();
-			
-			for (String parameterName : parameterNames) {
-				for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-					if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
-						actParam = new ActParameter();
-						actParam.setParameterName(parameterName);
-						actParams.add(actParam);
-						
-						processActualParameter(parameterName, ssp, placeHolder, sqlParamValues, actParam);
-						break;
+
+			if(sqlParams != null && sqlParams.size()>0){
+				// 记录系统内置参数和值
+				StringBuilder placeHolder = new StringBuilder();
+				for (String parameterName : parameterNames) {
+					for (ComSqlScriptParameter ssp : sqlParams) {
+						if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+							actParam = new ActParameter();
+							actParam.setParameterName(parameterName);
+							actParams.add(actParam);
+							
+							processActualParameter(parameterName, ssp, placeHolder, sqlParamValues, actParam);
+							break;
+						}
 					}
 				}
 			}
@@ -523,15 +525,15 @@ public class SqlStatementParserUtil {
 	 * @param actParam
 	 */
 	private static void processActualParameter(String parameterName, ComSqlScriptParameter ssp, StringBuilder placeHolder, List<Object> sqlParamValues, ActParameter actParam) {
-		if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){ // 如果参数是内置的，则要获取内置值
-			Object builtinQuerParamValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
+		Object actualInValue = ssp.getActualInValue();
+		if(ssp.getParameterFrom() == 1){ // 如果参数是内置的
 			
 			// 如果是条件参数，将值加入到sqlParamValues中，并将实际值改为?
 			if(ssp.getIsPlaceholder() == 1){
 				
 				// 如果是String类型，则证明是id，则要用,分割，可能会出现多个id
-				if(builtinQuerParamValue instanceof String){
-					String[] bqpvTmp = ((String)builtinQuerParamValue).split(",");
+				if(actualInValue instanceof String){
+					String[] bqpvTmp = ((String)actualInValue).split(",");
 					for (String bt : bqpvTmp) {
 						placeHolder.append("?,");
 						sqlParamValues.add(bt);
@@ -543,40 +545,26 @@ public class SqlStatementParserUtil {
 				// 否则就是一个值，则直接处理
 				else{
 					actParam.setActualValue("?");
-					sqlParamValues.add(builtinQuerParamValue);
+					sqlParamValues.add(actualInValue);
 				}
 			}
 			// 否则直接添加值
 			else{
-				actParam.setActualValue(getSimpleSqlParameterValue(builtinQuerParamValue));
+				actParam.setActualValue(actualInValue);
 			}
 		}else{
 			// 如果是条件参数，将值加入到sqlParamValues中，并将实际值改为?
 			if(ssp.getIsPlaceholder() == 1){
 				actParam.setActualValue("?");
-				sqlParamValues.add(ssp.getActualInValue());
+				sqlParamValues.add(actualInValue);
 			}
 			// 否则直接添加值
 			else{
-				actParam.setActualValue(ssp.getActualInValue());
+				actParam.setActualValue(actualInValue);
 			}
 		}		
 	}
 
-	/**
-	 * 获取简单的sql参数值
-	 * <p>目前就是对值加上''</p>
-	 * @param sqlParameterValue
-	 * @return
-	 */
-	public static String getSimpleSqlParameterValue(Object sqlParameterValue){
-		if(sqlParameterValue == null){
-			Log4jUtil.warn(SqlStatementParserUtil.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
-			return "";
-		}
-		return "'"+sqlParameterValue.toString()+"'";
-	}
-	
 
 //	下面的代码，是为了解析sql语句，分析出参数中，哪些是在调用的时候，通过?方式传值的，以及获取select语句，最终查询的结果列名集合
 //	/**
