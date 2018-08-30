@@ -16,7 +16,7 @@ import org.hibernate.jdbc.Work;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.sql.SqlQueryResultColumn;
+import com.king.tooth.sys.entity.cfg.SqlQueryResultColumn;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;

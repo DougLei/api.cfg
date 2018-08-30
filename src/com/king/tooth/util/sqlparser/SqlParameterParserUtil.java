@@ -111,7 +111,8 @@ public class SqlParameterParserUtil {
 			parameterPlaceholderIndex.clear();
 		}
 		parameterNames.clear();
-		sqlScript.setSqlScriptParameterList(sqlScriptParameterList);
+		
+		sqlScript.setSqlParams(sqlScriptParameterList);
 		sqlScript.doSetParameterRecordList(parameterNameRecordList);
 	}
 	

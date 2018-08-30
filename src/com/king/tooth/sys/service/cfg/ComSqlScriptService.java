@@ -9,6 +9,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
@@ -41,9 +42,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 		if(sqlScript.getIsEnabled() == 0){
 			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员");
 		}
-		if(StrUtils.isEmpty(sqlScript.getSqlScriptParameters())){
-			sqlScript.setSqlScriptParameterList(findSqlScriptParameters(sqlScriptId));
-		}
+		sqlScript.setSqlParams(findSqlParams(sqlScriptId));
+		sqlScript.setSqlResultsetsList(findSqlResultsetsList(sqlScript));
 		return sqlScript;
 	}
 	
@@ -139,8 +139,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
 				
 				String sqlScriptId = sqlScriptJsonObject.getString(ResourcePropNameConstants.ID);
-				if(sqlScript.getSqlScriptParameterList() != null && sqlScript.getSqlScriptParameterList().size() >0 ){
-					saveSqlScriptParameter(false, sqlScript.getSqlScriptParameterList(), sqlScriptId);
+				if(sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0 ){
+					saveSqlScriptParameter(false, sqlScript.getSqlParams(), sqlScriptId);
 				}
 				
 				// TODO 单项目，取消是否平台开发者的判断
@@ -204,11 +204,16 @@ public class ComSqlScriptService extends AbstractPublishService {
 				new SysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
-				if(sqlScript.getIsAnalysisParameters() == 1 && sqlScript.getSqlScriptParameterList() != null && sqlScript.getSqlScriptParameterList().size() >0){
+				if(sqlScript.getIsAnalysisParameters() == 1 && sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0){
 					String sqlScriptId = sqlScript.getId(); 
-					saveSqlScriptParameter(true, sqlScript.getSqlScriptParameterList(), sqlScriptId);
+					saveSqlScriptParameter(true, sqlScript.getSqlParams(), sqlScriptId);
 				}
-				sqlScript.setSqlQueryResultColumns("");
+				
+				// 如果是查询语句，则要删除之前解析的结果集信息集合
+				if(BuiltinDatabaseData.SELECT.equals(sqlScript.getSqlScriptType())){
+					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId=? and sqlParameterId is null and projectId=? and customerId=?", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+				}
+				
 				return HibernateUtil.updateObject(sqlScript, null);
 			}
 		}
@@ -353,7 +358,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		if(project.getIsCreated() == 0){
 			return "["+sqlScript.getSqlScriptResourceName()+"]sql脚本所属的项目还未发布，请先发布项目";
 		}
-		sqlScript.doSetSqlScriptParameterList(findSqlScriptParameters(sqlScriptId));
+//		sqlScript.doSetSqlScriptParameterList(findSqlScriptParameters(sqlScriptId));
 		
 		publishInfoService.deletePublishedData(projectId, sqlScriptId);
 		sqlScript.setRefDatabaseId(project.getRefDatabaseId());
@@ -404,7 +409,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 			sqlScriptIdStr.append(sqlScriptId).append(",");
 			
-			sqlScript.doSetSqlScriptParameterList(findSqlScriptParameters(sqlScript.getId()));
+//			sqlScript.doSetSqlScriptParameterList(findSqlScriptParameters(sqlScript.getId()));
 			sqlScript.setRefDatabaseId(databaseId);
 			sqlScript.setProjectId(projectId);
 			sqlScripts.add(sqlScript);
@@ -436,9 +441,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 	 * @param sqlScriptId
 	 * @return
 	 */
-	private List<ComSqlScriptParameter> findSqlScriptParameters(String sqlScriptId) {
+	private List<ComSqlScriptParameter> findSqlParams(String sqlScriptId) {
 		return HibernateUtil.extendExecuteListQueryByHqlArr(
-				ComSqlScriptParameter.class, null, null, "from ComSqlScriptParameter where sqlScriptId = ? order by orderCode asc", sqlScriptId);
+				ComSqlScriptParameter.class, null, null, "from ComSqlScriptParameter where sqlScriptId = ? and projectId=? and customerId=? order by orderCode asc", sqlScriptId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 	}
 	
 	/**
@@ -481,5 +486,69 @@ public class ComSqlScriptService extends AbstractPublishService {
 	public String deleteSqlScriptParameter(String sqlScriptParameterIds) {
 		deleteDataById("ComSqlScriptParameter", sqlScriptParameterIds);
 		return null;
+	}
+	
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 根据sql脚本id，查询对应的结果集信息集合
+	 * @param sqlScript
+	 * @return
+	 */
+	private List<List<CfgSqlResultset>> findSqlResultsetsList(ComSqlScript sqlScript) {
+		List<List<CfgSqlResultset>> sqlResultsetsList = null;
+		
+		// 查询语句，直接查询结果集
+		if(BuiltinDatabaseData.SELECT.equals(sqlScript.getSqlScriptType())){
+			sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
+			sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
+					CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+		}
+		
+		// 存储过程，要判断是否有返回结果集，再查询对应的结果集
+		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
+			// oracle的存储过程返回结果集，通过输出参数
+			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getSqlScriptType())){
+				List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
+				if(sqlParams != null && sqlParams.size() > 0){
+					sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
+					for (ComSqlScriptParameter sqlParam : sqlParams) {
+						// 只有游标类型，再查询其结果集信息
+						if("sys_refcursor".equals(sqlParam.getParameterDataType())){
+							sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
+									CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+						}
+					}
+				}
+				
+			}
+			// oracle的存储过程返回结果集，不需要参数，所以不用参数做查询
+			else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getSqlScriptType())){
+				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(6);
+				List<CfgSqlResultset> sqlResultsets = HibernateUtil.extendExecuteListQueryByHqlArr(
+						CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and projectId=? and customerId=? order by batchOrder asc, orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+				if(sqlResultsets != null && sqlResultsets.size() > 0){
+					int size = sqlResultsets.size();
+					int count = size;
+					CfgSqlResultset sqlResultset;
+					List<CfgSqlResultset> tmpSqlResultsets = new ArrayList<CfgSqlResultset>(count);
+					Integer batchOrder = null;
+					for(int i=0;i<size;i++){
+						count--;
+						sqlResultset = sqlResultsets.get(i);
+						if(batchOrder == null){
+							batchOrder = sqlResultset.getBatchOrder();
+						}
+						if(batchOrder != sqlResultset.getBatchOrder()){
+							sqlResultsetsList.add(tmpSqlResultsets);// 把属于同一个结果集信息集合的加入到大的集合中
+							
+							batchOrder = sqlResultset.getBatchOrder();
+							tmpSqlResultsets = new ArrayList<CfgSqlResultset>(count);
+						}
+						tmpSqlResultsets.add(sqlResultsets.remove(i--));
+					}
+				}
+			}
+		}
+		return sqlResultsetsList;
 	}
 }

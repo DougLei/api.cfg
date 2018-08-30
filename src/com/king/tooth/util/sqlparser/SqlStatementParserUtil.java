@@ -222,7 +222,7 @@ public class SqlStatementParserUtil {
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
 			}
-			sqlScript.setSqlScriptParameterList(sqlScriptParameterList);
+			sqlScript.setSqlParams(sqlScriptParameterList);
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
 	}
@@ -268,7 +268,7 @@ public class SqlStatementParserUtil {
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
 			}
-			sqlScript.setSqlScriptParameterList(sqlScriptParameterList);
+			sqlScript.setSqlParams(sqlScriptParameterList);
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
 	}

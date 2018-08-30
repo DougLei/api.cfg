@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import oracle.jdbc.OracleTypes;
+
 public class ExecuteProcedureTest extends Parent{
 	
 	public static void main(String[] args)  {
@@ -18,6 +20,7 @@ public class ExecuteProcedureTest extends Parent{
 		outTable();
 	}
 
+	@SuppressWarnings("unused")
 	private static void inTable() {
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -48,30 +51,41 @@ public class ExecuteProcedureTest extends Parent{
 	
 	private static void outTable() {
 		try {
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
+//			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:V6OA", "pt6", "cape");
 			
-			CallableStatement cs = conn.prepareCall("{call outTable(?)}");
-			cs.registerOutParameter(1, Types.INTEGER);
+			CallableStatement cs = conn.prepareCall("{call outTable(?,?,?)}");
+			cs.setInt(1, 10);
+			cs.registerOutParameter(2, Types.INTEGER);
+			cs.registerOutParameter(3, OracleTypes.CURSOR);
 
 			cs.execute();
 			
 			// 要先输出结果，再输出存储过程的输出值，反过来会获得不到数据集
 			System.out.println("存储过程的返回数据集为：");
 			
-			ResultSet rs = cs.getResultSet();
-			while(rs != null){
-				while(rs.next()){
-					System.out.println(rs.getString(1));
-				}
-				System.out.println("-----------------------------------");
-				cs.getMoreResults();
-				rs = cs.getResultSet();
-			}
+//			ResultSet rs = cs.getResultSet();
+//			while(rs != null){
+//				while(rs.next()){
+//					System.out.println(rs.getString(1));
+//				}
+//				System.out.println("-----------------------------------");
+//				cs.getMoreResults();
+//				rs = cs.getResultSet();
+//			}
 			
-			
-			Integer val = cs.getInt(1);
+			Integer val = cs.getInt(2);
 			System.out.println("存储过程的输出参数的值为："+val);
+			
+			
+			ResultSet rs = (ResultSet) cs.getObject(3);
+			while(rs.next()){
+				System.out.println(rs.getString(3));
+			}
+			System.out.println("-----------------------------------");
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

@@ -1,10 +1,7 @@
-create type accountType as table(
-	id varchar(32),
-	name varchar(30)
-)
-go
-
-create proc inTable(@accountTable accountType readonly)
+create or replace procedure outTable(inage in number, age out number, dataset out sys_refcursor)
 as
- select * from @accountTable;
-go
+begin
+    age:=inage+10;
+    open dataset for
+         select * from sys_user where id = '1';
+end;

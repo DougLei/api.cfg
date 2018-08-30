@@ -21,6 +21,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
@@ -34,7 +35,6 @@ import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
@@ -50,10 +50,11 @@ import com.king.tooth.sys.entity.sys.SysRole;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserGroup;
 import com.king.tooth.sys.entity.sys.SysUserGroupDetail;
-import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
+import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
+import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -142,6 +143,7 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new SysUserGroupDetail().toCreateTable());
 		tables.add(new CfgColumnCodeRule().toCreateTable());
 		tables.add(new CfgColumnCodeRuleDetail().toCreateTable());
+		tables.add(new CfgSqlResultset().toCreateTable());
 		return tables;
 	}
 	

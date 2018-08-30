@@ -20,6 +20,7 @@ import com.king.tooth.sys.controller.sys.SysUserController;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
@@ -170,6 +171,7 @@ public class BuiltinObjectInstance {
 	public static final ComProjectModule cfgProjectModule = new ComProjectModule();
 	public static final ComSqlScript cfgSqlScript = new ComSqlScript();
 	public static final ComSqlScriptParameter cfgSqlScriptParameter = new ComSqlScriptParameter();
+	public static final CfgSqlResultset cfgSqlResultset = new CfgSqlResultset();
 	public static final CfgColumnCodeRule cfgColumnCodeRule = new CfgColumnCodeRule();
 	public static final CfgColumnCodeRuleDetail cfgColumnCodeRuleDetail = new CfgColumnCodeRuleDetail();
 	

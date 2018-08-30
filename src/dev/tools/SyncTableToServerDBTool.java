@@ -8,9 +8,8 @@ import java.sql.Statement;
 
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
-import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
@@ -28,8 +27,8 @@ public final class SyncTableToServerDBTool extends AbstractService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new CfgColumnCodeRule().toCreateTable(), 
-				new CfgColumnCodeRuleDetail().toCreateTable());
+				new CfgSqlResultset().toCreateTable()
+				);
 	}
 	
 	/**
