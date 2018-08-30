@@ -6,7 +6,7 @@ import java.util.Map;
 import org.hibernate.Query;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.entity.cfg.SqlQueryResultColumn;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
@@ -22,9 +22,9 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 	 * @param dataList 之前递归查询到的数据集合
 	 * @param recursiveQuerySql 递归查询用sql
 	 * @param deepLevel 递归查询的钻取深度
-	 * @param list 
+	 * @param sqlResultsets 
 	 */
-	protected final void recursiveQuery(List<Map<String, Object>> dataList, String recursiveQuerySql, int deepLevel, List<SqlQueryResultColumn> sqlQueryResultColumns) {
+	protected final void recursiveQuery(List<Map<String, Object>> dataList, String recursiveQuerySql, int deepLevel, List<CfgSqlResultset> sqlResultsets) {
 		deepLevel--; // 自减递归查询的深度
 		if(deepLevel == 0){ // 判断是否到了要求递归查询的钻取深度，如果达到了则停止递归查询，return
 			return;
@@ -40,13 +40,13 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 				
 				// 执行查询
 				recursiveQuery = createQuery(0, recursiveQuerySql);
-				recursiveQueryDataList = executeList(recursiveQuery, sqlQueryResultColumns);
+				recursiveQueryDataList = executeList(recursiveQuery, sqlResultsets);
 				
 				// 将查询的子结果集合存储起来
 				map.put("children", recursiveQueryDataList);
 				
 				// 再进行递归查询
-				recursiveQuery(recursiveQueryDataList, recursiveQuerySql, deepLevel, sqlQueryResultColumns);
+				recursiveQuery(recursiveQueryDataList, recursiveQuerySql, deepLevel, sqlResultsets);
 			}
 		}
 	}

@@ -82,7 +82,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 */
 	private Map<String, String> analysisSqlScriptParam(ComSqlScript sqlScript, Map<String, String> requestUrlParams) {
 		Map<String, String> sqlScriptParams = null;
-		List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlScriptParameterList();
+		List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlParams();
 		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0 && requestUrlParams.size() > 0){
 			sqlScriptParams = new HashMap<String, String>(16);// 默认初始长度为16
 			

@@ -15,8 +15,8 @@ import org.hibernate.Query;
 import org.hibernate.jdbc.Work;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.SqlQueryResultColumn;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingTurnUtil;
@@ -27,8 +27,8 @@ import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesse
 import com.king.tooth.web.builtin.method.sqlresource.query.BuiltinQueryMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.query.SelectNaming;
 import com.king.tooth.web.builtin.method.sqlresource.querycond.BuiltinQueryCondMethodProcesser;
-import com.king.tooth.web.builtin.method.sqlresource.sort.BuiltinSortMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.recursive.BuiltinRecursiveMethodProcesser;
+import com.king.tooth.web.builtin.method.sqlresource.sort.BuiltinSortMethodProcesser;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.entity.resulttype.TextResultEntity;
@@ -98,11 +98,11 @@ public abstract class GetProcesser extends RequestProcesser{
 	 * <p>将列名，转换为属性名，作为key</p>
 	 * <p>将值作为value显示</p>
 	 * @param queryResultList
-	 * @param sqlQueryResultColumns
+	 * @param sqlResultset
 	 * @return
 	 */
-	private List<Map<String, Object>> sqlQueryResultToMap(List queryResultList, List<SqlQueryResultColumn> sqlQueryResultColumns){
-		if(sqlQueryResultColumns == null || sqlQueryResultColumns.size() == 0){
+	private List<Map<String, Object>> sqlQueryResultToMap(List queryResultList, List<CfgSqlResultset> sqlResultset){
+		if(sqlResultset == null || sqlResultset.size() == 0){
 			throw new NullPointerException("将sql查询结果转为map时，要转换的结果列名对象集合不能为空[sqlQueryResultColumns]");
 		}
 		
@@ -130,8 +130,8 @@ public abstract class GetProcesser extends RequestProcesser{
 							}
 						}
 					} else { // 否则，就是查询全部字段
-						for(SqlQueryResultColumn sqrc : sqlQueryResultColumns){
-							data.put(sqrc.getResultPropName(), object[i++]);
+						for(CfgSqlResultset csr : sqlResultset){
+							data.put(csr.getPropName(), object[i++]);
 						}
 					}
 					dataList.add(data);
@@ -148,7 +148,7 @@ public abstract class GetProcesser extends RequestProcesser{
 							data.put(selectNamingArr[0].getSelectAliasName(), object);
 						}
 					}else{
-						data.put(sqlQueryResultColumns.get(0).getResultPropName(), object);
+						data.put(sqlResultset.get(0).getPropName(), object);
 					}
 					dataList.add(data);
 				}
@@ -178,12 +178,12 @@ public abstract class GetProcesser extends RequestProcesser{
 	/**
 	 * 执行查询
 	 * @param query
-	 * @param sqlQueryResultColumns
+	 * @param sqlResultset
 	 * @return
 	 */
-	protected final List<Map<String, Object>> executeList(Query query, List<SqlQueryResultColumn> sqlQueryResultColumns) {
+	protected final List<Map<String, Object>> executeList(Query query, List<CfgSqlResultset> sqlResultset) {
 		List list = query.list();
-		List<Map<String, Object>> dataList = sqlQueryResultToMap(list, sqlQueryResultColumns);
+		List<Map<String, Object>> dataList = sqlQueryResultToMap(list, sqlResultset);
 		return dataList;
 	}
 	
@@ -278,10 +278,10 @@ public abstract class GetProcesser extends RequestProcesser{
 	 * @param sqlScriptResource 
 	 */
 	protected void validIdColumnIsExists(ComSqlScript sqlScriptResource) {
-		List<SqlQueryResultColumn> sqlQueryResultColumns = sqlScriptResource.getSqlQueryResultColumnList();
+		List<CfgSqlResultset> sqlResultsets = sqlScriptResource.getSqlResultsetsList().get(0);
 		boolean unIncludeIdColumn = true;// 是否不包含id字段，如果不包括，则该处理器无法使用
-		for (SqlQueryResultColumn sqrs : sqlQueryResultColumns) {
-			if(sqrs.getResultPropName().equalsIgnoreCase(ResourcePropNameConstants.ID)){
+		for (CfgSqlResultset csr : sqlResultsets) {
+			if(csr.getPropName().equalsIgnoreCase(ResourcePropNameConstants.ID)){
 				unIncludeIdColumn = false;
 				break;
 			}
@@ -292,11 +292,11 @@ public abstract class GetProcesser extends RequestProcesser{
 	}
 	
 	/**
-	 * [首次调用]处理select sql语句查询的结果列名集合
+	 * [首次调用]处理select sql语句查询的结果集信息
 	 * @param sqlScriptResource
 	 */
-	protected void processSelectSqlQueryResultColumns(ComSqlScript sqlScriptResource, String querySql) {
-		if(sqlScriptResource.getSqlQueryResultColumnList() == null){
+	protected void processSelectSqlResultsets(ComSqlScript sqlScriptResource, String querySql) {
+		if(sqlScriptResource.getSqlResultsetsList() == null || sqlScriptResource.getSqlResultsetsList().get(0) == null){
 			List<Object> queryCondParameters = null;
 			if(sqlParameterValues.size() > 0){
 				queryCondParameters = new ArrayList<Object>(sqlParameterValues.get(0).size());
@@ -307,22 +307,31 @@ public abstract class GetProcesser extends RequestProcesser{
 			}else{
 				querySql += " where 1=2";
 			}
-			sqlScriptResource.doSetSqlQueryResultColumns(getQueryResultColumns(querySql, queryCondParameters));
-			HibernateUtil.updateObject(sqlScriptResource, null);
+			sqlScriptResource.setSqlResultsetsList(getSelectSqlResultsets(querySql, queryCondParameters));
+			
+			// 保存select sql的查询结果集信息
+			List<CfgSqlResultset> sqlResultsets = sqlScriptResource.getSqlResultsetsList().get(0);
+			for (CfgSqlResultset src : sqlResultsets) {
+				src.setSqlScriptId(sqlScriptResource.getId());
+				HibernateUtil.saveObject(src, null);
+			}
 		}
 	}
 	
 	/**
-	 * 获取查询sql语句，查询结果的列集合
+	 * 获取select sql语句查询的结果集信息
 	 * @param querySql
 	 * @param queryCondParameters 
 	 * @return
 	 */
-	protected List<SqlQueryResultColumn> getQueryResultColumns(final String querySql, final List<Object> queryCondParameters){
+	protected List<List<CfgSqlResultset>> getSelectSqlResultsets(final String querySql, final List<Object> queryCondParameters){
 		if(StrUtils.isEmpty(querySql)){
 			return null;
 		}
-		final List<SqlQueryResultColumn> resultColumns = new ArrayList<SqlQueryResultColumn>();
+		List<List<CfgSqlResultset>> sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
+		final List<CfgSqlResultset> sqlResultsets = new ArrayList<CfgSqlResultset>();
+		sqlResultsetsList.add(sqlResultsets);
+		
 		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
 				PreparedStatement pst = null;
@@ -342,10 +351,10 @@ public abstract class GetProcesser extends RequestProcesser{
 					rs = pst.executeQuery();
 					ResultSetMetaData rsmd = rs.getMetaData();
 					int len = rsmd.getColumnCount();
-					SqlQueryResultColumn src = null;
+					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
-						src = new SqlQueryResultColumn(rsmd.getColumnName(i));
-						resultColumns.add(src);
+						csr = new CfgSqlResultset(rsmd.getColumnName(i), i);
+						sqlResultsets.add(csr);
 					}
 				}catch (Exception e){
 					e.printStackTrace();
@@ -354,11 +363,11 @@ public abstract class GetProcesser extends RequestProcesser{
 				}
 			}
 		});
-		Log4jUtil.debug("执行的sql语句为：{}", querySql);
-		Log4jUtil.debug("执行sql语句的条件参数集合为：{}", queryCondParameters);
+		Log4jUtil.debug("获取select语句查询结果集信息时，执行的sql语句为：{}", querySql);
+		Log4jUtil.debug("获取select语句查询结果集信息时，执行sql语句的条件参数集合为：{}", queryCondParameters);
 		if(queryCondParameters != null){
 			queryCondParameters.clear();
 		}
-		return resultColumns;
+		return sqlResultsetsList;
 	}
 }

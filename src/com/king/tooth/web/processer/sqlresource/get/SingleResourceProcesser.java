@@ -25,11 +25,11 @@ public final class SingleResourceProcesser extends GetProcesser{
 				builtinQueryMethodProcesser.getSql().append(getFromSql());
 		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
 		
-		processSelectSqlQueryResultColumns(sqlScriptResource, coreQuerySql);
+		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
 		
 		Query query = createQuery(0, querySql);
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
-		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlQueryResultColumnList());
+		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlResultsetsList().get(0));
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);
 		return true;

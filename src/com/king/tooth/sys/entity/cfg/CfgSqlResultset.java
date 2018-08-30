@@ -5,12 +5,14 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.util.NamingTurnUtil;
 
 /**
  * sql结果集信息表
@@ -48,6 +50,18 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	
 	//------------------------------------------------------------------------------
 	
+	public CfgSqlResultset(String columnName, int orderCode) {
+		this.orderCode = orderCode;
+		this.columnName = columnName;
+		if("id".equalsIgnoreCase(columnName)){
+			this.propName = ResourcePropNameConstants.ID;
+		}else{
+			this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
+		}
+	}
+	public CfgSqlResultset() {
+	}
+
 	public String getSqlScriptId() {
 		return sqlScriptId;
 	}

@@ -1,15 +1,8 @@
 package test.sqlparser.gsp;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-
 import gudusoft.gsqlparser.EDbVendor;
 import gudusoft.gsqlparser.TGSqlParser;
 import gudusoft.gsqlparser.TStatementList;
-import gudusoft.gsqlparser.nodes.TParameterDeclaration;
-import gudusoft.gsqlparser.stmt.oracle.TPlsqlCreateProcedure;
 
 public class TestProcedure {
 	public static void main(String[] args) {
@@ -27,26 +20,6 @@ public class TestProcedure {
 			System.out.println(sqlList.get(i).sqlstatementtype);
 		}
 		
-		TPlsqlCreateProcedure procedureSqlStatement = (TPlsqlCreateProcedure)sqlList.get(0);
-		// 解析参数
-		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
-			int len = procedureSqlStatement.getParameterDeclarations().size();
-			
-			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
-			ComSqlScriptParameter parameter = null;
-			
-			TParameterDeclaration param = null;
-			String parameterName;
-			String dataType;
-			String length = null;
-			for(int i=0;i<len;i++){
-				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
-				parameterName = param.getParameterName().toString();
-				
-				dataType = param.getDataType().toString().toLowerCase();
-				System.out.println(dataType);
-			}
-		}
 		
 	}
 
