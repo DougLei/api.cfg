@@ -14,7 +14,7 @@ public class SQLFileReader {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("String sqls = \"\";");
+		sql.append("String sqls = \"\";\n");
 		while(br.ready()){
 			sql.append("sqls += \"  ").append(br.readLine()).append("\\n\"; \n");
 		}

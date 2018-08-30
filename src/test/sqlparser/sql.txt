@@ -1,6 +1,10 @@
-declare @var_a int = 10
-while( @var_a > 0)
-begin
-    select @var_a
-    set @var_a=@var_a-1
-end
+create type accountType as table(
+	id varchar(32),
+	name varchar(30)
+)
+go
+
+create proc inTable(@accountTable accountType readonly)
+as
+ select * from @accountTable;
+go
