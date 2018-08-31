@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -512,8 +513,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 				if(sqlParams != null && sqlParams.size() > 0){
 					sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
 					for (ComSqlScriptParameter sqlParam : sqlParams) {
-						// 只有游标类型，再查询其结果集信息
-						if(BuiltinDatabaseData.ORACLE_CURSOR_TYPE.equals(sqlParam.getParameterDataType())){
+						// 只有表类型，再查询其结果集信息
+						if(BuiltinDataType.TABLE.equals(sqlParam.getParameterDataType())){
 							sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
 									CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 						}
@@ -521,7 +522,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 				}
 				
 			}
-			// oracle的存储过程返回结果集，不需要参数，所以不用参数做查询
+			// sqlserver的存储过程返回结果集，不需要参数，所以不用参数做查询
 			else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getSqlScriptType())){
 				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(6);
 				List<CfgSqlResultset> sqlResultsets = HibernateUtil.extendExecuteListQueryByHqlArr(

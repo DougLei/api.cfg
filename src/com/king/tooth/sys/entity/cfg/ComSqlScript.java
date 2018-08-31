@@ -12,7 +12,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -279,57 +279,57 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
-		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinCodeDataType.STRING, 16);
+		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinDataType.STRING, 16);
 		dbTypeColumn.setName("数据库类型");
 		dbTypeColumn.setComments("数据库类型");
 		dbTypeColumn.setOrderCode(1);
 		columns.add(dbTypeColumn);
 		
-		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption", BuiltinCodeDataType.STRING, 50);
+		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption", BuiltinDataType.STRING, 50);
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
 		sqlScriptCaptionColumn.setComments("sql脚本的标题");
 		sqlScriptCaptionColumn.setOrderCode(2);
 		columns.add(sqlScriptCaptionColumn);
 		
-		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name", BuiltinCodeDataType.STRING, 60);
+		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name", BuiltinDataType.STRING, 60);
 		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
 		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
 		sqlScriptResourceNameColumn.setIsNullabled(0);
 		sqlScriptResourceNameColumn.setOrderCode(3);
 		columns.add(sqlScriptResourceNameColumn);
 		
-		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", BuiltinCodeDataType.STRING, 50);
+		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", BuiltinDataType.STRING, 50);
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
 		sqlScriptTypeColumn.setOrderCode(4);
 		columns.add(sqlScriptTypeColumn);
 		
-		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", BuiltinCodeDataType.CLOB, 0);
+		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", BuiltinDataType.CLOB, 0);
 		sqlScriptContentColumn.setName("sql脚本内容");
 		sqlScriptContentColumn.setComments("sql脚本内容");
 		sqlScriptContentColumn.setIsNullabled(0);
 		sqlScriptContentColumn.setOrderCode(5);
 		columns.add(sqlScriptContentColumn);
 		
-		ComColumndata sqlScriptParametersColumn = new ComColumndata("sql_script_parameters", BuiltinCodeDataType.STRING, 9999);
+		ComColumndata sqlScriptParametersColumn = new ComColumndata("sql_script_parameters", BuiltinDataType.STRING, 9999);
 		sqlScriptParametersColumn.setName("sql脚本的参数对象集合");
 		sqlScriptParametersColumn.setComments("sql脚本的参数(json串)");
 		sqlScriptParametersColumn.setOrderCode(6);
 		columns.add(sqlScriptParametersColumn);
 		
-		ComColumndata objectNameColumn = new ComColumndata("object_name", BuiltinCodeDataType.STRING, 80);
+		ComColumndata objectNameColumn = new ComColumndata("object_name", BuiltinDataType.STRING, 80);
 		objectNameColumn.setName("sql对象名称");
 		objectNameColumn.setComments("存储过程、视图等");
 		objectNameColumn.setOrderCode(7);
 		columns.add(objectNameColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinCodeDataType.STRING, 200);
+		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 200);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		commentsColumn.setOrderCode(9);
 		columns.add(commentsColumn);
 		
-		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinCodeDataType.STRING, 9999);
+		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinDataType.STRING, 9999);
 		parameterNameRecordsColumn.setName("sql参数名的记录");
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
 		parameterNameRecordsColumn.setOrderCode(11);

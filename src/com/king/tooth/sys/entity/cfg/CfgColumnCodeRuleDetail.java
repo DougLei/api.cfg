@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -281,121 +281,121 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(28);
 		
-		ComColumndata columnCodeRuleIdColumn = new ComColumndata("column_code_rule_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata columnCodeRuleIdColumn = new ComColumndata("column_code_rule_id", BuiltinDataType.STRING, 32);
 		columnCodeRuleIdColumn.setName("关联的字段编码规则id");
 		columnCodeRuleIdColumn.setComments("关联的字段编码规则id");
 		columns.add(columnCodeRuleIdColumn);
 		
-		ComColumndata linkNextSymbolColumn = new ComColumndata("link_next_symbol", BuiltinCodeDataType.STRING, 5);
+		ComColumndata linkNextSymbolColumn = new ComColumndata("link_next_symbol", BuiltinDataType.STRING, 5);
 		linkNextSymbolColumn.setName("连接符");
 		linkNextSymbolColumn.setComments("当前段连接下一段的连接符；如果没有下一段，则连接符无效；默认值为空字符串");
 		linkNextSymbolColumn.setDefaultValue("");
 		columns.add(linkNextSymbolColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("按照顺序从小到大组装编码结果");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata ruleTypeColumn = new ComColumndata("rule_type", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata ruleTypeColumn = new ComColumndata("rule_type", BuiltinDataType.INTEGER, 1);
 		ruleTypeColumn.setName("规则类型");
 		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:type(类型值)，默认值为0");
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
-		ComColumndata defValueColumn = new ComColumndata("defValue", BuiltinCodeDataType.STRING, 10);
+		ComColumndata defValueColumn = new ComColumndata("defValue", BuiltinDataType.STRING, 10);
 		defValueColumn.setName("默认固定值");
 		defValueColumn.setComments("默认值为空字符串");
 		defValueColumn.setDefaultValue("");
 		columns.add(defValueColumn);
 		
-		ComColumndata dateFormateColumn = new ComColumndata("date_formate", BuiltinCodeDataType.STRING, 20);
+		ComColumndata dateFormateColumn = new ComColumndata("date_formate", BuiltinDataType.STRING, 20);
 		dateFormateColumn.setName("日期格式化格式");
 		dateFormateColumn.setComments("yyyy表示年，MM表示月，dd表示日，hh表示小时，mm表示分钟，ss表示秒，可任意组装，默认值为yyyyMMddHHmmss");
 		dateFormateColumn.setDefaultValue("yyyyMMddHHmmss");
 		columns.add(dateFormateColumn);
 		
-		ComColumndata seqReinitTimeColumn = new ComColumndata("seq_reinit_time", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata seqReinitTimeColumn = new ComColumndata("seq_reinit_time", BuiltinDataType.INTEGER, 1);
 		seqReinitTimeColumn.setName("序列再次初始化的时机");
 		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0");
 		seqReinitTimeColumn.setDefaultValue("0");
 		columns.add(seqReinitTimeColumn);
 		
-		ComColumndata seqStartValColumn = new ComColumndata("seq_start_val", BuiltinCodeDataType.INTEGER, 8);
+		ComColumndata seqStartValColumn = new ComColumndata("seq_start_val", BuiltinDataType.INTEGER, 8);
 		seqStartValColumn.setName("序列的起始值");
 		seqStartValColumn.setComments("序列的起始值");
 		columns.add(seqStartValColumn);
 		
-		ComColumndata seqCurrentValColumn = new ComColumndata("seq_current_val", BuiltinCodeDataType.INTEGER, 8);
+		ComColumndata seqCurrentValColumn = new ComColumndata("seq_current_val", BuiltinDataType.INTEGER, 8);
 		seqCurrentValColumn.setName("序列的当前值");
 		seqCurrentValColumn.setComments("序列的当前值");
 		columns.add(seqCurrentValColumn);
 		
-		ComColumndata seqSkipValColumn = new ComColumndata("seq_skip_val", BuiltinCodeDataType.INTEGER, 4);
+		ComColumndata seqSkipValColumn = new ComColumndata("seq_skip_val", BuiltinDataType.INTEGER, 4);
 		seqSkipValColumn.setName("序列的间隔值");
 		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1");
 		seqSkipValColumn.setDefaultValue("1");
 		columns.add(seqSkipValColumn);
 		
-		ComColumndata randomLengthColumn = new ComColumndata("random_length", BuiltinCodeDataType.INTEGER, 15);
+		ComColumndata randomLengthColumn = new ComColumndata("random_length", BuiltinDataType.INTEGER, 15);
 		randomLengthColumn.setName("随机数长度");
 		randomLengthColumn.setComments("默认值为6");
 		randomLengthColumn.setDefaultValue("6");
 		columns.add(randomLengthColumn);
 		
-		ComColumndata columnValFromColumn = new ComColumndata("column_val_from", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata columnValFromColumn = new ComColumndata("column_val_from", BuiltinDataType.INTEGER, 1);
 		columnValFromColumn.setName("列值的来源");
 		columnValFromColumn.setComments("0:当前数据、1:当前数据资源对象、2:其他数据资源对象，默认值为0");
 		columnValFromColumn.setDefaultValue("0");
 		columns.add(columnValFromColumn);
 		
-		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinDataType.STRING, 32);
 		refTableIdColumn.setName("引用表的id");
 		refTableIdColumn.setComments("引用表的id");
 		columns.add(refTableIdColumn);
 		
-		ComColumndata refColumnIdColumn = new ComColumndata("ref_column_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata refColumnIdColumn = new ComColumndata("ref_column_id", BuiltinDataType.STRING, 32);
 		refColumnIdColumn.setName("引用列的id");
 		refColumnIdColumn.setComments("引用列的id");
 		columns.add(refColumnIdColumn);
 		
-		ComColumndata queryColumnIdColumn = new ComColumndata("query_column_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata queryColumnIdColumn = new ComColumndata("query_column_id", BuiltinDataType.STRING, 32);
 		queryColumnIdColumn.setName("查询列的id");
 		queryColumnIdColumn.setComments("查询列的id");
 		columns.add(queryColumnIdColumn);
 		
-		ComColumndata queryColumnCondValColumn = new ComColumndata("query_column_cond_val", BuiltinCodeDataType.STRING, 60);
+		ComColumndata queryColumnCondValColumn = new ComColumndata("query_column_cond_val", BuiltinDataType.STRING, 60);
 		queryColumnCondValColumn.setName("查询列的条件值");
 		queryColumnCondValColumn.setComments("查询列的条件值");
 		columns.add(queryColumnCondValColumn);
 		
-		ComColumndata typeColumnValFromColumn = new ComColumndata("type_column_val_from", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata typeColumnValFromColumn = new ComColumndata("type_column_val_from", BuiltinDataType.INTEGER, 1);
 		typeColumnValFromColumn.setName("类型值的列值来源");
 		typeColumnValFromColumn.setComments("0:当前数据、1:当前数据资源对象、2:其他数据资源对象，默认值为0");
 		typeColumnValFromColumn.setDefaultValue("0");
 		columns.add(typeColumnValFromColumn);
 		
-		ComColumndata typeRefTableIdColumn = new ComColumndata("type_ref_table_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata typeRefTableIdColumn = new ComColumndata("type_ref_table_id", BuiltinDataType.STRING, 32);
 		typeRefTableIdColumn.setName("类型引用表的id");
 		typeRefTableIdColumn.setComments("类型引用表的id");
 		columns.add(typeRefTableIdColumn);
 		
-		ComColumndata typeRefColumnIdColumn = new ComColumndata("type_ref_column_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata typeRefColumnIdColumn = new ComColumndata("type_ref_column_id", BuiltinDataType.STRING, 32);
 		typeRefColumnIdColumn.setName("类型引用列的id");
 		typeRefColumnIdColumn.setComments("类型引用列的id");
 		columns.add(typeRefColumnIdColumn);
 		
-		ComColumndata typeQueryColumnIdColumn = new ComColumndata("type_query_column_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata typeQueryColumnIdColumn = new ComColumndata("type_query_column_id", BuiltinDataType.STRING, 32);
 		typeQueryColumnIdColumn.setName("类型查询列的id");
 		typeQueryColumnIdColumn.setComments("类型查询列的id");
 		columns.add(typeQueryColumnIdColumn);
 		
-		ComColumndata typeQueryColumnCondValColumn = new ComColumndata("type_query_column_cond_val", BuiltinCodeDataType.STRING, 60);
+		ComColumndata typeQueryColumnCondValColumn = new ComColumndata("type_query_column_cond_val", BuiltinDataType.STRING, 60);
 		typeQueryColumnCondValColumn.setName("类型查询列的条件值");
 		typeQueryColumnCondValColumn.setComments("类型查询列的条件值");
 		columns.add(typeQueryColumnCondValColumn);
 		
-		ComColumndata typeMapJsonColumn = new ComColumndata("type_map_json", BuiltinCodeDataType.STRING, 300);
+		ComColumndata typeMapJsonColumn = new ComColumndata("type_map_json", BuiltinDataType.STRING, 300);
 		typeMapJsonColumn.setName("类型映射json");
 		typeMapJsonColumn.setComments("这种结构：{\"类型值1\":\"展示值1\",\"类型值2\":\"展示值2\" ...}");
 		columns.add(typeMapJsonColumn);

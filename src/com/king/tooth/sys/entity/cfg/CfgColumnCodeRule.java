@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -87,17 +87,17 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
-		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinDataType.STRING, 32);
 		refTableIdColumn.setName("关联规则的表id");
 		refTableIdColumn.setComments("关联规则的表id");
 		columns.add(refTableIdColumn);
 		
-		ComColumndata refColumnIdColumn = new ComColumndata("ref_column_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata refColumnIdColumn = new ComColumndata("ref_column_id", BuiltinDataType.STRING, 32);
 		refColumnIdColumn.setName("关联规则的列id");
 		refColumnIdColumn.setComments("关联规则的列id");
 		columns.add(refColumnIdColumn);
 		
-		ComColumndata remarkColumn = new ComColumndata("remark", BuiltinCodeDataType.STRING, 500);
+		ComColumndata remarkColumn = new ComColumndata("remark", BuiltinDataType.STRING, 500);
 		remarkColumn.setName("备注");
 		remarkColumn.setComments("备注");
 		columns.add(remarkColumn);

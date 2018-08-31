@@ -2,7 +2,7 @@ package com.king.tooth.plugins.jdbc.table;
 
 import java.util.List;
 
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
@@ -80,10 +80,10 @@ public abstract class AbstractTableHandler {
 			createTableSql.append(" primary key ");
 		}
 		if(StrUtils.notEmpty(column.getDefaultValue())){
-			if(BuiltinCodeDataType.DATE.equals(column.getColumnType())){
+			if(BuiltinDataType.DATE.equals(column.getColumnType())){
 				throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
 			}
-			if(BuiltinCodeDataType.STRING.equals(column.getColumnType())){
+			if(BuiltinDataType.STRING.equals(column.getColumnType())){
 				createTableSql.append(" default '").append(column.getDefaultValue()).append("' ");
 			}else{
 				createTableSql.append(" default ").append(column.getDefaultValue()).append(" ");

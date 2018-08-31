@@ -1,7 +1,7 @@
 package com.king.tooth.plugins.jdbc.table.impl.sqlserver;
 
 import com.king.tooth.plugins.jdbc.table.AbstractTableHandler;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
@@ -14,19 +14,19 @@ public class TableImpl extends AbstractTableHandler{
 
 	protected void analysisColumnType(ComColumndata column) {
 		String columnType = column.getColumnType();
-		if(BuiltinCodeDataType.STRING.equals(columnType)){
+		if(BuiltinDataType.STRING.equals(columnType)){
 			createTableSql.append("varchar");
-		}else if(BuiltinCodeDataType.BOOLEAN.equals(columnType)){
+		}else if(BuiltinDataType.BOOLEAN.equals(columnType)){
 			createTableSql.append("char(1)");
-		}else if(BuiltinCodeDataType.INTEGER.equals(columnType)){
+		}else if(BuiltinDataType.INTEGER.equals(columnType)){
 			createTableSql.append("int");
-		}else if(BuiltinCodeDataType.DOUBLE.equals(columnType)){
+		}else if(BuiltinDataType.DOUBLE.equals(columnType)){
 			createTableSql.append("decimal");
-		}else if(BuiltinCodeDataType.DATE.equals(columnType)){
+		}else if(BuiltinDataType.DATE.equals(columnType)){
 			createTableSql.append("datetime");
-		}else if(BuiltinCodeDataType.CLOB.equals(columnType)){
+		}else if(BuiltinDataType.CLOB.equals(columnType)){
 			createTableSql.append("text");
-		}else if(BuiltinCodeDataType.BLOB.equals(columnType)){
+		}else if(BuiltinDataType.BLOB.equals(columnType)){
 			createTableSql.append("image");
 		}else{
 			throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成sqlserver对应的数据类型");
@@ -36,16 +36,16 @@ public class TableImpl extends AbstractTableHandler{
 	protected void analysisColumnLength(ComColumndata column) {
 		// 验证哪些类型，sqlserver不需要加长度限制
 		String columnType = column.getColumnType();
-		if(BuiltinCodeDataType.INTEGER.equals(columnType) 
-				|| BuiltinCodeDataType.DATE.equals(columnType)
-				|| BuiltinCodeDataType.CLOB.equals(columnType)
-				|| BuiltinCodeDataType.BLOB.equals(columnType)
-				|| BuiltinCodeDataType.BOOLEAN.equals(columnType)){
+		if(BuiltinDataType.INTEGER.equals(columnType) 
+				|| BuiltinDataType.DATE.equals(columnType)
+				|| BuiltinDataType.CLOB.equals(columnType)
+				|| BuiltinDataType.BLOB.equals(columnType)
+				|| BuiltinDataType.BOOLEAN.equals(columnType)){
 			return;
 		}
 		
 		Integer length = column.getLength();
-		if(BuiltinCodeDataType.STRING.equals(columnType)){
+		if(BuiltinDataType.STRING.equals(columnType)){
 			if(length < 0 || length > 8000){
 				createTableSql.append("(8000)");
 //				createTableSql.append("(max)"); // sqlserver的varchar最大长度配置为max，值可以为2G。目前系统不提供这种支持，如果要存储大数据，就用大字段text存储

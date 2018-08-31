@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
@@ -76,19 +76,19 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
-		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", BuiltinCodeDataType.STRING, 20);
+		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", BuiltinDataType.STRING, 20);
 		permissionTypeColumn.setName("权限类型");
 		permissionTypeColumn.setComments("比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等");
 		permissionTypeColumn.setOrderCode(1);
 		columns.add(permissionTypeColumn);
 		
-		ComColumndata lvColumn = new ComColumndata("lv", BuiltinCodeDataType.INTEGER, 2);
+		ComColumndata lvColumn = new ComColumndata("lv", BuiltinDataType.INTEGER, 2);
 		lvColumn.setName("优先等级");
 		lvColumn.setComments("越低越优先");
 		lvColumn.setOrderCode(2);
 		columns.add(lvColumn);
 		
-		ComColumndata samePermissionTypeLvColumn = new ComColumndata("same_permission_type_lv", BuiltinCodeDataType.CLOB, 0);
+		ComColumndata samePermissionTypeLvColumn = new ComColumndata("same_permission_type_lv", BuiltinDataType.CLOB, 0);
 		samePermissionTypeLvColumn.setName("相同权限类型的优先级");
 		samePermissionTypeLvColumn.setComments("这里可以按照等级顺序，存储多个id，用,分割，越前面的，优先级越高；第一个优先级最高；如果这个字段没有值，则默认以对应权限类型的orderCode来决定优先级，orderCode越低的，优先级越高");
 		samePermissionTypeLvColumn.setOrderCode(3);

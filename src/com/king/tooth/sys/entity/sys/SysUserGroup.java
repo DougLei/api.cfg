@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
@@ -86,27 +86,27 @@ public class SysUserGroup extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 60);
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 60);
 		nameColumn.setName("用户组名称");
 		nameColumn.setComments("用户组名称");
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 32);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinDataType.STRING, 32);
 		codeColumn.setName("用户组编码");
 		codeColumn.setComments("用户组编码");
 		columns.add(codeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", BuiltinCodeDataType.STRING, 200);
+		ComColumndata descsColumn = new ComColumndata("descs", BuiltinDataType.STRING, 200);
 		descsColumn.setName("描述");
 		descsColumn.setComments("描述");
 		columns.add(descsColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效");
 		columns.add(isEnabledColumn);

@@ -1,10 +1,10 @@
 package com.king.tooth.sys.builtin.data;
 
 /**
- * 内置的代码数据类型
+ * 内置的数据类型
  * @author DougLei
  */
-public class BuiltinCodeDataType {
+public class BuiltinDataType {
 	
 	/**
 	 * string
@@ -40,4 +40,9 @@ public class BuiltinCodeDataType {
 	 * blob
 	 */
 	public static final String BLOB = "blob";
+	
+	/**
+	 * 表类型
+	 */
+	public static final String TABLE = "table";
 }

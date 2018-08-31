@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
@@ -87,31 +87,31 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
-		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinDataType.STRING, 32);
 		parentIdColumn.setName("父组织主键");
 		parentIdColumn.setComments("父组织主键");
 		parentIdColumn.setOrderCode(1);
 		columns.add(parentIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 100);
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 100);
 		nameColumn.setName("组织名称");
 		nameColumn.setComments("组织名称");
 		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
-		ComColumndata shortNameColumn = new ComColumndata("short_name", BuiltinCodeDataType.STRING, 50);
+		ComColumndata shortNameColumn = new ComColumndata("short_name", BuiltinDataType.STRING, 50);
 		shortNameColumn.setName("组织简称");
 		shortNameColumn.setComments("组织简称");
 		shortNameColumn.setOrderCode(3);
 		columns.add(shortNameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 32);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinDataType.STRING, 32);
 		codeColumn.setName("组织编码");
 		codeColumn.setComments("组织编码");
 		codeColumn.setOrderCode(4);
 		columns.add(codeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(5);

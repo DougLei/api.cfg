@@ -6,7 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -69,19 +69,19 @@ public class SysResource extends AbstractSysResource implements ITable{
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
-		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", BuiltinDataType.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");
 		refResourceIdColumn.setComments("引用的资源主键");
 		refResourceIdColumn.setOrderCode(1);
 		columns.add(refResourceIdColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinCodeDataType.STRING, 60);
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		resourceNameColumn.setOrderCode(2);
 		columns.add(resourceNameColumn);
 		
-		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinDataType.INTEGER, 1);
 		resourceTypeColumn.setName("资源类型");
 		resourceTypeColumn.setComments("资源类型");
 		resourceTypeColumn.setOrderCode(3);

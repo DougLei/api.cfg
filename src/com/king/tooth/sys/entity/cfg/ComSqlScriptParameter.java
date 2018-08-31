@@ -8,8 +8,7 @@ import oracle.jdbc.OracleTypes;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -17,6 +16,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -116,12 +116,16 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 				throw new NullPointerException("调用sql脚本时，参数["+parameterName+"]的值不能为空");
 			}
 			if(isPlaceholder == 1){
-				if(BuiltinCodeDataType.INTEGER.equals(parameterDataType)){
+				if(BuiltinDataType.INTEGER.equals(parameterDataType)){
 					actualInValue = Integer.valueOf(actualInValue.toString());
-				}else if(BuiltinCodeDataType.DOUBLE.equals(parameterDataType)){
+				}else if(BuiltinDataType.DOUBLE.equals(parameterDataType)){
 					actualInValue = Double.valueOf(actualInValue.toString());
-				}else if(BuiltinCodeDataType.DATE.equals(parameterDataType)){
+				}else if(BuiltinDataType.DATE.equals(parameterDataType)){
 					actualInValue = DateUtil.parseSqlDate(actualInValue.toString());
+				}else if(BuiltinDataType.BOOLEAN.equals(parameterDataType)){
+					actualInValue = ("true".equals(actualInValue.toString()))? "1":"0";
+				}else if(BuiltinDataType.TABLE.equals(parameterDataType)){
+					actualInValue = JsonUtil.toJsonObject(actualInValue);
 				}else{
 					actualInValue = actualInValue.toString();
 				}
@@ -134,8 +138,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 				throw new NullPointerException("调用sql脚本时，内置参数["+parameterName+"]的值为空，请联系开发人员");
 			}
 			if(isPlaceholder == 0){
-				
-			}else{
 				actualInValue = getSimpleSqlParameterValue(actualInValue);
 			}
 		}else{
@@ -249,60 +251,60 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
-		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
 		sqlScriptIdColumn.setComments("关联的sql脚本id");
 		sqlScriptIdColumn.setOrderCode(10);
 		columns.add(sqlScriptIdColumn);
 		
-		ComColumndata parameterNameColumn = new ComColumndata("parameter_name", BuiltinCodeDataType.STRING, 50);
+		ComColumndata parameterNameColumn = new ComColumndata("parameter_name", BuiltinDataType.STRING, 50);
 		parameterNameColumn.setName("参数名称");
 		parameterNameColumn.setComments("参数名称");
 		parameterNameColumn.setOrderCode(20);
 		columns.add(parameterNameColumn);
 		
-		ComColumndata lengthColumn = new ComColumndata("length", BuiltinCodeDataType.INTEGER, 4);
+		ComColumndata lengthColumn = new ComColumndata("length", BuiltinDataType.INTEGER, 4);
 		lengthColumn.setName("参数的值长度");
 		lengthColumn.setComments("默认值为32");
 		lengthColumn.setDefaultValue("32");
 		lengthColumn.setOrderCode(30);
 		columns.add(lengthColumn);
 		
-		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinCodeDataType.STRING, 20);
+		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinDataType.STRING, 20);
 		parameterDataTypeColumn.setName("参数数据类型");
 		parameterDataTypeColumn.setComments("参数数据类型:默认值为string");
-		parameterDataTypeColumn.setDefaultValue(BuiltinCodeDataType.STRING);
+		parameterDataTypeColumn.setDefaultValue(BuiltinDataType.STRING);
 		parameterDataTypeColumn.setOrderCode(40);
 		columns.add(parameterDataTypeColumn);
 		
-		ComColumndata defaultValueColumn = new ComColumndata("default_value", BuiltinCodeDataType.STRING, 100);
+		ComColumndata defaultValueColumn = new ComColumndata("default_value", BuiltinDataType.STRING, 100);
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
 		defaultValueColumn.setOrderCode(50);
 		columns.add(defaultValueColumn);
 		
-		ComColumndata parameterFromColumn = new ComColumndata("parameter_from", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata parameterFromColumn = new ComColumndata("parameter_from", BuiltinDataType.INTEGER, 1);
 		parameterFromColumn.setName("参数来源");
 		parameterFromColumn.setComments("参数来源:0.用户输入、1.系统内置，默认值为0");
 		parameterFromColumn.setDefaultValue("0");
 		parameterFromColumn.setOrderCode(60);
 		columns.add(parameterFromColumn);
 		
-		ComColumndata isPlaceholderColumn = new ComColumndata("is_placeholder", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata isPlaceholderColumn = new ComColumndata("is_placeholder", BuiltinDataType.INTEGER, 1);
 		isPlaceholderColumn.setName("是否是需要占位符的参数");
 		isPlaceholderColumn.setComments("是否是需要占位符的参数:即是否是需要用?代替的，目前全部都是1，默认值是1");
 		isPlaceholderColumn.setDefaultValue("1");
 		isPlaceholderColumn.setOrderCode(70);
 		columns.add(isPlaceholderColumn);
 		
-		ComColumndata inOutColumn = new ComColumndata("in_out", BuiltinCodeDataType.INTEGER, 1);
+		ComColumndata inOutColumn = new ComColumndata("in_out", BuiltinDataType.INTEGER, 1);
 		inOutColumn.setName("参数的in/out类型");
 		inOutColumn.setComments("参数的in/out类型:in=1、out=2、inOut=3，默认值是1");
 		inOutColumn.setDefaultValue("1");
 		inOutColumn.setOrderCode(80);
 		columns.add(inOutColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 3);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 3);
 		orderCodeColumn.setName("参数的顺序值");
 		orderCodeColumn.setComments("参数的顺序值");
 		orderCodeColumn.setOrderCode(90);
@@ -322,7 +324,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	
 	public String analysisResourceProp() {
 		if(parameterDataType == null){
-			parameterDataType = BuiltinCodeDataType.STRING;
+			parameterDataType = BuiltinDataType.STRING;
 		}
 		
 		if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){
@@ -357,7 +359,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 				return OracleTypes.NUMBER;
 			}else if("date".equals(parameterDataType)){
 				return OracleTypes.TIMESTAMP;
-			}else if(BuiltinDatabaseData.ORACLE_CURSOR_TYPE.equals(parameterDataType)){
+			}else if(BuiltinDataType.TABLE.equals(parameterDataType)){
 				return OracleTypes.CURSOR;
 			}
 			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+parameterDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");

@@ -211,7 +211,7 @@ public class SqlStatementParserUtil {
 				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
 				parameterName = param.getParameterName().toString();
 				
-				dataType = param.getDataType().toString().toLowerCase();
+				dataType = getOracleProcedureParamDataType(param);
 				if(dataType.indexOf("(") != -1){
 					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
 					dataType = dataType.substring(0, dataType.indexOf("("));
@@ -226,6 +226,16 @@ public class SqlStatementParserUtil {
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
 	}
+	/**
+	 * 获取oracle存储过程的参数的数据类型
+	 * @param param
+	 * @return
+	 */
+	private static String getOracleProcedureParamDataType(TParameterDeclaration param) {
+		String parameterName = param.getDataType().toString().toLowerCase();
+		return parameterName;
+	}
+
 	/**
 	 * 解析sqlserver存储过程，获得存储过程名和参数集合
 	 * @param procedureSqlStatement
@@ -257,7 +267,7 @@ public class SqlStatementParserUtil {
 					parameterName = parameterName.substring(1);
 				}
 				
-				dataType = param.getDataType().toString().toLowerCase();
+				dataType = getSqlServerProcedureParamDataType(param);
 				if(dataType.indexOf("(") != -1){
 					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
 					dataType = dataType.substring(0, dataType.indexOf("("));
@@ -271,6 +281,15 @@ public class SqlStatementParserUtil {
 			sqlScript.setSqlParams(sqlScriptParameterList);
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
+	}
+	/**
+	 * 获取sqlserver存储过程的参数的数据类型
+	 * @param param
+	 * @return
+	 */
+	private static String getSqlServerProcedureParamDataType(TParameterDeclaration param) {
+		String parameterName = param.getDataType().toString().toLowerCase();
+		return parameterName;
 	}
 	
 	/**

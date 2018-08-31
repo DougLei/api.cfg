@@ -24,6 +24,7 @@ import org.hibernate.jdbc.Work;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
@@ -38,6 +39,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.SpringContextHelper;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
+import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 
 /**
  * hibernate工具类
@@ -597,7 +599,7 @@ public class HibernateUtil {
 			}
 			
 			/**
-			 * 设置值
+			 * 设置参数
 			 * @param cs
 			 * @param sqlParams
 			 * @throws SQLException 
@@ -606,17 +608,67 @@ public class HibernateUtil {
 				if(sqlParams != null && sqlParams.size() > 0){
 					for (ComSqlScriptParameter parameter : sqlParams) {
 						if(parameter.getInOut() == 1){//in
-							cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
+							setParameter(cs, parameter, parameter.getActualInValue());
 						}else if(parameter.getInOut() == 2){//out
 							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(isOracle, isSqlServer));
 						}else if(parameter.getInOut() == 3){//in out
-							cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
+							setParameter(cs, parameter, parameter.getActualInValue());
 							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(isOracle, isSqlServer));
 						}
 					}
 				}
 			}
 			
+			/**
+			 * 设置参数
+			 * @param cs
+			 * @param parameter
+			 * @param actualInValue
+			 * @throws SQLException
+			 */
+			private void setParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
+				if(isOracle){
+					setOracleParameter(cs, parameter, actualInValue);
+				}else if(isSqlServer){
+					setSqlServerParameter(cs, parameter, actualInValue);
+				}
+			}
+
+			/**
+			 * 设置oracle的参数
+			 * @param cs
+			 * @param parameter
+			 * @param actualInValue
+			 * @throws SQLException
+			 */
+			private void setOracleParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
+				if(BuiltinDataType.TABLE.equals(parameter.getParameterDataType())){
+					// TODO 处理oracle游标类型的参数
+				}else{
+					cs.setObject(parameter.getOrderCode(), actualInValue);
+				}
+			}
+			
+			/**
+			 * 设置sqlserver的参数
+			 * @param cs
+			 * @param parameter
+			 * @param actualInValue
+			 * @throws SQLException 
+			 */
+			private void setSqlServerParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
+				if(BuiltinDataType.TABLE.equals(parameter.getParameterDataType())){
+					// TODO 处理sqlserver表类型的参数
+					
+					SQLServerDataTable table = new SQLServerDataTable();
+					
+					
+					
+				}else{
+					cs.setObject(parameter.getOrderCode(), actualInValue);
+				}
+			}
+
 			/**
 			 * 存储output类型的值
 			 * @param cs
@@ -633,7 +685,7 @@ public class HibernateUtil {
 						int sqlResultsetIndex = 0;
 						for (ComSqlScriptParameter sp : sqlParams) {
 							if(sp.getInOut() == 2 || sp.getInOut() == 3){
-								if(BuiltinDatabaseData.ORACLE_CURSOR_TYPE.equals(sp.getParameterDataType())){
+								if(BuiltinDataType.TABLE.equals(sp.getParameterDataType())){
 									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), sqlResultsetsList, sqlResultsetIndex));
 									sqlResultsetIndex++;
 								}else{

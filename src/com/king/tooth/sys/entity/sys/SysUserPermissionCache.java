@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ISysResource;
@@ -70,12 +70,12 @@ public class SysUserPermissionCache extends BasicEntity implements ITable, IEnti
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
-		ComColumndata userIdColumn = new ComColumndata("user_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata userIdColumn = new ComColumndata("user_id", BuiltinDataType.STRING, 32);
 		userIdColumn.setName("用户主键");
 		userIdColumn.setComments("用户主键");
 		columns.add(userIdColumn);
 		
-		ComColumndata permissionColumn = new ComColumndata("permission", BuiltinCodeDataType.CLOB, 0);
+		ComColumndata permissionColumn = new ComColumndata("permission", BuiltinDataType.CLOB, 0);
 		permissionColumn.setName("用户所拥有的权限json");
 		permissionColumn.setComments("用户所拥有的权限json");
 		columns.add(permissionColumn);

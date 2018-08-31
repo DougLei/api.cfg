@@ -136,8 +136,4 @@ public class BuiltinDatabaseData {
 	public static final String oracle_queryObjectIsExistsSql = "select count(1) from user_objects where object_name = ? and object_type = ?";
 	
 	// -----------------------------------------------------------------------------
-	/**
-	 * oracle数据库的游标类型名
-	 */
-	public static final String ORACLE_CURSOR_TYPE = "sys_refcursor";
 }

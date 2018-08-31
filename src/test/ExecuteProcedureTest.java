@@ -6,41 +6,43 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import oracle.jdbc.OracleTypes;
+
+import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
+import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 
 public class ExecuteProcedureTest extends Parent{
 	
 	public static void main(String[] args)  {
-		inTable();
+		inSqlServerTable();
 //		outTable();
 	}
 
-	private static void inTable() {
+	private static void inSqlServerTable() {
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
 			
 			CallableStatement cs = conn.prepareCall("{call inTable(?)}");
 			
-			List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+			// 组装sqlserver表对象
+			SQLServerDataTable table = new SQLServerDataTable();
+			table.addColumnMetadata("id", Types.VARCHAR);
+			table.addColumnMetadata("name", Types.VARCHAR);
+			table.addRow("1", "哈哈11");
+			table.addRow("2", "呵呵发大水");
 			
-			Map<String, Object> m1 = new HashMap<String, Object>();
-			m1.put("id", "111");
-			m1.put("name", "账户1");
-			list.add(m1);
+			SQLServerCallableStatement scs = (SQLServerCallableStatement) cs;
+			scs.setStructured(1, "accountType", table);
 			
-			Map<String, Object> m2 = new HashMap<String, Object>();
-			m2.put("id", "222");
-			m2.put("name", "账户2");
-			list.add(m2);
-
-			cs.setArray(1, null);
-			cs.execute();
+			scs.execute();
+			
+			ResultSet rs = scs.getResultSet();
+			while(rs.next()){
+				System.out.println(rs.getString(1)+"   "+rs.getString(2));
+			}
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

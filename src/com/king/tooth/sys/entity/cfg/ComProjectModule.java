@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
-import com.king.tooth.sys.builtin.data.BuiltinCodeDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.IPublish;
@@ -146,57 +146,57 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
 		
-		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", BuiltinDataType.STRING, 32);
 		refProjectIdColumn.setName("关联的项目主键");
 		refProjectIdColumn.setComments("关联的项目主键");
 		refProjectIdColumn.setIsNullabled(0);
 		refProjectIdColumn.setOrderCode(1);
 		columns.add(refProjectIdColumn);
 		
-		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinDataType.STRING, 32);
 		parentIdColumn.setName("父模块主键");
 		parentIdColumn.setComments("父模块主键，可为空，用于递归");
 		parentIdColumn.setOrderCode(2);
 		columns.add(parentIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 50);
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 50);
 		nameColumn.setName("模块名称");
 		nameColumn.setComments("模块名称");
 		nameColumn.setOrderCode(3);
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", BuiltinCodeDataType.STRING, 100);
+		ComColumndata codeColumn = new ComColumndata("code", BuiltinDataType.STRING, 100);
 		codeColumn.setName("模块编码");
 		codeColumn.setComments("模块编码:这个编码的命名，要整个项目唯一");
 		codeColumn.setIsNullabled(0);
 		codeColumn.setOrderCode(4);
 		columns.add(codeColumn);
 		
-		ComColumndata urlColumn = new ComColumndata("url", BuiltinCodeDataType.STRING, 60);
+		ComColumndata urlColumn = new ComColumndata("url", BuiltinDataType.STRING, 60);
 		urlColumn.setName("url");
 		urlColumn.setComments("url");
 		urlColumn.setOrderCode(5);
 		columns.add(urlColumn);
 		
-		ComColumndata iconColumn = new ComColumndata("icon", BuiltinCodeDataType.STRING, 30);
+		ComColumndata iconColumn = new ComColumndata("icon", BuiltinDataType.STRING, 30);
 		iconColumn.setName("模块图标");
 		iconColumn.setComments("模块图标");
 		iconColumn.setOrderCode(6);
 		columns.add(iconColumn);
 		
-		ComColumndata bodyColumn = new ComColumndata("body", BuiltinCodeDataType.CLOB, 0);
+		ComColumndata bodyColumn = new ComColumndata("body", BuiltinDataType.CLOB, 0);
 		bodyColumn.setName("模块的内容");
 		bodyColumn.setComments("模块的内容:json串");
 		bodyColumn.setOrderCode(7);
 		columns.add(bodyColumn);
 		
-		ComColumndata functionTreeColumn = new ComColumndata("function_tree", BuiltinCodeDataType.CLOB, 0);
+		ComColumndata functionTreeColumn = new ComColumndata("function_tree", BuiltinDataType.CLOB, 0);
 		functionTreeColumn.setName("功能树");
 		functionTreeColumn.setComments("功能树:json串");
 		functionTreeColumn.setOrderCode(8);
 		columns.add(functionTreeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinCodeDataType.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
