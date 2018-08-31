@@ -505,7 +505,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		}
 		
 		// 存储过程，要判断是否有返回结果集，再查询对应的结果集
-		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
+		else if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
 			// oracle的存储过程返回结果集，通过输出参数
 			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getSqlScriptType())){
 				List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();

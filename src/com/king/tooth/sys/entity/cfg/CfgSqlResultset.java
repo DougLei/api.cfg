@@ -110,7 +110,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
-		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_id", BuiltinCodeDataType.STRING, 32);
+		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinCodeDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
 		sqlScriptIdColumn.setComments("关联的sql脚本id");
 		columns.add(sqlScriptIdColumn);
