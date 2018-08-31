@@ -40,6 +40,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.SpringContextHelper;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
+import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 
 /**
@@ -661,9 +662,16 @@ public class HibernateUtil {
 				if(BuiltinDataType.TABLE.equals(parameter.getParameterDataType())){
 					// TODO 处理sqlserver表类型的参数
 					SQLServerDataTable table = new SQLServerDataTable();
+
+					// 添加列信息：列名，列类型
+					table.addColumnMetadata("columnName", 1);
+					// 添加行数据
+					table.addRow();
+
 					
 					
-					
+					SQLServerCallableStatement scs = (SQLServerCallableStatement) cs;
+					scs.setStructured(parameter.getOrderCode(), parameter.getParameterDataType(), table);
 				}else{
 					cs.setObject(parameter.getOrderCode(), actualInValue);
 				}
