@@ -98,16 +98,17 @@ public abstract class GetProcesser extends RequestProcesser{
 	 * <p>将列名，转换为属性名，作为key</p>
 	 * <p>将值作为value显示</p>
 	 * @param queryResultList
-	 * @param sqlResultset
+	 * @param sqlResultsets
 	 * @return
 	 */
-	private List<Map<String, Object>> sqlQueryResultToMap(List queryResultList, List<CfgSqlResultset> sqlResultset){
-		if(sqlResultset == null || sqlResultset.size() == 0){
-			throw new NullPointerException("将sql查询结果转为map时，要转换的结果列名对象集合不能为空[sqlQueryResultColumns]");
+	private List<Map<String, Object>> sqlQueryResultToMap(List queryResultList, List<CfgSqlResultset> sqlResultsets){
+		if(sqlResultsets == null || sqlResultsets.size() == 0){
+			throw new NullPointerException("将sql查询结果转为map时，要参照的结果集列信息集合不能为空[sqlResultsets]");
 		}
 		
-		List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>(queryResultList.size());
+		List<Map<String, Object>> dataList = null;
 		if(queryResultList != null && queryResultList.size() > 0){
+			dataList = new ArrayList<Map<String, Object>>(queryResultList.size());
 			Map<String, Object> data = null;
 			SelectNaming[] selectNamingArr = builtinQueryMethodProcesser.getSelectNamingArr();// 如果编写的sql语句有查询多个列，同时在调用api时，通过_select指定查询某些字段，会用到这个
 			
@@ -130,7 +131,7 @@ public abstract class GetProcesser extends RequestProcesser{
 							}
 						}
 					} else { // 否则，就是查询全部字段
-						for(CfgSqlResultset csr : sqlResultset){
+						for(CfgSqlResultset csr : sqlResultsets){
 							data.put(csr.getPropName(), object[i++]);
 						}
 					}
@@ -148,7 +149,7 @@ public abstract class GetProcesser extends RequestProcesser{
 							data.put(selectNamingArr[0].getSelectAliasName(), object);
 						}
 					}else{
-						data.put(sqlResultset.get(0).getPropName(), object);
+						data.put(sqlResultsets.get(0).getPropName(), object);
 					}
 					dataList.add(data);
 				}

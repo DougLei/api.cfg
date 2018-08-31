@@ -513,7 +513,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 					sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
 					for (ComSqlScriptParameter sqlParam : sqlParams) {
 						// 只有游标类型，再查询其结果集信息
-						if("sys_refcursor".equals(sqlParam.getParameterDataType())){
+						if(BuiltinDatabaseData.ORACLE_CURSOR_TYPE.equals(sqlParam.getParameterDataType())){
 							sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
 									CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 						}

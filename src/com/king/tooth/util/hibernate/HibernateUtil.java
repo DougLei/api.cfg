@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IEntity;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.thread.CurrentThreadContext;
@@ -558,31 +560,36 @@ public class HibernateUtil {
 	
 	/**
 	 * 执行存储过程
-	 * @param dbType
-	 * @param procedureName
-	 * @param sqlParamsList
+	 * @param sqlScript
 	 * @return
 	 */
-	public static JSONObject executeProcedure(final String dbType, final String procedureName, final List<List<ComSqlScriptParameter>> sqlParamsList) {
-		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
+	public static JSONObject executeProcedure(final ComSqlScript sqlScript) {
+		final List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
+		final boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
 		if(sqlScriptHavaParams && sqlParamsList.size() >1){
 			throw new IllegalArgumentException("系统目前不支持批量处理存储过程，如有需要，请联系系统管理员");
 		}
 		
-		final JSONObject json = sqlScriptHavaParams?new JSONObject(sqlParamsList.get(0).size()):null;
+		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType());
+		final boolean isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType());
+		final String procedureName = sqlScript.getObjectName();
+		
+		final JSONObject json = new JSONObject(10);
 		final List<ComSqlScriptParameter> sqlParams = sqlScriptHavaParams?sqlParamsList.get(0):null;
+		final List<List<CfgSqlResultset>> sqlResultsetsList = sqlScript.getSqlResultsetsList();
 		
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
 				String procedure = callProcedure(procedureName, sqlParams);
 				CallableStatement cs = null;
+				ResultSet rs = null;
 				try {
 					cs = connection.prepareCall(procedure);
 					setParameters(cs, sqlParams);
 					cs.execute();
-					setOutputValues(cs, sqlParams);
+					putOutputValues(cs, rs, sqlParams);
 				} finally {
-					CloseUtil.closeDBConn(cs);
+					CloseUtil.closeDBConn(rs, cs);
 					if(sqlParams != null && sqlParams.size() > 0){
 						sqlParams.clear();
 					}
@@ -601,38 +608,159 @@ public class HibernateUtil {
 						if(parameter.getInOut() == 1){//in
 							cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
 						}else if(parameter.getInOut() == 2){//out
-							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
+							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(isOracle, isSqlServer));
 						}else if(parameter.getInOut() == 3){//in out
 							cs.setObject(parameter.getOrderCode(), parameter.getActualInValue());
-							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(dbType));
+							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(isOracle, isSqlServer));
 						}
 					}
 				}
 			}
 			
 			/**
-			 * 设置output类型的值
+			 * 存储output类型的值
 			 * @param cs
+			 * @param rs 
 			 * @param sqlParams
 			 * @throws SQLException 
 			 */
-			private void setOutputValues(CallableStatement cs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
-				if(json == null){
-					return;
-				}
-				if(sqlParams != null && sqlParams.size() > 0){
-					for (ComSqlScriptParameter pssp : sqlParams) {
-						if(pssp.getInOut() == 2 || pssp.getInOut() == 3){
-							json.put(pssp.getParameterName(), cs.getObject(pssp.getOrderCode()));
+			private void putOutputValues(CallableStatement cs, ResultSet rs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
+				if(isOracle){
+					if(!sqlScriptHavaParams){
+						return;
+					}
+					if(sqlParams != null && sqlParams.size() > 0){
+						int sqlResultsetIndex = 0;
+						for (ComSqlScriptParameter sp : sqlParams) {
+							if(sp.getInOut() == 2 || sp.getInOut() == 3){
+								if(BuiltinDatabaseData.ORACLE_CURSOR_TYPE.equals(sp.getParameterDataType())){
+									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), sqlResultsetsList, sqlResultsetIndex));
+									sqlResultsetIndex++;
+								}else{
+									json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
+								}
+							}
+						}
+					}
+				}else if(isSqlServer){
+					putSqlServerDataSet(cs, rs, sqlResultsetsList);
+					if(sqlParams != null && sqlParams.size() > 0){
+						for (ComSqlScriptParameter sp : sqlParams) {
+							if(sp.getInOut() == 2 || sp.getInOut() == 3){
+								json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
+							}
 						}
 					}
 				}
+			}
+			
+			/**
+			 * 获取oracle的游标数据集
+			 * @param rs 
+			 * @param cs 
+			 * @param orderCode
+			 * @param sqlResultsetsList
+			 * @param sqlResultsetIndex
+			 * @return
+			 */
+			private List<Map<String, Object>> getOracleCursorDataSet(CallableStatement cs, ResultSet rs, Integer orderCode, List<List<CfgSqlResultset>> sqlResultsetsList, int sqlResultsetIndex) throws SQLException {
+				try {
+					rs = (ResultSet) cs.getObject(orderCode);
+					return sqlQueryResultToMap(rs, sqlResultsetsList.get(sqlResultsetIndex));
+				} finally{
+					CloseUtil.closeDBConn(rs);
+				}
+			}
+
+			/**
+			 * 存储sqlserver的数据集
+			 * @param cs
+			 * @param rs 
+			 * @param sqlResultsetsList
+			 * @throws SQLException 
+			 */
+			private void putSqlServerDataSet(CallableStatement cs, ResultSet rs, List<List<CfgSqlResultset>> sqlResultsetsList) throws SQLException {
+				int sqlResultsetIndex = 0;
+				rs = cs.getResultSet();
+				while(rs != null){
+					json.put(sqlResultsetsList.get(sqlResultsetIndex).get(0).getName(sqlResultsetIndex), sqlQueryResultToMap(rs, sqlResultsetsList.get(sqlResultsetIndex)));
+					sqlResultsetIndex++;
+					
+					cs.getMoreResults();
+					rs = cs.getResultSet();
+				}
+			}
+			
+			/**
+			 * sql查询结果集转为list<map>
+			 * <p>将列名，转换为属性名，作为key</p>
+			 * <p>将值作为value显示</p>
+			 * @param rs
+			 * @param sqlResultSets
+			 * @return
+			 * @throws SQLException 
+			 */
+			private List<Map<String, Object>> sqlQueryResultToMap(ResultSet rs, List<CfgSqlResultset> sqlResultSets) throws SQLException{
+				List<Object[]> queryResultSetList = getQueryResultSetList(rs, sqlResultSets);
+				List<Map<String, Object>> dataList = null;
+				if(queryResultSetList != null && queryResultSetList.size() > 0){
+					dataList = new ArrayList<Map<String, Object>>(queryResultSetList.size());
+					Map<String, Object> data = null;
+
+					for(Object[] object : queryResultSetList){
+						data = new HashMap<String, Object>(object.length);
+						int i = 0;
+						for(CfgSqlResultset csr : sqlResultSets){
+							data.put(csr.getPropName(), object[i++]);
+						}
+						dataList.add(data);
+					}
+					queryResultSetList.clear();
+				}else{
+					Log4jUtil.debug("将sql查询结果集转为list<Map>时，sql查询的结果集为空，转换结果为空");
+				}
+				return dataList;
+			}
+			
+			/**
+			 * 从ResultSet中，获取结果集集合
+			 * @param rs
+			 * @param sqlResultSets
+			 * @return
+			 * @throws SQLException 
+			 */
+			private List<Object[]> getQueryResultSetList(ResultSet rs, List<CfgSqlResultset> sqlResultSets) throws SQLException{
+				if(sqlResultSets == null || sqlResultSets.size() == 0){
+					throw new NullPointerException("将sql查询结果转为map时，要参照的结果集列信息集合不能为空[sqlResultsets]");
+				}
+				List<Object[]> queryResultSetList = null;
+				
+				int flag = 0;
+				int size = sqlResultSets.size();
+				Object[] objects;
+				while(rs.next()){
+					if(flag == 0){
+						queryResultSetList = new ArrayList<Object[]>();
+						flag++;
+					}
+					objects = new Object[size];
+					for(int i=0;i<size;i++){
+						objects[i] = rs.getObject(i+1);
+					}
+					queryResultSetList.add(objects);
+				}
+				return queryResultSetList;
 			}
 		});
 		Log4jUtil.debug("执行procedure名为：{}", procedureName);
 		Log4jUtil.debug("执行procedure的条件参数集合为：{}", JsonUtil.toJsonString(sqlParams, false));
 		
 		if(sqlScriptHavaParams){
+			for (List<ComSqlScriptParameter> sp : sqlParamsList) {
+				if(sp != null){
+					sp.clear();
+				}
+			}
 			sqlParamsList.clear();
 		}
 		return json;

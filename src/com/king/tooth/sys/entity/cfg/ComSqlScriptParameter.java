@@ -342,11 +342,13 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	/**
 	 * 获取数据库的数据类型编码
 	 * <p>目前在调用存储过程的时候用到</p>
+	 * @param isOracle
+	 * @param isSqlServer
 	 * @return
 	 */
 	@JSONField(serialize = false)
-	public int getDatabaseDataTypeCode(String dbType){
-		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
+	public int getDatabaseDataTypeCode(boolean isOracle, boolean isSqlServer){
+		if(isOracle){
 			if("varchar2".equals(parameterDataType)){
 				return OracleTypes.VARCHAR;
 			}else if("char".equals(parameterDataType)){
@@ -355,9 +357,11 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 				return OracleTypes.NUMBER;
 			}else if("date".equals(parameterDataType)){
 				return OracleTypes.TIMESTAMP;
+			}else if(BuiltinDatabaseData.ORACLE_CURSOR_TYPE.equals(parameterDataType)){
+				return OracleTypes.CURSOR;
 			}
 			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+parameterDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
-		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
+		}else if(isSqlServer){
 			if("varchar".equals(parameterDataType)){
 				return Types.VARCHAR;
 			}else if("char".equals(parameterDataType)){
@@ -371,7 +375,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			}
 			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+parameterDataType+"]数据类型转换，请联系管理员");
 		}
-		throw new IllegalArgumentException("系统目前不支持["+dbType+"]数据库的数据类型转换，请联系管理员");
+		throw new IllegalArgumentException("系统目前只支持[oracle和sqlserver]数据库的数据类型转换，请联系管理员");
 	}
 	
 	public Object clone() throws CloneNotSupportedException {

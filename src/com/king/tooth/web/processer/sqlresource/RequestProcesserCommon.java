@@ -88,7 +88,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
 		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程
-			JSONObject json = HibernateUtil.executeProcedure(sqlScript.getDbType(), sqlScript.getObjectName(), sqlScript.getSqlParamsList());
+			JSONObject json = HibernateUtil.executeProcedure(sqlScript);
 			setResponseBody(new ResponseBody(json, true));
 			return;
 		}
@@ -106,7 +106,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		}
 		
 		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
-			setResponseBody(new ResponseBody(null, true));
+			setResponseBody(new ResponseBody(requestBody.getRequestUrlParams(), true));
 		}else{
 			setResponseBody(new ResponseBody(requestBody.getFormData().getJson(), true));
 		}

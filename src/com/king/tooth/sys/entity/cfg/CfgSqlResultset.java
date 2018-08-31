@@ -13,6 +13,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * sql结果集信息表
@@ -35,6 +36,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	 * <p>sqlserver直接返回结果集，所以这里用批次顺序来区分返回的结果集，第几个结果集[sqlserver使用字段]</p>
 	 */
 	private Integer batchOrder;
+	/**
+	 * 结果集名
+	 * <p>sqlserver直接返回结果集，这个用来配置每个结果集的名称，前端通过该key来取，如果没有配置，则使用dataSet1、dataSet2...自增[sqlserver使用字段]</p>
+	 */
+	private String name;
 	/**
 	 * 列名
 	 */
@@ -80,6 +86,18 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setBatchOrder(Integer batchOrder) {
 		this.batchOrder = batchOrder;
 	}
+	public String getName() {
+		return name;
+	}
+	public String getName(Integer index){
+		if(StrUtils.isEmpty(name)){
+			return "dataSet"+index;
+		}
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public String getColumnName() {
 		return columnName;
 	}
@@ -124,6 +142,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		batchOrderColumn.setName("结果集批次顺序");
 		batchOrderColumn.setComments("sqlserver直接返回结果集，所以这里用批次顺序来区分返回的结果集，第几个结果集[sqlserver使用字段]");
 		columns.add(batchOrderColumn);
+		
+		ComColumndata nameColumn = new ComColumndata("name", BuiltinCodeDataType.STRING, 40);
+		nameColumn.setName("结果集名");
+		nameColumn.setComments("sqlserver直接返回结果集，这个用来配置每个结果集的名称，前端通过该key来取，如果没有配置，则使用dataSet1、dataSet2...自增[sqlserver使用字段]");
+		columns.add(nameColumn);
 		
 		ComColumndata columnNameColumn = new ComColumndata("column_name", BuiltinCodeDataType.STRING, 40);
 		columnNameColumn.setName("列名");
