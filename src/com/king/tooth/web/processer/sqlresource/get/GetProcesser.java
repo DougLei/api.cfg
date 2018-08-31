@@ -308,30 +308,25 @@ public abstract class GetProcesser extends RequestProcesser{
 			}else{
 				querySql += " where 1=2";
 			}
-			sqlScriptResource.setSqlResultsetsList(getSelectSqlResultsets(querySql, queryCondParameters));
-			
-			// 保存select sql的查询结果集信息
-			List<CfgSqlResultset> sqlResultsets = sqlScriptResource.getSqlResultsetsList().get(0);
-			for (CfgSqlResultset src : sqlResultsets) {
-				src.setSqlScriptId(sqlScriptResource.getId());
-				HibernateUtil.saveObject(src, null);
-			}
+			sqlScriptResource.setSqlResultsetsList(processResultSetList(querySql, queryCondParameters, sqlScriptResource.getId()));
 		}
 	}
 	
 	/**
 	 * 获取select sql语句查询的结果集信息
-	 * @param querySql
-	 * @param queryCondParameters 
-	 * @return
+	 * <p>如果没有结果集，则要获取结果集信息并保存到数据库</p>
+	 * @param rs
+	 * @param sqlResultsetIndex
+	 * @param sqlScriptId 
+	 * @throws SQLException 
 	 */
-	protected List<List<CfgSqlResultset>> getSelectSqlResultsets(final String querySql, final List<Object> queryCondParameters){
+	protected List<List<CfgSqlResultset>> processResultSetList(final String querySql, final List<Object> queryCondParameters, final String sqlScriptId){
 		if(StrUtils.isEmpty(querySql)){
 			return null;
 		}
 		List<List<CfgSqlResultset>> sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
-		final List<CfgSqlResultset> sqlResultsets = new ArrayList<CfgSqlResultset>();
-		sqlResultsetsList.add(sqlResultsets);
+		final List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>();
+		sqlResultsetsList.add(sqlResultSets);
 		
 		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
@@ -355,7 +350,10 @@ public abstract class GetProcesser extends RequestProcesser{
 					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
 						csr = new CfgSqlResultset(rsmd.getColumnName(i), i);
-						sqlResultsets.add(csr);
+						csr.setSqlScriptId(sqlScriptId);
+						HibernateUtil.saveObject(csr, null);// 将每条结果集信息保存到数据库
+						
+						sqlResultSets.add(csr);
 					}
 				}catch (Exception e){
 					e.printStackTrace();

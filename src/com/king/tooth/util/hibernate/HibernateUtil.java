@@ -6,6 +6,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -559,7 +560,6 @@ public class HibernateUtil {
 		
 	}
 	
-	
 	/**
 	 * 执行存储过程
 	 * @param sqlScript
@@ -572,13 +572,14 @@ public class HibernateUtil {
 			throw new IllegalArgumentException("系统目前不支持批量处理存储过程，如有需要，请联系系统管理员");
 		}
 		
+		final String sqlScriptId = sqlScript.getId();
 		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType());
 		final boolean isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType());
 		final String procedureName = sqlScript.getObjectName();
 		
 		final JSONObject json = new JSONObject(10);
 		final List<ComSqlScriptParameter> sqlParams = sqlScriptHavaParams?sqlParamsList.get(0):null;
-		final List<List<CfgSqlResultset>> sqlResultsetsList = sqlScript.getSqlResultsetsList();
+		final List<List<CfgSqlResultset>> sqlResultSetsList = sqlScript.getSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getSqlResultsetsList();
 		
 		getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
@@ -627,10 +628,10 @@ public class HibernateUtil {
 			 * @throws SQLException
 			 */
 			private void setParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
-				if(isOracle){
-					setOracleParameter(cs, parameter, actualInValue);
-				}else if(isSqlServer){
+				if(isSqlServer){
 					setSqlServerParameter(cs, parameter, actualInValue);
+				}else if(isOracle){
+					setOracleParameter(cs, parameter, actualInValue);
 				}
 			}
 
@@ -659,7 +660,6 @@ public class HibernateUtil {
 			private void setSqlServerParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
 				if(BuiltinDataType.TABLE.equals(parameter.getParameterDataType())){
 					// TODO 处理sqlserver表类型的参数
-					
 					SQLServerDataTable table = new SQLServerDataTable();
 					
 					
@@ -677,7 +677,16 @@ public class HibernateUtil {
 			 * @throws SQLException 
 			 */
 			private void putOutputValues(CallableStatement cs, ResultSet rs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
-				if(isOracle){
+				if(isSqlServer){
+					putSqlServerDataSet(cs, rs);
+					if(sqlParams != null && sqlParams.size() > 0){
+						for (ComSqlScriptParameter sp : sqlParams) {
+							if(sp.getInOut() == 2 || sp.getInOut() == 3){
+								json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
+							}
+						}
+					}
+				}else if(isOracle){
 					if(!sqlScriptHavaParams){
 						return;
 					}
@@ -686,20 +695,11 @@ public class HibernateUtil {
 						for (ComSqlScriptParameter sp : sqlParams) {
 							if(sp.getInOut() == 2 || sp.getInOut() == 3){
 								if(BuiltinDataType.TABLE.equals(sp.getParameterDataType())){
-									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), sqlResultsetsList, sqlResultsetIndex));
+									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), sqlResultsetIndex, sp.getId()));
 									sqlResultsetIndex++;
 								}else{
 									json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
 								}
-							}
-						}
-					}
-				}else if(isSqlServer){
-					putSqlServerDataSet(cs, rs, sqlResultsetsList);
-					if(sqlParams != null && sqlParams.size() > 0){
-						for (ComSqlScriptParameter sp : sqlParams) {
-							if(sp.getInOut() == 2 || sp.getInOut() == 3){
-								json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
 							}
 						}
 					}
@@ -711,14 +711,15 @@ public class HibernateUtil {
 			 * @param rs 
 			 * @param cs 
 			 * @param orderCode
-			 * @param sqlResultsetsList
 			 * @param sqlResultsetIndex
+			 * @param sqlParameterId
 			 * @return
 			 */
-			private List<Map<String, Object>> getOracleCursorDataSet(CallableStatement cs, ResultSet rs, Integer orderCode, List<List<CfgSqlResultset>> sqlResultsetsList, int sqlResultsetIndex) throws SQLException {
+			private List<Map<String, Object>> getOracleCursorDataSet(CallableStatement cs, ResultSet rs, Integer orderCode, int sqlResultsetIndex, String sqlParameterId) throws SQLException {
 				try {
 					rs = (ResultSet) cs.getObject(orderCode);
-					return sqlQueryResultToMap(rs, sqlResultsetsList.get(sqlResultsetIndex));
+					processResultSetList(rs, sqlResultsetIndex, sqlParameterId);
+					return sqlQueryResultToMap(rs, sqlResultSetsList.get(sqlResultsetIndex));
 				} finally{
 					CloseUtil.closeDBConn(rs);
 				}
@@ -728,14 +729,14 @@ public class HibernateUtil {
 			 * 存储sqlserver的数据集
 			 * @param cs
 			 * @param rs 
-			 * @param sqlResultsetsList
 			 * @throws SQLException 
 			 */
-			private void putSqlServerDataSet(CallableStatement cs, ResultSet rs, List<List<CfgSqlResultset>> sqlResultsetsList) throws SQLException {
+			private void putSqlServerDataSet(CallableStatement cs, ResultSet rs) throws SQLException {
 				int sqlResultsetIndex = 0;
 				rs = cs.getResultSet();
 				while(rs != null){
-					json.put(sqlResultsetsList.get(sqlResultsetIndex).get(0).getName(sqlResultsetIndex), sqlQueryResultToMap(rs, sqlResultsetsList.get(sqlResultsetIndex)));
+					processResultSetList(rs, sqlResultsetIndex, null);
+					json.put(sqlResultSetsList.get(sqlResultsetIndex).get(0).getName(sqlResultsetIndex), sqlQueryResultToMap(rs, sqlResultSetsList.get(sqlResultsetIndex)));
 					sqlResultsetIndex++;
 					
 					cs.getMoreResults();
@@ -743,6 +744,38 @@ public class HibernateUtil {
 				}
 			}
 			
+			/**
+			 * 处理结果集
+			 * <p>如果没有结果集，则要获取结果集信息并保存到数据库</p>
+			 * @param rs
+			 * @param sqlResultsetIndex
+			 * @param sqlParameterId
+			 * @throws SQLException 
+			 */
+			private void processResultSetList(ResultSet rs, int sqlResultsetIndex, String sqlParameterId) throws SQLException {
+				if(sqlResultSetsList.size() == sqlResultsetIndex){
+					ResultSetMetaData rsmd = rs.getMetaData();
+					int len = rsmd.getColumnCount();
+					
+					List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(len);
+					CfgSqlResultset csr = null;
+					for(int i=1;i<=len;i++){
+						csr = new CfgSqlResultset(rsmd.getColumnName(i), i);
+						csr.setSqlScriptId(sqlScriptId);
+						
+						if(isSqlServer){
+							csr.setBatchOrder(sqlResultsetIndex);
+							csr.setName("dataSet"+(sqlResultsetIndex+1));
+						}else if(isOracle){
+							csr.setSqlParameterId(sqlParameterId);
+						}
+						HibernateUtil.saveObject(csr, null);// 保存结果集信息
+						sqlResultSets.add(csr);
+					}
+					sqlResultSetsList.add(sqlResultSets);
+				}
+			}
+
 			/**
 			 * sql查询结果集转为list<map>
 			 * <p>将列名，转换为属性名，作为key</p>

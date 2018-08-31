@@ -91,7 +91,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	}
 	public String getName(Integer index){
 		if(StrUtils.isEmpty(name)){
-			return "dataSet"+index;
+			return "dataSet"+(index+1);
 		}
 		return name;
 	}

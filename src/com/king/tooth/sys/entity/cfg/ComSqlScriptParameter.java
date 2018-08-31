@@ -350,20 +350,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 */
 	@JSONField(serialize = false)
 	public int getDatabaseDataTypeCode(boolean isOracle, boolean isSqlServer){
-		if(isOracle){
-			if("varchar2".equals(parameterDataType)){
-				return OracleTypes.VARCHAR;
-			}else if("char".equals(parameterDataType)){
-				return OracleTypes.CHAR;
-			}else if("number".equals(parameterDataType)){
-				return OracleTypes.NUMBER;
-			}else if("date".equals(parameterDataType)){
-				return OracleTypes.TIMESTAMP;
-			}else if(BuiltinDataType.TABLE.equals(parameterDataType)){
-				return OracleTypes.CURSOR;
-			}
-			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+parameterDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
-		}else if(isSqlServer){
+		if(isSqlServer){
 			if("varchar".equals(parameterDataType)){
 				return Types.VARCHAR;
 			}else if("char".equals(parameterDataType)){
@@ -376,6 +363,19 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 				return Types.TIMESTAMP;
 			}
 			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+parameterDataType+"]数据类型转换，请联系管理员");
+		}else if(isOracle){
+			if("varchar2".equals(parameterDataType)){
+				return OracleTypes.VARCHAR;
+			}else if("char".equals(parameterDataType)){
+				return OracleTypes.CHAR;
+			}else if("number".equals(parameterDataType)){
+				return OracleTypes.NUMBER;
+			}else if("date".equals(parameterDataType)){
+				return OracleTypes.TIMESTAMP;
+			}else if(BuiltinDataType.TABLE.equals(parameterDataType)){
+				return OracleTypes.CURSOR;
+			}
+			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+parameterDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
 		}
 		throw new IllegalArgumentException("系统目前只支持[oracle和sqlserver]数据库的数据类型转换，请联系管理员");
 	}

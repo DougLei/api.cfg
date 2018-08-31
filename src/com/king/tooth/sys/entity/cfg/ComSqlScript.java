@@ -521,11 +521,12 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	
 	public void clear(){
 		if(sqlResultsetsList != null){
-			for (List<CfgSqlResultset> sqlResultsets : sqlResultsetsList) {
-				if(sqlResultsets != null){
-					sqlResultsets.clear();
+			for (List<CfgSqlResultset> sqlResultSets : sqlResultsetsList) {
+				if(sqlResultSets != null){
+					sqlResultSets.clear();
 				}
 			}
+			sqlResultsetsList.clear();
 		}
 		if(finalSqlScriptList != null){
 			finalSqlScriptList.clear();

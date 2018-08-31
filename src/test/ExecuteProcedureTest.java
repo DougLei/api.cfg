@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 
@@ -78,15 +79,25 @@ public class ExecuteProcedureTest extends Parent{
 //				rs = cs.getResultSet();
 //			}
 			
-			Integer val = cs.getInt(2);
-			System.out.println("存储过程的输出参数的值为："+val);
-			
-			
 			ResultSet rs = (ResultSet) cs.getObject(3);
+			
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int len = rsmd.getColumnCount();
+			for(int i=1;i<=len;i++){
+				System.out.println(rsmd.getColumnName(i));
+			}
+			
 			while(rs.next()){
 				System.out.println(rs.getString(3));
 			}
 			System.out.println("-----------------------------------");
+			
+			
+			Integer val = cs.getInt(2);
+			System.out.println("存储过程的输出参数的值为："+val);
+			
+			
+			
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

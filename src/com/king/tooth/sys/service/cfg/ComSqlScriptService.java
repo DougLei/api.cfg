@@ -524,7 +524,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			}
 			// sqlserver的存储过程返回结果集，不需要参数，所以不用参数做查询
 			else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getSqlScriptType())){
-				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(6);
+				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(5);
 				List<CfgSqlResultset> sqlResultsets = HibernateUtil.extendExecuteListQueryByHqlArr(
 						CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and projectId=? and customerId=? order by batchOrder asc, orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 				if(sqlResultsets != null && sqlResultsets.size() > 0){
