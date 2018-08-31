@@ -1565,6 +1565,78 @@
 ```
 - 请求体: 无
 
+### (八)、sql结果集信息管理
+
+> 资源名: CfgSqlResultset
+
+#### 1. 添加sql结果集信息
+
+- 功能描述: 添加一条sql结果集信息信息 【支持批量操作】
+- api地址: /common/CfgSqlResultset
+- 请求类型: POST
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "sqlScriptId":"",                                     --关联的sql脚本id
+  "sqlParameterId":"",                                  --关联的sql脚本参数id，oracle通过输出参数返回结果集,[oracle使用字段]
+  "batchOrder":"",                                      --结果集批次顺序，sqlserver直接返回结果集，所以这里用批次顺序来区分返回的结果集，第几个结果集[sqlserver使用字段]
+  "name":"",                                            --结果集名，sqlserver直接返回结果集，这个用来配置每个结果集的名称，前端通过该key来取，如果没有配置，则使用dataSet1、dataSet2...自增[sqlserver使用字段]
+  "columnName":"",                                      --列名
+  "propName":"",                                        --属性名
+  "orderCode":""                                        --排序值
+}
+```
+
+#### 2. 修改sql结果集信息
+
+- 功能描述: 修改一条sql结果集信息信息
+- api地址: /common/CfgSqlResultset
+- 请求类型: PUT
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "Id":"",                                              --主键
+  "sqlScriptId":"",                                     --关联的sql脚本id
+  "sqlParameterId":"",                                  --关联的sql脚本参数id，oracle通过输出参数返回结果集,[oracle使用字段]
+  "batchOrder":"",                                      --结果集批次顺序，sqlserver直接返回结果集，所以这里用批次顺序来区分返回的结果集，第几个结果集[sqlserver使用字段]
+  "name":"",                                            --结果集名，sqlserver直接返回结果集，这个用来配置每个结果集的名称，前端通过该key来取，如果没有配置，则使用dataSet1、dataSet2...自增[sqlserver使用字段]
+  "columnName":"",                                      --列名
+  "propName":"",                                        --属性名
+  "orderCode":""                                        --排序值
+}
+```
+
+#### 3. 删除sql结果集信息
+
+- 功能描述: 删除一条sql结果集信息信息 【支持批量操作】
+- api地址: /common/CfgSqlResultset
+- 请求类型: DELETE
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 
+```
+?_ids=5k7f1ef06728y6016f9d10e91dcr1d39, ...             --主键，多个用,分隔
+```
+- 请求体: 无
+
 ----
 
 ## 三、系统其他接口

@@ -1,6 +1,7 @@
 package com.king.tooth.web.entity.request;
 
 import com.king.tooth.cache.CodeResourceMapping;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -59,7 +60,7 @@ public class ResourceInfo {
 		codeResourceKey = CodeResourceMapping.getCodeResourceKey(routeBody.getResourceName(), requestMethod, routeBody.getActionName());
 		if(routeBody.isAction() || CodeResourceMapping.isCodeResource(codeResourceKey)){
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				throw new IllegalArgumentException("平台目前不支持处理[主子/递归]方式调用code资源");
+				throw new IllegalArgumentException("系统目前不支持处理[主子/递归]方式调用code资源");
 			}
 			resourceType = ISysResource.CODE;
 		}else{
@@ -73,6 +74,10 @@ public class ResourceInfo {
 				if(!requestMethod.equals(sqlScriptResource.getReqResourceMethod())){
 					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，只支持["+sqlScriptResource.getReqResourceMethod()+"]方式的请求");
 				}
+				
+				if(BuiltinDatabaseData.VIEW.equals(sqlScriptResource.getSqlScriptType())){
+					throw new IllegalArgumentException("系统目前不支持直接处理视图类型的sql资源");
+				}
 			}
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
@@ -81,10 +86,10 @@ public class ResourceInfo {
 				reqResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
 				
 				if(reqResource.getResourceType() != resourceType){
-					throw new IllegalArgumentException("平台目前不支持处理不同类型的资源混合调用");
+					throw new IllegalArgumentException("系统目前不支持处理不同类型的资源混合调用");
 				}
 				if(reqResource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
-					throw new IllegalArgumentException("平台目前不支持处理[主子]方式调用sql资源");
+					throw new IllegalArgumentException("系统目前不支持处理[主子]方式调用sql资源");
 				}
 			}
 		}

@@ -16,11 +16,10 @@ import oracle.jdbc.OracleTypes;
 public class ExecuteProcedureTest extends Parent{
 	
 	public static void main(String[] args)  {
-//		inTable();
-		outTable();
+		inTable();
+//		outTable();
 	}
 
-	@SuppressWarnings("unused")
 	private static void inTable() {
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -49,6 +48,7 @@ public class ExecuteProcedureTest extends Parent{
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static void outTable() {
 		try {
 //			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
