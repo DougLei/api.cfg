@@ -4,11 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -467,100 +465,6 @@ public class HibernateUtil {
 	}
 	
 	//------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * 创建数据库对象
-	 * <p>存储过程、视图等</p>
-	 * @param sqls
-	 */
-	public static void createObjects(List<ComSqlScript> sqls) {
-		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
-		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqls.get(0).getDbType());
-		if(!isSqlServler && !isOracle){
-			throw new IllegalArgumentException("系统目前不支持["+sqls.get(0).getDbType()+"]类型的数据库操作");
-		}
-		processDBObjects(sqls, true, isSqlServler, isOracle);
-	}
-	
-	/**
-	 * 删除数据库对象
-	 * <p>存储过程、视图等</p>
-	 * @param sqls
-	 */
-	public static void dropObject(ComSqlScript sql){
-		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
-		sqls.add(sql);
-		dropObjects(sqls);
-		sqls.clear();
-	}
-	
-	/**
-	 * 删除数据库对象
-	 * <p>存储过程、视图等</p>
-	 * @param sqls
-	 */
-	public static void dropObjects(List<ComSqlScript> sqls){
-		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
-		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqls.get(0).getDbType());
-		if(!isSqlServler && !isOracle){
-			throw new IllegalArgumentException("系统目前不支持["+sqls.get(0).getDbType()+"]类型的数据库操作");
-		}
-		processDBObjects(sqls, false, isSqlServler, isOracle);
-	}
-	
-	/**
-	 * 处理数据库对象，如果存在则删除，再根据参数(isCreate)决定是否重新创建
-	 * <p>存储过程、视图等</p>
-	 */
-	private static void processDBObjects(final List<ComSqlScript> sqls, final boolean isCreate, final boolean isSqlServler, final boolean isOracle) {
-		getCurrentThreadSession().doWork(new Work() {
-			public void execute(Connection conn) throws SQLException {
-				Statement st = null;
-				PreparedStatement pst = null;
-				ResultSet rs = null;
-				try {
-					ComSqlScript tmpSql = sqls.get(0);
-					if(isSqlServler){
-						pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
-						if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType())){
-							pst.setString(2, "P");
-						}else if(BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
-							pst.setString(2, "V");
-						}else{
-							throw new IllegalArgumentException("系统目前不支持在sqlserver数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");
-						}
-					}else if(isOracle){
-						pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
-						if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType())){
-							pst.setString(2, "PROCEDURE");
-						}else if(BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
-							pst.setString(2, "VIEW");
-						}else{
-							throw new IllegalArgumentException("系统目前不支持在oracle数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");
-						}
-					}
-					
-					st = conn.createStatement();
-					for (ComSqlScript sql : sqls) {
-						pst.setString(1, sql.getObjectName());
-						
-						// 如果已经存在对象，则删除
-						rs = pst.executeQuery();
-						if(rs.next() && (rs.getInt(1) > 0)){
-							st.executeUpdate("drop " + sql.getSqlScriptType() + " " + sql.getObjectName());
-						}
-						
-						if(isCreate){
-							st.executeUpdate(sql.getSqlScriptContent());// 创建对象
-						}
-					}
-				} finally{
-					CloseUtil.closeDBConn(rs, st, pst);
-				}
-			}
-		});
-		
-	}
 	
 	/**
 	 * 执行存储过程
@@ -1038,5 +942,31 @@ public class HibernateUtil {
 		
 		setParamters(query, parameters);
 		return query.uniqueResult();
+	}
+	
+	/**
+	 * sql查询列表数据
+	 * @param querySql
+	 * @param parameterArr
+	 * @return
+	 */
+	public static List executeListQueryBySqlArr(String querySql, Object... parameterArr){
+		List<Object> parameters = processParameterArr(parameterArr);
+		return executeListQueryBySql(querySql, parameters);
+	}
+	/**
+	 * sql查询列表数据
+	 * @param querySql
+	 * @param parameters
+	 * @return
+	 */
+	public static List executeListQueryBySql(String querySql, List<Object> parameters){
+		Query query = getCurrentThreadSession().createSQLQuery(querySql);
+		
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
+		
+		setParamters(query, parameters);
+		return query.list();
 	}
 }

@@ -26,6 +26,7 @@ import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.database.DBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.sqlparser.SqlParameterParserUtil;
 import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
@@ -403,7 +404,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 					&& (BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType))){
 				List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
 				sqls.add(this);
-				HibernateUtil.createObjects(sqls);
+				DBUtil.createObjects(sqls);
 				this.isCreated = 1;
 			}
 		}
@@ -564,5 +565,16 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			}
 			sqlParamsList.clear();
 		}
+	}
+	
+	/**
+	 * 解析sql时，添加一个输入的结果集信息
+	 * @param sqlResultSets
+	 */
+	public void addInSqlResultsets(List<CfgSqlResultset> sqlResultSets) {
+		if(inSqlResultsetsList == null){
+			inSqlResultsetsList = new ArrayList<List<CfgSqlResultset>>();
+		}
+		inSqlResultsetsList.add(sqlResultSets);
 	}
 }

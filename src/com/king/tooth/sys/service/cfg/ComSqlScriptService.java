@@ -9,6 +9,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -19,6 +20,7 @@ import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.database.DBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -96,19 +98,40 @@ public class ComSqlScriptService extends AbstractPublishService {
 	}
 	
 	/**
-	 * 保存sql脚本对象时，解析出参数集合，并保存到sqlScriptParameter字段中
-	 * @param isDeleteBeforeSqlScriptParameterDatas 是否清空之前的sql脚本参数数据
+	 * 保存sql脚本对象时，解析出参数集合，保存起来
+	 * @param isDeleteSqlScriptParameterDatas 是否清空之前的sql脚本参数数据
 	 * @param sqlScriptParameterList
 	 * @param sqlScriptId
 	 */
-	private void saveSqlScriptParameter(boolean isDeleteBeforeSqlScriptParameterDatas, List<ComSqlScriptParameter> sqlScriptParameterList, String sqlScriptId){
-		if(isDeleteBeforeSqlScriptParameterDatas){
+	private void saveSqlScriptParameter(boolean isDeleteSqlScriptParameterDatas, List<ComSqlScriptParameter> sqlScriptParameterList, String sqlScriptId){
+		if(isDeleteSqlScriptParameterDatas){
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);
 		}
 		
 		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameterList) {
 			sqlScriptParameter.setSqlScriptId(sqlScriptId);
 			HibernateUtil.saveObject(sqlScriptParameter, null);
+		}
+	}
+	
+	/**
+	 * 保存sql脚本对象时，解析出输入结果集信息集合，保存起来
+	 * @param isDeleteSqlResultSetDatas 是否清空之前的所有的结果集信息数据
+	 * @param inSqlResultsetsList
+	 * @param sqlScriptId
+	 */
+	private void saveInSqlResultsetsList(boolean isDeleteSqlResultSetDatas, List<List<CfgSqlResultset>> inSqlResultsetsList, String sqlScriptId){
+		if(isDeleteSqlResultSetDatas){
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sqlScriptId);
+		}
+		
+		for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
+			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+				for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
+					inSqlResultset.setSqlScriptId(sqlScriptId);
+					HibernateUtil.saveObject(inSqlResultset, null);
+				}
+			}
 		}
 	}
 	
@@ -138,17 +161,22 @@ public class ComSqlScriptService extends AbstractPublishService {
 			
 			if(operResult == null){
 				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
-				
 				String sqlScriptId = sqlScriptJsonObject.getString(ResourcePropNameConstants.ID);
-				if(sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0 ){
-					saveSqlScriptParameter(false, sqlScript.getSqlParams(), sqlScriptId);
+				
+				if(sqlScript.getIsAnalysisParameters() == 1){
+					if(sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0 ){
+						saveSqlScriptParameter(false, sqlScript.getSqlParams(), sqlScriptId);
+					}
+					if(sqlScript.getInSqlResultsetsList() != null && sqlScript.getInSqlResultsetsList().size()>0){
+						saveInSqlResultsetsList(false, sqlScript.getInSqlResultsetsList(), sqlScriptId);
+					}
 				}
 				
 				// TODO 单项目，取消是否平台开发者的判断
 //				if(isDeveloper){
 					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
 					sqlScript.setId(sqlScriptId);
-					new SysResourceService().saveSysResource(sqlScript);
+					BuiltinObjectInstance.resourceService.saveSysResource(sqlScript);
 //				}
 				
 				// TODO 单项目，取消是否平台开发者的判断
@@ -202,17 +230,22 @@ public class ComSqlScriptService extends AbstractPublishService {
 //			if(isDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 				// 如果修改了sql脚本的资源名，也要同步修改SysResource表中的资源名
-				new SysResourceService().updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
+				BuiltinObjectInstance.resourceService.updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
-				if(sqlScript.getIsAnalysisParameters() == 1 && sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0){
+				if(sqlScript.getIsAnalysisParameters() == 1){
 					String sqlScriptId = sqlScript.getId(); 
-					saveSqlScriptParameter(true, sqlScript.getSqlParams(), sqlScriptId);
+					if(sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0){
+						saveSqlScriptParameter(true, sqlScript.getSqlParams(), sqlScriptId);
+					}
+					if(sqlScript.getInSqlResultsetsList() != null && sqlScript.getInSqlResultsetsList().size()>0){
+						saveInSqlResultsetsList(true, sqlScript.getInSqlResultsetsList(), sqlScriptId);
+					}
 				}
 				
-				// 如果是查询语句，则要删除之前解析的结果集信息集合
-				if(BuiltinDatabaseData.SELECT.equals(sqlScript.getSqlScriptType())){
-					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId=? and sqlParameterId is null and projectId=? and customerId=?", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+				// 如果是查询语句，或存储过程，则要删除之前解析的结果集信息集合
+				if(BuiltinDatabaseData.SELECT.equals(sqlScript.getSqlScriptType()) || BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
+					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId=? and projectId=? and customerId=?", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 				}
 				
 				return HibernateUtil.updateObject(sqlScript, null);
@@ -254,8 +287,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where "+ResourcePropNameConstants.ID+" = ?", sql.getId());
-		HibernateUtil.deleteDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sql.getId());
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sql.getId());
+		HibernateUtil.deleteDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		
 		// 如果是平台开发者账户，还要删除资源信息
 		// TODO 单项目，取消是否平台开发者的判断
@@ -264,7 +298,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 //		}
 			
 		// 删除sql脚本资源时，如果是视图、存储过程等，还需要drop对应的对象【删除数据库对象】
-		HibernateUtil.dropObject(sql);
+		DBUtil.dropObject(sql);
 			
 		sql.clear();
 		return null;
@@ -295,7 +329,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		updateHql.append(")");
 		
 		try {
-			HibernateUtil.createObjects(sqls);
+			DBUtil.createObjects(sqls);
 			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), null);
 		} catch (Exception e) {
 			return ExceptionUtil.getErrMsg("ComSqlScriptService", "immediateCreate", e);

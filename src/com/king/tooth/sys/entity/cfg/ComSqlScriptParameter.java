@@ -93,10 +93,9 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	private Object acutalOutValue;
 	
 	public ComSqlScriptParameter() {
-		this.id = ResourceHandlerUtil.getIdentity();
 	}
 	public ComSqlScriptParameter(String parameterName, String parameterDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp) {
-		this();
+		this.id = ResourceHandlerUtil.getIdentity();
 		this.parameterName = parameterName;
 		this.parameterDataType = parameterDataType;
 		this.inOut = inOut;

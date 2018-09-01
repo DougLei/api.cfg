@@ -12,7 +12,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.freemarker.FreemarkerUtil;
 
 /**
- * 对hibernate的hbm映射文件操作
+ * 对hibernate的hbm映射文件操作工具类
  * @author DougLei
  */
 public class HibernateHbmUtil {

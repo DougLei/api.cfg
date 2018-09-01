@@ -36,9 +36,11 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(analysisResult == null){
 			if(sqlScripts.size() == 1){
 				resultObject = BuiltinObjectInstance.sqlScriptService.saveSqlScript(sqlScripts.get(0));
+				sqlScripts.get(0).clear();
 			}else{
 				for (ComSqlScript sqlScript : sqlScripts) {
 					resultObject = BuiltinObjectInstance.sqlScriptService.saveSqlScript(sqlScript);
+					sqlScript.clear();
 					if(resultObject instanceof String){
 						break;
 					}
@@ -61,9 +63,11 @@ public class ComSqlScriptController extends AbstractPublishController{
 		if(analysisResult == null){
 			if(sqlScripts.size() == 1){
 				resultObject = BuiltinObjectInstance.sqlScriptService.updateSqlScript(sqlScripts.get(0));
+				sqlScripts.get(0).clear();
 			}else{
 				for (ComSqlScript sqlScript : sqlScripts) {
 					resultObject = BuiltinObjectInstance.sqlScriptService.updateSqlScript(sqlScript);
+					sqlScript.clear();
 					if(resultObject instanceof String){
 						break;
 					}
