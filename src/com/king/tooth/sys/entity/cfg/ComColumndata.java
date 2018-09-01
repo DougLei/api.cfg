@@ -94,6 +94,11 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 * 注释
 	 */
 	private String comments;
+	/**
+	 * 是否被删除
+	 * <p>默认为0</p>
+	 */
+	private Integer isDelete;
 	
 	//-------------------------------------------------------------------------
 	
@@ -205,6 +210,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public void setIsEnabled(String isEnabled) {
 		this.isEnabled = isEnabled;
 	}
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
 	
 	
 	public ComTabledata toCreateTable() {
@@ -216,7 +227,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", BuiltinDataType.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -325,6 +336,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		commentsColumn.setComments("注释");
 		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
+		
+		ComColumndata isDeleteColumn = new ComColumndata("is_delete", BuiltinDataType.INTEGER, 1);
+		isDeleteColumn.setName("是否被删除");
+		isDeleteColumn.setComments("默认为0");
+		isDeleteColumn.setDefaultValue("0");
+		columns.add(isDeleteColumn);
 		
 		table.setColumns(columns);
 		return table;
