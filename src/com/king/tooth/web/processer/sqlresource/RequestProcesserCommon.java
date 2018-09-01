@@ -2,7 +2,9 @@ package com.king.tooth.web.processer.sqlresource;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hibernate.Query;
+
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -10,6 +12,7 @@ import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.hibernate.ProcedureUtil;
 import com.king.tooth.web.builtin.method.sqlresource.BuiltinSqlResourceBMProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sqlscript.BuiltinSqlScriptMethodProcesser;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -88,7 +91,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
 		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程
-			JSONObject json = HibernateUtil.executeProcedure(sqlScript);
+			JSONObject json = ProcedureUtil.executeProcedure(sqlScript);
 			setResponseBody(new ResponseBody(json, true));
 			return;
 		}

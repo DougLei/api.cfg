@@ -2,7 +2,9 @@ package com.king.tooth.thread;
 
 import org.hibernate.Session;
 
+import com.king.tooth.cache.DatabaseInstancesMapping;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.thread.log.ReqLogData;
@@ -165,5 +167,14 @@ public class CurrentThreadContext {
 		if(reqLog != null){
 			reqLog.addOperSqlLog(sqlScript, sqlParams);
 		}
+	}
+	
+	//-------------------------------------------------------------------
+	/**
+	 * 获取当前线程对应的database实例
+	 * @return
+	 */
+	public static CfgDatabase getDatabaseInstance() {
+		return  DatabaseInstancesMapping.getDatabasInstance(CurrentThreadContext.getDatabaseId());
 	}
 }

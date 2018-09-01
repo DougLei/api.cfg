@@ -30,6 +30,9 @@ public class DBLink {
 	 * @param sessionFactory 
 	 */
 	public DBLink(CfgDatabase database){
+		if(database == null){
+			throw new NullPointerException("创建DBLink实例时，传入的database对象不能为空");
+		}
 		this.database = database;
 	}
 	
@@ -133,5 +136,21 @@ public class DBLink {
 		Class.forName(database.getDriverClass());
 		Connection connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
 		return connection;
+	}
+	
+	/**
+	 * 执行原生数据库操作
+	 * @param execute
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 */
+	public void doExecute(IExecute execute){
+		try {
+			execute.execute(getConnection());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -74,7 +74,7 @@ public class DynamicHibernateSessionFactoryHolder {
 	}
 	
 	/**
-	 * 获取当前线程的项目主键
+	 * 获取当前线程的数据库主键
 	 * @return
 	 */
 	protected String getDatabaseId(){

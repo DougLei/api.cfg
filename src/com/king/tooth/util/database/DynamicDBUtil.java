@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.king.tooth.cache.DatabaseInstancesMapping;
 import com.king.tooth.plugins.datasource.dynamic.druid.DynamicDruidDataSourceHandler;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
@@ -38,6 +39,7 @@ public class DynamicDBUtil {
 	 * <pre>
 	 * 动态添加数据源
 	 *   同时也会动态创建一个对应的hibernate sessionFactory对象
+	 *   同时也会添加一条database实例映射
 	 * </pre>
 	 * @param database
 	 */
@@ -47,12 +49,14 @@ public class DynamicDBUtil {
 		}
 		DataSource dataSource = dynamicDruidDataSourceHandler.addDataSource(database);
 		dynamicSessionFactoryHandler.addSessionFactory(database.getId(), dataSource, database.getDialect());
+		DatabaseInstancesMapping.addDatabaseInstance(database);
 	}
 	
 	/**
 	 * <pre>
 	 * 动态删除数据源
 	 *   同时也会动态删除对应的hibernate sessionFactory对象
+	 *   同时也会删除对应的database实例映射
 	 * </pre>
 	 * @param databaseId
 	 */
@@ -68,6 +72,7 @@ public class DynamicDBUtil {
 		if(dataSource != null){
 			dataSource.close();
 		}
+		DatabaseInstancesMapping.removeDatabaseInstance(databaseId);
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------
@@ -105,4 +110,14 @@ public class DynamicDBUtil {
 	public static Map<String, SessionFactory> getAllDynamicSessionFactorys(){
 		return dynamicSessionFactoryHandler.getAllDynamicSessionFactorys();
 	}
+	
+	/**
+	 * 获取database实例对象集合
+	 * @return
+	 */
+	public static Map<String, CfgDatabase> getAllDatabaseInstances(){
+		return DatabaseInstancesMapping.getAllDatabaseInstances();
+	}
+	
+	//----------------------------------------------------------------------------------------------------------------------
 }
