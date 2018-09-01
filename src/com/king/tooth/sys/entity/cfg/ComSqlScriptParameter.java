@@ -1,13 +1,11 @@
 package com.king.tooth.sys.entity.cfg;
 
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import oracle.jdbc.OracleTypes;
-
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -16,7 +14,6 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -46,6 +43,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 * <p>默认值为string</p>
 	 */
 	private String parameterDataType;
+	/**
+	 * 是否是表类型
+	 * <p>存储过程专用的属性，因为存储过程的参数，可以使用表类型</p>
+	 * <p>默认值为0</p>
+	 */
+	private Integer isTableType;
 	/**
 	 * 默认值
 	 */
@@ -124,8 +127,8 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 					actualInValue = DateUtil.parseSqlDate(actualInValue.toString());
 				}else if(BuiltinDataType.BOOLEAN.equals(parameterDataType)){
 					actualInValue = ("true".equals(actualInValue.toString()))? "1":"0";
-				}else if(BuiltinDataType.TABLE.equals(parameterDataType)){
-					actualInValue = JsonUtil.toJsonObject(actualInValue);
+				}else if(isTableType == 1){
+					actualInValue = IJsonUtil.getIJson(actualInValue.toString());
 				}else{
 					actualInValue = actualInValue.toString();
 				}
@@ -216,6 +219,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public Integer getIsPlaceholder() {
 		return isPlaceholder;
 	}
+	public Integer getIsTableType() {
+		return isTableType;
+	}
+	public void setIsTableType(Integer isTableType) {
+		this.isTableType = isTableType;
+	}
 	public void setIsPlaceholder(Integer isPlaceholder) {
 		this.isPlaceholder = isPlaceholder;
 	}
@@ -249,7 +258,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -272,10 +281,16 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		
 		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinDataType.STRING, 20);
 		parameterDataTypeColumn.setName("参数数据类型");
-		parameterDataTypeColumn.setComments("参数数据类型:默认值为string");
+		parameterDataTypeColumn.setComments("默认值为string");
 		parameterDataTypeColumn.setDefaultValue(BuiltinDataType.STRING);
 		parameterDataTypeColumn.setOrderCode(40);
 		columns.add(parameterDataTypeColumn);
+		
+		ComColumndata isTableTypeColumn = new ComColumndata("is_table_type", BuiltinDataType.INTEGER, 1);
+		isTableTypeColumn.setName("是否是表类型");
+		isTableTypeColumn.setComments("存储过程专用的属性，因为存储过程的参数，可以使用表类型，默认值为0");
+		isTableTypeColumn.setDefaultValue("0");
+		columns.add(isTableTypeColumn);
 		
 		ComColumndata defaultValueColumn = new ComColumndata("default_value", BuiltinDataType.STRING, 100);
 		defaultValueColumn.setName("默认值");
@@ -339,45 +354,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			inOut = 3;
 		}
 		return null;
-	}
-	
-	/**
-	 * 获取数据库的数据类型编码
-	 * <p>目前在调用存储过程的时候用到</p>
-	 * @param isOracle
-	 * @param isSqlServer
-	 * @return
-	 */
-	@JSONField(serialize = false)
-	public int getDatabaseDataTypeCode(boolean isOracle, boolean isSqlServer){
-		if(isSqlServer){
-			if("varchar".equals(parameterDataType)){
-				return Types.VARCHAR;
-			}else if("char".equals(parameterDataType)){
-				return Types.CHAR;
-			}else if("int".equals(parameterDataType)){
-				return Types.INTEGER;
-			}else if("decimal".equals(parameterDataType)){
-				return Types.DECIMAL;
-			}else if("datetime".equals(parameterDataType)){
-				return Types.TIMESTAMP;
-			}
-			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+parameterDataType+"]数据类型转换，请联系管理员");
-		}else if(isOracle){
-			if("varchar2".equals(parameterDataType)){
-				return OracleTypes.VARCHAR;
-			}else if("char".equals(parameterDataType)){
-				return OracleTypes.CHAR;
-			}else if("number".equals(parameterDataType)){
-				return OracleTypes.NUMBER;
-			}else if("date".equals(parameterDataType)){
-				return OracleTypes.TIMESTAMP;
-			}else if(BuiltinDataType.TABLE.equals(parameterDataType)){
-				return OracleTypes.CURSOR;
-			}
-			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+parameterDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
-		}
-		throw new IllegalArgumentException("系统目前只支持[oracle和sqlserver]数据库的数据类型转换，请联系管理员");
 	}
 	
 	public Object clone() throws CloneNotSupportedException {

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.HttpHelperUtil;
@@ -71,7 +71,7 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 	private IJson analysisFormData(HttpServletRequest request) {
 		Object obj = HttpHelperUtil.analysisFormData(request);
 		if(StrUtils.notEmpty(obj)){
-			IJson ijson = ProcessStringTypeJsonExtend.getIJson(obj.toString());
+			IJson ijson = IJsonUtil.getIJson(obj.toString());
 			CurrentThreadContext.getReqLogData().getReqLog().setReqData(ijson.toString());// 记录请求体
 			return ijson;
 		}

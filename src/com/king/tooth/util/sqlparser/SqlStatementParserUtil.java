@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
@@ -173,67 +174,15 @@ public class SqlStatementParserUtil {
 	public static void analysisProcedureSqlScriptParam(ComSqlScript sqlScript) {
 		TCustomSqlStatement sqlStatement = sqlScript.getGsqlParser().sqlstatements.get(0);
 		switch(sqlStatement.sqlstatementtype){
-		    case sstplsql_createprocedure:
-		    	analysisOracleProcedure((TPlsqlCreateProcedure)sqlStatement, sqlScript);
-		    	break;
 		    case sstmssqlcreateprocedure:
 		    	analysisSqlServerProcedure((TMssqlCreateProcedure)sqlStatement, sqlScript);
+		    	break;
+		    case sstplsql_createprocedure:
+		    	analysisOracleProcedure((TPlsqlCreateProcedure)sqlStatement, sqlScript);
 		    	break;
 		    default:
 		    	throw new IllegalArgumentException("目前不支持["+sqlStatement.sqlstatementtype+"]类型的存储过程");
 		}
-	}
-	/**
-	 * 解析oracle存储过程，获得存储过程名和参数集合
-	 * @param procedureSqlStatement
-	 * @param sqlScript
-	 */
-	private static void analysisOracleProcedure(TPlsqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
-		// 解析出存储过程名
-		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
-
-		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
-		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
-		parameterNameRecordList.add(parameterNameRecord);
-		
-		// 解析参数
-		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
-			int len = procedureSqlStatement.getParameterDeclarations().size();
-			
-			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
-			ComSqlScriptParameter parameter = null;
-			
-			TParameterDeclaration param = null;
-			String parameterName;
-			String dataType;
-			String length = null;
-			for(int i=0;i<len;i++){
-				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
-				parameterName = param.getParameterName().toString();
-				
-				dataType = getOracleProcedureParamDataType(param);
-				if(dataType.indexOf("(") != -1){
-					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
-					dataType = dataType.substring(0, dataType.indexOf("("));
-				}
-				
-				parameter = new ComSqlScriptParameter(parameterName, dataType, param.getMode(), (i+1), true);
-				parameter.setLengthStr(length);
-				sqlScriptParameterList.add(parameter);
-				parameterNameRecord.addParameterName(parameterName);
-			}
-			sqlScript.setSqlParams(sqlScriptParameterList);
-			sqlScript.doSetParameterRecordList(parameterNameRecordList);
-		}
-	}
-	/**
-	 * 获取oracle存储过程的参数的数据类型
-	 * @param param
-	 * @return
-	 */
-	private static String getOracleProcedureParamDataType(TParameterDeclaration param) {
-		String parameterName = param.getDataType().toString().toLowerCase();
-		return parameterName;
 	}
 
 	/**
@@ -267,7 +216,7 @@ public class SqlStatementParserUtil {
 					parameterName = parameterName.substring(1);
 				}
 				
-				dataType = getSqlServerProcedureParamDataType(param);
+				dataType = param.getDataType().toString().toLowerCase();
 				if(dataType.indexOf("(") != -1){
 					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
 					dataType = dataType.substring(0, dataType.indexOf("("));
@@ -275,6 +224,7 @@ public class SqlStatementParserUtil {
 				
 				parameter = new ComSqlScriptParameter(parameterName , dataType, param.getMode(), (i+1), true);
 				parameter.setLengthStr(length);
+				processSqlServerProcTableParam(parameter);
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
 			}
@@ -283,15 +233,73 @@ public class SqlStatementParserUtil {
 		}
 	}
 	/**
-	 * 获取sqlserver存储过程的参数的数据类型
-	 * @param param
-	 * @return
+	 * 处理sqlserver存储过程的表类型参数，如果是表类型，则要在参数中标识出来
+	 * @param parameter
 	 */
-	private static String getSqlServerProcedureParamDataType(TParameterDeclaration param) {
-		String parameterName = param.getDataType().toString().toLowerCase();
-		return parameterName;
+	private static void processSqlServerProcTableParam(ComSqlScriptParameter parameter) {
+		long count = (long) HibernateUtil.executeUniqueQueryBySqlArr(sqlserver_queryDefinedTableTypeIsExistsSql, parameter.getParameterDataType());
+		if(count == 1){
+			parameter.setIsTableType(1);
+		}
 	}
+	// sqlserver查询自定义的表类型是否存在
+	private static final String sqlserver_queryDefinedTableTypeIsExistsSql = "select count(1) from sys.types where is_user_defined=1 and name = ? and is_table_type=1";
 	
+	/**
+	 * 解析oracle存储过程，获得存储过程名和参数集合
+	 * @param procedureSqlStatement
+	 * @param sqlScript
+	 */
+	private static void analysisOracleProcedure(TPlsqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
+		// 解析出存储过程名
+		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
+
+		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
+		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
+		parameterNameRecordList.add(parameterNameRecord);
+		
+		// 解析参数
+		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
+			int len = procedureSqlStatement.getParameterDeclarations().size();
+			
+			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
+			ComSqlScriptParameter parameter = null;
+			
+			TParameterDeclaration param = null;
+			String parameterName;
+			String dataType;
+			String length = null;
+			for(int i=0;i<len;i++){
+				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
+				parameterName = param.getParameterName().toString();
+				
+				dataType = param.getDataType().toString().toLowerCase();
+				if(dataType.indexOf("(") != -1){
+					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
+					dataType = dataType.substring(0, dataType.indexOf("("));
+				}
+				
+				parameter = new ComSqlScriptParameter(parameterName, dataType, param.getMode(), (i+1), true);
+				parameter.setLengthStr(length);
+				processOracleProcCursorParam(parameter);
+				sqlScriptParameterList.add(parameter);
+				parameterNameRecord.addParameterName(parameterName);
+			}
+			
+			sqlScript.setSqlParams(sqlScriptParameterList);
+			sqlScript.doSetParameterRecordList(parameterNameRecordList);
+		}
+	}
+	/**
+	 * 处理oracle存储过程的游标类型参数，如果是游标类型，则要在参数中标识出来
+	 * @param parameter
+	 */
+	private static void processOracleProcCursorParam(ComSqlScriptParameter parameter) {
+		if(BuiltinDataType.ORACLE_CURSOR_TYPE.equals(parameter.getParameterDataType())){
+			parameter.setIsTableType(1);
+		}
+	}
+
 	/**
 	 * 解析出视图名
 	 * @param sqlScript

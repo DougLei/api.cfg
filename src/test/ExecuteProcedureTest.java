@@ -31,17 +31,19 @@ public class ExecuteProcedureTest extends Parent{
 			SQLServerDataTable table = new SQLServerDataTable();
 			table.addColumnMetadata("id", Types.VARCHAR);
 			table.addColumnMetadata("name", Types.VARCHAR);
-			table.addRow("1", "哈哈11");
-			table.addRow("2", "呵呵发大水");
+			table.addColumnMetadata("live_addr", Types.VARCHAR);
+			
+			table.addRow("1");
+			table.addRow("2", "呵呵发大水", "陕西");
 			
 			SQLServerCallableStatement scs = (SQLServerCallableStatement) cs;
-			scs.setStructured(1, "accountType", table);
+			scs.setStructured(1, "AccOuntTYpE", table);
 			
 			scs.execute();
 			
 			ResultSet rs = scs.getResultSet();
 			while(rs.next()){
-				System.out.println(rs.getString(1)+"   "+rs.getString(2));
+				System.out.println(rs.getString(1)+"   "+rs.getString(2)+"   "+rs.getString(3));
 			}
 			
 		} catch (ClassNotFoundException e) {

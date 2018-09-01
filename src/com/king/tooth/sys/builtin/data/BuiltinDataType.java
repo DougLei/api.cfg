@@ -41,8 +41,11 @@ public class BuiltinDataType {
 	 */
 	public static final String BLOB = "blob";
 	
+	// -----------------------------------------------------------------------------------------------------------------
+	
 	/**
-	 * 表类型
+	 * oracle的游标类型
+	 * <p>即表类型</p>
 	 */
-	public static final String TABLE = "table";
+	public static final String ORACLE_CURSOR_TYPE = "sys_refcursor";
 }

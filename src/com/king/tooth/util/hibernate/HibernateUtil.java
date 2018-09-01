@@ -24,8 +24,8 @@ import org.hibernate.jdbc.Work;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
@@ -39,6 +39,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.SpringContextHelper;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.database.DBUtil;
 import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
@@ -580,9 +581,12 @@ public class HibernateUtil {
 		
 		final JSONObject json = new JSONObject(10);
 		final List<ComSqlScriptParameter> sqlParams = sqlScriptHavaParams?sqlParamsList.get(0):null;
-		final List<List<CfgSqlResultset>> sqlResultSetsList = sqlScript.getSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getSqlResultsetsList();
+		final List<List<CfgSqlResultset>> inSqlResultSetsList = sqlScript.getInSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getInSqlResultsetsList();
+		final List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getOutSqlResultsetsList();
 		
 		getCurrentThreadSession().doWork(new Work() {
+			private int inSqlResultsetIndex = 0;
+			
 			public void execute(Connection connection) throws SQLException {
 				String procedure = callProcedure(procedureName, sqlParams);
 				CallableStatement cs = null;
@@ -612,10 +616,10 @@ public class HibernateUtil {
 						if(parameter.getInOut() == 1){//in
 							setParameter(cs, parameter, parameter.getActualInValue());
 						}else if(parameter.getInOut() == 2){//out
-							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(isOracle, isSqlServer));
+							cs.registerOutParameter(parameter.getOrderCode(), DBUtil.getDatabaseDataTypeCode(parameter.getParameterDataType(), parameter.getIsTableType(), isOracle, isSqlServer));
 						}else if(parameter.getInOut() == 3){//in out
 							setParameter(cs, parameter, parameter.getActualInValue());
-							cs.registerOutParameter(parameter.getOrderCode(), parameter.getDatabaseDataTypeCode(isOracle, isSqlServer));
+							cs.registerOutParameter(parameter.getOrderCode(), DBUtil.getDatabaseDataTypeCode(parameter.getParameterDataType(), parameter.getIsTableType(), isOracle, isSqlServer));
 						}
 					}
 				}
@@ -629,10 +633,10 @@ public class HibernateUtil {
 			 * @throws SQLException
 			 */
 			private void setParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
-				if(isSqlServer){
-					setSqlServerParameter(cs, parameter, actualInValue);
-				}else if(isOracle){
+				if(isOracle){
 					setOracleParameter(cs, parameter, actualInValue);
+				}else if(isSqlServer){
+					setSqlServerParameter(cs, parameter, actualInValue);
 				}
 			}
 
@@ -644,8 +648,11 @@ public class HibernateUtil {
 			 * @throws SQLException
 			 */
 			private void setOracleParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
-				if(BuiltinDataType.TABLE.equals(parameter.getParameterDataType())){
+				if(parameter.getIsTableType() == 1){
 					// TODO 处理oracle游标类型的参数
+					
+					
+					inSqlResultsetIndex++;
 				}else{
 					cs.setObject(parameter.getOrderCode(), actualInValue);
 				}
@@ -659,19 +666,39 @@ public class HibernateUtil {
 			 * @throws SQLException 
 			 */
 			private void setSqlServerParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
-				if(BuiltinDataType.TABLE.equals(parameter.getParameterDataType())){
-					// TODO 处理sqlserver表类型的参数
+				if(parameter.getIsTableType() == 1){
+					List<CfgSqlResultset> inSqlResultSets = inSqlResultSetsList.get(inSqlResultsetIndex);
+					
 					SQLServerDataTable table = new SQLServerDataTable();
-
-					// 添加列信息：列名，列类型
-					table.addColumnMetadata("columnName", 1);
-					// 添加行数据
-					table.addRow();
-
+					for (CfgSqlResultset inSqlResultSet : inSqlResultSets) {
+						// 添加列信息：列名，列类型
+						table.addColumnMetadata(inSqlResultSet.getColumnName(), DBUtil.getDatabaseDataTypeCode(inSqlResultSet.getDataType(), 0, isOracle, isSqlServer));
+					}
 					
-					
+					if(actualInValue != null){
+						IJson ijson = (IJson) actualInValue;
+						int arrLength = ijson.size();
+						if(arrLength > 0){
+							int objLength = inSqlResultSets.size();
+							JSONObject json;
+							Object[] valueArr;
+							for(int i =0; i<arrLength; i++){
+								json = ijson.get(i);
+								if(json != null && json.size()>0){
+									valueArr = new Object[json.size()];
+									for(int j=0; j<objLength; j++){
+										valueArr[j] = json.get(inSqlResultSets.get(j).getPropName());
+									}
+									table.addRow(valueArr);
+								}
+							}
+							ijson.clear();
+						}
+					}
 					SQLServerCallableStatement scs = (SQLServerCallableStatement) cs;
 					scs.setStructured(parameter.getOrderCode(), parameter.getParameterDataType(), table);
+					
+					inSqlResultsetIndex++;
 				}else{
 					cs.setObject(parameter.getOrderCode(), actualInValue);
 				}
@@ -685,29 +712,29 @@ public class HibernateUtil {
 			 * @throws SQLException 
 			 */
 			private void putOutputValues(CallableStatement cs, ResultSet rs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
-				if(isSqlServer){
+				if(isOracle){
+					if(!sqlScriptHavaParams){
+						return;
+					}
+					if(sqlParams != null && sqlParams.size() > 0){
+						int outSqlResultsetIndex = 0;
+						for (ComSqlScriptParameter sp : sqlParams) {
+							if(sp.getInOut() == 2 || sp.getInOut() == 3){
+								if(sp.getIsTableType() == 1){
+									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), outSqlResultsetIndex, sp.getId()));
+									outSqlResultsetIndex++;
+								}else{
+									json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
+								}
+							}
+						}
+					}
+				}else if(isSqlServer){
 					putSqlServerDataSet(cs, rs);
 					if(sqlParams != null && sqlParams.size() > 0){
 						for (ComSqlScriptParameter sp : sqlParams) {
 							if(sp.getInOut() == 2 || sp.getInOut() == 3){
 								json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
-							}
-						}
-					}
-				}else if(isOracle){
-					if(!sqlScriptHavaParams){
-						return;
-					}
-					if(sqlParams != null && sqlParams.size() > 0){
-						int sqlResultsetIndex = 0;
-						for (ComSqlScriptParameter sp : sqlParams) {
-							if(sp.getInOut() == 2 || sp.getInOut() == 3){
-								if(BuiltinDataType.TABLE.equals(sp.getParameterDataType())){
-									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), sqlResultsetIndex, sp.getId()));
-									sqlResultsetIndex++;
-								}else{
-									json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
-								}
 							}
 						}
 					}
@@ -719,15 +746,15 @@ public class HibernateUtil {
 			 * @param rs 
 			 * @param cs 
 			 * @param orderCode
-			 * @param sqlResultsetIndex
+			 * @param outSqlResultsetIndex
 			 * @param sqlParameterId
 			 * @return
 			 */
-			private List<Map<String, Object>> getOracleCursorDataSet(CallableStatement cs, ResultSet rs, Integer orderCode, int sqlResultsetIndex, String sqlParameterId) throws SQLException {
+			private List<Map<String, Object>> getOracleCursorDataSet(CallableStatement cs, ResultSet rs, Integer orderCode, int outSqlResultsetIndex, String sqlParameterId) throws SQLException {
 				try {
 					rs = (ResultSet) cs.getObject(orderCode);
-					processResultSetList(rs, sqlResultsetIndex, sqlParameterId);
-					return sqlQueryResultToMap(rs, sqlResultSetsList.get(sqlResultsetIndex));
+					processResultSetList(rs, outSqlResultsetIndex, sqlParameterId);
+					return sqlQueryResultToMap(rs, outSqlResultSetsList.get(outSqlResultsetIndex));
 				} finally{
 					CloseUtil.closeDBConn(rs);
 				}
@@ -740,12 +767,12 @@ public class HibernateUtil {
 			 * @throws SQLException 
 			 */
 			private void putSqlServerDataSet(CallableStatement cs, ResultSet rs) throws SQLException {
-				int sqlResultsetIndex = 0;
+				int outSqlResultsetIndex = 0;
 				rs = cs.getResultSet();
 				while(rs != null){
-					processResultSetList(rs, sqlResultsetIndex, null);
-					json.put(sqlResultSetsList.get(sqlResultsetIndex).get(0).getName(sqlResultsetIndex), sqlQueryResultToMap(rs, sqlResultSetsList.get(sqlResultsetIndex)));
-					sqlResultsetIndex++;
+					processResultSetList(rs, outSqlResultsetIndex, null);
+					json.put(outSqlResultSetsList.get(outSqlResultsetIndex).get(0).getName(outSqlResultsetIndex), sqlQueryResultToMap(rs, outSqlResultSetsList.get(outSqlResultsetIndex)));
+					outSqlResultsetIndex++;
 					
 					cs.getMoreResults();
 					rs = cs.getResultSet();
@@ -756,31 +783,31 @@ public class HibernateUtil {
 			 * 处理结果集
 			 * <p>如果没有结果集，则要获取结果集信息并保存到数据库</p>
 			 * @param rs
-			 * @param sqlResultsetIndex
+			 * @param outSqlResultsetIndex
 			 * @param sqlParameterId
 			 * @throws SQLException 
 			 */
-			private void processResultSetList(ResultSet rs, int sqlResultsetIndex, String sqlParameterId) throws SQLException {
-				if(sqlResultSetsList.size() == sqlResultsetIndex){
+			private void processResultSetList(ResultSet rs, int outSqlResultsetIndex, String sqlParameterId) throws SQLException {
+				if(outSqlResultSetsList.size() == outSqlResultsetIndex){
 					ResultSetMetaData rsmd = rs.getMetaData();
 					int len = rsmd.getColumnCount();
 					
 					List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(len);
 					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
-						csr = new CfgSqlResultset(rsmd.getColumnName(i), i);
+						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, 2);
 						csr.setSqlScriptId(sqlScriptId);
 						
 						if(isSqlServer){
-							csr.setBatchOrder(sqlResultsetIndex);
-							csr.setName("dataSet"+(sqlResultsetIndex+1));
+							csr.setBatchOrder(outSqlResultsetIndex);
+							csr.setName("dataSet"+(outSqlResultsetIndex+1));
 						}else if(isOracle){
 							csr.setSqlParameterId(sqlParameterId);
 						}
 						HibernateUtil.saveObject(csr, null);// 保存结果集信息
 						sqlResultSets.add(csr);
 					}
-					sqlResultSetsList.add(sqlResultSets);
+					outSqlResultSetsList.add(sqlResultSets);
 				}
 			}
 

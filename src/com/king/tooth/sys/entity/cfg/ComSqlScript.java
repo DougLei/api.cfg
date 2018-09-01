@@ -11,7 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.ProcessStringTypeJsonExtend;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.AbstractSysResource;
@@ -134,9 +134,16 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	
 	/**
 	 * sql结果集信息集合
+	 * <p>传入</p>
 	 */
 	@JSONField(serialize = false)
-	private List<List<CfgSqlResultset>> sqlResultsetsList;
+	private List<List<CfgSqlResultset>> inSqlResultsetsList;
+	/**
+	 * sql结果集信息集合
+	 * <p>传出</p>
+	 */
+	@JSONField(serialize = false)
+	private List<List<CfgSqlResultset>> outSqlResultsetsList;
 	
 	/**
 	 * 关联的数据库id
@@ -173,7 +180,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		if(StrUtils.isEmpty(parameterNameRecords)){
 			return;
 		}
-		IJson ijson = ProcessStringTypeJsonExtend.getIJson(parameterNameRecords);
+		IJson ijson = IJsonUtil.getIJson(parameterNameRecords);
 		int len = ijson.size();
 		this.parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(len);
 		
@@ -259,11 +266,17 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public List<List<ComSqlScriptParameter>> getSqlParamsList() {
 		return sqlParamsList;
 	}
-	public List<List<CfgSqlResultset>> getSqlResultsetsList() {
-		return sqlResultsetsList;
+	public List<List<CfgSqlResultset>> getInSqlResultsetsList() {
+		return inSqlResultsetsList;
 	}
-	public void setSqlResultsetsList(List<List<CfgSqlResultset>> sqlResultsetsList) {
-		this.sqlResultsetsList = sqlResultsetsList;
+	public void setInSqlResultsetsList(List<List<CfgSqlResultset>> inSqlResultsetsList) {
+		this.inSqlResultsetsList = inSqlResultsetsList;
+	}
+	public List<List<CfgSqlResultset>> getOutSqlResultsetsList() {
+		return outSqlResultsetsList;
+	}
+	public void setOutSqlResultsetsList(List<List<CfgSqlResultset>> outSqlResultsetsList) {
+		this.outSqlResultsetsList = outSqlResultsetsList;
 	}
 	
 	public ComTabledata toCreateTable() {
@@ -520,14 +533,23 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public void clear(){
-		if(sqlResultsetsList != null){
-			for (List<CfgSqlResultset> sqlResultSets : sqlResultsetsList) {
+		if(inSqlResultsetsList != null){
+			for (List<CfgSqlResultset> sqlResultSets : inSqlResultsetsList) {
 				if(sqlResultSets != null){
 					sqlResultSets.clear();
 				}
 			}
-			sqlResultsetsList.clear();
+			inSqlResultsetsList.clear();
 		}
+		if(outSqlResultsetsList != null){
+			for (List<CfgSqlResultset> sqlResultSets : outSqlResultsetsList) {
+				if(sqlResultSets != null){
+					sqlResultSets.clear();
+				}
+			}
+			outSqlResultsetsList.clear();
+		}
+		
 		if(finalSqlScriptList != null){
 			finalSqlScriptList.clear();
 		}

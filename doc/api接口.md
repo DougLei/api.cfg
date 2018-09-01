@@ -1589,8 +1589,10 @@
   "batchOrder":"",                                      --结果集批次顺序，sqlserver直接返回结果集，所以这里用批次顺序来区分返回的结果集，第几个结果集[sqlserver使用字段]
   "name":"",                                            --结果集名，sqlserver直接返回结果集，这个用来配置每个结果集的名称，前端通过该key来取，如果没有配置，则使用dataSet1、dataSet2...自增[sqlserver使用字段]
   "columnName":"",                                      --列名
+  "dataType":"",                                        --存储过程传入表参数时，需要知道每个列的数据类型[sqlserver使用字段]
   "propName":"",                                        --属性名
-  "orderCode":""                                        --排序值
+  "orderCode":"",                                       --排序值
+  "inOut":1                                             --标识是传入的结果集信息，还是传出的结果集信息，in=1、out=2
 }
 ```
 
@@ -1615,8 +1617,10 @@
   "batchOrder":"",                                      --结果集批次顺序，sqlserver直接返回结果集，所以这里用批次顺序来区分返回的结果集，第几个结果集[sqlserver使用字段]
   "name":"",                                            --结果集名，sqlserver直接返回结果集，这个用来配置每个结果集的名称，前端通过该key来取，如果没有配置，则使用dataSet1、dataSet2...自增[sqlserver使用字段]
   "columnName":"",                                      --列名
+  "dataType":"",                                        --存储过程传入表参数时，需要知道每个列的数据类型[sqlserver使用字段]
   "propName":"",                                        --属性名
-  "orderCode":""                                        --排序值
+  "orderCode":"",                                       --排序值
+  "inOut":1                                             --标识是传入的结果集信息，还是传出的结果集信息，in=1、out=2
 }
 ```
 

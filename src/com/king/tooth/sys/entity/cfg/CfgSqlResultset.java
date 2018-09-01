@@ -46,6 +46,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	 */
 	private String columnName;
 	/**
+	 * 列的数据类型
+	 * <p>存储过程传入表参数时，需要知道每个列的数据类型[sqlserver使用字段]</p>
+	 */
+	private String dataType;
+	/**
 	 * 属性名
 	 */
 	private String propName;
@@ -53,11 +58,18 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	 * 排序值
 	 */
 	private Integer orderCode;
+	/**
+	 * 传入还是传出
+	 * <p>标识是传入的结果集信息，还是传出的结果集信息</p>
+	 * <p>in=1、out=2</p>
+	 */
+	private Integer inOut;
 	
 	//------------------------------------------------------------------------------
 	
-	public CfgSqlResultset(String columnName, int orderCode) {
+	public CfgSqlResultset(String columnName, int orderCode, int inOut) {
 		this.orderCode = orderCode;
+		this.inOut = inOut;
 		this.columnName = columnName;
 		if("id".equalsIgnoreCase(columnName)){
 			this.propName = ResourcePropNameConstants.ID;
@@ -104,6 +116,12 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
+	public String getDataType() {
+		return dataType;
+	}
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
 	public String getPropName() {
 		return propName;
 	}
@@ -116,6 +134,12 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
+	public Integer getInOut() {
+		return inOut;
+	}
+	public void setInOut(Integer inOut) {
+		this.inOut = inOut;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("CFG_SQL_RESULTSET", 0);
@@ -126,7 +150,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -153,6 +177,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		columnNameColumn.setComments("列名");
 		columns.add(columnNameColumn);
 		
+		ComColumndata dataTypeColumn = new ComColumndata("data_type", BuiltinDataType.STRING, 20);
+		dataTypeColumn.setName("列的数据类型");
+		dataTypeColumn.setComments("存储过程传入表参数时，需要知道每个列的数据类型[sqlserver使用字段]");
+		columns.add(dataTypeColumn);
+		
 		ComColumndata propNameColumn = new ComColumndata("prop_name", BuiltinDataType.STRING, 40);
 		propNameColumn.setName("属性名");
 		propNameColumn.setComments("属性名");
@@ -162,6 +191,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		columns.add(orderCodeColumn);
+		
+		ComColumndata inOutColumn = new ComColumndata("in_out", BuiltinDataType.INTEGER, 1);
+		inOutColumn.setName("传入还是传出");
+		inOutColumn.setComments("标识是传入的结果集信息，还是传出的结果集信息，in=1、out=2");
+		columns.add(inOutColumn);
 		
 		table.setColumns(columns);
 		return table;

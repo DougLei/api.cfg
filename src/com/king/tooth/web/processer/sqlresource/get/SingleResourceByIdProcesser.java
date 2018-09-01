@@ -24,14 +24,14 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 				  builtinQueryMethodProcesser.getSql().append(getFromSql());
 		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
 		
-		if(sqlScriptResource.getSqlResultsetsList() != null && sqlScriptResource.getSqlResultsetsList().get(0) != null){
+		if(sqlScriptResource.getOutSqlResultsetsList() != null && sqlScriptResource.getOutSqlResultsetsList().get(0) != null){
 			validIdColumnIsExists(sqlScriptResource);
 		}
 		
 		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
 		
 		Query query = createQuery(0, querySql);
-		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getSqlResultsetsList().get(0));
+		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataObject(dataList, true);
 		return true;

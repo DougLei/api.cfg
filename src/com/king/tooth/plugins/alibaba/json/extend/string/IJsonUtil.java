@@ -3,13 +3,26 @@ package com.king.tooth.plugins.alibaba.json.extend.string;
 import java.io.Serializable;
 
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
- * 处理String类型的Json扩展类
+ * ijson的工具类
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ProcessStringTypeJsonExtend implements Serializable{
+public class IJsonUtil implements Serializable{
+	
+	/**
+	 * 获取IJson对象
+	 * @param jsonStr
+	 * @return
+	 */
+	public static IJson getIJson(Object json) {
+		if(StrUtils.isEmpty(json)){
+			return null;
+		}
+		return getIJson(json.toString());
+	}
 	
 	/**
 	 * 获取IJson对象

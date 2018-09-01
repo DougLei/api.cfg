@@ -156,6 +156,7 @@ public abstract class GetProcesser extends RequestProcesser{
 			}
 			queryResultList.clear();
 		}else{
+			dataList = new ArrayList<Map<String, Object>>(0);
 			Log4jUtil.debug("将sql查询结果集转为list<Map>时，sql查询的结果集为空，转换结果为空");
 		}
 		return dataList;
@@ -279,7 +280,7 @@ public abstract class GetProcesser extends RequestProcesser{
 	 * @param sqlScriptResource 
 	 */
 	protected void validIdColumnIsExists(ComSqlScript sqlScriptResource) {
-		List<CfgSqlResultset> sqlResultsets = sqlScriptResource.getSqlResultsetsList().get(0);
+		List<CfgSqlResultset> sqlResultsets = sqlScriptResource.getOutSqlResultsetsList().get(0);
 		boolean unIncludeIdColumn = true;// 是否不包含id字段，如果不包括，则该处理器无法使用
 		for (CfgSqlResultset csr : sqlResultsets) {
 			if(csr.getPropName().equalsIgnoreCase(ResourcePropNameConstants.ID)){
@@ -297,7 +298,7 @@ public abstract class GetProcesser extends RequestProcesser{
 	 * @param sqlScriptResource
 	 */
 	protected void processSelectSqlResultsets(ComSqlScript sqlScriptResource, String querySql) {
-		if(sqlScriptResource.getSqlResultsetsList() == null || sqlScriptResource.getSqlResultsetsList().get(0) == null){
+		if(sqlScriptResource.getOutSqlResultsetsList() == null || sqlScriptResource.getOutSqlResultsetsList().get(0) == null){
 			List<Object> queryCondParameters = null;
 			if(sqlParameterValues.size() > 0){
 				queryCondParameters = new ArrayList<Object>(sqlParameterValues.get(0).size());
@@ -308,7 +309,7 @@ public abstract class GetProcesser extends RequestProcesser{
 			}else{
 				querySql += " where 1=2";
 			}
-			sqlScriptResource.setSqlResultsetsList(processResultSetList(querySql, queryCondParameters, sqlScriptResource.getId()));
+			sqlScriptResource.setOutSqlResultsetsList(processResultSetList(querySql, queryCondParameters, sqlScriptResource.getId()));
 		}
 	}
 	
@@ -349,7 +350,7 @@ public abstract class GetProcesser extends RequestProcesser{
 					int len = rsmd.getColumnCount();
 					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
-						csr = new CfgSqlResultset(rsmd.getColumnName(i), i);
+						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, 2);
 						csr.setSqlScriptId(sqlScriptId);
 						HibernateUtil.saveObject(csr, null);// 将每条结果集信息保存到数据库
 						

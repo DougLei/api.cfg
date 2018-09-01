@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -44,7 +43,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员");
 		}
 		sqlScript.setSqlParams(findSqlParams(sqlScriptId));
-		sqlScript.setSqlResultsetsList(findSqlResultsetsList(sqlScript));
+		sqlScript.setInSqlResultsetsList(findInSqlResultsetsList(sqlScript));
+		sqlScript.setOutSqlResultsetsList(findOutSqlResultsetsList(sqlScript));
 		return sqlScript;
 	}
 	
@@ -491,18 +491,41 @@ public class ComSqlScriptService extends AbstractPublishService {
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
-	 * 根据sql脚本id，查询对应的结果集信息集合
+	 * 根据sql脚本id，查询对应的传入类型的结果集信息集合
 	 * @param sqlScript
 	 * @return
 	 */
-	private List<List<CfgSqlResultset>> findSqlResultsetsList(ComSqlScript sqlScript) {
+	private List<List<CfgSqlResultset>> findInSqlResultsetsList(ComSqlScript sqlScript) {
+		List<List<CfgSqlResultset>> sqlResultsetsList = null;
+		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
+			List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
+			if(sqlParams != null && sqlParams.size() > 0){
+				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
+				for (ComSqlScriptParameter sqlParam : sqlParams) {
+					// 只有表类型，再查询其结果集信息
+					if(sqlParam.getIsTableType() == 1){
+						sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
+								CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = 1 and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+					}
+				}
+			}
+		}
+		return sqlResultsetsList;
+	}
+	
+	/**
+	 * 根据sql脚本id，查询对应的传出类型的结果集信息集合
+	 * @param sqlScript
+	 * @return
+	 */
+	private List<List<CfgSqlResultset>> findOutSqlResultsetsList(ComSqlScript sqlScript) {
 		List<List<CfgSqlResultset>> sqlResultsetsList = null;
 		
 		// 查询语句，直接查询结果集
 		if(BuiltinDatabaseData.SELECT.equals(sqlScript.getSqlScriptType())){
 			sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
 			sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
-					CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+					CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and inOut = 2 and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 		}
 		
 		// 存储过程，要判断是否有返回结果集，再查询对应的结果集
@@ -514,9 +537,9 @@ public class ComSqlScriptService extends AbstractPublishService {
 					sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
 					for (ComSqlScriptParameter sqlParam : sqlParams) {
 						// 只有表类型，再查询其结果集信息
-						if(BuiltinDataType.TABLE.equals(sqlParam.getParameterDataType())){
+						if(sqlParam.getIsTableType() == 1){
 							sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
-									CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+									CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = 2 and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 						}
 					}
 				}
@@ -526,7 +549,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getSqlScriptType())){
 				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(5);
 				List<CfgSqlResultset> sqlResultsets = HibernateUtil.extendExecuteListQueryByHqlArr(
-						CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and projectId=? and customerId=? order by batchOrder asc, orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+						CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and inOut = 2 and projectId=? and customerId=? order by batchOrder asc, orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 				if(sqlResultsets != null && sqlResultsets.size() > 0){
 					int size = sqlResultsets.size();
 					int count = size;
