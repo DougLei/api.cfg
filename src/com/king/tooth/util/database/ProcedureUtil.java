@@ -1,4 +1,4 @@
-package com.king.tooth.util.hibernate;
+package com.king.tooth.util.database;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -22,7 +22,7 @@ import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.database.DBUtil;
+import com.king.tooth.util.hibernate.HibernateUtil;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 
@@ -67,7 +67,7 @@ public class ProcedureUtil {
 					cs.execute();
 					putOutputValues(cs, rs, sqlParams);
 				} finally {
-					CloseUtil.closeDBConn(rs, cs);
+					CloseUtil.closeDBConn(rs, cs, connection);
 					if(sqlParams != null && sqlParams.size() > 0){
 						sqlParams.clear();
 					}
