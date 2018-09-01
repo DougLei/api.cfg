@@ -297,11 +297,11 @@ public class SqlStatementParserUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	private static void processSqlServerProcTableParam(ComSqlScriptParameter parameter, ComSqlScript sqlScript) {
-		long count = (long) HibernateUtil.executeUniqueQueryBySqlArr(sqlserver_queryDefinedTableTypeIsExistsSql, parameter.getParameterDataType());
+		int count = (int) HibernateUtil.executeUniqueQueryBySqlArr(sqlserver_queryDefinedTableTypeIsExistsSql, parameter.getParameterDataType());
 		if(count == 1){
 			parameter.setIsTableType(1);
 			
-			List<Object[]> columnList = HibernateUtil.executeListQueryBySqlArr(sqlserver_queryDefinedTableTypeColumnInfoSql, parameter.getParameterDataType());
+			List<Object[]> columnList = HibernateUtil.executeListQueryBySqlArr(sqlserver_queryDefinedTableTypeColumnInfoSql, "tt_"+parameter.getParameterDataType()+"_%");
 			if(columnList == null || columnList.size() == 0){
 				throw new NullPointerException("sqlserver中，自定义的表类型["+parameter.getParameterDataType()+"]，不存在任何列信息，请检查");
 			}
@@ -323,7 +323,7 @@ public class SqlStatementParserUtil {
 	// sqlserver查询自定义的表类型是否存在
 	private static final String sqlserver_queryDefinedTableTypeIsExistsSql = "select count(1) from sys.types where is_user_defined=1 and name = ? and is_table_type=1";
 	// sqlserver查询自定义的表类型的列信息
-	private static final String sqlserver_queryDefinedTableTypeColumnInfoSql = "";
+	private static final String sqlserver_queryDefinedTableTypeColumnInfoSql = "select cast(c.name as varchar) name, cast(c.xtype as varchar) xtype from syscolumns c left join sysobjects o on (c.id = o.id) where o.name like ? and o.xtype = 'TT' order by c.colorder asc";
 	
 
 	/**

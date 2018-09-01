@@ -345,12 +345,14 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			parameterFrom = 1;
 		}
 		
-		if(inOut == 0 || inOut == 1){// in
+		if(inOut == 0 || inOut == 5 || inOut == 1){// in (inOut == 0是sqlserver的input，inOut == 5是sqlserver的readonly，inOut == 1是oracle的input)
 			inOut = 1;
-		}else if(inOut == 2 || inOut == 4){// out
+		}else if(inOut == 4 || inOut == 2){// out (inOut == 4是sqlserver的output，inOut == 2是oracle的output)
 			inOut = 2;
-		}else{// in out
+		}else if(inOut == 3){// in out (inOut==3是oracle的in out)
 			inOut = 3;
+		}else{
+			throw new IllegalArgumentException("系统在解析存储过程参数的时候，无法处理inOut="+inOut+"的类型，请联系后台系统开发人员");
 		}
 		return null;
 	}

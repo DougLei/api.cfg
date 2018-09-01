@@ -32,25 +32,28 @@ public class TestProcedure {
 				if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
 					int len = procedureSqlStatement.getParameterDeclarations().size();
 					
+					System.out.println("   "+len);
 					TParameterDeclaration param = null;
-					String dataType;
 					for(int i=0;i<len;i++){
 						param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
-						dataType = param.getDataType().toString().toLowerCase();
-						System.out.println(dataType);
+						System.out.println(param.getMode());
 					}
 				}
 	}
 
 	private static String getSql() {
 		String sqls = "";
-		sqls += "  create or replace procedure outTable(inage in number, age out number, dataset out sys_refcursor)\n"; 
+		sqls += "  create or replace procedure outTable(inage in number, age out number, dataset in out sys_refcursor)\n"; 
 		sqls += "  as\n"; 
 		sqls += "  begin\n"; 
 		sqls += "      age:=inage+10;\n"; 
 		sqls += "      open dataset for\n"; 
 		sqls += "           select * from sys_user where id = '1';\n"; 
 		sqls += "  end;\n"; 
+
+
+
+
 
 
 

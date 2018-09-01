@@ -539,7 +539,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 					// 只有表类型，再查询其结果集信息
 					if(sqlParam.getIsTableType() == 1){
 						sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
-								CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = 1 and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+								CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = 1 and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 					}
 				}
 			}
@@ -573,7 +573,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 						// 只有表类型，再查询其结果集信息
 						if(sqlParam.getIsTableType() == 1){
 							sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
-									CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = 2 and sqlScriptId is null and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+									CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = 2 and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 						}
 					}
 				}
