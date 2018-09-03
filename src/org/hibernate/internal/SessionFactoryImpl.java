@@ -171,7 +171,7 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	private final transient SQLFunctionRegistry sqlFunctionRegistry;
 	private final transient SessionFactoryObserverChain observer = new SessionFactoryObserverChain();
 	private final transient ConcurrentHashMap<EntityNameResolver,Object> entityNameResolvers = new ConcurrentHashMap<EntityNameResolver, Object>();
-	private final transient QueryPlanCache queryPlanCache;
+	private transient QueryPlanCache queryPlanCache;
 	private final transient CacheImplementor cacheAccess;
 	private transient boolean isClosed = false;
 	private final transient TypeResolver typeResolver;
@@ -2067,6 +2067,9 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 		this.currentTenantIdentifierResolver = determineCurrentTenantIdentifierResolver( cfg.getCurrentTenantIdentifierResolver() );
 		this.transactionEnvironment = new TransactionEnvironmentImpl( this );
 		this.observer.sessionFactoryCreated(this);
+		
+		this.queryPlanCache.cleanup();
+		this.queryPlanCache = new QueryPlanCache( this );
 	}  
 	
 	/**

@@ -233,7 +233,7 @@ public class ComTabledataService extends AbstractPublishService {
 				cancelBuildModel(dbTableHandler, table, true);
 			}
 				
-			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =?", tableId));
+			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =? order by orderCode asc", tableId));
 			
 			// 1、建表
 			List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
