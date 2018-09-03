@@ -73,14 +73,26 @@ public class ComColumndataService extends AbstractService{
 			return "没有找到id为["+column.getId()+"]的列对象信息";
 		}
 		
-		String operResult = null;
-		if(!oldColumn.getColumnName().equals(column.getColumnName())){
-			operResult = validColumnNameIsExists(column);
+		if(!oldColumn.getColumnType().equals(column.getColumnType())){
+			return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]";
 		}
+		if(oldColumn.getLength()> column.getLength()){
+			return "系统不允许修改["+column.getColumnName()+"]字段的数据长度[从"+oldColumn.getLength()+"降低到"+column.getLength()+"]，此操作可能会损失实际数据的精度";
+		}
+		
+		String operResult = null;
 		if(operResult == null){
 			operResult = validColumnRefTableIsExists(column);
 		}
+		if(!oldColumn.getColumnName().equals(column.getColumnName())){
+			operResult = validColumnNameIsExists(column);
+			if(operResult == null && oldColumn.getOperStatus() == ComColumndata.CREATED){
+				// 如果修改了列名，则要记录之前的列名
+				column.setOldColumnName(oldColumn.getColumnName());
+			}
+		}
 		if(operResult == null){
+			column.setOperStatus(ComColumndata.MODIFIED);
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
 			// TODO 单项目，取消是否平台开发者的判断
 //			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
@@ -97,8 +109,26 @@ public class ComColumndataService extends AbstractService{
 	 * @return
 	 */
 	public String deleteColumn(String columnIds) {
-		modifyTableIsBuildModel(null, columnIds.split(",")[0], 0);
-		return deleteDataById("ComColumndata", columnIds);
+		String[] idArr = columnIds.split(",");
+		
+		StringBuilder hql = new StringBuilder("update ComColumndata set operStatus="+ComColumndata.DELETED+" where id ");
+		if(idArr.length ==1){
+			hql.append("= '").append(idArr[0]).append("'");
+		}else if(idArr.length > 1){
+			hql.append("in (");
+			for (String columnId : idArr) {
+				hql.append("'").append(columnId).append("',");
+			}
+			hql.setLength(hql.length()-1);
+			hql.append(")");
+		}else{
+			return "删除数据时，传入的id数据数组长度小于1";
+		}
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, hql.toString());
+		hql.setLength(0);
+		
+		modifyTableIsBuildModel(null, idArr[0], 0);
+		return null;
 	}
 	
 	/**

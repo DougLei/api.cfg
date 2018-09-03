@@ -12,6 +12,7 @@ import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.jdbc.util.DynamicDataLinkTableUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -78,9 +79,9 @@ public class DBTableHandler {
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 */
 	public void createTable(List<ComTabledata> tabledatas, boolean isNeedInitBasicColumns){
-		String tmpSql = getCreateTableSql(tabledatas, isNeedInitBasicColumns);
-		if(StrUtils.notEmpty(tmpSql)){
-			String[] ddlSqlArr = tmpSql.split(";");
+		String createTableSql = getCreateTableSql(tabledatas, isNeedInitBasicColumns);
+		if(StrUtils.notEmpty(createTableSql)){
+			String[] ddlSqlArr = createTableSql.split(";");
 			executeDDL(ddlSqlArr, tabledatas);
 		}
 	}
@@ -104,9 +105,9 @@ public class DBTableHandler {
 	 * @return 返回被删除表的资源名，多个用,分割
 	 */
 	public String dropTable(List<ComTabledata> tabledatas){
-		String tmpSql = getDropTableSql(tabledatas);
-		if(StrUtils.notEmpty(tmpSql)){
-			String[] ddlSqlArr = tmpSql.split(";");
+		String dropTableSql = getDropTableSql(tabledatas);
+		if(StrUtils.notEmpty(dropTableSql)){
+			String[] ddlSqlArr = dropTableSql.split(";");
 			executeDDL(ddlSqlArr, tabledatas);
 		}
 		
@@ -118,6 +119,18 @@ public class DBTableHandler {
 		return deleteTableResourceNames.toString();
 	}
 	
+	/**
+	 * 执行操作数据表的ddlsql语句
+	 * @param ddlSqlArr
+	 */
+	private void executeDDL(String[] ddlSqlArr, List<ComTabledata> tabledatas){
+		String result = dblink.executeDDL(ddlSqlArr);
+		if(result == null){
+			Log4jUtil.debug("[DBTableHandler.executeDDL]操作数据表成功：{}", tabledatas);
+		}else{
+			Log4jUtil.warn("[DBTableHandler.executeDDL]操作数据表失败，异常信息为：{}", result);
+		}
+	}
 	
 	/**
 	 * 获得创建表的sql
@@ -133,17 +146,17 @@ public class DBTableHandler {
 		if(tabledatas != null && tabledatas.size() > 0){
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, true);
-			StringBuilder createSql = new StringBuilder();
+			StringBuilder createTableSql = new StringBuilder();
 			for (ComTabledata tabledata : tabledatas) {
 				if(isNeedInitBasicColumns){
 					DynamicBasicDataColumnUtil.initBasicColumnToTable(tabledata);
 				}
 				tableOper.installCreateTableSql(tabledata);
-				createSql.append(tableOper.getCreateTableSql()).append(";")
+				createTableSql.append(tableOper.getCreateTableSql()).append(";")
 						 .append(tableOper.getCreateCommentSql()).append(";");
 			}
-			createSql.setLength(createSql.length() - 1);
-			return createSql.toString();
+			createTableSql.setLength(createTableSql.length() - 1);
+			return createTableSql.toString();
 		}
 		return null;
 	}
@@ -155,17 +168,17 @@ public class DBTableHandler {
 	 */
 	public String getDropTableSql(List<ComTabledata> tabledatas){
 		if(tabledatas != null && tabledatas.size() > 0){
-			StringBuilder dropSql = new StringBuilder();
+			StringBuilder dropTableSql = new StringBuilder();
 			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
 			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, false);
 			List<String> tableNames = filterTableIsExists(tabledatas);
 			if(tableNames!= null && tableNames.size() > 0){
 				for (String tn: tableNames) {
-					dropSql.append(" drop table ").append(tn).append(";");
+					dropTableSql.append(" drop table ").append(tn).append(";");
 				}
-				dropSql.setLength(dropSql.length() - 1);
+				dropTableSql.setLength(dropTableSql.length() - 1);
 			}
-			return dropSql.toString();
+			return dropTableSql.toString();
 		}
 		return null;
 	}
@@ -182,14 +195,12 @@ public class DBTableHandler {
 		ResultSet rs = null;
 		try {
 			conn = dblink.getConnection();
-			if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dblink.getDBType())){
-				pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
-				pst.setString(2, "U");
-			}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dblink.getDBType())){
+			if(dblink.isOracle()){
 				pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
 				pst.setString(2, "TABLE");
-			}else{
-				throw new IllegalArgumentException("系统目前不支持["+dblink.getDBType()+"]类型的数据库操作");
+			}else if(dblink.isSqlServer()){
+				pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
+				pst.setString(2, "U");
 			}
 			for (ComTabledata table : tabledatas) {
 				pst.setString(1, table.getTableName());
@@ -223,14 +234,12 @@ public class DBTableHandler {
 		ResultSet rs = null;
 		try {
 			conn = dblink.getConnection();
-			if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dblink.getDBType())){
-				pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
-				pst.setString(2, "U");
-			}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dblink.getDBType())){
+			if(dblink.isOracle()){
 				pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
 				pst.setString(2, "TABLE");
-			}else{
-				throw new IllegalArgumentException("系统目前不支持["+dblink.getDBType()+"]类型的数据库操作");
+			}else if(dblink.isSqlServer()){
+				pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
+				pst.setString(2, "U");
 			}
 			for (String tableName : tableNameArr) {
 				pst.setString(1, tableName);
@@ -254,15 +263,40 @@ public class DBTableHandler {
 	}
 
 	/**
-	 * 执行操作数据表的ddlsql语句
-	 * @param ddlSqlArr
+	 * 修改列
+	 * @param tableName
+	 * @param columns
+	 * @param removeDeleteColumn 是否从集合中移除被删除的列
 	 */
-	private void executeDDL(String[] ddlSqlArr, List<ComTabledata> tabledatas){
-		String result = dblink.executeDDL(ddlSqlArr);
-		if(result == null){
-			Log4jUtil.debug("[DBTableHandler.executeDDL]操作数据表成功：{}", tabledatas);
-		}else{
-			Log4jUtil.debug("[DBTableHandler.executeDDL]操作数据表失败，异常信息为：{}", result);
+	public void modifyColumn(String tableName, List<ComColumndata> columns, boolean removeDeleteColumn){
+		StringBuilder modifyColumnSql = new StringBuilder();
+		
+		ComColumndata column;
+		for (int i = 0; i < columns.size(); i++) {
+			column = columns.get(i);
+			
+			if(column.getOperStatus() == ComColumndata.UN_CREATED){
+				
+			}else if(column.getOperStatus() == ComColumndata.MODIFIED){
+				
+			}else if(column.getOperStatus() == ComColumndata.DELETED){
+				
+				
+				if(removeDeleteColumn){
+					columns.remove(i);
+					i--;
+				}
+			}
+			
+			if(dblink.isOracle()){
+			}else if(dblink.isSqlServer()){
+			}
+		}
+		
+		if(StrUtils.notEmpty(modifyColumnSql)){
+			String[] ddlSqlArr = modifyColumnSql.toString().split(";");
+			modifyColumnSql.setLength(0);
+			dblink.executeDDL(ddlSqlArr);
 		}
 	}
 }

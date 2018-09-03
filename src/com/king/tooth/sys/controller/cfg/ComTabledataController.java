@@ -112,7 +112,7 @@ public class ComTabledataController extends AbstractPublishController{
 //		}
 		
 		// 获取数据库连接对象，准备进行create表、drop表的操作
-		DBTableHandler dbTableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
+		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 		
 		int len = ijson.size();
 		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id

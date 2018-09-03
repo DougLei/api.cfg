@@ -25,6 +25,9 @@ public class DBLink {
 	 */
 	private CfgDatabase database;
 	
+	private boolean isOracle;
+	private boolean isSqlServer;
+	
 	/**
 	 * 根据动态数据库对象，获取dblink实例
 	 * @param sessionFactory 
@@ -34,6 +37,13 @@ public class DBLink {
 			throw new NullPointerException("创建DBLink实例时，传入的database对象不能为空");
 		}
 		this.database = database;
+		
+		String dbType = database.getType();
+		isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType);
+		isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType);
+		if(!isOracle && !isSqlServer){
+			throw new IllegalArgumentException("系统目前不支持["+dbType+"]类型的数据库操作");
+		}
 	}
 	
 	/**
@@ -58,7 +68,6 @@ public class DBLink {
 			for (String ds : ddlSqlArr) {
 				if(StrUtils.notEmpty(ds)){
 					try {
-						// 执行建库建表语句错误，也要继续下去
 						st.executeUpdate(ds);
 					} catch (Exception e) {
 						String errMessage = "[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]，错误信息为："+ExceptionUtil.getErrMsg("DBLink", "executeDDL", e);
@@ -118,6 +127,22 @@ public class DBLink {
 		return database.getType();
 	}
 	
+	/**
+	 * 是否是oracle数据库
+	 * @return
+	 */
+	public boolean isOracle() {
+		return isOracle;
+	}
+
+	/**
+	 * 是否是sqlserver数据库
+	 * @return
+	 */
+	public boolean isSqlServer() {
+		return isSqlServer;
+	}
+
 	/**
 	 * 获取目前dblink支持的数据库
 	 * @return

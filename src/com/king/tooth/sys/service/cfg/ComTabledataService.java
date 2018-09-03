@@ -208,7 +208,7 @@ public class ComTabledataService extends AbstractPublishService {
 		// TODO 单项目，取消是否平台开发者的判断
 //		if(isDeveloper && oldTable.getIsCreated() == 1){
 		if(oldTable.getIsCreated() == 1){
-			cancelBuildModel(new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance), oldTable, true);
+			cancelBuildModel(new DBTableHandler(CurrentThreadContext.getDatabaseInstance()), oldTable, true);
 		}
 		
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
@@ -225,24 +225,41 @@ public class ComTabledataService extends AbstractPublishService {
 	 * @return
 	 */
 	public String buildModel(String tableId, List<String> deleteTableIds, DBTableHandler dbTableHandler){
-		deleteTableIds.add(tableId);
-		
 		try {
 			ComTabledata table = getObjectById(tableId, ComTabledata.class);
-			if(table.getIsCreated() == 1){
-				cancelBuildModel(dbTableHandler, table, true);
+			if(table.getIsBuildModel() == 1){
+				return "表["+table.getTableName()+"]已经完成建模，且在无任何字段信息被修改的情况下，无法重复进行建模操作";
 			}
-				
-			table.setColumns(HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =? order by orderCode asc", tableId));
 			
-			// 1、建表
-			List<ComTabledata> tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
+			boolean isNeedInitBasicColumns = false;
+			List<ComColumndata> columns = HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =? order by orderCode asc", tableId);
+			List<ComTabledata> tables = null;
+			if(table.getIsCreated() == 0){
+				// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
+				deleteTableIds.add(tableId);
+				
+				table.setColumns(columns);
+				// 1、建表
+				tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
+			}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
+				// 删除hbm信息
+				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+				// 删除资源
+				BuiltinObjectInstance.resourceService.deleteSysResource(table.getId());
+				
+				// 修改数据库中的列
+				dbTableHandler.modifyColumn(table.getTableName(), columns, true);
+				table.setColumns(columns);
+				isNeedInitBasicColumns = true;
+			}else{
+				return "建模时，表["+table.getTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
+			}
 			
 			List<String> hbmContents = new ArrayList<String>(tables.size());
 			SysHibernateHbm hbm;
 			int i = 0;
 			for (ComTabledata tb : tables) {
-				hbmContents.add(HibernateHbmUtil.createHbmMappingContent(tb, false));
+				hbmContents.add(HibernateHbmUtil.createHbmMappingContent(tb, isNeedInitBasicColumns));
 				
 				// 2、插入hbm
 				hbm = new SysHibernateHbm();
@@ -259,8 +276,11 @@ public class ComTabledataService extends AbstractPublishService {
 			hbmContents.clear();
 			
 			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1
-			modifyIsCreatedPropVal(table.getEntityName(), 1, table.getId());
-			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, "update ComTabledata set isBuildModel =1 where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'", null);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated=1, isBuildModel =1 where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'");
+			
+			// 6、修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为已创建状态
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "delete ComColumndata where tableId = '"+table.getId()+"' and operStatus="+ComColumndata.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus="+ComColumndata.CREATED+" where tableId = '"+table.getId()+"'");
 			
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {
@@ -291,7 +311,9 @@ public class ComTabledataService extends AbstractPublishService {
 	 * 取消建模
 	 * @param dbTableHandler 
 	 * @param table
-	 * @param modifyRelationDatas 是否修改相关数据，例如资源数据，SysHibernateHbm数据；如果是在建模的时候，这个值应该是false，因为相关数据会被rollback；其他时候，这个值应该是true
+	 * @param modifyRelationDatas 是否修改相关数据：
+	 * 											如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
+	 * 											如果是在建模的过程中，先删除之前的数据，再重新建模，这个值应该传递为true，因为这个是必要操作
 	 */
 	public void cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, boolean modifyRelationDatas){
 		// drop表
@@ -305,10 +327,8 @@ public class ComTabledataService extends AbstractPublishService {
 		if(modifyRelationDatas){
 			// 修改表是否创建的状态
 			modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
-			
 			// 删除hbm信息
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
-			
 			// 删除资源
 			BuiltinObjectInstance.resourceService.deleteSysResource(table.getId());
 		}

@@ -99,6 +99,11 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 * <p>默认为0</p>
 	 */
 	private Integer operStatus;
+	/**
+	 * 旧列名
+	 * <p>如果列名被修改，记录之前的列名，在重新建模的时候，进行删除操作</p>
+	 */
+	private String oldColumnName;
 	
 	//-------------------------------------------------------------------------
 	
@@ -216,6 +221,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public void setOperStatus(Integer operStatus) {
 		this.operStatus = operStatus;
 	}
+	public String getOldColumnName() {
+		return oldColumnName;
+	}
+	public void setOldColumnName(String oldColumnName) {
+		this.oldColumnName = oldColumnName;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_COLUMNDATA", 0);
@@ -226,7 +237,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", BuiltinDataType.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -341,6 +352,11 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		operStatusColumn.setComments("0:待创建、1:已创建、2:被删除、3:被修改，默认为0");
 		operStatusColumn.setDefaultValue("0");
 		columns.add(operStatusColumn);
+
+		ComColumndata oldColumnNameColumn = new ComColumndata("old_column_name", BuiltinDataType.STRING, 40);
+		oldColumnNameColumn.setName("旧列名");
+		oldColumnNameColumn.setComments("如果列名被修改，记录之前的列名，在重新建模的时候，进行删除操作");
+		columns.add(oldColumnNameColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -380,4 +396,22 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public SysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
 	}
+	
+	// --------------------------------------------------------------------------------------
+	/**
+	 * 0:待创建
+	 */
+	public static final Integer UN_CREATED = 0;
+	/**
+	 * 1:已创建
+	 */
+	public static final Integer CREATED = 1;
+	/**
+	 * 2:被删除
+	 */
+	public static final Integer DELETED = 2;
+	/**
+	 * 3:被修改
+	 */
+	public static final Integer MODIFIED = 3;
 }

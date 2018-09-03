@@ -49,7 +49,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			logTables.add(BuiltinObjectInstance.sysReqLog.toCreateTable());
 			logTables.add(BuiltinObjectInstance.sysOperSqlLog.toCreateTable());
 			
-			DBTableHandler dbTableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
+			DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 			try {
 				HibernateUtil.openSessionToCurrentThread();
 				HibernateUtil.beginTransaction();

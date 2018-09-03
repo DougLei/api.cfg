@@ -175,7 +175,7 @@ public class InitCfgSystemService extends AbstractService{
 	private void createTables(){
 		List<ComTabledata> tables = getAllTables();
 		List<ComTabledata> tmpTables = new ArrayList<ComTabledata>();
-		DBTableHandler dbHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
+		DBTableHandler dbHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 		for (ComTabledata table : tables) {
 			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
 				continue;
@@ -603,7 +603,7 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void initLogTables() {
 		// 判断是否存在日志表table
-		DBTableHandler tableHandler = new DBTableHandler(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance);
+		DBTableHandler tableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 		List<String> logTableNames = tableHandler.filterTable(false, BuiltinObjectInstance.sysReqLog.toDropTable(), BuiltinObjectInstance.sysOperSqlLog.toDropTable());
 		if(logTableNames != null && logTableNames.size() > 0){
 			// 不存在，则create
