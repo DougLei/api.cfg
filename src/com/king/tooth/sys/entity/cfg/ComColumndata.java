@@ -95,10 +95,10 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 */
 	private String comments;
 	/**
-	 * 是否被删除
+	 * 操作状态:0:待创建、1:已创建、2:被删除、3:被修改
 	 * <p>默认为0</p>
 	 */
-	private Integer isDelete;
+	private Integer operStatus;
 	
 	//-------------------------------------------------------------------------
 	
@@ -210,13 +210,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public void setIsEnabled(String isEnabled) {
 		this.isEnabled = isEnabled;
 	}
-	public Integer getIsDelete() {
-		return isDelete;
+	public Integer getOperStatus() {
+		return operStatus;
 	}
-	public void setIsDelete(Integer isDelete) {
-		this.isDelete = isDelete;
+	public void setOperStatus(Integer operStatus) {
+		this.operStatus = operStatus;
 	}
-	
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("COM_COLUMNDATA", 0);
@@ -227,7 +226,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", BuiltinDataType.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -337,11 +336,11 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
 		
-		ComColumndata isDeleteColumn = new ComColumndata("is_delete", BuiltinDataType.INTEGER, 1);
-		isDeleteColumn.setName("是否被删除");
-		isDeleteColumn.setComments("默认为0");
-		isDeleteColumn.setDefaultValue("0");
-		columns.add(isDeleteColumn);
+		ComColumndata operStatusColumn = new ComColumndata("oper_status", BuiltinDataType.INTEGER, 1);
+		operStatusColumn.setName("操作状态");
+		operStatusColumn.setComments("0:待创建、1:已创建、2:被删除、3:被修改，默认为0");
+		operStatusColumn.setDefaultValue("0");
+		columns.add(operStatusColumn);
 		
 		table.setColumns(columns);
 		return table;
