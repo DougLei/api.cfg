@@ -276,10 +276,6 @@ public class InitCfgSystemService extends AbstractService{
 		insertBasicDataDictionary(adminAccountId);
 		// 添加要发布的基础数据
 		insertPublishBasicData(adminAccountId);
-		
-		//----------------------------------------------------------------------------------------------------------------------------------------------------------
-		// 清空用户在线数据表
-		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus", null);
 	}
 	
 	/**
@@ -498,6 +494,9 @@ public class InitCfgSystemService extends AbstractService{
 			}else{
 				HibernateUtil.closeCurrentThreadSession();
 			}
+			
+			// 清空用户在线数据表
+			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus", null);
 		} catch (Exception e) {
 			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg("InitCfgSystemService", "loadHbmsByStart", e));
 			System.exit(0);
