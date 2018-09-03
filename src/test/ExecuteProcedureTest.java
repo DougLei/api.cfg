@@ -6,7 +6,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Date;
 
 import oracle.jdbc.OracleTypes;
 
@@ -30,11 +32,13 @@ public class ExecuteProcedureTest extends Parent{
 			// 组装sqlserver表对象
 			SQLServerDataTable table = new SQLServerDataTable();
 			table.addColumnMetadata("id", Types.VARCHAR);
-			table.addColumnMetadata("name", Types.VARCHAR);
-			table.addColumnMetadata("live_addr", Types.VARCHAR);
+			table.addColumnMetadata("birthday", Types.TIMESTAMP);
+			table.addColumnMetadata("age", Types.INTEGER);
+			table.addColumnMetadata("score", Types.DECIMAL);
 			
-			table.addRow("1");
-			table.addRow("2", "呵呵发大水", "陕西");
+			
+			
+			table.addRow("1", new Timestamp(new Date().getTime()), 20, 22.3);
 			
 			SQLServerCallableStatement scs = (SQLServerCallableStatement) cs;
 			scs.setStructured(1, "AccOuntTYpE", table);
@@ -43,7 +47,8 @@ public class ExecuteProcedureTest extends Parent{
 			
 			ResultSet rs = scs.getResultSet();
 			while(rs.next()){
-				System.out.println(rs.getString(1)+"   "+rs.getString(2)+"   "+rs.getString(3));
+				System.out.println(rs.getObject(1)+"   "+rs.getObject(2)+"   "+rs.getObject(3)+"   "+rs.getObject(4));
+				System.out.println(rs.getObject(1).getClass()+"   "+rs.getObject(2).getClass()+"   "+rs.getObject(3).getClass()+"   "+rs.getObject(4).getClass());
 			}
 			
 		} catch (ClassNotFoundException e) {

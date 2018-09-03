@@ -297,12 +297,14 @@ public class InitCfgSystemService extends AbstractService{
 			// 创建对应的hbm文件，并保存
 			hbm = new SysHibernateHbm();
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
+			hbm.setRefTableId("builtinResource");
 			hbm.tableTurnToHbm(table);
 			hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
 			// 保存到资源表中
 			resource = table.turnToResource();
+			resource.setRefResourceId("builtinResource");
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
 		ResourceHandlerUtil.clearTables(tables);

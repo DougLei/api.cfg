@@ -13,6 +13,8 @@ import org.hibernate.jdbc.Work;
 
 import oracle.jdbc.OracleTypes;
 
+import com.king.tooth.constants.OracleDataTypeConstants;
+import com.king.tooth.constants.SQLServerDataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.util.CloseUtil;
@@ -168,28 +170,28 @@ public class DBUtil {
 	 */
 	public static int getDatabaseDataTypeCode(String dataType, Integer isTableType, boolean isOracle, boolean isSqlServer){
 		if(isOracle){
-			if("varchar2".equals(dataType)){
+			if(OracleDataTypeConstants.VARCHAR2.equals(dataType)){
 				return OracleTypes.VARCHAR;
-			}else if("char".equals(dataType)){
+			}else if(OracleDataTypeConstants.CHAR.equals(dataType)){
 				return OracleTypes.CHAR;
-			}else if("number".equals(dataType)){
+			}else if(OracleDataTypeConstants.NUMBER.equals(dataType)){
 				return OracleTypes.NUMBER;
-			}else if("date".equals(dataType)){
+			}else if(OracleDataTypeConstants.DATE.equals(dataType)){
 				return OracleTypes.TIMESTAMP;
 			}else if(isTableType == 1){
 				return OracleTypes.CURSOR;
 			}
 			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+dataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
 		}else if(isSqlServer){
-			if("varchar".equals(dataType)){
+			if(SQLServerDataTypeConstants.VARCHAR.equals(dataType)){
 				return Types.VARCHAR;
-			}else if("char".equals(dataType)){
+			}else if(SQLServerDataTypeConstants.CHAR.equals(dataType)){
 				return Types.CHAR;
-			}else if("int".equals(dataType)){
+			}else if(SQLServerDataTypeConstants.INT.equals(dataType)){
 				return Types.INTEGER;
-			}else if("decimal".equals(dataType)){
+			}else if(SQLServerDataTypeConstants.DECIMAL.equals(dataType)){
 				return Types.DECIMAL;
-			}else if("datetime".equals(dataType)){
+			}else if(SQLServerDataTypeConstants.DATETIME.equals(dataType)){
 				return Types.TIMESTAMP;
 			}
 			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+dataType+"]数据类型转换，请联系管理员");
@@ -206,15 +208,15 @@ public class DBUtil {
 	public static String getSqlServerDataType(int xtype){
 		switch(xtype){
 			case 56:
-				return "int";
+				return SQLServerDataTypeConstants.INT;
 			case 61:
-				return "datetime";
+				return SQLServerDataTypeConstants.DATETIME;
 			case 106:
-				return "decimal";
+				return SQLServerDataTypeConstants.DECIMAL;
 			case 167:
-				return "varchar";
+				return SQLServerDataTypeConstants.VARCHAR;
 			case 175:
-				return "char";
+				return SQLServerDataTypeConstants.CHAR;
 			default:
 				throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库[xtype="+xtype+"]的类型转换，请联系管理员");
 		}

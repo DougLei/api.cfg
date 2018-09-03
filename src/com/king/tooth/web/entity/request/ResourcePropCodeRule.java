@@ -32,6 +32,12 @@ public class ResourcePropCodeRule {
 	private void analysisResourcePropCodeRule(RequestBody requestBody) {
 		if(!requestBody.getResourceInfo().getIsParentSubResourceRelation() && requestBody.getResourceInfo().isTableResource() 
 				&& requestBody.isPostRequest()){
+			
+			// 内置的资源，不需要处理
+			if("builtinResource".equals(requestBody.getResourceInfo().getReqResource().getRefResourceId())){
+				return;
+			}
+			
 			rules = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumnCodeRule.class, null, null, queryColumnCodeRuleHql, requestBody.getResourceInfo().getReqResource().getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 			if(rules == null || rules.size() == 0){
 				return;

@@ -123,10 +123,10 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 				}else if(BuiltinDataType.DOUBLE.equals(parameterDataType)){
 					actualInValue = Double.valueOf(actualInValue.toString());
 				}else if(BuiltinDataType.DATE.equals(parameterDataType)){
-					actualInValue = DateUtil.parseSqlDate(actualInValue.toString());
+					actualInValue = DateUtil.parseTimestamp(actualInValue.toString());
 				}else if(BuiltinDataType.BOOLEAN.equals(parameterDataType)){
 					actualInValue = ("true".equals(actualInValue.toString()))? "1":"0";
-				}else if(isTableType == 1){
+				}else if(getIsTableType() == 1){
 					actualInValue = IJsonUtil.getIJson(actualInValue.toString());
 				}else{
 					actualInValue = actualInValue.toString();
@@ -219,6 +219,9 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		return isPlaceholder;
 	}
 	public Integer getIsTableType() {
+		if(isTableType == null){
+			return 0;
+		}
 		return isTableType;
 	}
 	public void setIsTableType(Integer isTableType) {

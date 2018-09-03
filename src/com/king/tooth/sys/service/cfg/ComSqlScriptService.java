@@ -298,8 +298,10 @@ public class ComSqlScriptService extends AbstractPublishService {
 //		}
 			
 		// 删除sql脚本资源时，如果是视图、存储过程等，还需要drop对应的对象【删除数据库对象】
-		DBUtil.dropObject(sql);
-			
+		if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType()) || BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
+			DBUtil.dropObject(sql);
+		}
+
 		sql.clear();
 		return null;
 	}
@@ -565,7 +567,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 		// 存储过程，要判断是否有返回结果集，再查询对应的结果集
 		else if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
 			// oracle的存储过程返回结果集，通过输出参数
-			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getSqlScriptType())){
+			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType())){
 				List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
 				if(sqlParams != null && sqlParams.size() > 0){
 					sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
@@ -580,7 +582,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 				
 			}
 			// sqlserver的存储过程返回结果集，不需要参数，所以不用参数做查询
-			else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getSqlScriptType())){
+			else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType())){
 				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(5);
 				List<CfgSqlResultset> sqlResultsets = HibernateUtil.extendExecuteListQueryByHqlArr(
 						CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and inOut = 2 and projectId=? and customerId=? order by batchOrder asc, orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
@@ -589,20 +591,22 @@ public class ComSqlScriptService extends AbstractPublishService {
 					int count = size;
 					CfgSqlResultset sqlResultset;
 					List<CfgSqlResultset> tmpSqlResultsets = new ArrayList<CfgSqlResultset>(count);
+					sqlResultsetsList.add(tmpSqlResultsets);// [第一次，将结果信息加入到集合中] 把属于同一个结果集信息集合的加入到大的集合中
+					
 					Integer batchOrder = null;
-					for(int i=0;i<size;i++){
+					while(sqlResultsets.size() > 0){
 						count--;
-						sqlResultset = sqlResultsets.get(i);
+						sqlResultset = sqlResultsets.get(0);
 						if(batchOrder == null){
 							batchOrder = sqlResultset.getBatchOrder();
 						}
 						if(batchOrder != sqlResultset.getBatchOrder()){
-							sqlResultsetsList.add(tmpSqlResultsets);// 把属于同一个结果集信息集合的加入到大的集合中
+							sqlResultsetsList.add(tmpSqlResultsets);// [后续如果有新的，再加入到集合中] 把属于同一个结果集信息集合的加入到大的集合中
 							
 							batchOrder = sqlResultset.getBatchOrder();
 							tmpSqlResultsets = new ArrayList<CfgSqlResultset>(count);
 						}
-						tmpSqlResultsets.add(sqlResultsets.remove(i--));
+						tmpSqlResultsets.add(sqlResultsets.remove(0));
 					}
 				}
 			}

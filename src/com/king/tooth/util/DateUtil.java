@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * 日期工具类
@@ -70,6 +71,7 @@ public class DateUtil {
 	
 	/**
 	 * 格式化日期字符串为sql类型的日期对象
+	 * <p>没有时分秒</p>
 	 * @param dateStr
 	 * @return
 	 */
@@ -79,6 +81,7 @@ public class DateUtil {
 	
 	/**
 	 * 格式化日期字符串为sql类型的日期对象
+	 * <p>没有时分秒</p>
 	 * @param dateStr
 	 * @return
 	 */
@@ -88,6 +91,7 @@ public class DateUtil {
 	
 	/**
 	 * 格式化日期字符串为sql类型的日期对象
+	 * <p>有时分秒</p>
 	 * @param dateStr
 	 * @return
 	 */
@@ -97,6 +101,7 @@ public class DateUtil {
 	
 	/**
 	 * 格式化日期字符串为sql类型的日期对象
+	 * <p>有时分秒</p>
 	 * @param dateStr
 	 * @return
 	 */
@@ -145,4 +150,22 @@ public class DateUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		return sdf.format(date);
 	}
+	
+	// -----------------------------------------------------------------
+	/**
+	 * 值是否是时间格式
+	 * @param value
+	 * @return
+	 */
+	public static boolean valueIsDateFormat(Object value) {
+		if(value != null){
+			String tmpVal = value.toString();
+			if(dateFormat.matcher(tmpVal).matches()){
+				return true;
+			}
+		}
+		return false;
+	}
+	// 判断日期格式的正则表达式
+	private static final Pattern dateFormat = Pattern.compile("[0-9]{4}-([1-9]|0[1-9]|1[0-2])-([1-9]|0[1-9]|[1-2][0-9]|3[0-1])( ([0-9]|0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[0-5][0-9]):(0[0-9]|[0-5][0-9]))?");
 }

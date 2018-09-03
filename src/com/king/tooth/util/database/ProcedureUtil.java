@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.SQLServerDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.IExecute;
@@ -20,6 +21,7 @@ import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -157,7 +159,11 @@ public class ProcedureUtil {
 								if(json != null && json.size()>0){
 									valueArr = new Object[json.size()];
 									for(int j=0; j<objLength; j++){
-										valueArr[j] = json.get(inSqlResultSets.get(j).getPropName());
+										if(SQLServerDataTypeConstants.DATETIME.equals(inSqlResultSets.get(j).getDataType())){
+											valueArr[j] = DateUtil.parseTimestamp(json.getString(inSqlResultSets.get(j).getPropName()));
+										}else{
+											valueArr[j] = json.get(inSqlResultSets.get(j).getPropName());
+										}
 									}
 									table.addRow(valueArr);
 								}

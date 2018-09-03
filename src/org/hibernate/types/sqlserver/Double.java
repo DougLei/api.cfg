@@ -1,6 +1,7 @@
 package org.hibernate.types.sqlserver;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,7 +45,7 @@ public class Double implements UserType{
 		if(obj == null){
 			return null;
 		}
-		return java.lang.Double.valueOf(obj.toString());
+		return BigDecimal.valueOf(java.lang.Double.valueOf(obj.toString()));
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class Double implements UserType{
 	 */
 	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
 		if(StrUtils.notEmpty(value)){
-			st.setDouble(index, java.lang.Double.valueOf(value.toString()));
+			st.setBigDecimal(index, new BigDecimal(value.toString()));
 		}else{
 			st.setNull(index, Types.DECIMAL);
 		}
