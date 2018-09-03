@@ -401,10 +401,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			}
 			
 			if(isImmediateCreate == 1 
-					&& (BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType))){
+					&& (BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType) || BuiltinDatabaseData.SQLSERVER_CREATE_TYPE.equals(sqlScriptType))){
 				List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
 				sqls.add(this);
 				DBUtil.createObjects(sqls);
+				sqls.clear();
 				this.isCreated = 1;
 			}
 		}

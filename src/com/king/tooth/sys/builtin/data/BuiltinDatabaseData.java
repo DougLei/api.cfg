@@ -120,6 +120,11 @@ public class BuiltinDatabaseData {
 	 * procedure
 	 */
 	public static final String PROCEDURE = "procedure";
+	/**
+	 * sqlserver create type
+	 * <p>sqlserver创建自定义类型</p>
+	 */
+	public static final String SQLSERVER_CREATE_TYPE = "createType";
 	
 	// -----------------------------------------------------------------------------
 	// 查询数据是否存在的sql语句

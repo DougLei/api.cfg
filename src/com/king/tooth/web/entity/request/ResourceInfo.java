@@ -71,6 +71,10 @@ public class ResourceInfo {
 			if(ISysResource.SQLSCRIPT == resourceType){
 				sqlScriptResource = BuiltinObjectInstance.sqlScriptService.findSqlScriptResourceById(reqResource.getRefResourceId());
 				
+				if("none".equals(sqlScriptResource.getReqResourceMethod())){
+					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，不支持任何方式的请求");
+				}
+				
 				if(!requestMethod.equals(sqlScriptResource.getReqResourceMethod())){
 					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，只支持["+sqlScriptResource.getReqResourceMethod()+"]方式的请求");
 				}
