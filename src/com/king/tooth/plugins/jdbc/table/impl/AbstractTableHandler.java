@@ -120,9 +120,7 @@ public abstract class AbstractTableHandler {
 	 * @param tableName
 	 * @param column
 	 */
-	public void installModifyColumnSql(String tableName, ComColumndata column) {
-		
-	}
+	public abstract void installModifyColumnSql(String tableName, ComColumndata column);
 	
 	/**
 	 * 组装删除列的sql语句

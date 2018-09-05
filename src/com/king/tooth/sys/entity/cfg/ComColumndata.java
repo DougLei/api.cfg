@@ -3,6 +3,7 @@ package com.king.tooth.sys.entity.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
@@ -12,6 +13,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingTurnUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -100,10 +102,13 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 */
 	private Integer operStatus;
 	/**
-	 * 旧列名
-	 * <p>如果列名被修改，记录之前的列名，在重新建模的时候，进行删除操作</p>
+	 * 旧的信息json串
+	 * <p>如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作</p>
+	 * <p>例如：旧列名，旧默认值等</p>
 	 */
-	private String oldColumnName;
+	private String oldInfoJson;
+	@JSONField(serialize = false)
+	private JSONObject oldColumnInfo;
 	
 	//-------------------------------------------------------------------------
 	
@@ -221,11 +226,56 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public void setOperStatus(Integer operStatus) {
 		this.operStatus = operStatus;
 	}
-	public String getOldColumnName() {
-		return oldColumnName;
+	public String getOldInfoJson() {
+		return oldInfoJson;
 	}
-	public void setOldColumnName(String oldColumnName) {
-		this.oldColumnName = oldColumnName;
+	public void setOldInfoJson(String oldInfoJson) {
+		this.oldInfoJson = oldInfoJson;
+		this.oldColumnInfo = JsonUtil.parseJsonObject(oldInfoJson);
+	}
+	public JSONObject getOldColumnInfo() {
+		return oldColumnInfo;
+	}
+	
+	/**
+	 * 解析出旧的列信息
+	 * <p>为重新建模做准备</p>
+	 * @param oldColumn
+	 * @param newColumn
+	 */
+	public void analysisOldColumnInfo(ComColumndata oldColumn, ComColumndata newColumn) {
+		if(oldColumn.getOperStatus() == ComColumndata.CREATED){
+			this.oldColumnInfo = new JSONObject(7);
+			// 1.记录 (旧的)列名
+			if(!oldColumn.getColumnName().equals(newColumn.getColumnName())){
+				this.oldColumnInfo.put("columnName", oldColumn.getColumnName());
+			}
+			// 2.记录 (旧的)字段数据类型
+			if(!oldColumn.getColumnType().equals(newColumn.getColumnType())){
+				this.oldColumnInfo.put("columnType", oldColumn.getColumnType());
+			}
+			// 3.记录 (旧的)字段长度
+			if(oldColumn.getLength() != newColumn.getLength()){
+				this.oldColumnInfo.put("length", oldColumn.getLength());
+			}
+			// 4.记录 (旧的)数据精度
+			if(oldColumn.getPrecision() != newColumn.getPrecision()){
+				this.oldColumnInfo.put("precision", oldColumn.getPrecision());
+			}
+			// 5.记录 (旧的)默认值
+			if(!oldColumn.getDefaultValue().equals(newColumn.getDefaultValue())){
+				this.oldColumnInfo.put("defaultValue", oldColumn.getDefaultValue());
+			}
+			// 6.记录 (旧的)是否唯一
+			if(oldColumn.getIsUnique() != newColumn.getIsUnique()){
+				this.oldColumnInfo.put("isUnique", oldColumn.getIsUnique());
+			}
+			// 7.记录 (旧的)是否可为空
+			if(oldColumn.getIsNullabled() != newColumn.getIsNullabled()){
+				this.oldColumnInfo.put("isNullabled", oldColumn.getIsNullabled());
+			}
+			this.oldInfoJson = JsonUtil.toJsonString(oldColumnInfo, false);
+		}
 	}
 	
 	public ComTabledata toCreateTable() {
@@ -353,10 +403,10 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		operStatusColumn.setDefaultValue("0");
 		columns.add(operStatusColumn);
 
-		ComColumndata oldColumnNameColumn = new ComColumndata("old_column_name", BuiltinDataType.STRING, 40);
-		oldColumnNameColumn.setName("旧列名");
-		oldColumnNameColumn.setComments("如果列名被修改，记录之前的列名，在重新建模的时候，进行删除操作");
-		columns.add(oldColumnNameColumn);
+		ComColumndata oldInfoJsonColumn = new ComColumndata("oldInfoJson", BuiltinDataType.STRING, 500);
+		oldInfoJsonColumn.setName("旧的信息json串");
+		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
+		columns.add(oldInfoJsonColumn);
 		
 		table.setColumns(columns);
 		return table;

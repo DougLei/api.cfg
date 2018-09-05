@@ -86,13 +86,11 @@ public class ComColumndataService extends AbstractService{
 		}
 		if(!oldColumn.getColumnName().equals(column.getColumnName())){
 			operResult = validColumnNameIsExists(column);
-			if(operResult == null && oldColumn.getOperStatus() == ComColumndata.CREATED){
-				// 如果修改了列名，则要记录之前的列名
-				column.setOldColumnName(oldColumn.getColumnName());
-			}
 		}
 		if(operResult == null){
 			column.setOperStatus(ComColumndata.MODIFIED);
+			column.analysisOldColumnInfo(oldColumn, column);
+			
 			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
 			// TODO 单项目，取消是否平台开发者的判断
 //			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){

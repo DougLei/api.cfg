@@ -242,6 +242,9 @@ public class ComTabledataService extends AbstractPublishService {
 				// 1、建表
 				tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 			}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
+				tables = new ArrayList<ComTabledata>(1);
+				tables.add(table);
+				
 				// 删除hbm信息
 				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 				// 删除资源
@@ -278,9 +281,9 @@ public class ComTabledataService extends AbstractPublishService {
 			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated=1, isBuildModel =1 where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'");
 			
-			// 6、修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为已创建状态
+			// 6、修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为已创建状态，且置空oldInfoJson字段的值
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "delete ComColumndata where tableId = '"+table.getId()+"' and operStatus="+ComColumndata.DELETED);
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus="+ComColumndata.CREATED+" where tableId = '"+table.getId()+"'");
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus="+ComColumndata.CREATED+", oldInfoJson=null where tableId = '"+table.getId()+"'");
 			
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {
