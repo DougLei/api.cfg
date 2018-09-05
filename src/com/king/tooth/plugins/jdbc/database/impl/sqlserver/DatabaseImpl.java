@@ -1,6 +1,6 @@
 package com.king.tooth.plugins.jdbc.database.impl.sqlserver;
 
-import com.king.tooth.plugins.jdbc.database.AbstractDatabaseHandler;
+import com.king.tooth.plugins.jdbc.database.impl.AbstractDatabaseHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.StrUtils;
 

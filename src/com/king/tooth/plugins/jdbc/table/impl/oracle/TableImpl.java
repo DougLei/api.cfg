@@ -1,6 +1,6 @@
 package com.king.tooth.plugins.jdbc.table.impl.oracle;
 
-import com.king.tooth.plugins.jdbc.table.AbstractTableHandler;
+import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -12,28 +12,28 @@ import com.king.tooth.util.StrUtils;
  */
 public class TableImpl extends AbstractTableHandler{
 
-	protected void analysisColumnType(ComColumndata column) {
+	protected void analysisColumnType(ComColumndata column, StringBuilder columnSql) {
 		String columnType = column.getColumnType();
 		if(BuiltinDataType.STRING.equals(columnType)){
-			createTableSql.append("varchar2");
+			columnSql.append("varchar2");
 		}else if(BuiltinDataType.BOOLEAN.equals(columnType)){
-			createTableSql.append("char(1)");
+			columnSql.append("char(1)");
 		}else if(BuiltinDataType.INTEGER.equals(columnType)){
-			createTableSql.append("number");
+			columnSql.append("number");
 		}else if(BuiltinDataType.DOUBLE.equals(columnType)){
-			createTableSql.append("number");
+			columnSql.append("number");
 		}else if(BuiltinDataType.DATE.equals(columnType)){
-			createTableSql.append("date");
+			columnSql.append("date");
 		}else if(BuiltinDataType.CLOB.equals(columnType)){
-			createTableSql.append("clob");
+			columnSql.append("clob");
 		}else if(BuiltinDataType.BLOB.equals(columnType)){
-			createTableSql.append("blob");
+			columnSql.append("blob");
 		}else{
 			throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成oracle对应的数据类型");
 		}
 	}
 
-	protected void analysisColumnLength(ComColumndata column) {
+	protected void analysisColumnLength(ComColumndata column, StringBuilder columnSql) {
 		// 验证哪些类型，oracle不需要加长度限制
 		String columnType = column.getColumnType();
 		if(BuiltinDataType.DATE.equals(columnType)
@@ -46,19 +46,19 @@ public class TableImpl extends AbstractTableHandler{
 		Integer length = column.getLength();
 		if(BuiltinDataType.STRING.equals(columnType)){
 			if(length < 0 || length > 4000){
-				createTableSql.append("(4000)");
+				columnSql.append("(4000)");
 			}else{
-				createTableSql.append("(").append(length).append(")");
+				columnSql.append("(").append(length).append(")");
 			}
 		}else if(length > 0){
-			createTableSql.append("(");
-			createTableSql.append(length);
+			columnSql.append("(");
+			columnSql.append(length);
 			
 			Integer precision = column.getPrecision();
 			if(precision != null && precision > 0){
-				createTableSql.append(",").append(precision);
+				columnSql.append(",").append(precision);
 			}
-			createTableSql.append(")");
+			columnSql.append(")");
 		}
 	}
 	
@@ -72,13 +72,13 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 
-	protected void analysisColumnComments(String tableName, ComColumndata column) {
+	protected void analysisColumnComments(String tableName, ComColumndata column, StringBuilder columnSql) {
 		if(StrUtils.notEmpty(column.getComments())){
-			createCommentSql.append("comment on column ")
-							.append(tableName).append(".").append(column.getColumnName())
-							.append(" is '")
-							.append(column.getComments())
-							.append("';");
+			columnSql.append("comment on column ")
+					 .append(tableName).append(".").append(column.getColumnName())
+					 .append(" is '")
+					 .append(column.getComments())
+					 .append("';");
 		}
 	}
 }

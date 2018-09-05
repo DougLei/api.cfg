@@ -3,6 +3,7 @@ package com.king.tooth.plugins.jdbc.database;
 import java.util.Arrays;
 
 import com.king.tooth.plugins.jdbc.DBLink;
+import com.king.tooth.plugins.jdbc.database.impl.AbstractDatabaseHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;

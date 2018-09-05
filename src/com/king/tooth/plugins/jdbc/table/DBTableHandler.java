@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.king.tooth.plugins.jdbc.DBLink;
+import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
 import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.plugins.jdbc.util.DynamicDataLinkTableUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
@@ -269,19 +270,16 @@ public class DBTableHandler {
 	 * @param removeDeleteColumn 是否从集合中移除被删除的列
 	 */
 	public void modifyColumn(String tableName, List<ComColumndata> columns, boolean removeDeleteColumn){
-		StringBuilder modifyColumnSql = new StringBuilder();
-		
 		ComColumndata column;
 		for (int i = 0; i < columns.size(); i++) {
 			column = columns.get(i);
 			
 			if(column.getOperStatus() == ComColumndata.UN_CREATED){
-				
+				tableOper.installCreateColumnSql(tableName, column);
 			}else if(column.getOperStatus() == ComColumndata.MODIFIED){
-				
+				tableOper.installModifyColumnSql(tableName, column);
 			}else if(column.getOperStatus() == ComColumndata.DELETED){
-				
-				
+				tableOper.installDeleteColumnSql(tableName, column);
 				if(removeDeleteColumn){
 					columns.remove(i);
 					i--;
@@ -293,9 +291,9 @@ public class DBTableHandler {
 			}
 		}
 		
-		if(StrUtils.notEmpty(modifyColumnSql)){
-			String[] ddlSqlArr = modifyColumnSql.toString().split(";");
-			modifyColumnSql.setLength(0);
+		String operColumnSql = tableOper.getOperColumnSql();
+		if(StrUtils.notEmpty(operColumnSql)){
+			String[] ddlSqlArr = operColumnSql.split(";");
 			dblink.executeDDL(ddlSqlArr);
 		}
 	}

@@ -1,6 +1,6 @@
 package com.king.tooth.plugins.jdbc.table.impl.sqlserver;
 
-import com.king.tooth.plugins.jdbc.table.AbstractTableHandler;
+import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -12,28 +12,28 @@ import com.king.tooth.util.StrUtils;
  */
 public class TableImpl extends AbstractTableHandler{
 
-	protected void analysisColumnType(ComColumndata column) {
+	protected void analysisColumnType(ComColumndata column, StringBuilder columnSql) {
 		String columnType = column.getColumnType();
 		if(BuiltinDataType.STRING.equals(columnType)){
-			createTableSql.append("varchar");
+			columnSql.append("varchar");
 		}else if(BuiltinDataType.BOOLEAN.equals(columnType)){
-			createTableSql.append("char(1)");
+			columnSql.append("char(1)");
 		}else if(BuiltinDataType.INTEGER.equals(columnType)){
-			createTableSql.append("int");
+			columnSql.append("int");
 		}else if(BuiltinDataType.DOUBLE.equals(columnType)){
-			createTableSql.append("decimal");
+			columnSql.append("decimal");
 		}else if(BuiltinDataType.DATE.equals(columnType)){
-			createTableSql.append("datetime");
+			columnSql.append("datetime");
 		}else if(BuiltinDataType.CLOB.equals(columnType)){
-			createTableSql.append("text");
+			columnSql.append("text");
 		}else if(BuiltinDataType.BLOB.equals(columnType)){
-			createTableSql.append("image");
+			columnSql.append("image");
 		}else{
 			throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成sqlserver对应的数据类型");
 		}
 	}
 
-	protected void analysisColumnLength(ComColumndata column) {
+	protected void analysisColumnLength(ComColumndata column, StringBuilder columnSql) {
 		// 验证哪些类型，sqlserver不需要加长度限制
 		String columnType = column.getColumnType();
 		if(BuiltinDataType.INTEGER.equals(columnType) 
@@ -47,20 +47,20 @@ public class TableImpl extends AbstractTableHandler{
 		Integer length = column.getLength();
 		if(BuiltinDataType.STRING.equals(columnType)){
 			if(length < 0 || length > 8000){
-				createTableSql.append("(8000)");
-//				createTableSql.append("(max)"); // sqlserver的varchar最大长度配置为max，值可以为2G。目前系统不提供这种支持，如果要存储大数据，就用大字段text存储
+				columnSql.append("(8000)");
+//				columnSql.append("(max)"); // sqlserver的varchar最大长度配置为max，值可以为2G。目前系统不提供这种支持，如果要存储大数据，就用大字段text存储
 			}else{
-				createTableSql.append("(").append(length).append(")");
+				columnSql.append("(").append(length).append(")");
 			}
 		}else if(length > 0){
-			createTableSql.append("(");
-			createTableSql.append(length);
+			columnSql.append("(");
+			columnSql.append(length);
 			
 			Integer precision = column.getPrecision();
 			if(precision != null && precision > 0){
-				createTableSql.append(",").append(precision);
+				columnSql.append(",").append(precision);
 			}
-			createTableSql.append(")");
+			columnSql.append(")");
 		}
 	}
 	
@@ -74,15 +74,15 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 
-	protected void analysisColumnComments(String tableName, ComColumndata column) {
+	protected void analysisColumnComments(String tableName, ComColumndata column, StringBuilder columnSql) {
 		if(StrUtils.notEmpty(column.getComments())){
-			createCommentSql.append("execute sp_addextendedproperty 'MS_Description','")
-							.append(column.getComments())
-							.append("','user','dbo','table','")
-							.append(tableName)
-							.append("','column','")
-							.append(column.getColumnName())
-							.append("';");
+			columnSql.append("execute sp_addextendedproperty 'MS_Description','")
+					 .append(column.getComments())
+					 .append("','user','dbo','table','")
+					 .append(tableName)
+					 .append("','column','")
+					 .append(column.getColumnName())
+					 .append("';");
 		}
 	}
 }

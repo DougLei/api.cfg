@@ -1,4 +1,4 @@
-package com.king.tooth.plugins.jdbc.database;
+package com.king.tooth.plugins.jdbc.database.impl;
 
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 
