@@ -91,8 +91,7 @@ public class TableImpl extends AbstractTableHandler{
 		JSONObject oldColumnInfo = column.getOldColumnInfo();
 		if(oldColumnInfo != null){
 			if(oldColumnInfo.get("columnName") != null){ // 列名
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
+				operColumnSql.append("alter table ").append(tableName).append(" rename ").append(oldColumnInfo.get("columnName")).append(" to ").append(column.getColumnName());
 			}
 			if(oldColumnInfo.get("columnType") != null){ // 字段数据类型
 				operColumnSql.append("alter table ").append(tableName).append(" ");
