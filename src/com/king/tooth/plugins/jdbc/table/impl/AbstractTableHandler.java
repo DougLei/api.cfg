@@ -37,6 +37,7 @@ public abstract class AbstractTableHandler {
 	 * @param tabledata
 	 */
 	public void installCreateTableSql(ComTabledata tabledata) {
+		String tableName = tabledata.getTableName();
 		analysisTable(tabledata);
 		analysisTableComments(tabledata, true);// 解析表注释
 		createTableSql.append(" ( ");
@@ -45,9 +46,9 @@ public abstract class AbstractTableHandler {
 			analysisColumn(column, createTableSql);
 			analysisColumnType(column, createTableSql);
 			analysisColumnLength(column, createTableSql);
-			analysisColumnProp(column, createTableSql);
+			analysisColumnProps(tableName, column, createTableSql, operColumnSql);
 			createTableSql.append(",");
-			analysisColumnComments(tabledata.getTableName(), column, true, createTableSql);// 解析列注释
+			analysisColumnComments(tabledata.getTableName(), column, true, createCommentSql);// 解析列注释
 		}
 		createTableSql.setLength(createTableSql.length() - 1);
 		createTableSql.append(")");
@@ -72,32 +73,49 @@ public abstract class AbstractTableHandler {
 	
 	/**
 	 * 解析字段的属性配置
-	 * <p>1.解析字段是否主键</p>
-	 * <p>2.解析字段的默认值</p>
-	 * <p>3.解析字段的值是否可为null</p>
-	 * <p>4.解析字段是否唯一</p>
+	 * <p>1.解析字段的值是否可为null(添加到语句中)</p>
+	 * <p>2.解析字段是否主键(单独创建添加约束的语句)</p>
+	 * <p>3.解析字段的默认值(单独创建添加约束的语句)</p>
+	 * <p>4.解析字段是否唯一(单独创建添加约束的语句)</p>
+	 * @param tableName
 	 * @param column
 	 * @param columnSql
+	 * @param operColumnSql 
 	 */
-	private void analysisColumnProp(ComColumndata column, StringBuilder columnSql) {
-		if(column.getIsPrimaryKey() != null && 1 == column.getIsPrimaryKey()){
-			columnSql.append(" primary key ");
-		}
-		if(StrUtils.notEmpty(column.getDefaultValue())){
-			if(BuiltinDataType.DATE.equals(column.getColumnType())){
-				throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
-			}
-			if(BuiltinDataType.STRING.equals(column.getColumnType())){
-				columnSql.append(" default '").append(column.getDefaultValue()).append("' ");
-			}else{
-				columnSql.append(" default ").append(column.getDefaultValue()).append(" ");
+	private void analysisColumnProps(String tableName, ComColumndata column, StringBuilder columnSql, StringBuilder operColumnSql) {
+		if(columnSql != null){
+			if(column.getIsNullabled() != null && 0 == column.getIsNullabled()){
+				columnSql.append(" not null ");
 			}
 		}
-		if(column.getIsNullabled() != null && 0 == column.getIsNullabled()){
-			columnSql.append(" not null ");
-		}
-		if(column.getIsUnique() != null && 1 == column.getIsUnique()){
-			columnSql.append(" unique ");
+		
+		if(operColumnSql != null){
+			if(column.getIsPrimaryKey() != null && 1 == column.getIsPrimaryKey()){
+				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "pk"))
+							 .append(" primary key (").append(column.getColumnName()).append(")")
+					         .append(";");
+			}
+			if(StrUtils.notEmpty(column.getDefaultValue())){
+				if(BuiltinDataType.DATE.equals(column.getColumnType())){
+					throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
+				}
+				
+				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "dv"));
+				if(BuiltinDataType.STRING.equals(column.getColumnType())){
+					operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
+				}else{
+					operColumnSql.append(" default ").append(column.getDefaultValue());
+				}
+				operColumnSql.append(" for ").append(column.getColumnName()).append(";");
+			}
+			if(column.getIsUnique() != null && 1 == column.getIsUnique()){
+				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "uq"))
+							 .append(" unique(").append(column.getColumnName()).append(")")
+				             .append(";");
+			}
 		}
 	}
 	
@@ -113,8 +131,10 @@ public abstract class AbstractTableHandler {
 		analysisColumn(column, operColumnSql);
 		analysisColumnType(column, operColumnSql);
 		analysisColumnLength(column, operColumnSql);
-		analysisColumnProp(column, operColumnSql);             
-		analysisColumnComments(tableName, column, true, operColumnSql);// 解析列注释        
+		analysisColumnProps(tableName, column, operColumnSql, null);// 先解析是否可为空
+		operColumnSql.append(";");// 结束
+		analysisColumnProps(tableName, column, null, operColumnSql);// 再解析其他约束配置
+		analysisColumnComments(tableName, column, true, operColumnSql);// 最后解析列注释        
 	}
 
 	/**
@@ -180,7 +200,7 @@ public abstract class AbstractTableHandler {
 					}else{
 						operColumnSql.append(" default ").append(column.getDefaultValue());
 					}
-					operColumnSql.append(" for ").append(column.getColumnName());
+					operColumnSql.append(" for ").append(column.getColumnName()).append(";");
 				}
 			}
 			
