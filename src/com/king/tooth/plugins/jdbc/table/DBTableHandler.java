@@ -273,7 +273,6 @@ public class DBTableHandler {
 		ComColumndata column;
 		for (int i = 0; i < columns.size(); i++) {
 			column = columns.get(i);
-			
 			if(column.getOperStatus() == ComColumndata.UN_CREATED){
 				tableOper.installCreateColumnSql(tableName, column);
 			}else if(column.getOperStatus() == ComColumndata.MODIFIED){
@@ -284,10 +283,6 @@ public class DBTableHandler {
 					columns.remove(i);
 					i--;
 				}
-			}
-			
-			if(dblink.isOracle()){
-			}else if(dblink.isSqlServer()){
 			}
 		}
 		

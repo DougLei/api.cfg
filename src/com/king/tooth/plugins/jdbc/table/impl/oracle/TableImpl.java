@@ -4,7 +4,6 @@ import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.StrUtils;
 
 /**
  * oracle创建表操作的实现类
@@ -62,8 +61,8 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 	
-	protected void analysisTableComments(ComTabledata table) {
-		if(StrUtils.notEmpty(table.getComments())){
+	protected void analysisTableComments(ComTabledata table, boolean isAdd) {
+		if(table.getComments() != null){
 			createCommentSql.append("comment on table ")
 							.append(table.getTableName())
 							.append(" is '")
@@ -73,7 +72,7 @@ public class TableImpl extends AbstractTableHandler{
 	}
 
 	protected void analysisColumnComments(String tableName, ComColumndata column, boolean isAdd, StringBuilder columnSql) {
-		if(StrUtils.notEmpty(column.getComments())){
+		if(column.getComments() != null){
 			columnSql.append("comment on column ")
 					 .append(tableName).append(".").append(column.getColumnName())
 					 .append(" is '")

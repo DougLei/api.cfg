@@ -4,7 +4,6 @@ import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.StrUtils;
 
 /**
  * sqlserver创建表操作的实现类
@@ -64,9 +63,15 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 	
-	protected void analysisTableComments(ComTabledata table) {
-		if(StrUtils.notEmpty(table.getComments())){
-			createCommentSql.append("execute sp_addextendedproperty 'MS_Description','")
+	protected void analysisTableComments(ComTabledata table, boolean isAdd) {
+		if(table.getComments() != null){
+			createCommentSql.append("execute ");
+			if(isAdd){
+				createCommentSql.append("sp_addextendedproperty");
+			}else{
+				createCommentSql.append("sp_updateextendedproperty");
+			}
+			createCommentSql.append(" 'MS_Description','")
 							.append(table.getComments())
 						    .append("','user','dbo','table','")
 						    .append(table.getTableName())
@@ -75,15 +80,14 @@ public class TableImpl extends AbstractTableHandler{
 	}
 
 	protected void analysisColumnComments(String tableName, ComColumndata column, boolean isAdd, StringBuilder columnSql) {
-		if(StrUtils.notEmpty(column.getComments())){
-			String procedureName;
+		if(column.getComments() != null){
+			columnSql.append("execute ");
 			if(isAdd){
-				procedureName = "sp_addextendedproperty";
+				columnSql.append("sp_addextendedproperty");
 			}else{
-				procedureName = "sp_updateextendedproperty";
+				columnSql.append("sp_updateextendedproperty");
 			}
-			columnSql.append("execute ").append(procedureName)
-				 	 .append(" 'MS_Description','")
+			columnSql.append(" 'MS_Description','")
 					 .append(column.getComments())
 					 .append("','user','dbo','table','")
 					 .append(tableName)

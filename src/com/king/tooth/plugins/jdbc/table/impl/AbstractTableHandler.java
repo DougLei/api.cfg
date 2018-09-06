@@ -38,7 +38,7 @@ public abstract class AbstractTableHandler {
 	 */
 	public void installCreateTableSql(ComTabledata tabledata) {
 		analysisTable(tabledata);
-		analysisTableComments(tabledata);// 解析表注释
+		analysisTableComments(tabledata, true);// 解析表注释
 		createTableSql.append(" ( ");
 		List<ComColumndata> columns = tabledata.getColumns();
 		for (ComColumndata column : columns) {
@@ -231,8 +231,9 @@ public abstract class AbstractTableHandler {
 	/**
 	 * 解析表的注释
 	 * @param table
+	 * @param isAdd 是否是添加，不是添加，就是修改
 	 */
-	protected abstract void analysisTableComments(ComTabledata table);
+	protected abstract void analysisTableComments(ComTabledata table, boolean isAdd);
 	
 	/**
 	 * 解析字段注释
