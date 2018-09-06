@@ -60,9 +60,9 @@ public class DBUtil {
 				constraintName = NamingProcessUtil.extractDbObjName(constraintName);
 				Log4jUtil.debug("自动处理的新约束名为：{}",  constraintName);
 			}
-			return constraintName + "_" + constraintType;
+			return constraintType+"_"+constraintName;
 		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
-			return tableName+"_"+columnName+"_"+constraintType;
+			return constraintType+"_"+tableName+"_"+columnName;
 		}
 		throw new IllegalArgumentException("获取约束名时，无法获取 ["+dbType+"] 数据库类型的约束名");
 	}

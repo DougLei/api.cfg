@@ -3,6 +3,7 @@ package com.king.tooth.plugins.jdbc.table.impl;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.database.DatabaseConstraintConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -91,7 +92,7 @@ public abstract class AbstractTableHandler {
 		if(operColumnSql != null){
 			if(column.getIsPrimaryKey() != null && 1 == column.getIsPrimaryKey()){
 				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
-							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "pk"))
+							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.PRIMARY_KEY))
 							 .append(" primary key (").append(column.getColumnName()).append(")")
 					         .append(";");
 			}
@@ -103,7 +104,7 @@ public abstract class AbstractTableHandler {
 			}
 			if(column.getIsUnique() != null && 1 == column.getIsUnique()){
 				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
-							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "uq"))
+							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.UNIQUE))
 							 .append(" unique(").append(column.getColumnName()).append(")")
 				             .append(";");
 			}
@@ -160,10 +161,10 @@ public abstract class AbstractTableHandler {
 			if(oldColumnInfo.get("isUnique") != null){ 
 				Integer isUnique = column.getIsUnique();
 				if(isUnique == 0){
-					dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
+					dropConstraint(tableName, column.getColumnName(), operColumnSql, DatabaseConstraintConstants.UNIQUE);
 				}else if(isUnique == 1){
 					operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
-								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "uq"))
+								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.UNIQUE))
 								 .append(" unique(").append(column.getColumnName()).append(")")
 					             .append(";");
 				}
