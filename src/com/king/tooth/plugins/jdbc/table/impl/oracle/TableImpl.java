@@ -1,6 +1,5 @@
 package com.king.tooth.plugins.jdbc.table.impl.oracle;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -73,47 +72,13 @@ public class TableImpl extends AbstractTableHandler{
 		}
 	}
 
-	protected void analysisColumnComments(String tableName, ComColumndata column, StringBuilder columnSql) {
+	protected void analysisColumnComments(String tableName, ComColumndata column, boolean isAdd, StringBuilder columnSql) {
 		if(StrUtils.notEmpty(column.getComments())){
 			columnSql.append("comment on column ")
 					 .append(tableName).append(".").append(column.getColumnName())
 					 .append(" is '")
 					 .append(column.getComments())
 					 .append("';");
-		}
-	}
-	
-	public void installModifyColumnSql(String tableName, ComColumndata column) {
-		JSONObject oldColumnInfo = column.getOldColumnInfo();
-		if(oldColumnInfo != null){
-			if(oldColumnInfo.get("columnName") != null){ // 列名
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
-			}
-			if(oldColumnInfo.get("columnType") != null){ // 字段数据类型
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
-			}
-			if(oldColumnInfo.get("defaultValue") != null){ // 默认值
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
-			}
-			if(oldColumnInfo.get("length") != null){ // 字段长度
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
-			}
-			if(oldColumnInfo.get("precision") != null){ // 数据精度
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
-			}
-			if(oldColumnInfo.get("isUnique") != null){ // 是否唯一
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
-			}
-			if(oldColumnInfo.get("isNullabled") != null){ // 是否可为空
-				operColumnSql.append("alter table ").append(tableName).append(" ");
-				
-			}
 		}
 	}
 }

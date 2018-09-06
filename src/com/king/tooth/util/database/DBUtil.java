@@ -13,8 +13,8 @@ import org.hibernate.jdbc.Work;
 
 import oracle.jdbc.OracleTypes;
 
-import com.king.tooth.constants.OracleDataTypeConstants;
-import com.king.tooth.constants.SQLServerDataTypeConstants;
+import com.king.tooth.constants.database.OracleDataTypeConstants;
+import com.king.tooth.constants.database.SQLServerDataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.util.CloseUtil;
@@ -62,6 +62,18 @@ public class DBUtil {
 			return true;
 		}
 		return false;
+	}
+	
+	//----------------------------------------------------------------------------
+	/**
+	 * 获取约束名
+	 * @param tableName
+	 * @param columnName
+	 * @param constraintType
+	 * @return
+	 */
+	public static String getConstraintName(String tableName, String columnName, String constraintType){
+		return tableName+"_"+columnName+"_"+constraintType;
 	}
 	
 	//----------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package com.king.tooth.constants;
+package com.king.tooth.constants.database;
 
 /**
  * sqlserver的数据类型常量

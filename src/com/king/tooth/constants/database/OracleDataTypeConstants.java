@@ -1,4 +1,4 @@
-package com.king.tooth.constants;
+package com.king.tooth.constants.database;
 
 /**
  * oracle的数据类型常量

@@ -2,10 +2,12 @@ package com.king.tooth.plugins.jdbc.table.impl;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.database.DBUtil;
 
 /**
  * 数据表操作的抽象类(创建/删除)
@@ -45,7 +47,7 @@ public abstract class AbstractTableHandler {
 			analysisColumnLength(column, createTableSql);
 			analysisColumnProp(column, createTableSql);
 			createTableSql.append(",");
-			analysisColumnComments(tabledata.getTableName(), column, createTableSql);// 解析列注释
+			analysisColumnComments(tabledata.getTableName(), column, true, createTableSql);// 解析列注释
 		}
 		createTableSql.setLength(createTableSql.length() - 1);
 		createTableSql.append(")");
@@ -112,7 +114,7 @@ public abstract class AbstractTableHandler {
 		analysisColumnType(column, operColumnSql);
 		analysisColumnLength(column, operColumnSql);
 		analysisColumnProp(column, operColumnSql);             
-		analysisColumnComments(tableName, column, operColumnSql);// 解析列注释        
+		analysisColumnComments(tableName, column, true, operColumnSql);// 解析列注释        
 	}
 
 	/**
@@ -120,7 +122,75 @@ public abstract class AbstractTableHandler {
 	 * @param tableName
 	 * @param column
 	 */
-	public abstract void installModifyColumnSql(String tableName, ComColumndata column);
+	public void installModifyColumnSql(String tableName, ComColumndata column){
+		JSONObject oldColumnInfo = column.getOldColumnInfo();
+		if(oldColumnInfo != null){
+			
+			// 列名
+			if(oldColumnInfo.get("columnName") != null){ 
+				operColumnSql.append("alter table ").append(tableName).append(" rename ").append(oldColumnInfo.get("columnName")).append(" to ").append(column.getColumnName()).append(";");
+			}
+			
+			// 字段数据类型，字段长度，数据精度，是否可为空
+			if(oldColumnInfo.get("columnType") != null || oldColumnInfo.get("length") != null || oldColumnInfo.get("precision") != null || oldColumnInfo.get("isNullabled") != null){ 
+				operColumnSql.append("alter table ").append(tableName).append(" alter column ").append(column.getColumnName()).append(" ");
+				analysisColumnType(column, operColumnSql);
+				analysisColumnLength(column, operColumnSql);
+				
+				if(column.getIsNullabled() == 0){
+					operColumnSql.append(" not null ");
+				}else if(column.getIsNullabled() == 1){
+					operColumnSql.append(" null ");
+				}
+				operColumnSql.append(";");
+			}
+			
+			// 是否唯一
+			if(oldColumnInfo.get("isUnique") != null){ 
+				Integer isUnique = column.getIsUnique();
+				if(isUnique == 0){
+					operColumnSql.append("alter table ").append(tableName)
+								 .append(" drop constraint ")
+								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "uq"))
+								 .append(";");
+				}else if(isUnique == 1){
+					operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "uq"))
+								 .append(" unique(").append(column.getColumnName()).append(")")
+					             .append(";");
+				}
+			}
+			
+			// 默认值
+			if(oldColumnInfo.getBoolean("havaOldDefaultValue")){ 
+				// 原来存在默认值约束，则要删除之前的默认值约束
+				if(oldColumnInfo.get("defaultValue") != null){
+					operColumnSql.append("alter table ").append(tableName)
+								 .append(" drop constraint ")
+								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "dv"))
+								 .append(";");
+				}
+				
+				// 如果存在新的默认值约束，则就添加
+				if(column.getDefaultValue() != null){
+					operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "dv"));
+					if(BuiltinDataType.STRING.equals(column.getColumnType())){
+						operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
+					}else{
+						operColumnSql.append(" default ").append(column.getDefaultValue());
+					}
+					operColumnSql.append(" for ").append(column.getColumnName());
+				}
+			}
+			
+			// 注释
+			if(oldColumnInfo.getBoolean("havaComments")){ 
+				boolean isAdd = oldColumnInfo.get("comments") == null;
+				analysisColumnComments(tableName, column, isAdd, operColumnSql);
+			}
+		}
+	}
 	
 	/**
 	 * 组装删除列的sql语句
@@ -168,9 +238,10 @@ public abstract class AbstractTableHandler {
 	 * 解析字段注释
 	 * @param tableName
 	 * @param column
+	 * @param isAdd 是否是添加，不是添加，就是修改
 	 * @param columnSql
 	 */
-	protected abstract void analysisColumnComments(String tableName, ComColumndata column, StringBuilder columnSql);
+	protected abstract void analysisColumnComments(String tableName, ComColumndata column, boolean isAdd, StringBuilder columnSql);
 
 	// ----------------------------------------------------------------------------------------------------------------------------------
 	/**

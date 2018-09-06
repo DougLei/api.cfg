@@ -245,7 +245,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 */
 	public void analysisOldColumnInfo(ComColumndata oldColumn, ComColumndata newColumn) {
 		if(oldColumn.getOperStatus() == ComColumndata.CREATED){
-			this.oldColumnInfo = new JSONObject(7);
+			this.oldColumnInfo = new JSONObject(10);
 			// 1.记录 (旧的)列名
 			if(!oldColumn.getColumnName().equals(newColumn.getColumnName())){
 				this.oldColumnInfo.put("columnName", oldColumn.getColumnName());
@@ -263,7 +263,9 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 				this.oldColumnInfo.put("precision", oldColumn.getPrecision());
 			}
 			// 5.记录 (旧的)默认值
-			if(!oldColumn.getDefaultValue().equals(newColumn.getDefaultValue())){
+			if((oldColumn.getDefaultValue() == null && newColumn.getDefaultValue() != null)
+					|| (!oldColumn.getDefaultValue().equals(newColumn.getDefaultValue()))){
+				this.oldColumnInfo.put("havaOldDefaultValue", true);
 				this.oldColumnInfo.put("defaultValue", oldColumn.getDefaultValue());
 			}
 			// 6.记录 (旧的)是否唯一
@@ -273,6 +275,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 			// 7.记录 (旧的)是否可为空
 			if(oldColumn.getIsNullabled() != newColumn.getIsNullabled()){
 				this.oldColumnInfo.put("isNullabled", oldColumn.getIsNullabled());
+			}
+			// 8.记录 (旧的)备注信息
+			if((oldColumn.getComments() == null && newColumn.getComments() != null)
+					|| (!oldColumn.getComments().equals(newColumn.getComments()))){
+				this.oldColumnInfo.put("havaComments", true);
+				this.oldColumnInfo.put("comments", oldColumn.getComments());
 			}
 			this.oldInfoJson = JsonUtil.toJsonString(oldColumnInfo, false);
 		}
@@ -403,7 +411,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		operStatusColumn.setDefaultValue("0");
 		columns.add(operStatusColumn);
 
-		ComColumndata oldInfoJsonColumn = new ComColumndata("oldInfoJson", BuiltinDataType.STRING, 500);
+		ComColumndata oldInfoJsonColumn = new ComColumndata("oldInfoJson", BuiltinDataType.STRING, 1000);
 		oldInfoJsonColumn.setName("旧的信息json串");
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);
