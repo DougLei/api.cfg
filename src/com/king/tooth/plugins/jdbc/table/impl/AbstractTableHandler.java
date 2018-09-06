@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DBUtil;
 
 /**
@@ -96,19 +95,11 @@ public abstract class AbstractTableHandler {
 							 .append(" primary key (").append(column.getColumnName()).append(")")
 					         .append(";");
 			}
-			if(StrUtils.notEmpty(column.getDefaultValue())){
+			if(column.getDefaultValue() != null){
 				if(BuiltinDataType.DATE.equals(column.getColumnType())){
 					throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
 				}
-				
-				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
-							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "dv"));
-				if(BuiltinDataType.STRING.equals(column.getColumnType())){
-					operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
-				}else{
-					operColumnSql.append(" default ").append(column.getDefaultValue());
-				}
-				operColumnSql.append(" for ").append(column.getColumnName()).append(";");
+				addDefaultValueConstraint(tableName, column, operColumnSql);
 			}
 			if(column.getIsUnique() != null && 1 == column.getIsUnique()){
 				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
@@ -182,19 +173,12 @@ public abstract class AbstractTableHandler {
 			if(oldColumnInfo.get("havaOldDefaultValue") != null && oldColumnInfo.getBoolean("havaOldDefaultValue")){ 
 				// 原来存在默认值约束，则要删除之前的默认值约束
 				if(oldColumnInfo.get("defaultValue") != null){
-					dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
+					deleteDefaultValueConstraint(tableName, column, operColumnSql);
 				}
 				
 				// 如果存在新的默认值约束，则就添加
 				if(column.getDefaultValue() != null){
-					operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
-								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "dv"));
-					if(BuiltinDataType.STRING.equals(column.getColumnType())){
-						operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
-					}else{
-						operColumnSql.append(" default ").append(column.getDefaultValue());
-					}
-					operColumnSql.append(" for ").append(column.getColumnName()).append(";");
+					addDefaultValueConstraint(tableName, column, operColumnSql);
 				}
 			}
 			
@@ -213,25 +197,6 @@ public abstract class AbstractTableHandler {
 	 * @param column
 	 */
 	public void installDeleteColumnSql(String tableName, ComColumndata column) {
-		JSONObject oldColumnInfo = column.getOldColumnInfo();
-		if(oldColumnInfo != null){
-			// 是否唯一
-			if(oldColumnInfo.get("isUnique") != null && oldColumnInfo.getInteger("isUnique") == 1){ 
-				dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
-			}
-			// 默认值
-			if(oldColumnInfo.get("havaOldDefaultValue") != null && oldColumnInfo.getBoolean("havaOldDefaultValue") && oldColumnInfo.get("defaultValue") != null){ 
-				dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
-			}
-			oldColumnInfo.clear();
-		}
-		
-		if(column.getIsUnique() != null && column.getIsUnique() == 1){
-			dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
-		}
-		if(column.getDefaultValue() != null ){
-			dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
-		}
 		operColumnSql.append("alter table ").append(tableName).append(" drop column " + column.getColumnName()).append(";");
 	}
 	
@@ -243,12 +208,28 @@ public abstract class AbstractTableHandler {
 	 * @param operColumnSql
 	 * @param constraintType
 	 */
-	private void dropConstraint(String tableName, String columnName, StringBuilder operColumnSql, String constraintType){
+	protected void dropConstraint(String tableName, String columnName, StringBuilder operColumnSql, String constraintType){
 		operColumnSql.append("alter table ").append(tableName)
 					 .append(" drop constraint ")
 					 .append(DBUtil.getConstraintName(tableName, columnName, constraintType))
 					 .append(";");
 	}
+	
+	/**
+	 * 添加默认值约束
+	 * @param tableName
+	 * @param column
+	 * @param operColumnSql
+	 */
+	protected abstract void addDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql);
+	
+	/**
+	 * 删除默认值约束
+	 * @param tableName
+	 * @param column
+	 * @param operColumnSql
+	 */
+	protected abstract void deleteDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql);
 	
 	// ----------------------------------------------------------------------------------------------------------------------------------
 	/**

@@ -22,6 +22,10 @@ public class DateUtil {
 	 * <p>日期格式为：yyyy-MM-dd HH:mm:ss</p>
 	 */
 	private transient static final SimpleDateFormat sdfDetail = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	/**
+	 * 带时区的日期格式化类
+	 */
+	private transient static final SimpleDateFormat sdfTimeZone = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
 	
 	/**
 	 * 格式化日期对象为字符串
@@ -59,7 +63,9 @@ public class DateUtil {
 			throw new NullPointerException("[DateUtil.parseDate]格式化日期字符串["+dateStr+"]不能为空！");
 		}
 		try {
-			if(dateStr.indexOf(":") != -1){
+			if(dateStr.endsWith("Z")){
+				return sdfTimeZone.parse(dateStr.replace("Z", " UTC"));
+			}else if(dateStr.indexOf(":") != -1){
 				return sdfDetail.parse(dateStr);
 			}else{
 				return sdfSimple.parse(dateStr);

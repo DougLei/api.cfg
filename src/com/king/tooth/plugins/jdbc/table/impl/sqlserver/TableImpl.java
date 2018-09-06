@@ -1,9 +1,11 @@
 package com.king.tooth.plugins.jdbc.table.impl.sqlserver;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.util.database.DBUtil;
 
 /**
  * sqlserver创建表操作的实现类
@@ -95,5 +97,43 @@ public class TableImpl extends AbstractTableHandler{
 					 .append(column.getColumnName())
 					 .append("';");
 		}
+	}
+
+	protected void addDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
+		operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+				 	 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "dv"));
+		if(BuiltinDataType.STRING.equals(column.getColumnType())){
+			operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
+		}else{
+			operColumnSql.append(" default ").append(column.getDefaultValue());
+		}
+		operColumnSql.append(" for ").append(column.getColumnName()).append(";");
+	}
+
+	protected void deleteDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
+		dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
+	}
+
+	public void installDeleteColumnSql(String tableName, ComColumndata column) {
+		JSONObject oldColumnInfo = column.getOldColumnInfo();
+		if(oldColumnInfo != null){
+			// 是否唯一
+			if(oldColumnInfo.get("isUnique") != null && oldColumnInfo.getInteger("isUnique") == 1){ 
+				dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
+			}
+			// 默认值
+			if(oldColumnInfo.get("havaOldDefaultValue") != null && oldColumnInfo.getBoolean("havaOldDefaultValue") && oldColumnInfo.get("defaultValue") != null){ 
+				dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
+			}
+			oldColumnInfo.clear();
+		}
+		
+		if(column.getIsUnique() != null && column.getIsUnique() == 1){
+			dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
+		}
+		if(column.getDefaultValue() != null ){
+			dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
+		}
+		super.installDeleteColumnSql(tableName, column);
 	}
 }

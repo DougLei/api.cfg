@@ -12,7 +12,7 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -74,7 +74,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		if("id".equalsIgnoreCase(columnName)){
 			this.propName = ResourcePropNameConstants.ID;
 		}else{
-			this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
+			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		}
 	}
 	public CfgSqlResultset() {

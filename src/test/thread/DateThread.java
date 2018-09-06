@@ -1,6 +1,6 @@
 package test.thread;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DateThread extends Thread{
 
@@ -9,8 +9,10 @@ public class DateThread extends Thread{
 	}
 
 	private synchronized void doRan() {
-		Random r = new Random(10000l);
-		System.out.println(r.nextInt());
+//		Random r = new Random(10000l);
+//		System.out.println(r.nextInt());
+		
+		System.out.println(Math.abs(ThreadLocalRandom.current().nextInt()));
 		
 	}
 	

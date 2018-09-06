@@ -80,4 +80,18 @@ public class TableImpl extends AbstractTableHandler{
 					 .append("';");
 		}
 	}
+	
+	protected void addDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
+		operColumnSql.append("alter table ").append(tableName).append(" modify ")
+				 	 .append(column.getColumnName());
+		if(BuiltinDataType.STRING.equals(column.getColumnType())){
+			operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
+		}else{
+			operColumnSql.append(" default ").append(column.getDefaultValue());
+		}
+		operColumnSql.append(";");
+	}
+
+	protected void deleteDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
+	}
 }

@@ -14,7 +14,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.JsonUtil;
-import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -446,7 +446,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		String result = validNotNullProps();
 		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();
-			this.propName = NamingTurnUtil.columnNameTurnPropName(columnName);
+			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		}
 		return result;
 	}

@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.sqlresource.AbstractSqlResourceBuiltinMethodProcesser;
 
@@ -56,9 +56,9 @@ public class BuiltinSortMethodProcesser extends AbstractSqlResourceBuiltinMethod
 			commonMatcher = BEFORE_SPACE_PATTERN.matcher(resultOrderBy[i].trim());
 			if(commonMatcher.find()){
 				reqPropName = commonMatcher.group();
-				resultOrderBy[i] = resultOrderBy[i].replace(reqPropName, NamingTurnUtil.propNameTurnColumnName(reqPropName));
+				resultOrderBy[i] = resultOrderBy[i].replace(reqPropName, NamingProcessUtil.propNameTurnColumnName(reqPropName));
 			}else{
-				resultOrderBy[i] = NamingTurnUtil.propNameTurnColumnName(resultOrderBy[i].trim());
+				resultOrderBy[i] = NamingProcessUtil.propNameTurnColumnName(resultOrderBy[i].trim());
 			}
 		}
 		

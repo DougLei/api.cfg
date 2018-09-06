@@ -18,6 +18,8 @@ import com.king.tooth.constants.database.SQLServerDataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.util.CloseUtil;
+import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -40,30 +42,6 @@ public class DBUtil {
 		throw new IllegalArgumentException("根据数据库类型，获取数据库字符串连接符时，无法获取 ["+dbType+"] 数据库类型的字符串连接符");
 	}
 	
-	/**
-	 * 是否是sqlserver数据库
-	 * @return
-	 */
-	public static boolean isSqlserver(){
-		String dbType = HibernateUtil.getCurrentDatabaseType();
-		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * 是否是oracle数据库
-	 * @return
-	 */
-	public static boolean isOracle(){
-		String dbType = HibernateUtil.getCurrentDatabaseType();
-		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
-			return true;
-		}
-		return false;
-	}
-	
 	//----------------------------------------------------------------------------
 	/**
 	 * 获取约束名
@@ -73,7 +51,20 @@ public class DBUtil {
 	 * @return
 	 */
 	public static String getConstraintName(String tableName, String columnName, String constraintType){
-		return tableName+"_"+columnName+"_"+constraintType;
+		String dbType = HibernateUtil.getCurrentDatabaseType();
+		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
+			String constraintName = tableName+"_"+columnName;
+			if(constraintName.length() >= 27){
+				// oracle的约束名长度不能超过30个字符，所以这里对约束名做处理：
+				Log4jUtil.debug("在oracle数据库中，因约束名长度超过30个字符，系统自动处理",  constraintName);
+				constraintName = NamingProcessUtil.extractDbObjName(constraintName);
+				Log4jUtil.debug("自动处理的新约束名为：{}",  constraintName);
+			}
+			return constraintName + "_" + constraintType;
+		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
+			return tableName+"_"+columnName+"_"+constraintType;
+		}
+		throw new IllegalArgumentException("获取约束名时，无法获取 ["+dbType+"] 数据库类型的约束名");
 	}
 	
 	//----------------------------------------------------------------------------

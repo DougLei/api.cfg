@@ -98,7 +98,7 @@ public class SysFileService extends AbstractService{
 								fileName = file.getName().substring(file.getName().lastIndexOf("\\")+1);
 								
 								sysFile.setActName(fileName);
-								sysFile.setSize(file.getSize()+"");
+								sysFile.setSizes(file.getSize()+"");
 								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1));
 								sysFile.setFileItem(file);
 								if(FileUtil.saveToService){

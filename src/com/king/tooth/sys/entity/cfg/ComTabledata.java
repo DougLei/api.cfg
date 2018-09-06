@@ -14,7 +14,7 @@ import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -182,7 +182,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	public String getResourceName() {
 		if(StrUtils.isEmpty(resourceName)){
-			resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
+			resourceName = NamingProcessUtil.tableNameTurnClassName(tableName);
 		}
 		return resourceName;
 	}
@@ -380,13 +380,13 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		String result = validNotNullProps();
 		if(result == null){
 			this.tableName = tableName.trim().toUpperCase();
-			this.resourceName = NamingTurnUtil.tableNameTurnClassName(tableName);
+			this.resourceName = NamingProcessUtil.tableNameTurnClassName(tableName);
 			
 			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType) && isDatalinkTable == 1 && this.tableName.length() > 30){
 				// oracle的表名长度不能超过30个字符，所以这里对关系表的表名做处理：前缀+'_'+表名substring(5, 16)+'_'+后缀
-				Log4jUtil.info("在oracle数据库中，解析关系表[{}]时，因关系表名长度超过30个字符，系统自动处理",  tableName);
-				this.tableName = "DL_" + this.tableName.substring(5, 16) + "_LINKS";
-				Log4jUtil.info("自动处理的新表名为：{}",  tableName);
+				Log4jUtil.debug("在oracle数据库中，解析关系表[{}]时，因关系表名长度超过30个字符，系统自动处理",  tableName);
+				this.tableName = "DL_" + NamingProcessUtil.extractDbObjName(tableName) + "_LINKS";
+				Log4jUtil.debug("自动处理的新表名为：{}",  tableName);
 			}
 		}
 		return result;

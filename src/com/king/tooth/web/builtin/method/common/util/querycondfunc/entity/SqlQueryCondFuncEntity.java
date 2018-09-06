@@ -7,7 +7,7 @@ import java.util.List;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
-import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.NamingProcessUtil;
 
 /**
  * sql查询函数参数实体类
@@ -19,7 +19,7 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 	public SqlQueryCondFuncEntity(String propName, String value) {
 		this.propName = propName;
 		analysisQueryParams(value);
-		modifyPropName(NamingTurnUtil.propNameTurnColumnName(propName));
+		modifyPropName(NamingProcessUtil.propNameTurnColumnName(propName));
 	}
 	
 	/**

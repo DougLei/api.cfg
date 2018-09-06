@@ -19,7 +19,7 @@ import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
@@ -125,7 +125,7 @@ public abstract class GetProcesser extends RequestProcesser{
 					if(selectNamingArr != null && selectNamingArr.length > 0){ // 证明指定了_select查询的字段，则结果肯定是这几个字段
 						for(SelectNaming sn : selectNamingArr){
 							if(StrUtils.isEmpty(sn.getSelectAliasName())){
-								data.put(NamingTurnUtil.columnNameTurnPropName(sn.getSelectName()), object[i++]);
+								data.put(NamingProcessUtil.columnNameTurnPropName(sn.getSelectName()), object[i++]);
 							}else{
 								data.put(sn.getSelectAliasName(), object[i++]);
 							}
@@ -144,7 +144,7 @@ public abstract class GetProcesser extends RequestProcesser{
 					data = new HashMap<String, Object>(1);
 					if(selectNamingArr != null && selectNamingArr.length > 0){ // 证明指定了_select查询的字段，则结果肯定是这一个字段，这一步主要是防止，如果用户查询一个字段起了个别名
 						if(StrUtils.isEmpty(selectNamingArr[0].getSelectAliasName())){
-							data.put(NamingTurnUtil.columnNameTurnPropName(selectNamingArr[0].getSelectName()), object);
+							data.put(NamingProcessUtil.columnNameTurnPropName(selectNamingArr[0].getSelectName()), object);
 						}else{
 							data.put(selectNamingArr[0].getSelectAliasName(), object);
 						}

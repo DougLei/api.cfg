@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.NamingTurnUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.util.resulttype.IResultType;
@@ -83,7 +83,7 @@ public class BuiltinQueryMethodProcesser extends AbstractSqlResourceBuiltinMetho
 					propArr[i] = tmpQueryPropName + " as " + tmpQueryPropName;
 				}
 				
-				queryPropName = NamingTurnUtil.propNameTurnColumnName(tmpQueryPropName);
+				queryPropName = NamingProcessUtil.propNameTurnColumnName(tmpQueryPropName);
 				propArr[i] = propArr[i].replace(tmpQueryPropName, queryPropName);
 				sn.setSelectName(queryPropName);
 				selectNamingArr[i] = sn;

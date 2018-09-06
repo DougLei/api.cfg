@@ -39,7 +39,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 文件大小，单位为b
 	 */
-	private String size;
+	private String sizes;
 	/**
 	 * 文件后缀
 	 */
@@ -97,11 +97,11 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public String getSize() {
-		return size;
+	public String getSizes() {
+		return sizes;
 	}
-	public void setSize(String size) {
-		this.size = size;
+	public void setSizes(String sizes) {
+		this.sizes = sizes;
 	}
 	public String getSuffix() {
 		return suffix;
@@ -182,11 +182,11 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		codeColumn.setOrderCode(3);
 		columns.add(codeColumn);
 		
-		ComColumndata sizeColumn = new ComColumndata("size", BuiltinDataType.STRING, 30);
-		sizeColumn.setName("文件大小");
-		sizeColumn.setComments("文件大小，单位为b");
-		sizeColumn.setOrderCode(4);
-		columns.add(sizeColumn);
+		ComColumndata sizesColumn = new ComColumndata("sizes", BuiltinDataType.STRING, 30);
+		sizesColumn.setName("文件大小");
+		sizesColumn.setComments("文件大小，单位为b");
+		sizesColumn.setOrderCode(4);
+		columns.add(sizesColumn);
 		
 		ComColumndata suffixColumn = new ComColumndata("suffix", BuiltinDataType.STRING, 10);
 		suffixColumn.setName("文件后缀");
