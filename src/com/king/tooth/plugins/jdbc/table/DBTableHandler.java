@@ -154,7 +154,8 @@ public class DBTableHandler {
 				}
 				tableOper.installCreateTableSql(tabledata);
 				createTableSql.append(tableOper.getCreateTableSql()).append(";")
-						 .append(tableOper.getCreateCommentSql()).append(";");
+						 	  .append(tableOper.getCreateCommentSql()).append(";")
+						 	  .append(tableOper.getOperColumnSql()).append(";");
 			}
 			createTableSql.setLength(createTableSql.length() - 1);
 			return createTableSql.toString();
