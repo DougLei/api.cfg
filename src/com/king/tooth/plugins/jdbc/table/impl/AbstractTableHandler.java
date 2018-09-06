@@ -169,10 +169,7 @@ public abstract class AbstractTableHandler {
 			if(oldColumnInfo.get("isUnique") != null){ 
 				Integer isUnique = column.getIsUnique();
 				if(isUnique == 0){
-					operColumnSql.append("alter table ").append(tableName)
-								 .append(" drop constraint ")
-								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "uq"))
-								 .append(";");
+					dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
 				}else if(isUnique == 1){
 					operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
 								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "uq"))
@@ -182,13 +179,10 @@ public abstract class AbstractTableHandler {
 			}
 			
 			// 默认值
-			if(oldColumnInfo.getBoolean("havaOldDefaultValue")){ 
+			if(oldColumnInfo.get("havaOldDefaultValue") != null && oldColumnInfo.getBoolean("havaOldDefaultValue")){ 
 				// 原来存在默认值约束，则要删除之前的默认值约束
 				if(oldColumnInfo.get("defaultValue") != null){
-					operColumnSql.append("alter table ").append(tableName)
-								 .append(" drop constraint ")
-								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), "dv"))
-								 .append(";");
+					dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
 				}
 				
 				// 如果存在新的默认值约束，则就添加
@@ -205,10 +199,11 @@ public abstract class AbstractTableHandler {
 			}
 			
 			// 注释
-			if(oldColumnInfo.getBoolean("havaComments")){ 
+			if(oldColumnInfo.get("havaComments") != null && oldColumnInfo.getBoolean("havaComments")){ 
 				boolean isAdd = oldColumnInfo.get("comments") == null;
 				analysisColumnComments(tableName, column, isAdd, operColumnSql);
 			}
+			oldColumnInfo.clear();
 		}
 	}
 	
@@ -218,7 +213,41 @@ public abstract class AbstractTableHandler {
 	 * @param column
 	 */
 	public void installDeleteColumnSql(String tableName, ComColumndata column) {
+		JSONObject oldColumnInfo = column.getOldColumnInfo();
+		if(oldColumnInfo != null){
+			// 是否唯一
+			if(oldColumnInfo.get("isUnique") != null && oldColumnInfo.getInteger("isUnique") == 1){ 
+				dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
+			}
+			// 默认值
+			if(oldColumnInfo.get("havaOldDefaultValue") != null && oldColumnInfo.getBoolean("havaOldDefaultValue") && oldColumnInfo.get("defaultValue") != null){ 
+				dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
+			}
+			oldColumnInfo.clear();
+		}
+		
+		if(column.getIsUnique() != null && column.getIsUnique() == 1){
+			dropConstraint(tableName, column.getColumnName(), operColumnSql, "uq");
+		}
+		if(column.getDefaultValue() != null ){
+			dropConstraint(tableName, column.getColumnName(), operColumnSql, "dv");
+		}
 		operColumnSql.append("alter table ").append(tableName).append(" drop column " + column.getColumnName()).append(";");
+	}
+	
+	// ----------------------------------------------------------------------------------------------------------------------------------
+	/**
+	 * 删除约束
+	 * @param tableName
+	 * @param columnName
+	 * @param operColumnSql
+	 * @param constraintType
+	 */
+	private void dropConstraint(String tableName, String columnName, StringBuilder operColumnSql, String constraintType){
+		operColumnSql.append("alter table ").append(tableName)
+					 .append(" drop constraint ")
+					 .append(DBUtil.getConstraintName(tableName, columnName, constraintType))
+					 .append(";");
 	}
 	
 	// ----------------------------------------------------------------------------------------------------------------------------------

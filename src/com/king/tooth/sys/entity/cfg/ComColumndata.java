@@ -263,8 +263,8 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 				this.oldColumnInfo.put("precision", oldColumn.getPrecision());
 			}
 			// 5.记录 (旧的)默认值
-			if((oldColumn.getDefaultValue() == null && newColumn.getDefaultValue() != null)
-					|| (!oldColumn.getDefaultValue().equals(newColumn.getDefaultValue()))){
+			if((oldColumn.getDefaultValue() != null && !oldColumn.getDefaultValue().equals(newColumn.getDefaultValue())) 
+					|| (newColumn.getDefaultValue() != null && !newColumn.getDefaultValue().equals(oldColumn.getDefaultValue()))){
 				this.oldColumnInfo.put("havaOldDefaultValue", true);
 				this.oldColumnInfo.put("defaultValue", oldColumn.getDefaultValue());
 			}
@@ -277,8 +277,8 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 				this.oldColumnInfo.put("isNullabled", oldColumn.getIsNullabled());
 			}
 			// 8.记录 (旧的)备注信息
-			if((oldColumn.getComments() == null && newColumn.getComments() != null)
-					|| (!oldColumn.getComments().equals(newColumn.getComments()))){
+			if((oldColumn.getComments() != null && !oldColumn.getComments().equals(newColumn.getComments())) 
+					|| (newColumn.getComments() != null && !newColumn.getComments().equals(oldColumn.getComments()))){
 				this.oldColumnInfo.put("havaComments", true);
 				this.oldColumnInfo.put("comments", oldColumn.getComments());
 			}

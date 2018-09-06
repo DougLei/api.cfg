@@ -2,13 +2,13 @@ package com.king.tooth.plugins.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -68,6 +68,8 @@ public class DBLink {
 			for (String ds : ddlSqlArr) {
 				if(StrUtils.notEmpty(ds)){
 					try {
+						// 日志记录发出的ddl语句
+						CurrentThreadContext.toReqLogDataAddOperSqlLog(ds, null);
 						st.executeUpdate(ds);
 					} catch (Exception e) {
 						String errMessage = "[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]，错误信息为："+ExceptionUtil.getErrMsg("DBLink", "executeDDL", e);
@@ -98,23 +100,25 @@ public class DBLink {
 		Log4jUtil.debug("执行{}数据库的update-sql语句为：{}", database.getType(), Arrays.toString(updateSqlArr));
 		
 		Connection connection = null;
-		PreparedStatement pst = null;
+		Statement st = null;
 		StringBuilder errSql = new StringBuilder();
 		try {
 			Class.forName(database.getDriverClass());
 			connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
 			for (String us : updateSqlArr) {
 				if(StrUtils.notEmpty(us)){
-					pst = connection.prepareStatement(us);
+					st = connection.createStatement();
 					errSql.setLength(0);
 					errSql.append(us);
-					pst.executeUpdate();
+					// 日志记录发出的update语句
+					CurrentThreadContext.toReqLogDataAddOperSqlLog(us, null);
+					st.executeUpdate(us);
 				}
 			}
 		} catch (Exception e) {
 			throw new IllegalArgumentException(" ====> 发生错误的ddl-sql语句为:["+errSql.toString()+"]，错误信息为："+ExceptionUtil.getErrMsg("DBLink", "executeUpdate", e));
 		}finally{
-			CloseUtil.closeDBConn(pst, connection);
+			CloseUtil.closeDBConn(st, connection);
 		}
 		return null;
 	}
