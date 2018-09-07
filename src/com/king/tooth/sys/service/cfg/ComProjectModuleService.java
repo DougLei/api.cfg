@@ -8,6 +8,8 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
+import com.king.tooth.sys.entity.cfg.projectmodule.CfgProjectModuleExtend;
+import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
@@ -93,6 +95,91 @@ public class ComProjectModuleService extends AbstractPublishService {
 		return null;
 	}
 	
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 获取当前项目所有有效的模块信息
+	 * <p>该方法目前只在登陆的时候用到</p>
+	 * @return
+	 */
+	public List<CfgProjectModuleExtend> getCurrentProjectOfModules(){
+		List<CfgProjectModuleExtend> modules = HibernateUtil.extendExecuteListQueryByHqlArr(CfgProjectModuleExtend.class, null, null, queryRootModulesHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(modules != null && modules.size() > 0){
+			for (CfgProjectModuleExtend module : modules) {
+				module.setChildren(recursiveGetCurrentProjectOfSubModules(module));
+			}
+		}
+		return modules;
+	}
+	/**
+	 * 递归获取当前项目所有有效的模块的子模块
+	 * @param projectModule
+	 * @return
+	 */
+	private List<CfgProjectModuleExtend> recursiveGetCurrentProjectOfSubModules(CfgProjectModuleExtend projectModule) {
+		List<CfgProjectModuleExtend> subProjectModules = HibernateUtil.extendExecuteListQueryByHqlArr(CfgProjectModuleExtend.class, null, null, queryModulesHql, projectModule.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(subProjectModules != null && subProjectModules.size() > 0){
+			for (CfgProjectModuleExtend subModule : subProjectModules) {
+				subModule.setChildren(recursiveGetCurrentProjectOfSubModules(subModule));
+			}
+		}
+		return subProjectModules;
+	}
+	/** 查询根模块集合的hql */
+	private static final String queryRootModulesHql = "from ComProjectModule where (parentId is null or parentId = '') and projectId=? and customerId=? and isEnabled = 1";
+	/** 查询子模块集合的hql */
+	private static final String queryModulesHql = "from ComProjectModule where parentId=? and projectId=? and customerId=? and isEnabled = 1";
+	//--------------------------------------------------------------------------------------------------------
+	/**
+	 * 根据权限获取对应的模块集合
+	 * <p>该方法目前只在登陆的时候用到</p>
+	 * @param permission
+	 * @return
+	 */
+	public List<CfgProjectModuleExtend> getProjectModulesByPermission(SysPermissionExtend permission) {
+		List<SysPermissionExtend> permissions = permission.getChildren();
+		List<CfgProjectModuleExtend> modules = new ArrayList<CfgProjectModuleExtend>(permissions.size());
+		for (SysPermissionExtend sysPermissionExtend : permissions) {
+			modules.add(getProjectModuleByPermission(sysPermissionExtend));
+		}
+		return modules;
+	}
+	/**
+	 * 查询权限对应的模块信息
+	 * @param permission
+	 * @return
+	 */
+	private CfgProjectModuleExtend getProjectModuleByPermission(SysPermissionExtend permission) {
+		CfgProjectModuleExtend module = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgProjectModuleExtend.class, queryProjectModuleByIdHql, permission.getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(module == null){
+			return null;
+		}
+		module.setChildren(recursiveGetProjectModuleByPermission(permission.getChildren()));
+		return module;
+	}
+	/**
+	 * 递归查询权限对应的模块信息
+	 * @param permissions
+	 * @return
+	 */
+	private List<CfgProjectModuleExtend> recursiveGetProjectModuleByPermission(List<SysPermissionExtend> permissions) {
+		List<CfgProjectModuleExtend> modules = null;
+		if(permissions != null && permissions.size() > 0){
+			modules = new ArrayList<CfgProjectModuleExtend>(permissions.size());
+			CfgProjectModuleExtend module;
+			for (SysPermissionExtend permission : permissions) {
+				module = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgProjectModuleExtend.class, queryProjectModuleByIdHql, permission.getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+				if(module == null){
+					continue;
+				}
+				modules.add(module);
+				module.setChildren(recursiveGetProjectModuleByPermission(permission.getChildren()));
+			}
+		}
+		return modules;
+	}
+	/** 根据id查询模块信息集合的hql */
+	private final static String queryProjectModuleByIdHql = "from ComProjectModule where "+ResourcePropNameConstants.ID+"=? and projectId=? and customerId=? and isEnabled = 1";
+
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布项目模块

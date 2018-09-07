@@ -94,4 +94,9 @@ public class TableImpl extends AbstractTableHandler{
 
 	protected void deleteDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
 	}
+	
+	protected void reColumnName(String tableName, String oldColumnName, String newColumnName) {
+		operColumnSql.append("alter table ").append(tableName).append(" rename column ").append(oldColumnName).append(" to ").append(newColumnName).append(";");
+
+	}
 }

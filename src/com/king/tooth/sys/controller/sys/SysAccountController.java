@@ -39,7 +39,7 @@ public class SysAccountController extends AbstractController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(1);// 标识为登陆日志
 		
 		SysAccount account = JsonUtil.toJavaObject(ijson.get(0), SysAccount.class);
-		SysAccountOnlineStatus accountOnlineStatus = BuiltinObjectInstance.accountService.modifyAccountOfOnLineStatus(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinObjectInstance.accountService.login(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{
@@ -48,7 +48,7 @@ public class SysAccountController extends AbstractController{
 			
 			// 将(模块)权限信息组装到结果json中
 			JSONObject json = JsonUtil.toJsonObject(accountOnlineStatus);
-			json.put("permissions", accountOnlineStatus.getPermission());
+			json.put("modules", accountOnlineStatus.getProjectModules());
 			resultObject = json;
 		}
 		return getResultObject();

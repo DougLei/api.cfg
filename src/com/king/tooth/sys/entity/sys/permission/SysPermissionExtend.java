@@ -22,5 +22,4 @@ public class SysPermissionExtend extends SysPermission {
 	public void setChildren(List<SysPermissionExtend> children) {
 		this.children = children;
 	}
-	
 }

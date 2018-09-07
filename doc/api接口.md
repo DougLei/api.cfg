@@ -18,14 +18,12 @@
 ```
 返回值: 
 ```
-管理员或系统开发人员会返回: ALL标识具有权限
+管理员或系统开发人员会返回: 所有系统模块信息集合
   {
       "data": {
           "token": "c14582c5551f4ae093c54ecdb07a6764",
-          "permissions": {
-              "refResourceCode": "ALL",
-              "refResourceId": "ALL",
-              "refResourceType": "ALL",
+          "modules": {
+              递归显示所有模块信息
               ...
           },
           ...
@@ -34,22 +32,12 @@
       "message": null,
       "status": 200
   }
-一般用户会返回: 具体的权限对象集合，主要是到模块的权限
+一般用户会返回: 具有操作权限的模块信息集合
   {
       "data": {
           "token": "c14582c5551f4ae093c54ecdb07a6764",
-          "permissions": {
-              "objId": "xxx",
-              "refResourceId": "xxx",
-              "isOper": 1,
-              "refResourceType": "xxx",
-              "refParentResourceId": "xxx",
-              "secretLevels": 1,
-              "objType": "xxx",
-              "isVisibility": 1,
-              "Id": "xxx",
-              "refResourceCode": "xxx",
-              "children": [...],
+          "modules": {
+              递归显示当前用户有权限的模块信息
               ...
           },
           ...

@@ -13,10 +13,11 @@ import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.entity.cfg.projectmodule.CfgProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.SysUser;
+import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
@@ -54,14 +55,14 @@ public class SysAccountService extends AbstractService{
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
-	 * 创建或修改一个账户在线状态对象
-	 * <p>登录</p>
+	 * 登录
+	 * <p>创建或修改一个账户在线状态对象</p>
 	 * @param loginIp
 	 * @param accountName
 	 * @param password
 	 * @return
 	 */
-	public SysAccountOnlineStatus modifyAccountOfOnLineStatus(String loginIp, String accountName, String password){
+	public SysAccountOnlineStatus login(String loginIp, String accountName, String password){
 		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		
@@ -230,7 +231,7 @@ public class SysAccountService extends AbstractService{
 	private boolean processPermission(SysAccountOnlineStatus accountOnlineStatus) {
 		// 管理员或系统开发人员，不做权限控制，返回ALL，标识可以访问所有功能
 		if(accountOnlineStatus.isAdministrator() || accountOnlineStatus.isDeveloper()){
-			accountOnlineStatus.setPermission(BuiltinObjectInstance.allPermission);
+			accountOnlineStatus.setProjectModules(processProjectModules(BuiltinObjectInstance.allPermission));
 			return true;
 		}
 		
@@ -249,8 +250,24 @@ public class SysAccountService extends AbstractService{
 		}
 		
 		BuiltinObjectInstance.permissionService.filterPermission(permission, PermissionConstants.RT_MODULE);
-		accountOnlineStatus.setPermission(permission);
+		accountOnlineStatus.setProjectModules(processProjectModules(permission));
 		return true;
+	}
+	
+	/**
+	 * 处理项目模块信息
+	 * <p>登陆时先进行权限过滤，筛选出当前用户有哪些模块的权限，查询出来，组成树形结构返回</p>
+	 * <p>如果是管理员或系统开发人员，不做权限控制，查询所有模块，组成树形结构返回</p>
+	 * @param permission
+	 * @return
+	 */
+	private List<CfgProjectModuleExtend> processProjectModules(SysPermissionExtend permission) {
+		if(permission == BuiltinObjectInstance.allPermission){
+			// 证明是管理员或系统开发人员
+			return BuiltinObjectInstance.projectModuleService.getCurrentProjectOfModules();
+		}else{
+			return BuiltinObjectInstance.projectModuleService.getProjectModulesByPermission(permission);
+		}
 	}
 	
 	/**

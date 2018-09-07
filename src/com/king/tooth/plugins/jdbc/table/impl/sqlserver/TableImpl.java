@@ -137,4 +137,8 @@ public class TableImpl extends AbstractTableHandler{
 		}
 		super.installDeleteColumnSql(tableName, column);
 	}
+
+	protected void reColumnName(String tableName, String oldColumnName, String newColumnName) {
+		operColumnSql.append("exec sp_rename '").append(tableName).append(".").append(oldColumnName).append("','").append(newColumnName).append("','column';");
+	}
 }

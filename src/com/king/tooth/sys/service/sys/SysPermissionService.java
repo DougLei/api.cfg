@@ -239,15 +239,17 @@ public class SysPermissionService extends AbstractService{
 					if(np.getRefResourceId().equals(p.getRefResourceId()) || np.getRefResourceCode().equals(p.getRefResourceCode())){
 						unExists = false;
 						
-						// 现在是只要配置了相应的权限，就能访问和操作，没有体现出优先级
-						if(np.getIsVisibility()==1){
-							p.setIsVisibility(1);
+						if(!PermissionConstants.PERMISSION_PRIORITY_IS_OPEN){
+							// 现在是只要配置了相应的权限，就能访问和操作，没有体现出优先级
+							if(np.getIsVisibility()==1){
+								p.setIsVisibility(1);
+							}
+							if(np.getIsOper()==1){
+								p.setIsOper(1);
+							}
+							// 如果注释掉上面两行if代码块，则可以体现出优先级
+							// 例如A角色和B角色都对同一个功能C有权限控制，A角色可以操作C，B角色不可以操作C。如果A的优先级高，则最后可以操作功能C；如果B的优先级高，则最终权限不能操作功能C
 						}
-						if(np.getIsOper()==1){
-							p.setIsOper(1);
-						}
-						// 如果注释掉上面两行if代码块，则可以体现出优先级
-						// 例如A角色和B角色都对同一个功能C有权限控制，A角色可以操作C，B角色不可以操作C。如果A的优先级高，则最后可以操作功能C；如果B的优先级高，则最终权限不能操作功能C
 						
 						if(p.getChildren() == null){
 							p.setChildren(new ArrayList<SysPermissionExtend>());
@@ -352,7 +354,6 @@ public class SysPermissionService extends AbstractService{
 	}
 	
 	// --------------------------------------------------------------------------------------
-	
 	/**
 	 * 计算获取当前用户，指定code的功能权限以及子权限集合
 	 * @param code

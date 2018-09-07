@@ -130,6 +130,14 @@ public abstract class AbstractTableHandler {
 	}
 
 	/**
+	 * 修改列名
+	 * @param tableName
+	 * @param oldColumnName
+	 * @param newColumnName
+	 */
+	protected abstract void reColumnName(String tableName, String oldColumnName, String newColumnName);
+	
+	/**
 	 * 组装修改列的sql语句
 	 * @param tableName
 	 * @param column
@@ -140,7 +148,7 @@ public abstract class AbstractTableHandler {
 			
 			// 列名
 			if(oldColumnInfo.get("columnName") != null){ 
-				operColumnSql.append("alter table ").append(tableName).append(" rename ").append(oldColumnInfo.get("columnName")).append(" to ").append(column.getColumnName()).append(";");
+				reColumnName(tableName, oldColumnInfo.getString("columnName"), column.getColumnName());
 			}
 			
 			// 字段数据类型，字段长度，数据精度，是否可为空
