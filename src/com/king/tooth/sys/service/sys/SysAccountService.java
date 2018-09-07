@@ -236,7 +236,7 @@ public class SysAccountService extends AbstractService{
 		}
 		
 		if(!accountOnlineStatus.getIsExistsUserObj()){
-			accountOnlineStatus.setMessage("您账户的用户信息还未完善，请联系系统管理员，协助您创建和完善用户信息，并分配系统功能权限");
+			accountOnlineStatus.setMessage("您账户关联的用户信息还未完善，请联系系统管理员，协助您创建和完善用户信息，并分配系统功能权限");
 			return false;
 		}
 		
