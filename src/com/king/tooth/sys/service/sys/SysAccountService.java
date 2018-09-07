@@ -140,6 +140,7 @@ public class SysAccountService extends AbstractService{
 	 * @param accountName
 	 */
 	private void processAccountAndUserRelation(SysAccountOnlineStatus accountOnlineStatus, String accountId, String accountName) {
+		accountOnlineStatus.setAccountId(accountId);
 		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
 		
 		if(loginUser == null){
@@ -262,7 +263,6 @@ public class SysAccountService extends AbstractService{
 		accountOnlineStatus.setToken(ResourceHandlerUtil.getToken());
 		accountOnlineStatus.setLoginDate(new Date());
 		accountOnlineStatus.setTryLoginTimes(0);
-		accountOnlineStatus.setAccountId(loginAccount.getId());
 	}
 	
 	/**
