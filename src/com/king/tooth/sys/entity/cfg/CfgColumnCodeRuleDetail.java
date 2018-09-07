@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
@@ -454,6 +455,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getType() {
+		// TODO 
 		return null;
 	}
 	
@@ -462,6 +464,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getColumn() {
+		// TODO 
 		return null;
 	}
 	
@@ -470,7 +473,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getRandom() {
-		return null;
+		return ThreadLocalRandom.current().nextInt(randomLength)+"";
 	}
 	
 	/**
@@ -478,6 +481,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getSerialNumber() {
+		// TODO 
 		return null;
 	}
 	
@@ -486,6 +490,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getSeq() {
+		// TODO 
 		return null;
 	}
 	
