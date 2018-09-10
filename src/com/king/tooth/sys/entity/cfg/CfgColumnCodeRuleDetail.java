@@ -6,14 +6,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 字段编码规则明细表
@@ -66,6 +70,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	private Integer seqReinitTime;
 	/**
 	 * 序列的起始值
+	 * <p>默认值是1</p>
 	 */
 	private Integer seqStartVal;
 	/**
@@ -84,6 +89,11 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * <p>默认值为6</p>
 	 */
 	private Integer randomLength;
+	/**
+	 * 随机数种子的值
+	 * <p>随机数长度定义随机数种子的值，默认为100000</p>
+	 */
+	private Integer randomSeedVal;
 	
 	/**
 	 * 列值的来源
@@ -203,6 +213,12 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	}
 	public void setRandomLength(Integer randomLength) {
 		this.randomLength = randomLength;
+	}
+	public Integer getRandomSeedVal() {
+		return randomSeedVal;
+	}
+	public void setRandomSeedVal(Integer randomSeedVal) {
+		this.randomSeedVal = randomSeedVal;
 	}
 	public Integer getColumnValFrom() {
 		return columnValFrom;
@@ -324,7 +340,8 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		
 		ComColumndata seqStartValColumn = new ComColumndata("seq_start_val", BuiltinDataType.INTEGER, 8);
 		seqStartValColumn.setName("序列的起始值");
-		seqStartValColumn.setComments("序列的起始值");
+		seqStartValColumn.setComments("序列的起始值，默认值是1");
+		seqStartValColumn.setDefaultValue("1");
 		columns.add(seqStartValColumn);
 		
 		ComColumndata seqCurrentValColumn = new ComColumndata("seq_current_val", BuiltinDataType.INTEGER, 8);
@@ -343,6 +360,12 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		randomLengthColumn.setComments("默认值为6");
 		randomLengthColumn.setDefaultValue("6");
 		columns.add(randomLengthColumn);
+		
+		ComColumndata randomSeedValColumn = new ComColumndata("random_seed_val", BuiltinDataType.INTEGER, 15);
+		randomSeedValColumn.setName("随机数种子的值");
+		randomSeedValColumn.setComments("随机数长度定义随机数种子的值，默认为");
+		randomSeedValColumn.setDefaultValue("100000");
+		columns.add(randomSeedValColumn);
 		
 		ComColumndata columnValFromColumn = new ComColumndata("column_val_from", BuiltinDataType.INTEGER, 1);
 		columnValFromColumn.setName("列值的来源");
@@ -425,91 +448,124 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		return result;
 	}
 	
+	// ------------------------------------------------------------------------------------------------------
+	
 	/**
 	 * 得到当前段的编码值
+	 * @param resourceName 当前对象资源名
+	 * @param currentJsonObject 当前对象的json对象，获取当前段的值的时候，可能会用到当前对象的数据
 	 * @return
 	 */
-	public String getCurrentStageCodeVal() {
+	public String getCurrentStageCodeVal(String resourceName, JSONObject currentJsonObject) {
 		switch(ruleType){
 			case 0: // 0:default(默认固定值)
-				return getDefaultVal();
+				return getDefaultVal(resourceName, currentJsonObject);
 			case 1: // 1:date(日期)
-				return getDate();
+				return getDate(resourceName, currentJsonObject);
 			case 2: // 2:seq(序列)
-				return getSeq();
+				return getSeq(resourceName, currentJsonObject);
 			case 3: // 3:serialNumber(流水号)
-				return getSerialNumber();
+				return getSerialNumber(resourceName, currentJsonObject);
 			case 4: // 4:random(随机数)
-				return getRandom();
+				return getRandom(resourceName, currentJsonObject);
 			case 5: // 5:column(其他列值)
-				return getColumn();
+				return getColumn(resourceName, currentJsonObject);
 			case 6: // 6:type(类型值)
-				return getType();
+				return getType(resourceName, currentJsonObject);
 			default: // 默认值为0，0:default(默认固定值)
-				return getDefaultVal();
+				return getDefaultVal(resourceName, currentJsonObject);
 		}
-	}
-	
-	/**
-	 * 获取【6:type(类型值)】
-	 * @return
-	 */
-	private String getType() {
-		// TODO 
-		return null;
-	}
-	
-	/**
-	 * 获取【5:column(其他列值)】
-	 * @return
-	 */
-	private String getColumn() {
-		// TODO 
-		return null;
-	}
-	
-	/**
-	 * 获取【4:random(随机数)】
-	 * @return
-	 */
-	private String getRandom() {
-		int seed = 1;
-		for(int i=0;i<randomLength;i++){
-			seed *= 10;
-		}
-		return ThreadLocalRandom.current().nextInt(seed)+"";
-	}
-	
-	/**
-	 * 获取【3:serialNumber(流水号)】
-	 * @return
-	 */
-	private String getSerialNumber() {
-		return null;
-	}
-	
-	/**
-	 * 获取【2:seq(序列)】
-	 * @return
-	 */
-	private String getSeq() {
-		// TODO 
-		return null;
-	}
-	
-	/**
-	 * 获取【1:date(日期)】
-	 * @return
-	 */
-	private String getDate() {
-		return new SimpleDateFormat(dateFormate).format(new Date());
 	}
 	
 	/**
 	 * 获取【0:default(默认固定值)】
+	 * @param currentJsonObject
+	 * @param resourceName
 	 * @return
 	 */
-	private String getDefaultVal() {
+	private String getDefaultVal(String resourceName, JSONObject currentJsonObject) {
 		return defValue;
+	}
+	
+	/**
+	 * 获取【1:date(日期)】
+	 * @param currentJsonObject
+	 * @param resourceName
+	 * @return
+	 */
+	private String getDate(String resourceName, JSONObject currentJsonObject) {
+		return new SimpleDateFormat(dateFormate).format(new Date());
+	}
+	
+	/**
+	 * 获取【2:seq(序列)】
+	 * @param currentJsonObject
+	 * @param resourceName
+	 * @return
+	 */
+	private String getSeq(String resourceName, JSONObject currentJsonObject) {
+		// TODO 
+		return null;
+	}
+	
+	/**
+	 * 获取【3:serialNumber(流水号)】
+	 * @param currentJsonObject
+	 * @param resourceName
+	 * @return
+	 */
+	private synchronized String getSerialNumber(String resourceName, JSONObject currentJsonObject) {
+		return DateUtil.getSerialNumberDateStr();
+	}
+	
+	/**
+	 * 获取【4:random(随机数)】
+	 * @param currentJsonObject
+	 * @param resourceName
+	 * @return
+	 */
+	private String getRandom(String resourceName, JSONObject currentJsonObject) {
+		return ThreadLocalRandom.current().nextInt(randomSeedVal)+"";
+	}
+	
+	/**
+	 * 获取【5:column(其他列值)】
+	 * @param currentJsonObject
+	 * @param resourceName
+	 * @return
+	 */
+	private String getColumn(String resourceName, JSONObject currentJsonObject) {
+		ComColumndata column = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComColumndata.class, queryColumnPropNamesByIdHql, refColumnId);
+		switch (columnValFrom) {
+			case 0: // 0:当前数据
+				return currentJsonObject.getString(column.getPropName());
+			case 1: // 1:当前数据资源对象
+				return "select " + column.getPropName() + " from " + resourceName + " where ";
+			case 2: // 2:其他数据资源对象
+				return null;
+			default: // 默认值为0，0:当前数据
+				return null;
+		}
+	}
+	/** 根据ids查询column属性名集合的hql */
+	private static final String queryColumnPropNamesByIdHql = "select propName from ComColumndata where " + ResourcePropNameConstants.ID + "=? and isEnabled=1 and operStatus="+ComColumndata.CREATED;
+	
+	/**
+	 * 获取【6:type(类型值)】
+	 * @param currentJsonObject
+	 * @param resourceName
+	 * @return
+	 */
+	private String getType(String resourceName, JSONObject currentJsonObject) {
+		switch (typeColumnValFrom) {
+			case 0: // 0:当前数据
+				return null;
+			case 1: // 1:当前数据资源对象
+				return null;
+			case 2: // 2:其他数据资源对象
+				return null;
+			default: // 默认值为0，0:当前数据
+				return null;
+		}
 	}
 }

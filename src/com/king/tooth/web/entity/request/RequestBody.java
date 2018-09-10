@@ -5,7 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.cache.CodeResourceMapping;
+import com.king.tooth.cache.code.resource.CodeResourceMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.web.servlet.route.RouteBody;
 

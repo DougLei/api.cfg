@@ -2,6 +2,7 @@ package com.king.tooth.web.entity.request;
 
 import java.util.List;
 
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -42,8 +43,11 @@ public class ResourcePropCodeRule {
 			if(rules == null || rules.size() == 0){
 				return;
 			}
+			
+			IJson ijson = requestBody.getFormData();
+			String resourceName = requestBody.getResourceInfo().getReqResource().getResourceName();
 			for (CfgColumnCodeRule rule : rules) {
-				rule.doProcessFinalCodeVal(requestBody.getFormData().size());
+				rule.doProcessFinalCodeVal(ijson, resourceName);
 			}
 		}
 	}

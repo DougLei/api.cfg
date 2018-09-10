@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.king.tooth.cache.CodeResourceMapping;
+import com.king.tooth.cache.code.resource.CodeResourceMapping;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.ResponseBody;

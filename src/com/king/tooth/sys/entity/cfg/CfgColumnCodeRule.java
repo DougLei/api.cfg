@@ -3,8 +3,10 @@ package com.king.tooth.sys.entity.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Entity;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -156,22 +158,27 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	/**
 	 * 处理并获取最终的字段编码值
 	 * <p>将值set到finalCodeVal属性中</p>
-	 * @param codeValCount 要生成编码值的数量 
+	 * @param ijson 
+	 * @param resourceName 
 	 */
-	public void doProcessFinalCodeVal(int codeValCount) {
+	public void doProcessFinalCodeVal(IJson ijson, String resourceName) {
 		ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumnCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(ruleDetails != null && ruleDetails.size() > 0){
-			this.finalCodeVals = new ArrayList<String>(codeValCount);
+			int size = ijson.size();// 要生成编码值的数量 
+			
+			this.finalCodeVals = new ArrayList<String>(size);
 			finalCodeValBuffer = new StringBuilder();
 			int len = ruleDetails.size();
 			int lastIndex = len-1;
 			
-			for(int j=0;j<codeValCount;j++){
+			JSONObject currentJsonObject;
+			for(int j=0;j<size;j++){
+				currentJsonObject = ijson.get(j);
 				for(int i=0;i<len;i++){
 					if(i>0 && i<lastIndex){
 						finalCodeValBuffer.append(ruleDetails.get(i-1).getLinkNextSymbol());
 					}
-					finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal());
+					finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal(resourceName, currentJsonObject));
 				}
 				this.finalCodeVals.add(finalCodeValBuffer.toString());
 				finalCodeValBuffer.setLength(0);

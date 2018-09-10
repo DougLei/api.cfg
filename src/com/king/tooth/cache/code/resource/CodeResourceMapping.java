@@ -1,11 +1,10 @@
-package com.king.tooth.cache;
+package com.king.tooth.cache.code.resource;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.cache.entity.CodeResourceEntity;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.util.Log4jUtil;

@@ -1,4 +1,4 @@
-package com.king.tooth.util;
+package com.king.tooth.util.column.code.rule;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import com.king.tooth.web.entity.request.ResourcePropCodeRule;
  */
 public class ColumnCodeRuleUtil {
 	
+	// ---------------------------------------------------------------------------------------------------
 	/**
 	 * 给对象的属性设置最终的编码值
 	 * @param data

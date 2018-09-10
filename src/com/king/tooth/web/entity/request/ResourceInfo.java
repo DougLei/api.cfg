@@ -1,6 +1,6 @@
 package com.king.tooth.web.entity.request;
 
-import com.king.tooth.cache.CodeResourceMapping;
+import com.king.tooth.cache.code.resource.CodeResourceMapping;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.ISysResource;

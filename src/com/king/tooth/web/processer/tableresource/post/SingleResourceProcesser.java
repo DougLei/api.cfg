@@ -1,7 +1,7 @@
 package com.king.tooth.web.processer.tableresource.post;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.util.ColumnCodeRuleUtil;
+import com.king.tooth.util.column.code.rule.ColumnCodeRuleUtil;
 
 /**
  * 处理这种请求路径格式的处理器：/{resourceType}
