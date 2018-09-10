@@ -21,6 +21,32 @@ public class RunMain {
 		new DateThread().start();
 		new DateThread().start();
 		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
+		new DateThread().start();
 		
 	}
 }

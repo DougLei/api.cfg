@@ -12,7 +12,7 @@ public class DateThread extends Thread{
 //		Random r = new Random(10000l);
 //		System.out.println(r.nextInt());
 		
-		System.out.println(Math.abs(ThreadLocalRandom.current().nextInt()));
+		System.out.println(Math.abs(ThreadLocalRandom.current().nextInt(10)));
 		
 	}
 	

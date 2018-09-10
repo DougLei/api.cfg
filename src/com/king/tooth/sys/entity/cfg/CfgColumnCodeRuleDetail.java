@@ -53,8 +53,8 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	
 	/**
 	 * 日期格式化格式
-	 * <p>yyyy表示年，MM表示月，dd表示日，hh表示小时，mm表示分钟，ss表示秒，可任意组装</p>
-	 * <p>默认值为yyyyMMddHHmmss</p>
+	 * <p>yyyy表示年，MM表示月，dd表示日，hh表示小时，mm表示分钟，ss表示秒，SSS表示毫秒，可任意组装</p>
+	 * <p>默认值为yyyyMMddHHmmssSSS</p>
 	 */
 	private String dateFormate;
 	
@@ -312,8 +312,8 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		
 		ComColumndata dateFormateColumn = new ComColumndata("date_formate", BuiltinDataType.STRING, 20);
 		dateFormateColumn.setName("日期格式化格式");
-		dateFormateColumn.setComments("yyyy表示年，MM表示月，dd表示日，hh表示小时，mm表示分钟，ss表示秒，可任意组装，默认值为yyyyMMddHHmmss");
-		dateFormateColumn.setDefaultValue("yyyyMMddHHmmss");
+		dateFormateColumn.setComments("yyyy表示年，MM表示月，dd表示日，hh表示小时，mm表示分钟，ss表示秒，SSS表示毫秒，可任意组装，默认值为yyyyMMddHHmmssSSS");
+		dateFormateColumn.setDefaultValue("yyyyMMddHHmmssSSS");
 		columns.add(dateFormateColumn);
 		
 		ComColumndata seqReinitTimeColumn = new ComColumndata("seq_reinit_time", BuiltinDataType.INTEGER, 1);
@@ -473,7 +473,11 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getRandom() {
-		return ThreadLocalRandom.current().nextInt(randomLength)+"";
+		int seed = 1;
+		for(int i=0;i<randomLength;i++){
+			seed *= 10;
+		}
+		return ThreadLocalRandom.current().nextInt(seed)+"";
 	}
 	
 	/**
@@ -481,7 +485,6 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getSerialNumber() {
-		// TODO 
 		return null;
 	}
 	
