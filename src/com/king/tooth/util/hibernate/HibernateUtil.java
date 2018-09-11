@@ -232,6 +232,7 @@ public class HibernateUtil {
 			// 日志记录发出的hql/sql语句
 			CurrentThreadContext.toReqLogDataAddOperSqlLog("insert " + entityName, data);
 			
+			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_add");
 			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
@@ -282,6 +283,8 @@ public class HibernateUtil {
 			parameters.add(updateId);
 			
 			executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), parameters);
+			
+			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_edit");
 			Log4jUtil.debug("修改数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {

@@ -21,7 +21,7 @@ public class BuiltinSortMethodProcesser extends AbstractSqlResourceBuiltinMethod
 	private transient Matcher commonMatcher;
 	
 	/**
-	 * 获取空格前字符的正则表达式编译器对象
+	 * 获取排序标识的空格前字符的正则表达式编译器对象
 	 * <p>例如:Name desc中的Name</p>
 	 */
 	private transient static final Pattern BEFORE_SPACE_PATTERN = Pattern.compile(".*(?= )");
@@ -63,7 +63,7 @@ public class BuiltinSortMethodProcesser extends AbstractSqlResourceBuiltinMethod
 		}
 		
 		for (String spv : resultOrderBy) {
-			sql.append(spv).append(",");
+			sql.append("s_.").append(spv).append(",");
 		}
 		sql.setLength(sql.length() - 1);
 		Log4jUtil.debug("[BuiltinSortMethodProcesser.analysisSortParamsToSql]解析出来，要执行的排序sql语句为：{}", sql);

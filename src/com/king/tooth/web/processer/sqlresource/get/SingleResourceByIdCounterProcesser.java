@@ -24,6 +24,9 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 		String querySql = sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql() + 
 						  getFromSql().toString();
 		
+		recordCoreSqlBuffer(querySql);
+		reocrdCoreSqlParams(null);
+		
 		Query query = createQuery(0, querySql);
 		long totalCount = (long) query.uniqueResult();
 		TextResultEntity textResult = new TextResultEntity(totalCount);

@@ -72,6 +72,9 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
         				      .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
         				      .append(" ) s_ ");
 		builtinRecursiveMethodProcesser.getFirstRecursiveQuerySql(firstRecursiveQuerySql, firstRecursiveQueryParams);
+		
+		recordCoreSqlBuffer(firstRecursiveQuerySql);
+		reocrdCoreSqlParams(firstRecursiveQueryParams);
 	}
 
 	protected StringBuilder getFromSql() {

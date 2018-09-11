@@ -146,6 +146,7 @@ public abstract class GetProcesser extends RequestProcesser {
 				}
 				hql.setLength(hql.length()-1);
 				hql.append(")");
+				hql.append(builtinSortMethodProcesser.getHql());
 				
 				List<Map<String, Object>> addDataList = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), addFocusedIds);
 				dataList.addAll(0, addDataList);

@@ -27,6 +27,8 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		if(sqlScriptResource.getOutSqlResultsetsList() != null && sqlScriptResource.getOutSqlResultsetsList().get(0) != null){
 			validIdColumnIsExists(sqlScriptResource);
 		}
+		recordCoreSqlBuffer(coreQuerySql);
+		reocrdCoreSqlParams(null);
 		
 		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
 		

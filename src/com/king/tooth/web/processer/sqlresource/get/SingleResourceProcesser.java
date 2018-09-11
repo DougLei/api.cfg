@@ -27,6 +27,9 @@ public final class SingleResourceProcesser extends GetProcesser{
 		
 		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
 		
+		recordCoreSqlBuffer(coreQuerySql);
+		reocrdCoreSqlParams(null);
+		
 		Query query = createQuery(0, querySql);
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
 		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0));

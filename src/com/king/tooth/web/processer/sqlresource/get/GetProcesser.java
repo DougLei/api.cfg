@@ -183,6 +183,11 @@ public abstract class GetProcesser extends RequestProcesser{
 	 */
 	private final StringBuilder coreSqlBuffer = new StringBuilder();
 	/**
+	 * 核心的sql语句的参数
+	 * <p>只给executeQuery()方法中，聚焦id时使用</p>
+	 */
+	private final List<Object> coreSqlParams = new ArrayList<Object>(12);
+	/**
 	 * 记录核心的sql语句
 	 * <p>只给executeQuery()方法中，聚焦id时使用</p>
 	 * @param coreSql
@@ -192,6 +197,18 @@ public abstract class GetProcesser extends RequestProcesser{
 			coreSqlBuffer.setLength(0);
 		}
 		coreSqlBuffer.append(coreSql);
+	}
+	/**
+	 * 记录核心的sql语句的参数
+	 * <p>只给executeQuery()方法中，聚焦id时使用</p>
+	 * @param coreSqlParams
+	 */
+	protected final void reocrdCoreSqlParams(List<Object> coreSqlParams) {
+		if(coreSqlParams != null){
+			this.coreSqlParams.addAll(coreSqlParams);
+		} else if(sqlParameterValues.size() > 0){
+			this.coreSqlParams.addAll(sqlParameterValues.get(0));
+		}
 	}
 	/**
 	 * 执行查询
@@ -205,24 +222,20 @@ public abstract class GetProcesser extends RequestProcesser{
 			List<Object> addFocusedIds = builtinFocusedIdMethodProcesser.getAddFocusedIds();
 			if(addFocusedIds != null && addFocusedIds.size() > 0){
 				coreSqlBuffer.append(" where s_.").append(ResourcePropNameConstants.ID).append(" in (");
-				int size = addFocusedIds.size();
-				for (int i=0;i<size;i++) {
+				for (Object fid : addFocusedIds) {
+					coreSqlParams.add(fid);
 					coreSqlBuffer.append("?,");
 					list.remove(list.size()-1);// 挤掉最后的数据
 				}
 				coreSqlBuffer.setLength(coreSqlBuffer.length()-1);
 				coreSqlBuffer.append(")");
+				coreSqlBuffer.append(builtinSortMethodProcesser.getSql());
 				
-				if(sqlParameterValues.size() > 0){
-					List<Object> querySqlParameterValues = sqlParameterValues.get(0);
-					if(querySqlParameterValues != null && querySqlParameterValues.size() > 0){
-						addFocusedIds.addAll(0, querySqlParameterValues);
-					}
-				}
-				
-				List addList = HibernateUtil.executeListQueryBySql(coreSqlBuffer.toString(), addFocusedIds);
+				List addList = HibernateUtil.executeListQueryBySql(coreSqlBuffer.toString(), coreSqlParams);
 				list.addAll(0, addList);
+				
 				coreSqlBuffer.setLength(0);
+				coreSqlParams.clear();
 			}
 		}
 		

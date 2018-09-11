@@ -31,11 +31,8 @@ public class BuiltinPagerMethodProcesser extends AbstractBuiltinCommonMethod{
 		}
 	}
 	
-	public BuiltinPagerMethodProcesser(String limit, String start, String rows, String page, String focusedPage) {
+	public BuiltinPagerMethodProcesser(String limit, String start, String rows, String page) {
 		isUsed = true;
-		if(focusedPage != null && Integer.valueOf(focusedPage) > 0){
-			page = focusedPage;
-		}
 		pageQueryEntity = new PageQueryEntity(limit, start, rows, page);
 	}
 	

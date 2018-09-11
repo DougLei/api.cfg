@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.Query;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
@@ -111,7 +113,25 @@ public class RequestProcesserCommon extends CommonProcesser{
 		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
 			setResponseBody(new ResponseBody(requestBody.getRequestUrlParams(), true));
 		}else{
-			setResponseBody(new ResponseBody(requestBody.getFormData().getJson(), true));
+			String operType = null;
+			if(BuiltinDatabaseData.INSERT.equals(sqlDesc)){
+				operType = "_add";
+			}else if(BuiltinDatabaseData.UPDATE.equals(sqlDesc)){
+				operType = "_edit";
+			}
+			
+			IJson ijson = requestBody.getFormData();
+			if(operType != null){
+				int size = ijson.size();
+				JSONObject jsonObject;
+				for(int i=0;i<size;i++){
+					jsonObject = ijson.get(i);
+					if(jsonObject.get(ResourcePropNameConstants.ID) != null){
+						jsonObject.put(ResourcePropNameConstants.FOCUSED_OPER, jsonObject.getString(ResourcePropNameConstants.ID) + operType);
+					}
+				}
+			}
+			setResponseBody(new ResponseBody(ijson.getJson(), true));
 		}
 	}
 	
