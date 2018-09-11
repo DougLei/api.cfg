@@ -99,4 +99,8 @@ public class TableImpl extends AbstractTableHandler{
 		operColumnSql.append("alter table ").append(tableName).append(" rename column ").append(oldColumnName).append(" to ").append(newColumnName).append(";");
 
 	}
+
+	public String getReTableNameSql(String newTableName, String oldTableName) {
+		return "alter table "+oldTableName+" rename to "+ newTableName;
+	}
 }

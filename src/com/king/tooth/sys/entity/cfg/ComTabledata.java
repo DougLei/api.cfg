@@ -33,6 +33,11 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 */
 	private String tableName;
 	/**
+	 * 旧表名
+	 * <p>如果修改了表名，这里记录之前的表名</p>
+	 */
+	private String oldTableName;
+	/**
 	 * 资源名
 	 */
 	private String resourceName;
@@ -153,6 +158,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public String getTableName() {
 		return tableName;
 	}
+	public String getOldTableName() {
+		return oldTableName;
+	}
+	public void setOldTableName(String oldTableName) {
+		this.oldTableName = oldTableName;
+	}
 	public List<ComColumndata> getColumns() {
 		return columns;
 	}
@@ -262,7 +273,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(27);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(28);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
@@ -279,6 +290,15 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		tableNameColumn.setComments("表名");
 		tableNameColumn.setOrderCode(2);
 		columns.add(tableNameColumn);
+		
+		ComColumndata oldTableNameColumn = new ComColumndata("old_table_name", BuiltinDataType.STRING, 80);
+		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
+			oldTableNameColumn.setLength(30);
+		}
+		oldTableNameColumn.setName("旧表名");
+		oldTableNameColumn.setComments("如果修改了表名，这里记录之前的表名");
+		oldTableNameColumn.setOrderCode(2);
+		columns.add(oldTableNameColumn);
 		
 		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
 		resourceNameColumn.setName("资源名");

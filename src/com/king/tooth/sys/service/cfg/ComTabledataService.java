@@ -26,6 +26,7 @@ import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DynamicDBUtil;
@@ -138,6 +139,12 @@ public class ComTabledataService extends AbstractPublishService {
 		String operResult = null;
 		if(!oldTable.getTableName().equals(table.getTableName())){
 			operResult = validTableNameIsExists(table);
+			if(operResult == null){
+				table.setIsBuildModel(0);
+				if(StrUtils.isEmpty(oldTable.getOldTableName()) && oldTable.getIsCreated() == 1 && oldTable.getIsBuildModel() == 1){
+					table.setOldTableName(oldTable.getTableName());
+				}
+			}
 		}
 		
 		if(operResult == null){
@@ -207,7 +214,7 @@ public class ComTabledataService extends AbstractPublishService {
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
 		// TODO 单项目，取消是否平台开发者的判断
 //		if(isDeveloper && oldTable.getIsCreated() == 1){
-		if(oldTable.getIsCreated() == 1){
+		if(oldTable.getIsCreated() == 1 && oldTable.getIsBuildModel() == 1){
 			cancelBuildModel(new DBTableHandler(CurrentThreadContext.getDatabaseInstance()), oldTable, true);
 		}
 		
@@ -228,7 +235,7 @@ public class ComTabledataService extends AbstractPublishService {
 		try {
 			ComTabledata table = getObjectById(tableId, ComTabledata.class);
 			if(table.getIsBuildModel() == 1){
-				return "表["+table.getTableName()+"]已经完成建模，且在无任何字段信息被修改的情况下，无法重复进行建模操作";
+				return "表["+table.getTableName()+"]已经完成建模，且在无表名被修改、或任何字段信息被修改的情况下，无法重复进行建模操作";
 			}
 			
 			boolean isNeedInitBasicColumns = false;
@@ -244,6 +251,14 @@ public class ComTabledataService extends AbstractPublishService {
 			}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
 				tables = new ArrayList<ComTabledata>(1);
 				tables.add(table);
+				
+				String oldTableName = table.getOldTableName();
+				if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
+					// 修改表名
+					dbTableHandler.reTableName(table.getTableName(), oldTableName);
+					// 移除hibernate中之前表的缓存
+					HibernateUtil.removeConfig(NamingProcessUtil.tableNameTurnClassName(oldTableName));
+				}
 				
 				// 删除hbm信息
 				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
@@ -282,8 +297,11 @@ public class ComTabledataService extends AbstractPublishService {
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated=1, isBuildModel =1 where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'");
 			
 			// 6、修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为已创建状态，且置空oldInfoJson字段的值
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "delete ComColumndata where tableId = '"+table.getId()+"' and operStatus="+ComColumndata.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+table.getId()+"' and operStatus="+ComColumndata.DELETED);
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus="+ComColumndata.CREATED+", oldInfoJson=null where tableId = '"+table.getId()+"'");
+			
+			// 7、置空ComTabledata表中，oldTableName字段的值
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set oldTableName=null where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'");
 			
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {

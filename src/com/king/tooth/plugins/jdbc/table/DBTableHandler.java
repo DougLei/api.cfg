@@ -293,4 +293,17 @@ public class DBTableHandler {
 			dblink.executeDDL(ddlSqlArr);
 		}
 	}
+	
+	/**
+	 * 修改表名
+	 * @param tableName
+	 * @param oldTableName
+	 */
+	public void reTableName(String tableName, String oldTableName) {
+		String reTableNameSql = tableOper.getReTableNameSql(tableName, oldTableName);
+		if(StrUtils.notEmpty(reTableNameSql)){
+			String[] sqlArr = {reTableNameSql};
+			dblink.executeDDL(sqlArr);
+		}
+	}
 }

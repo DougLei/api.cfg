@@ -2213,6 +2213,10 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 */
 	public void removeHbmConfig(String entityName) {
 		classMetadata.remove(entityName);
+		entityPersisters.remove(entityName);
+		identifierGenerators.remove(entityName);
+		imports.remove(entityName);
+		entityNameResolvers.remove(entityName);
 		hibernateDataLinkResourceNameList.remove(entityName);
 	}
 	

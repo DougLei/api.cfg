@@ -318,4 +318,12 @@ public abstract class AbstractTableHandler {
 			operColumnSql.setLength(0);
 		}
 	}
+
+	/**
+	 * 获取修改表名的sql
+	 * @param newTableName
+	 * @param oldTableName
+	 * @return
+	 */
+	public abstract String getReTableNameSql(String newTableName, String oldTableName);
 }

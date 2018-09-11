@@ -124,6 +124,7 @@ public class SqlStatementParserUtil {
 		 Map<String, String> typeMap = new HashMap<String, String>(4);
 		 typeMap.put("other", "false");
 		 typeMap.put("isUnique", "false");
+		 typeMap.put("reqMethod", "post");
 		 
 		 switch(sqlStatementType){
 	         case sstselect:
@@ -133,30 +134,25 @@ public class SqlStatementParserUtil {
 	        	 break;
 	         case sstupdate:
 	        	 typeMap.put("type", BuiltinDatabaseData.UPDATE);
-	        	 typeMap.put("reqMethod", "put");
 	        	 break;
 	         case sstinsert:
 	        	 typeMap.put("type", BuiltinDatabaseData.INSERT);
-	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	         case sstdelete:
 	        	 typeMap.put("type", BuiltinDatabaseData.DELETE);
-	        	 typeMap.put("reqMethod", "delete");
 	        	 break;
 	         case sstplsql_createprocedure:
 	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
 	        	 typeMap.put("isUnique", "true");
-	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	         case sstmssqlcreateprocedure:
 	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
 	        	 typeMap.put("isUnique", "true");
-	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	         case sstcreateview:
 	        	 typeMap.put("type", BuiltinDatabaseData.VIEW);
 	        	 typeMap.put("isUnique", "true");
-	        	 typeMap.put("reqMethod", "get");
+	        	 typeMap.put("reqMethod", "none");
 	        	 break;
 	         case sstmssqlcreatetype:
 	        	 typeMap.put("type", BuiltinDatabaseData.SQLSERVER_CREATE_TYPE);
@@ -167,7 +163,6 @@ public class SqlStatementParserUtil {
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
 	        	 typeMap.put("type", sqlStatementType.toString());
 	        	 typeMap.put("other", "true");
-	        	 typeMap.put("reqMethod", "post");
 	        	 break;
 	     }
 		 return typeMap;

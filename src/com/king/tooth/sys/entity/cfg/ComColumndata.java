@@ -411,7 +411,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		operStatusColumn.setDefaultValue("0");
 		columns.add(operStatusColumn);
 
-		ComColumndata oldInfoJsonColumn = new ComColumndata("oldInfoJson", BuiltinDataType.STRING, 1000);
+		ComColumndata oldInfoJsonColumn = new ComColumndata("old_info_json", BuiltinDataType.STRING, 1000);
 		oldInfoJsonColumn.setName("旧的信息json串");
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);

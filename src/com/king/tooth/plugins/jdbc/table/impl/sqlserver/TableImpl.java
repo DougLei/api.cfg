@@ -141,4 +141,8 @@ public class TableImpl extends AbstractTableHandler{
 	protected void reColumnName(String tableName, String oldColumnName, String newColumnName) {
 		operColumnSql.append("exec sp_rename '").append(tableName).append(".").append(oldColumnName).append("','").append(newColumnName).append("','column';");
 	}
+	
+	public String getReTableNameSql(String newTableName, String oldTableName) {
+		return "exec sp_rename '"+oldTableName+"', '"+newTableName+"'";
+	}
 }
