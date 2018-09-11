@@ -13,7 +13,6 @@ import com.king.tooth.web.entity.resulttype.PageResultEntity;
  * <p>处理递归查询</p>
  * @author DougLei
  */
-@SuppressWarnings("unchecked")
 public final class RecursiveParentResourceByIdToSubResourceProcesser extends RecursiveQueryProcesser {
 	
 	public String getProcesserName() {
@@ -39,7 +38,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 			pageResultEntity = loadPageResultEntity(query);
 		}
 
-		List<Map<String, Object>> dataList = query.list();// 查询
+		List<Map<String, Object>> dataList = executeQuery(query);// 查询
 		// 判断是否要进行递归查询
 		if(builtinRecursiveMethodProcesser.getIsRecursive() && (builtinRecursiveMethodProcesser.getDeepLevel() > 1 || builtinRecursiveMethodProcesser.getDeepLevel() == -1)){
 			queryHql = builtinQueryMethodProcesser.getHql().append(getFromHql())

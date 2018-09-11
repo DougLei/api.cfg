@@ -17,14 +17,13 @@ public final class SingleResourceProcesser extends GetProcesser {
 		return "【Get-TableResource】SingleResourceProcesser";
 	}
 
-	@SuppressWarnings("unchecked")
 	protected boolean doGetProcess() {
 		String queryHql = builtinQueryMethodProcesser.getHql().append(getFromHql())
 															  .append(builtinSortMethodProcesser.getHql())
 															  .toString();
 		Query query = createQuery(queryHql);
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
-		List<Map<String, Object>> dataList = query.list();// 查询
+		List<Map<String, Object>> dataList = executeQuery(query);// 查询
 		dataList = doProcessDataCollection(dataList);
 		doProcessSubListQuery(dataList);
 		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);

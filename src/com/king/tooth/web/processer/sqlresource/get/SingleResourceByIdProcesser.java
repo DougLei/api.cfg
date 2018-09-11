@@ -31,7 +31,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
 		
 		Query query = createQuery(0, querySql);
-		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
+		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataObject(dataList, true);
 		return true;

@@ -178,13 +178,54 @@ public abstract class GetProcesser extends RequestProcesser{
 	// 以下是给子类使用的通用方法
 	
 	/**
+	 * 核心的sql语句
+	 * <p>只给executeQuery()方法中，聚焦id时使用</p>
+	 */
+	private final StringBuilder coreSqlBuffer = new StringBuilder();
+	/**
+	 * 记录核心的sql语句
+	 * <p>只给executeQuery()方法中，聚焦id时使用</p>
+	 * @param coreSql
+	 */
+	protected final void recordCoreSqlBuffer(Object coreSql){
+		if(coreSqlBuffer.length() > 0){
+			coreSqlBuffer.setLength(0);
+		}
+		coreSqlBuffer.append(coreSql);
+	}
+	/**
 	 * 执行查询
 	 * @param query
 	 * @param sqlResultset
 	 * @return
 	 */
-	protected final List<Map<String, Object>> executeList(Query query, List<CfgSqlResultset> sqlResultset) {
+	protected final List<Map<String, Object>> executeQuery(Query query, List<CfgSqlResultset> sqlResultset) {
 		List list = query.list();
+		if(builtinFocusedIdMethodProcesser.getIsUsed()){
+			List<Object> addFocusedIds = builtinFocusedIdMethodProcesser.getAddFocusedIds();
+			if(addFocusedIds != null && addFocusedIds.size() > 0){
+				coreSqlBuffer.append(" where s_.").append(ResourcePropNameConstants.ID).append(" in (");
+				int size = addFocusedIds.size();
+				for (int i=0;i<size;i++) {
+					coreSqlBuffer.append("?,");
+					list.remove(list.size()-1);// 挤掉最后的数据
+				}
+				coreSqlBuffer.setLength(coreSqlBuffer.length()-1);
+				coreSqlBuffer.append(")");
+				
+				if(sqlParameterValues.size() > 0){
+					List<Object> querySqlParameterValues = sqlParameterValues.get(0);
+					if(querySqlParameterValues != null && querySqlParameterValues.size() > 0){
+						addFocusedIds.addAll(0, querySqlParameterValues);
+					}
+				}
+				
+				List addList = HibernateUtil.executeListQueryBySql(coreSqlBuffer.toString(), addFocusedIds);
+				list.addAll(0, addList);
+				coreSqlBuffer.setLength(0);
+			}
+		}
+		
 		List<Map<String, Object>> dataList = sqlQueryResultToMap(list, sqlResultset);
 		return dataList;
 	}

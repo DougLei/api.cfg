@@ -252,5 +252,8 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		if(sqlScriptMethodProcesser != null){
 			sqlScriptMethodProcesser.clearInvalidMemory();
 		}
+		if(focusedIdProcesser != null){
+			focusedIdProcesser.clearInvalidMemory();
+		}
 	}
 }

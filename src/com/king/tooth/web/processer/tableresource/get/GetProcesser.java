@@ -6,6 +6,7 @@ import java.util.Map;
 import org.hibernate.Query;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.query.BuiltinQueryMethodProcesser;
@@ -123,6 +124,35 @@ public abstract class GetProcesser extends RequestProcesser {
 			query.setMaxResults(builtinPagerMethodProcesser.getPageQueryEntity().getMaxResult());
 		}
 		return pageResultEntity;
+	}
+	
+	/**
+	 * 执行查询
+	 * <p>如果有聚焦id，则要处理</p>
+	 * @param query
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected final List<Map<String, Object>> executeQuery(Query query){
+		List<Map<String, Object>> dataList = query.list();
+		if(builtinFocusedIdMethodProcesser.getIsUsed()){
+			List<Object> addFocusedIds = builtinFocusedIdMethodProcesser.getAddFocusedIds();
+			if(addFocusedIds != null && addFocusedIds.size() > 0){
+				StringBuilder hql = new StringBuilder("from " + requestBody.getResourceName() + " where " + ResourcePropNameConstants.ID + " in(");
+				int size = addFocusedIds.size();
+				for (int i=0;i<size;i++) {
+					hql.append("?,");
+					dataList.remove(dataList.size()-1);// 挤掉最后的数据
+				}
+				hql.setLength(hql.length()-1);
+				hql.append(")");
+				
+				List<Map<String, Object>> addDataList = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), addFocusedIds);
+				dataList.addAll(0, addDataList);
+				hql.setLength(0);
+			}
+		}
+		return dataList;
 	}
 
 	/**

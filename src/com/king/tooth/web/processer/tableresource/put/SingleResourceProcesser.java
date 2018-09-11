@@ -43,6 +43,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 				hqlParameterValues.remove(0);
 			}
 			params.clear();
+			updatedJsonObj.put(ResourcePropNameConstants.FOCUSED_OPER, updatedJsonObj.getString(ResourcePropNameConstants.ID) + "_edit");
 		}
 		installResponseBodyForUpdateData(null, json.getJson(), true);
 		return true;

@@ -247,5 +247,8 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		if(sublistMethodProcesser != null){
 			sublistMethodProcesser.clearInvalidMemory();
 		}
+		if(focusedIdProcesser != null){
+			focusedIdProcesser.clearInvalidMemory();
+		}
 	}
 }

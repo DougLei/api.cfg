@@ -14,7 +14,7 @@ public class PageResultEntity implements Serializable {
 	/**
 	 * 该属性后面指定资源标识
 	 */
-	private String focusedId;
+	private String[] focusedId;
 	
 	/**
 	 * 一页显示的数量
@@ -54,10 +54,10 @@ public class PageResultEntity implements Serializable {
 	private List<? extends Object> resultDatas;
 	
 	
-	public String getFocusedId() {
+	public String[] getFocusedId() {
 		return focusedId;
 	}
-	public void setFocusedId(String focusedId) {
+	public void setFocusedId(String[] focusedId) {
 		this.focusedId = focusedId;
 	}
 	public List<? extends Object> getResultDatas() {

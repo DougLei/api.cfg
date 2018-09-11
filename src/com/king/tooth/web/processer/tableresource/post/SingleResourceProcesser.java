@@ -1,6 +1,7 @@
 package com.king.tooth.web.processer.tableresource.post;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.column.code.rule.ColumnCodeRuleUtil;
 
 /**
@@ -15,6 +16,7 @@ public final class SingleResourceProcesser extends PostProcesser {
 			data = json.get(i);
 			ColumnCodeRuleUtil.setFinalCodeVal(data, i, requestBody.getResourcePropCodeRule());
 			saveData(requestBody.getRouteBody().getResourceName(), data);
+			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_add");
 		}
 		
 		installResponseBodyForSaveData(null, json.getJson(), true);

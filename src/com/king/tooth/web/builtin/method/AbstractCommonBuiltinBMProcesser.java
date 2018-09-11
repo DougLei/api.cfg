@@ -58,7 +58,8 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		String rows = requestUrlParams.remove("_rows");
 		String page = requestUrlParams.remove("_page");// 这四个参数的内容，需要理清楚
 		if((StrUtils.notEmpty(limit) && StrUtils.notEmpty(start)) || (StrUtils.notEmpty(rows) && StrUtils.notEmpty(page))){
-			pagerProcesser = new BuiltinPagerMethodProcesser(limit, start, rows, page);
+			String focusedPage = requestUrlParams.remove("_focusedPage");
+			pagerProcesser = new BuiltinPagerMethodProcesser(limit, start, rows, page, focusedPage);
 		}
 	}
 	

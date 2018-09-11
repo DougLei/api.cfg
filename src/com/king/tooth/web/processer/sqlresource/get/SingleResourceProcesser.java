@@ -29,7 +29,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 		
 		Query query = createQuery(0, querySql);
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
-		List<Map<String, Object>> dataList = executeList(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
+		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);
 		return true;
