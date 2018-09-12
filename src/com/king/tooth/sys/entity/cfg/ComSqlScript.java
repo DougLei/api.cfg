@@ -9,7 +9,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.annotation.Entity;
+import com.king.tooth.annotation.Table;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
@@ -36,7 +36,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  * @author StoneKing
  */
 @SuppressWarnings("serial")
-@Entity
+@Table
 public class ComSqlScript extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
 	/**
 	 * 数据库类型

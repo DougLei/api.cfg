@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.annotation.Entity;
+import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
 import com.king.tooth.sys.entity.ITable;
@@ -19,7 +19,7 @@ import com.king.tooth.sys.entity.dm.DmPublishInfo;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-@Entity
+@Table
 public class SysResource extends AbstractSysResource implements ITable{
 	
 	/**

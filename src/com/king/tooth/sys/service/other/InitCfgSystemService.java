@@ -55,6 +55,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
+import com.king.tooth.sys.entity.ws.WsPushMsgInfo;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -144,6 +145,7 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new CfgColumnCodeRule().toCreateTable());
 		tables.add(new CfgColumnCodeRuleDetail().toCreateTable());
 		tables.add(new CfgSqlResultset().toCreateTable());
+		tables.add(new WsPushMsgInfo().toCreateTable());
 		return tables;
 	}
 	

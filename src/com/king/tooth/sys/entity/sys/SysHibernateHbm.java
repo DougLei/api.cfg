@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.annotation.Entity;
+import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.AbstractSysResource;
@@ -21,7 +21,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-@Entity
+@Table
 public class SysHibernateHbm extends AbstractSysResource implements ITable, IPublish{
 	
 	/**

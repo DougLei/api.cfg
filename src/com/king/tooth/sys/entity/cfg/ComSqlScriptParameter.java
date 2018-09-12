@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.annotation.Entity;
+import com.king.tooth.annotation.Table;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
@@ -23,7 +23,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-@Entity
+@Table
 public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis, Cloneable{
 	/**
 	 * 关联的sql脚本id

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.king.tooth.annotation.Entity;
+import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -18,7 +18,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-@Entity
+@Table
 public class SysPosition extends BasicEntity implements ITable, IEntity{
 	
 	/**

@@ -55,6 +55,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
+import com.king.tooth.sys.entity.ws.WsPushMsgInfo;
 import com.king.tooth.sys.service.cfg.CfgDatabaseService;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.sys.service.cfg.ComProjectModuleService;
@@ -207,4 +208,7 @@ public class BuiltinObjectInstance {
 	public static final SysUserRoleLinks sysUserRoleLinks = new SysUserRoleLinks();
 	public static final SysUserDeptLinks sysUserDeptLinks = new SysUserDeptLinks();
 	public static final SysUserPositionLinks sysUserPositionLinks = new SysUserPositionLinks();
+	
+	// ws(websocket)
+	public static final WsPushMsgInfo wsPushMsgInfo = new WsPushMsgInfo();
 }
