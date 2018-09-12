@@ -1,4 +1,4 @@
-package com.king.tooth.cache.code.resource;
+package com.king.tooth.sys.code.resource;
 
 import java.lang.reflect.Method;
 import java.util.Map;

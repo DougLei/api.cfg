@@ -44,6 +44,7 @@ import com.king.tooth.sys.entity.sys.SysOrg;
 import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.SysPosition;
+import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.SysRole;
@@ -55,7 +56,6 @@ import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
-import com.king.tooth.sys.entity.ws.WsPushMsgInfo;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -145,7 +145,7 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new CfgColumnCodeRule().toCreateTable());
 		tables.add(new CfgColumnCodeRuleDetail().toCreateTable());
 		tables.add(new CfgSqlResultset().toCreateTable());
-		tables.add(new WsPushMsgInfo().toCreateTable());
+		tables.add(new SysPushMessageInfo().toCreateTable());
 		return tables;
 	}
 	

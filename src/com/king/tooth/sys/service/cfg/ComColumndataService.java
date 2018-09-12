@@ -4,6 +4,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -109,23 +110,32 @@ public class ComColumndataService extends AbstractService{
 	public String deleteColumn(String columnIds) {
 		String[] idArr = columnIds.split(",");
 		
-		StringBuilder hql = new StringBuilder("update ComColumndata set operStatus="+ComColumndata.DELETED+" where id ");
-		if(idArr.length ==1){
-			hql.append("= '").append(idArr[0]).append("'");
-		}else if(idArr.length > 1){
-			hql.append("in (");
-			for (String columnId : idArr) {
-				hql.append("'").append(columnId).append("',");
-			}
-			hql.setLength(hql.length()-1);
-			hql.append(")");
-		}else{
-			return "删除数据时，传入的id数据数组长度小于1";
-		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, hql.toString());
-		hql.setLength(0);
+		ComColumndata column = getObjectById(idArr[0], ComColumndata.class);
+		ComTabledata table = getObjectById(column.getTableId(), ComTabledata.class);
 		
-		modifyTableIsBuildModel(null, idArr[0], 0);
+		if(table.getIsCreated() == 0){// 表还没有建模，这里就直接删除
+			deleteDataById("ComColumndata", columnIds);
+		}else if(table.getIsCreated() == 1){// 表已经建模，就修改operStatus的值为2
+			StringBuilder hql = new StringBuilder("update ComColumndata set operStatus="+ComColumndata.DELETED+" where id ");
+			if(idArr.length ==1){
+				hql.append("= '").append(idArr[0]).append("'");
+			}else if(idArr.length > 1){
+				hql.append("in (");
+				for (String columnId : idArr) {
+					hql.append("'").append(columnId).append("',");
+				}
+				hql.setLength(hql.length()-1);
+				hql.append(")");
+			}else{
+				return "删除数据时，传入的id数据数组长度小于1";
+			}
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, hql.toString());
+			hql.setLength(0);
+			
+			modifyTableIsBuildModel(null, idArr[0], 0);
+		}else{
+			throw new IllegalArgumentException("删除列时，相关联的表的isCreated字段值异常，值为["+table.getIsCreated()+"]，请联系后台系统开发人员");
+		}
 		return null;
 	}
 	

@@ -9,7 +9,7 @@ import com.king.tooth.util.JsonUtil;
  * 资源信息对象
  * @author DougLei
  */
-public class ResourceInfoEntity {
+public class ResourceInfo {
 	
 	/**
 	 * 资源名

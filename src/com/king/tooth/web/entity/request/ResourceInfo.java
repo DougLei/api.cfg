@@ -1,8 +1,8 @@
 package com.king.tooth.web.entity.request;
 
-import com.king.tooth.cache.code.resource.CodeResourceMapping;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.sys.SysResource;
@@ -57,8 +57,8 @@ public class ResourceInfo {
 		RouteBody routeBody = requestBody.getRouteBody();
 		String requestMethod = requestBody.getRequestMethod();
 		
-		codeResourceKey = CodeResourceMapping.getCodeResourceKey(routeBody.getResourceName(), requestMethod, routeBody.getActionName());
-		if(routeBody.isAction() || CodeResourceMapping.isCodeResource(codeResourceKey)){
+		codeResourceKey = CodeResourceProcesser.getCodeResourceKey(routeBody.getResourceName(), requestMethod, routeBody.getActionName());
+		if(routeBody.isAction() || CodeResourceProcesser.isCodeResource(codeResourceKey)){
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
 				throw new IllegalArgumentException("系统目前不支持处理[主子/递归]方式调用code资源");
 			}

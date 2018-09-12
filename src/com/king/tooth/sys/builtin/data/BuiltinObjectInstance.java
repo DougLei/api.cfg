@@ -16,6 +16,7 @@ import com.king.tooth.sys.controller.cfg.ComTabledataController;
 import com.king.tooth.sys.controller.other.SystemToolsController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
 import com.king.tooth.sys.controller.sys.SysPermissionController;
+import com.king.tooth.sys.controller.sys.SysPushMessageInfoController;
 import com.king.tooth.sys.controller.sys.SysUserController;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
@@ -43,6 +44,7 @@ import com.king.tooth.sys.entity.sys.SysOrg;
 import com.king.tooth.sys.entity.sys.SysPermission;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.SysPosition;
+import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.SysRole;
@@ -55,7 +57,6 @@ import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
-import com.king.tooth.sys.entity.ws.WsPushMsgInfo;
 import com.king.tooth.sys.service.cfg.CfgDatabaseService;
 import com.king.tooth.sys.service.cfg.ComColumndataService;
 import com.king.tooth.sys.service.cfg.ComProjectModuleService;
@@ -68,6 +69,7 @@ import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
 import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.sys.service.sys.SysFileService;
 import com.king.tooth.sys.service.sys.SysPermissionService;
+import com.king.tooth.sys.service.sys.SysPushMessageInfoService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.sys.service.sys.SysUserService;
 import com.king.tooth.util.DateUtil;
@@ -143,6 +145,7 @@ public class BuiltinObjectInstance {
 	public static final SysUserController userController = new SysUserController();
 	public static final SysPermissionController permissionController = new SysPermissionController();
 	public static final SystemToolsController systemToolsController = new SystemToolsController();
+	public static final SysPushMessageInfoController sysPushMessageInfoController = new SysPushMessageInfoController();
 	
 	//service
 	public static final ComColumndataService columnService = new ComColumndataService();
@@ -159,6 +162,7 @@ public class BuiltinObjectInstance {
 	public static final SysPermissionService permissionService = new SysPermissionService();
 	public static final SysFileService fileService = new SysFileService();
 	public static final SystemToolsService systemToolsService = new SystemToolsService();
+	public static final SysPushMessageInfoService sysPushMessageInfoService = new SysPushMessageInfoService();
 	
 	
 	// -------------------------------------------------------
@@ -203,12 +207,10 @@ public class BuiltinObjectInstance {
 	public static final SysHibernateHbm sysHibernateHbm = new SysHibernateHbm();
 	public static final SysUserGroup sysUserGroup = new SysUserGroup();
 	public static final SysUserGroupDetail sysUserGroupDetail = new SysUserGroupDetail();
+	public static final SysPushMessageInfo sysPushMessageInfo = new SysPushMessageInfo();
 	
 	public static final SysDataLinks sysDataLinks = new SysDataLinks();
 	public static final SysUserRoleLinks sysUserRoleLinks = new SysUserRoleLinks();
 	public static final SysUserDeptLinks sysUserDeptLinks = new SysUserDeptLinks();
 	public static final SysUserPositionLinks sysUserPositionLinks = new SysUserPositionLinks();
-	
-	// ws(websocket)
-	public static final WsPushMsgInfo wsPushMsgInfo = new WsPushMsgInfo();
 }

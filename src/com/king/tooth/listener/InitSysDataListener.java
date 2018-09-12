@@ -9,8 +9,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.cache.code.resource.CodeResourceMapping;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.sys.code.resource.CodeResourceMapping;
 import com.king.tooth.sys.service.other.InitCfgSystemService;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
 import com.king.tooth.web.processer.ProcesserConfig;
@@ -40,7 +40,7 @@ public class InitSysDataListener implements ServletContextListener {
 		BuiltinQueryCondFuncUtil.initBuiltinQueryCondFuncConfig();
 		
 		// 初始化系统代码资源映射
-		CodeResourceMapping.initBuiltinQueryCondFuncConfig();
+		CodeResourceMapping.initCodeResourceMapping();
 		
 		// 初始化系统核心数据信息
 		initSysCoreDataInfos();

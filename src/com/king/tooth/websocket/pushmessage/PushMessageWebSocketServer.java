@@ -1,4 +1,4 @@
-package com.king.tooth.websocket;
+package com.king.tooth.websocket.pushmessage;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,23 +15,20 @@ import javax.websocket.server.ServerEndpoint;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * webSocket的服务端
+ * 推送消息的webSocket服务端
  * @author DougLei
  */
-@ServerEndpoint("/WebSocketServer/{username}")  
-public class WebSocketServer {
+@ServerEndpoint("/message/push/{userId}/{token}")  
+public class PushMessageWebSocketServer {
 	
 	private static int onlineCount = 0; 
-    private static Map<String, WebSocketServer> clients = new ConcurrentHashMap<String, WebSocketServer>(); 
-    private Session session; 
-    private String username; 
+    private static Map<String, PushMessageClient> clients = new ConcurrentHashMap<String, PushMessageClient>(); 
        
     @OnOpen 
     public void onOpen(@PathParam("username") String username, Session session) throws IOException { 
-   
-        this.username = username; 
-        this.session = session; 
-           
+    	
+    	
+    	
         addOnlineCount(); 
         clients.put(username, this);
         System.out.println("已连接");
@@ -62,14 +59,14 @@ public class WebSocketServer {
     } 
    
     public void sendMessageTo(String message, String To) throws IOException { 
-        for (WebSocketServer item : clients.values()) { 
+        for (PushMessageWebSocketServer item : clients.values()) { 
             if (item.username.equals(To) ) 
                 item.session.getAsyncRemote().sendText(message); 
         } 
     } 
        
     public void sendMessageAll(String message) throws IOException { 
-        for (WebSocketServer item : clients.values()) { 
+        for (PushMessageWebSocketServer item : clients.values()) { 
             item.session.getAsyncRemote().sendText(message); 
         } 
     } 
@@ -79,14 +76,14 @@ public class WebSocketServer {
     } 
    
     public static synchronized void addOnlineCount() { 
-    	WebSocketServer.onlineCount++; 
+    	PushMessageWebSocketServer.onlineCount++; 
     } 
    
     public static synchronized void subOnlineCount() { 
-    	WebSocketServer.onlineCount--; 
+    	PushMessageWebSocketServer.onlineCount--; 
     } 
    
-    public static synchronized Map<String, WebSocketServer> getClients() { 
+    public static synchronized Map<String, PushMessageWebSocketServer> getClients() { 
         return clients; 
     } 
 }

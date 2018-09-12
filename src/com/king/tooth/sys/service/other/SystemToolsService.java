@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.other.ResourceInfoEntity;
+import com.king.tooth.sys.entity.other.ResourceInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.thread.CurrentThreadContext;
 import com.king.tooth.util.NamingProcessUtil;
@@ -39,7 +39,7 @@ public class SystemToolsService {
 			return "系统中没有查询到指定名称["+name+"]的资源";
 		}
 		Integer resourceType = resource.getResourceType();
-		ResourceInfoEntity resourceInfo = new ResourceInfoEntity();
+		ResourceInfo resourceInfo = new ResourceInfo();
 		resourceInfo.setResourceName(resource.getResourceName());
 		resourceInfo.setResourceType(resourceType);
 		resourceInfo.setReqResourceMethod(resource.getReqResourceMethod().toUpperCase());
@@ -60,7 +60,7 @@ public class SystemToolsService {
 	 * @param resourceInfo
 	 */
 	@SuppressWarnings("unchecked")
-	private void setTableResourceStruct(String tableResourceId, ResourceInfoEntity resourceInfo) {
+	private void setTableResourceStruct(String tableResourceId, ResourceInfo resourceInfo) {
 		List<Object[]> columns = HibernateUtil.executeListQueryByHqlArr(null, null, "select propName,columnType,name,comments  from ComColumndata where tableId=?", tableResourceId);
 		if(columns == null || columns.size() == 0){
 			resourceInfo.setMsg("名为["+resourceInfo.getResourceName()+"]的表资源不存在结构信息，请检查配置的列信息");
@@ -79,7 +79,7 @@ public class SystemToolsService {
 	 * @param resourceInfo
 	 */
 	@SuppressWarnings("unchecked")
-	private void setSqlResourceStruct(String sqlResourceId, ResourceInfoEntity resourceInfo) {
+	private void setSqlResourceStruct(String sqlResourceId, ResourceInfo resourceInfo) {
 		List<Object[]> sqlParams = HibernateUtil.executeListQueryByHqlArr(null, null, "select parameterName,parameterDataType from ComSqlScriptParameter where sqlScriptId=? and parameterFrom=0", sqlResourceId);
 		if(sqlParams == null || sqlParams.size() == 0){
 			resourceInfo.setMsg("名为["+resourceInfo.getResourceName()+"]的sql脚本资源不存在结构信息，没有任何参数，可以直接调用");

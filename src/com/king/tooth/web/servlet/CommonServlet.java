@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.king.tooth.cache.code.resource.CodeResourceMapping;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.IRequestProcesser;
@@ -28,7 +28,7 @@ public class CommonServlet extends HttpServlet implements Serializable{
 		
 		ResponseBody responseBody = null;
 		if(requestBody.getResourceInfo().isCodeResource()){
-			Object object = CodeResourceMapping.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData(), requestBody.getRequestUrlParams());
+			Object object = CodeResourceProcesser.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData(), requestBody.getRequestUrlParams());
 			if(object instanceof String){
 				responseBody = new ResponseBody(object.toString());
 			}else{
