@@ -111,7 +111,7 @@ public class SysAccountService extends AbstractService{
 			accountOnlineStatus.setMessage("您的账号已过期，请联系管理员");
 			return accountOnlineStatus;
 		}
-		if(!loginAccount.getLoginPwd().equals(CryptographyUtil.encodeMd5AccountPassword(password, loginAccount.getLoginPwdKey()))){
+		if(!loginAccount.getLoginPwd().equals(CryptographyUtil.encodeMd5(password, loginAccount.getLoginPwdKey()))){
 			accountOnlineStatus.setMessage("帐号或密码错误，请重新输入");
 			return accountOnlineStatus;
 		}
@@ -439,7 +439,7 @@ public class SysAccountService extends AbstractService{
 				account.setLoginPwd(SysConfig.getSystemConfig("account.default.pwd"));
 			}
 			account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-			account.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(account.getLoginPwd(), account.getLoginPwdKey()));
+			account.setLoginPwd(CryptographyUtil.encodeMd5(account.getLoginPwd(), account.getLoginPwdKey()));
 			if(account.getValidDate() == null){
 				account.setValidDate(BuiltinObjectInstance.validDate);
 			}

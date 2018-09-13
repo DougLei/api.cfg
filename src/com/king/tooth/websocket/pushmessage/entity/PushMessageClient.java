@@ -1,9 +1,11 @@
-package com.king.tooth.websocket.pushmessage;
+package com.king.tooth.websocket.pushmessage.entity;
+
+import java.util.Date;
 
 import javax.websocket.Session;
 
 /**
- * 推送消息的客户端
+ * 推送消息的客户端对象
  * @author DougLei
  */
 public class PushMessageClient {
@@ -12,6 +14,12 @@ public class PushMessageClient {
 	 * 与客户端的连接对象
 	 */
 	private Session session;
+	
+	/**
+	 * 连接上的时间
+	 * <p>即何时连接上</p>
+	 */
+	private Date connectDate;
 
 	public PushMessageClient(Session session) {
 		this.session = session;
@@ -24,5 +32,11 @@ public class PushMessageClient {
 	}
 	public void setSession(Session session) {
 		this.session = session;
+	}
+	public Date getConnectDate() {
+		return connectDate;
+	}
+	public void setConnectDate(Date connectDate) {
+		this.connectDate = connectDate;
 	}
 }

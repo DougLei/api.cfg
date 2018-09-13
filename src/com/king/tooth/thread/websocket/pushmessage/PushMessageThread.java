@@ -6,12 +6,17 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
 import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
  * 消息推送的线程
  * @author DougLei
  */
 public class PushMessageThread extends Thread{
+	/**
+	 * 线程名前缀
+	 */
+	private static final String threadNamePrefix = "PushMessage_";
 	
 	/**
 	 * 要推送的信息集合
@@ -23,6 +28,8 @@ public class PushMessageThread extends Thread{
 	}
 
 	public void start() {
+		setName(threadNamePrefix + ResourceHandlerUtil.getIdentity());
+		
 		System.out.println(getName());
 		
 		SysPushMessageInfo basicPushMsgInfo = new SysPushMessageInfo(

@@ -1,8 +1,6 @@
 package com.king.tooth.websocket.pushmessage;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -12,78 +10,98 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
-import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.websocket.pushmessage.entity.PushMessageClient;
 
 /**
  * 推送消息的webSocket服务端
  * @author DougLei
  */
-@ServerEndpoint("/message/push/{customerId}/{token}/{clientId}")  
+@ServerEndpoint("/websocket/message/push/{customerToken}/{clientIdentity}")  
 public class PushMessageWebSocketServer {
-	
-	private static int onlineCount = 0; 
-    private static Map<String, PushMessageClient> clients = new ConcurrentHashMap<String, PushMessageClient>(); 
-       
+    
+	/**
+     * 建立连接
+     * @param customerToken 票，客户的(用户名+密码)后再md5加密的值
+     * @param clientIdentity 客户端的唯一标示，一般传入一个绝对唯一的值，例如uuid
+     * @param session
+     * @throws IOException
+     */
     @OnOpen 
-    public void onOpen(@PathParam("username") String username, Session session) throws IOException { 
-    	
-    	
-    	
-        addOnlineCount(); 
-        clients.put(username, this);
-        System.out.println("已连接");
+    public void onOpen(@PathParam("customerToken")String customerToken, @PathParam("clientIdentity")String clientIdentity, Session session) throws IOException {
+//    	Customer customer = CustomerMapping.getCustomer(customerToken);
+//    	if(customer != null){
+    		addOnlineCount(); 
+    		PushMessageClientMapping.put(clientIdentity, new PushMessageClient(session));
+//    		Log4jUtil.debug("客户{}中，clientIdentity为{}的连接上消息推送服务器", customer.getRealName(), clientIdentity);
+//    	}else{
+//    		session.close();
+//    		Log4jUtil.warn("不存在customerToken值为{}的客户，请注意可能是恶意请求", customerToken);
+//    	}
     } 
    
+    /**
+     * 关闭连接
+     * <p>在调用session.close()的时候，会调用到该方法</p>
+     * @param clientIdentity
+     * @throws IOException
+     */
     @OnClose 
-    public void onClose() throws IOException { 
-        clients.remove(username); 
+    public void onClose(@PathParam("clientIdentity")String clientIdentity) throws IOException { 
+    	PushMessageClientMapping.remove(clientIdentity);
         subOnlineCount(); 
     } 
    
-    @OnMessage 
-    public void onMessage(String message) throws IOException { 
-   
-        JSONObject jsonTo = JSONObject.parseObject(message);
-        String mes = (String) jsonTo.get("message");
-         
-        if (!jsonTo.get("To").equals("All")){ 
-            sendMessageTo(mes, jsonTo.get("To").toString()); 
-        }else{ 
-            sendMessageAll("给所有人"); 
-        } 
-    } 
-   
+    /**
+     * 当连接出现异常时
+     * @param session
+     * @param error
+     */
     @OnError 
     public void onError(Session session, Throwable error) { 
         error.printStackTrace(); 
+        Log4jUtil.error("消息推送服务器的连接出现异常信息：{}", error.getMessage());
+    }
+    
+    /**
+     * 发送消息
+     * <p>该方法可以实现在线聊天的功能</p>
+     * @param message
+     * @throws IOException
+     */
+    @OnMessage 
+    public int onMessage(String message) throws IOException { 
+        return 1; 
     } 
    
-    public void sendMessageTo(String message, String To) throws IOException { 
-        for (PushMessageWebSocketServer item : clients.values()) { 
-            if (item.username.equals(To) ) 
-                item.session.getAsyncRemote().sendText(message); 
-        } 
+    /**
+     * 推送消息
+     * @param clientIdentity
+     * @param message
+     * @throws IOException
+     */
+    public static int sendMessage(String clientIdentity, String message) {
+    	PushMessageClient client = PushMessageClientMapping.get(clientIdentity);
+    	if(client == null){
+    		Log4jUtil.debug("clientIdentity为{}的客户端不在线，推送消息失败", clientIdentity);
+    		return 2;
+    	}else{
+    		client.getSession().getAsyncRemote().sendText(message);
+    		return 1;
+    	}
     } 
-       
-    public void sendMessageAll(String message) throws IOException { 
-        for (PushMessageWebSocketServer item : clients.values()) { 
-            item.session.getAsyncRemote().sendText(message); 
-        } 
-    } 
+    
+    /**
+     * 增加一个在线的数量
+     */
+    private static synchronized void addOnlineCount() { 
+    	PushMessageClientMapping.onlineCount++; 
+    }
    
-    public static synchronized int getOnlineCount() { 
-        return onlineCount; 
-    } 
-   
-    public static synchronized void addOnlineCount() { 
-    	PushMessageWebSocketServer.onlineCount++; 
-    } 
-   
-    public static synchronized void subOnlineCount() { 
-    	PushMessageWebSocketServer.onlineCount--; 
-    } 
-   
-    public static synchronized Map<String, PushMessageWebSocketServer> getClients() { 
-        return clients; 
-    } 
+    /**
+     * 减少一个在线的数量
+     */
+    private static synchronized void subOnlineCount() { 
+    	PushMessageClientMapping.onlineCount--; 
+	}
 }

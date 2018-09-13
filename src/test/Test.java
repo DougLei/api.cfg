@@ -1,5 +1,8 @@
 package test;
 
+import com.king.tooth.util.CryptographyUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
+
 
 public class Test {
 	
@@ -11,6 +14,8 @@ public class Test {
 		
 		System.out.println(99/100);
 		System.out.println(99%100);
+		
+		System.out.println(CryptographyUtil.encodeMd5("smartone", "1QaZ2wSx,."));
 	}
 }
  

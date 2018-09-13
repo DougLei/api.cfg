@@ -219,7 +219,7 @@ public class InitCfgSystemService extends AbstractService{
 		admin.setType(1);
 		admin.setLoginName("admin");
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
+		admin.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(BuiltinObjectInstance.validDate);
 		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourcePropNameConstants.ID);
 	
@@ -229,7 +229,7 @@ public class InitCfgSystemService extends AbstractService{
 		normal.setType(2);
 		normal.setLoginName("normal");
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		normal.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
+		normal.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		normal.setValidDate(BuiltinObjectInstance.validDate);
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
@@ -239,7 +239,7 @@ public class InitCfgSystemService extends AbstractService{
 		developer.setType(3);
 		developer.setLoginName("developer");
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		developer.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
+		developer.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
 		developer.setValidDate(BuiltinObjectInstance.validDate);
 		HibernateUtil.saveObject(developer, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
@@ -426,7 +426,7 @@ public class InitCfgSystemService extends AbstractService{
 		admin.setId(ResourceHandlerUtil.getIdentity());
 		admin.setType(1);
 		admin.setLoginName("admin");
-		admin.setLoginPwd(CryptographyUtil.encodeMd5AccountPassword(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
+		admin.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(BuiltinObjectInstance.validDate);
 		HibernateUtil.saveObject(admin.turnToPublishBasicData(ISysResource.APP_PLATFORM), adminAccountId);
 	}

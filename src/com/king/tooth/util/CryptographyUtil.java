@@ -46,14 +46,4 @@ public class CryptographyUtil {
 	public static String encodeMd5(String str){
 		return new Md5Hash(str).toString();
 	}
-	
-	/**
-	 * 给系统账户的密码加密
-	 * @param password
-	 * @param passwordKey
-	 * @return
-	 */
-	public static String encodeMd5AccountPassword(String password, String passwordKey){
-		return encodeMd5(password, password + passwordKey);
-	}
 }

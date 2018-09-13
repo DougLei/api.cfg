@@ -10,7 +10,6 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
-import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.websocket.pushmessage.PushMessageThread;
 
 /**

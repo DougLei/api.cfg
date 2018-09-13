@@ -8,12 +8,18 @@ import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
  * 记录日志的线程
  * @author DougLei
  */
 public class RecordLogThread extends Thread{
+	/**
+	 * 线程名前缀
+	 */
+	private static final String threadNamePrefix = "RecordLog_";
+	
 	/**
 	 * 处理log的session对象
 	 */
@@ -26,6 +32,8 @@ public class RecordLogThread extends Thread{
 	public RecordLogThread() {
 	}
 	public RecordLogThread(Session logSession, JSONArray logs) {
+		setName(threadNamePrefix + ResourceHandlerUtil.getIdentity());
+		
 		this.logSession = logSession;
 		this.logs = logs;
 	}
