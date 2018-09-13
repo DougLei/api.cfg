@@ -1,7 +1,6 @@
 package test;
 
 import com.king.tooth.util.CryptographyUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
 
 
 public class Test {
