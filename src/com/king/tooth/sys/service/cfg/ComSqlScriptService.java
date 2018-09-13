@@ -16,7 +16,7 @@ import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.service.AbstractPublishService;
 import com.king.tooth.sys.service.sys.SysResourceService;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;

@@ -16,7 +16,7 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -33,7 +33,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
+		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
 			if(tables.size() == 1){
@@ -47,6 +47,7 @@ public class ComTabledataController extends AbstractPublishController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			tables.clear();
 		}
 		return getResultObject();
 	}
@@ -58,7 +59,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class);
+		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
 			if(tables.size() == 1){
@@ -72,6 +73,7 @@ public class ComTabledataController extends AbstractPublishController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			tables.clear();
 		}
 		return getResultObject();
 	}

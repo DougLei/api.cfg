@@ -10,7 +10,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.sys.entity.sys.SysReqLog;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 
 /**
  * 记录请求日志的过滤器

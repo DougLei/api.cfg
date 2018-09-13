@@ -18,7 +18,7 @@ import com.alibaba.fastjson.JSONObject;
  * 推送消息的webSocket服务端
  * @author DougLei
  */
-@ServerEndpoint("/message/push/{userId}/{token}")  
+@ServerEndpoint("/message/push/{customerId}/{token}/{clientId}")  
 public class PushMessageWebSocketServer {
 	
 	private static int onlineCount = 0; 

@@ -104,8 +104,14 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	private String positionId;
 	/**
 	 * 主要所属的组织id
+	 * <p>即所属主要部门关联的组织id</p>
 	 */
 	private String orgId;
+	/**
+	 * 是否被删除
+	 * <p>逻辑删除，默认值为0</p>
+	 */
+	private Integer isDelete;
 	
 	// ---------------------------------------------------------------------------
 
@@ -241,6 +247,12 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	public void setIsCreateAccount(int isCreateAccount) {
 		this.isCreateAccount = isCreateAccount;
 	}
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
 	
 	
 	public ComTabledata toCreateTable() {
@@ -252,7 +264,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(27);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(28);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinDataType.STRING, 32);
 		accountIdColumn.setName("关联的账户主键");
@@ -373,9 +385,15 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		
 		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinDataType.STRING, 32);
 		orgIdColumn.setName("主要所属的组织id");
-		orgIdColumn.setComments("主要所属的组织id");
+		orgIdColumn.setComments("即所属主要部门关联的组织id");
 		orgIdColumn.setOrderCode(20);
 		columns.add(orgIdColumn);
+		
+		ComColumndata isDeleteColumn = new ComColumndata("is_delete", BuiltinDataType.INTEGER, 1);
+		isDeleteColumn.setName("是否被删除");
+		isDeleteColumn.setComments("逻辑删除，默认值为0");
+		isDeleteColumn.setDefaultValue("0");
+		columns.add(isDeleteColumn);
 		
 		table.setColumns(columns);
 		return table;

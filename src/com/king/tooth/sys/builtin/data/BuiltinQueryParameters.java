@@ -1,6 +1,6 @@
 package com.king.tooth.sys.builtin.data;
 
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**

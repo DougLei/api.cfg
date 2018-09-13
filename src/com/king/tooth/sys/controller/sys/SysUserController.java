@@ -30,7 +30,7 @@ public class SysUserController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<SysUser> users = getDataInstanceList(ijson, SysUser.class);
+		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
@@ -44,6 +44,7 @@ public class SysUserController extends AbstractController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			users.clear();
 		}
 		return getResultObject();
 	}
@@ -55,7 +56,7 @@ public class SysUserController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<SysUser> users = getDataInstanceList(ijson, SysUser.class);
+		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		analysisResourceProp(users);
 		if(analysisResult == null){
 			if(users.size() == 1){
@@ -69,6 +70,7 @@ public class SysUserController extends AbstractController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			users.clear();
 		}
 		return getResultObject();
 	}
@@ -103,7 +105,7 @@ public class SysUserController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object openAccount(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<SysUser> users = getDataInstanceList(ijson, SysUser.class);
+		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		if(users.size() == 1){
 			resultObject = BuiltinObjectInstance.userService.openAccount(users.get(0));
 		}else{
@@ -115,6 +117,7 @@ public class SysUserController extends AbstractController{
 				resultJsonArray.add((JSONObject) resultObject);
 			}
 		}
+		users.clear();
 		return getResultObject();
 	}
 	

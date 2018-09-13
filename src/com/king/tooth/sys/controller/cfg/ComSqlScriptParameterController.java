@@ -28,10 +28,11 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
+		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
 			resultObject = BuiltinObjectInstance.sqlScriptService.saveSqlScriptParameter(sqlScriptParameters);
+			sqlScriptParameters.clear();
 		}
 		return getResultObject();
 	}
@@ -43,10 +44,11 @@ public class ComSqlScriptParameterController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class);
+		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
 			resultObject = BuiltinObjectInstance.sqlScriptService.updateSqlScriptParameter(sqlScriptParameters);
+			sqlScriptParameters.clear();
 		}
 		return getResultObject();
 	}

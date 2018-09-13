@@ -20,7 +20,7 @@ import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -96,7 +96,7 @@ public class SysAccountService extends AbstractService{
 			return accountOnlineStatus;
 		}
 		
-		String queryAccountHql = "from SysAccount where (loginName = ? or tel = ? or email = ?) and customerId = ?";
+		String queryAccountHql = "from SysAccount where (loginName = ? or tel = ? or email = ?) and customerId = ? and isDelete=0";
 		SysAccount loginAccount = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccount.class, queryAccountHql, accountName, accountName, accountName, CurrentThreadContext.getCustomerId());
 		
 		if(loginAccount == null){
@@ -142,7 +142,7 @@ public class SysAccountService extends AbstractService{
 	 */
 	private void processAccountAndUserRelation(SysAccountOnlineStatus accountOnlineStatus, String accountId, String accountName) {
 		accountOnlineStatus.setAccountId(accountId);
-		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
+		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ? and customerId=? and isDelete=0", accountId, CurrentThreadContext.getCustomerId());
 		
 		if(loginUser == null){
 			accountOnlineStatus.setAccountName(accountName);
@@ -382,7 +382,7 @@ public class SysAccountService extends AbstractService{
 	 * @return 
 	 */
 	private String validWorkNoIsExists(String loginName) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=?", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=? and isDelete=0", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在登录名为["+loginName+"]的账户";
 		}
@@ -398,7 +398,7 @@ public class SysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(email)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=? and isDelete=0", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的账户";
 		}
@@ -414,7 +414,7 @@ public class SysAccountService extends AbstractService{
 		if(StrUtils.isEmpty(tel)){
 			return null;
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=? and isDelete=0", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的账户";
 		}
@@ -478,11 +478,18 @@ public class SysAccountService extends AbstractService{
 	 * @param accountId
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public Object deleteAccount(String accountId) {
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where " + ResourcePropNameConstants.ID+"=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId =null  where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
-		
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where " + ResourcePropNameConstants.ID+"=? and customerId=?", new Date(), accountId, CurrentThreadContext.getCustomerId());
+		deleteTokenInfoByAccountId(accountId);
+		return null;
+	}
+
+	/**
+	 * 删除指定账户id的token信息
+	 * @param accountId
+	 */
+	@SuppressWarnings("unchecked")
+	public void deleteTokenInfoByAccountId(String accountId) {
 		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr(null, null, "select token from SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
 		if(tokens != null && tokens.size() > 0){
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
@@ -492,6 +499,5 @@ public class SysAccountService extends AbstractService{
 			}
 			tokens.clear();
 		}
-		return null;
 	}
 }

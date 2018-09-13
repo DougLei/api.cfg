@@ -1,4 +1,4 @@
-package com.king.tooth.util;
+package com.king.tooth.util.websocket;
 
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 
@@ -11,11 +11,14 @@ public class PushMessageUtil {
 	/**
 	 * 推送消息
 	 * @param pushMsgInfo
+	 * @return 推送结果的编码
 	 */
-	public static void pushMessage(SysPushMessageInfo pushMsgInfo) {
+	public static int pushMessage(SysPushMessageInfo pushMsgInfo) {
 		// TODO 远程推送消息
 		
 		
 		
+		
+		return 1;
 	}
 }

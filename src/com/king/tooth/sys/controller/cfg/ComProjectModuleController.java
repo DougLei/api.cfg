@@ -14,7 +14,7 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -31,7 +31,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams) {
-		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class);
+		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
 			if(projectModules.size() == 1){
@@ -45,6 +45,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			projectModules.clear();
 		}
 		return getResultObject();
 	}
@@ -56,7 +57,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams) {
-		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class);
+		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
 			if(projectModules.size() == 1){
@@ -70,6 +71,7 @@ public class ComProjectModuleController extends AbstractPublishController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			projectModules.clear();
 		}
 		return getResultObject();
 	}

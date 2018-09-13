@@ -66,6 +66,11 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	 * 账户有效期限
 	 */
 	private Date validDate;
+	/**
+	 * 是否被删除
+	 * <p>逻辑删除，默认值为0</p>
+	 */
+	private Integer isDelete;
 	
 	//-------------------------------------------------------------------------
 	
@@ -140,7 +145,13 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	public void setVerifyCode(String verifyCode) {
 		this.verifyCode = verifyCode;
 	}
-
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
+	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_ACCOUNT", 0);
 		table.setName("账户表");
@@ -151,7 +162,7 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		table.setIsCore(1);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata loginNameColumn = new ComColumndata("login_name", BuiltinDataType.STRING, 30);
 		loginNameColumn.setName("登录名");
@@ -202,6 +213,12 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		validDateColumn.setComments("账户有效期限");
 		validDateColumn.setOrderCode(8);
 		columns.add(validDateColumn);
+		
+		ComColumndata isDeleteColumn = new ComColumndata("is_delete", BuiltinDataType.INTEGER, 1);
+		isDeleteColumn.setName("是否被删除");
+		isDeleteColumn.setComments("逻辑删除，默认值为0");
+		isDeleteColumn.setDefaultValue("0");
+		columns.add(isDeleteColumn);
 		
 		table.setColumns(columns);
 		return table;

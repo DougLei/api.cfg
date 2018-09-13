@@ -17,7 +17,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.dm.DmPublishBasicData;
 import com.king.tooth.sys.service.AbstractPublishService;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;

@@ -14,7 +14,7 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -31,7 +31,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class);
+		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
@@ -45,6 +45,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			databases.clear();
 		}
 		return getResultObject();
 	}
@@ -56,7 +57,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class);
+		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
 			if(databases.size() == 1){
@@ -70,6 +71,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			databases.clear();
 		}
 		return getResultObject();
 	}

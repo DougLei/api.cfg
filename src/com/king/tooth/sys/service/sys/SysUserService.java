@@ -1,5 +1,7 @@
 package com.king.tooth.sys.service.sys;
 
+import java.util.Date;
+
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
@@ -9,7 +11,7 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.service.AbstractService;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -48,14 +50,14 @@ public class SysUserService extends AbstractService{
 		String workNo = user.getWorkNo();
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where workNo=? and customerId=?", workNo, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where workNo=? and customerId=? and isDelete=0", workNo, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在工号为["+workNo+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的loginName
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=?", workNo, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=? and isDelete=0", workNo, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在登录名为["+workNo+"]的账户";
 			}
@@ -75,14 +77,14 @@ public class SysUserService extends AbstractService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where email=? and customerId=?", email, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where email=? and customerId=? and isDelete=0", email, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的email
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=?", email, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=? and isDelete=0", email, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在邮箱为["+email+"]的账户";
 			}
@@ -102,14 +104,14 @@ public class SysUserService extends AbstractService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where tel=? and customerId=?", tel, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where tel=? and customerId=? and isDelete=0", tel, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的tel
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=? and isDelete=0", tel, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在手机号为["+tel+"]的账户";
 			}
@@ -253,15 +255,23 @@ public class SysUserService extends AbstractService{
 	public Object openAccount(SysUser user) {
 		user = getObjectById(user.getId(), SysUser.class);
 		
-		SysAccount account = new SysAccount();
-		account.setLoginName(user.getWorkNo());
-		account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
-		account.setTel(user.getTel());
-		account.setEmail(user.getEmail());
-		String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
-		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId=? where "+ResourcePropNameConstants.ID+"=?", accountId, user.getId());
+		if(StrUtils.isEmpty(user.getAccountId())){
+			SysAccount account = new SysAccount();
+			account.setLoginName(user.getWorkNo());
+			account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
+			account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+			account.setTel(user.getTel());
+			account.setEmail(user.getEmail());
+			String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId=? where "+ResourcePropNameConstants.ID+"=?", accountId, user.getId());
+		}else{
+			SysAccount account = getObjectById(user.getAccountId(), SysAccount.class);
+			if(account.getIsDelete() == 0){
+				return "用户["+user.getName()+"]已经存在账户，禁止重复开通账户";
+			}else if(account.getIsDelete() == 1){
+				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=0, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), user.getAccountId());
+			}
+		}
 		
 		JSONObject jsonObject = new JSONObject(1);
 		jsonObject.put(ResourcePropNameConstants.ID, user.getId());
@@ -274,20 +284,28 @@ public class SysUserService extends AbstractService{
 	 * @return
 	 */
 	public String deleteUser(String userId) {
-		SysUser oldUser = getObjectById(userId, SysUser.class);
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUser where "+ResourcePropNameConstants.ID+" = '"+oldUser.getId()+"'");
+		SysUser user = getObjectById(userId, SysUser.class);
+		// 删除用户
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
 		
-		if(StrUtils.notEmpty(oldUser.getAccountId())){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccount where "+ResourcePropNameConstants.ID+" = '"+oldUser.getAccountId()+"'");
+		// 删除账户
+		String accountId = user.getAccountId();
+		if(StrUtils.notEmpty(accountId)){
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), accountId);
+			BuiltinObjectInstance.accountService.deleteTokenInfoByAccountId(accountId);
 		}
-		
-		if(StrUtils.notEmpty(oldUser.getDeptId())){
-			HibernateUtil.deleteDataLinks(sysUserDeptLinks, oldUser.getId(), oldUser.getDeptId());
+		// 删除所属的部门
+		if(StrUtils.notEmpty(user.getDeptId())){
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserDeptLinks where leftId = ?", userId);
 		}
-		
-		if(StrUtils.notEmpty(oldUser.getPositionId())){
-			HibernateUtil.deleteDataLinks(sysUserPositionLinks, oldUser.getId(), oldUser.getPositionId());
+		// 删除所属的职务
+		if(StrUtils.notEmpty(user.getPositionId())){
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserPositionLinks where leftId = ?", userId);
 		}
+		// 删除所属的角色
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserRoleLinks where leftId = ?", userId);
+		// 删除所属的用户组
+		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserGroupDetail where userId = ?", userId);
 		
 		return null;
 	}

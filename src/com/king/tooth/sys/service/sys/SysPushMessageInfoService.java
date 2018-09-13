@@ -5,8 +5,8 @@ import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.util.ExceptionUtil;
-import com.king.tooth.util.PushMessageUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.websocket.PushMessageUtil;
 
 /**
  * 推送消息信息表Service
@@ -39,9 +39,8 @@ public class SysPushMessageInfoService extends AbstractService{
 						pushMsgInfo.setMsgBatchOrderCode(msgBatchOrderCode);
 						pushMsgInfo.setMsgOrderCode(msgOrderCode++);
 						pushMsgInfo.analyzeActualSendMessage();
+						pushMsgInfo.recordPushResultCode(PushMessageUtil.pushMessage(pushMsgInfo));// 推送消息，并记录推送结果
 						HibernateUtil.saveObject(pushMsgInfo, null);// 保存推送的消息
-						
-						PushMessageUtil.pushMessage(pushMsgInfo);// 推送消息
 					}
 					msgBatchOrderCode++;
 				}

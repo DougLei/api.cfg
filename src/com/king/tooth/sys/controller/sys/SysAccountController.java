@@ -16,7 +16,7 @@ import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -83,7 +83,7 @@ public class SysAccountController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class);
+		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
@@ -97,6 +97,7 @@ public class SysAccountController extends AbstractController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			accounts.clear();
 		}
 		return getResultObject();
 	}
@@ -108,7 +109,7 @@ public class SysAccountController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class);
+		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
@@ -122,6 +123,7 @@ public class SysAccountController extends AbstractController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			accounts.clear();
 		}
 		return getResultObject();
 	}

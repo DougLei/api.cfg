@@ -8,7 +8,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.other.ResourceInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;

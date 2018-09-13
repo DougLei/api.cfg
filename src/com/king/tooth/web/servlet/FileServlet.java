@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.FileUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 

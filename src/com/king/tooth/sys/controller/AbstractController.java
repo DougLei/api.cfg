@@ -47,9 +47,10 @@ public abstract class AbstractController {
 	 * 根据json串，获取对应数据类型实例集合
 	 * @param ijson
 	 * @param targetClass
+	 * @param clearIJsonData 是否清除ijson中的数据
 	 * @return
 	 */
-	protected <T> List<T> getDataInstanceList(IJson ijson, Class<T> targetClass){
+	protected <T> List<T> getDataInstanceList(IJson ijson, Class<T> targetClass, boolean clearIJsonData){
 		vaildIJsonNotNull(ijson);
 		if(ijson.isArray()){
 			resultJsonArray = new JSONArray(ijson.size());
@@ -59,7 +60,10 @@ public abstract class AbstractController {
 		for(int i=0;i<ijson.size();i++){
 			list.add(JsonUtil.parseObject(ijson.get(i).toJSONString(), targetClass));
 		}
-		ijson.clear();
+		
+		if(clearIJsonData){
+			ijson.clear();
+		}
 		return list;
 	}
 	

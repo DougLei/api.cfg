@@ -1,4 +1,4 @@
-package com.king.tooth.thread;
+package com.king.tooth.thread.current;
 
 import org.hibernate.Session;
 

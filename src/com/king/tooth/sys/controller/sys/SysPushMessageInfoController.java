@@ -5,15 +5,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.controller.AbstractController;
-import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
-import com.king.tooth.thread.CurrentThreadContext;
+import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.thread.websocket.pushmessage.PushMessageThread;
 
 /**
  * 推送消息信息表Controller
@@ -31,24 +29,11 @@ public class SysPushMessageInfoController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object pushMessage(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<PushMessage> pushMessages = getDataInstanceList(ijson, PushMessage.class);
+		List<PushMessage> pushMessages = getDataInstanceList(ijson, PushMessage.class, false);
 		analysisResourceProp(pushMessages);
 		if(analysisResult == null){
-			SysPushMessageInfo basicPushMsgInfo = new SysPushMessageInfo(
-					CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
-					CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId());
-			
-			if(pushMessages.size() == 1){
-				resultObject = BuiltinObjectInstance.sysPushMessageInfoService.pushMessage(basicPushMsgInfo, pushMessages.get(0));
-			}else{
-				for (PushMessage pushMessage : pushMessages) {
-					resultObject = BuiltinObjectInstance.sysPushMessageInfoService.pushMessage(basicPushMsgInfo, pushMessage);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
-				}
-			}
+			new PushMessageThread(pushMessages).start();// 启动推送消息的线程
+			resultObject = ijson.getJson();
 		}
 		return getResultObject();
 	}

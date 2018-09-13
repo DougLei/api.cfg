@@ -29,7 +29,7 @@ public class ComColumndataController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class);
+		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class, true);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
@@ -43,6 +43,7 @@ public class ComColumndataController extends AbstractController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			columns.clear();
 		}
 		return getResultObject();
 	}
@@ -54,7 +55,7 @@ public class ComColumndataController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class);
+		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class, true);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
@@ -68,6 +69,7 @@ public class ComColumndataController extends AbstractController{
 					resultJsonArray.add((JSONObject) resultObject);
 				}
 			}
+			columns.clear();
 		}
 		return getResultObject();
 	}

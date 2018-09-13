@@ -57,6 +57,14 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	 * <p>标识推送每条消息的顺序</p>
 	 */
 	private Integer msgOrderCode;
+	/**
+	 * 推送是否成功
+	 */
+	private Integer isSuccess;
+	/**
+	 * 推送的结果编码
+	 */
+	private Integer pushResultCode;
 	
 	//----------------------------------------------------------------
 
@@ -115,7 +123,19 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	public void setMsgOrderCode(Integer msgOrderCode) {
 		this.msgOrderCode = msgOrderCode;
 	}
-
+	public Integer getIsSuccess() {
+		return isSuccess;
+	}
+	public void setIsSuccess(Integer isSuccess) {
+		this.isSuccess = isSuccess;
+	}
+	public Integer getPushResultCode() {
+		return pushResultCode;
+	}
+	public void setPushResultCode(Integer pushResultCode) {
+		this.pushResultCode = pushResultCode;
+	}
+	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_PUSH_MESSAGE_INFO", 0);
 		table.setName("推送消息信息表");
@@ -125,7 +145,7 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(15);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata msgTypeColumn = new ComColumndata("msg_type", BuiltinDataType.INTEGER, 1);
 		msgTypeColumn.setName("消息类型");
@@ -168,6 +188,16 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		msgOrderCodeColumn.setComments("标识推送每条消息的顺序");
 		columns.add(msgOrderCodeColumn);
 		
+		ComColumndata isSuccessColumn = new ComColumndata("is_success", BuiltinDataType.INTEGER, 1);
+		isSuccessColumn.setName("推送是否成功");
+		isSuccessColumn.setComments("推送是否成功");
+		columns.add(isSuccessColumn);
+		
+		ComColumndata pushResultCodeColumn = new ComColumndata("push_result_code", BuiltinDataType.INTEGER, 5);
+		pushResultCodeColumn.setName("推送的结果编码");
+		pushResultCodeColumn.setComments("推送的结果编码");
+		columns.add(pushResultCodeColumn);
+		
 		table.setColumns(columns);
 		return table;
 	}
@@ -193,5 +223,15 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		if(msgType == 1){
 			targetMsg = sourceMsg;
 		}
+	}
+	
+	/**
+	 * 记录推送结果编码
+	 * <p>并记录是否推送成功</p>
+	 * @param pushResultCode
+	 */
+	public void recordPushResultCode(Integer pushResultCode) {
+		this.pushResultCode = pushResultCode;
+		this.isSuccess = (pushResultCode==1)?1:0;
 	}
 }

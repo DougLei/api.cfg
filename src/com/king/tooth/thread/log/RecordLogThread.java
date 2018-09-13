@@ -9,6 +9,10 @@ import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 
+/**
+ * 记录日志的线程
+ * @author DougLei
+ */
 public class RecordLogThread extends Thread{
 	/**
 	 * 处理log的session对象
