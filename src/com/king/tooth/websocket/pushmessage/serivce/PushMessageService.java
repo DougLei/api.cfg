@@ -6,4 +6,6 @@ package com.king.tooth.websocket.pushmessage.serivce;
  */
 public class PushMessageService {
 
+	// TODO 对外提供接口
+	
 }
