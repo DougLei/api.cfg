@@ -15,10 +15,17 @@ public class PushMessageUtil {
 	 */
 	public static int pushMessage(SysPushMessageInfo pushMsgInfo) {
 		// TODO 远程推送消息
-		
-		
-		
-		
+		return 1;
+	}
+	
+	/**
+	 * 给指定用户推送消息
+	 * @param targetUserId
+	 * @param message
+	 * @return 推送结果的编码
+	 */
+	public static int pushMessage(String targetUserId, String message) {
+		// TODO 远程推送消息
 		return 1;
 	}
 }

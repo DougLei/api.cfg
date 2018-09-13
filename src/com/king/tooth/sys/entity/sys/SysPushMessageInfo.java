@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity.sys;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -68,9 +69,16 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	
 	//----------------------------------------------------------------
 
-	public SysPushMessageInfo(String pushAccountId, String pushUserId) {
+	public SysPushMessageInfo(String pushAccountId, String pushUserId, String projectId, String customerId) {
 		this.pushAccountId = pushAccountId;
 		this.pushUserId = pushUserId;
+		
+		this.customerId = customerId;
+		this.projectId = projectId;
+		this.createUserId = pushAccountId;
+		this.lastUpdateUserId = pushAccountId;
+		this.createDate = new Date();
+		this.lastUpdateDate = new Date();
 	}
 	public SysPushMessageInfo() {
 	}

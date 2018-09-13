@@ -7,7 +7,7 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysReqLog;
-import com.king.tooth.thread.log.ReqLogData;
+import com.king.tooth.sys.entity.sys.reqlog.ReqLogData;
 
 /**
  * 当前线程的上下文

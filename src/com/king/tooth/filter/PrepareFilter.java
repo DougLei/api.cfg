@@ -2,7 +2,6 @@ package com.king.tooth.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -101,7 +100,6 @@ public class PrepareFilter extends AbstractFilter{
 			if(!"get".equals(CurrentThreadContext.getReqLogData().getReqLog().getMethod())){
 				CurrentThreadContext.getReqLogData().getReqLog().setRespData(responseBody.toStrings());
 			}
-			CurrentThreadContext.getReqLogData().getReqLog().setRespDate(new Date());
 			CurrentThreadContext.getReqLogData().recordLogs();
 			
 			// 清除本次请求的线程数据

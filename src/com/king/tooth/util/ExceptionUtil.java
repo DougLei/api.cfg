@@ -32,4 +32,21 @@ public class ExceptionUtil {
 		}
 		return errMsg.toString();
 	}
+	
+	/**
+	 * 获取异常信息
+	 * @param e
+	 * @return
+	 */
+	public static String getErrMsg(Exception e) {
+		if(isDevelop){
+			e.printStackTrace();
+		}
+		StringBuilder errMsg = new StringBuilder("抛出异常信息的位置为： >>>>>>");
+		errMsg.append("异常的信息为：").append(e.getMessage());
+		if(e.getCause() != null){
+			errMsg.append(" >>>>>>").append(e.getCause().getMessage());
+		}
+		return errMsg.toString();
+	}
 }

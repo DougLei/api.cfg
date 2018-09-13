@@ -11,8 +11,11 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.websocket.pushmessage.entity.Customer;
 import com.king.tooth.websocket.pushmessage.entity.PushMessageClient;
 import com.king.tooth.websocket.pushmessage.enums.ReturnCodeEnum;
+import com.king.tooth.websocket.pushmessage.mapping.CustomerMapping;
+import com.king.tooth.websocket.pushmessage.mapping.PushMessageClientMapping;
 
 /**
  * 推送消息的webSocket服务端
@@ -30,15 +33,15 @@ public class PushMessageWebSocketServer {
      */
     @OnOpen 
     public void onOpen(@PathParam("customerToken")String customerToken, @PathParam("clientIdentity")String clientIdentity, Session session) throws IOException {
-//    	Customer customer = CustomerMapping.getCustomer(customerToken);
-//    	if(customer != null){
+    	Customer customer = CustomerMapping.getCustomer(customerToken);
+    	if(customer != null){
     		addOnlineCount(); 
     		PushMessageClientMapping.put(clientIdentity, new PushMessageClient(session));
-//    		Log4jUtil.debug("客户{}中，clientIdentity为{}的连接上消息推送服务器", customer.getRealName(), clientIdentity);
-//    	}else{
-//    		session.close();
-//    		Log4jUtil.warn("不存在customerToken值为{}的客户，请注意可能是恶意请求", customerToken);
-//    	}
+    		Log4jUtil.debug("客户{}中，clientIdentity为{}的连接上消息推送服务器", customer.getRealName(), clientIdentity);
+    	}else{
+    		session.close();
+    		Log4jUtil.warn("不存在customerToken值为{}的客户，请注意可能是恶意请求", customerToken);
+    	}
     } 
    
     /**

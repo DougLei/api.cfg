@@ -49,10 +49,11 @@ public class HibernateUtil {
 	}
 	
 	/**
-	 * 获得当前线程的logSession对象
+	 * 获得一个新Session对象
+	 * <p>这个session必须有调用者自己处理</p>
 	 * @return
 	 */
-	public static Session getCurrentThreadLogSession(){
+	public static Session openNewSession(){
 		return getSessionFactory().openSession();
 	}
 	

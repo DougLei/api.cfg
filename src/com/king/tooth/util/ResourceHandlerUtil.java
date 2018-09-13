@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.thread.current.CurrentThreadContext;
 
@@ -39,6 +41,36 @@ public class ResourceHandlerUtil {
 	 */
 	public static String getLoginPwdKey() {
 		return getIdentity();
+	}
+	
+	/**
+	 * 获取随机数
+	 * @param seed
+	 * @return
+	 */
+	public static int getRandom(int seed) {
+		return ThreadLocalRandom.current().nextInt(seed);
+	}
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 给对象设置基础属性值
+	 * @param entity
+	 * @param currentAccountId
+	 * @param projectId
+	 * @param customerId
+	 * @param currentDate
+	 */
+	public static void setBasicPropVals(BasicEntity entity, String currentAccountId, String projectId, String customerId, Date currentDate) {
+		if(StrUtils.isEmpty(entity.getId())){
+			entity.setId(getIdentity());
+		}
+		entity.setCreateUserId(currentAccountId);
+		entity.setLastUpdateUserId(currentAccountId);
+		entity.setProjectId(projectId);
+		entity.setCustomerId(customerId);
+		entity.setCreateDate(currentDate);
+		entity.setLastUpdateDate(currentDate);
 	}
 	
 	/**
@@ -92,6 +124,7 @@ public class ResourceHandlerUtil {
 		}
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取关联关系jsonObject对象
 	 * @param leftId
@@ -115,6 +148,7 @@ public class ResourceHandlerUtil {
 		return dataLinks;
 	}
 
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 初始化配置参数值
 	 * @param configKey
@@ -129,6 +163,7 @@ public class ResourceHandlerUtil {
 		return confValue;
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 清除表信息
 	 * @param tables

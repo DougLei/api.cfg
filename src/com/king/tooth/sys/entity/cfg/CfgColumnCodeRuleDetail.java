@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -17,6 +16,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -525,7 +525,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	 * @return
 	 */
 	private String getRandom(String resourceName, JSONObject currentJsonObject) {
-		return ThreadLocalRandom.current().nextInt(randomSeedVal)+"";
+		return ResourceHandlerUtil.getRandom(randomSeedVal)+"";
 	}
 	
 	/**

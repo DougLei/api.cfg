@@ -10,7 +10,9 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
-import com.king.tooth.thread.websocket.pushmessage.PushMessageThread;
+import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.thread.operdb.websocket.pushmessage.PushMessageThread;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 推送消息信息表Controller
@@ -31,7 +33,12 @@ public class SysPushMessageInfoController extends AbstractController{
 		List<PushMessage> pushMessages = getDataInstanceList(ijson, PushMessage.class, false);
 		analysisResourceProp(pushMessages);
 		if(analysisResult == null){
-			new PushMessageThread(pushMessages).start();// 启动推送消息的线程
+			new PushMessageThread(HibernateUtil.openNewSession(),
+					pushMessages,
+					CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
+					CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
+					CurrentThreadContext.getProjectId(),
+					CurrentThreadContext.getCustomerId()).start();// 启动推送消息的线程
 			resultObject = ijson.getJson();
 		}
 		return getResultObject();

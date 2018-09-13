@@ -281,7 +281,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 			operSqlLogs = new ArrayList<SysOperSqlLog>();
 		}
 		SysOperSqlLog operSqlLog = new SysOperSqlLog();
-		operSqlLog.setReqLogId(this.id);
+		operSqlLog.setReqLogId(id);
 		operSqlLog.setSqlScript(sqlScript);
 		operSqlLog.setSqlParams(JsonUtil.toJsonString(sqlParams, false));
 		operSqlLogs.add(operSqlLog);

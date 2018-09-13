@@ -1,4 +1,4 @@
-package com.king.tooth.websocket.pushmessage;
+package com.king.tooth.websocket.pushmessage.mapping;
 
 import java.util.HashMap;
 import java.util.Map;

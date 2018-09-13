@@ -16,6 +16,11 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class PushMessage implements IEntityPropAnalysis{
 	
 	/**
+	 * 标题
+	 * <p>推送消息的标题，类似于描述</p>
+	 */
+	private String title;
+	/**
 	 * 接收的用户id
 	 * <p>多个用,隔开</p>
 	 */
@@ -30,6 +35,12 @@ public class PushMessage implements IEntityPropAnalysis{
 	private String message;
 
 	// ---------------------------------------------------------------------------------------------------
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	public void setToUserId(String toUserId) {
 		this.toUserId = toUserId;
 	}
