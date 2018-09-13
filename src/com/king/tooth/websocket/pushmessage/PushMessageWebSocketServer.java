@@ -12,6 +12,7 @@ import javax.websocket.server.ServerEndpoint;
 
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.websocket.pushmessage.entity.PushMessageClient;
+import com.king.tooth.websocket.pushmessage.enums.ReturnCodeEnum;
 
 /**
  * 推送消息的webSocket服务端
@@ -83,11 +84,11 @@ public class PushMessageWebSocketServer {
     public static int sendMessage(String clientIdentity, String message) {
     	PushMessageClient client = PushMessageClientMapping.get(clientIdentity);
     	if(client == null){
-    		Log4jUtil.debug("clientIdentity为{}的客户端不在线，推送消息失败", clientIdentity);
-    		return 2;
+    		Log4jUtil.debug("被推送的，clientIdentity值为{}的客户端不在线，推送消息失败", clientIdentity);
+    		return ReturnCodeEnum.UN_ONLINE.getCode();
     	}else{
     		client.getSession().getAsyncRemote().sendText(message);
-    		return 1;
+    		return ReturnCodeEnum.SUCCESS.getCode();
     	}
     } 
     
