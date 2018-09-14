@@ -26,10 +26,6 @@ public class InitSysDataListener implements ServletContextListener {
 		// 获取项目在磁盘的根目录
 		SysConfig.WEB_SYSTEM_CONTEXT_REALPATH = sc.getServletContext().getRealPath(File.separator);
 		
-		// 获取项目类型，配置系统(1)/运行系统(2)
-		SysConfig.isConfSys = "1".equals(sc.getServletContext().getInitParameter("currentSysType"));
-		SysConfig.isAppSys = !SysConfig.isConfSys;
-		
 		// 初始化资源处理器配置
 		ProcesserConfig.initResourceProcesserConfig();
 		

@@ -124,10 +124,10 @@ public class SysAccountService extends AbstractService{
 		if(processPermission(accountOnlineStatus)){
 			// 处理基本信息
 			processOnlineStatusBasicData(accountOnlineStatus, loginAccount);
-			if(SysConfig.isConfSys){
-				// TODO 这里暂时写成固定值
-				accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
-			}
+			
+			// TODO 在配置系统中，要配置的项目id，这里暂时写成固定值
+			accountOnlineStatus.setConfProjectId("7fe971700f21d3a796d2017398812dcd");
+			
 			accountOnlineStatus.setIsError(0);// 都没有错误，修改标识的值
 		}
 		return accountOnlineStatus;

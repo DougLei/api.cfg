@@ -73,9 +73,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		CurrentThreadContext.setCurrentAccountOnlineStatus(onlineStatus);// 记录当前账户在线对象到当前线程中
 		
 		// 记录配置的项目id，配置系统使用
-		if(SysConfig.isConfSys){
-			CurrentThreadContext.setConfProjectId(onlineStatus.getConfProjectId());
-		}
+		CurrentThreadContext.setConfProjectId(onlineStatus.getConfProjectId());
 		
 		// 修改最后的操作时间
 		onlineStatus.setLastOperDate(new Date());
