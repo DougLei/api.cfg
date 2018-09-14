@@ -28,7 +28,7 @@ public class PushMessageUtil {
 	 */
 	private static final String WEB_PUSH_MESSAGE_ROOT_API;
 	static{
-		WEB_PUSH_MESSAGE_ROOT_API = ResourceHandlerUtil.initConfValue("web.pushmessage.root.api", "http://localhost:8091/api.push.message/websocket/message");
+		WEB_PUSH_MESSAGE_ROOT_API = ResourceHandlerUtil.initConfValue("web.pushmessage.root.api", "http://localhost:8091/api.push.message/common/message");
 		HEADERS.put("customerToken", CryptographyUtil.encodeMd5(
 				ResourceHandlerUtil.initConfValue("web.pushmessage.api.customer.username", "SmartOne"), 
 				ResourceHandlerUtil.initConfValue("web.pushmessage.api.customer.password", "1QaZ2wSx,.")));
