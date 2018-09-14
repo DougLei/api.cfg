@@ -167,9 +167,6 @@ public class RequestBody implements Serializable{
 	public void setFormData(IJson formData) {
 		this.formData = formData;
 	}
-	public HttpServletRequest getRequest() {
-		return request;
-	}
 	public String getRequestMethod() {
 		return request.getMethod().toLowerCase();
 	}
