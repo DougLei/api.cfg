@@ -65,7 +65,6 @@ public class PushMessageUtil {
 			return json.getInteger("data");
 		} catch (NumberFormatException e) {
 			Log4jUtil.error(ExceptionUtil.getErrMsg("PushMessageUtil", "pushMessage", e));
-			// 调用推送消息接口，业务系统出现异常，调用失败
 			return -2;
 		} finally{
 			if(json != null){
@@ -107,7 +106,6 @@ public class PushMessageUtil {
 			return result;
 		} catch (Exception e) {
 			Log4jUtil.error(ExceptionUtil.getErrMsg("PushMessageUtil", "batchPushMessage", e));
-			// 调用推送消息接口，业务系统出现异常，调用失败
 			return new Integer[]{-2};
 		} finally{
 			if(toUserId.length()>0){
@@ -144,4 +142,35 @@ public class PushMessageUtil {
 		return null;
 	}
 	private static final String batchPushIndividualityMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch_individuality_push";
+	
+	// ---------------------------------------------------------------------------------
+	/**
+	 * 根据消息推送的结果编码，获取相应的具体结果内容
+	 * @param pushResourceCode
+	 * @return
+	 */
+	public static String getPushResultContent(Integer pushResourceCode){
+		switch (pushResourceCode) {
+			case -2:
+				return "调用推送消息接口时，本系统出现异常，调用失败";
+			case -1:
+				return "调用推送消息接口，接口系统出现异常，调用失败";
+			case 0:
+				return "调用推送消息接口，传入的数据不能为空";
+			case 1:
+				return "推送成功";
+			case 2:
+				return "被推送的客户端不在线";
+			case 3:
+				return "要接收推送消息的用户id不能为空";
+			case 4:
+				return "推送消息的内容不能为空";
+			case 101:
+				return "客户信息不能为空";
+			case 102:
+				return "客户信息无效";
+			default:
+				return "目前系统无法解析消息推送的结果编码值:"+pushResourceCode;
+		}
+	}
 }
