@@ -64,7 +64,7 @@ public final class PushMessageThread extends HibernateOperDBThread{
 			resultMessageBuilder.append("因").append(pushFailCount).append("个用户不在线，给其推送消息失败").append(";");
 		}
 		if(resultMessageBuilder.length() > 0){
-			PushMessageUtil.pushMessage(currentUserId, resultMessageBuilder.toString());
+			PushMessageUtil.pushMessage( resultMessageBuilder.toString(), currentUserId);
 			resultMessageBuilder.setLength(0);
 		}
 	}
@@ -97,7 +97,7 @@ public final class PushMessageThread extends HibernateOperDBThread{
 					pushMsgInfo.setMsgBatchOrderCode(msgBatchOrderCode);
 					pushMsgInfo.setMsgOrderCode(msgOrderCode++);
 					pushMsgInfo.analyzeActualSendMessage();
-					pushMsgInfo.recordPushResultCode(PushMessageUtil.pushMessage(pushMsgInfo));// 推送消息，并记录推送结果
+					pushMsgInfo.recordPushResultCode(PushMessageUtil.pushMessage(pushMsgInfo.getTargetMsg(), pushMsgInfo.getReceiveUserId()));// 推送消息，并记录推送结果
 					session.save(SysPushMessageInfoEntityName, pushMsgInfo.toEntityJson());// 保存推送的消息
 					
 					if(pushMsgInfo.getPushResultCode() != ReturnCodeEnum.SUCCESS.getCode()){
