@@ -29,19 +29,6 @@ public class CodeResourceMapping {
 		initActionCodeResource();
 		// normal
 		initNormalCodeResource();
-		// webapi
-		initWebApiResource();
-	}
-	
-	/**
-	 * 初始化webapi代码资源
-	 * <p>例如：消息推送系统对外提供的接口</p>
-	 */
-	private static void initWebApiResource() {
-		// 消息推送
-		put("/message/single_push/post", BuiltinObjectInstance.pushMessageWebApi, "pushMessage");
-		put("/message/batch_push//post", BuiltinObjectInstance.pushMessageWebApi, "batchPushMessage");
-		put("/message/batch_individuality_push/post", BuiltinObjectInstance.pushMessageWebApi, "batchPushIndividualityMessage");
 	}
 	
 	/**

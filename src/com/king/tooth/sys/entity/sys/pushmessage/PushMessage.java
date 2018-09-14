@@ -16,42 +16,45 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class PushMessage implements IEntityPropAnalysis{
 	
 	/**
-	 * 标题
-	 * <p>推送消息的标题，类似于描述</p>
-	 */
-	private String title;
-	/**
 	 * 接收的用户id
 	 * <p>多个用,隔开</p>
 	 */
 	private String toUserId;
 	/**
-	 * 推送的消息类型
+	 * 消息类型
+	 * <p>不能为空</p>
+	 * <p>1:待办消息、2.通知消息、...</p>
 	 */
-	private Integer pushMessageType;
+	private Integer msgType;
+	/**
+	 * 推送类型
+	 * <p>不能为空</p>
+	 * <p>0:直接推送，即直接将消息原原本本推送给客户端</p>
+	 */
+	private Integer sendType;
 	/**
 	 * 推送的消息内容
 	 */
 	private String message;
 
 	// ---------------------------------------------------------------------------------------------------
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
 	public void setToUserId(String toUserId) {
 		this.toUserId = toUserId;
 	}
 	public String getToUserId() {
 		return toUserId;
 	}
-	public Integer getPushMessageType() {
-		return pushMessageType;
+	public Integer getMsgType() {
+		return msgType;
 	}
-	public void setPushMessageType(Integer pushMessageType) {
-		this.pushMessageType = pushMessageType;
+	public void setMsgType(Integer msgType) {
+		this.msgType = msgType;
+	}
+	public Integer getSendType() {
+		return sendType;
+	}
+	public void setSendType(Integer sendType) {
+		this.sendType = sendType;
 	}
 	public String getMessage() {
 		return message;
@@ -102,11 +105,14 @@ public class PushMessage implements IEntityPropAnalysis{
 		if(StrUtils.isEmpty(toUserId)){
 			return "要接收推送消息的用户id不能为空！";
 		}
-		if(pushMessageType == null){
-			return "推送消息的类型值不能为空！";
+		if(msgType == null){
+			return "消息类型不能为空！";
 		}
-		if(pushMessageType != 0){
-			return "推送消息的pushMessageType值不合法，目前仅支持=0！";
+		if(sendType == null){
+			return "推送类型不能为空！";
+		}
+		if(sendType != 0){
+			return "推送消息的sendType值不合法，目前仅支持=0！";
 		}
 		if(StrUtils.isEmpty(message)){
 			return "推送消息的内容不能为空！";

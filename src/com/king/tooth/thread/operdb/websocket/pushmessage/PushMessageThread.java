@@ -60,7 +60,8 @@ public final class PushMessageThread extends HibernateOperDBThread{
 	 * @throws CloneNotSupportedException 
 	 */
 	private void pushMessage(Session session, SysPushMessageInfo basicPushMsgInfo, PushMessage pushMessage) throws CloneNotSupportedException {
-		basicPushMsgInfo.setMsgType(pushMessage.getPushMessageType());
+		basicPushMsgInfo.setMsgType(pushMessage.getMsgType());
+		basicPushMsgInfo.setSendType(pushMessage.getSendType());
 		basicPushMsgInfo.setSourceMsg(pushMessage.getMessage());
 		
 		SysPushMessageInfo pushMsgInfo;

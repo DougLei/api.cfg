@@ -1,10 +1,10 @@
 package com.king.tooth.util.websocket.pushmessage;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.king.tooth.enums.websocket.pushmessage.PushMessageReturnCodeEnum;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
@@ -28,7 +28,7 @@ public class PushMessageUtil {
 	 */
 	private static final String WEB_PUSH_MESSAGE_ROOT_API;
 	static{
-		WEB_PUSH_MESSAGE_ROOT_API = ResourceHandlerUtil.initConfValue("web.pushmessage.root.api", "http://localhost:8081/api.cfg/message");
+		WEB_PUSH_MESSAGE_ROOT_API = ResourceHandlerUtil.initConfValue("web.pushmessage.root.api", "http://localhost:8091/api.push.message/websocket/message");
 		HEADERS.put("customerToken", CryptographyUtil.encodeMd5(
 				ResourceHandlerUtil.initConfValue("web.pushmessage.api.customer.username", "SmartOne"), 
 				ResourceHandlerUtil.initConfValue("web.pushmessage.api.customer.password", "1QaZ2wSx,.")));
@@ -40,9 +40,9 @@ public class PushMessageUtil {
 	 * @param data
 	 * @return
 	 */
-	private static String callPushMessageApi(String apiUrl, Object data){
-		return HttpClientUtil.doPostBasic(apiUrl, null, null, HEADERS, 
-				HttpClientUtil.getHttpStringRequestEntity(JsonUtil.toJsonString(data, false), "text/json"));
+	private static JSONObject callPushMessageApi(String apiUrl, Object data){
+		return JsonUtil.parseJsonObject(HttpClientUtil.doPostBasic(apiUrl, null, null, HEADERS, 
+				HttpClientUtil.getHttpStringRequestEntity(JsonUtil.toJsonString(data, false), "text/json")));
 	}
 	
 	/**
@@ -59,12 +59,18 @@ public class PushMessageUtil {
 			throw new NullPointerException("推送的消息不能为空");
 		}
 		
+		JSONObject json = null;
 		try {
-			String result = callPushMessageApi(pushMessageApi, new PushMessageDataEntity(targetUserId, message));
-			return Integer.valueOf(result);
+			json = callPushMessageApi(pushMessageApi, new PushMessageDataEntity(targetUserId, message));
+			return json.getInteger("data");
 		} catch (NumberFormatException e) {
 			Log4jUtil.error(ExceptionUtil.getErrMsg("PushMessageUtil", "pushMessage", e));
-			return PushMessageReturnCodeEnum.LOCAL_EXCEPTION.getCode();
+			// 调用推送消息接口，业务系统出现异常，调用失败
+			return -2;
+		} finally{
+			if(json != null){
+				json.clear();
+			}
 		}
 	}
 	private static final String pushMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/single_push";
@@ -84,29 +90,34 @@ public class PushMessageUtil {
 		}
 		
 		StringBuilder toUserId = new StringBuilder();
-		List<Integer> tmpResultList = null;
+		JSONObject json = null;
+		JSONArray jsonArray = null;
 		try {
 			for (String targetUserId : targetUserIds) {
 				toUserId.append(targetUserId).append(",");
 			}
 			toUserId.setLength(toUserId.length()-1);
 			
-			String callResult = callPushMessageApi(batchPushMessageApi, new PushMessageDataEntity(toUserId.toString(), message));
+			json = callPushMessageApi(batchPushMessageApi, new PushMessageDataEntity(toUserId.toString(), message));
 			
-			tmpResultList = JsonUtil.parseArray(callResult, Integer.class);
-			Integer[] result = new Integer[tmpResultList.size()];
-			tmpResultList.toArray(result);
+			jsonArray = json.getJSONArray("data");
+			Integer[] result = new Integer[jsonArray.size()];
+			jsonArray.toArray(result);
 			
 			return result;
 		} catch (Exception e) {
 			Log4jUtil.error(ExceptionUtil.getErrMsg("PushMessageUtil", "batchPushMessage", e));
-			return new Integer[]{PushMessageReturnCodeEnum.LOCAL_EXCEPTION.getCode()};
+			// 调用推送消息接口，业务系统出现异常，调用失败
+			return new Integer[]{-2};
 		} finally{
 			if(toUserId.length()>0){
 				toUserId.setLength(0);
 			}
-			if(tmpResultList != null && tmpResultList.size() > 0){
-				tmpResultList.clear();
+			if(json != null){
+				json.clear();
+			}
+			if(jsonArray != null){
+				jsonArray.clear();
 			}
 		}
 	}

@@ -263,7 +263,7 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	 * @param toUserId
 	 */
 	public void analyzeActualSendMessage() {
-		if(msgType == 1){
+		if(sendType == 0){
 			targetMsg = sourceMsg;
 		}
 	}

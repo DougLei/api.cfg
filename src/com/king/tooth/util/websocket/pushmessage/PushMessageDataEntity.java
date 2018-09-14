@@ -1,7 +1,5 @@
 package com.king.tooth.util.websocket.pushmessage;
 
-import com.king.tooth.util.StrUtils;
-import com.king.tooth.websocket.pushmessage.enums.PushMessageReturnCodeEnum;
 
 /**
  * 消息推送的数据实体
@@ -37,27 +35,5 @@ public class PushMessageDataEntity {
 		this.message = message;
 	}
 	public PushMessageDataEntity() {
-	}
-	
-	/**
-	 * 验证所有不能为空的属性
-	 * @return
-	 */
-	private PushMessageReturnCodeEnum validNotNullProps() {
-		if(StrUtils.isEmpty(toUserId)){
-			return PushMessageReturnCodeEnum.TO_USERID_NOTNULL;
-		}
-		if(StrUtils.isEmpty(message)){
-			return PushMessageReturnCodeEnum.MESSAGE_NOTNULL;
-		}
-		return null;
-	}
-	
-	/**
-	 * 解析资源属性
-	 * @return
-	 */
-	public PushMessageReturnCodeEnum analysisResourceProp() {
-		return validNotNullProps();
 	}
 }
