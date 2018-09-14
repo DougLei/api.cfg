@@ -13,7 +13,7 @@ import javax.websocket.server.ServerEndpoint;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.websocket.pushmessage.entity.Customer;
 import com.king.tooth.websocket.pushmessage.entity.PushMessageClient;
-import com.king.tooth.websocket.pushmessage.enums.ReturnCodeEnum;
+import com.king.tooth.websocket.pushmessage.enums.PushMessageReturnCodeEnum;
 import com.king.tooth.websocket.pushmessage.mapping.CustomerMapping;
 import com.king.tooth.websocket.pushmessage.mapping.PushMessageClientMapping;
 
@@ -68,8 +68,8 @@ public class PushMessageWebSocketServer {
     }
     
     /**
-     * 发送消息
-     * <p>该方法可以实现在线聊天的功能</p>
+     * 当收到客户端传来的消息时
+     * <p>该方法可以实现在线聊天的功能，将客户端传来的消息再推出</p>
      * @param message
      * @throws IOException
      */
@@ -79,7 +79,7 @@ public class PushMessageWebSocketServer {
     } 
    
     /**
-     * 推送消息
+     * 推送消息的方法
      * @param clientIdentity
      * @param message
      * @throws IOException
@@ -88,10 +88,10 @@ public class PushMessageWebSocketServer {
     	PushMessageClient client = PushMessageClientMapping.get(clientIdentity);
     	if(client == null){
     		Log4jUtil.debug("被推送的，clientIdentity值为{}的客户端不在线，推送消息失败", clientIdentity);
-    		return ReturnCodeEnum.UN_ONLINE.getCode();
+    		return PushMessageReturnCodeEnum.UN_ONLINE.getCode();
     	}else{
     		client.getSession().getAsyncRemote().sendText(message);
-    		return ReturnCodeEnum.SUCCESS.getCode();
+    		return PushMessageReturnCodeEnum.SUCCESS.getCode();
     	}
     } 
     

@@ -10,7 +10,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.JsonUtil;
 
 /**
- * 控制器的抽象父类
+ * 控制器的父类
  * @author DougLei
  */
 public abstract class AbstractController {
@@ -37,6 +37,10 @@ public abstract class AbstractController {
 	 */
 	protected JSONArray resultJsonArray;
 	
+	/**
+	 * 验证ijson参数是否为空
+	 * @param ijson
+	 */
 	private void vaildIJsonNotNull(IJson ijson){
 		if(ijson == null || ijson.size() == 0){
 			throw new NullPointerException("操作的数据不能为空");

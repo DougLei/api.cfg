@@ -25,9 +25,15 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	/**
 	 * 消息类型
 	 * <p>不能为空</p>
-	 * <p>0:直接推送，即直接将消息原原本本推送给客户端</p>
+	 * <p>1:待办消息、2.通知消息、...</p>
 	 */
 	private Integer msgType;
+	/**
+	 * 推送类型
+	 * <p>不能为空</p>
+	 * <p>0:直接推送，即直接将消息原原本本推送给客户端</p>
+	 */
+	private Integer sendType;
 	/**
 	 * 推送者账户id
 	 */
@@ -59,6 +65,11 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	 */
 	private Integer msgOrderCode;
 	/**
+	 * 是否已读
+	 * <p>默认值为0</p>
+	 */
+	private Integer isReaded;
+	/**
 	 * 推送是否成功
 	 */
 	private Integer isSuccess;
@@ -88,6 +99,12 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	}
 	public void setMsgType(Integer msgType) {
 		this.msgType = msgType;
+	}
+	public Integer getSendType() {
+		return sendType;
+	}
+	public void setSendType(Integer sendType) {
+		this.sendType = sendType;
 	}
 	public String getPushAccountId() {
 		return pushAccountId;
@@ -131,6 +148,12 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	public void setMsgOrderCode(Integer msgOrderCode) {
 		this.msgOrderCode = msgOrderCode;
 	}
+	public Integer getIsReaded() {
+		return isReaded;
+	}
+	public void setIsReaded(Integer isReaded) {
+		this.isReaded = isReaded;
+	}
 	public Integer getIsSuccess() {
 		return isSuccess;
 	}
@@ -153,13 +176,19 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata msgTypeColumn = new ComColumndata("msg_type", BuiltinDataType.INTEGER, 1);
 		msgTypeColumn.setName("消息类型");
-		msgTypeColumn.setComments("不能为空；0:直接推送，即直接将消息原原本本推送给客户端；");
+		msgTypeColumn.setComments("不能为空；1:待办消息、2.通知消息、...");
 		msgTypeColumn.setIsNullabled(0);
 		columns.add(msgTypeColumn);
+		
+		ComColumndata sendTypeColumn = new ComColumndata("send_type", BuiltinDataType.INTEGER, 1);
+		sendTypeColumn.setName("推送类型");
+		sendTypeColumn.setComments("不能为空；0:直接推送，即直接将消息原原本本推送给客户端；");
+		sendTypeColumn.setIsNullabled(0);
+		columns.add(sendTypeColumn);
 		
 		ComColumndata pushAccountIdColumn = new ComColumndata("push_account_id", BuiltinDataType.STRING, 32);
 		pushAccountIdColumn.setName("推送者账户id");
@@ -195,6 +224,12 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		msgOrderCodeColumn.setName("消息排序");
 		msgOrderCodeColumn.setComments("标识推送每条消息的顺序");
 		columns.add(msgOrderCodeColumn);
+		
+		ComColumndata isReadedColumn = new ComColumndata("is_readed", BuiltinDataType.INTEGER, 1);
+		isReadedColumn.setName("是否已读");
+		isReadedColumn.setComments("默认值为0");
+		isReadedColumn.setDefaultValue("0");
+		columns.add(isReadedColumn);
 		
 		ComColumndata isSuccessColumn = new ComColumndata("is_success", BuiltinDataType.INTEGER, 1);
 		isSuccessColumn.setName("推送是否成功");

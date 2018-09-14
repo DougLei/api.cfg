@@ -73,6 +73,7 @@ import com.king.tooth.sys.service.sys.SysPushMessageInfoService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.sys.service.sys.SysUserService;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.websocket.pushmessage.webapi.PushMessageWebApi;
 
 /**
  * 系统内置的对象实例
@@ -164,6 +165,8 @@ public class BuiltinObjectInstance {
 	public static final SystemToolsService systemToolsService = new SystemToolsService();
 	public static final SysPushMessageInfoService sysPushMessageInfoService = new SysPushMessageInfoService();
 	
+	//webapi
+	public static final PushMessageWebApi pushMessageWebApi = new PushMessageWebApi();
 	
 	// -------------------------------------------------------
 	/* 内置表对象，用来建表建模用到的 */
