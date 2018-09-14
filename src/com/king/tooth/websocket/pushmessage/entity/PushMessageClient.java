@@ -1,5 +1,6 @@
 package com.king.tooth.websocket.pushmessage.entity;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.websocket.Session;
@@ -38,5 +39,15 @@ public class PushMessageClient {
 	}
 	public void setConnectDate(Date connectDate) {
 		this.connectDate = connectDate;
+	}
+	
+	/**
+	 * 关闭连接
+	 * @throws IOException 
+	 */
+	public void closeSession() throws IOException {
+		if(session != null && session.isOpen()){
+			session.close();
+		}
 	}
 }

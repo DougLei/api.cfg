@@ -135,7 +135,7 @@ public class PushMessage implements IEntityPropAnalysis{
 	/** 每次多少条数据 */
 	private static final int size = 100;
 	/** 查询用户id的hql */
-	private static final String queryUserIdHql = "select "+ResourcePropNameConstants.ID+" from SysUser where customerId=?";
+	private static final String queryUserIdHql = "select "+ResourcePropNameConstants.ID+" from SysUser where customerId=? and isDelete=0";
 	
 	/**
 	 * 是否还有userId

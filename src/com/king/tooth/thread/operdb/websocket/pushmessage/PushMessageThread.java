@@ -78,7 +78,7 @@ public final class PushMessageThread extends HibernateOperDBThread{
 					pushMsgInfo.setMsgBatchOrderCode(msgBatchOrderCode);
 					pushMsgInfo.setMsgOrderCode(msgOrderCode++);
 					pushMsgInfo.analyzeActualSendMessage();
-					pushMsgInfo.recordPushResultCode(PushMessageUtil.pushMessage(pushMsgInfo.getTargetMsg(), pushMsgInfo.getReceiveUserId()));// 推送消息，并记录推送结果
+					pushMsgInfo.recordPushResultCode(PushMessageUtil.pushMessage(pushMsgInfo.getReceiveUserId(), pushMsgInfo.getTargetMsg()));// 推送消息，并记录推送结果
 					session.save(SysPushMessageInfoEntityName, pushMsgInfo.toEntityJson());// 保存推送的消息
 				}
 				msgBatchOrderCode++;

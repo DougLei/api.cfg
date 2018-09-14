@@ -25,6 +25,15 @@ public class Customer {
 	 */
 	private String realName;
 	
+	public Customer(String id, String userName, String password, String realName) {
+		this.id = id;
+		this.userName = userName;
+		this.password = password;
+		this.realName = realName;
+	}
+	public Customer() {
+	}
+	
 	public String getId() {
 		return id;
 	}

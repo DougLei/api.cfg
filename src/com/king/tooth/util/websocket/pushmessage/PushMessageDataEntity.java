@@ -1,4 +1,4 @@
-package com.king.tooth.websocket.pushmessage.entity;
+package com.king.tooth.util.websocket.pushmessage;
 
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.websocket.pushmessage.enums.PushMessageReturnCodeEnum;

@@ -1,5 +1,6 @@
 package com.king.tooth.websocket.pushmessage.mapping;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,8 +22,13 @@ public class PushMessageClientMapping {
 	 * 
 	 * @param clientIdentity
 	 * @param client
+	 * @throws IOException 
 	 */
-	public static void put(String clientIdentity, PushMessageClient client){
+	public static void put(String clientIdentity, PushMessageClient client) throws IOException{
+		PushMessageClient oldClient = get(clientIdentity);
+		if(oldClient != null){
+			oldClient.closeSession();
+		}
 		onlineClientMapping.put(clientIdentity, client);
 	}
 	

@@ -12,6 +12,10 @@ import com.king.tooth.websocket.pushmessage.entity.Customer;
  */
 public class CustomerMapping {
 	private static final Map<String, Customer> customerMapping = new HashMap<String, Customer>(16);
+	static{
+		Customer customer = new Customer("48a3b6dfad19478592e936071d0582bb", "SmartOne", "1QaZ2wSx,.", "西安博道工业科技有限公司");
+		customerMapping.put(customer.getCustomerToken(), customer);
+	}
 	
 	/**
 	 * 添加客户
@@ -46,5 +50,14 @@ public class CustomerMapping {
 	 */
 	public static Customer getCustomer(String customerToken){
 		return customerMapping.get(customerToken);
+	}
+	
+	/**
+	 * 根据token，判断是否存在对应的客户对象
+	 * @param customerToken
+	 * @return
+	 */
+	public static boolean customerIsExists(String customerToken){
+		return customerMapping.containsKey(customerToken);
 	}
 }
