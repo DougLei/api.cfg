@@ -1,4 +1,4 @@
-package com.king.tooth.util.websocket;
+package com.king.tooth.util.websocket.pushmessage;
 
 /**
  * 推送消息的工具类

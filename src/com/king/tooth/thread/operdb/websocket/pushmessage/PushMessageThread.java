@@ -10,7 +10,7 @@ import com.king.tooth.thread.operdb.HibernateOperDBThread;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
-import com.king.tooth.util.websocket.PushMessageUtil;
+import com.king.tooth.util.websocket.pushmessage.PushMessageUtil;
 
 /**
  * 消息推送的线程
