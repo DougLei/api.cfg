@@ -51,6 +51,8 @@ public class DBUtil {
 	 * @return
 	 */
 	public static String getConstraintName(String tableName, String columnName, String constraintType){
+//		String dbType = BuiltinDatabaseData.DB_TYPE_SQLSERVER;
+//		String dbType = BuiltinDatabaseData.DB_TYPE_ORACLE;
 		String dbType = HibernateUtil.getCurrentDatabaseType();
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			String constraintName = tableName+"_"+columnName;

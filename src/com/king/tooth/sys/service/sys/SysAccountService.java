@@ -13,7 +13,7 @@ import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
-import com.king.tooth.sys.entity.cfg.projectmodule.CfgProjectModuleExtend;
+import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysUser;
@@ -261,7 +261,7 @@ public class SysAccountService extends AbstractService{
 	 * @param permission
 	 * @return
 	 */
-	private List<CfgProjectModuleExtend> processProjectModules(SysPermissionExtend permission) {
+	private List<ProjectModuleExtend> processProjectModules(SysPermissionExtend permission) {
 		if(permission == BuiltinObjectInstance.allPermission){
 			// 证明是管理员或系统开发人员
 			return BuiltinObjectInstance.projectModuleService.getCurrentProjectOfModules();

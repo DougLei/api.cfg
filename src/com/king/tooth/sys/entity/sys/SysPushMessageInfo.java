@@ -35,10 +35,6 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	 */
 	private Integer sendType;
 	/**
-	 * 推送者账户id
-	 */
-	private String pushAccountId;
-	/**
 	 * 推送者id
 	 */
 	private String pushUserId;
@@ -81,7 +77,6 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	//----------------------------------------------------------------
 
 	public SysPushMessageInfo(String pushAccountId, String pushUserId, String projectId, String customerId) {
-		this.pushAccountId = pushAccountId;
 		this.pushUserId = pushUserId;
 		
 		this.customerId = customerId;
@@ -105,12 +100,6 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	}
 	public void setSendType(Integer sendType) {
 		this.sendType = sendType;
-	}
-	public String getPushAccountId() {
-		return pushAccountId;
-	}
-	public void setPushAccountId(String pushAccountId) {
-		this.pushAccountId = pushAccountId;
 	}
 	public String getPushUserId() {
 		return pushUserId;
@@ -176,7 +165,7 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
 		ComColumndata msgTypeColumn = new ComColumndata("msg_type", BuiltinDataType.INTEGER, 1);
 		msgTypeColumn.setName("消息类型");
@@ -189,11 +178,6 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		sendTypeColumn.setComments("不能为空；0:直接推送，即直接将消息原原本本推送给客户端；");
 		sendTypeColumn.setIsNullabled(0);
 		columns.add(sendTypeColumn);
-		
-		ComColumndata pushAccountIdColumn = new ComColumndata("push_account_id", BuiltinDataType.STRING, 32);
-		pushAccountIdColumn.setName("推送者账户id");
-		pushAccountIdColumn.setComments("推送者账户id");
-		columns.add(pushAccountIdColumn);
 		
 		ComColumndata pushUserIdColumn = new ComColumndata("push_user_id", BuiltinDataType.STRING, 32);
 		pushUserIdColumn.setName("推送者id");

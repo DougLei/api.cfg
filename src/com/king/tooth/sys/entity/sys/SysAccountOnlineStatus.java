@@ -13,7 +13,7 @@ import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.cfg.projectmodule.CfgProjectModuleExtend;
+import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 
 /**
  * 账户在线状态信息表
@@ -115,7 +115,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	 * 模块信息对象集合
 	 */
 	@JSONField(serialize = false)
-	private List<CfgProjectModuleExtend> projectModules;
+	private List<ProjectModuleExtend> projectModules;
 	
 	/**
 	 * 登录或验证登录时，传递的信息
@@ -266,10 +266,10 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	public void setUserGroupIds(List<Object> userGroupIds) {
 		this.userGroupIds = userGroupIds;
 	}
-	public List<CfgProjectModuleExtend> getProjectModules() {
+	public List<ProjectModuleExtend> getProjectModules() {
 		return projectModules;
 	}
-	public void setProjectModules(List<CfgProjectModuleExtend> projectModules) {
+	public void setProjectModules(List<ProjectModuleExtend> projectModules) {
 		this.projectModules = projectModules;
 	}
 	public List<Object> getOrgIds() {

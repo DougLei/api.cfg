@@ -83,6 +83,10 @@ public class CodeResourceMapping {
 		
 		// 消息推送
 		put("/message/push/post", BuiltinObjectInstance.sysPushMessageInfoController, "pushMessage");
+		// 消息阅读
+		put("/message/read/get", BuiltinObjectInstance.sysPushMessageInfoController, "readMessage");
+		// 修改消息的阅读状态
+		put("/message/read_status/update/put", BuiltinObjectInstance.sysPushMessageInfoController, "updateMessageReadStatus");
 	}
 	
 	/**

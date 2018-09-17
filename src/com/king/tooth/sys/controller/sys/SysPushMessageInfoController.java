@@ -5,13 +5,18 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.websocket.pushmessage.PushMessageThread;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -40,6 +45,51 @@ public class SysPushMessageInfoController extends AbstractController{
 					CurrentThreadContext.getProjectId(),
 					CurrentThreadContext.getCustomerId()).start();// 启动推送消息的线程
 			resultObject = ijson.getJson();
+		}
+		return getResultObject();
+	}
+	
+	/**
+	 * 消息阅读
+	 * <p>请求方式：GET</p>
+	 * @param request
+	 * @param json
+	 * @return
+	 */
+	@RequestMapping
+	public Object readMessage(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+		String id = request.getParameter(ResourcePropNameConstants.ID);
+		if(StrUtils.isEmpty(id)){
+			return "要阅读的消息id不能为空";
+		}
+		resultObject = BuiltinObjectInstance.sysPushMessageInfoService.readMessage(id);
+		return getResultObject();
+	}
+	
+	/**
+	 * 修改消息的阅读状态
+	 * <p>改为已读或未读</p>
+	 * <p>请求方式：PUT</p>
+	 * @param request
+	 * @param json
+	 * @return
+	 */
+	@RequestMapping
+	public Object updateMessageReadStatus(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+		List<SysPushMessageInfo> sysPushMessageInfos = getDataInstanceList(ijson, SysPushMessageInfo.class, true);
+		if(analysisResult == null){
+			if(sysPushMessageInfos.size() == 1){
+				resultObject = BuiltinObjectInstance.sysPushMessageInfoService.updateMessageReadStatus(sysPushMessageInfos.get(0));
+			}else{
+				for (SysPushMessageInfo spmi : sysPushMessageInfos) {
+					resultObject = BuiltinObjectInstance.sysPushMessageInfoService.updateMessageReadStatus(spmi);
+					if(resultObject instanceof String){
+						break;
+					}
+					resultJsonArray.add((JSONObject) resultObject);
+				}
+			}
+			sysPushMessageInfos.clear();
 		}
 		return getResultObject();
 	}
