@@ -36,6 +36,7 @@ import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
+import com.king.tooth.sys.entity.sys.SysDataPrivS;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
@@ -146,6 +147,7 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new CfgColumnCodeRuleDetail().toCreateTable());
 		tables.add(new CfgSqlResultset().toCreateTable());
 		tables.add(new SysPushMessageInfo().toCreateTable());
+		tables.add(new SysDataPrivS().toCreateTable());
 		return tables;
 	}
 	

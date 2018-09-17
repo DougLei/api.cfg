@@ -36,6 +36,7 @@ import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
+import com.king.tooth.sys.entity.sys.SysDataPrivS;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
@@ -207,6 +208,7 @@ public class BuiltinObjectInstance {
 	public static final SysUserGroup sysUserGroup = new SysUserGroup();
 	public static final SysUserGroupDetail sysUserGroupDetail = new SysUserGroupDetail();
 	public static final SysPushMessageInfo sysPushMessageInfo = new SysPushMessageInfo();
+	public static final SysDataPrivS sysDataPrivS = new SysDataPrivS();
 	
 	public static final SysDataLinks sysDataLinks = new SysDataLinks();
 	public static final SysUserRoleLinks sysUserRoleLinks = new SysUserRoleLinks();
