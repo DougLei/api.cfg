@@ -2,12 +2,14 @@ package com.king.tooth.sys.entity.sys.pushmessage;
 
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
 
 /**
  * 要推送消息的实体
@@ -142,17 +144,32 @@ public class PushMessage implements IEntityPropAnalysis{
 	private static final int size = 100;
 	/** 查询用户id的hql */
 	private static final String queryUserIdHql = "select "+ResourcePropNameConstants.ID+" from SysUser where customerId=? and isDelete=0";
+	/** 查询用户id的query对象 */
+	private Query query;
+	/** 查询用户id的分页对象 */
+	private PageQueryEntity pageQueryEntity;
+	/** 查询用户id的方法 */
+	@SuppressWarnings("unchecked")
+	private List<Object> executeQuery(Session session, String customerId) {
+		query = session.createQuery(queryUserIdHql);
+		query.setParameter(0, customerId);
+		pageQueryEntity = new PageQueryEntity(null, null, size+"", count+"");
+		pageQueryEntity.execAnalysisPageQueryParams();
+		query.setFirstResult(pageQueryEntity.getFirstResult());
+		query.setMaxResults(pageQueryEntity.getMaxResult());
+		return query.list();
+	}
 	
 	/**
 	 * 是否还有userId
-	 * @param pageNo 如果toUserId传的是all，则要分页查询用户表
+	 * @param session
+	 * @param customerId
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public boolean hasMoreToUserId() {
+	public boolean hasMoreToUserId(Session session, String customerId) {
 		if(isToAllUser){
 			count++;
-			List<Object> toUserIdList = HibernateUtil.executeListQueryByHqlArr(size+"", count+"", queryUserIdHql, CurrentThreadContext.getCustomerId());
+			List<Object> toUserIdList = executeQuery(session, customerId);
 			if(toUserIdList == null || toUserIdList.size() == 0){
 				return false;
 			}
@@ -180,7 +197,7 @@ public class PushMessage implements IEntityPropAnalysis{
 			return true;
 		}
 	}
-
+	
 	/**
 	 * 获取要推送的用户id数据
 	 * @return

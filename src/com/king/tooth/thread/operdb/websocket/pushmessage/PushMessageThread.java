@@ -40,7 +40,7 @@ public final class PushMessageThread extends HibernateOperDBThread{
 	protected void doRun() throws Exception {
 		SysPushMessageInfo basicPushMsgInfo = new SysPushMessageInfo(currentAccountId, currentUserId, projectId, customerId);
 		for (PushMessage pushMessage : pushMessages) {
-			pushMessage(session, basicPushMsgInfo, pushMessage);
+			pushMessage(basicPushMsgInfo, pushMessage);
 		}
 		pushMessages.clear();
 	}
@@ -54,12 +54,11 @@ public final class PushMessageThread extends HibernateOperDBThread{
 	
 	/**
 	 * 消息推送
-	 * @param session
 	 * @param basicPushMsgInfo 
 	 * @param pushMessage
 	 * @throws CloneNotSupportedException 
 	 */
-	private void pushMessage(Session session, SysPushMessageInfo basicPushMsgInfo, PushMessage pushMessage) throws CloneNotSupportedException {
+	private void pushMessage(SysPushMessageInfo basicPushMsgInfo, PushMessage pushMessage) throws CloneNotSupportedException {
 		basicPushMsgInfo.setMsgType(pushMessage.getMsgType());
 		basicPushMsgInfo.setSendType(pushMessage.getSendType());
 		basicPushMsgInfo.setSourceMsg(pushMessage.getMessage());
@@ -69,7 +68,7 @@ public final class PushMessageThread extends HibernateOperDBThread{
 		int msgBatchOrderCode = 1;
 		int msgOrderCode = 1;
 		
-		while(pushMessage.hasMoreToUserId()){
+		while(pushMessage.hasMoreToUserId(session, customerId)){
 			toUserIdArray = pushMessage.getActualToUserIdArr();
 			if(toUserIdArray != null && toUserIdArray.length > 0){
 				for (String toUserId : toUserIdArray) {

@@ -242,9 +242,16 @@ public class ComTabledataService extends AbstractPublishService {
 			List<ComColumndata> columns = HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =? order by orderCode asc", tableId);
 			List<ComTabledata> tables = null;
 			if(table.getIsCreated() == 0){
+				int columnSize = columns.size();
+				for (int i=0;i<columnSize ;i++) {
+					if(columns.get(i).getOperStatus() == 2){
+						columns.remove(i);
+						i--;
+					}
+				}
+				
 				// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 				deleteTableIds.add(tableId);
-				
 				table.setColumns(columns);
 				// 1、建表
 				tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
@@ -252,23 +259,35 @@ public class ComTabledataService extends AbstractPublishService {
 				tables = new ArrayList<ComTabledata>(1);
 				tables.add(table);
 				
-				String oldTableName = table.getOldTableName();
-				if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
-					// 修改表名
-					dbTableHandler.reTableName(table.getTableName(), oldTableName);
-					// 移除hibernate中之前表的缓存
-					HibernateUtil.removeConfig(NamingProcessUtil.tableNameTurnClassName(oldTableName));
-				}
-				
 				// 删除hbm信息
 				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 				// 删除资源
 				BuiltinObjectInstance.resourceService.deleteSysResource(table.getId());
 				
-				// 修改数据库中的列
-				dbTableHandler.modifyColumn(table.getTableName(), columns, true);
-				table.setColumns(columns);
-				isNeedInitBasicColumns = true;
+				// 判断该表是否存在
+				List<String> tableNames = dbTableHandler.filterTable(true, table.getTableName());
+				if(tableNames.size() == 0){// 如果不存在，则create
+					// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
+					deleteTableIds.add(tableId);
+					table.setColumns(columns);
+					// 1、建表
+					tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
+				}else{// 如果存在，则update
+					tableNames.clear();
+					
+					String oldTableName = table.getOldTableName();
+					if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
+						// 修改表名
+						dbTableHandler.reTableName(table.getTableName(), oldTableName);
+						// 移除hibernate中之前表的缓存
+						HibernateUtil.removeConfig(NamingProcessUtil.tableNameTurnClassName(oldTableName));
+					}
+					
+					// 修改数据库中的列
+					dbTableHandler.modifyColumn(table.getTableName(), columns, true);
+					table.setColumns(columns);
+					isNeedInitBasicColumns = true;
+				}
 			}else{
 				return "建模时，表["+table.getTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
 			}

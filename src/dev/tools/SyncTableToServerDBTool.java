@@ -36,7 +36,7 @@ public final class SyncTableToServerDBTool extends AbstractService{
 	 * <p>解决每次开发新加的表，后续还要手工到服务器数据库中建表、加建模数据</p>
 	 * @param tables
 	 */
-	public static void syncTablesToService(ComTabledata... tables){
+	private static void syncTablesToService(ComTabledata... tables){
 		// 服务器数据库对象
 		CfgDatabase serviceDatabaseInstance = new CfgDatabase();
 		// 服务器数据库连接信息

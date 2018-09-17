@@ -121,6 +121,8 @@ public class HibernateUtil {
 	 * @return
 	 */
 	public static String getCurrentDatabaseType(){
+//		return BuiltinDatabaseData.DB_TYPE_SQLSERVER;
+//		return BuiltinDatabaseData.DB_TYPE_ORACLE;
 		return getSessionFactory().getDatabaseType();
 	}
 	

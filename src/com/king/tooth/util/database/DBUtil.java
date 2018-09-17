@@ -56,9 +56,9 @@ public class DBUtil {
 			String constraintName = tableName+"_"+columnName;
 			if(constraintName.length() >= 27){
 				// oracle的约束名长度不能超过30个字符，所以这里对约束名做处理：
-				Log4jUtil.debug("在oracle数据库中，因约束名长度超过30个字符，系统自动处理",  constraintName);
+				Log4jUtil.debug("在oracle数据库中，因约束名长度超过30个字符，系统自动处理:{}",  constraintName);
 				constraintName = NamingProcessUtil.extractDbObjName(constraintName);
-				Log4jUtil.debug("自动处理的新约束名为：{}",  constraintName);
+				Log4jUtil.debug("自动处理的新约束名为:{}",  constraintName);
 			}
 			return constraintType+"_"+constraintName;
 		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
