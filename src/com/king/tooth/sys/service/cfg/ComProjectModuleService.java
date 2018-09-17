@@ -97,7 +97,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	
 	//--------------------------------------------------------------------------------------------------------
 	/** 查询模块集合的selectHql语句的select头 */
-	private static final String queryModulesSelectHqlHeader = "";
+	private static final String queryModulesSelectHqlHeader = "select " + ResourcePropNameConstants.ID + ", name, url, icon, isEnabled ";
 	
 	/**
 	 * 获取当前项目所有有效的模块信息
@@ -105,7 +105,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return
 	 */
 	public List<ProjectModuleExtend> getCurrentProjectOfModules(){
-		List<ProjectModuleExtend> modules = HibernateUtil.extendExecuteListQueryByHqlArr(ProjectModuleExtend.class, null, null, queryRootModulesHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		List<ProjectModuleExtend> modules = installProjectModuleInstanceList(queryRootModulesHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(modules != null && modules.size() > 0){
 			for (ProjectModuleExtend module : modules) {
 				module.setChildren(recursiveGetCurrentProjectOfSubModules(module));
@@ -119,7 +119,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return
 	 */
 	private List<ProjectModuleExtend> recursiveGetCurrentProjectOfSubModules(ProjectModuleExtend projectModule) {
-		List<ProjectModuleExtend> subProjectModules = HibernateUtil.extendExecuteListQueryByHqlArr(ProjectModuleExtend.class, null, null, queryModulesHql, projectModule.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		List<ProjectModuleExtend> subProjectModules = installProjectModuleInstanceList(queryModulesHql, projectModule.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(subProjectModules != null && subProjectModules.size() > 0){
 			for (ProjectModuleExtend subModule : subProjectModules) {
 				subModule.setChildren(recursiveGetCurrentProjectOfSubModules(subModule));
@@ -152,7 +152,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return
 	 */
 	private ProjectModuleExtend getProjectModuleByPermission(SysPermissionExtend permission) {
-		ProjectModuleExtend module = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ProjectModuleExtend.class, queryProjectModuleByIdHql, permission.getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		ProjectModuleExtend module = installProjectModuleInstance(queryProjectModuleByIdHql, permission.getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(module == null){
 			return null;
 		}
@@ -170,7 +170,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 			modules = new ArrayList<ProjectModuleExtend>(permissions.size());
 			ProjectModuleExtend module;
 			for (SysPermissionExtend permission : permissions) {
-				module = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ProjectModuleExtend.class, queryProjectModuleByIdHql, permission.getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+				module = installProjectModuleInstance(queryProjectModuleByIdHql, permission.getRefResourceId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 				if(module == null){
 					continue;
 				}
@@ -182,7 +182,54 @@ public class ComProjectModuleService extends AbstractPublishService {
 	}
 	/** 根据id查询模块信息集合的hql */
 	private final static String queryProjectModuleByIdHql = queryModulesSelectHqlHeader + "from ComProjectModule where "+ResourcePropNameConstants.ID+"=? and projectId=? and customerId=? and isEnabled = 1";
-
+	//--------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * 组装projectModule实例对象
+	 * @param objectArray
+	 * @return
+	 */
+	private ProjectModuleExtend installProjectModuleInstance(Object[] objectArray){
+		ProjectModuleExtend projectModuleExtend = new ProjectModuleExtend();
+		projectModuleExtend.setId(objectArray[0]);
+		projectModuleExtend.setText(objectArray[1]);
+		projectModuleExtend.setLink(objectArray[2]);
+		projectModuleExtend.setIcon(objectArray[3]);
+		projectModuleExtend.setHide(objectArray[4]);
+		return projectModuleExtend;
+	}
+	
+	/**
+	 * 组装projectModule实例对象
+	 * @param hql
+	 * @param parameterArray
+	 * @return
+	 */
+	private ProjectModuleExtend installProjectModuleInstance(String hql, Object... parameterArray){
+		Object[] objectArray = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(hql, parameterArray);
+		return installProjectModuleInstance(objectArray);
+	}
+	
+	/**
+	 * 组装projectModule实例集合
+	 * @param hql
+	 * @param parameterArray
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<ProjectModuleExtend> installProjectModuleInstanceList(String hql, Object... parameterArray){
+		List<Object[]> objectList = HibernateUtil.executeListQueryByHqlArr(null, null, hql, parameterArray);
+		if(objectList != null && objectList.size() > 0){
+			List<ProjectModuleExtend> modules = new ArrayList<ProjectModuleExtend>(objectList.size());
+			for (Object[] objectArray : objectList) {
+				modules.add(installProjectModuleInstance(objectArray));
+			}
+			objectList.clear();
+			return modules;
+		}
+		return null;
+	}
+	
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 发布项目模块

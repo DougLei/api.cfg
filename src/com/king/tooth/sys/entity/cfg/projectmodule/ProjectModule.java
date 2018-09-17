@@ -2,6 +2,8 @@ package com.king.tooth.sys.entity.cfg.projectmodule;
 
 import java.io.Serializable;
 
+import com.king.tooth.util.StrUtils;
+
 /**
  * 前端对应的项目模块对象
  * @author DougLei
@@ -17,31 +19,42 @@ public class ProjectModule implements Serializable{
 	public String getId() {
 		return id;
 	}
-	public void setId(String id) {
-		this.id = id;
-	}
 	public String getText() {
 		return text;
-	}
-	public void setName(String name) {
-		this.text = name;
 	}
 	public String getLink() {
 		return link;
 	}
-	public void setUrl(String url) {
-		this.link = url;
-	}
 	public String getIcon() {
 		return icon;
-	}
-	public void setIcon(String icon) {
-		this.icon = icon;
 	}
 	public Boolean getHide() {
 		return hide;
 	}
-	public void setIsEnabled(Integer isEnabled) {
-		this.hide = (isEnabled==1) ? false : true;
+	
+	public void setId(Object id) {
+		if(StrUtils.notEmpty(id)){
+			this.id = id.toString();
+		}
+	}
+	public void setText(Object text) {
+		if(StrUtils.notEmpty(text)){
+			this.text = text.toString();
+		}
+	}
+	public void setLink(Object link) {
+		if(StrUtils.notEmpty(link)){
+			this.link = link.toString();
+		}
+	}
+	public void setIcon(Object icon) {
+		if(StrUtils.notEmpty(icon)){
+			this.icon = icon.toString();
+		}
+	}
+	public void setHide(Object hide) {
+		if(StrUtils.notEmpty(hide)){
+			this.hide = hide.toString().equals("0");
+		}
 	}
 }
