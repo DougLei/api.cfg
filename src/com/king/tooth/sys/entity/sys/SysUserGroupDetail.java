@@ -29,10 +29,6 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 	 * 人员主键
 	 */
 	private String userId;
-	/**
-	 * 账户主键
-	 */
-	private String accountId;
 	
 	//-------------------------------------------------------------------------
 	public String getUserGroupId() {
@@ -47,12 +43,6 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	public String getAccountId() {
-		return accountId;
-	}
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
 
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_USER_GROUP_DETAIL", 0);
@@ -63,7 +53,7 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
 		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", BuiltinDataType.STRING, 32);
 		userGroupIdColumn.setName("用户组主键");
@@ -74,11 +64,6 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 		userIdColumn.setName("人员主键");
 		userIdColumn.setComments("人员主键");
 		columns.add(userIdColumn);
-		
-		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinDataType.STRING, 32);
-		accountIdColumn.setName("账户主键");
-		accountIdColumn.setComments("账户主键");
-		columns.add(accountIdColumn);
 		
 		table.setColumns(columns);
 		return table;

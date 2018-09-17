@@ -28,17 +28,29 @@ public class SysUserService extends AbstractService{
 	private static final String sysUserPositionLinks = "SysUserPositionLinks";
 	
 	/**
+	 * 账户是否存在
+	 * @param id
+	 * @return
+	 */
+	private boolean accountIsExists(String id){
+		Object obj = HibernateUtil.executeUniqueQueryByHqlArr("select "+ResourcePropNameConstants.ID+" from SysAccount where " + ResourcePropNameConstants.ID +"=?", id);
+		if(obj == null){
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * 修改用户关联的账户密码
 	 * @param userId
 	 * @param newLoginPwd
 	 * @return
 	 */
 	public Object uploadUserLoginPwd(String userId, String newLoginPwd){
-		SysUser user = getObjectById(userId, SysUser.class);
-		if(StrUtils.isEmpty(user.getAccountId())){
+		if(!accountIsExists(userId)){
 			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
 		}
-		return BuiltinObjectInstance.accountService.uploadAccounLoginPwd(user.getId(), user.getAccountId(), newLoginPwd);
+		return BuiltinObjectInstance.accountService.uploadAccounLoginPwd(userId, newLoginPwd);
 	}
 	
 	/**
@@ -141,7 +153,7 @@ public class SysUserService extends AbstractService{
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
 				String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
-				user.setAccountId(accountId);
+				user.setId(accountId);
 			}
 			JSONObject userJsonObject = HibernateUtil.saveObject(user, null);
 			String userId = userJsonObject.getString(ResourcePropNameConstants.ID);
@@ -172,11 +184,12 @@ public class SysUserService extends AbstractService{
 	public Object updateUser(SysUser user){
 		SysUser oldUser = getObjectById(user.getId(), SysUser.class);
 		
-		String accountId = oldUser.getAccountId();
+		String accountId = user.getId();
+		boolean accountIsExists = accountIsExists(accountId);
 		boolean modifyAccountInfo = false;// 标识是否修改账户信息
 		SysAccount account = null;
-		if(StrUtils.notEmpty(accountId)){
-			account = getObjectById(oldUser.getAccountId(), SysAccount.class);
+		if(accountIsExists){
+			account = getObjectById(accountId, SysAccount.class);
 		}else if(user.getIsCreateAccount() == 1){
 			account = new SysAccount();
 		}
@@ -205,13 +218,12 @@ public class SysUserService extends AbstractService{
 		}
 		if(result == null){
 			if(account != null && modifyAccountInfo){
-				if(StrUtils.notEmpty(oldUser.getAccountId())){
+				if(accountIsExists){
 					HibernateUtil.updateObject(account, null);
 				}else{
 					account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 					account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
-					accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
-					user.setAccountId(accountId);
+					HibernateUtil.saveObject(account, null);
 				}
 			}
 			JSONObject userJsonObject = HibernateUtil.updateObject(user, null);
@@ -255,22 +267,30 @@ public class SysUserService extends AbstractService{
 	public Object openAccount(SysUser user) {
 		user = getObjectById(user.getId(), SysUser.class);
 		
-		if(StrUtils.isEmpty(user.getAccountId())){
+		if(accountIsExists(user.getId())){
+			SysAccount account = getObjectById(user.getId(), SysAccount.class);
+			if(account.getIsDelete() == 0){
+				return "用户["+user.getName()+"]已经存在账户，禁止重复开通账户";
+			}else if(account.getIsDelete() == 1){
+				account.setIsDelete(0);
+				account.setLastUpdateDate(new Date());
+				// ----
+				account.setLoginName(user.getWorkNo());
+				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+				account.setTel(user.getTel());
+				account.setEmail(user.getEmail());
+				HibernateUtil.updateObject(account, null);
+			}
+		}else{
 			SysAccount account = new SysAccount();
+			account.setId(user.getId());
+			// ----
 			account.setLoginName(user.getWorkNo());
 			account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 			account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 			account.setTel(user.getTel());
 			account.setEmail(user.getEmail());
-			String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set accountId=? where "+ResourcePropNameConstants.ID+"=?", accountId, user.getId());
-		}else{
-			SysAccount account = getObjectById(user.getAccountId(), SysAccount.class);
-			if(account.getIsDelete() == 0){
-				return "用户["+user.getName()+"]已经存在账户，禁止重复开通账户";
-			}else if(account.getIsDelete() == 1){
-				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=0, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), user.getAccountId());
-			}
+			HibernateUtil.saveObject(account, null);
 		}
 		
 		JSONObject jsonObject = new JSONObject(1);
@@ -289,10 +309,9 @@ public class SysUserService extends AbstractService{
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
 		
 		// 删除账户
-		String accountId = user.getAccountId();
-		if(StrUtils.notEmpty(accountId)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), accountId);
-			BuiltinObjectInstance.accountService.deleteTokenInfoByAccountId(accountId);
+		if(accountIsExists(userId)){
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
+			BuiltinObjectInstance.accountService.deleteTokenInfoByAccountId(userId);
 		}
 		// 删除所属的部门
 		if(StrUtils.notEmpty(user.getDeptId())){

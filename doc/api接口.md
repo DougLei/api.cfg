@@ -958,8 +958,7 @@
 ```
 {
   "userGroupId":"",                                     --用户组主键
-  "userId":"",                                          --人员主键
-  "accountId":""                                        --账户主键(人员信息中的accountId)，可为空
+  "userId":""                                           --人员主键
 }
 ```
 
@@ -980,8 +979,7 @@
 {
   "Id":"",                                              --主键
   "userGroupId":"",                                     --用户组主键
-  "userId":"",                                          --人员主键
-  "accountId":""                                        --账户主键(人员信息中的accountId)，可为空
+  "userId":""                                           --人员主键
 }
 ```
 

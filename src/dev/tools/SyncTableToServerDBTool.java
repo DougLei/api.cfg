@@ -11,8 +11,8 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
-import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.sys.SysUserGroupDetail;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -27,7 +27,7 @@ public final class SyncTableToServerDBTool extends AbstractService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new SysPushMessageInfo().toCreateTable()
+				new SysUserGroupDetail().toCreateTable()
 				);
 	}
 	

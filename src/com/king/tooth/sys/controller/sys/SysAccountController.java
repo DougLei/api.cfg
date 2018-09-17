@@ -165,7 +165,7 @@ public class SysAccountController extends AbstractController{
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = BuiltinObjectInstance.accountService.uploadAccounLoginPwd(null, jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinObjectInstance.accountService.uploadAccounLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

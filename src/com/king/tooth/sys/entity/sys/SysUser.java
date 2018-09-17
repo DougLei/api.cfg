@@ -24,10 +24,6 @@ import com.king.tooth.util.StrUtils;
 @Table
 public class SysUser extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 	/**
-	 * 关联的账户主键
-	 */
-	private String accountId;
-	/**
 	 * 昵称
 	 */
 	private String nikeName;
@@ -121,12 +117,6 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	@JSONField(serialize = false)
 	private int isCreateAccount;
 	
-	public String getAccountId() {
-		return accountId;
-	}
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
 	public String getNikeName() {
 		return nikeName;
 	}
@@ -264,13 +254,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(28);
-		
-		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinDataType.STRING, 32);
-		accountIdColumn.setName("关联的账户主键");
-		accountIdColumn.setComments("关联的账户主键");
-		accountIdColumn.setOrderCode(1);
-		columns.add(accountIdColumn);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(27);
 		
 		ComColumndata nikeNameColumn = new ComColumndata("nike_name", BuiltinDataType.STRING, 50);
 		nikeNameColumn.setName("昵称");

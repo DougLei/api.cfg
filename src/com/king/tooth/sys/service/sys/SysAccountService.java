@@ -142,7 +142,7 @@ public class SysAccountService extends AbstractService{
 	 */
 	private void processAccountAndUserRelation(SysAccountOnlineStatus accountOnlineStatus, String accountId, String accountName) {
 		accountOnlineStatus.setAccountId(accountId);
-		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where accountId = ? and customerId=? and isDelete=0", accountId, CurrentThreadContext.getCustomerId());
+		SysUser loginUser = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where "+ResourcePropNameConstants.ID+" = ? and customerId=? and isDelete=0", accountId, CurrentThreadContext.getCustomerId());
 		
 		if(loginUser == null){
 			accountOnlineStatus.setAccountName(accountName);
@@ -356,7 +356,7 @@ public class SysAccountService extends AbstractService{
 	 * @param newLoginPwd
 	 * @return
 	 */
-	public Object uploadAccounLoginPwd(String userId, String accountId, String newLoginPwd){
+	public Object uploadAccounLoginPwd(String accountId, String newLoginPwd){
 		SysAccount account = getObjectById(accountId, SysAccount.class);
 		String newPwd = CryptographyUtil.encodeMd5(newLoginPwd, account.getLoginPwdKey());
 		if(newPwd.equals(account.getLoginPwd())){
@@ -365,11 +365,7 @@ public class SysAccountService extends AbstractService{
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPwd, accountId);
 		
 		JSONObject json = new JSONObject(2);
-		if(StrUtils.notEmpty(userId)){
-			json.put(ResourcePropNameConstants.ID, userId);
-		}else if(StrUtils.notEmpty(accountId)){
-			json.put(ResourcePropNameConstants.ID, accountId);
-		}
+		json.put(ResourcePropNameConstants.ID, accountId);
 		json.put("password", newPwd);
 		return json;
 	}
