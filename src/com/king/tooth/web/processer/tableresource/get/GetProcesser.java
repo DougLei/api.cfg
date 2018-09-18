@@ -1,5 +1,6 @@
 package com.king.tooth.web.processer.tableresource.get;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -139,22 +140,65 @@ public abstract class GetProcesser extends RequestProcesser {
 		if(builtinFocusedIdMethodProcesser.getIsUsed()){
 			List<Object> addFocusedIds = builtinFocusedIdMethodProcesser.getAddFocusedIds();
 			if(addFocusedIds != null && addFocusedIds.size() > 0){
-				StringBuilder hql = new StringBuilder("from " + requestBody.getResourceName() + " where " + ResourcePropNameConstants.ID + " in(");
-				int size = addFocusedIds.size();
-				for (int i=0;i<size;i++) {
-					hql.append("?,");
-					dataList.remove(dataList.size()-1);// 挤掉最后的数据
-				}
-				hql.setLength(hql.length()-1);
-				hql.append(")");
-				hql.append(builtinSortMethodProcesser.getHql());
+				List<Map<String, Object>> addDataList = removeDatas(dataList, addFocusedIds);
 				
-				List<Map<String, Object>> addDataList = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), addFocusedIds);
-				dataList.addAll(0, addDataList);
-				hql.setLength(0);
+				if(addFocusedIds.size() > 0){
+					StringBuilder hql = new StringBuilder("from " + requestBody.getResourceName() + " where " + ResourcePropNameConstants.ID + " in(");
+					int size = addFocusedIds.size();
+					for (int i=0;i<size;i++) {
+						hql.append("?,");
+						dataList.remove(dataList.size()-1).clear();// 挤掉最后的数据
+					}
+					hql.setLength(hql.length()-1);
+					hql.append(")");
+					hql.append(builtinSortMethodProcesser.getHql());
+					
+					List<Map<String, Object>> tmpAddDataList = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), addFocusedIds);
+					hql.setLength(0);
+					
+					if(addDataList == null){
+						addDataList = tmpAddDataList;
+					}else{
+						addDataList.addAll(0, tmpAddDataList);
+						tmpAddDataList.clear();
+					}
+				}
+				
+				if(addDataList != null && addDataList.size() > 0){
+					dataList.addAll(0, addDataList);
+				}
 			}
 		}
 		return dataList;
+	}
+
+	/**
+	 * 移除最后的数据，或和dataId相同id的数据
+	 * <p>处理聚焦定位的数据</p>
+	 * @param dataList
+	 * @param dataId
+	 */
+	private List<Map<String, Object>> removeDatas(List<Map<String, Object>> dataList, List<Object> dataIds) {
+		List<Map<String, Object>> addDataList = null;
+		
+		String dataId;
+		Map<String, Object> dataMap;
+		for(int i=0;i<dataIds.size();i++){
+			dataId = dataIds.get(i).toString();
+			for(int j=0;j<dataList.size();j++){
+				dataMap = dataList.get(j);
+				if(dataId.equals(dataMap.get(ResourcePropNameConstants.ID).toString())){
+					if(addDataList == null){
+						addDataList = new ArrayList<Map<String,Object>>(dataIds.size());
+					}
+					addDataList.add(dataMap);
+					dataIds.remove(i--);
+					dataList.remove(j--);
+					break;
+				}
+			}
+		}
+		return addDataList;
 	}
 
 	/**

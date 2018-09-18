@@ -24,9 +24,6 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 				  builtinQueryMethodProcesser.getSql().append(getFromSql());
 		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
 		
-		if(sqlScriptResource.getOutSqlResultsetsList() != null && sqlScriptResource.getOutSqlResultsetsList().get(0) != null){
-			validIdColumnIsExists(sqlScriptResource);
-		}
 		recordCoreSqlBuffer(coreQuerySql);
 		reocrdCoreSqlParams(null);
 		

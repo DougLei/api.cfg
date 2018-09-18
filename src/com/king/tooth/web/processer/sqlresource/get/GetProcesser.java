@@ -221,26 +221,87 @@ public abstract class GetProcesser extends RequestProcesser{
 		if(builtinFocusedIdMethodProcesser.getIsUsed()){
 			List<Object> addFocusedIds = builtinFocusedIdMethodProcesser.getAddFocusedIds();
 			if(addFocusedIds != null && addFocusedIds.size() > 0){
-				coreSqlBuffer.append(" where s_.").append(ResourcePropNameConstants.ID).append(" in (");
-				for (Object fid : addFocusedIds) {
-					coreSqlParams.add(fid);
-					coreSqlBuffer.append("?,");
-					list.remove(list.size()-1);// 挤掉最后的数据
+				int idColumnIndex = getIdColumnIndex(sqlResultset);
+				List addList = removeDatas(list, addFocusedIds, idColumnIndex);
+				
+				if(addFocusedIds.size() > 0){
+					coreSqlBuffer.append(" where s_.").append(ResourcePropNameConstants.ID).append(" in (");
+					for (Object fid : addFocusedIds) {
+						coreSqlParams.add(fid);
+						coreSqlBuffer.append("?,");
+						list.remove(list.size()-1);// 挤掉最后的数据
+					}
+					coreSqlBuffer.setLength(coreSqlBuffer.length()-1);
+					coreSqlBuffer.append(")");
+					coreSqlBuffer.append(builtinSortMethodProcesser.getSql());
+					
+					List tmpAddList = HibernateUtil.executeListQueryBySql(coreSqlBuffer.toString(), coreSqlParams);
+					if(addList == null){
+						addList = tmpAddList;
+					}else{
+						addList.addAll(0, tmpAddList);
+						tmpAddList.clear();
+					}
 				}
-				coreSqlBuffer.setLength(coreSqlBuffer.length()-1);
-				coreSqlBuffer.append(")");
-				coreSqlBuffer.append(builtinSortMethodProcesser.getSql());
 				
-				List addList = HibernateUtil.executeListQueryBySql(coreSqlBuffer.toString(), coreSqlParams);
-				list.addAll(0, addList);
-				
-				coreSqlBuffer.setLength(0);
-				coreSqlParams.clear();
+				if(addList != null && addList.size() > 0){
+					list.addAll(0, addList);
+				}
 			}
 		}
+		coreSqlBuffer.setLength(0);
+		coreSqlParams.clear();
 		
 		List<Map<String, Object>> dataList = sqlQueryResultToMap(list, sqlResultset);
 		return dataList;
+	}
+	
+	/**
+	 * 获得id列在查询结果数组中的下标值
+	 * @param sqlResultsets
+	 * @return
+	 */
+	private int getIdColumnIndex(List<CfgSqlResultset> sqlResultsets) {
+		int index = 0;
+		for(CfgSqlResultset csr : sqlResultsets){
+			if(csr.getPropName().equals(ResourcePropNameConstants.ID)){
+				break;
+			}
+			index++;
+		}
+		return index;
+	}
+
+	/**
+	 * 移除最后的数据，或和dataId相同id的数据
+	 * <p>处理聚焦定位的数据</p>
+	 * @param dataList
+	 * @param idColumnIndex 
+	 * @param dataId
+	 */
+	private List removeDatas(List dataList, List<Object> dataIds, int idColumnIndex) {
+		List addDataList = null;
+		
+		if(dataList.get(0) instanceof Object[]){
+			String dataId;
+			Object[] dataArray;
+			for(int i=0;i<dataIds.size();i++){
+				dataId = dataIds.get(i).toString();
+				for(int j=0;j<dataList.size();j++){
+					dataArray = (Object[]) dataList.get(j);
+					if(dataId.equals(dataArray[idColumnIndex].toString())){
+						if(addDataList == null){
+							addDataList = new ArrayList<Map<String,Object>>(dataIds.size());
+						}
+						addDataList.add(dataArray);
+						dataIds.remove(i--);
+						dataList.remove(j--);
+						break;
+					}
+				}
+			}
+		}
+		return addDataList;
 	}
 	
 	/**
@@ -331,24 +392,6 @@ public abstract class GetProcesser extends RequestProcesser{
 	}
 	
 	/**
-	 * 验证id字段是否存在
-	 * @param sqlScriptResource 
-	 */
-	protected void validIdColumnIsExists(ComSqlScript sqlScriptResource) {
-		List<CfgSqlResultset> sqlResultsets = sqlScriptResource.getOutSqlResultsetsList().get(0);
-		boolean unIncludeIdColumn = true;// 是否不包含id字段，如果不包括，则该处理器无法使用
-		for (CfgSqlResultset csr : sqlResultsets) {
-			if(csr.getPropName().equalsIgnoreCase(ResourcePropNameConstants.ID)){
-				unIncludeIdColumn = false;
-				break;
-			}
-		}
-		if(unIncludeIdColumn){
-			throw new IllegalArgumentException("请求的select sql资源的查询结果字段，不包括id列，请求失败");
-		}
-	}
-	
-	/**
 	 * [首次调用]处理select sql语句查询的结果集信息
 	 * @param sqlScriptResource
 	 */
@@ -364,19 +407,20 @@ public abstract class GetProcesser extends RequestProcesser{
 			}else{
 				querySql += " where 1=2";
 			}
-			sqlScriptResource.setOutSqlResultsetsList(processResultSetList(querySql, queryCondParameters, sqlScriptResource.getId()));
+			sqlScriptResource.setOutSqlResultsetsList(processResultSetList(sqlScriptResource.getSqlScriptResourceName(), querySql, queryCondParameters, sqlScriptResource.getId()));
 		}
 	}
 	
 	/**
 	 * 获取select sql语句查询的结果集信息
 	 * <p>如果没有结果集，则要获取结果集信息并保存到数据库</p>
-	 * @param rs
-	 * @param sqlResultsetIndex
-	 * @param sqlScriptId 
-	 * @throws SQLException 
+	 * @param sqlScriptResourceName
+	 * @param querySql
+	 * @param queryCondParameters
+	 * @param sqlScriptId
+	 * @return
 	 */
-	protected List<List<CfgSqlResultset>> processResultSetList(final String querySql, final List<Object> queryCondParameters, final String sqlScriptId){
+	private List<List<CfgSqlResultset>> processResultSetList(final String sqlScriptResourceName, final String querySql, final List<Object> queryCondParameters, final String sqlScriptId){
 		if(StrUtils.isEmpty(querySql)){
 			return null;
 		}
@@ -386,6 +430,8 @@ public abstract class GetProcesser extends RequestProcesser{
 		
 		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection connection) throws SQLException {
+				boolean includeIdColumn = false;// 是否包含id字段，如果不包括，则系统抛出异常
+				
 				PreparedStatement pst = null;
 				ResultSet rs = null;
 				try {
@@ -402,19 +448,26 @@ public abstract class GetProcesser extends RequestProcesser{
 					}
 					rs = pst.executeQuery();
 					ResultSetMetaData rsmd = rs.getMetaData();
-					int len = rsmd.getColumnCount();
+					int len = rsmd.getColumnCount()+1;
 					CfgSqlResultset csr = null;
-					for(int i=1;i<=len;i++){
+					for(int i=1;i<len;i++){
 						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, 2);
 						csr.setSqlScriptId(sqlScriptId);
 						HibernateUtil.saveObject(csr, null);// 将每条结果集信息保存到数据库
 						
 						sqlResultSets.add(csr);
+						
+						if(!includeIdColumn && csr.getPropName() == ResourcePropNameConstants.ID){
+							includeIdColumn = true;
+						}
 					}
 				}catch (Exception e){
 					e.printStackTrace();
 				} finally{
 					CloseUtil.closeDBConn(rs, pst);// 从当前线程session中获取的connection，会在最后同session一同关闭，不需要单独关闭。即execute中的connection参数
+				}
+				if(!includeIdColumn){
+					throw new IllegalArgumentException("请求的名为["+sqlScriptResourceName+"]的select sql资源，其查询结果字段，不包含id列，系统无法处理，请修改该sql脚本，增加查询id字段的语句");
 				}
 			}
 		});

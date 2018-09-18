@@ -17,9 +17,6 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 	
 	protected boolean doGetProcess() {
 		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
-		if(sqlScriptResource.getOutSqlResultsetsList() != null && sqlScriptResource.getOutSqlResultsetsList().get(0) != null){
-			validIdColumnIsExists(sqlScriptResource);
-		}
 		
 		String querySql = sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql() + 
 						  getFromSql().toString();
