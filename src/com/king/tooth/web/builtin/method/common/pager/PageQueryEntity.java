@@ -152,7 +152,7 @@ public class PageQueryEntity implements Serializable{
 	 * <p>hibernate query.setMaxResults(maxResults)</p>
 	 * @return
 	 */
-	public int getMaxResult(){
+	public int getMaxResults(){
 		return getPageSize();
 	}
 	
@@ -184,9 +184,8 @@ public class PageQueryEntity implements Serializable{
 	/**
 	 * 获取当前页数
 	 * 即第几页
-	 * @param totalCount 总数量
 	 */
-	public int getPageNum(long totalCount){
+	public int getPageNum(){
 		if(useLimitStart){
 			return this.start/this.limit + 1;
 		}else if(useRowsPage){

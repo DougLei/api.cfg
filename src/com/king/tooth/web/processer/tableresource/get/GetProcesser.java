@@ -105,23 +105,24 @@ public abstract class GetProcesser extends RequestProcesser {
 		PageResultEntity pageResultEntity = null;
 		if(builtinPagerMethodProcesser.getIsUsed()){
 			pageResultEntity =  new PageResultEntity();
-			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
-			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
 			
 			// 获得查询总数量的hql语句
 			String countHql = builtinPagerMethodProcesser.getHql() + getFromHql();
 			Query countQuery = createQuery(countHql);
 			long totalCount = (long) countQuery.uniqueResult();// 查询获得数据总数
 			pageResultEntity.setTotalCount(totalCount);
-			pageResultEntity.setPageNum(builtinPagerMethodProcesser.getPageQueryEntity().getPageNum(totalCount));
+			pageResultEntity.setPageNum(builtinPagerMethodProcesser.getPageQueryEntity().getPageNum());
 			pageResultEntity.setPageTotalCount(builtinPagerMethodProcesser.getPageQueryEntity().getPageTotalCount(totalCount));
 			
 			if(builtinFocusedIdMethodProcesser.getIsUsed()){
 				pageResultEntity.setFocusedId(builtinFocusedIdMethodProcesser.getFocusedId());
 			}
 			
-			query.setFirstResult(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
-			query.setMaxResults(builtinPagerMethodProcesser.getPageQueryEntity().getMaxResult());
+			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
+			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
+			
+			query.setFirstResult(pageResultEntity.getFirstDataIndex());
+			query.setMaxResults(pageResultEntity.getPageSize());
 		}
 		return pageResultEntity;
 	}

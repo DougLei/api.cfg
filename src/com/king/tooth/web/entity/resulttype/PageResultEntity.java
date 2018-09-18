@@ -46,13 +46,30 @@ public class PageResultEntity implements Serializable {
 	 */
 	@JSONField(name = "pageCount")
 	private int pageTotalCount;
-	
+
 	/**
 	 * 结果集合
 	 */
 	@JSONField(name = "rows")
 	private List<? extends Object> resultDatas;
 	
+	/**
+	 * 是否最后一页
+	 * @return
+	 */
+	public boolean getIsLastPage() {
+		return pageNum == pageTotalCount;
+	}
+	
+	/**
+	 * 是否数据溢出
+	 * <p>即只有两页数据，查询第三页数据的时候，是不应该查询的</p>
+	 * <p>这时要将查询的最后一页该为最大页数</p>
+	 * @return
+	 */
+	private boolean overflowData() {
+		return pageNum > pageTotalCount;
+	}
 	
 	public String[] getFocusedId() {
 		return focusedId;
@@ -76,7 +93,12 @@ public class PageResultEntity implements Serializable {
 		return firstDataIndex;
 	}
 	public void setFirstDataIndex(int firstDataIndex) {
-		this.firstDataIndex = firstDataIndex;
+		if(overflowData()){
+			this.pageNum = pageTotalCount;
+			this.firstDataIndex = (pageTotalCount-1)*pageSize;
+		}else{
+			this.firstDataIndex = firstDataIndex;
+		}
 	}
 	public long getTotalCount() {
 		return totalCount;

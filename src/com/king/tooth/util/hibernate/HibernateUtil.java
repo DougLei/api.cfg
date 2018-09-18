@@ -503,7 +503,7 @@ public class HibernateUtil {
 			pageQueryEntity.execAnalysisPageQueryParams();
 			
 			query.setFirstResult(pageQueryEntity.getFirstResult());
-			query.setMaxResults(pageQueryEntity.getMaxResult());
+			query.setMaxResults(pageQueryEntity.getMaxResults());
 		}
 	}
 	

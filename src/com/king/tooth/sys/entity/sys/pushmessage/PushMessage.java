@@ -156,7 +156,7 @@ public class PushMessage implements IEntityPropAnalysis{
 		pageQueryEntity = new PageQueryEntity(null, null, size+"", count+"");
 		pageQueryEntity.execAnalysisPageQueryParams();
 		query.setFirstResult(pageQueryEntity.getFirstResult());
-		query.setMaxResults(pageQueryEntity.getMaxResult());
+		query.setMaxResults(pageQueryEntity.getMaxResults());
 		return query.list();
 	}
 	

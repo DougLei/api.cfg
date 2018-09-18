@@ -84,23 +84,24 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 		PageResultEntity pageResultEntity = null;
 		if(builtinPagerMethodProcesser.getIsUsed()){
 			pageResultEntity = new PageResultEntity();
-			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
-			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
 			
 			// 获得查询总数量的hql语句
 			Query countQuery = createRecursiveQuery(countSql, firstRecursiveQueryParams);
 			long totalCount = Long.valueOf(countQuery.uniqueResult()+"");// 查询获得数据总数
 			pageResultEntity.setTotalCount(totalCount);
-			pageResultEntity.setPageNum(builtinPagerMethodProcesser.getPageQueryEntity().getPageNum(totalCount));
+			pageResultEntity.setPageNum(builtinPagerMethodProcesser.getPageQueryEntity().getPageNum());
 			pageResultEntity.setPageTotalCount(builtinPagerMethodProcesser.getPageQueryEntity().getPageTotalCount(totalCount));
 			
 			if(builtinFocusedIdMethodProcesser.getIsUsed()){
 				pageResultEntity.setFocusedId(builtinFocusedIdMethodProcesser.getFocusedId());
 			}
 			
+			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
+			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
+			
 			// 在主查询的query对象中，设置分页数据
-			query.setFirstResult(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
-			query.setMaxResults(builtinPagerMethodProcesser.getPageQueryEntity().getMaxResult());
+			query.setFirstResult(pageResultEntity.getFirstDataIndex());
+			query.setMaxResults(pageResultEntity.getPageSize());
 		}
 		return pageResultEntity;
 	}

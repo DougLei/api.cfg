@@ -254,7 +254,7 @@ SELECT sub_columns FROM sub_resource s, relation_resource r
 
 > 参数: ?_ids=要删除的文件数据id，多个用,分隔
 
-## 三、系统内置参数
+## 三、系统其他功能
 
 ### (一)、sql脚本的内置参数
 ```
@@ -287,3 +287,17 @@ _currentDeptId                                          --当前用户所属部�
 _currentPositionId                                      --当前用户所属岗位id
 _currentUserGroupId                                     --当前用户所属用户组id，同上
 ```
+
+### (三)、消息推送系统接口
+	api: ws://ipAddress:8091/api.push.message/websocket/message/push/customerId/clientIdentity
+
+> api 内容详解:
+
+	ipAddress
+	说明: 消息推送服务器的ip地址
+
+	customerId
+	说明: 可以连接消息推送服务器的客户id，用户名[SmartOne]，密码[1QaZ2wSx,.]，(不包括[])在连接消息推送服务器时，将md5(用户名,密码)的结果值，放到customerId的位置，去连接消息推送服务器
+
+	clientIdentity
+	说明: 将业务系统用户id的值，放到clientIdentity的位置，去连接消息推送服务器
