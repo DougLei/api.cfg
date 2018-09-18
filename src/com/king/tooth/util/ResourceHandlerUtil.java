@@ -44,6 +44,13 @@ public class ResourceHandlerUtil {
 	}
 	
 	/**
+	 * 获取批次编号
+	 */
+	public static String getBatchNum(){
+		return getIdentity();
+	}
+	
+	/**
 	 * 获取随机数
 	 * @param seed
 	 * @return

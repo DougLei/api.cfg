@@ -23,6 +23,13 @@ public abstract class HibernateOperDBThread extends OperDBThread{
 	}
 
 	/**
+	 * 是否继续执行
+	 * <p>在线程一开始启动的时候判断</p>
+	 * @return
+	 */
+	protected abstract boolean isGoOn();
+	
+	/**
 	 * 进行实际的操作处理
 	 * @throws Exception
 	 */
@@ -41,15 +48,20 @@ public abstract class HibernateOperDBThread extends OperDBThread{
 	
 	public void run(){
 		Log4jUtil.debug("线程{}启动", getName());
-		try {
-			session.beginTransaction();
-			doRun();
-			session.flush();
-			session.getTransaction().commit();
-		} catch (Exception e) {
-			session.getTransaction().rollback();
-			doCatch(e);
-		} finally{
+		if(isGoOn()){
+			try {
+				session.beginTransaction();
+				doRun();
+				session.flush();
+				session.getTransaction().commit();
+			} catch (Exception e) {
+				session.getTransaction().rollback();
+				doCatch(e);
+			} finally{
+				session.close();
+				doFinally();
+			}
+		}else{
 			session.close();
 			doFinally();
 		}

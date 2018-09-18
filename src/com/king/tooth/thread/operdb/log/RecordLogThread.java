@@ -41,6 +41,10 @@ public final class RecordLogThread extends HibernateOperDBThread{
 		setName(threadNamePrefix + ResourceHandlerUtil.getRandom(1000000000));
 	}
 	
+	protected boolean isGoOn() {
+		return true;
+	}
+	
 	protected void doRun() {
 		Date currentDate = new Date();
 		reqLog.setRespDate(currentDate);

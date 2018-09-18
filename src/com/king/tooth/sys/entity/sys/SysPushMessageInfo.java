@@ -51,6 +51,11 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	 */
 	private String targetMsg;
 	/**
+	 * 消息推送的批次编号
+	 * <p>区分每次的消息推送</p>
+	 */
+	private String batchNum;
+	/**
 	 * 消息批次排序
 	 * <p>标识消息发送是否属于同一次，如果一次推送的人员超过100人后，系统会分批次，每次100人推送，以减少服务器压力；且这个字段还能用来排序，区分批次的顺序</p>
 	 */
@@ -76,8 +81,9 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	
 	//----------------------------------------------------------------
 
-	public SysPushMessageInfo(String pushAccountId, String pushUserId, String projectId, String customerId) {
+	public SysPushMessageInfo(String pushAccountId, String pushUserId, String projectId, String customerId, String batchNum) {
 		this.pushUserId = pushUserId;
+		this.batchNum = batchNum;
 		
 		this.customerId = customerId;
 		this.projectId = projectId;
@@ -122,6 +128,12 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	public String getTargetMsg() {
 		return targetMsg;
 	}
+	public String getBatchNum() {
+		return batchNum;
+	}
+	public void setBatchNum(String batchNum) {
+		this.batchNum = batchNum;
+	}
 	public void setTargetMsg(String targetMsg) {
 		this.targetMsg = targetMsg;
 	}
@@ -165,7 +177,7 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata msgTypeColumn = new ComColumndata("msg_type", BuiltinDataType.INTEGER, 1);
 		msgTypeColumn.setName("消息类型");
@@ -198,6 +210,11 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		targetMsgColumn.setName("实际消息内容");
 		targetMsgColumn.setComments("实际消息内容");
 		columns.add(targetMsgColumn);
+		
+		ComColumndata batchNumCodeColumn = new ComColumndata("batch_num", BuiltinDataType.STRING, 32);
+		batchNumCodeColumn.setName("消息推送的批次编号");
+		batchNumCodeColumn.setComments("区分每次的消息推送");
+		columns.add(batchNumCodeColumn);
 		
 		ComColumndata msgBatchOrderCodeColumn = new ComColumndata("msg_batch_order_code", BuiltinDataType.INTEGER, 3);
 		msgBatchOrderCodeColumn.setName("消息批次排序");
@@ -247,7 +264,7 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	 * @param toUserId
 	 */
 	public void analyzeActualSendMessage() {
-		if(sendType == 0){
+		if(sendType == DIRECT_SEND){
 			targetMsg = sourceMsg;
 		}
 	}
@@ -261,4 +278,11 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		this.pushResultCode = pushResultCode;
 		this.isSuccess = (pushResultCode==1)?1:0;
 	}
+	
+	// -----------------------------------------------------------
+	/**
+	 * 0:直接推送，即直接将消息原原本本推送给客户端
+	 * <p>推送类型</p>
+	 */
+	public static final Integer DIRECT_SEND = 0;
 }
