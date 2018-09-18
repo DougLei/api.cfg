@@ -517,6 +517,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		analysisParameterNameRecordMap();
 		return parameterNameRecordMap;
 	}
+	
 	/**
 	 * 解析脚本参数记录的map
 	 */

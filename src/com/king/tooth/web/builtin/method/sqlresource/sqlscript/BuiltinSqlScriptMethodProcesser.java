@@ -111,7 +111,6 @@ public class BuiltinSqlScriptMethodProcesser extends AbstractSqlResourceBuiltinM
 		return actualValue;
 	}
 	
-	
 	protected void execAnalysisParam() {
 		// 获取从调用方传过来的脚本参数对象，通过url传入的，现在默认是第一个sql语句的参数，即sqlIndex=1
 		// 现在考虑是能通过url传值的，应该都是get请求，调用的select sql资源
