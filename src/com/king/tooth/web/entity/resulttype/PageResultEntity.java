@@ -35,6 +35,15 @@ public class PageResultEntity implements Serializable {
 	private long totalCount;
 	
 	/**
+	 * 实际传入的当前页数
+	 * 即第几页
+	 * <p>例如只有5页，传入的值是100，则这个字段保存的是100</p>
+	 * <p>下面的pageNum保存的是系统处理后，实际的当前页数值，用上面的例子看，toImportPageNum=100，处理后，pageNum=5，即最大支持的页数</p>
+	 */
+	@JSONField(name = "toImportPage")
+	private int toImportPageNum;
+	
+	/**
 	 * 当前页数
 	 * 即第几页
 	 */
@@ -93,6 +102,7 @@ public class PageResultEntity implements Serializable {
 		return firstDataIndex;
 	}
 	public void setFirstDataIndex(int firstDataIndex) {
+		this.toImportPageNum = this.pageNum;
 		if(overflowData()){
 			this.pageNum = pageTotalCount;
 			this.firstDataIndex = (pageTotalCount-1)*pageSize;
@@ -117,5 +127,8 @@ public class PageResultEntity implements Serializable {
 	}
 	public void setPageTotalCount(int pageTotalCount) {
 		this.pageTotalCount = pageTotalCount;
+	}
+	public int getToImportPageNum() {
+		return toImportPageNum;
 	}
 }
