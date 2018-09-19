@@ -80,7 +80,7 @@ public class PrepareFilter extends AbstractFilter{
 				printResult(resp, responseBody);
 			}
 		} catch (Exception err) {
-			String errMsg = ExceptionUtil.getErrMsg("PrepareFilter", "doFilter", err);
+			String errMsg = ExceptionUtil.getErrMsg(err);
 			Log4jUtil.error("请求处理出现异常，异常信息为:{}", errMsg);
 			HibernateUtil.rollbackTransaction();
 			responseBody = new ResponseBody(errMsg);
