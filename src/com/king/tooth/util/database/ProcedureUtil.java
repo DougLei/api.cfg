@@ -43,7 +43,7 @@ public class ProcedureUtil {
 		final List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
 		final boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
 		if(sqlScriptHavaParams && sqlParamsList.size() >1){
-			throw new IllegalArgumentException("系统目前不支持批量处理存储过程，如有需要，请联系系统管理员");
+			throw new IllegalArgumentException("系统目前不支持批量处理存储过程，如有需要，请联系后台系统开发人员");
 		}
 		
 		final String sqlScriptId = sqlScript.getId();

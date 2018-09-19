@@ -70,6 +70,18 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	 * <p>标识同一次上传的文件</p>
 	 */
 	private String batch;
+	/**
+	 * 备注
+	 */
+	private String remark;
+	/**
+	 * 备用字段01
+	 */
+	private String backup01;
+	/**
+	 * 备用字段02
+	 */
+	private String backup02;
 	
 	// ---------------------------------------------------------------------------
 	
@@ -151,7 +163,24 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setBatch(String batch) {
 		this.batch = batch;
 	}
-	
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getBackup01() {
+		return backup01;
+	}
+	public void setBackup01(String backup01) {
+		this.backup01 = backup01;
+	}
+	public String getBackup02() {
+		return backup02;
+	}
+	public void setBackup02(String backup02) {
+		this.backup02 = backup02;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_FILE", 0);
@@ -162,75 +191,79 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinDataType.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
 		refDataIdColumn.setComments("关联的数据主键值");
-		refDataIdColumn.setOrderCode(1);
 		columns.add(refDataIdColumn);
 		
 		ComColumndata actNameColumn = new ComColumndata("act_name", BuiltinDataType.STRING, 300);
 		actNameColumn.setName("文件的实际名");
 		actNameColumn.setComments("文件的实际名：即上传时的文件名称");
-		actNameColumn.setOrderCode(2);
 		columns.add(actNameColumn);
 		
 		ComColumndata codeColumn = new ComColumndata("code", BuiltinDataType.STRING, 32);
 		codeColumn.setName("文件编码");
 		codeColumn.setComments("文件编码：在上传的时候，修改后的文件名");
-		codeColumn.setOrderCode(3);
 		columns.add(codeColumn);
 		
 		ComColumndata sizesColumn = new ComColumndata("sizes", BuiltinDataType.STRING, 30);
 		sizesColumn.setName("文件大小");
 		sizesColumn.setComments("文件大小，单位为b");
-		sizesColumn.setOrderCode(4);
 		columns.add(sizesColumn);
 		
 		ComColumndata suffixColumn = new ComColumndata("suffix", BuiltinDataType.STRING, 10);
 		suffixColumn.setName("文件后缀");
 		suffixColumn.setComments("文件后缀");
-		suffixColumn.setOrderCode(5);
 		columns.add(suffixColumn);
 		
 		ComColumndata savePathColumn = new ComColumndata("save_path", BuiltinDataType.STRING, 1000);
 		savePathColumn.setName("文件的存储路径");
 		savePathColumn.setComments("文件的存储路径：存储文件的路径");
-		savePathColumn.setOrderCode(6);
 		columns.add(savePathColumn);
 		
 		ComColumndata saveTypeColumn = new ComColumndata("save_type", BuiltinDataType.STRING, 10);
 		saveTypeColumn.setName("文件的存储方式");
 		saveTypeColumn.setComments("文件的存储方式：db:存储在数据库，service:存储在系统服务器上...");
 		saveTypeColumn.setDefaultValue(service);
-		saveTypeColumn.setOrderCode(7);
 		columns.add(saveTypeColumn);
 		
 		ComColumndata contentColumn = new ComColumndata("content", BuiltinDataType.BLOB, 0);
 		contentColumn.setName("文件内容");
 		contentColumn.setComments("文件内容");
-		contentColumn.setOrderCode(8);
 		columns.add(contentColumn);
 		
 		ComColumndata secretLevelColumn = new ComColumndata("secret_level", BuiltinDataType.INTEGER, 1);
 		secretLevelColumn.setName("文件的密级");
 		secretLevelColumn.setComments("文件的密级");
-		secretLevelColumn.setOrderCode(9);
 		columns.add(secretLevelColumn);
 		
 		ComColumndata downloadCountColumn = new ComColumndata("download_count", BuiltinDataType.INTEGER, 10);
 		downloadCountColumn.setName("文件的下载次数");
 		downloadCountColumn.setComments("文件的下载次数");
 		downloadCountColumn.setDefaultValue("0");
-		downloadCountColumn.setOrderCode(10);
 		columns.add(downloadCountColumn);
 		
 		ComColumndata batchColumn = new ComColumndata("batch", BuiltinDataType.STRING, 32);
 		batchColumn.setName("批次");
 		batchColumn.setComments("标识同一次上传的文件");
-		batchColumn.setOrderCode(11);
 		columns.add(batchColumn);
+		
+		ComColumndata remarkColumn = new ComColumndata("remark", BuiltinDataType.STRING, 2000);
+		remarkColumn.setName("备注");
+		remarkColumn.setComments("备注");
+		columns.add(remarkColumn);
+		
+		ComColumndata backup01Column = new ComColumndata("backup01", BuiltinDataType.STRING, 1000);
+		backup01Column.setName("备用字段01");
+		backup01Column.setComments("备用字段01");
+		columns.add(backup01Column);
+		
+		ComColumndata backup02Column = new ComColumndata("backup02", BuiltinDataType.STRING, 1000);
+		backup02Column.setName("备用字段02");
+		backup02Column.setComments("备用字段02");
+		columns.add(backup02Column);
 		
 		table.setColumns(columns);
 		return table;

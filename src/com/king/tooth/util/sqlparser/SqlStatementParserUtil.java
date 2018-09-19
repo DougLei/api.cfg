@@ -579,7 +579,7 @@ public class SqlStatementParserUtil {
 	 */
 	private static void processActualParameter(String parameterName, ComSqlScriptParameter ssp, StringBuilder placeHolder, List<Object> sqlParamValues, ActParameter actParam) {
 		Object actualInValue = ssp.getActualInValue();
-		if(ssp.getParameterFrom() == 1){ // 如果参数是内置的
+		if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){ // 如果参数是内置的
 			
 			// 如果是条件参数，将值加入到sqlParamValues中，并将实际值改为?
 			if(ssp.getIsPlaceholder() == 1){

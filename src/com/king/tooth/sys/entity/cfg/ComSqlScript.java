@@ -463,37 +463,72 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	
 	/**
 	 * 将调用sql资源时，实际传过来的值存到参数集合中(sql参数集合/procedure sql参数集合)
+	 * 
+	 * <p>同时还要验证参数</p>
+	 * <p>1.是否sql脚本没有参数，而调用的时候传入了参数</p>
+	 * <p>2.是否sql脚本的参数，和传入的参数数量一致[有默认值的参数，或参数值来源为系统内置的参数，可以在调用sql脚本的时候不传入]</p>
 	 * @param sqlScriptActualParameters
 	 */
 	public void setActualParams(List<List<ComSqlScriptParameter>> actualParamsList) {
-		if(actualParamsList == null || actualParamsList.size() == 0){
-			return;
-		}
-		
-		if(this.sqlParams == null || this.sqlParams.size() == 0){
-			throw new IllegalArgumentException("在调用sql资源时，传入的实际参数集合为：["+JsonUtil.toJsonString(actualParamsList, false)+"]，但是被调用的sql资源["+this.sqlScriptResourceName+"]却不存在任何sql脚本的参数对象集合。请检查该sql资源是否确实有参数配置，并确认合法调用sql资源，或联系管理员");
-		}
-		
-		sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(actualParamsList.size());
-		List<ComSqlScriptParameter> sqlParams;
-		for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
-			sqlParams = cloneSqlParams();
+		if((actualParamsList == null || actualParamsList.size() == 0)){
+			if(this.sqlParams == null || this.sqlParams.size() == 0){
+				return;
+			}
+			
+			// 检查，是否有必须的参数，但实际却没有传有
+			String requireParamName = null;
 			for (ComSqlScriptParameter ssp : sqlParams) {
-				if(ssp.getParameterFrom() == 1){// 参数值来源为系统内置
-					ssp.analysisActualInValue();
-				}else if(ssp.getParameterFrom() == 0){// 参数值来源为用户输入
-					for (ComSqlScriptParameter ssap : actualParams) {
-						if(ssp.getParameterName().equals(ssap.getParameterName())){
-							ssp.setActualInValue(ssap.getActualInValue());
-							ssp.analysisActualInValue();
-							break;
+				if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT && ssp.getDefaultValue() == null){
+					requireParamName = ssp.getParameterName();
+					break;
+				}
+			}
+			if(requireParamName != null){
+				throw new IllegalArgumentException("在调用sql资源时，必须要传入的参数["+requireParamName+"]，请修改调用方式，传入该参数值");
+			}
+		}
+		
+		// 如果实际传入了参数，但是配置的sql却没有任何参数，也是有问题的
+		if(this.sqlParams == null || this.sqlParams.size() == 0){
+			throw new IllegalArgumentException("在调用sql资源时，传入的实际参数集合为：["+JsonUtil.toJsonString(actualParamsList, false)+"]，但是被调用的sql资源["+this.sqlScriptResourceName+"]却不存在任何sql脚本的参数对象集合。请检查该sql资源是否确实有参数配置，并确认合法调用sql资源，或联系后端系统开发人员");
+		}
+		
+		List<ComSqlScriptParameter> sqlParams;
+		
+		// 如果没有传入任何参数，还能进入到这里，说明配置的参数要么是系统内置，要么是有默认值的
+		if((actualParamsList == null || actualParamsList.size() == 0)){
+			sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(1);
+			sqlParams = this.sqlParams;
+			sqlParamsList.add(sqlParams);
+			
+			for (ComSqlScriptParameter ssp : sqlParams) {
+				ssp.analysisActualInValue();
+			}
+		}
+		// 否则就去解析实际的参数，将其和配置的参数进行匹配
+		else{
+			sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(actualParamsList.size());
+			
+			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
+				sqlParams = cloneSqlParams();
+				sqlParamsList.add(sqlParams);
+				
+				for (ComSqlScriptParameter ssp : sqlParams) {
+					if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
+						ssp.analysisActualInValue();
+					}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
+						for (ComSqlScriptParameter ssap : actualParams) {
+							if(ssp.getParameterName().equals(ssap.getParameterName())){
+								ssp.setActualInValue(ssap.getActualInValue());
+								break;
+							}
 						}
+						ssp.analysisActualInValue();
 					}
 				}
 			}
-			sqlParamsList.add(sqlParams);
+			this.sqlParams.clear();
 		}
-		this.sqlParams.clear();
 	}
 	
 	/**

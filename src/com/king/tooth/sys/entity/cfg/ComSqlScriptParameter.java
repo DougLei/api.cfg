@@ -59,6 +59,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 * <p>默认值是0</p>
 	 */
 	private Integer parameterFrom = 0;
+	
 	/**
 	 * 是否是需要占位符的参数
 	 * <p>即是否是需要用?代替的</p>
@@ -110,12 +111,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 * @return
 	 */
 	public void analysisActualInValue() {
-		if(parameterFrom == 0){
+		if(parameterFrom == ComSqlScriptParameter.USER_INPUT){
 			if(actualInValue == null){
 				actualInValue = defaultValue;
 			}
 			if(actualInValue == null){
-				throw new NullPointerException("调用sql脚本时，参数["+parameterName+"]的值不能为空");
+				throw new NullPointerException("调用sql脚本时，参数["+parameterName+"]的值为空，请联系后台系统开发人员");
 			}
 			if(isPlaceholder == 1){
 				if(BuiltinDataType.INTEGER.equals(parameterDataType)){
@@ -134,10 +135,10 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			}else{
 				actualInValue = getSimpleSqlParameterValue(actualInValue);
 			}
-		}else if(parameterFrom == 1){
+		}else if(parameterFrom == ComSqlScriptParameter.SYSTEM_BUILTIN){
 			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
 			if(actualInValue == null){
-				throw new NullPointerException("调用sql脚本时，内置参数["+parameterName+"]的值为空，请联系开发人员");
+				throw new NullPointerException("调用sql脚本时，内置参数["+parameterName+"]的值为空，请联系后台系统开发人员");
 			}
 			if(isPlaceholder == 0){
 				actualInValue = getSimpleSqlParameterValue(actualInValue);
@@ -265,27 +266,23 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
 		sqlScriptIdColumn.setComments("关联的sql脚本id");
-		sqlScriptIdColumn.setOrderCode(10);
 		columns.add(sqlScriptIdColumn);
 		
 		ComColumndata parameterNameColumn = new ComColumndata("parameter_name", BuiltinDataType.STRING, 50);
 		parameterNameColumn.setName("参数名称");
 		parameterNameColumn.setComments("参数名称");
-		parameterNameColumn.setOrderCode(20);
 		columns.add(parameterNameColumn);
 		
 		ComColumndata lengthColumn = new ComColumndata("length", BuiltinDataType.INTEGER, 4);
 		lengthColumn.setName("参数的值长度");
 		lengthColumn.setComments("默认值为32");
 		lengthColumn.setDefaultValue("32");
-		lengthColumn.setOrderCode(30);
 		columns.add(lengthColumn);
 		
 		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinDataType.STRING, 20);
 		parameterDataTypeColumn.setName("参数数据类型");
 		parameterDataTypeColumn.setComments("默认值为string");
 		parameterDataTypeColumn.setDefaultValue(BuiltinDataType.STRING);
-		parameterDataTypeColumn.setOrderCode(40);
 		columns.add(parameterDataTypeColumn);
 		
 		ComColumndata isTableTypeColumn = new ComColumndata("is_table_type", BuiltinDataType.INTEGER, 1);
@@ -297,34 +294,29 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		ComColumndata defaultValueColumn = new ComColumndata("default_value", BuiltinDataType.STRING, 100);
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
-		defaultValueColumn.setOrderCode(50);
 		columns.add(defaultValueColumn);
 		
 		ComColumndata parameterFromColumn = new ComColumndata("parameter_from", BuiltinDataType.INTEGER, 1);
 		parameterFromColumn.setName("参数来源");
 		parameterFromColumn.setComments("参数来源:0.用户输入、1.系统内置，默认值为0");
 		parameterFromColumn.setDefaultValue("0");
-		parameterFromColumn.setOrderCode(60);
 		columns.add(parameterFromColumn);
 		
 		ComColumndata isPlaceholderColumn = new ComColumndata("is_placeholder", BuiltinDataType.INTEGER, 1);
 		isPlaceholderColumn.setName("是否是需要占位符的参数");
 		isPlaceholderColumn.setComments("是否是需要占位符的参数:即是否是需要用?代替的，目前全部都是1，默认值是1");
 		isPlaceholderColumn.setDefaultValue("1");
-		isPlaceholderColumn.setOrderCode(70);
 		columns.add(isPlaceholderColumn);
 		
 		ComColumndata inOutColumn = new ComColumndata("in_out", BuiltinDataType.INTEGER, 1);
 		inOutColumn.setName("参数的in/out类型");
 		inOutColumn.setComments("参数的in/out类型:in=1、out=2、inOut=3，默认值是1");
 		inOutColumn.setDefaultValue("1");
-		inOutColumn.setOrderCode(80);
 		columns.add(inOutColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 3);
 		orderCodeColumn.setName("参数的顺序值");
 		orderCodeColumn.setComments("参数的顺序值");
-		orderCodeColumn.setOrderCode(90);
 		columns.add(orderCodeColumn);
 		
 		table.setColumns(columns);
@@ -363,4 +355,16 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
+	
+	// ----------------------------------------------------------------------
+	/**
+	 * 参数来源
+	 * <p>0.用户输入</p>
+	 */
+	public static final Integer USER_INPUT = 0;
+	/**
+	 * 参数来源
+	 * <p>1.系统内置</p>
+	 */
+	public static final Integer SYSTEM_BUILTIN = 1;
 }
