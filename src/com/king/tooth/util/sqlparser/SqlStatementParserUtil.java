@@ -208,11 +208,19 @@ public class SqlStatementParserUtil {
 			ComSqlScriptParameter parameter = null;
 			
 			TParameterDeclaration param = null;
+			String defaultValue = null;
 			String parameterName;
 			String dataType;
 			String length = null;
 			for(int i=0;i<len;i++){
 				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
+				if(param.getDefaultValue() != null){
+					defaultValue = param.getDefaultValue().toString();
+					if(defaultValue.startsWith("'")){
+						defaultValue = defaultValue.substring(1, defaultValue.length()-1);
+					}
+				}
+				
 				parameterName = param.getParameterName().toString();
 				
 				dataType = param.getDataType().toString().toLowerCase();
@@ -264,11 +272,19 @@ public class SqlStatementParserUtil {
 			ComSqlScriptParameter parameter = null;
 			
 			TParameterDeclaration param = null;
+			String defaultValue = null;
 			String parameterName;
 			String dataType;
 			String length = null;
 			for(int i=0;i<len;i++){
 				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
+				if(param.getDefaultValue() != null){
+					defaultValue = param.getDefaultValue().toString();
+					if(defaultValue.startsWith("'")){
+						defaultValue = defaultValue.substring(1, defaultValue.length()-1);
+					}
+				}
+				
 				parameterName = param.getParameterName().toString();
 				if(parameterName.startsWith("@")){
 					parameterName = parameterName.substring(1);
@@ -282,6 +298,7 @@ public class SqlStatementParserUtil {
 				
 				parameter = new ComSqlScriptParameter(parameterName , dataType, param.getMode(), (i+1), true);
 				parameter.setLengthStr(length);
+				parameter.setDefaultValue(defaultValue);
 				processSqlServerProcTableParam(parameter, sqlScript);
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);

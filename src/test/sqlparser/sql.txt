@@ -1,5 +1,5 @@
-create type accountType as table(
-	id varchar(32),
-	birthday datetime,
-	age int
-)
+create or replace procedure test(age number, name varchar2 default '呵呵啊')
+as 
+begin
+ dbms_output.put_line(name || '+' || age);
+end;

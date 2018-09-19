@@ -242,16 +242,9 @@ public class ComTabledataService extends AbstractPublishService {
 			List<ComColumndata> columns = HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =? order by orderCode asc", tableId);
 			List<ComTabledata> tables = null;
 			if(table.getIsCreated() == 0){
-				int columnSize = columns.size();
-				for (int i=0;i<columnSize ;i++) {
-					if(columns.get(i).getOperStatus() == 2){
-						columns.remove(i);
-						i--;
-					}
-				}
-				
 				// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 				deleteTableIds.add(tableId);
+				removeDeleteColumns(columns);
 				table.setColumns(columns);
 				// 1、建表
 				tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
@@ -269,6 +262,7 @@ public class ComTabledataService extends AbstractPublishService {
 				if(tableNames.size() == 0){// 如果不存在，则create
 					// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 					deleteTableIds.add(tableId);
+					removeDeleteColumns(columns);
 					table.setColumns(columns);
 					// 1、建表
 					tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
@@ -328,6 +322,19 @@ public class ComTabledataService extends AbstractPublishService {
 			return ExceptionUtil.getErrMsg("ComTabledataService", "buildModel", e);
 		}
 		return null;
+	}
+	
+	/**
+	 * 移除被删除的列对象
+	 * @param columns
+	 */
+	private void removeDeleteColumns(List<ComColumndata> columns){
+		for (int i=0;i<columns.size() ;i++) {
+			if(columns.get(i).getOperStatus() == ComColumndata.DELETED){
+				columns.remove(i);
+				i--;
+			}
+		}
 	}
 	
 	/**
