@@ -46,6 +46,11 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 	 * 排序值
 	 */
 	private Integer orderCode;
+	/**
+	 * 部门类型
+	 * <p>部门类型，例如班组，科室等</p>
+	 */
+	private Integer type;
 
 	// ---------------------------------------------------------------------------
 	
@@ -86,6 +91,12 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_DEPT", 0);
@@ -96,43 +107,42 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinDataType.STRING, 32);
 		orgIdColumn.setName("所属组织主键");
 		orgIdColumn.setComments("所属组织主键：顶级部门的这个字段有值，子部门不需要");
-		orgIdColumn.setOrderCode(1);
 		columns.add(orgIdColumn);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinDataType.STRING, 32);
 		parentIdColumn.setName("父部门主键");
 		parentIdColumn.setComments("父部门主键");
-		parentIdColumn.setOrderCode(2);
 		columns.add(parentIdColumn);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 100);
 		nameColumn.setName("部门名称");
 		nameColumn.setComments("部门名称");
-		nameColumn.setOrderCode(3);
 		columns.add(nameColumn);
 		
 		ComColumndata shortNameColumn = new ComColumndata("short_name", BuiltinDataType.STRING, 50);
 		shortNameColumn.setName("部门简称");
 		shortNameColumn.setComments("部门简称");
-		shortNameColumn.setOrderCode(4);
 		columns.add(shortNameColumn);
 		
 		ComColumndata codeColumn = new ComColumndata("code", BuiltinDataType.STRING, 32);
 		codeColumn.setName("部门编码");
 		codeColumn.setComments("部门编码");
-		codeColumn.setOrderCode(5);
 		columns.add(codeColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
-		orderCodeColumn.setOrderCode(6);
 		columns.add(orderCodeColumn);
+		
+		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.INTEGER, 3);
+		typeColumn.setName("部门类型");
+		typeColumn.setComments("部门类型，例如班组，科室等");
+		columns.add(typeColumn);
 		
 		table.setColumns(columns);
 		return table;

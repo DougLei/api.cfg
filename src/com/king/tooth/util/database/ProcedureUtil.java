@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.database.SQLServerDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
@@ -39,32 +40,105 @@ public class ProcedureUtil {
 	 * @param sqlScript
 	 * @return
 	 */
-	public static JSONObject executeProcedure(final ComSqlScript sqlScript) {
-		final List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
-		final boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
-		if(sqlScriptHavaParams && sqlParamsList.size() >1){
-			throw new IllegalArgumentException("系统目前不支持批量处理存储过程，如有需要，请联系后台系统开发人员");
+	public static JSONArray executeProcedure(final ComSqlScript sqlScript) {
+		JSONArray jsonArray = null;
+		
+		boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType());
+		boolean isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType());
+		String sqlScriptId = sqlScript.getId();
+		
+		List<List<CfgSqlResultset>> inSqlResultSetsList = sqlScript.getInSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getInSqlResultsetsList();
+		List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getOutSqlResultsetsList();
+		
+		List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
+		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
+		
+		String procedureName = sqlScript.getObjectName();
+		String callProcedure = null;
+		JSONObject json = null;
+		
+		if(sqlScriptHavaParams){
+			jsonArray = new JSONArray(sqlParamsList.size());
+			callProcedure = callProcedure(procedureName, sqlParamsList.get(0));
+			int count = 1;
+			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
+				json = new JSONObject(10);
+				execProcedure(sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, sqlParams, callProcedure, json);
+				jsonArray.add(json);
+				
+				Log4jUtil.debug("第{}次执行procedure名为：{}", count, procedureName);
+				Log4jUtil.debug("第{}次执行procedure的条件参数集合为：{}", count, JsonUtil.toJsonString(sqlParams, false));
+				count++;
+			}
+		}else{
+			jsonArray = new JSONArray(1);
+			callProcedure = callProcedure(procedureName, null);
+			json = new JSONObject(10);
+			execProcedure(sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, null, callProcedure, json);
+			jsonArray.add(json);
+			
+			Log4jUtil.debug("执行procedure名为：{}", procedureName);
+			Log4jUtil.debug("执行procedure的没有参数");
 		}
 		
-		final String sqlScriptId = sqlScript.getId();
-		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType());
-		final boolean isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType());
-		final String procedureName = sqlScript.getObjectName();
+		if(sqlScriptHavaParams){
+			for (List<ComSqlScriptParameter> sp : sqlParamsList) {
+				if(sp != null){
+					sp.clear();
+				}
+			}
+			sqlParamsList.clear();
+		}
+		return jsonArray;
+	}
+	
+	/**
+	 * 组装调用存储过程的语句
+	 * @param procedureName
+	 * @param sqlScriptParameterList
+	 * @return
+	 */
+	private static String callProcedure(final String procedureName, final List<ComSqlScriptParameter> sqlParams) {
+		StringBuilder procedure = new StringBuilder();
+		procedure.append("{call ").append(procedureName).append("(");
+		if(sqlParams != null && sqlParams.size() > 0){
+			int len = sqlParams.size();
+			for (int i=0;i<len ;i++) {
+				procedure.append("?,");
+			}
+			procedure.setLength(procedure.length() - 1);
+		}
+		procedure.append(")}");
+		Log4jUtil.debug("调用的procedure为：{}", procedure);
 		
-		final JSONObject json = new JSONObject(10);
-		final List<ComSqlScriptParameter> sqlParams = sqlScriptHavaParams?sqlParamsList.get(0):null;
-		final List<List<CfgSqlResultset>> inSqlResultSetsList = sqlScript.getInSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getInSqlResultsetsList();
-		final List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getOutSqlResultsetsList();
+		// 日志记录发出的hql/sql语句
+		CurrentThreadContext.toReqLogDataAddOperSqlLog(procedure.toString(), sqlParams);
 		
+		return procedure.toString();
+	}
+	
+	/**
+	 * 执行存储过程
+	 * <p>输出参数，返回结果，按顺序存储到json中</p>
+	 * @param sqlScriptHavaParams
+	 * @param isOracle
+	 * @param isSqlServer
+	 * @param sqlScriptId
+	 * @param inSqlResultSetsList
+	 * @param outSqlResultSetsList
+	 * @param sqlParams
+	 * @param callProcedure
+	 * @param json
+	 */
+	private static void execProcedure(final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final List<List<CfgSqlResultset>> inSqlResultSetsList, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
 		new DBLink(CurrentThreadContext.getDatabaseInstance()).doExecute(new IExecute() {
 			private int inSqlResultsetIndex = 0;
 			
 			public void execute(Connection connection) throws SQLException {
-				String procedure = callProcedure(procedureName, sqlParams);
 				CallableStatement cs = null;
 				ResultSet rs = null;
 				try {
-					cs = connection.prepareCall(procedure);
+					cs = connection.prepareCall(callProcedure);
 					setParameters(cs, sqlParams);
 					cs.execute();
 					putOutputValues(cs, rs, sqlParams);
@@ -122,8 +196,6 @@ public class ProcedureUtil {
 			private void setOracleParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
 				if(parameter.getIsTableType() == 1){
 					// TODO 处理oracle游标类型的参数
-					
-					
 					inSqlResultsetIndex++;
 				}else{
 					cs.setObject(parameter.getOrderCode(), actualInValue);
@@ -348,43 +420,5 @@ public class ProcedureUtil {
 				return queryResultSetList;
 			}
 		});
-		Log4jUtil.debug("执行procedure名为：{}", procedureName);
-		Log4jUtil.debug("执行procedure的条件参数集合为：{}", JsonUtil.toJsonString(sqlParams, false));
-		
-		if(sqlScriptHavaParams){
-			for (List<ComSqlScriptParameter> sp : sqlParamsList) {
-				if(sp != null){
-					sp.clear();
-				}
-			}
-			sqlParamsList.clear();
-		}
-		return json;
 	}
-	
-	/**
-	 * 组装调用存储过程的语句
-	 * @param procedureName
-	 * @param sqlScriptParameterList
-	 * @return
-	 */
-	private static String callProcedure(final String procedureName, final List<ComSqlScriptParameter> sqlParams) {
-		StringBuilder procedure = new StringBuilder();
-		procedure.append("{call ").append(procedureName).append("(");
-		if(sqlParams != null && sqlParams.size() > 0){
-			int len = sqlParams.size();
-			for (int i=0;i<len ;i++) {
-				procedure.append("?,");
-			}
-			procedure.setLength(procedure.length() - 1);
-		}
-		procedure.append(")}");
-		Log4jUtil.debug("调用的procedure为：{}", procedure);
-		
-		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(procedure.toString(), sqlParams);
-		
-		return procedure.toString();
-	}
-	
 }

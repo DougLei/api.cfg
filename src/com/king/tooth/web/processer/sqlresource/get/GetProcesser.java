@@ -462,7 +462,7 @@ public abstract class GetProcesser extends RequestProcesser{
 						}
 					}
 				}catch (Exception e){
-					e.printStackTrace();
+					throw e;
 				} finally{
 					CloseUtil.closeDBConn(rs, pst);// 从当前线程session中获取的connection，会在最后同session一同关闭，不需要单独关闭。即execute中的connection参数
 				}

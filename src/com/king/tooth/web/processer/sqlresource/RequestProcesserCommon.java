@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
@@ -93,8 +94,13 @@ public class RequestProcesserCommon extends CommonProcesser{
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
 		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程
-			JSONObject json = ProcedureUtil.executeProcedure(sqlScript);
-			setResponseBody(new ResponseBody(json, true));
+			JSONArray jsonArray = ProcedureUtil.executeProcedure(sqlScript);
+			
+			if(jsonArray != null && jsonArray.size() > 0){
+				setResponseBody(new ResponseBody(jsonArray, true));
+			}else{
+				setResponseBody(new ResponseBody("成功执行名为["+sqlScript.getObjectName()+"]的存储过程", true));
+			}
 			return;
 		}
 		

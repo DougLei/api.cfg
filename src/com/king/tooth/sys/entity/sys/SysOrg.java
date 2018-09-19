@@ -41,6 +41,10 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 	 * 排序值
 	 */
 	private Integer orderCode;
+	/**
+	 * 组织机构类型
+	 */
+	private Integer type;
 
 	// ---------------------------------------------------------------------------
 
@@ -74,7 +78,12 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
-
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
 	
 	public ComTabledata toCreateTable() {
 		ComTabledata table = new ComTabledata("SYS_ORG", 0);
@@ -85,7 +94,7 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinDataType.STRING, 32);
 		parentIdColumn.setName("父组织主键");
@@ -116,6 +125,11 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
+		
+		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.INTEGER, 3);
+		typeColumn.setName("组织机构类型");
+		typeColumn.setComments("组织机构类型");
+		columns.add(typeColumn);
 		
 		table.setColumns(columns);
 		return table;
