@@ -145,6 +145,21 @@ public class PushMessageUtil {
 	
 	// ---------------------------------------------------------------------------------
 	/**
+	 * 关闭某个用户的websocket连接
+	 * @param userId
+	 * @return
+	 */
+	public static String closeSession(String userId){
+		Map<String, String> urlParams = new HashMap<String, String>(1);
+		urlParams.put("clientIdentity", userId);
+		JSONObject json = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(closeSessionApi, urlParams , null));
+		return getPushResultContent(json.getInteger("data"));
+		
+	}
+	private static final String closeSessionApi = WEB_PUSH_MESSAGE_ROOT_API + "/session/close";
+	
+	// ---------------------------------------------------------------------------------
+	/**
 	 * 根据消息推送的结果编码，获取相应的具体结果内容
 	 * @param pushResourceCode
 	 * @return
@@ -158,7 +173,7 @@ public class PushMessageUtil {
 			case 0:
 				return "调用推送消息接口，传入的数据不能为空";
 			case 1:
-				return "推送成功";
+				return "成功";
 			case 2:
 				return "被推送的客户端不在线";
 			case 3:

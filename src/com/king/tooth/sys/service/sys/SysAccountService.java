@@ -22,9 +22,11 @@ import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.websocket.pushmessage.PushMessageUtil;
 
 /**
  * 账户表Service
@@ -346,6 +348,11 @@ public class SysAccountService extends AbstractService{
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where token = ? ", token);
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
+		
+		// 断开与websocket连接
+		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
+		String result = PushMessageUtil.closeSession(userId);
+		Log4jUtil.info("id为[{}]，名为[{}]的用户，断开与消息推送系统(websocket)的连接结果为:{}", userId, CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName(), result);
 	}
 	
 	//-----------------------------------------------------------------------------------------------
