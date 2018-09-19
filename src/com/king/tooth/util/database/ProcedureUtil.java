@@ -144,9 +144,6 @@ public class ProcedureUtil {
 					putOutputValues(cs, rs, sqlParams);
 				} finally {
 					CloseUtil.closeDBConn(rs, cs, connection);
-					if(sqlParams != null && sqlParams.size() > 0){
-						sqlParams.clear();
-					}
 				}
 			}
 			
