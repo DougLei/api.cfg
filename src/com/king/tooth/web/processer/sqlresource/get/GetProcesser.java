@@ -333,8 +333,10 @@ public abstract class GetProcesser extends RequestProcesser{
 			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getMaxResults());
 			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
 			
-			query.setFirstResult(pageResultEntity.getFirstDataIndex());
-			query.setMaxResults(pageResultEntity.getPageSize());
+			if(totalCount>0){
+				query.setFirstResult(pageResultEntity.getFirstDataIndex());
+				query.setMaxResults(pageResultEntity.getPageSize());
+			}
 		}
 		return pageResultEntity;
 	}

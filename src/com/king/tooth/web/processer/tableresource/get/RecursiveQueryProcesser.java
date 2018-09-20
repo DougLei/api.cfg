@@ -91,8 +91,10 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
 			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
 			
-			query.setFirstResult(pageResultEntity.getFirstDataIndex());
-			query.setMaxResults(pageResultEntity.getPageSize());
+			if(totalCount>0){
+				query.setFirstResult(pageResultEntity.getFirstDataIndex());
+				query.setMaxResults(pageResultEntity.getPageSize());
+			}
 		}
 		return pageResultEntity;
 	}
