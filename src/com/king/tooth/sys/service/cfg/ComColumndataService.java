@@ -38,7 +38,7 @@ public class ComColumndataService extends AbstractService{
 	 * @return operResult
 	 */
 	private String validColumnNameIsExists(ComColumndata column) {
-		String hql = "select count("+ResourcePropNameConstants.ID+") from ComColumndata where columnName = ? and tableId = ?";
+		String hql = "select count("+ResourcePropNameConstants.ID+") from ComColumndata where columnName = ? and tableId = ? and operStatus != "+ComColumndata.DELETED;
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, column.getColumnName(), column.getTableId());
 		if(count > 0){
 			return "列名为["+column.getColumnName()+"]的信息已存在";
@@ -74,11 +74,14 @@ public class ComColumndataService extends AbstractService{
 			return "没有找到id为["+column.getId()+"]的列对象信息";
 		}
 		
-		if(!oldColumn.getColumnType().equals(column.getColumnType())){
-			return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]";
-		}
-		if(oldColumn.getLength()> column.getLength()){
-			return "系统不允许修改["+column.getColumnName()+"]字段的数据长度[从"+oldColumn.getLength()+"降低到"+column.getLength()+"]，此操作可能会损失实际数据的精度";
+		ComTabledata table = getObjectById(column.getTableId(), ComTabledata.class);
+		if(table.getIsCreated() == 1){// 表已经建模，不能修改列的类型，以及缩小列的长度
+			if(!oldColumn.getColumnType().equals(column.getColumnType())){
+				return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]";
+			}
+			if(oldColumn.getLength()> column.getLength()){
+				return "系统不允许修改["+column.getColumnName()+"]字段的数据长度[从"+oldColumn.getLength()+"降低到"+column.getLength()+"]，此操作可能会损失实际数据的精度";
+			}
 		}
 		
 		String operResult = null;
