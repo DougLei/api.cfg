@@ -217,4 +217,18 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public String analysisResourceProp() {
 		return validNotNullProps();
 	}
+	
+	// -------------------------------------------------------------------
+	/**
+	 * 传入
+	 * <p>标识是传入的结果集信息</p>
+	 * <p>in=1</p>
+	 */
+	public static final Integer IN = 1;
+	/**
+	 * 传出
+	 * <p>标识是传出的结果集信息</p>
+	 * <p>out=2</p>
+	 */
+	public static final Integer OUT = 2;
 }

@@ -22,7 +22,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		
 		String coreQuerySql =  sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql()+
 				  builtinQueryMethodProcesser.getSql().append(getFromSql());
-		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
+//		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
 		
 		recordCoreSqlBuffer(coreQuerySql);
 		reocrdCoreSqlParams(null);

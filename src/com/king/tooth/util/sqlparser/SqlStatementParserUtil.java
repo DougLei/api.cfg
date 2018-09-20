@@ -5,11 +5,9 @@ import gudusoft.gsqlparser.ESqlStatementType;
 import gudusoft.gsqlparser.TCustomSqlStatement;
 import gudusoft.gsqlparser.TGSqlParser;
 import gudusoft.gsqlparser.TStatementList;
-import gudusoft.gsqlparser.nodes.TCTEList;
-import gudusoft.gsqlparser.nodes.TJoinItem;
-import gudusoft.gsqlparser.nodes.TJoinItemList;
-import gudusoft.gsqlparser.nodes.TJoinList;
 import gudusoft.gsqlparser.nodes.TParameterDeclaration;
+import gudusoft.gsqlparser.nodes.TResultColumn;
+import gudusoft.gsqlparser.nodes.TResultColumnList;
 import gudusoft.gsqlparser.stmt.TCreateViewSqlStatement;
 import gudusoft.gsqlparser.stmt.TSelectSqlStatement;
 import gudusoft.gsqlparser.stmt.mssql.TMssqlCreateProcedure;
@@ -20,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
@@ -29,6 +28,7 @@ import com.king.tooth.sys.entity.cfg.sql.ActParameter;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -56,7 +56,7 @@ public class SqlStatementParserUtil {
 		TGSqlParser sqlParser = preAnalysisSqlScript(sqlScript);
 		int ret = sqlParser.parse();
 		if(ret != 0){
-			throw new IllegalArgumentException("解析的sql脚本内容出现语法错误：" + sqlParser.getErrormessage());
+			throw new IllegalArgumentException("解析的sql脚本内容出现语法错误，请检查sql：" + sqlParser.getErrormessage());
 		}
 		return sqlParser;
 	}
@@ -105,7 +105,7 @@ public class SqlStatementParserUtil {
 		sql.setReqResourceMethod(typeMap.get("reqMethod"));
 		
 		String[] sqlScriptArr;
-		if("true".equals(typeMap.get("other"))){
+		if("true".equals(typeMap.get("isOtherSqlType"))){
 			sqlScriptArr = new String[1];
 			sqlScriptArr[0] =  gsqlParser.sqltext;
 		}else{
@@ -126,7 +126,7 @@ public class SqlStatementParserUtil {
 	 */
 	private static Map<String, String> getSqlScriptTypeMap(ESqlStatementType sqlStatementType) {
 		 Map<String, String> typeMap = new HashMap<String, String>(4);
-		 typeMap.put("other", "false");
+		 typeMap.put("isOtherSqlType", "false");// 不在BuiltinDatabaseData常量中的，其他sql脚本类型
 		 typeMap.put("isUnique", "false");
 		 typeMap.put("reqMethod", "post");
 		 
@@ -166,7 +166,7 @@ public class SqlStatementParserUtil {
 	         default:
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
 	        	 typeMap.put("type", sqlStatementType.toString());
-	        	 typeMap.put("other", "true");
+	        	 typeMap.put("isOtherSqlType", "true");
 	        	 break;
 	     }
 		 return typeMap;
@@ -188,6 +188,32 @@ public class SqlStatementParserUtil {
 		    	break;
 		    default:
 		    	throw new IllegalArgumentException("目前不支持["+sqlStatement.sqlstatementtype+"]类型的存储过程");
+		}
+		String sqlScriptId = sqlScript.getId();
+		
+		// 保存参数
+		List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
+		if(sqlParams != null && sqlParams.size() > 0){
+			for (ComSqlScriptParameter sqlParam : sqlParams) {
+				sqlParam.setSqlScriptId(sqlScriptId);
+				HibernateUtil.saveObject(sqlParam, null);
+			}
+			sqlParams.clear();
+		}
+		
+		// 保存输入结果集信息
+		List<List<CfgSqlResultset>> inSqlResultsetsList = sqlScript.getInSqlResultsetsList();
+		if(inSqlResultsetsList != null && inSqlResultsetsList.size() > 0){
+			for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
+				if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+					for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
+						inSqlResultset.setSqlScriptId(sqlScriptId);
+						HibernateUtil.saveObject(inSqlResultset, null);
+					}
+					inSqlResultsets.clear();
+				}
+			}
+			inSqlResultsetsList.clear();
 		}
 	}
 
@@ -331,7 +357,7 @@ public class SqlStatementParserUtil {
 			int index = 0;
 			CfgSqlResultset sqlResultSet;
 			for (Object[] objArr : columnList) {
-				sqlResultSet = new CfgSqlResultset(objArr[0].toString(), index++, 1);
+				sqlResultSet = new CfgSqlResultset(objArr[0].toString(), index++, CfgSqlResultset.IN);
 				sqlResultSets.add(sqlResultSet);
 				
 				sqlResultSet.setSqlParameterId(parameter.getId());
@@ -351,7 +377,7 @@ public class SqlStatementParserUtil {
 	 * 解析出视图名
 	 * @param sqlScript
 	 */
-	public static void analysisViewSqlScriptParam(ComSqlScript sqlScript) {
+	public static void analysisViewName(ComSqlScript sqlScript) {
 		TCustomSqlStatement sqlStatement = sqlScript.getGsqlParser().sqlstatements.get(0);
 		sqlScript.setObjectName(((TCreateViewSqlStatement) sqlStatement).getViewName().toString());
 	}
@@ -639,191 +665,78 @@ public class SqlStatementParserUtil {
 		}		
 	}
 
-
-//	下面的代码，是为了解析sql语句，分析出参数中，哪些是在调用的时候，通过?方式传值的，以及获取select语句，最终查询的结果列名集合
 	/**
-	 * 获取select的sql语句，执行后的查询字段名集合
-	 * <p>同时，处理sql脚本的参数，分析出哪些参数是需要通过占位符使用的。后续可以提高调用时的效率</p>
-	 * @param sqlParser
-	 * @param sqlScriptParameterList
-	 * @return select sql语句查询的结果列集合
-	 * 
-	 * @throws SqlScriptSyntaxException 
-	 * @throws AnalyzeSqlScriptException 
-	 * @throws EDBVendorIsNullException 
+	 * 解析select sql语句查询的结果集信息
+	 * <p>如果select语句查询的是*，则抛出异常，不能这样写，这样写不规范</p>
+	 * @param sql
 	 */
-	public static List<SqlQueryResultColumn> getSelectSqlOfResultColumnsAndAnalysisSqlScriptParameters(ComSqlScript comSqlScript) throws SqlScriptSyntaxException, AnalyzeSqlScriptException, EDBVendorIsNullException {
-		TGSqlParser sqlParser = comSqlScript.getGsqlParser();
-		TStatementList selectSqlStatementList = sqlParser.sqlstatements;
-		if(selectSqlStatementList != null && selectSqlStatementList.size() > 0){
+	public static void analysisSelectSqlResultSetList(ComSqlScript sql) {
+		if(BuiltinDatabaseData.SELECT.equals(sql.getSqlScriptType())){ 
+			TGSqlParser sqlParser = sql.getGsqlParser();
+			TSelectSqlStatement selectSqlStatement = (TSelectSqlStatement) sqlParser.sqlstatements.get(0);
+			TResultColumnList columns = analysisResultColumnList(selectSqlStatement);
+			if(columns == null || columns.size() == 0){
+				throw new NullPointerException("资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源，没有解析到任何查询结果字段，请联系后台系统开发人员");
+			}
 			
-			List<ComSqlScriptParameter> sqlScriptParameters = comSqlScript.getSqlScriptParameterList();
+			int columnSize = columns.size();
+			List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(columnSize);
 			
-			TCustomSqlStatement sqlStatement = selectSqlStatementList.get(0);
-			switch(sqlStatement.sqlstatementtype){
-				case sstselect:
-					if(selectSqlStatementList.size() > 1){
-						throw new AnalyzeSqlScriptException("目前只支持一次解析一条select sql脚本语句");
-					}
-					return getSelectSqlOfResultColumns((TSelectSqlStatement)sqlStatement, sqlScriptParameters);
-				case sstinsert:
-					analysisInsertSqlScriptParameters(selectSqlStatementList, sqlScriptParameters);
-					return null;
-				case sstupdate:
-					analysisUpdateSqlScriptParameters(selectSqlStatementList, sqlScriptParameters);
-					return null;
-				case sstdelete:
-					analysisDeleteSqlScriptParameters(selectSqlStatementList, sqlScriptParameters);
-					return null;
-				default:
-					throw new IllegalArgumentException("目前对sql脚本参数的解析，还不支持该sql脚本类型：["+sqlStatement.sqlstatementtype+"]");
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * 解析添加sql脚本的参数
-	 * <p>目前都是占位符</p>
-	 * @param deleteSqlStatement
-	 * @param sqlScriptParameters
-	 */
-	private static void analysisInsertSqlScriptParameters(TStatementList selectSqlStatementList, List<ComSqlScriptParameter> sqlScriptParameters) {
-		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
-			sqlScriptParameter.setIsPlaceholderParameter(1);
-		}
-	}
-	
-	/**
-	 * 解析修改sql脚本的参数
-	 * <p>目前都是占位符</p>
-	 * @param deleteSqlStatement
-	 * @param sqlScriptParameters
-	 */
-	private static void analysisUpdateSqlScriptParameters(TStatementList selectSqlStatementList, List<ComSqlScriptParameter> sqlScriptParameters) {
-		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
-			sqlScriptParameter.setIsPlaceholderParameter(1);
-		}
-	}
-	
-	/**
-	 * 解析删除sql脚本的参数
-	 * <p>目前都是占位符</p>
-	 * @param deleteSqlStatement
-	 * @param sqlScriptParameters
-	 */
-	private static void analysisDeleteSqlScriptParameters(TStatementList selectSqlStatementList, List<ComSqlScriptParameter> sqlScriptParameters) {
-		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameters) {
-			sqlScriptParameter.setIsPlaceholderParameter(1);
-		}
-	}
-
-	/**
-	 * 获取select sql执行后的结果列对象集合
-	 * @param selectSqlStatement
-	 * @param sqlScriptParameters
-	 * @return
-	 */
-	private static List<SqlQueryResultColumn> getSelectSqlOfResultColumns(TSelectSqlStatement selectSqlStatement, List<ComSqlScriptParameter> sqlScriptParameters) {
-		selectSqlStatement.addCondition("1=2");// 加入 1=2 的条件，结果不会查询出任何数据，因为主要要列名
-		
-		List<Object> queryCondParameters = new ArrayList<Object>();// 记录测试时，查询条件的值集合
-		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0){
-			// 查询语句只支持处理一条，所以这里index参数传递为1
-			processSqlCondClauseParameter(1, selectSqlStatement, sqlScriptParameters, queryCondParameters);
-		}
-		
-		String finalSelectSqlScript = SqlParameterParserUtil.replaceSqlScriptParams(1, selectSqlStatement.toString(), sqlScriptParameters);
-		List<SqlQueryResultColumn> resultColumns = HibernateUtil.getQueryResultColumns(finalSelectSqlScript, queryCondParameters);// 记录select sql语句，最终查询的字段名集合.如果有别名，则记录别名，不记录实际的字段名
-		return resultColumns;
-	}
-
-	/**
-	 * 处理sql中所有条件子句语的参数
-	 * <p>如果是条件子句中的参数，将对应的SqlScriptParameter对象的actualValue的值存储到queryCondParameters集合中</p>
-	 * <p>				 再将其actualValue的值改为?，后续直接调用SqlParameterParserUtil.replaceSqlScriptParams的替换方法，完成select sql语句的参数替换</p>
-	 * <p>				最后，根据结果sql语句，和queryCondParameters集合，进行查询</p>
-	 * @param index
-	 * @param selectSqlStatement
-	 * @param sqlScriptParameterList
-	 * @param queryCondParameters
-	 */
-	private static void processSqlCondClauseParameter(int index, TSelectSqlStatement selectSqlStatement, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
-		// 如果是组合查询，比如是用到了union、union all、intersect、intersect all、minus、 minus all、except、except all这些关键字，将多个查询结果集组合起来
-		if (selectSqlStatement.isCombinedQuery()) {
-			processSqlCondClauseParameter(index, selectSqlStatement.getLeftStmt(), sqlScriptParameterList, queryCondParameters);
-			return;
-		}
-		// 否则就是单一查询，包括left join连接查询等，都属于单一查询，最后都是查询出一个结果集
-		else {
-			// 获取每一个独立的sql语句，看看里面有没有条件子句，如果有，看看子句中有没有参数，如果有，将参数替换为?，实际值add到queryCondParameters中
-			processCteClauseSqlCondClauseParameter(index, selectSqlStatement.getCteList(), sqlScriptParameterList, queryCondParameters);
-			processJoinClauseSqlOnCondClauseParameter(index, selectSqlStatement.getJoins(), sqlScriptParameterList, queryCondParameters);
-			if(selectSqlStatement.getWhereClause() != null){
-				processCondClauseSqlParameter(index, selectSqlStatement.getWhereClause().toString(), sqlScriptParameterList, queryCondParameters);
-			}
-		}
-	}
-
-	/**
-	 * 处理cte子句中所有条件子句语的参数
-	 * <p>cte子句，就是with子句</p>
-	 * @param index
-	 * @param cteList
-	 * @param sqlScriptParameterList
-	 * @param queryCondParameters
-	 */
-	private static void processCteClauseSqlCondClauseParameter(int index, TCTEList cteList, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
-		if(cteList != null && cteList.size() > 0){
-			int len = cteList.size();
-			for(int i=0;i<len;i++){
-				processSqlCondClauseParameter(index, cteList.getCTE(i).getSubquery(), sqlScriptParameterList, queryCondParameters);
-			}
-		}
-	}
-
-	/**
-	 * 处理join on中所有条件子句语的参数
-	 * @param index
-	 * @param joinSqls
-	 * @param sqlScriptParameterList
-	 * @param queryCondParameters
-	 */
-	private static void processJoinClauseSqlOnCondClauseParameter(int index, TJoinList joinSqls, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
-		if(joinSqls != null && joinSqls.size() > 0){
-			 TJoinItemList joinItemList = null;
-			 TJoinItem joinItem = null;
-			 int joinLen = joinSqls.size();
-			 int joinItemLen = 0;
-			 for(int i = 0;i < joinLen;i++){
-				 joinItemList = joinSqls.getJoin(i).getJoinItems();
-				 joinItemLen = joinItemList.size();
-				 for(int j = 0;j < joinItemLen; j++){
-					 joinItem = joinItemList.getJoinItem(j);
-					 if (joinItem.getOnCondition() != null){
-						 processCondClauseSqlParameter(index, joinItem.getOnCondition().toString(), sqlScriptParameterList, queryCondParameters);
-					 }
-				 }
-			 }
-		}
-	}
-	
-	/**
-	 * 处理条件子句所有条件子句语的参数
-	 * @param index
-	 * @param conditionSql
-	 * @param sqlScriptParameterList
-	 * @param queryCondParameters
-	 */
-	private static void processCondClauseSqlParameter(int index, String conditionSql, List<ComSqlScriptParameter> sqlScriptParameterList, List<Object> queryCondParameters) {
-		if(conditionSql.contains(SqlParameterParserUtil.PREFIX)){// 这个是判断sql语句中是否有$字符，如果有，则证明有配置参数
-			for (ComSqlScriptParameter ssp : sqlScriptParameterList) {
-				if(index == ssp.getIndex() && SqlParameterParserUtil.sqlScriptContainsParameterName(conditionSql, ssp.getParameterName())){
-					queryCondParameters.add(ssp.getActualValue());
-					ssp.setActualValue("?");
-					ssp.setIsPlaceholderParameter(1);
+			boolean includeIdColumn = false;// 是否包含id字段，如果不包括，则系统抛出异常
+			String columnName = null;
+			TResultColumn column = null;
+			CfgSqlResultset csr = null;
+			for(int i=0;i<columnSize ;i++){
+				column = columns.getResultColumn(i);
+				columnName = column.getAliasClause() == null ? column.getColumnNameOnly() : column.getColumnAlias();
+				
+				if(StrUtils.isEmpty(columnName)){
+					throw new IllegalArgumentException("在资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源中，请给查询结果列["+column.toString()+"]指定合法的列名");
+				}
+				if("*".equals(columnName)){
+					throw new IllegalArgumentException("在资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源中，请指定具体查询的列名，禁止使用["+column.toString()+"]查询");
+				}
+				csr = new CfgSqlResultset(columnName, (i+1), CfgSqlResultset.OUT);
+				csr.setSqlScriptId(sql.getId());
+				sqlResultSets.add(csr);
+				
+				if(!includeIdColumn && csr.getPropName() == ResourcePropNameConstants.ID){
+					includeIdColumn = true;
 				}
 			}
+			if(!includeIdColumn){
+				throw new IllegalArgumentException("资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源，其查询结果字段，不包含id列，系统无法处理，请修改该sql脚本，增加查询id字段的语句");
+			}
+			
+			for(int i=0;i<columnSize-1;i++){
+				columnName = sqlResultSets.get(i).getColumnName();
+				for(int j=1;j<columnSize;j++){
+					if(i!=j && columnName.equals(sqlResultSets.get(j).getColumnName())){
+						throw new IllegalArgumentException("资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源，其查询结果字段，出现重复列名["+columnName+"]，位置分别位于["+(i+1)+","+(j+1)+"]，请检查");
+					}
+				}
+			}
+			
+			for (CfgSqlResultset sqlResultSet : sqlResultSets) {
+				HibernateUtil.saveObject(sqlResultSet, null);// 将每条结果集信息保存到数据库
+			}
+			sqlResultSets.clear();
 		}
 	}
+	
+	/**
+	 * 解析出查询的结果列
+	 * @param selectSqlStatement
+	 * @return
+	 */
+	private static TResultColumnList analysisResultColumnList(TSelectSqlStatement selectSqlStatement) {
+		if(selectSqlStatement.isCombinedQuery()){
+			return analysisResultColumnList(selectSqlStatement.getLeftStmt());
+		}else{
+			return selectSqlStatement.getResultColumnList();
+		}
+	}
+	
+	
+	
 }

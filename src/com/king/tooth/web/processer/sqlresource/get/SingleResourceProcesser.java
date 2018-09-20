@@ -25,7 +25,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 				builtinQueryMethodProcesser.getSql().append(getFromSql());
 		String querySql = coreQuerySql + builtinSortMethodProcesser.getSql();
 		
-		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
+//		processSelectSqlResultsets(sqlScriptResource, coreQuerySql);
 		
 		recordCoreSqlBuffer(coreQuerySql);
 		reocrdCoreSqlParams(null);

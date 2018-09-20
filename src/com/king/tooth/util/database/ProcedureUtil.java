@@ -63,7 +63,7 @@ public class ProcedureUtil {
 			int count = 1;
 			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
 				json = new JSONObject(10);
-				execProcedure(sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, sqlParams, callProcedure, json);
+				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, sqlParams, callProcedure, json);
 				jsonArray.add(json);
 				
 				Log4jUtil.debug("第{}次执行procedure名为：{}", count, procedureName);
@@ -74,7 +74,7 @@ public class ProcedureUtil {
 			jsonArray = new JSONArray(1);
 			callProcedure = callProcedure(procedureName, null);
 			json = new JSONObject(10);
-			execProcedure(sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, null, callProcedure, json);
+			execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, null, callProcedure, json);
 			jsonArray.add(json);
 			
 			Log4jUtil.debug("执行procedure名为：{}", procedureName);
@@ -120,6 +120,7 @@ public class ProcedureUtil {
 	/**
 	 * 执行存储过程
 	 * <p>输出参数，返回结果，按顺序存储到json中</p>
+	 * @param procedureName 
 	 * @param sqlScriptHavaParams
 	 * @param isOracle
 	 * @param isSqlServer
@@ -130,7 +131,7 @@ public class ProcedureUtil {
 	 * @param callProcedure
 	 * @param json
 	 */
-	private static void execProcedure(final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final List<List<CfgSqlResultset>> inSqlResultSetsList, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
+	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final List<List<CfgSqlResultset>> inSqlResultSetsList, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
 		new DBLink(CurrentThreadContext.getDatabaseInstance()).doExecute(new IExecute() {
 			private int inSqlResultsetIndex = 0;
 			
@@ -337,10 +338,20 @@ public class ProcedureUtil {
 					ResultSetMetaData rsmd = rs.getMetaData();
 					int len = rsmd.getColumnCount();
 					
+					String columnName = null;
+					for(int i=1;i<=len-1;i++){
+						columnName = rsmd.getColumnName(i);
+						for(int j=2;j<=len;j++){
+							if(i!=j && columnName.equals(rsmd.getColumnName(j))){
+								throw new IllegalArgumentException("调用名为["+procedureName+"]的存储过程返回的结果集中，出现重复列名["+columnName+"]，位置分别位于["+i+","+j+"]，请检查"); 
+							}
+						}
+					}
+					
 					List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(len);
 					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
-						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, 2);
+						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, CfgSqlResultset.OUT);
 						csr.setSqlScriptId(sqlScriptId);
 						
 						if(isSqlServer){

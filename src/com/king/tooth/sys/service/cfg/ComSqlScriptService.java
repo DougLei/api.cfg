@@ -98,34 +98,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 	}
 	
 	/**
-	 * 保存sql脚本对象时，解析出参数集合，保存起来
-	 * @param sqlScriptParameterList
-	 * @param sqlScriptId
-	 */
-	private void saveSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameterList, String sqlScriptId){
-		for (ComSqlScriptParameter sqlScriptParameter : sqlScriptParameterList) {
-			sqlScriptParameter.setSqlScriptId(sqlScriptId);
-			HibernateUtil.saveObject(sqlScriptParameter, null);
-		}
-	}
-	
-	/**
-	 * 保存sql脚本对象时，解析出输入结果集信息集合，保存起来
-	 * @param inSqlResultsetsList
-	 * @param sqlScriptId
-	 */
-	private void saveInSqlResultsetsList(List<List<CfgSqlResultset>> inSqlResultsetsList, String sqlScriptId){
-		for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
-			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
-				for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
-					inSqlResultset.setSqlScriptId(sqlScriptId);
-					HibernateUtil.saveObject(inSqlResultset, null);
-				}
-			}
-		}
-	}
-	
-	/**
 	 * 保存sql脚本
 	 * @param sqlScript
 	 * @return
@@ -152,15 +124,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 			if(operResult == null){
 				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
 				String sqlScriptId = sqlScriptJsonObject.getString(ResourcePropNameConstants.ID);
-				
-				if(sqlScript.getIsAnalysisParameters() == 1){
-					if(sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0 ){
-						saveSqlScriptParameter(sqlScript.getSqlParams(), sqlScriptId);
-					}
-					if(sqlScript.getInSqlResultsetsList() != null && sqlScript.getInSqlResultsetsList().size()>0){
-						saveInSqlResultsetsList(sqlScript.getInSqlResultsetsList(), sqlScriptId);
-					}
-				}
 				
 				// TODO 单项目，取消是否平台开发者的判断
 //				if(isDeveloper){
@@ -225,16 +188,8 @@ public class ComSqlScriptService extends AbstractPublishService {
 			if(operResult == null){
 				if(sqlScript.getIsAnalysisParameters() == 1){
 					String sqlScriptId = sqlScript.getId();
-					
 					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);// 删除之前的参数
-					if(sqlScript.getSqlParams() != null && sqlScript.getSqlParams().size() >0){
-						saveSqlScriptParameter(sqlScript.getSqlParams(), sqlScriptId);
-					}
-					
 					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sqlScriptId);// 删除之前的所有结果集信息
-					if(sqlScript.getInSqlResultsetsList() != null && sqlScript.getInSqlResultsetsList().size()>0){
-						saveInSqlResultsetsList(sqlScript.getInSqlResultsetsList(), sqlScriptId);
-					}
 				}
 				
 				// 如果是查询语句，或存储过程，则要删除之前解析的结果集信息集合

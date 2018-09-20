@@ -1,23 +1,14 @@
 package com.king.tooth.web.processer.sqlresource.get;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Query;
-import org.hibernate.jdbc.Work;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
@@ -391,91 +382,91 @@ public abstract class GetProcesser extends RequestProcesser{
 		setResponseBody(responseBody);
 	}
 	
-	/**
-	 * [首次调用]处理select sql语句查询的结果集信息
-	 * @param sqlScriptResource
-	 */
-	protected void processSelectSqlResultsets(ComSqlScript sqlScriptResource, String querySql) {
-		if(sqlScriptResource.getOutSqlResultsetsList() == null || sqlScriptResource.getOutSqlResultsetsList().get(0) == null){
-			List<Object> queryCondParameters = null;
-			if(sqlParameterValues.size() > 0){
-				queryCondParameters = new ArrayList<Object>(sqlParameterValues.get(0).size());
-				queryCondParameters.addAll(sqlParameterValues.get(0));
-			}
-			if(builtinQueryCondMethodProcesser.getSql().length() > 0){
-				querySql += " and 1=2";
-			}else{
-				querySql += " where 1=2";
-			}
-			sqlScriptResource.setOutSqlResultsetsList(processResultSetList(sqlScriptResource.getSqlScriptResourceName(), querySql, queryCondParameters, sqlScriptResource.getId()));
-		}
-	}
+//	/**
+//	 * [首次调用]处理select sql语句查询的结果集信息
+//	 * @param sqlScriptResource
+//	 */
+//	protected void processSelectSqlResultsets(ComSqlScript sqlScriptResource, String querySql) {
+//		if(sqlScriptResource.getOutSqlResultsetsList() == null || sqlScriptResource.getOutSqlResultsetsList().get(0) == null){
+//			List<Object> queryCondParameters = null;
+//			if(sqlParameterValues.size() > 0){
+//				queryCondParameters = new ArrayList<Object>(sqlParameterValues.get(0).size());
+//				queryCondParameters.addAll(sqlParameterValues.get(0));
+//			}
+//			if(builtinQueryCondMethodProcesser.getSql().length() > 0){
+//				querySql += " and 1=2";
+//			}else{
+//				querySql += " where 1=2";
+//			}
+//			sqlScriptResource.setOutSqlResultsetsList(processResultSetList(sqlScriptResource.getSqlScriptResourceName(), querySql, queryCondParameters, sqlScriptResource.getId()));
+//		}
+//	}
 	
-	/**
-	 * 获取select sql语句查询的结果集信息
-	 * <p>如果没有结果集，则要获取结果集信息并保存到数据库</p>
-	 * @param sqlScriptResourceName
-	 * @param querySql
-	 * @param queryCondParameters
-	 * @param sqlScriptId
-	 * @return
-	 */
-	private List<List<CfgSqlResultset>> processResultSetList(final String sqlScriptResourceName, final String querySql, final List<Object> queryCondParameters, final String sqlScriptId){
-		if(StrUtils.isEmpty(querySql)){
-			return null;
-		}
-		List<List<CfgSqlResultset>> sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
-		final List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>();
-		sqlResultsetsList.add(sqlResultSets);
-		
-		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
-			public void execute(Connection connection) throws SQLException {
-				boolean includeIdColumn = false;// 是否包含id字段，如果不包括，则系统抛出异常
-				
-				PreparedStatement pst = null;
-				ResultSet rs = null;
-				try {
-					pst = connection.prepareStatement(querySql);
-					if(queryCondParameters != null && queryCondParameters.size()>0){
-						int i=1;
-						for (Object paramValue : queryCondParameters) {
-							if(paramValue instanceof Date){
-								pst.setDate(i++, new java.sql.Date(((Date)paramValue).getTime()));
-							}else{
-								pst.setObject(i++, paramValue);
-							}
-						}
-					}
-					rs = pst.executeQuery();
-					ResultSetMetaData rsmd = rs.getMetaData();
-					int len = rsmd.getColumnCount()+1;
-					CfgSqlResultset csr = null;
-					for(int i=1;i<len;i++){
-						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, 2);
-						csr.setSqlScriptId(sqlScriptId);
-						HibernateUtil.saveObject(csr, null);// 将每条结果集信息保存到数据库
-						
-						sqlResultSets.add(csr);
-						
-						if(!includeIdColumn && csr.getPropName() == ResourcePropNameConstants.ID){
-							includeIdColumn = true;
-						}
-					}
-				}catch (Exception e){
-					throw e;
-				} finally{
-					CloseUtil.closeDBConn(rs, pst);// 从当前线程session中获取的connection，会在最后同session一同关闭，不需要单独关闭。即execute中的connection参数
-				}
-				if(!includeIdColumn){
-					throw new IllegalArgumentException("请求的名为["+sqlScriptResourceName+"]的select sql资源，其查询结果字段，不包含id列，系统无法处理，请修改该sql脚本，增加查询id字段的语句");
-				}
-			}
-		});
-		Log4jUtil.debug("获取select语句查询结果集信息时，执行的sql语句为：{}", querySql);
-		Log4jUtil.debug("获取select语句查询结果集信息时，执行sql语句的条件参数集合为：{}", queryCondParameters);
-		if(queryCondParameters != null){
-			queryCondParameters.clear();
-		}
-		return sqlResultsetsList;
-	}
+//	/**
+//	 * 获取select sql语句查询的结果集信息
+//	 * <p>如果没有结果集，则要获取结果集信息并保存到数据库</p>
+//	 * @param sqlScriptResourceName
+//	 * @param querySql
+//	 * @param queryCondParameters
+//	 * @param sqlScriptId
+//	 * @return
+//	 */
+//	private List<List<CfgSqlResultset>> processResultSetList(final String sqlScriptResourceName, final String querySql, final List<Object> queryCondParameters, final String sqlScriptId){
+//		if(StrUtils.isEmpty(querySql)){
+//			return null;
+//		}
+//		List<List<CfgSqlResultset>> sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
+//		final List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>();
+//		sqlResultsetsList.add(sqlResultSets);
+//		
+//		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
+//			public void execute(Connection connection) throws SQLException {
+//				boolean includeIdColumn = false;// 是否包含id字段，如果不包括，则系统抛出异常
+//				
+//				PreparedStatement pst = null;
+//				ResultSet rs = null;
+//				try {
+//					pst = connection.prepareStatement(querySql);
+//					if(queryCondParameters != null && queryCondParameters.size()>0){
+//						int i=1;
+//						for (Object paramValue : queryCondParameters) {
+//							if(paramValue instanceof Date){
+//								pst.setDate(i++, new java.sql.Date(((Date)paramValue).getTime()));
+//							}else{
+//								pst.setObject(i++, paramValue);
+//							}
+//						}
+//					}
+//					rs = pst.executeQuery();
+//					ResultSetMetaData rsmd = rs.getMetaData();
+//					int len = rsmd.getColumnCount()+1;
+//					CfgSqlResultset csr = null;
+//					for(int i=1;i<len;i++){
+//						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, 2);
+//						csr.setSqlScriptId(sqlScriptId);
+//						HibernateUtil.saveObject(csr, null);// 将每条结果集信息保存到数据库
+//						
+//						sqlResultSets.add(csr);
+//						
+//						if(!includeIdColumn && csr.getPropName() == ResourcePropNameConstants.ID){
+//							includeIdColumn = true;
+//						}
+//					}
+//				}catch (Exception e){
+//					throw e;
+//				} finally{
+//					CloseUtil.closeDBConn(rs, pst);// 从当前线程session中获取的connection，会在最后同session一同关闭，不需要单独关闭。即execute中的connection参数
+//				}
+//				if(!includeIdColumn){
+//					throw new IllegalArgumentException("请求的名为["+sqlScriptResourceName+"]的select sql资源，其查询结果字段，不包含id列，系统无法处理，请修改该sql脚本，增加查询id字段的语句");
+//				}
+//			}
+//		});
+//		Log4jUtil.debug("获取select语句查询结果集信息时，执行的sql语句为：{}", querySql);
+//		Log4jUtil.debug("获取select语句查询结果集信息时，执行sql语句的条件参数集合为：{}", queryCondParameters);
+//		if(queryCondParameters != null){
+//			queryCondParameters.clear();
+//		}
+//		return sqlResultsetsList;
+//	}
 }

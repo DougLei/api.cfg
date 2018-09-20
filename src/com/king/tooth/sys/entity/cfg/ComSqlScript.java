@@ -296,57 +296,48 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinDataType.STRING, 16);
 		dbTypeColumn.setName("数据库类型");
 		dbTypeColumn.setComments("数据库类型");
-		dbTypeColumn.setOrderCode(1);
 		columns.add(dbTypeColumn);
 		
 		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption", BuiltinDataType.STRING, 50);
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
 		sqlScriptCaptionColumn.setComments("sql脚本的标题");
-		sqlScriptCaptionColumn.setOrderCode(2);
 		columns.add(sqlScriptCaptionColumn);
 		
 		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name", BuiltinDataType.STRING, 60);
 		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
 		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
 		sqlScriptResourceNameColumn.setIsNullabled(0);
-		sqlScriptResourceNameColumn.setOrderCode(3);
 		columns.add(sqlScriptResourceNameColumn);
 		
-		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", BuiltinDataType.STRING, 50);
+		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", BuiltinDataType.STRING, 80);
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
-		sqlScriptTypeColumn.setOrderCode(4);
 		columns.add(sqlScriptTypeColumn);
 		
 		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", BuiltinDataType.CLOB, 0);
 		sqlScriptContentColumn.setName("sql脚本内容");
 		sqlScriptContentColumn.setComments("sql脚本内容");
 		sqlScriptContentColumn.setIsNullabled(0);
-		sqlScriptContentColumn.setOrderCode(5);
 		columns.add(sqlScriptContentColumn);
 		
 		ComColumndata sqlScriptParametersColumn = new ComColumndata("sql_script_parameters", BuiltinDataType.STRING, 9999);
 		sqlScriptParametersColumn.setName("sql脚本的参数对象集合");
 		sqlScriptParametersColumn.setComments("sql脚本的参数(json串)");
-		sqlScriptParametersColumn.setOrderCode(6);
 		columns.add(sqlScriptParametersColumn);
 		
 		ComColumndata objectNameColumn = new ComColumndata("object_name", BuiltinDataType.STRING, 80);
 		objectNameColumn.setName("sql对象名称");
 		objectNameColumn.setComments("存储过程、视图等");
-		objectNameColumn.setOrderCode(7);
 		columns.add(objectNameColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 200);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
-		commentsColumn.setOrderCode(9);
 		columns.add(commentsColumn);
 		
 		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinDataType.STRING, 9999);
 		parameterNameRecordsColumn.setName("sql参数名的记录");
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
-		parameterNameRecordsColumn.setOrderCode(11);
 		columns.add(parameterNameRecordsColumn);
 		
 		table.setColumns(columns);
@@ -375,6 +366,10 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
+			if(StrUtils.isEmpty(id)){
+				this.id = ResourceHandlerUtil.getIdentity();
+			}
+			
 			// 获取数据库类型
 			this.dbType = HibernateUtil.getCurrentDatabaseType();
 			
@@ -389,15 +384,17 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 				if(BuiltinDatabaseData.PROCEDURE.equals(this.sqlScriptType)){ 
 					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this);
 				}
-				// 如果是视图，则不用解析参数
+				// 如果是视图，则不用解析参数，只要解析出视图名即可
 				else if(BuiltinDatabaseData.VIEW.equals(this.sqlScriptType)){ 
-					SqlStatementParserUtil.analysisViewSqlScriptParam(this);
+					SqlStatementParserUtil.analysisViewName(this);
 				}
 				// 否则是一般sql脚本，解析[$xxx$]的参数
 				else{ 
 					SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this);// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
 					this.isCreated = 1;
 				}
+				// 如果是select语句，还要解析出查询结果字段集合，如果select语句查询的是*，则抛出异常，不能这样写，这样写不规范
+				SqlStatementParserUtil.analysisSelectSqlResultSetList(this);
 			}
 			
 			if(isImmediateCreate == 1 
