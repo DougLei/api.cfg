@@ -445,11 +445,24 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
+			for(String builtinColumnName: BUILTIN_COLUMNNAMES){
+				if(columnName.equalsIgnoreCase(builtinColumnName)){
+					result = "不能添加系统内置的列名:"+columnName;
+					break;
+				}
+			}
+		}
+		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		}
 		return result;
 	}
+	
+	/**
+	 * 系统内置的列名
+	 */
+	private static final String[] BUILTIN_COLUMNNAMES = {"id", "customer_id", "project_id", "create_date", "last_update_date", "create_user_id", "last_update_user_id"};
 	
 	public SysResource turnToResource() {
 		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");

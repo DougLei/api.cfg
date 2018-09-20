@@ -37,27 +37,28 @@ public class NamingProcessUtil {
 	 */
 	private static String databaseNamingToCodeNaming(String databaseNaming, boolean turnToPropname){
 		StringBuilder sb = new StringBuilder();
-		try {
-			databaseNaming = databaseNaming.trim().toLowerCase();
-			String firstWord = databaseNaming.substring(0,1);// 首字母
-			
-			String[] words = databaseNaming.split("_");
-			sb.append(words[0]);
-			if(!turnToPropname){ // 是要转换表名
-				sb.replace(0, 1, firstWord.toUpperCase());
-			}
-			
-			int len = words.length;
-			if(len > 1){
-				for(int i = 1; i<len; i++){
+		databaseNaming = databaseNaming.trim().toLowerCase();
+		if(databaseNaming.startsWith("_")){
+			throw new IllegalArgumentException("数据库字段命名不能以[_]开头");
+		}
+		String firstWord = databaseNaming.substring(0,1);// 首字母
+		
+		String[] words = databaseNaming.split("_");
+		sb.append(words[0]);
+		if(!turnToPropname){ // 是要转换表名
+			sb.replace(0, 1, firstWord.toUpperCase());
+		}
+		
+		int len = words.length;
+		if(len > 1){
+			for(int i = 1; i<len; i++){
+				if(StrUtils.notEmpty(words[i])){
 					firstWord = words[i].substring(0,1);
 					sb.append(words[i].replaceFirst(firstWord, firstWord.toUpperCase()));
 				}
 			}
-			return sb.toString();
-		} finally{
-			sb.setLength(0);
 		}
+		return sb.toString();
 	}
 	
 	//----------------------------------------------------------------------------------------------

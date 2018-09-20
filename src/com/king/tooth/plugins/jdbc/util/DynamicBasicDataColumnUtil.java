@@ -90,17 +90,17 @@ public class DynamicBasicDataColumnUtil {
 		}
 		
 		if(table.getIsDatalinkTable() == 0 && !table.getTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
-			ComColumndata createTimeColumn = new ComColumndata("create_date", BuiltinDataType.DATE, 0);
-			createTimeColumn.setName("创建时间");
-			createTimeColumn.setComments("创建时间");
-			createTimeColumn.setOrderCode(9910);
-			table.getColumns().add(createTimeColumn);
+			ComColumndata createDateColumn = new ComColumndata("create_date", BuiltinDataType.DATE, 0);
+			createDateColumn.setName("创建时间");
+			createDateColumn.setComments("创建时间");
+			createDateColumn.setOrderCode(9910);
+			table.getColumns().add(createDateColumn);
 			
-			ComColumndata lastUpdateTimeColumn = new ComColumndata("last_update_date", BuiltinDataType.DATE, 0);
-			lastUpdateTimeColumn.setComments("最后修改时间");
-			lastUpdateTimeColumn.setName("最后修改时间");
-			lastUpdateTimeColumn.setOrderCode(9911);
-			table.getColumns().add(lastUpdateTimeColumn);
+			ComColumndata lastUpdateDateColumn = new ComColumndata("last_update_date", BuiltinDataType.DATE, 0);
+			lastUpdateDateColumn.setComments("最后修改时间");
+			lastUpdateDateColumn.setName("最后修改时间");
+			lastUpdateDateColumn.setOrderCode(9911);
+			table.getColumns().add(lastUpdateDateColumn);
 			
 			ComColumndata createUserIdColumn = new ComColumndata("create_user_id", BuiltinDataType.STRING, 32);
 			createUserIdColumn.setComments("创建人主键");

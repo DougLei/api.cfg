@@ -333,7 +333,7 @@ public abstract class GetProcesser extends RequestProcesser{
 			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getMaxResults());
 			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
 			
-			if(totalCount>0){
+			if(totalCount>0){// 如果没有数据，则不进行分页查询
 				query.setFirstResult(pageResultEntity.getFirstDataIndex());
 				query.setMaxResults(pageResultEntity.getPageSize());
 			}

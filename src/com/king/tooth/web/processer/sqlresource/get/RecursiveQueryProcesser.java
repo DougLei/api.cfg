@@ -99,8 +99,8 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
 			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
 			
-			if(totalCount>0){
-				// 在主查询的query对象中，设置分页数据
+			// 在主查询的query对象中，设置分页数据
+			if(totalCount>0){// 如果没有数据，则不进行分页查询
 				query.setFirstResult(pageResultEntity.getFirstDataIndex());
 				query.setMaxResults(pageResultEntity.getPageSize());
 			}
