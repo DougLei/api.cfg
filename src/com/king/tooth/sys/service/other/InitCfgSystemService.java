@@ -88,7 +88,7 @@ public class InitCfgSystemService extends AbstractService{
 			updateInitConfig();
 			Log4jUtil.info("系统初始化完成！");
 		} catch (Exception e) {
-			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg("InitCfgSystemService", "loadSysBasicDatasBySysFirstStart", e));
+			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
 		}
 	}
@@ -502,7 +502,7 @@ public class InitCfgSystemService extends AbstractService{
 			// 清空用户在线数据表
 			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus", null);
 		} catch (Exception e) {
-			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg("InitCfgSystemService", "loadHbmsByStart", e));
+			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
 		}
 	}

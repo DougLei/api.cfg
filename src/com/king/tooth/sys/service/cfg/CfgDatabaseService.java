@@ -231,7 +231,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			return ExceptionUtil.getErrMsg("CfgDatabaseService", "publishDatabase", e);
+			return ExceptionUtil.getErrMsg(e);
 		}finally{
 			if(session != null){
 				session.flush();

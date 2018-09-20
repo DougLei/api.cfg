@@ -49,7 +49,7 @@ public final class BatchPushMessageThread extends PMThread{
 	}
 
 	protected void doCatch(Exception e) {
-		Log4jUtil.warn("批量消息推送处理时出现异常信息：{}", ExceptionUtil.getErrMsg("BatchPushMessageThread", "run", e));
+		Log4jUtil.warn("批量消息推送处理时出现异常信息：{}", ExceptionUtil.getErrMsg(e));
 	}
 
 	protected void doFinally() {

@@ -380,6 +380,11 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			String[] sqlScriptArr = SqlStatementParserUtil.parseSqlScript(this.gsqlParser, this);
 			
 			if(isAnalysisParameters == 1){
+				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", id);// 删除之前的参数
+				if(BuiltinDatabaseData.SELECT.equals(sqlScriptType) || BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType)){
+					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", id);// 删除之前的所有结果集信息(select/存储过程/视图)
+				}
+				
 				// 如果是存储过程，则用另一个方法处理，解析出参数
 				if(BuiltinDatabaseData.PROCEDURE.equals(this.sqlScriptType)){ 
 					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this);
@@ -540,7 +545,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 				sqlParams.add((ComSqlScriptParameter)sqlParam.clone());
 			}
 		} catch (CloneNotSupportedException e) {
-			throw new IllegalArgumentException(ExceptionUtil.getErrMsg("ComSqlScript", "cloneSqlParams", e));
+			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e));
 		}
 		return sqlParams;
 	}

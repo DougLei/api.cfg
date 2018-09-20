@@ -186,17 +186,6 @@ public class ComSqlScriptService extends AbstractPublishService {
 				BuiltinObjectInstance.resourceService.updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
-				if(sqlScript.getIsAnalysisParameters() == 1){
-					String sqlScriptId = sqlScript.getId();
-					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sqlScriptId);// 删除之前的参数
-					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sqlScriptId);// 删除之前的所有结果集信息
-				}
-				
-				// 如果是查询语句，或存储过程，则要删除之前解析的结果集信息集合
-				if(BuiltinDatabaseData.SELECT.equals(sqlScript.getSqlScriptType()) || BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
-					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId=? and projectId=? and customerId=?", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-				}
-				
 				return HibernateUtil.updateObject(sqlScript, null);
 			}
 		}
@@ -283,7 +272,7 @@ public class ComSqlScriptService extends AbstractPublishService {
 			DBUtil.createObjects(sqls);
 			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), null);
 		} catch (Exception e) {
-			return ExceptionUtil.getErrMsg("ComSqlScriptService", "immediateCreate", e);
+			return ExceptionUtil.getErrMsg(e);
 		} finally {
 			for (ComSqlScript sql : sqls) {
 				sql.clear();

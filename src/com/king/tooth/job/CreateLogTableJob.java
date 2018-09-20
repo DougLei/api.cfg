@@ -58,7 +58,7 @@ public class CreateLogTableJob implements Job, Serializable{
 				
 				HibernateUtil.commitTransaction();
 			} catch (Exception e) {
-				Log4jUtil.error("系统在自动创建日志信息表时出现异常，请联系系统管理员:{}", ExceptionUtil.getErrMsg("CreateLogTableJob", "execute", e));
+				Log4jUtil.error("系统在自动创建日志信息表时出现异常，请联系系统管理员:{}", ExceptionUtil.getErrMsg(e));
 				HibernateUtil.rollbackTransaction();
 				
 				// 恢复之前日志表的年月后缀

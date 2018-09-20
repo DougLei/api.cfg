@@ -1,45 +1,59 @@
 package com.king.tooth.web.entity.request;
 
-
 /**
- * 请求的资源元数据信息
+ * 资源元数据信息对象
  * @author DougLei
  */
 public class ResourceMetadataInfo {
-	
-	public ResourceMetadataInfo() {
-	}
-	public ResourceMetadataInfo(RequestBody requestBody) {
-		validResourceMetadata(requestBody);
-	}
-	
-	//------------------------------------------------------------------
 	/**
-	 * 验证资源的元数据
-	 * @param requestBody
+	 * 属性名
 	 */
-	private void validResourceMetadata(RequestBody requestBody) {
-		if(requestBody.getResourceInfo().isTableResource()){
-			validTableResourceMetadata(requestBody);
-			return;
-		}
-		if(requestBody.getResourceInfo().isSqlResource()){
-			validSqlResourceMetadata(requestBody);
-			return;
-		}
-	}
-	
+	private String name;
 	/**
-	 * 验证表资源的元数据
-	 * @param requestBody
+	 * 数据类型
 	 */
-	private void validTableResourceMetadata(RequestBody requestBody) {
-	}
-	
+	private String dataType;
 	/**
-	 * 验证sql资源的元数据
-	 * @param requestBody
+	 * 长度
 	 */
-	private void validSqlResourceMetadata(RequestBody requestBody) {
+	private int length;
+	/**
+	 * 数据精度
+	 */
+	private int precision;
+	/**
+	 * 是否可为空
+	 */
+	private int isNullabled;
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDataType() {
+		return dataType;
+	}
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
+	public int getLength() {
+		return length;
+	}
+	public void setLength(int length) {
+		this.length = length;
+	}
+	public int getPrecision() {
+		return precision;
+	}
+	public void setPrecision(int precision) {
+		this.precision = precision;
+	}
+	public int getIsNullabled() {
+		return isNullabled;
+	}
+	public void setIsNullabled(int isNullabled) {
+		this.isNullabled = isNullabled;
 	}
 }

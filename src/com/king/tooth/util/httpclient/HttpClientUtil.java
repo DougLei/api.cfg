@@ -191,10 +191,10 @@ public class HttpClientUtil {
 			Log4jUtil.debug("[HttpClientUtil.doPost]方法调用接口\"{}\"的结果为\"{}\"", reqUrl, status);
 			return postMethod.getResponseBodyAsString();
 		} catch (HttpException e) {
-			errMsg = ExceptionUtil.getErrMsg("HttpClientUtil", "doPostBasic", e);
+			errMsg = ExceptionUtil.getErrMsg(e);
 			Log4jUtil.debug("[HttpClientUtil.doPostBasic]方法出现异常：{}", errMsg);
 		} catch (IOException e) {
-			errMsg = ExceptionUtil.getErrMsg("HttpClientUtil", "doPostBasic", e);
+			errMsg = ExceptionUtil.getErrMsg(e);
 			Log4jUtil.debug("[HttpClientUtil.doPostBasic]方法出现异常：{}", errMsg);
 		}finally{
 			if(postMethod != null){

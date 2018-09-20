@@ -123,7 +123,7 @@ public class SysFileService extends AbstractService{
 					}
 				}
 			}
-			return ExceptionUtil.getErrMsg("SysFileService", "upload", e);
+			return ExceptionUtil.getErrMsg(e);
 		} finally{
 			if(fileList != null){
 				fileList.clear();
@@ -365,7 +365,7 @@ public class SysFileService extends AbstractService{
 				}
 			}
 		} catch (Exception e) {
-			return ExceptionUtil.getErrMsg("SysFileService", "download", e);
+			return ExceptionUtil.getErrMsg(e);
 		} finally{
 			CloseUtil.closeIO(zos, out, fis, input);
 			sysFileList.clear();
@@ -411,7 +411,7 @@ public class SysFileService extends AbstractService{
 			// 删除数据
 			deleteDataById("SysFile", fileIds);
 		} catch (Exception e) {
-			return ExceptionUtil.getErrMsg("SysFileService", "delete", e);
+			return ExceptionUtil.getErrMsg(e);
 		}
 		
 		// 组装结果

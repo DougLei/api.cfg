@@ -75,7 +75,7 @@ public class DateUtil {
 				return sdfSimple.parse(dateStr);
 			}
 		} catch (ParseException e) {
-			throw new IllegalArgumentException("[DateUtil.parseDate]格式化日期字符串["+dateStr+"]为日期对象时出现错误："+ExceptionUtil.getErrMsg("DateUtil", "parseDate", e));
+			throw new IllegalArgumentException("[DateUtil.parseDate]格式化日期字符串["+dateStr+"]为日期对象时出现错误："+ExceptionUtil.getErrMsg(e));
 		}
 	}
 	

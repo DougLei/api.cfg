@@ -52,7 +52,7 @@ public class CodeResourceEntity {
 			Method method = instance.getClass().getDeclaredMethod(methodName, methodParameterClassTypeArr);
 			object = method.invoke(instance, new Object[]{request, ijson, urlParams});
 		} catch (Exception e) {
-			object = ExceptionUtil.getErrMsg("CodeResourceEntity", "invokeMethodForCodeResource", e);
+			object = ExceptionUtil.getErrMsg(e);
 			Log4jUtil.debug("[CodeResourceEntity.invokeMethodForCodeResource]方法出现异常信息:{}", object);
 		} 
 		return object;

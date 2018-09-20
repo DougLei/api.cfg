@@ -109,15 +109,31 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	private String oldInfoJson;
 	@JSONField(serialize = false)
 	private JSONObject oldColumnInfo;
+	/**
+	 * 是否有约束
+	 * <p>是否有唯一约束，不可为空约束等，用来做数据校验</p>
+	 * <p>默认为0</p>
+	 */
+	private Integer haveConstraint;
 	
 	//-------------------------------------------------------------------------
+	
+	/**
+	 * 是否忽略检查内置的列
+	 */
+	@JSONField(serialize = false)
+	private boolean isIgnoreCheckBuiltinColumnName;
 	
 	public ComColumndata() {
 	}
 	public ComColumndata(String columnName, String columnType, Integer length) {
+		this(columnName, columnType, length, true);
+	}
+	private ComColumndata(String columnName, String columnType, Integer length, boolean isIgnoreCheckBuiltinColumnName) {
 		this.columnName = columnName;
 		this.columnType = columnType;
 		this.length = length;
+		this.isIgnoreCheckBuiltinColumnName = isIgnoreCheckBuiltinColumnName;
 		analysisResourceProp();
 	}
 	
@@ -236,6 +252,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public JSONObject getOldColumnInfo() {
 		return oldColumnInfo;
 	}
+	public Integer getHaveConstraint() {
+		return haveConstraint;
+	}
+	public void setHaveConstraint(Integer haveConstraint) {
+		this.haveConstraint = haveConstraint;
+	}
 	
 	/**
 	 * 解析出旧的列信息
@@ -295,31 +317,27 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(25);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", BuiltinDataType.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
 		tableIdColumn.setComments("关联的表主键");
-		tableIdColumn.setOrderCode(1);
 		columns.add(tableIdColumn);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 60);
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
-		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
 		ComColumndata columnNameColumn = new ComColumndata("column_name", BuiltinDataType.STRING, 40);
 		columnNameColumn.setName("列名");
 		columnNameColumn.setComments("列名");
 		columnNameColumn.setIsNullabled(0);
-		columnNameColumn.setOrderCode(3);
 		columns.add(columnNameColumn);
 		
 		ComColumndata propNameColumn = new ComColumndata("prop_name", BuiltinDataType.STRING, 40);
 		propNameColumn.setName("属性名");
 		propNameColumn.setComments("属性名");
-		propNameColumn.setOrderCode(4);
 		columns.add(propNameColumn);
 		
 		ComColumndata columnTypeColumn = new ComColumndata("column_type", BuiltinDataType.STRING, 10);
@@ -327,7 +345,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		columnTypeColumn.setComments("字段数据类型：默认为string");
 		columnTypeColumn.setDefaultValue(BuiltinDataType.STRING);
 		columnTypeColumn.setIsNullabled(0);
-		columnTypeColumn.setOrderCode(5);
 		columns.add(columnTypeColumn);
 		
 		ComColumndata lengthColumn = new ComColumndata("length", BuiltinDataType.INTEGER, 4);
@@ -335,74 +352,63 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		lengthColumn.setComments("字段长度:默认长度为32");
 		lengthColumn.setDefaultValue("32");
 		lengthColumn.setIsNullabled(0);
-		lengthColumn.setOrderCode(6);
 		columns.add(lengthColumn);
 		
 		ComColumndata precisionColumn = new ComColumndata("precision", BuiltinDataType.INTEGER, 4);
 		precisionColumn.setName("数据精度");
 		precisionColumn.setComments("数据精度:默认为0");
 		precisionColumn.setDefaultValue("0");
-		precisionColumn.setOrderCode(7);
 		columns.add(precisionColumn);
 		
 		ComColumndata defaultValueColumn = new ComColumndata("default_value", BuiltinDataType.STRING, 50);
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
-		defaultValueColumn.setOrderCode(8);
 		columns.add(defaultValueColumn);
 		
 		ComColumndata isPrimaryKeyColumn = new ComColumndata("is_primary_key", BuiltinDataType.INTEGER, 1);
 		isPrimaryKeyColumn.setName("是否主键");
 		isPrimaryKeyColumn.setComments("是否主键:默认为0");
 		isPrimaryKeyColumn.setDefaultValue("0");
-		isPrimaryKeyColumn.setOrderCode(9);
 		columns.add(isPrimaryKeyColumn);
 		
 		ComColumndata isUniqueColumn = new ComColumndata("is_unique", BuiltinDataType.INTEGER, 1);
 		isUniqueColumn.setName("是否唯一");
 		isUniqueColumn.setComments("是否唯一:默认为0");
 		isUniqueColumn.setDefaultValue("0");
-		isUniqueColumn.setOrderCode(10);
 		columns.add(isUniqueColumn);
 		
 		ComColumndata isNullabledColumn = new ComColumndata("is_nullabled", BuiltinDataType.INTEGER, 1);
 		isNullabledColumn.setName("是否可为空");
 		isNullabledColumn.setComments("是否可为空:默认为1");
 		isNullabledColumn.setDefaultValue("1");
-		isNullabledColumn.setOrderCode(11);
 		columns.add(isNullabledColumn);
 		
 		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary", BuiltinDataType.INTEGER, 1);
 		isDataDictionaryColumn.setName("是否数据字典");
 		isDataDictionaryColumn.setComments("是否数据字典:默认为0");
 		isDataDictionaryColumn.setDefaultValue("0");
-		isDataDictionaryColumn.setOrderCode(12);
 		columns.add(isDataDictionaryColumn);
 		
 		ComColumndata dataDictionaryCodeColumn = new ComColumndata("data_dictionary_code", BuiltinDataType.STRING, 50);
 		dataDictionaryCodeColumn.setName("数据字典编码");
 		dataDictionaryCodeColumn.setComments("数据字典编码");
-		dataDictionaryCodeColumn.setOrderCode(13);
 		columns.add(dataDictionaryCodeColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 4);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
 		orderCodeColumn.setDefaultValue("0");
-		orderCodeColumn.setOrderCode(14);
 		columns.add(orderCodeColumn);
 		
 		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效:默认为1");
 		isEnabledColumn.setDefaultValue("1");
-		isEnabledColumn.setOrderCode(15);
 		columns.add(isEnabledColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 650);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
-		commentsColumn.setOrderCode(16);
 		columns.add(commentsColumn);
 		
 		ComColumndata operStatusColumn = new ComColumndata("oper_status", BuiltinDataType.INTEGER, 1);
@@ -415,6 +421,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		oldInfoJsonColumn.setName("旧的信息json串");
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);
+
+		ComColumndata haveConstraintColumn = new ComColumndata("have_constraint", BuiltinDataType.INTEGER, 1);
+		haveConstraintColumn.setName("是否有约束");
+		haveConstraintColumn.setComments("是否有唯一约束，不可为空约束等，用来做数据校验，默认为0");
+		haveConstraintColumn.setDefaultValue("0");
+		columns.add(haveConstraintColumn);
 		
 		table.setColumns(columns);
 		return table;
@@ -444,17 +456,26 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
-		if(result == null){
-			for(String builtinColumnName: BUILTIN_COLUMNNAMES){
-				if(columnName.equalsIgnoreCase(builtinColumnName)){
-					result = "不能添加系统内置的列名:"+columnName;
-					break;
+		if(!isIgnoreCheckBuiltinColumnName){
+			if(result == null){
+				for(String builtinColumnName: BUILTIN_COLUMNNAMES){
+					if(columnName.equalsIgnoreCase(builtinColumnName)){
+						result = "不能添加系统内置的列名:"+columnName;
+						break;
+					}
 				}
 			}
 		}
 		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
+			
+			// 检查列是否有约束
+			if((isUnique != null && isUnique == 1) || (isNullabled != null && isNullabled == 0)){
+				this.haveConstraint = 1;
+			}else{
+				this.haveConstraint = 0;
+			}
 		}
 		return result;
 	}

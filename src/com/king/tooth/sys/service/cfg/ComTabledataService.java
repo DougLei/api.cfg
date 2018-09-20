@@ -319,7 +319,7 @@ public class ComTabledataService extends AbstractPublishService {
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {
 			batchCancelBuildModel(dbTableHandler, deleteTableIds, false);// 如果建模出现异常，要将一起建模操作过的表都删除掉
-			return ExceptionUtil.getErrMsg("ComTabledataService", "buildModel", e);
+			return ExceptionUtil.getErrMsg(e);
 		}
 		return null;
 	}
@@ -511,7 +511,7 @@ public class ComTabledataService extends AbstractPublishService {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			session.getTransaction().rollback();
-			errMsg = ExceptionUtil.getErrMsg("ComTabledataService", "executeRemotePublishTable", e);
+			errMsg = ExceptionUtil.getErrMsg(e);
 		}finally{
 			if(session != null){
 				session.flush();

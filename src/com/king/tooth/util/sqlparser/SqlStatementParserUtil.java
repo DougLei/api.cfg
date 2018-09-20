@@ -717,7 +717,9 @@ public class SqlStatementParserUtil {
 				}
 			}
 			
+			String sqlScriptId = sql.getId();
 			for (CfgSqlResultset sqlResultSet : sqlResultSets) {
+				sqlResultSet.setSqlScriptId(sqlScriptId);
 				HibernateUtil.saveObject(sqlResultSet, null);// 将每条结果集信息保存到数据库
 			}
 			sqlResultSets.clear();

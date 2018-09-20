@@ -64,7 +64,7 @@ public class PushMessageUtil {
 			json = callPushMessageApi(pushMessageApi, new PushMessageDataEntity(targetUserId, message));
 			return json.getInteger("data");
 		} catch (NumberFormatException e) {
-			Log4jUtil.error(ExceptionUtil.getErrMsg("PushMessageUtil", "pushMessage", e));
+			Log4jUtil.error(ExceptionUtil.getErrMsg(e));
 			return -2;
 		} finally{
 			if(json != null){
@@ -105,7 +105,7 @@ public class PushMessageUtil {
 			
 			return result;
 		} catch (Exception e) {
-			Log4jUtil.error(ExceptionUtil.getErrMsg("PushMessageUtil", "batchPushMessage", e));
+			Log4jUtil.error(ExceptionUtil.getErrMsg(e));
 			return new Integer[]{-2};
 		} finally{
 			if(toUserId.length()>0){

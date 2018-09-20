@@ -36,7 +36,7 @@ public class SerializeUtil {
 				byte[] bytes = out.toByteArray();
 				return bytes;
 			} catch (IOException e) {
-				Log4jUtil.debug("[SerializeUtil.serializeObjectToByte]序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "serializeObjectToByte", e));
+				Log4jUtil.debug("[SerializeUtil.serializeObjectToByte]序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 			}finally{
 				CloseUtil.closeIO(objectOut);
 				CloseUtil.closeIO(out);
@@ -66,9 +66,9 @@ public class SerializeUtil {
 			objectIn = new ObjectInputStream(in);
 			return objectIn.readObject();
 		} catch (IOException e) {
-			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromByte]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "unserializeObjectFromByte", e));
+			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromByte]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (ClassNotFoundException e) {
-			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromByte]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "unserializeObjectFromByte", e));
+			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromByte]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}finally{
 			CloseUtil.closeIO(objectIn);
 			CloseUtil.closeIO(in);
@@ -106,9 +106,9 @@ public class SerializeUtil {
 				objectOut = new ObjectOutputStream(out);
 				objectOut.writeObject(obj);
 			} catch (FileNotFoundException e) {
-				Log4jUtil.debug("[SerializeUtil.serializeObject]序列化的对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "serializeObjectToFile", e));
+				Log4jUtil.debug("[SerializeUtil.serializeObject]序列化的对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 			} catch (IOException e) {
-				Log4jUtil.debug("[SerializeUtil.serializeObject]序列化的对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "serializeObjectToFile", e));
+				Log4jUtil.debug("[SerializeUtil.serializeObject]序列化的对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 			}finally{
 				CloseUtil.closeIO(objectOut);
 				CloseUtil.closeIO(out);
@@ -138,11 +138,11 @@ public class SerializeUtil {
 			objectIn = new ObjectInputStream(in);
 			return objectIn.readObject();
 		} catch (FileNotFoundException e) {
-			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromFile]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "unserializeObjectFromFile", e));
+			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromFile]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (IOException e) {
-			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromFile]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "unserializeObjectFromFile", e));
+			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromFile]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (ClassNotFoundException e) {
-			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromFile]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg("SerializeUtil", "unserializeObjectFromFile", e));
+			Log4jUtil.debug("[SerializeUtil.unserializeObjectFromFile]反序列化对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}finally{
 			CloseUtil.closeIO(objectIn);
 			CloseUtil.closeIO(in);

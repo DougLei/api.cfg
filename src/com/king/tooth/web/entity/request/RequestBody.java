@@ -44,12 +44,6 @@ public class RequestBody implements Serializable{
 	
 	// -------------------------------------------------------------------------------------------------------------------------
 	/**
-	 * 请求的资源元数据
-	 */
-	private ResourceMetadataInfo resourceMetadataInfo;
-	
-	// -------------------------------------------------------------------------------------------------------------------------
-	/**
 	 * 请求资源的属性(字段、列)值编码规范
 	 */
 	private ResourcePropCodeRule resourcePropCodeRule;
@@ -61,6 +55,7 @@ public class RequestBody implements Serializable{
 		this.request = request;
 		analysisRouteBody();
 		analysisResource();
+		validResourceData();
 	}
 	
 	// -------------------------------------------------------------------------------------------------------------------------
@@ -91,14 +86,20 @@ public class RequestBody implements Serializable{
 	 */
 	private void analysisResource() {
 		resourceInfo = new ResourceInfo(this);
-		resourceMetadataInfo = new ResourceMetadataInfo(this);
+	}
+
+	/**
+	 * 校验请求资源的数据
+	 */
+	private void validResourceData() {
+		new ResourceDataVerifier(this).doValidResourceData();
 	}
 	
+	// -------------------------------------------------------------------------------------------------------------------------
 	/**
 	 * 解析资源字段的编码规则，并获取结果值
 	 */
 	public void analysisResourcePropCodeRule() {
-		// TODO 暂时不要处理字段编码规则
 		resourcePropCodeRule = new ResourcePropCodeRule(this);
 	}
 	
@@ -178,9 +179,6 @@ public class RequestBody implements Serializable{
 	}
 	public ResourceInfo getResourceInfo() {
 		return resourceInfo;
-	}
-	public ResourceMetadataInfo getResourceMetadataInfo() {
-		return resourceMetadataInfo;
 	}
 	public ResourcePropCodeRule getResourcePropCodeRule() {
 		return resourcePropCodeRule;

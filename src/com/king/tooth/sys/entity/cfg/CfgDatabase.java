@@ -272,7 +272,7 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 			int connectSeconds = (int) ((System.currentTimeMillis()-start)/1000);
 			return "ok:连接成功，耗时["+connectSeconds+"]秒";
 		} catch (Exception e) {
-			return "测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg("CfgDatabase", "testDbLink", e)+"]";
+			return "测试数据库连接失败，系统在[2秒]内无法连接到数据库，请检查您的配置是否正确，以及要连接的数据库是否可以正常连接，或联系管理员：["+ExceptionUtil.getErrMsg(e)+"]";
 		} finally{
 			CloseUtil.closeDBConn(conn);
 		}

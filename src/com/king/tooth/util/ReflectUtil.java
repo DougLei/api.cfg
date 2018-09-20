@@ -21,7 +21,7 @@ public class ReflectUtil {
 			try {
 				return superClass.getDeclaredField(fieldName);
 			} catch (NoSuchFieldException e) {
-				Log4jUtil.debug("[ReflectUtil.getFieldByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "getFieldByFieldName", e));
+				Log4jUtil.debug("[ReflectUtil.getFieldByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 			}
 		}
 		return null;
@@ -46,11 +46,11 @@ public class ReflectUtil {
 					field.setAccessible(false);
 				}
 			} catch (IllegalArgumentException e) {
-				Log4jUtil.debug("[ReflectUtil.getValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "getValueByFieldName", e));
+				Log4jUtil.debug("[ReflectUtil.getValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 			} catch (IllegalAccessException e) {
-				Log4jUtil.debug("[ReflectUtil.getValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "getValueByFieldName", e));
+				Log4jUtil.debug("[ReflectUtil.getValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 			} catch (SecurityException e) {
-				Log4jUtil.debug("[ReflectUtil.getValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "getValueByFieldName", e));
+				Log4jUtil.debug("[ReflectUtil.getValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 			}
 		}
 		return value;
@@ -73,11 +73,11 @@ public class ReflectUtil {
 				field.setAccessible(false);
 			}
 		} catch (IllegalArgumentException e) {
-			Log4jUtil.debug("[ReflectUtil.setValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "setValueByFieldName", e));
+			Log4jUtil.debug("[ReflectUtil.setValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (IllegalAccessException e) {
-			Log4jUtil.debug("[ReflectUtil.setValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "setValueByFieldName", e));
+			Log4jUtil.debug("[ReflectUtil.setValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (SecurityException e) {
-			Log4jUtil.debug("[ReflectUtil.setValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "setValueByFieldName", e));
+			Log4jUtil.debug("[ReflectUtil.setValueByFieldName]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}
 	}
 	
@@ -95,15 +95,15 @@ public class ReflectUtil {
 			Method method = obj.getClass().getDeclaredMethod(methodName, clz);
 			resObj = method.invoke(obj, params);
 		} catch (SecurityException e) {
-			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "invokeMethod", e));
+			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (IllegalArgumentException e) {
-			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "invokeMethod", e));
+			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (IllegalAccessException e) {
-			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "invokeMethod", e));
+			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (NoSuchMethodException e) {
-			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "invokeMethod", e));
+			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (InvocationTargetException e) {
-			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "invokeMethod", e));
+			Log4jUtil.debug("[ReflectUtil.invokeMethod]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}
 		return resObj;
 	}
@@ -119,7 +119,7 @@ public class ReflectUtil {
 		try {
 			clz = Class.forName(classPath);
 		} catch (ClassNotFoundException e) {
-			Log4jUtil.debug("[ReflectUtil.getClass]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "getClass", e));
+			Log4jUtil.debug("[ReflectUtil.getClass]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}
 		return clz;
 	}
@@ -134,9 +134,9 @@ public class ReflectUtil {
 		try {
 			t = (T) clz.newInstance();
 		} catch (InstantiationException e) {
-			Log4jUtil.debug("[ReflectUtil.newInstance]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "newInstance", e));
+			Log4jUtil.debug("[ReflectUtil.newInstance]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		} catch (IllegalAccessException e) {
-			Log4jUtil.debug("[ReflectUtil.newInstance]方法出现异常信息:{}", ExceptionUtil.getErrMsg("ReflectUtil", "newInstance", e));
+			Log4jUtil.debug("[ReflectUtil.newInstance]方法出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}
 		return t;
 	}

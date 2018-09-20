@@ -64,7 +64,7 @@ public final class RecordLogThread extends HibernateOperDBThread{
 	}
 
 	protected void doCatch(Exception e) {
-		Log4jUtil.warn("保存log时出现异常信息：{}", ExceptionUtil.getErrMsg("RecordLogThread", "run", e));
+		Log4jUtil.warn("保存log时出现异常信息：{}", ExceptionUtil.getErrMsg(e));
 	}
 
 	protected void doFinally() {

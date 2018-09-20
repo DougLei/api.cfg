@@ -51,7 +51,7 @@ public class QuartzUtil implements Serializable{
 				SCHEDULER_MAP.put(jobName+"."+groupName, scheduler);
 			}
 		} catch (SchedulerException e) {
-			Log4jUtil.debug("[QuartzUtil.getScheduler]方法出现异常：{}", ExceptionUtil.getErrMsg("QuartzUtil", "getScheduler", e));
+			Log4jUtil.debug("[QuartzUtil.getScheduler]方法出现异常：{}", ExceptionUtil.getErrMsg(e));
 		}
 		return scheduler;
 	}
@@ -83,11 +83,11 @@ public class QuartzUtil implements Serializable{
 				executeJob(clz);
 			}
 		} catch (SchedulerException e) {
-			Log4jUtil.debug("[QuartzUtil.addJob]方法出现异常：{}", ExceptionUtil.getErrMsg("QuartzUtil", "addJob", e));
+			Log4jUtil.debug("[QuartzUtil.addJob]方法出现异常：{}", ExceptionUtil.getErrMsg(e));
 		} catch (InstantiationException e) {
-			Log4jUtil.debug("[QuartzUtil.addJob]方法出现异常：{}", ExceptionUtil.getErrMsg("QuartzUtil", "addJob", e));
+			Log4jUtil.debug("[QuartzUtil.addJob]方法出现异常：{}", ExceptionUtil.getErrMsg(e));
 		} catch (IllegalAccessException e) {
-			Log4jUtil.debug("[QuartzUtil.addJob]方法出现异常：{}", ExceptionUtil.getErrMsg("QuartzUtil", "addJob", e));
+			Log4jUtil.debug("[QuartzUtil.addJob]方法出现异常：{}", ExceptionUtil.getErrMsg(e));
 		} 
 	}
 	
@@ -101,7 +101,7 @@ public class QuartzUtil implements Serializable{
 		try {
 			scheduler.shutdown();
 		} catch (SchedulerException e) {
-			Log4jUtil.debug("[QuartzUtil.stopJob]方法出现异常：{}", ExceptionUtil.getErrMsg("QuartzUtil", "stopJob", e));
+			Log4jUtil.debug("[QuartzUtil.stopJob]方法出现异常：{}", ExceptionUtil.getErrMsg(e));
 		}
 	}
 	

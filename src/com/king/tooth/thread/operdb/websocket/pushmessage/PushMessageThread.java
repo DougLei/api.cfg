@@ -76,7 +76,7 @@ public final class PushMessageThread extends PMThread{
 	}
 
 	protected void doCatch(Exception e) {
-		Log4jUtil.warn("消息推送处理时出现异常信息：{}", ExceptionUtil.getErrMsg("PushMessageThread", "run", e));
+		Log4jUtil.warn("消息推送处理时出现异常信息：{}", ExceptionUtil.getErrMsg(e));
 	}
 
 	protected void doFinally() {

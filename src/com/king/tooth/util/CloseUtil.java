@@ -75,7 +75,7 @@ public class CloseUtil {
 				Log4jUtil.debug("[CloseUtil.closeIO]没有匹配到要关闭的类型:{}", ioClass);
 			}
 		} catch (IOException e) {
-			Log4jUtil.debug("[CloseUtil.closeIO]方法在关闭IO对象出现异常信息:{}", ExceptionUtil.getErrMsg("CloseUtil", "closeIO", e));
+			Log4jUtil.debug("[CloseUtil.closeIO]方法在关闭IO对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}finally{
 			io = null;
 		}
@@ -107,7 +107,7 @@ public class CloseUtil {
 				Log4jUtil.debug("[CloseUtil.closeDBConn]没有匹配到要关闭的类型:{}", dbconnClass);
 			}
 		} catch (SQLException e) {
-			Log4jUtil.debug("[CloseUtil.closeDBConn]方法在关闭dbconn对象出现异常信息:{}", ExceptionUtil.getErrMsg("CloseUtil", "closeDBConn", e));
+			Log4jUtil.debug("[CloseUtil.closeDBConn]方法在关闭dbconn对象出现异常信息:{}", ExceptionUtil.getErrMsg(e));
 		}finally{
 			dbconn = null;
 		}

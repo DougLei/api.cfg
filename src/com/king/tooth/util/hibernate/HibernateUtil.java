@@ -237,7 +237,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
-			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg("HibernateUtil", "saveObject", e));
+			Log4jUtil.debug("保存数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 			throw e;
 		}
 	}
@@ -289,7 +289,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("修改数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
-			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg("HibernateUtil", "updateObjectByHql", e));
+			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 			throw e;
 		}
 	}
@@ -376,7 +376,7 @@ public class HibernateUtil {
 			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}了{}条数据", hqlDes, modifyCount);
 			return modifyCount;
 		} catch (HibernateException e) {
-			throw new IllegalArgumentException("[HibernateUtil.executeUpdateByHql]["+hqlDes+"]数据的时候出现了异常信息：" + ExceptionUtil.getErrMsg("HibernateUtil", "executeUpdateByHql", e));
+			throw new IllegalArgumentException("[HibernateUtil.executeUpdateByHql]["+hqlDes+"]数据的时候出现了异常信息：" + ExceptionUtil.getErrMsg(e));
 		}
 	}
 	
