@@ -710,8 +710,8 @@ public class SqlStatementParserUtil {
 			
 			for(int i=0;i<columnSize-1;i++){
 				columnName = sqlResultSets.get(i).getColumnName();
-				for(int j=1;j<columnSize;j++){
-					if(i!=j && columnName.equals(sqlResultSets.get(j).getColumnName())){
+				for(int j=i+1;j<columnSize;j++){
+					if(columnName.equals(sqlResultSets.get(j).getColumnName())){
 						throw new IllegalArgumentException("资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源，其查询结果字段，出现重复列名["+columnName+"]，位置分别位于["+(i+1)+","+(j+1)+"]，请检查");
 					}
 				}

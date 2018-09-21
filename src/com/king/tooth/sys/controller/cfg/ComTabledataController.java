@@ -86,10 +86,6 @@ public class ComTabledataController extends AbstractPublishController{
 	@RequestMapping
 	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
 		String tableIds = request.getParameter(BuiltinParameterKeys._IDS);
-		if(StrUtils.isEmpty(tableIds)){
-			return "要删除的表id不能为空";
-		}
-		
 		String[] tableIdArr = tableIds.split(",");
 		for (String tableId : tableIdArr) {
 			resultObject = BuiltinObjectInstance.tableService.deleteTable(tableId);

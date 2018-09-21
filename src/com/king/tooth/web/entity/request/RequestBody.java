@@ -44,6 +44,12 @@ public class RequestBody implements Serializable{
 	
 	// -------------------------------------------------------------------------------------------------------------------------
 	/**
+	 * 资源的数据校验类
+	 */
+	private ResourceDataVerifier resourceDataVerifier;
+	
+	// -------------------------------------------------------------------------------------------------------------------------
+	/**
 	 * 请求资源的属性(字段、列)值编码规范
 	 */
 	private ResourcePropCodeRule resourcePropCodeRule;
@@ -93,7 +99,8 @@ public class RequestBody implements Serializable{
 	 * @return
 	 */
 	public String validResourceData() {
-		return new ResourceDataVerifier(this).doValidResourceData();
+		resourceDataVerifier = new ResourceDataVerifier(this);
+		return resourceDataVerifier.doValidResourceData();
 	}
 	
 	/**
@@ -147,6 +154,15 @@ public class RequestBody implements Serializable{
 	public void clear() {
 		if(resourcePropCodeRule != null){
 			resourcePropCodeRule.clear();
+		}
+		if(requestUrlParams != null && requestUrlParams.size() > 0){
+			requestUrlParams.clear();
+		}
+		if(formData != null && formData.size() > 0){
+			formData.clear();
+		}
+		if(resourceDataVerifier != null){
+			resourceDataVerifier.clear();
 		}
 	}
 	

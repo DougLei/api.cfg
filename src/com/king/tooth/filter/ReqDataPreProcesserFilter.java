@@ -53,15 +53,15 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 	private Object analysisRequestBody(HttpServletRequest request) {
 		RequestBody requestBody = new RequestBody(request);
 		requestBody.setFormData(analysisFormData(request));
-		
 		if(requestBody.getResourceInfo().isTableResource() && (requestBody.isPostRequest() || requestBody.isPutRequest()) && (requestBody.getFormData()==null || requestBody.getFormData().size()==0)){
+			requestBody.clear();
 			return "系统要保存[POST]或修改[PUT]的表资源的formData(表单)数据不能为空";
 		}
-		
 		requestBody.setRequestUrlParams(analysisUrlParams(request, requestBody));
 		
 		String validResult = requestBody.validResourceData();
 		if(validResult != null){
+			requestBody.clear();
 			return validResult;
 		}
 		requestBody.analysisResourcePropCodeRule();

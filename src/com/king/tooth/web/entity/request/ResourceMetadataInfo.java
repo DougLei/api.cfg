@@ -16,15 +16,20 @@ public class ResourceMetadataInfo {
 	/**
 	 * 长度
 	 */
-	private int length;
+	private Integer length;
 	/**
 	 * 数据精度
 	 */
-	private int precision;
+	private Integer precision;
+	/**
+	 * 是否唯一
+	 */
+	private Integer isUnique;
 	/**
 	 * 是否可为空
 	 */
-	private int isNullabled;
+	private Integer isNullabled;
+	
 	
 	public String getName() {
 		return name;
@@ -38,22 +43,28 @@ public class ResourceMetadataInfo {
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
-	public int getLength() {
+	public Integer getLength() {
 		return length;
 	}
-	public void setLength(int length) {
+	public void setLength(Integer length) {
 		this.length = length;
 	}
-	public int getPrecision() {
+	public Integer getPrecision() {
 		return precision;
 	}
-	public void setPrecision(int precision) {
+	public void setPrecision(Integer precision) {
 		this.precision = precision;
 	}
-	public int getIsNullabled() {
+	public Integer getIsUnique() {
+		return isUnique;
+	}
+	public void setIsUnique(Integer isUnique) {
+		this.isUnique = isUnique;
+	}
+	public Integer getIsNullabled() {
 		return isNullabled;
 	}
-	public void setIsNullabled(int isNullabled) {
+	public void setIsNullabled(Integer isNullabled) {
 		this.isNullabled = isNullabled;
 	}
 }

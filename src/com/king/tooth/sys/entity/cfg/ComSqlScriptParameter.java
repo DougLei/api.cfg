@@ -39,6 +39,11 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 */
 	private Integer length;
 	/**
+	 * 数据精度
+	 * <p>默认为0</p>
+	 */
+	private Integer precision;
+	/**
 	 * 参数数据类型
 	 * <p>默认值为string</p>
 	 */
@@ -205,6 +210,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public void setLength(Integer length) {
 		this.length = length;
 	}
+	public Integer getPrecision() {
+		return precision;
+	}
+	public void setPrecision(Integer precision) {
+		this.precision = precision;
+	}
 	public void setLengthStr(String length) {
 		if(StrUtils.notEmpty(length)){
 			this.length = Integer.valueOf(length);
@@ -261,7 +272,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -278,6 +289,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		lengthColumn.setComments("默认值为32");
 		lengthColumn.setDefaultValue("32");
 		columns.add(lengthColumn);
+		
+		ComColumndata precisionColumn = new ComColumndata("precision", BuiltinDataType.INTEGER, 2);
+		precisionColumn.setName("数据精度");
+		precisionColumn.setComments("数据精度:默认为0");
+		precisionColumn.setDefaultValue("0");
+		columns.add(precisionColumn);
 		
 		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", BuiltinDataType.STRING, 20);
 		parameterDataTypeColumn.setName("参数数据类型");

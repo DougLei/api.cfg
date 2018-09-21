@@ -71,6 +71,11 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	 */
 	private String batch;
 	/**
+	 * 文件类型
+	 * <p>由用户自定义</p>
+	 */
+	private Integer type;
+	/**
 	 * 备注
 	 */
 	private String remark;
@@ -163,6 +168,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setBatch(String batch) {
 		this.batch = batch;
 	}
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
 	public String getRemark() {
 		return remark;
 	}
@@ -191,7 +202,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(21);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinDataType.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
@@ -249,6 +260,11 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		batchColumn.setName("批次");
 		batchColumn.setComments("标识同一次上传的文件");
 		columns.add(batchColumn);
+		
+		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.INTEGER, 4);
+		typeColumn.setName("文件类型");
+		typeColumn.setComments("由用户自定义");
+		columns.add(typeColumn);
 		
 		ComColumndata remarkColumn = new ComColumndata("remark", BuiltinDataType.STRING, 2000);
 		remarkColumn.setName("备注");

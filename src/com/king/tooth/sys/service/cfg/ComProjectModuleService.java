@@ -97,7 +97,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	
 	//--------------------------------------------------------------------------------------------------------
 	/** 查询模块集合的selectHql语句的select头 */
-	private static final String queryModulesSelectHqlHeader = "select " + ResourcePropNameConstants.ID + ", name, url, icon, isEnabled ";
+	private static final String queryModulesSelectHqlHeader = "select new map(" + ResourcePropNameConstants.ID + " as id, name as text, url as link, icon as icon, isEnabled as hide) ";
 	
 	/**
 	 * 获取当前项目所有有效的模块信息
@@ -128,9 +128,9 @@ public class ComProjectModuleService extends AbstractPublishService {
 		return subProjectModules;
 	}
 	/** 查询根模块集合的hql */
-	private static final String queryRootModulesHql = queryModulesSelectHqlHeader + "from ComProjectModule where (parentId is null or parentId = '') and projectId=? and customerId=? and isEnabled = 1";
+	private static final String queryRootModulesHql = queryModulesSelectHqlHeader + "from ComProjectModule where (parentId is null or parentId = '') and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
 	/** 查询子模块集合的hql */
-	private static final String queryModulesHql = queryModulesSelectHqlHeader + "from ComProjectModule where parentId=? and projectId=? and customerId=? and isEnabled = 1";
+	private static final String queryModulesHql = queryModulesSelectHqlHeader + "from ComProjectModule where parentId=? and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 根据权限获取对应的模块集合
@@ -181,24 +181,8 @@ public class ComProjectModuleService extends AbstractPublishService {
 		return modules;
 	}
 	/** 根据id查询模块信息集合的hql */
-	private final static String queryProjectModuleByIdHql = queryModulesSelectHqlHeader + "from ComProjectModule where "+ResourcePropNameConstants.ID+"=? and projectId=? and customerId=? and isEnabled = 1";
+	private final static String queryProjectModuleByIdHql = queryModulesSelectHqlHeader + "from ComProjectModule where "+ResourcePropNameConstants.ID+"=? and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
 	//--------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * 组装projectModule实例对象
-	 * @param objectArray
-	 * @return
-	 */
-	private ProjectModuleExtend installProjectModuleInstance(Object[] objectArray){
-		ProjectModuleExtend projectModuleExtend = new ProjectModuleExtend();
-		projectModuleExtend.setId(objectArray[0]);
-		projectModuleExtend.setText(objectArray[1]);
-		projectModuleExtend.setLink(objectArray[2]);
-		projectModuleExtend.setIcon(objectArray[3]);
-		projectModuleExtend.setHide(objectArray[4]);
-		return projectModuleExtend;
-	}
-	
 	/**
 	 * 组装projectModule实例对象
 	 * @param hql
@@ -206,8 +190,7 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @return
 	 */
 	private ProjectModuleExtend installProjectModuleInstance(String hql, Object... parameterArray){
-		Object[] objectArray = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(hql, parameterArray);
-		return installProjectModuleInstance(objectArray);
+		return HibernateUtil.extendExecuteUniqueQueryByHqlArr(ProjectModuleExtend.class, hql, parameterArray);
 	}
 	
 	/**
@@ -216,18 +199,8 @@ public class ComProjectModuleService extends AbstractPublishService {
 	 * @param parameterArray
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	private List<ProjectModuleExtend> installProjectModuleInstanceList(String hql, Object... parameterArray){
-		List<Object[]> objectList = HibernateUtil.executeListQueryByHqlArr(null, null, hql, parameterArray);
-		if(objectList != null && objectList.size() > 0){
-			List<ProjectModuleExtend> modules = new ArrayList<ProjectModuleExtend>(objectList.size());
-			for (Object[] objectArray : objectList) {
-				modules.add(installProjectModuleInstance(objectArray));
-			}
-			objectList.clear();
-			return modules;
-		}
-		return null;
+		return HibernateUtil.extendExecuteListQueryByHqlArr(ProjectModuleExtend.class, null, null, hql, parameterArray);
 	}
 	
 	//--------------------------------------------------------------------------------------------------------

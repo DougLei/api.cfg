@@ -267,7 +267,7 @@ public class ProcedureUtil {
 						for (ComSqlScriptParameter sp : sqlParams) {
 							if(sp.getInOut() == 2 || sp.getInOut() == 3){
 								if(sp.getIsTableType() == 1){
-									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), outSqlResultsetIndex, sp.getId()));
+									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), outSqlResultsetIndex, sp.getId(), sp.getParameterName()));
 									outSqlResultsetIndex++;
 								}else{
 									json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
@@ -294,12 +294,13 @@ public class ProcedureUtil {
 			 * @param orderCode
 			 * @param outSqlResultsetIndex
 			 * @param sqlParameterId
+			 * @param sqlParameterName
 			 * @return
 			 */
-			private List<Map<String, Object>> getOracleCursorDataSet(CallableStatement cs, ResultSet rs, Integer orderCode, int outSqlResultsetIndex, String sqlParameterId) throws SQLException {
+			private List<Map<String, Object>> getOracleCursorDataSet(CallableStatement cs, ResultSet rs, Integer orderCode, int outSqlResultsetIndex, String sqlParameterId, String sqlParameterName) throws SQLException {
 				try {
 					rs = (ResultSet) cs.getObject(orderCode);
-					processResultSetList(rs, outSqlResultsetIndex, sqlParameterId);
+					processResultSetList(rs, outSqlResultsetIndex, sqlParameterId, sqlParameterName);
 					return sqlQueryResultToMap(rs, outSqlResultSetsList.get(outSqlResultsetIndex));
 				} finally{
 					CloseUtil.closeDBConn(rs);
@@ -316,7 +317,7 @@ public class ProcedureUtil {
 				int outSqlResultsetIndex = 0;
 				rs = cs.getResultSet();
 				while(rs != null){
-					processResultSetList(rs, outSqlResultsetIndex, null);
+					processResultSetList(rs, outSqlResultsetIndex, null, null);
 					json.put(outSqlResultSetsList.get(outSqlResultsetIndex).get(0).getName(outSqlResultsetIndex), sqlQueryResultToMap(rs, outSqlResultSetsList.get(outSqlResultsetIndex)));
 					outSqlResultsetIndex++;
 					
@@ -331,9 +332,10 @@ public class ProcedureUtil {
 			 * @param rs
 			 * @param outSqlResultsetIndex
 			 * @param sqlParameterId
+			 * @param sqlParameterName 
 			 * @throws SQLException 
 			 */
-			private void processResultSetList(ResultSet rs, int outSqlResultsetIndex, String sqlParameterId) throws SQLException {
+			private void processResultSetList(ResultSet rs, int outSqlResultsetIndex, String sqlParameterId, String sqlParameterName) throws SQLException {
 				if(outSqlResultSetsList.size() == outSqlResultsetIndex){
 					ResultSetMetaData rsmd = rs.getMetaData();
 					int len = rsmd.getColumnCount();
@@ -341,9 +343,13 @@ public class ProcedureUtil {
 					String columnName = null;
 					for(int i=1;i<=len-1;i++){
 						columnName = rsmd.getColumnName(i);
-						for(int j=2;j<=len;j++){
-							if(i!=j && columnName.equals(rsmd.getColumnName(j))){
-								throw new IllegalArgumentException("调用名为["+procedureName+"]的存储过程返回的结果集中，出现重复列名["+columnName+"]，位置分别位于["+i+","+j+"]，请检查"); 
+						for(int j=i+1;j<=len;j++){
+							if(columnName.equals(rsmd.getColumnName(j))){
+								if(isOracle){
+									throw new IllegalArgumentException("调用名为["+procedureName+"]的存储过程，返回参数名为["+sqlParameterName+"]的结果集中，出现重复列名["+columnName+"]，位置分别位于["+i+","+j+"]，请检查");
+								}else if(isSqlServer){
+									throw new IllegalArgumentException("调用名为["+procedureName+"]的存储过程，返回的第"+(outSqlResultsetIndex+1)+"个结果集中，出现重复列名["+columnName+"]，位置分别位于["+i+","+j+"]，请检查");
+								}
 							}
 						}
 					}

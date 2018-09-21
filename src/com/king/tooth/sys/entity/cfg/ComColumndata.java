@@ -326,6 +326,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		ComColumndata propNameColumn = new ComColumndata("prop_name", BuiltinDataType.STRING, 40);
 		propNameColumn.setName("属性名");
 		propNameColumn.setComments("属性名");
+		propNameColumn.setIsNullabled(0);
 		columns.add(propNameColumn);
 		
 		ComColumndata columnTypeColumn = new ComColumndata("column_type", BuiltinDataType.STRING, 10);
@@ -342,7 +343,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		lengthColumn.setIsNullabled(0);
 		columns.add(lengthColumn);
 		
-		ComColumndata precisionColumn = new ComColumndata("precision", BuiltinDataType.INTEGER, 4);
+		ComColumndata precisionColumn = new ComColumndata("precision", BuiltinDataType.INTEGER, 2);
 		precisionColumn.setName("数据精度");
 		precisionColumn.setComments("数据精度:默认为0");
 		precisionColumn.setDefaultValue("0");
