@@ -1,5 +1,6 @@
 package com.king.tooth.web.entity.request;
 
+
 /**
  * 资源元数据信息对象
  * @author DougLei

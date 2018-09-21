@@ -23,17 +23,42 @@ public class TestSqlserverProcedure {
 			int len = procedureSqlStatement.getParameterDeclarations().size();
 		
 			TParameterDeclaration param = null;
+			String defaultValue = null;
+			String parameterName;
+			String dataType;
+			String[] lengthArr = null;
+			String length;
+			String precision;
 			for(int i=0;i<len;i++){
-				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
+				length = null;
+				precision = null;
 				
-				 
+				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
 				if(param.getDefaultValue() != null){
-					String defaultValue = param.getDefaultValue().toString();
+					defaultValue = param.getDefaultValue().toString();
 					if(defaultValue.startsWith("'")){
 						defaultValue = defaultValue.substring(1, defaultValue.length()-1);
 					}
-					System.out.println(defaultValue);
 				}
+				
+				parameterName = param.getParameterName().toString();
+				if(parameterName.startsWith("@")){
+					parameterName = parameterName.substring(1);
+				}
+				
+				dataType = param.getDataType().toString().toLowerCase();
+				if(dataType.indexOf("(") != -1){
+					lengthArr = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")")).split(",");
+					length = lengthArr[0];
+					if(lengthArr.length == 2){
+						precision = lengthArr[1];
+					}else if(lengthArr.length > 2){
+						throw new IllegalArgumentException("系统在解析存储过程参数时出现异常，请联系后台系统开发人员");
+					}
+					dataType = dataType.substring(0, dataType.indexOf("("));
+				}
+				
+				System.out.println("|"+parameterName+"|"+dataType +"\t\t" + length + "\t\t" + precision);
 			}
 		}
 		
@@ -43,8 +68,9 @@ public class TestSqlserverProcedure {
 	private static String getSql() {
 		String sqls = "";
 		sqls += "  create procedure test\n"; 
-		sqls += "  	@name varchar(20) = '哈哈',\n"; 
-		sqls += "  	@resultName varchar(20) out\n"; 
+		sqls += "  	    @name varchar(12) = '哈哈',\n"; 
+		sqls += "  	@resultName varchar out,\n"; 
+		sqls += "  	@numbers decimal(20, 2) out\n"; 
 		sqls += "  as \n"; 
 		sqls += "  begin\n"; 
 		sqls += "    set @resultName=@name+'-zd';\n"; 

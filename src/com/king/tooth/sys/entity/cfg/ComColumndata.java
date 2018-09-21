@@ -450,6 +450,11 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 			}
 		}
 		if(result == null){
+			if((BuiltinDataType.CLOB.equals(columnType) || BuiltinDataType.BLOB.equals(columnType)) && (isUnique != null && isUnique == 1)){
+				result = "列["+columnName+"]，属于大字段类型，禁止添加唯一约束";
+			}
+		}
+		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		}

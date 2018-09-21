@@ -241,8 +241,13 @@ public class SqlStatementParserUtil {
 			String defaultValue = null;
 			String parameterName;
 			String dataType;
-			String length = null;
+			String[] lengthArr = null;
+			String length;
+			String precision;
 			for(int i=0;i<len;i++){
+				length = null;
+				precision = null;
+				
 				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
 				if(param.getDefaultValue() != null){
 					defaultValue = param.getDefaultValue().toString();
@@ -255,12 +260,19 @@ public class SqlStatementParserUtil {
 				
 				dataType = param.getDataType().toString().toLowerCase();
 				if(dataType.indexOf("(") != -1){
-					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
+					lengthArr = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")")).split(",");
+					length = lengthArr[0];
+					if(lengthArr.length == 2){
+						precision = lengthArr[1];
+					}else if(lengthArr.length > 2){
+						throw new IllegalArgumentException("系统在解析oracle存储过程参数时出现异常，请联系后台系统开发人员");
+					}
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
 				parameter = new ComSqlScriptParameter(parameterName, dataType, param.getMode(), (i+1), true);
 				parameter.setLengthStr(length);
+				parameter.setPrecisionStr(precision);
 				processOracleProcCursorParam(parameter, sqlScript);
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
@@ -305,8 +317,13 @@ public class SqlStatementParserUtil {
 			String defaultValue = null;
 			String parameterName;
 			String dataType;
-			String length = null;
+			String[] lengthArr = null;
+			String length;
+			String precision;
 			for(int i=0;i<len;i++){
+				length = null;
+				precision = null;
+				
 				param = procedureSqlStatement.getParameterDeclarations().getParameterDeclarationItem(i);
 				if(param.getDefaultValue() != null){
 					defaultValue = param.getDefaultValue().toString();
@@ -322,12 +339,19 @@ public class SqlStatementParserUtil {
 				
 				dataType = param.getDataType().toString().toLowerCase();
 				if(dataType.indexOf("(") != -1){
-					length = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")"));
+					lengthArr = dataType.substring(dataType.indexOf("(")+1, dataType.indexOf(")")).split(",");
+					length = lengthArr[0];
+					if(lengthArr.length == 2){
+						precision = lengthArr[1];
+					}else if(lengthArr.length > 2){
+						throw new IllegalArgumentException("系统在解析sqlserver存储过程参数时出现异常，请联系后台系统开发人员");
+					}
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
 				parameter = new ComSqlScriptParameter(parameterName , dataType, param.getMode(), (i+1), true);
 				parameter.setLengthStr(length);
+				parameter.setPrecisionStr(precision);
 				parameter.setDefaultValue(defaultValue);
 				processSqlServerProcTableParam(parameter, sqlScript);
 				sqlScriptParameterList.add(parameter);

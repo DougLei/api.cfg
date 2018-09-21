@@ -1,5 +1,6 @@
 package com.king.tooth.web.entity.request;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -98,7 +100,7 @@ public class ResourceDataVerifier {
 	 */
 	private String validTableResourceMetadata() {
 		if(requestBody.isGetRequest()){
-			return null;
+			return validGetTableResourceMetadata();
 		}else if(requestBody.isPostRequest()){
 			return validPostTableResourceMetadata(false);
 		}else if(requestBody.isPutRequest()){
@@ -109,6 +111,16 @@ public class ResourceDataVerifier {
 		return "系统只支持[get、post、put、delete]四种请求方式";
 	}
 	
+	/**
+	 * 验证get请求的表资源数据
+	 * @return
+	 */
+	private String validGetTableResourceMetadata() {
+		// TODO
+		
+		return null;
+	}
+
 	/**
 	 * 验证post请求的表资源数据
 	 * @param isValidIdPropIsNull 是否验证id属性为空
@@ -122,6 +134,7 @@ public class ResourceDataVerifier {
 		JSONObject data = null;
 		boolean dataValueIsNull;
 		Object dataValue = null;
+		String validDataIsLegalResult = null;
 		for(int i=0;i<size;i++){
 			data = ijson.get(i);
 			if(isValidIdPropIsNull && StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
@@ -129,32 +142,29 @@ public class ResourceDataVerifier {
 			}
 			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
-//				if(BuiltinDataType.CLOB.equals(rmi.getDataType()) || BuiltinDataType.BLOB.equals(rmi.getDataType())){
-//					continue;
-//				}
 				dataValue = data.get(rmi.getName());
 				dataValueIsNull = StrUtils.isEmpty(dataValue);
 				
 				// 验证不能为空
 				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
-					return "保存表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"]的值不能为空";
+					return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"]的值不能为空";
 				}
 				
 				if(!dataValueIsNull){
-					// 验证数据类型
-					rmi.getDataType();
-					
-					// 验证数据长度
-					rmi.getLength();
-					
-					// 验证数据精度
-					rmi.getPrecision();
+					// 两个大字段类型不用检查
+					if(BuiltinDataType.CLOB.equals(rmi.getDataType()) || BuiltinDataType.BLOB.equals(rmi.getDataType())){
+						continue;
+					}
+					validDataIsLegalResult = validDataIsLegal("表", dataValue, rmi, (i+1));
+					if(validDataIsLegalResult != null){
+						return validDataIsLegalResult;
+					}
 					
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintPropName.add(rmi.getName());
 						if(validDataIsExists(rmi.getName(), dataValue)){
-							return "保存表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"]的值["+dataValue+"]已经存在，不能重复添加";
+							return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"]的值["+dataValue+"]已经存在，不能重复添加";
 						}
 					}
 				}
@@ -180,6 +190,51 @@ public class ResourceDataVerifier {
 		uniqueConstraintPropName.clear();
 		return null;
 	}
+	
+	/**
+	 * 验证数据是否合法
+	 * @param resourceTypeDesc
+	 * @param dataValue
+	 * @param rmi
+	 * @param index
+	 * @return
+	 */
+	private String validDataIsLegal(String resourceTypeDesc, Object dataValue, ResourceMetadataInfo rmi, int index){
+		// 验证数据类型、数据长度、数据精度
+		if(BuiltinDataType.BOOLEAN.equals(rmi.getDataType())){
+			if(!(dataValue instanceof Boolean)){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为布尔值类型";
+			}
+		}else if(BuiltinDataType.INTEGER.equals(rmi.getDataType())){
+			if(!(dataValue instanceof Integer)){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为整数类型";
+			}
+			if(dataValue.toString().length() > rmi.getLength()){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值长度，大于实际配置的长度限制";
+			}
+		}else if(BuiltinDataType.DOUBLE.equals(rmi.getDataType())){
+			if(!(dataValue instanceof BigDecimal)){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为浮点类型";
+			}
+			dataValueStr = dataValue.toString();
+			if((dataValueStr.length()-1) > rmi.getLength()){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值长度，大于实际配置的长度限制";
+			}
+			if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值的精度，大于实际配置的精度限制";
+			}
+		}else if(BuiltinDataType.DATE.equals(rmi.getDataType())){
+			if(!DateUtil.valueIsDateFormat(dataValue)){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为日期类型";
+			}
+		}else if(BuiltinDataType.STRING.equals(rmi.getDataType())){
+			if(StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
+				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值长度，大于实际配置的长度限制";
+			}
+		}
+		return null;
+	}
+	private String dataValueStr;
 	
 	/**
 	 * 验证数据是否已经存在
@@ -217,12 +272,16 @@ public class ResourceDataVerifier {
 	 */
 	private String validSqlResourceMetadata() {
 		if(requestBody.isGetRequest()){
+			// TODO
 			return null;
 		}else if(requestBody.isPostRequest()){
+			// TODO
 			return null;
 		}else if(requestBody.isPutRequest()){
+			// TODO
 			return null;
 		}else if(requestBody.isDeleteRequest()){
+			// TODO
 			return null;
 		}
 		return "系统只支持[get、post、put、delete]四种请求方式";
@@ -235,12 +294,16 @@ public class ResourceDataVerifier {
 	 */
 	private String validCodeResourceMetadata() {
 		if(requestBody.isGetRequest()){
+			// TODO
 			return null;
 		}else if(requestBody.isPostRequest()){
+			// TODO
 			return null;
 		}else if(requestBody.isPutRequest()){
+			// TODO
 			return null;
 		}else if(requestBody.isDeleteRequest()){
+			// TODO
 			return null;
 		}
 		return "系统只支持[get、post、put、delete]四种请求方式";

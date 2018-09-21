@@ -218,7 +218,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	}
 	public void setLengthStr(String length) {
 		if(StrUtils.notEmpty(length)){
-			this.length = Integer.valueOf(length);
+			this.length = Integer.valueOf(length.trim());
+		}
+	}
+	public void setPrecisionStr(String precision) {
+		if(StrUtils.notEmpty(precision)){
+			this.precision = Integer.valueOf(precision.trim());
 		}
 	}
 	public Integer getParameterFrom() {

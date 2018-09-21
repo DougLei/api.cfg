@@ -111,4 +111,17 @@ public class StrUtils {
 		return false;
 	}
 	private static final String NULL = "null";
+	
+	/**
+	 * 计算字符串的长度
+	 * <p>如果是汉字等，长度解析为2</p>
+	 * @param string
+	 * @return
+	 */
+	public static int calcStrLength(String str) {
+		if(isEmpty(str)){
+			return 0;
+		}
+		return str.length();
+	}
 }
