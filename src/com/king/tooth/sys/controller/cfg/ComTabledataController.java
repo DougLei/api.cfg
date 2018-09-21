@@ -145,48 +145,46 @@ public class ComTabledataController extends AbstractPublishController{
 		return getResultObject();
 	}
 	
-//	/**
-//	 * 取消建模
-//	 * <p>请求方式：POST</p>
-//	 * @return
-//	 */
-//	@RequestMapping
-//	public Object cancelBuildModel(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
-////		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-////			return "建模功能目前只提供给平台开发人员使用";
-////		}
-//		
-//		// 获取数据库连接对象，准备进行create表、drop表的操作
-//		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-//		
-//		int len = ijson.size();
-//		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id
-//		String tableId;
-//		if(len == 1){
-//			tableId = ijson.get(0).getString(ResourcePropNameConstants.ID);
-//			if(StrUtils.isEmpty(tableId)){
-//				return "要取消建模的表id不能为空";
-//			}
-//			resultObject = BuiltinObjectInstance.tableService.cancelBuildModel(tableId, deleteTableIds, dbTableHandler);
-//		}else{
-//			for(int i=0;i<len ;i++){
-//				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
-//				if(StrUtils.isEmpty(tableId)){
-//					resultObject = "要取消建模的表id不能为空";
-//					continue;
-//				}
-//				resultObject = BuiltinObjectInstance.tableService.cancelBuildModel(tableId, deleteTableIds, dbTableHandler);
-//				if(resultObject != null){
-//					break;
-//				}
-//			}
+	/**
+	 * 取消建模
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object cancelBuildModel(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+//		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
+//			return "建模功能目前只提供给平台开发人员使用";
 //		}
-//		if(resultObject == null){
-//			resultObject = ijson.getJson();
-//		}
-//		deleteTableIds.clear();
-//		return getResultObject();
-//	}
+		
+		// 获取数据库连接对象，准备进行create表、drop表的操作
+		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
+		
+		int len = ijson.size();
+		String tableId;
+		if(len == 1){
+			tableId = ijson.get(0).getString(ResourcePropNameConstants.ID);
+			if(StrUtils.isEmpty(tableId)){
+				return "要取消建模的表id不能为空";
+			}
+			resultObject = BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, null, tableId, true);
+		}else{
+			for(int i=0;i<len ;i++){
+				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
+				if(StrUtils.isEmpty(tableId)){
+					resultObject = "要取消建模的表id不能为空";
+					continue;
+				}
+				resultObject = BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, null, tableId, true);
+				if(resultObject != null){
+					break;
+				}
+			}
+		}
+		if(resultObject == null){
+			resultObject = ijson.getJson();
+		}
+		return getResultObject();
+	}
 	
 	
 	/**

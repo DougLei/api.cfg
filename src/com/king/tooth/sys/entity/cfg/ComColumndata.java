@@ -109,12 +109,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	private String oldInfoJson;
 	@JSONField(serialize = false)
 	private JSONObject oldColumnInfo;
-	/**
-	 * 是否有约束
-	 * <p>是否有唯一约束，不可为空约束等，用来做数据校验</p>
-	 * <p>默认为0</p>
-	 */
-	private Integer haveConstraint;
 	
 	//-------------------------------------------------------------------------
 	
@@ -252,12 +246,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public JSONObject getOldColumnInfo() {
 		return oldColumnInfo;
 	}
-	public Integer getHaveConstraint() {
-		return haveConstraint;
-	}
-	public void setHaveConstraint(Integer haveConstraint) {
-		this.haveConstraint = haveConstraint;
-	}
 	
 	/**
 	 * 解析出旧的列信息
@@ -317,7 +305,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(25);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", BuiltinDataType.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -422,12 +410,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);
 
-		ComColumndata haveConstraintColumn = new ComColumndata("have_constraint", BuiltinDataType.INTEGER, 1);
-		haveConstraintColumn.setName("是否有约束");
-		haveConstraintColumn.setComments("是否有唯一约束，不可为空约束等，用来做数据校验，默认为0");
-		haveConstraintColumn.setDefaultValue("0");
-		columns.add(haveConstraintColumn);
-		
 		table.setColumns(columns);
 		return table;
 	}
@@ -469,13 +451,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
-			
-			// 检查列是否有约束
-			if((isUnique != null && isUnique == 1) || (isNullabled != null && isNullabled == 0)){
-				this.haveConstraint = 1;
-			}else{
-				this.haveConstraint = 0;
-			}
 		}
 		return result;
 	}

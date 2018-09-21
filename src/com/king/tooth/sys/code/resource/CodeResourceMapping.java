@@ -52,6 +52,7 @@ public class CodeResourceMapping {
 		// 表操作
 		put("ComTabledata_post_buildModel", BuiltinObjectInstance.tableController, "buildModel");
 		put("/table/model/create/post", BuiltinObjectInstance.tableController, "buildModel");
+		put("/table/model/drop/post", BuiltinObjectInstance.tableController, "cancelBuildModel");
 		put("/table/publish/add/post", BuiltinObjectInstance.tableController, "publish");
 		put("/table/publish/cancel/post", BuiltinObjectInstance.tableController, "cancelPublish");
 		put("/project/table/relation/add/post", BuiltinObjectInstance.tableController, "addProjTableRelation");

@@ -214,7 +214,7 @@ public class ComTabledataService extends AbstractPublishService {
 		// 如果是平台开发者账户，则需删除资源信息，要删表，以及映射文件数据，并从当前的sessionFacotry中移除
 		// TODO 单项目，取消是否平台开发者的判断
 //		if(isDeveloper && oldTable.getIsCreated() == 1){
-		if(oldTable.getIsCreated() == 1 && oldTable.getIsBuildModel() == 1){
+		if(oldTable.getIsCreated() == 1){
 			cancelBuildModel(new DBTableHandler(CurrentThreadContext.getDatabaseInstance()), oldTable, true);
 		}
 		
@@ -290,6 +290,7 @@ public class ComTabledataService extends AbstractPublishService {
 			SysHibernateHbm hbm;
 			int i = 0;
 			for (ComTabledata tb : tables) {
+				
 				hbmContents.add(HibernateHbmUtil.createHbmMappingContent(tb, isNeedInitBasicColumns));
 				
 				// 2、插入hbm
@@ -306,15 +307,12 @@ public class ComTabledataService extends AbstractPublishService {
 			HibernateUtil.appendNewConfig(hbmContents);
 			hbmContents.clear();
 			
-			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated=1, isBuildModel =1 where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'");
+			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1，且置空oldTableName字段
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated=1, isBuildModel =1, oldTableName=null where "+ResourcePropNameConstants.ID+" = ?", tableId);
 			
 			// 6、修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为已创建状态，且置空oldInfoJson字段的值
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = '"+table.getId()+"' and operStatus="+ComColumndata.DELETED);
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus="+ComColumndata.CREATED+", oldInfoJson=null where tableId = '"+table.getId()+"'");
-			
-			// 7、置空ComTabledata表中，oldTableName字段的值
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set oldTableName=null where "+ResourcePropNameConstants.ID+" = '"+table.getId()+"'");
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = ? and operStatus=?", tableId, ComColumndata.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", ComColumndata.CREATED, tableId, ComColumndata.DELETED);
 			
 			ResourceHandlerUtil.clearTables(tables);
 		} catch (Exception e) {
@@ -356,13 +354,30 @@ public class ComTabledataService extends AbstractPublishService {
 	
 	/**
 	 * 取消建模
+	 * @param dbTableHandler
+	 * @param table
+	 * @param tableId
+	 * @param deleteRelationDatas 是否删除相关数据：主要是资源信息，建模状态，以及hbm信息
+	 * 											   如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
+	 * 											   如果是重新建模，或取消建模，这个值应该传递为true，因为这个是必要操作
+	 */
+	public String cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, String tableId, boolean deleteRelationDatas){
+		if(table == null){
+			table = getObjectById(tableId, ComTabledata.class);
+		}
+		cancelBuildModel(dbTableHandler, table, deleteRelationDatas);
+		return null;
+	}
+	
+	/**
+	 * 取消建模
 	 * @param dbTableHandler 
 	 * @param table
-	 * @param modifyRelationDatas 是否修改相关数据：
-	 * 											如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
-	 * 											如果是在建模的过程中，先删除之前的数据，再重新建模，这个值应该传递为true，因为这个是必要操作
+	 * @param deleteRelationDatas 是否删除相关数据：主要是删除资源信息、hbm信息、表的建模状态、字段的状态、同时会将已删除的字段删除掉
+	 * 											   如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
+	 * 											   如果是重新建模，或取消建模，这个值应该传递为true，因为这个是必要操作
 	 */
-	public void cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, boolean modifyRelationDatas){
+	private void cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, boolean deleteRelationDatas){
 		// drop表
 		String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
 		
@@ -371,13 +386,17 @@ public class ComTabledataService extends AbstractPublishService {
 			HibernateUtil.removeConfig(tableResourceName);
 		}
 		
-		if(modifyRelationDatas){
-			// 修改表是否创建的状态
-			modifyIsCreatedPropVal(table.getEntityName(), 0, table.getId());
+		if(deleteRelationDatas){
+			String tableId = table.getId();
+			// 修改表是否创建的状态，以及是否建模的字段值，均改为0，且置空oldTableName字段
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated =0, isBuildModel=0, oldTableName=null  where "+ResourcePropNameConstants.ID+" = ?", tableId);
 			// 删除hbm信息
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
 			// 删除资源
-			BuiltinObjectInstance.resourceService.deleteSysResource(table.getId());
+			BuiltinObjectInstance.resourceService.deleteSysResource(tableId);
+			// 修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为待创建状态，且置空oldInfoJson字段的值
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = ? and operStatus=?", tableId, ComColumndata.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", ComColumndata.UN_CREATED, tableId, ComColumndata.DELETED);
 		}
 	}
 	

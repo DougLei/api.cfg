@@ -65,7 +65,7 @@ public class CreateLogTableJob implements Job, Serializable{
 				SysReqLog.yyyyMM = yyyyMMBak;
 				
 				for (ComTabledata logTable : logTables) {
-					BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, logTable, false);
+					BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, logTable, null, false);
 				}
 			} finally{
 				// 关闭连接
