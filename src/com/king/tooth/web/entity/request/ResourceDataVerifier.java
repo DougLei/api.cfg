@@ -25,7 +25,7 @@ public class ResourceDataVerifier {
 		if(requestBody.getResourceInfo().isSqlResource()){
 			return validSqlResourceMetadata(requestBody);
 		}
-		return "系统目前只存在[表、sql脚本、代码]三种资源类型，本次请求的资源类型为["+requestBody.getResourceInfo().getResourceType()+"]，请联系后台系统开发人员";
+		return null;
 	}
 	
 	// ------------------------------------------------------------------------------------------------
