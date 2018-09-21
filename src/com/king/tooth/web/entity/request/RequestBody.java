@@ -55,7 +55,6 @@ public class RequestBody implements Serializable{
 		this.request = request;
 		analysisRouteBody();
 		analysisResource();
-		validResourceData();
 	}
 	
 	// -------------------------------------------------------------------------------------------------------------------------
@@ -88,14 +87,15 @@ public class RequestBody implements Serializable{
 		resourceInfo = new ResourceInfo(this);
 	}
 
+	// -------------------------------------------------------------------------------------------------------------------------
 	/**
 	 * 校验请求资源的数据
+	 * @return
 	 */
-	private void validResourceData() {
-		new ResourceDataVerifier(this).doValidResourceData();
+	public String validResourceData() {
+		return new ResourceDataVerifier(this).doValidResourceData();
 	}
 	
-	// -------------------------------------------------------------------------------------------------------------------------
 	/**
 	 * 解析资源字段的编码规则，并获取结果值
 	 */

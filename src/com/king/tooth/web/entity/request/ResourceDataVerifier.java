@@ -16,29 +16,59 @@ public class ResourceDataVerifier {
 	/**
 	 * 校验请求资源的数据
 	 * @param requestBody
+	 * @return
 	 */
-	public void doValidResourceData() {
+	public String doValidResourceData() {
 		if(requestBody.getResourceInfo().isTableResource()){
-			validTableResourceMetadata(requestBody);
-			return;
+			return validTableResourceMetadata(requestBody);
 		}
 		if(requestBody.getResourceInfo().isSqlResource()){
-			validSqlResourceMetadata(requestBody);
-			return;
+			return validSqlResourceMetadata(requestBody);
 		}
+		return "系统目前只存在[表、sql脚本、代码]三种资源类型，本次请求的资源类型为["+requestBody.getResourceInfo().getResourceType()+"]，请联系后台系统开发人员";
 	}
 	
+	// ------------------------------------------------------------------------------------------------
 	/**
 	 * 验证表资源的元数据
 	 * @param requestBody
+	 * @return
 	 */
-	private void validTableResourceMetadata(RequestBody requestBody) {
+	private String validTableResourceMetadata(RequestBody requestBody) {
+		if(requestBody.isGetRequest()){
+			return null;
+		}else if(requestBody.isPostRequest()){
+			return null;
+			
+		}else if(requestBody.isPutRequest()){
+			return null;
+			
+		}else if(requestBody.isDeleteRequest()){
+			return null;
+			
+		}
+		return "系统只支持[get、post、put、delete]四种请求方式";
 	}
 	
+	// ------------------------------------------------------------------------------------------------
 	/**
 	 * 验证sql资源的元数据
 	 * @param requestBody
+	 * @return
 	 */
-	private void validSqlResourceMetadata(RequestBody requestBody) {
+	private String validSqlResourceMetadata(RequestBody requestBody) {
+		if(requestBody.isGetRequest()){
+			return null;
+		}else if(requestBody.isPostRequest()){
+			return null;
+			
+		}else if(requestBody.isPutRequest()){
+			return null;
+			
+		}else if(requestBody.isDeleteRequest()){
+			return null;
+			
+		}
+		return "系统只支持[get、post、put、delete]四种请求方式";
 	}
 }
