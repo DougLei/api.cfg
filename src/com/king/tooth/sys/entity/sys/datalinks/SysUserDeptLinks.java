@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.ISysResource;
@@ -18,17 +19,9 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 @SuppressWarnings("serial")
 @Table
 public class SysUserDeptLinks implements Serializable, ITable {
-	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_USER_DEPT_LINKS", 0);
-		table.setResourceName("SysUserDeptLinks");
-		table.setName("人员和部门的关联关系表表");
-		table.setComments("人员和部门的关联关系表表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", BuiltinDataType.STRING, 32);
@@ -57,7 +50,20 @@ public class SysUserDeptLinks implements Serializable, ITable {
 		isMainColumn.setOrderCode(4);
 		columns.add(isMainColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_USER_DEPT_LINKS", 0);
+		table.setResourceName("SysUserDeptLinks");
+		table.setName("人员和部门的关联关系表表");
+		table.setComments("人员和部门的关联关系表表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

@@ -72,17 +72,8 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		this.projCode = projCode;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PROJECT", 0);
-		table.setName("项目信息表表");
-		table.setComments("项目信息表表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", BuiltinDataType.STRING, 32);
@@ -111,7 +102,21 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		descsColumn.setOrderCode(4);
 		columns.add(descsColumn);
 		
-		table.setColumns(columns);
+		return null;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_PROJECT", 0);
+		table.setName("项目信息表表");
+		table.setComments("项目信息表表");
+		table.setIsResource(1);
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 	public String toDropTable() {

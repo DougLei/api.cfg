@@ -78,15 +78,8 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 		this.refPropName = refPropName;
 	}
 
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_COLUMN_CODE_RULE", 0);
-		table.setName("字段编码规则表");
-		table.setComments("字段编码规则表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
 		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinDataType.STRING, 32);
@@ -104,7 +97,19 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 		remarkColumn.setComments("备注");
 		columns.add(remarkColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("CFG_COLUMN_CODE_RULE", 0);
+		table.setName("字段编码规则表");
+		table.setComments("字段编码规则表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

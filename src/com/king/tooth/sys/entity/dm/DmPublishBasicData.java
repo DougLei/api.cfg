@@ -92,15 +92,8 @@ public class DmPublishBasicData extends BasicEntity implements ITable, IEntity{
 		return json;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("DM_PUBLISH_BASIC_DATA", 0);
-		table.setName("发布的基础数据信息表");
-		table.setComments("发布的基础数据信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
 		ComColumndata basicDataResourceNameColumn = new ComColumndata("basic_data_resource_name", BuiltinDataType.STRING, 60);
@@ -122,7 +115,19 @@ public class DmPublishBasicData extends BasicEntity implements ITable, IEntity{
 		belongPlatformTypeColumn.setOrderCode(3);
 		columns.add(belongPlatformTypeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("DM_PUBLISH_BASIC_DATA", 0);
+		table.setName("发布的基础数据信息表");
+		table.setComments("发布的基础数据信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(0);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 	

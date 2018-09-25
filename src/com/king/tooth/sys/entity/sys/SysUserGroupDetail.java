@@ -44,15 +44,8 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 		this.userId = userId;
 	}
 
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_USER_GROUP_DETAIL", 0);
-		table.setName("用户组明细表");
-		table.setComments("用户组明细表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
 		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", BuiltinDataType.STRING, 32);
@@ -65,7 +58,19 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 		userIdColumn.setComments("人员主键");
 		columns.add(userIdColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_USER_GROUP_DETAIL", 0);
+		table.setName("用户组明细表");
+		table.setComments("用户组明细表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

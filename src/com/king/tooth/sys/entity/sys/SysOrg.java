@@ -85,15 +85,8 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 		this.type = type;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ORG", 0);
-		table.setName("组织机构表");
-		table.setComments("组织机构表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinDataType.STRING, 32);
@@ -131,7 +124,19 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 		typeColumn.setComments("组织机构类型");
 		columns.add(typeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_ORG", 0);
+		table.setName("组织机构表");
+		table.setComments("组织机构表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

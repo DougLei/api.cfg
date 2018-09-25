@@ -65,15 +65,8 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 		this.lv = lv;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_PERMISSION_PRIORITY", 0);
-		table.setName("权限优先级信息表");
-		table.setComments("权限优先级信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
 		
 		ComColumndata permissionTypeColumn = new ComColumndata("permission_type", BuiltinDataType.STRING, 20);
@@ -94,7 +87,19 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 		samePermissionTypeLvColumn.setOrderCode(3);
 		columns.add(samePermissionTypeLvColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_PERMISSION_PRIORITY", 0);
+		table.setName("权限优先级信息表");
+		table.setComments("权限优先级信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

@@ -244,16 +244,8 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		this.isDelete = isDelete;
 	}
 	
-	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_USER", 0);
-		table.setName("用户信息表");
-		table.setComments("用户信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(27);
 		
 		ComColumndata nikeNameColumn = new ComColumndata("nike_name", BuiltinDataType.STRING, 50);
@@ -379,7 +371,19 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		isDeleteColumn.setDefaultValue("0");
 		columns.add(isDeleteColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_USER", 0);
+		table.setName("用户信息表");
+		table.setComments("用户信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

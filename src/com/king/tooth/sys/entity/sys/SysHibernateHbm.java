@@ -82,18 +82,8 @@ public class SysHibernateHbm extends AbstractSysResource implements ITable, IPub
 		this.isDataLinkTableHbm = isDataLinkTableHbm;
 	}
 	
-	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_HIBERNATE_HBM", 0);
-		table.setName("hibernate的hbm内容表");
-		table.setComments("hibernate的hbm内容表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", BuiltinDataType.STRING, 32);
@@ -127,7 +117,21 @@ public class SysHibernateHbm extends AbstractSysResource implements ITable, IPub
 		hbmContentColumn.setOrderCode(5);
 		columns.add(hbmContentColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_HIBERNATE_HBM", 0);
+		table.setName("hibernate的hbm内容表");
+		table.setComments("hibernate的hbm内容表");
+		table.setIsResource(1);
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 	

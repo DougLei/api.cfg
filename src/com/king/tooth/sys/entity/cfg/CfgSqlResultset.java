@@ -141,15 +141,8 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		this.inOut = inOut;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_SQL_RESULTSET", 0);
-		table.setName("sql结果集信息表");
-		table.setComments("sql结果集信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0); 
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
@@ -197,7 +190,19 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		inOutColumn.setComments("标识是传入的结果集信息，还是传出的结果集信息，in=1、out=2");
 		columns.add(inOutColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("CFG_SQL_RESULTSET", 0);
+		table.setName("sql结果集信息表");
+		table.setComments("sql结果集信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(0); 
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 	

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.ISysResource;
@@ -19,16 +20,8 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 @Table
 public class SysDataLinks implements Serializable, ITable {
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_DATA_LINKS", 0);
-		table.setResourceName("SysDataLinks");
-		table.setName("数据关联关系信息表");
-		table.setComments("数据关联关系信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(8);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", BuiltinDataType.STRING, 32);
@@ -62,7 +55,20 @@ public class SysDataLinks implements Serializable, ITable {
 		rightResourceNameColumn.setOrderCode(5);
 		columns.add(rightResourceNameColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_DATA_LINKS", 0);
+		table.setResourceName("SysDataLinks");
+		table.setName("数据关联关系信息表");
+		table.setComments("数据关联关系信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

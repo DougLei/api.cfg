@@ -71,15 +71,8 @@ public class SysDataPrivS extends BasicEntity implements ITable, IEntity{
 		this.refType = refType;
 	}
 
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_DATA_PRIV_S", 0);
-		table.setName("数据权限信息表（简单）");
-		table.setComments("数据权限信息表（简单）");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinDataType.STRING, 32);
@@ -102,7 +95,19 @@ public class SysDataPrivS extends BasicEntity implements ITable, IEntity{
 		refTypeColumn.setComments("关联的数据类型：比如部门dept");
 		columns.add(refTypeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_DATA_PRIV_S", 0);
+		table.setName("数据权限信息表（简单）");
+		table.setComments("数据权限信息表（简单）");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

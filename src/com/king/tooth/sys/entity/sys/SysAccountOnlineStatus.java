@@ -303,15 +303,8 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		this.isExistsUserObj = isExistsUserObj;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ACCOUNT_ONLINE_STATUS", 0);
-		table.setName("账户在线状态信息表");
-		table.setComments("账户在线状态信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinDataType.STRING, 32);
@@ -400,7 +393,19 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		confProjectIdColumn.setComments("配置的项目id：配置系统使用");
 		columns.add(confProjectIdColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_ACCOUNT_ONLINE_STATUS", 0);
+		table.setName("账户在线状态信息表");
+		table.setComments("账户在线状态信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

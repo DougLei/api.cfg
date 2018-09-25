@@ -193,15 +193,8 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		this.backup02 = backup02;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_FILE", 0);
-		table.setName("文件表");
-		table.setComments("文件表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinDataType.STRING, 32);
@@ -281,7 +274,19 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		backup02Column.setComments("备用字段02");
 		columns.add(backup02Column);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_FILE", 0);
+		table.setName("文件表");
+		table.setComments("文件表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

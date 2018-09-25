@@ -263,16 +263,8 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		this.isBuildModel = isBuildModel;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_TABLEDATA", 0);
-		table.setName("表信息表");
-		table.setComments("表信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(28);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 100);
@@ -373,7 +365,20 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		isBuildModelColumn.setDefaultValue("0");
 		columns.add(isBuildModelColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_TABLEDATA", 0);
+		table.setName("表信息表");
+		table.setComments("表信息表");
+		table.setIsResource(1);
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(0);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

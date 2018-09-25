@@ -50,7 +50,7 @@ public class Test1 {
 //		TInsertSqlStatement insert = (TInsertSqlStatement) sql;
 //		TMultiTargetList values = insert.getValues();
 //		
-//		TResultColumn trc = values.getMultiTarget(0).getColumnList().getResultColumn(3);
+//		TResultColumn trc = values.getMultiTarget(0).getColumnList()().getResultColumn(3);
 //		
 //	}
 //	private static String returnSql() {

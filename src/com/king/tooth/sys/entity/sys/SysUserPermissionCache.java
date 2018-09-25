@@ -59,15 +59,8 @@ public class SysUserPermissionCache extends BasicEntity implements ITable, IEnti
 		this.permissionObject = permissionObject;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_USER_PERMISSION_CACHE", 0);
-		table.setName("系统用户权限缓存表");
-		table.setComments("系统用户权限缓存表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
 		ComColumndata userIdColumn = new ComColumndata("user_id", BuiltinDataType.STRING, 32);
@@ -80,7 +73,19 @@ public class SysUserPermissionCache extends BasicEntity implements ITable, IEnti
 		permissionColumn.setComments("用户所拥有的权限json");
 		columns.add(permissionColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_USER_PERMISSION_CACHE", 0);
+		table.setName("系统用户权限缓存表");
+		table.setComments("系统用户权限缓存表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

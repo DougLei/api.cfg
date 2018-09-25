@@ -152,16 +152,8 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		this.isDelete = isDelete;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ACCOUNT", 0);
-		table.setName("账户表");
-		table.setComments("账户表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		table.setIsCore(1);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
 		
 		ComColumndata loginNameColumn = new ComColumndata("login_name", BuiltinDataType.STRING, 30);
@@ -220,7 +212,20 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		isDeleteColumn.setDefaultValue("0");
 		columns.add(isDeleteColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_ACCOUNT", 0);
+		table.setName("账户表");
+		table.setComments("账户表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		table.setIsCore(1);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

@@ -1,5 +1,8 @@
 package com.king.tooth.sys.entity;
 
+import java.util.List;
+
+import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
@@ -21,4 +24,10 @@ public interface ITable {
 	 * @return
 	 */
 	String toDropTable();
+	
+	/**
+	 * 获取列信息集合
+	 * @return
+	 */
+	List<ComColumndata> getColumnList();
 }

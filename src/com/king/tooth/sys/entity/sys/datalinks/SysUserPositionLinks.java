@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.ISysResource;
@@ -29,6 +30,16 @@ public class SysUserPositionLinks implements Serializable, ITable {
 		table.setIsCreated(1);
 		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
+		table.setColumns(getColumnList());
+		return table;
+	}
+
+	public String toDropTable() {
+		return "SYS_USER_POSITION_LINKS";
+	}
+
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
 		
 		ComColumndata leftIdColumn = new ComColumndata("left_id", BuiltinDataType.STRING, 32);
@@ -57,11 +68,6 @@ public class SysUserPositionLinks implements Serializable, ITable {
 		isMainColumn.setOrderCode(4);
 		columns.add(isMainColumn);
 		
-		table.setColumns(columns);
-		return table;
-	}
-
-	public String toDropTable() {
-		return "SYS_USER_POSITION_LINKS";
+		return columns;
 	}
 }

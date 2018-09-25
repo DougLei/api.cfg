@@ -55,18 +55,9 @@ public class SysResource extends AbstractSysResource implements ITable{
 	public void setResourceType(Integer resourceType) {
 		this.resourceType = resourceType;
 	}
-	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_RESOURCE", 0);
-		table.setName("资源信息表");
-		table.setComments("资源信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
-		
+
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", BuiltinDataType.STRING, 32);
@@ -87,7 +78,21 @@ public class SysResource extends AbstractSysResource implements ITable{
 		resourceTypeColumn.setOrderCode(3);
 		columns.add(resourceTypeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_RESOURCE", 0);
+		table.setName("资源信息表");
+		table.setComments("资源信息表");
+		table.setIsResource(1);
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

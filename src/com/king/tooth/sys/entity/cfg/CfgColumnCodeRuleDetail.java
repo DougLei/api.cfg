@@ -287,15 +287,8 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		this.typeMapJson = typeMapJson;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_COLUMN_CODE_RULE_DETAIL", 0);
-		table.setName("字段编码规则表");
-		table.setComments("字段编码规则表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(28);
 		
 		ComColumndata columnCodeRuleIdColumn = new ComColumndata("column_code_rule_id", BuiltinDataType.STRING, 32);
@@ -424,7 +417,19 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		typeMapJsonColumn.setComments("这种结构：{\"类型值1\":\"展示值1\",\"类型值2\":\"展示值2\" ...}");
 		columns.add(typeMapJsonColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("CFG_COLUMN_CODE_RULE_DETAIL", 0);
+		table.setName("字段编码规则表");
+		table.setComments("字段编码规则表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

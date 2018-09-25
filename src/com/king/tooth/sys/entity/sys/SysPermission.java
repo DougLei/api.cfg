@@ -125,15 +125,8 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 		this.refResourceType = refResourceType;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_PERMISSION", 0);
-		table.setName("权限信息表");
-		table.setComments("权限信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
 		
 		ComColumndata objIdColumn = new ComColumndata("obj_id", BuiltinDataType.STRING, 32);
@@ -194,7 +187,19 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 		secretLevelsColumn.setOrderCode(10);
 		columns.add(secretLevelsColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_PERMISSION", 0);
+		table.setName("权限信息表");
+		table.setComments("权限信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

@@ -96,16 +96,8 @@ public class DmPublishInfo extends BasicEntity implements ITable, IEntity{
 		this.resourceType = resourceType;
 	}
 	
-	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("DM_PUBLISH_INFO", 0);
-		table.setName("发布信息表");
-		table.setComments("发布信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata publishDatabaseIdColumn = new ComColumndata("publish_database_id", BuiltinDataType.STRING, 32);
@@ -152,7 +144,19 @@ public class DmPublishInfo extends BasicEntity implements ITable, IEntity{
 		errMsgColumn.setOrderCode(7);
 		columns.add(errMsgColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("DM_PUBLISH_INFO", 0);
+		table.setName("发布信息表");
+		table.setComments("发布信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(0);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 	

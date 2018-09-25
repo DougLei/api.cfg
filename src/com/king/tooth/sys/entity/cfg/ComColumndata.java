@@ -296,15 +296,8 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		}
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_COLUMNDATA", 0);
-		table.setName("字段数据信息资源对象表");
-		table.setComments("字段数据信息资源对象表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0); 
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", BuiltinDataType.STRING, 32);
@@ -410,8 +403,20 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		oldInfoJsonColumn.setName("旧的信息json串");
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);
-
-		table.setColumns(columns);
+		
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_COLUMNDATA", 0);
+		table.setName("字段数据信息资源对象表");
+		table.setComments("字段数据信息资源对象表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(0); 
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

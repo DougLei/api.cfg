@@ -148,17 +148,8 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		return tmpLogFile;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_DATABASE", 0);
-		table.setName("数据库信息表");
-		table.setComments("数据库信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata displayNameColumn = new ComColumndata("display_name", BuiltinDataType.STRING, 100);
@@ -221,7 +212,21 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		cfgTmplogFileContentColumn.setOrderCode(10);
 		columns.add(cfgTmplogFileContentColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("CFG_DATABASE", 0);
+		table.setName("数据库信息表");
+		table.setComments("数据库信息表");
+		table.setIsResource(1);
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
  * 实体接口
  * @author DougLei
  */
-public interface IEntity extends IMetadataInfo{
+public interface IEntity{
 	
 	/**
 	 * 获取实体名

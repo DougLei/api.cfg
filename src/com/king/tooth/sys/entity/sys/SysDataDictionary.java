@@ -98,16 +98,8 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 		this.comments = comments;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_DATA_DICTIONARY", 0);
-		table.setName("数据字典表");
-		table.setComments("数据字典表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		table.setIsCore(1);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata codeColumn = new ComColumndata("code", BuiltinDataType.STRING, 50);
@@ -154,7 +146,20 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 		commentsColumn.setOrderCode(7);
 		columns.add(commentsColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_DATA_DICTIONARY", 0);
+		table.setName("数据字典表");
+		table.setComments("数据字典表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		table.setIsCore(1);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

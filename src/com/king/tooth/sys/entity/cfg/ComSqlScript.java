@@ -280,17 +280,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		this.outSqlResultsetsList = outSqlResultsetsList;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT", 0);
-		table.setName("sql脚本信息表");
-		table.setComments("sql脚本信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
 		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinDataType.STRING, 16);
@@ -340,7 +331,21 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
 		columns.add(parameterNameRecordsColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT", 0);
+		table.setName("sql脚本信息表");
+		table.setComments("sql脚本信息表");
+		table.setIsResource(1);
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(COMMON_PLATFORM);
+		table.setIsCore(1);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

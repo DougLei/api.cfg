@@ -174,15 +174,8 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		this.reqDate = new Date();
 	}
 
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_REQ_LOG" + "_" + yyyyMM, 0);
-		table.setName("请求日志信息表");
-		table.setComments("请求日志信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.INTEGER, 1);
@@ -258,7 +251,19 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		parentResourceNameColumn.setOrderCode(12);
 		columns.add(parentResourceNameColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_REQ_LOG" + "_" + yyyyMM, 0);
+		table.setName("请求日志信息表");
+		table.setComments("请求日志信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

@@ -80,16 +80,8 @@ public class SysRole extends BasicEntity implements ITable, IEntity{
 		this.isEnabled = isEnabled;
 	}
 	
-	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ROLE", 0);
-		table.setName("角色表");
-		table.setComments("角色表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 30);
@@ -124,7 +116,19 @@ public class SysRole extends BasicEntity implements ITable, IEntity{
 		isEnabledColumn.setOrderCode(5);
 		columns.add(isEnabledColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_ROLE", 0);
+		table.setName("角色表");
+		table.setComments("角色表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

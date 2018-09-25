@@ -64,16 +64,8 @@ public class SysPosition extends BasicEntity implements ITable, IEntity{
 		this.orderCode = orderCode;
 	}
 
-	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_POSITION", 0);
-		table.setName("职务表");
-		table.setComments("职务表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 60);
@@ -100,7 +92,19 @@ public class SysPosition extends BasicEntity implements ITable, IEntity{
 		orderCodeColumn.setOrderCode(4);
 		columns.add(orderCodeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_POSITION", 0);
+		table.setName("职务表");
+		table.setComments("职务表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 

@@ -268,15 +268,8 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		return "ComSqlScriptParameter";
 	}
 
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT_PARAMETER", 0);
-		table.setName("sql脚本参数信息表");
-		table.setComments("sql脚本参数信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0); 
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
@@ -341,7 +334,19 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		orderCodeColumn.setComments("参数的顺序值");
 		columns.add(orderCodeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT_PARAMETER", 0);
+		table.setName("sql脚本参数信息表");
+		table.setComments("sql脚本参数信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(0); 
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 	

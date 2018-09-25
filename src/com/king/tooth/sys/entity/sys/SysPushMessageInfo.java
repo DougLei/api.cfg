@@ -168,15 +168,8 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		this.pushResultCode = pushResultCode;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_PUSH_MESSAGE_INFO", 0);
-		table.setName("推送消息信息表");
-		table.setComments("推送消息信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata msgTypeColumn = new ComColumndata("msg_type", BuiltinDataType.INTEGER, 1);
@@ -242,7 +235,19 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		pushResultCodeColumn.setComments("推送的结果编码");
 		columns.add(pushResultCodeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_PUSH_MESSAGE_INFO", 0);
+		table.setName("推送消息信息表");
+		table.setComments("推送消息信息表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 	

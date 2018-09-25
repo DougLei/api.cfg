@@ -98,15 +98,8 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 		this.type = type;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_DEPT", 0);
-		table.setName("部门表");
-		table.setComments("部门表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
+	@JSONField(serialize = false)
+	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
 		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinDataType.STRING, 32);
@@ -144,7 +137,19 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 		typeColumn.setComments("部门类型，例如班组，科室等");
 		columns.add(typeColumn);
 		
-		table.setColumns(columns);
+		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_DEPT", 0);
+		table.setName("部门表");
+		table.setComments("部门表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
 		return table;
 	}
 
