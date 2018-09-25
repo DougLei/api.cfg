@@ -28,7 +28,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("unchecked")
 @Service
-public class ComProjectService extends AbstractPublishService {
+public class CfgProjectService extends AbstractPublishService {
 	
 	/**
 	 * 验证项目关联的数据库是否存在
@@ -197,12 +197,12 @@ public class ComProjectService extends AbstractPublishService {
 				publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
 						"select "+ResourcePropNameConstants.ID+" from ComProjectModule where isEnabled =1 and isNeedDeploy=1 and refProjectId = '"+projectId+"'");
 				if(publishDataIds != null && publishDataIds.size() > 0){
-					new ComProjectModuleService().batchPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
+					new CfgProjectModuleService().batchPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
 					publishDataIds.clear();
 				}
 				
 				// 发布公用的表
-				ComTabledataService tableService = new ComTabledataService();
+				CfgTableService tableService = new CfgTableService();
 				tableService.publishCommonTableResource(project.getRefDatabaseId(), projectId);
 				
 				// 发布项目关联的表
@@ -221,7 +221,7 @@ public class ComProjectService extends AbstractPublishService {
 								" and sqlScript.isEnabled =1 and sqlScript.isNeedDeploy=1" +
 								" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 				if(publishDataIds != null && publishDataIds.size() > 0){
-					new ComSqlScriptService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
+					new CfgSqlService().batchPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 					publishDataIds.clear();
 				}
 				
@@ -275,7 +275,7 @@ public class ComProjectService extends AbstractPublishService {
 			publishDataIds = HibernateUtil.executeListQueryByHqlArr(null, null, 
 					"select "+ResourcePropNameConstants.ID+" from ComProjectModule where refProjectId = '"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
-				new ComProjectModuleService().batchCancelPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
+				new CfgProjectModuleService().batchCancelPublishProjectModule(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
 			}
 			
@@ -285,7 +285,7 @@ public class ComProjectService extends AbstractPublishService {
 							" and table.isNeedDeploy=1 and table.isBuiltin=0" +
 							" and pt.leftId='"+projectId+"'");
 			if(publishDataIds != null && publishDataIds.size() > 0){
-				new ComTabledataService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
+				new CfgTableService().batchCancelPublishTable(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
 			}
 			
@@ -295,7 +295,7 @@ public class ComProjectService extends AbstractPublishService {
 							" and sqlScript.isNeedDeploy=1 and sqlScript.isBuiltin=0" +
 							" and (ps.leftId='"+projectId+"' or sqlScript.belongPlatformType="+ISysResource.COMMON_PLATFORM +")");
 			if(publishDataIds != null && publishDataIds.size() > 0){
-				new ComSqlScriptService().batchCancelPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
+				new CfgSqlService().batchCancelPublishSqlScript(project.getRefDatabaseId(), projectId, publishDataIds);
 				publishDataIds.clear();
 			}
 			

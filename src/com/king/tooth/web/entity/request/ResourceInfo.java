@@ -34,12 +34,10 @@ public class ResourceInfo {
 	 * 请求的资源对象
 	 */
 	private SysResource reqResource;
-	
 	/**
-	 * 是否系统内置的资源
-	 * <p>例如表资源、列资源、项目资源等</p>
+	 * 请求的父资源对象
 	 */
-	private boolean isBuiltin;
+	private SysResource reqParentResource;
 	
 	//------------------------------------------------------------------
 	public ResourceInfo() {
@@ -87,12 +85,12 @@ public class ResourceInfo {
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				reqResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
+				reqParentResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
 				
-				if(reqResource.getResourceType() != resourceType){
+				if(reqParentResource.getResourceType() != resourceType){
 					throw new IllegalArgumentException("系统目前不支持处理不同类型的资源混合调用");
 				}
-				if(reqResource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
+				if(reqParentResource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
 					throw new IllegalArgumentException("系统目前不支持处理[主子]方式调用sql资源");
 				}
 			}
@@ -140,7 +138,7 @@ public class ResourceInfo {
 	public SysResource getReqResource() {
 		return reqResource;
 	}
-	public boolean isBuiltin() {
-		return isBuiltin;
+	public SysResource getReqParentResource() {
+		return reqParentResource;
 	}
 }

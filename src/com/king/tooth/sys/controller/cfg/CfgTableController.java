@@ -23,7 +23,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class ComTabledataController extends AbstractPublishController{
+public class CfgTableController extends AbstractPublishController{
 	
 	/**
 	 * 添加表

@@ -126,4 +126,17 @@ public class SysResource extends AbstractSysResource implements ITable{
 		publishBasicData.setBelongPlatformType(belongPlatformType);
 		return publishBasicData;
 	}
+	
+	/**
+	 * 是否是内置资源
+	 * @return
+	 */
+	public boolean isBuiltinResource(){
+		return BUILTIN_RESOURCE.equals(refResourceId);
+	}
+	/**
+	 * 内置资源标识
+	 * <p>系统内置资源的refResourceId的值为内置资源标识</p>
+	 */
+	private static final String BUILTIN_RESOURCE = "builtinResource";
 }

@@ -19,7 +19,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class ComColumndataController extends AbstractController{
+public class CfgColumnController extends AbstractController{
 	
 	/**
 	 * 添加列

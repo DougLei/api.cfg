@@ -23,12 +23,6 @@ public abstract class AbstractController {
 	
 	/**
 	 * 处理结果对象
-	 * <p>
-	 * 	要么是string类型，记录操作失败的原因
-	 *  要么是jsonObject类型，记录操作结果
-	 *  要么是jsonArray类型
-	 *  只能是这三种类型中的任意一种
-	 * </p>
 	 */
 	protected Object resultObject;
 	

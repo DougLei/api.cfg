@@ -20,7 +20,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class ComProjectModuleService extends AbstractPublishService {
+public class CfgProjectModuleService extends AbstractPublishService {
 
 	/**
 	 * 验证模块编码是否存在

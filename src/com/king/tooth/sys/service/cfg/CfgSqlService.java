@@ -29,7 +29,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("unchecked")
 @Service
-public class ComSqlScriptService extends AbstractPublishService {
+public class CfgSqlService extends AbstractPublishService {
 	
 	/**
 	 * 根据id，获取sql脚本资源对象

@@ -29,6 +29,15 @@ public class BuiltinParameterKeys {
 	
 	//------------------------------------------------------------------------------------
 	/**
+	 * 内置的参数
+	 * <p>上面的url:xxx的那些</p>
+	 */
+	public static final String[] BUILTIN_PARAMS = {"_resource_name", 
+		"_resource_id", 
+		"_parent_resource_name", 
+		"_parent_resource_id"};
+	
+	/**
 	 * 内置的url功能性参数
 	 */
 	public static final String[] BUILTIN_URL_FUNC_PARAMS = {"_focusedId", 
@@ -58,10 +67,4 @@ public class BuiltinParameterKeys {
 	 * <p>目前只有在下载文件的时候，是不需要打印responseBody</p>
 	 */
 	public static final String _IS_PRINT_RESPONSEBODY = "_isPrintResponseBody";
-	
-	//------------------------------------------------------------------------------------
-	/**
-	 * 要保存的数据的实体名
-	 */
-	public static final String ENTITY_NAME = "__entityName";
 }

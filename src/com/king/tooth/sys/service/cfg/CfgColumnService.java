@@ -14,7 +14,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class ComColumndataService extends AbstractService{
+public class CfgColumnService extends AbstractService{
 
 	/**
 	 * 验证列关联的表是否存在

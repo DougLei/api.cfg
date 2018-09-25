@@ -27,13 +27,13 @@ public class ResourceDataVerifier {
 	private String parentResourceName;
 	
 	/**
-	 * 父资源的元数据信息集合
-	 */
-	private List<ResourceMetadataInfo> parentResourceMetadataInfos;
-	/**
 	 * 资源的元数据信息集合
 	 */
 	private List<ResourceMetadataInfo> resourceMetadataInfos;
+	/**
+	 * 父资源的元数据信息集合
+	 */
+	private List<ResourceMetadataInfo> parentResourceMetadataInfos;
 	
 	public ResourceDataVerifier(RequestBody requestBody) {
 		this.requestBody = requestBody;
@@ -76,15 +76,39 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private void initTableResourceMetadataInfos() {
-		if(requestBody.getResourceInfo().isBuiltin()){
-			// TODO
-			throw new NullPointerException("");
+		if(requestBody.getResourceInfo().getReqResource().isBuiltinResource()){
+			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource().getResourceName());
 		}else{
 			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled) from ComColumndata where tableId=? and operStatus=? order by orderCode asc", requestBody.getResourceInfo().getReqResource().getRefResourceId(), ComColumndata.CREATED);
 			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
 				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 			}
 		}
+		
+		if(requestBody.isParentSubResourceQuery()){
+			if(requestBody.isRecursiveQuery()){
+				parentResourceMetadataInfos = resourceMetadataInfos;
+			}else{
+				if(requestBody.getResourceInfo().getReqParentResource().isBuiltinResource()){
+					parentResourceMetadataInfos = getBuiltinTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource().getResourceName());
+				}else{
+					parentResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled) from ComColumndata where tableId=? and operStatus=? order by orderCode asc", requestBody.getResourceInfo().getReqParentResource().getRefResourceId(), ComColumndata.CREATED);
+					if(parentResourceMetadataInfos == null || parentResourceMetadataInfos.size() == 0){
+						throw new NullPointerException("没有查询到父表资源["+parentResourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 获取内置表资源的元数据信息集合
+	 * @param tableResourceName
+	 * @return
+	 */
+	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
+//		BuiltinResourceInstance
+		return null;
 	}
 	
 	/**
@@ -121,13 +145,46 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private String validGetTableResourceMetadata() {
-		// TODO
-		if(parentResourceName == null){
-			
-		}else{
-			
+		Set<String> requestResourcePropNames = requestBody.getRequestResourceParams().keySet();
+		for (String propName : requestResourcePropNames) {
+			if(validPropUnExists(true, propName, resourceMetadataInfos)){
+				return "操作表资源["+resourceName+"]时，不存在名为["+propName+"]的属性";
+			}
+		}
+		
+		if(requestBody.isParentSubResourceQuery()){
+			requestResourcePropNames = requestBody.getRequestParentResourceParams().keySet();
+			for (String propName : requestResourcePropNames) {
+				if(validPropUnExists(true, propName, parentResourceMetadataInfos)){
+					return "操作父表资源["+parentResourceName+"]时，不存在名为["+propName+"]的属性";
+				}
+			}
 		}
 		return null;
+	}
+	
+	/**
+	 * 验证属性是否不存在
+	 * @param validBuiltinParams 是否验证内置参数，是get请求的时候才需要为true，其他请求都是false
+	 * @param propName
+	 * @param resourceMetadataInfos
+	 * @return
+	 */
+	private boolean validPropUnExists(boolean validBuiltinParams, String propName, List<ResourceMetadataInfo> resourceMetadataInfos){
+		if(validBuiltinParams){
+			for (String builtinParams : BuiltinParameterKeys.BUILTIN_PARAMS) { // 内置的参数不做是否存在的验证，因为肯定不存在，是后台使用的一些参数
+				if(propName.equals(builtinParams)){
+					return false;
+				}
+			}
+		}
+		
+		for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
+			if(propName.equals(rmi.getName())){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -142,6 +199,7 @@ public class ResourceDataVerifier {
 		Set<String> uniqueConstraintPropName = new HashSet<String>(resourceMetadataInfos.size());
 		JSONObject data = null;
 		boolean dataValueIsNull;
+		Set<String> propKeys = null;
 		Object dataValue = null;
 		String validDataIsLegalResult = null;
 		for(int i=0;i<size;i++){
@@ -149,6 +207,15 @@ public class ResourceDataVerifier {
 			if(isValidIdPropIsNull && StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
 				return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"属性值不能为空";
 			}
+			
+			// 验证每个对象的属性，是否存在
+			propKeys = data.keySet();
+			for (String propName : propKeys) {
+				if(validPropUnExists(false, propName, resourceMetadataInfos)){
+					return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
+				}
+			}
+			
 			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
 				dataValue = data.get(rmi.getName());
@@ -270,7 +337,7 @@ public class ResourceDataVerifier {
 	 */
 	private String validDeleteTableResourceMetadata() {
 		if(StrUtils.isEmpty(requestBody.getRequestResourceParams().get(BuiltinParameterKeys._IDS))){
-			return "要删除["+resourceName+"]资源时，_ids参数值不能为空";
+			return "要删除["+resourceName+"]资源时，"+BuiltinParameterKeys._IDS+"参数值不能为空";
 		}
 		return null;
 	}

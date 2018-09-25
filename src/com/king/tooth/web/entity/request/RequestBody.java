@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.code.resource.CodeResourceProcesser;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
 
 /**
@@ -107,9 +108,8 @@ public class RequestBody implements Serializable{
 	 * @return
 	 */
 	public String validResourceData() {
-//		resourceDataVerifier = new ResourceDataVerifier(this);
-//		return resourceDataVerifier.doValidResourceData();
-		return null;
+		resourceDataVerifier = new ResourceDataVerifier(this);
+		return resourceDataVerifier.doValidResourceData();
 	}
 	
 	/**
@@ -133,6 +133,24 @@ public class RequestBody implements Serializable{
 	 */
 	public String getParentResourceName(){
 		return routeBody.getParentResourceName();
+	}
+	
+	/**
+	 * 是否主子资源查询
+	 * <p>包括递归</p>
+	 * @return
+	 */
+	public boolean isParentSubResourceQuery(){
+		return StrUtils.notEmpty(getParentResourceName());
+	}
+	
+	/**
+	 * 是否是递归查询
+	 * <p>即主子资源名一样</p>
+	 * @return
+	 */
+	public boolean isRecursiveQuery(){
+		return getResourceName().equals(getParentResourceName());
 	}
 	
 	public boolean isGetRequest(){

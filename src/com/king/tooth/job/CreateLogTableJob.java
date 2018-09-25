@@ -11,8 +11,10 @@ import org.quartz.JobExecutionException;
 
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
+import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
@@ -46,8 +48,8 @@ public class CreateLogTableJob implements Job, Serializable{
 			
 			// 获取两个日志表对象
 			List<ComTabledata> logTables = new ArrayList<ComTabledata>(logTableSize);
-			logTables.add(BuiltinObjectInstance.sysReqLog.toCreateTable());
-			logTables.add(BuiltinObjectInstance.sysOperSqlLog.toCreateTable());
+			logTables.add(BuiltinResourceInstance.getEntityInstance("SysReqLog", SysReqLog.class).toCreateTable());
+			logTables.add(BuiltinResourceInstance.getEntityInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
 			
 			DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 			try {
@@ -65,6 +67,8 @@ public class CreateLogTableJob implements Job, Serializable{
 				SysReqLog.yyyyMM = yyyyMMBak;
 				
 				for (ComTabledata logTable : logTables) {
+					BuiltinResourceInstance.getServiceInstance("", clz)
+					
 					BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, logTable, null, false);
 				}
 			} finally{

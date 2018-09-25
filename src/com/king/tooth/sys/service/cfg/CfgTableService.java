@@ -39,7 +39,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("unchecked")
 @Service
-public class ComTabledataService extends AbstractPublishService {
+public class CfgTableService extends AbstractPublishService {
 	
 	/**
 	 * 验证表名是否存在

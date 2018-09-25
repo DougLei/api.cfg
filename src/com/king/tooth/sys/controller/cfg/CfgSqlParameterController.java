@@ -18,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class ComSqlScriptParameterController extends AbstractPublishController{
+public class CfgSqlParameterController extends AbstractPublishController{
 	
 	/**
 	 * 添加sql脚本参数
