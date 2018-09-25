@@ -97,7 +97,11 @@ public class RequestProcesserCommon extends CommonProcesser{
 			JSONArray jsonArray = ProcedureUtil.executeProcedure(sqlScript);
 			
 			if(jsonArray != null && jsonArray.size() > 0){
-				setResponseBody(new ResponseBody(jsonArray, true));
+				if(jsonArray.size() == 1){
+					setResponseBody(new ResponseBody(jsonArray.getJSONObject(0), true));
+				}else{
+					setResponseBody(new ResponseBody(jsonArray, true));
+				}
 			}else{
 				setResponseBody(new ResponseBody("成功执行名为["+sqlScript.getObjectName()+"]的存储过程", true));
 			}
