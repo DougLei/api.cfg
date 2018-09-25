@@ -10,6 +10,9 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.IMetadataInfo;
+import com.king.tooth.sys.entity.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
@@ -107,8 +110,7 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
-//		BuiltinResourceInstance
-		return null;
+		return BuiltinResourceInstance.getInstance(tableResourceName, IMetadataInfo.class).getResourceMetadataInfos();
 	}
 	
 	/**

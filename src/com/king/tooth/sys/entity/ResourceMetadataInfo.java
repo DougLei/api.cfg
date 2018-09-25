@@ -1,4 +1,4 @@
-package com.king.tooth.web.entity.request;
+package com.king.tooth.sys.entity;
 
 
 /**
