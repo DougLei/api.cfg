@@ -108,8 +108,9 @@ public class RequestBody implements Serializable{
 	 * @return
 	 */
 	public String validResourceData() {
-		resourceDataVerifier = new ResourceDataVerifier(this);
-		return resourceDataVerifier.doValidResourceData();
+//		resourceDataVerifier = new ResourceDataVerifier(this);
+//		return resourceDataVerifier.doValidResourceData();
+		return null;
 	}
 	
 	/**
