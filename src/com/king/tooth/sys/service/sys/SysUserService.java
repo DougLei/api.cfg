@@ -7,7 +7,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.service.AbstractService;
@@ -50,7 +50,7 @@ public class SysUserService extends AbstractService{
 		if(!accountIsExists(userId)){
 			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
 		}
-		return BuiltinObjectInstance.accountService.uploadAccounLoginPwd(userId, newLoginPwd);
+		return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).uploadAccounLoginPwd(userId, newLoginPwd);
 	}
 	
 	/**
@@ -311,7 +311,7 @@ public class SysUserService extends AbstractService{
 		// 删除账户
 		if(accountIsExists(userId)){
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
-			BuiltinObjectInstance.accountService.deleteTokenInfoByAccountId(userId);
+			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteTokenInfoByAccountId(userId);
 		}
 		// 删除所属的部门
 		if(StrUtils.notEmpty(user.getDeptId())){

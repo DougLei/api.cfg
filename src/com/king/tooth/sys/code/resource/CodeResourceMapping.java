@@ -3,7 +3,7 @@ package com.king.tooth.sys.code.resource;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 
 /**
  * 代码资源映射
@@ -37,57 +37,57 @@ public class CodeResourceMapping {
 	 */
 	private static void initActionCodeResource() {
 		// 数据库操作
-		put("/database/test_link/post", BuiltinObjectInstance.databaseController, "testLink");
-		put("/database/publish/add/post", BuiltinObjectInstance.databaseController, "publish");
-		put("/database/publish/cancel/post", BuiltinObjectInstance.databaseController, "cancelPublish");
+		put("/database/test_link/post", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "testLink");
+		put("/database/publish/add/post", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "publish");
+		put("/database/publish/cancel/post", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "cancelPublish");
 		
 		// 项目操作
-		put("/project/publish/add/post", BuiltinObjectInstance.projectController, "publish");
-		put("/project/publish/cancel/post", BuiltinObjectInstance.projectController, "cancelPublish");
+		put("/project/publish/add/post", BuiltinResourceInstance.getInstance("CfgProjectController"), "publish");
+		put("/project/publish/cancel/post", BuiltinResourceInstance.getInstance("CfgProjectController"), "cancelPublish");
 		
 		// 项目模块操作
-		put("/project_module/publish/add/post", BuiltinObjectInstance.projectModuleController, "publish");
-		put("/project_module/publish/cancel/post", BuiltinObjectInstance.projectModuleController, "cancelPublish");
+		put("/project_module/publish/add/post", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "publish");
+		put("/project_module/publish/cancel/post", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "cancelPublish");
 		
 		// 表操作
-		put("ComTabledata_post_buildModel", BuiltinObjectInstance.tableController, "buildModel");
-		put("/table/model/create/post", BuiltinObjectInstance.tableController, "buildModel");
-		put("/table/model/drop/post", BuiltinObjectInstance.tableController, "cancelBuildModel");
-		put("/table/publish/add/post", BuiltinObjectInstance.tableController, "publish");
-		put("/table/publish/cancel/post", BuiltinObjectInstance.tableController, "cancelPublish");
-		put("/project/table/relation/add/post", BuiltinObjectInstance.tableController, "addProjTableRelation");
-		put("/project/table/relation/cancel/post", BuiltinObjectInstance.tableController, "cancelProjTableRelation");
+		put("ComTabledata_post_buildModel", BuiltinResourceInstance.getInstance("CfgTableController"), "buildModel");
+		put("/table/model/create/post", BuiltinResourceInstance.getInstance("CfgTableController"), "buildModel");
+		put("/table/model/drop/post", BuiltinResourceInstance.getInstance("CfgTableController"), "cancelBuildModel");
+		put("/table/publish/add/post", BuiltinResourceInstance.getInstance("CfgTableController"), "publish");
+		put("/table/publish/cancel/post", BuiltinResourceInstance.getInstance("CfgTableController"), "cancelPublish");
+		put("/project/table/relation/add/post", BuiltinResourceInstance.getInstance("CfgTableController"), "addProjTableRelation");
+		put("/project/table/relation/cancel/post", BuiltinResourceInstance.getInstance("CfgTableController"), "cancelProjTableRelation");
 		
 		// sql脚本操作
-		put("/sql/object/create/post", BuiltinObjectInstance.sqlController, "immediateCreate");
-		put("/project/sql/relation/add/post", BuiltinObjectInstance.sqlController, "addProjSqlScriptRelation");
-		put("/project/sql/relation/cancel/post", BuiltinObjectInstance.sqlController, "cancelProjSqlScriptRelation");
-		put("/sql/publish/add/post", BuiltinObjectInstance.sqlController, "publish");
-		put("/sql/publish/cancel/post", BuiltinObjectInstance.sqlController, "cancelPublish");
+		put("/sql/object/create/post", BuiltinResourceInstance.getInstance("CfgSqlController"), "immediateCreate");
+		put("/project/sql/relation/add/post", BuiltinResourceInstance.getInstance("CfgSqlController"), "addProjSqlScriptRelation");
+		put("/project/sql/relation/cancel/post", BuiltinResourceInstance.getInstance("CfgSqlController"), "cancelProjSqlScriptRelation");
+		put("/sql/publish/add/post", BuiltinResourceInstance.getInstance("CfgSqlController"), "publish");
+		put("/sql/publish/cancel/post", BuiltinResourceInstance.getInstance("CfgSqlController"), "cancelPublish");
 		
 		// 用户操作
-		put("/user/open_account/post", BuiltinObjectInstance.userController, "openAccount");
-		put("/user/update_pwd/post", BuiltinObjectInstance.userController, "updatePassword");
+		put("/user/open_account/post", BuiltinResourceInstance.getInstance("SysUserController"), "openAccount");
+		put("/user/update_pwd/post", BuiltinResourceInstance.getInstance("SysUserController"), "updatePassword");
 		
 		// 账户操作
-		put("/login/post", BuiltinObjectInstance.accountController, "login");
-		put("/login_out/post", BuiltinObjectInstance.accountController, "loginOut");
-		put("/account/update_pwd/post", BuiltinObjectInstance.accountController, "updatePassword");
+		put("/login/post", BuiltinResourceInstance.getInstance("SysAccountController"), "login");
+		put("/login_out/post", BuiltinResourceInstance.getInstance("SysAccountController"), "loginOut");
+		put("/account/update_pwd/post", BuiltinResourceInstance.getInstance("SysAccountController"), "updatePassword");
 		
-		// 账户操作
-		put("/permission/get", BuiltinObjectInstance.permissionController, "calcPermissionByCode");
+		// 权限操作
+		put("/permission/get", BuiltinResourceInstance.getInstance("SysPermissionController"), "calcPermissionByCode");
 		
 		// 监听hibernate类元数据
-		put("/hibernate_classmetadata/monitor/get", BuiltinObjectInstance.systemToolsController, "monitorHibernateClassMetadata");
+		put("/hibernate_classmetadata/monitor/get", BuiltinResourceInstance.getInstance("SystemToolsController"), "monitorHibernateClassMetadata");
 		// 获取指定资源信息
-		put("/resource_info/get/get", BuiltinObjectInstance.systemToolsController, "getResourceInfo");
+		put("/resource_info/get/get", BuiltinResourceInstance.getInstance("SystemToolsController"), "getResourceInfo");
 		
 		// 消息推送
-		put("/message/push/post", BuiltinObjectInstance.sysPushMessageInfoController, "pushMessage");
+		put("/message/push/post", BuiltinResourceInstance.getInstance("SysPushMessageInfoController"), "pushMessage");
 		// 消息阅读
-		put("/message/read/get", BuiltinObjectInstance.sysPushMessageInfoController, "readMessage");
+		put("/message/read/get", BuiltinResourceInstance.getInstance("SysPushMessageInfoController"), "readMessage");
 		// 修改消息的阅读状态
-		put("/message/read_status/update/put", BuiltinObjectInstance.sysPushMessageInfoController, "updateMessageReadStatus");
+		put("/message/read_status/update/put", BuiltinResourceInstance.getInstance("SysPushMessageInfoController"), "updateMessageReadStatus");
 	}
 	
 	/**
@@ -96,76 +96,76 @@ public class CodeResourceMapping {
 	 */
 	private static void initNormalCodeResource() {
 		// 数据库操作
-		put("CfgDatabase_post", BuiltinObjectInstance.databaseController, "add");
-		put("CfgDatabase_put", BuiltinObjectInstance.databaseController, "update");
-		put("CfgDatabase_delete", BuiltinObjectInstance.databaseController, "delete");
-		put("/database/add/post", BuiltinObjectInstance.databaseController, "add");
-		put("/database/update/put", BuiltinObjectInstance.databaseController, "update");
-		put("/database/delete/delete", BuiltinObjectInstance.databaseController, "delete");
+		put("CfgDatabase_post", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "add");
+		put("CfgDatabase_put", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "update");
+		put("CfgDatabase_delete", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "delete");
+		put("/database/add/post", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "add");
+		put("/database/update/put", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "update");
+		put("/database/delete/delete", BuiltinResourceInstance.getInstance("CfgDatabaseController"), "delete");
 		
 		// 项目操作
-		put("ComProject_post", BuiltinObjectInstance.projectController, "add");
-		put("ComProject_put", BuiltinObjectInstance.projectController, "update");
-		put("ComProject_delete", BuiltinObjectInstance.projectController, "delete");
-		put("/project/add/post", BuiltinObjectInstance.projectController, "add");
-		put("/project/update/put", BuiltinObjectInstance.projectController, "update");
-		put("/project/delete/delete", BuiltinObjectInstance.projectController, "delete");
+		put("ComProject_post", BuiltinResourceInstance.getInstance("CfgProjectController"), "add");
+		put("ComProject_put", BuiltinResourceInstance.getInstance("CfgProjectController"), "update");
+		put("ComProject_delete", BuiltinResourceInstance.getInstance("CfgProjectController"), "delete");
+		put("/project/add/post", BuiltinResourceInstance.getInstance("CfgProjectController"), "add");
+		put("/project/update/put", BuiltinResourceInstance.getInstance("CfgProjectController"), "update");
+		put("/project/delete/delete", BuiltinResourceInstance.getInstance("CfgProjectController"), "delete");
 		
 		// 项目模块操作
-		put("ComProjectModule_post", BuiltinObjectInstance.projectModuleController, "add");
-		put("ComProjectModule_put", BuiltinObjectInstance.projectModuleController, "update");
-		put("ComProjectModule_delete", BuiltinObjectInstance.projectModuleController, "delete");
-		put("/project_module/add/post", BuiltinObjectInstance.projectModuleController, "add");
-		put("/project_module/update/put", BuiltinObjectInstance.projectModuleController, "update");
-		put("/project_module/delete/delete", BuiltinObjectInstance.projectModuleController, "delete");
+		put("ComProjectModule_post", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "add");
+		put("ComProjectModule_put", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "update");
+		put("ComProjectModule_delete", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "delete");
+		put("/project_module/add/post", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "add");
+		put("/project_module/update/put", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "update");
+		put("/project_module/delete/delete", BuiltinResourceInstance.getInstance("CfgProjectModuleController"), "delete");
 		
 		// 表操作
-		put("ComTabledata_post", BuiltinObjectInstance.tableController, "add");
-		put("ComTabledata_put", BuiltinObjectInstance.tableController, "update");
-		put("ComTabledata_delete", BuiltinObjectInstance.tableController, "delete");
-		put("/table/add/post", BuiltinObjectInstance.tableController, "add");
-		put("/table/update/put", BuiltinObjectInstance.tableController, "update");
-		put("/table/delete/delete", BuiltinObjectInstance.tableController, "delete");
+		put("ComTabledata_post", BuiltinResourceInstance.getInstance("CfgTableController"), "add");
+		put("ComTabledata_put", BuiltinResourceInstance.getInstance("CfgTableController"), "update");
+		put("ComTabledata_delete", BuiltinResourceInstance.getInstance("CfgTableController"), "delete");
+		put("/table/add/post", BuiltinResourceInstance.getInstance("CfgTableController"), "add");
+		put("/table/update/put", BuiltinResourceInstance.getInstance("CfgTableController"), "update");
+		put("/table/delete/delete", BuiltinResourceInstance.getInstance("CfgTableController"), "delete");
 		
 		// 列操作
-		put("ComColumndata_post", BuiltinObjectInstance.columnController, "add");
-		put("ComColumndata_put", BuiltinObjectInstance.columnController, "update");
-		put("ComColumndata_delete", BuiltinObjectInstance.columnController, "delete");
-		put("/column/add/post", BuiltinObjectInstance.columnController, "add");
-		put("/column/update/put", BuiltinObjectInstance.columnController, "update");
-		put("/column/delete/delete", BuiltinObjectInstance.columnController, "delete");
+		put("ComColumndata_post", BuiltinResourceInstance.getInstance("CfgColumnController"), "add");
+		put("ComColumndata_put", BuiltinResourceInstance.getInstance("CfgColumnController"), "update");
+		put("ComColumndata_delete", BuiltinResourceInstance.getInstance("CfgColumnController"), "delete");
+		put("/column/add/post", BuiltinResourceInstance.getInstance("CfgColumnController"), "add");
+		put("/column/update/put", BuiltinResourceInstance.getInstance("CfgColumnController"), "update");
+		put("/column/delete/delete", BuiltinResourceInstance.getInstance("CfgColumnController"), "delete");
 		
 		// sql脚本操作
-		put("ComSqlScript_post", BuiltinObjectInstance.sqlController, "add");
-		put("ComSqlScript_put", BuiltinObjectInstance.sqlController, "update");
-		put("ComSqlScript_delete", BuiltinObjectInstance.sqlController, "delete");
-		put("/sql/add/post", BuiltinObjectInstance.sqlController, "add");
-		put("/sql/update/put", BuiltinObjectInstance.sqlController, "update");
-		put("/sql/delete/delete", BuiltinObjectInstance.sqlController, "delete");
+		put("ComSqlScript_post", BuiltinResourceInstance.getInstance("CfgSqlController"), "add");
+		put("ComSqlScript_put", BuiltinResourceInstance.getInstance("CfgSqlController"), "update");
+		put("ComSqlScript_delete", BuiltinResourceInstance.getInstance("CfgSqlController"), "delete");
+		put("/sql/add/post", BuiltinResourceInstance.getInstance("CfgSqlController"), "add");
+		put("/sql/update/put", BuiltinResourceInstance.getInstance("CfgSqlController"), "update");
+		put("/sql/delete/delete", BuiltinResourceInstance.getInstance("CfgSqlController"), "delete");
 		
 		// sql脚本参数操作
-		put("ComSqlScriptParameter_post", BuiltinObjectInstance.sqlParamController, "add");
-		put("ComSqlScriptParameter_put", BuiltinObjectInstance.sqlParamController, "update");
-		put("ComSqlScriptParameter_delete", BuiltinObjectInstance.sqlParamController, "delete");
-		put("/sql_parameter/add/post", BuiltinObjectInstance.sqlParamController, "add");
-		put("/sql_parameter/update/put", BuiltinObjectInstance.sqlParamController, "update");
-		put("/sql_parameter/delete/delete", BuiltinObjectInstance.sqlParamController, "delete");
+		put("ComSqlScriptParameter_post", BuiltinResourceInstance.getInstance("CfgSqlParameterController"), "add");
+		put("ComSqlScriptParameter_put", BuiltinResourceInstance.getInstance("CfgSqlParameterController"), "update");
+		put("ComSqlScriptParameter_delete", BuiltinResourceInstance.getInstance("CfgSqlParameterController"), "delete");
+		put("/sql_parameter/add/post", BuiltinResourceInstance.getInstance("CfgSqlParameterController"), "add");
+		put("/sql_parameter/update/put", BuiltinResourceInstance.getInstance("CfgSqlParameterController"), "update");
+		put("/sql_parameter/delete/delete", BuiltinResourceInstance.getInstance("CfgSqlParameterController"), "delete");
 		
 		// 用户操作
-		put("SysUser_post", BuiltinObjectInstance.userController, "add");
-		put("SysUser_put", BuiltinObjectInstance.userController, "update");
-		put("SysUser_delete", BuiltinObjectInstance.userController, "delete");
-		put("/user/add/post", BuiltinObjectInstance.userController, "add");
-		put("/user/update/put", BuiltinObjectInstance.userController, "update");
-		put("/user/delete/delete", BuiltinObjectInstance.userController, "delete");
+		put("SysUser_post", BuiltinResourceInstance.getInstance("SysUserController"), "add");
+		put("SysUser_put", BuiltinResourceInstance.getInstance("SysUserController"), "update");
+		put("SysUser_delete", BuiltinResourceInstance.getInstance("SysUserController"), "delete");
+		put("/user/add/post", BuiltinResourceInstance.getInstance("SysUserController"), "add");
+		put("/user/update/put", BuiltinResourceInstance.getInstance("SysUserController"), "update");
+		put("/user/delete/delete", BuiltinResourceInstance.getInstance("SysUserController"), "delete");
 		
 		// 账户操作
-		put("SysAccount_post", BuiltinObjectInstance.accountController, "add");
-		put("SysAccount_put", BuiltinObjectInstance.accountController, "update");
-		put("SysAccount_delete", BuiltinObjectInstance.accountController, "delete");
-		put("/account/add/post", BuiltinObjectInstance.accountController, "add");
-		put("/account/update/put", BuiltinObjectInstance.accountController, "update");
-		put("/account/delete/delete", BuiltinObjectInstance.accountController, "delete");
+		put("SysAccount_post", BuiltinResourceInstance.getInstance("SysAccountController"), "add");
+		put("SysAccount_put", BuiltinResourceInstance.getInstance("SysAccountController"), "update");
+		put("SysAccount_delete", BuiltinResourceInstance.getInstance("SysAccountController"), "delete");
+		put("/account/add/post", BuiltinResourceInstance.getInstance("SysAccountController"), "add");
+		put("/account/update/put", BuiltinResourceInstance.getInstance("SysAccountController"), "update");
+		put("/account/delete/delete", BuiltinResourceInstance.getInstance("SysAccountController"), "delete");
 	}
 	
 

@@ -5,8 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.service.other.SystemToolsService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -30,7 +31,7 @@ public class SystemToolsController extends AbstractController{
 			resourceNameArr = resourceNames.split(",");
 		}
 		
-		resultObject = BuiltinObjectInstance.systemToolsService.monitorHibernateClassMetadata(resourceNameArr);
+		resultObject = BuiltinResourceInstance.getInstance("SystemToolsService", SystemToolsService.class).monitorHibernateClassMetadata(resourceNameArr);
 		return getResultObject();
 	}
 	
@@ -46,7 +47,7 @@ public class SystemToolsController extends AbstractController{
 			return "获取指定资源信息接口的url参数[name]的值不能为空";
 		}
 		
-		resultObject = BuiltinObjectInstance.systemToolsService.getResourceInfo(name);
+		resultObject = BuiltinResourceInstance.getInstance("SystemToolsService", SystemToolsService.class).getResourceInfo(name);
 		return getResultObject();
 	}
 }

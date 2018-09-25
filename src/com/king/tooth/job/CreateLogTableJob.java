@@ -16,6 +16,8 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
+import com.king.tooth.sys.service.cfg.CfgTableService;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -48,8 +50,8 @@ public class CreateLogTableJob implements Job, Serializable{
 			
 			// 获取两个日志表对象
 			List<ComTabledata> logTables = new ArrayList<ComTabledata>(logTableSize);
-			logTables.add(BuiltinResourceInstance.getEntityInstance("SysReqLog", SysReqLog.class).toCreateTable());
-			logTables.add(BuiltinResourceInstance.getEntityInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
+			logTables.add(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable());
+			logTables.add(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
 			
 			DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 			try {
@@ -67,9 +69,7 @@ public class CreateLogTableJob implements Job, Serializable{
 				SysReqLog.yyyyMM = yyyyMMBak;
 				
 				for (ComTabledata logTable : logTables) {
-					BuiltinResourceInstance.getServiceInstance("", clz)
-					
-					BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, logTable, null, false);
+					BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, logTable, null, false);
 				}
 			} finally{
 				// 关闭连接
@@ -106,7 +106,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			HibernateUtil.saveObject(hbm, null);
 			
 			// 3、插入资源数据
-			BuiltinObjectInstance.resourceService.saveSysResource(logTable);
+			BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(logTable);
 		}
 		
 		// 4、将hbm配置内容，加入到sessionFactory中

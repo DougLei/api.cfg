@@ -9,10 +9,11 @@ import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
+import com.king.tooth.sys.service.cfg.CfgProjectModuleService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
@@ -34,10 +35,10 @@ public class CfgProjectModuleController extends AbstractPublishController{
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
 			if(projectModules.size() == 1){
-				resultObject = BuiltinObjectInstance.projectModuleService.saveProjectModule(projectModules.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).saveProjectModule(projectModules.get(0));
 			}else{
 				for (ComProjectModule projectModule : projectModules) {
-					resultObject = BuiltinObjectInstance.projectModuleService.saveProjectModule(projectModule);
+					resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).saveProjectModule(projectModule);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -60,10 +61,10 @@ public class CfgProjectModuleController extends AbstractPublishController{
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
 			if(projectModules.size() == 1){
-				resultObject = BuiltinObjectInstance.projectModuleService.updateProjectModule(projectModules.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).updateProjectModule(projectModules.get(0));
 			}else{
 				for (ComProjectModule projectModule : projectModules) {
-					resultObject = BuiltinObjectInstance.projectModuleService.updateProjectModule(projectModule);
+					resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).updateProjectModule(projectModule);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -89,7 +90,7 @@ public class CfgProjectModuleController extends AbstractPublishController{
 		
 		String[] projectModuleIdArr = projectModuleIds.split(",");
 		for (String projectModuleId : projectModuleIdArr) {
-			resultObject = BuiltinObjectInstance.projectModuleService.deleteProjectModule(projectModuleId);
+			resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).deleteProjectModule(projectModuleId);
 			if(resultObject != null){
 				break;
 			}
@@ -113,7 +114,7 @@ public class CfgProjectModuleController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的项目模块id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.projectModuleService.publishProjectModule(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).publishProjectModule(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -134,7 +135,7 @@ public class CfgProjectModuleController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要取消发布的项目模块id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.projectModuleService.cancelPublishProjectModule(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).cancelPublishProjectModule(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

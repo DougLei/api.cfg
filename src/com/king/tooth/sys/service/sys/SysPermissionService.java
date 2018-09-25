@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
@@ -334,14 +335,14 @@ public class SysPermissionService extends AbstractService{
 		
 		SysPermissionExtend permission = null;
 		if(sapc == null){
-			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus);
+			permission = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).findAccountOfPermissions(accountOnlineStatus);
 			
 			sapc = new SysUserPermissionCache();
 			sapc.setUserId(accountOnlineStatus.getUserId());
 			sapc.setPermission(JsonUtil.toJsonString(permission, false));
 			HibernateUtil.saveObject(sapc, null);
 		}else if(StrUtils.isEmpty(sapc.getPermission())){
-			permission = BuiltinObjectInstance.permissionService.findAccountOfPermissions(accountOnlineStatus);
+			permission = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).findAccountOfPermissions(accountOnlineStatus);
 			
 			sapc.setPermission(JsonUtil.toJsonString(permission, false));
 			HibernateUtil.updateObject(sapc, null);

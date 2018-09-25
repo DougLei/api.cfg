@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.king.tooth.constants.EncodingConstants;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.service.sys.SysFileService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.FileUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -34,7 +35,7 @@ public class FileServlet extends HttpServlet{
 				
 				// 下载
 				if("get".equals(method) && "download".equals(uri[3])){
-					result = BuiltinObjectInstance.fileService.download(request, response);
+					result = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).download(request, response);
 					if(result instanceof String){// 如果下载出现问题，则最后需要打印responseBody
 						response.setHeader("Content-Type", "application/json;charset="+ EncodingConstants.UTF_8);
 						request.setAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY, true);
@@ -42,11 +43,11 @@ public class FileServlet extends HttpServlet{
 				}
 				// 上传
 				else if("post".equals(method) && "upload".equals(uri[3])){
-					result = BuiltinObjectInstance.fileService.upload(request);
+					result = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).upload(request);
 				}
 				// 删除
 				else if("delete".equals(method) && "delete".equals(uri[3])){
-					result = BuiltinObjectInstance.fileService.delete(request);
+					result = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).delete(request);
 				}
 				// 暂不支持
 				else{

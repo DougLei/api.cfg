@@ -1,11 +1,13 @@
 package com.king.tooth.web.entity.request;
 
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.service.cfg.CfgSqlService;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
@@ -63,12 +65,12 @@ public class ResourceInfo {
 			}
 			resourceType = ISysResource.CODE;
 		}else{
-			reqResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getResourceName());
+			reqResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getResourceName());
 			resourceType = reqResource.getResourceType();
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ISysResource.SQLSCRIPT == resourceType){
-				sqlScriptResource = BuiltinObjectInstance.sqlScriptService.findSqlScriptResourceById(reqResource.getRefResourceId());
+				sqlScriptResource = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(reqResource.getRefResourceId());
 				
 				if("none".equals(sqlScriptResource.getReqResourceMethod())){
 					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，不支持任何方式的请求");
@@ -85,7 +87,7 @@ public class ResourceInfo {
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				reqParentResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
+				reqParentResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getParentResourceName());
 				
 				if(reqParentResource.getResourceType() != resourceType){
 					throw new IllegalArgumentException("系统目前不支持处理不同类型的资源混合调用");

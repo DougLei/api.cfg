@@ -76,148 +76,96 @@ import com.king.tooth.sys.service.sys.SysUserService;
 public class BuiltinResourceInstance {
 	
 	/**
-	 * controller类的map缓存
+	 * 类实例的map缓存
 	 */
-	private static final Map<String, Object> controllerCache = new HashMap<String, Object>(12); 
+	private static final Map<String, Object> instanceCache = new HashMap<String, Object>(70); 
 	static{
-		controllerCache.put("CfgTableController", new CfgTableController());
-		controllerCache.put("CfgColumnController", new CfgColumnController());
-		controllerCache.put("CfgDatabaseController", new CfgDatabaseController());
-		controllerCache.put("CfgProjectController", new CfgProjectController());
-		controllerCache.put("CfgProjectModuleController", new CfgProjectModuleController());
-		controllerCache.put("CfgSqlController", new CfgSqlController());
-		controllerCache.put("CfgSqlParameterController", new CfgSqlParameterController());
-		controllerCache.put("SysAccountController", new SysAccountController());
-		controllerCache.put("SysUserController", new SysUserController());
-		controllerCache.put("SysPermissionController", new SysPermissionController());
-		controllerCache.put("SystemToolsController", new SystemToolsController());
-		controllerCache.put("SysPushMessageInfoController", new SysPushMessageInfoController());
+		instanceCache.put("CfgDatabaseController", new CfgDatabaseController());
+		instanceCache.put("CfgProjectController", new CfgProjectController());
+		instanceCache.put("CfgProjectModuleController", new CfgProjectModuleController());
+		instanceCache.put("CfgTableController", new CfgTableController());
+		instanceCache.put("CfgColumnController", new CfgColumnController());
+		instanceCache.put("CfgSqlController", new CfgSqlController());
+		instanceCache.put("CfgSqlParameterController", new CfgSqlParameterController());
+		instanceCache.put("SysAccountController", new SysAccountController());
+		instanceCache.put("SysUserController", new SysUserController());
+		instanceCache.put("SysPermissionController", new SysPermissionController());
+		instanceCache.put("SystemToolsController", new SystemToolsController());
+		instanceCache.put("SysPushMessageInfoController", new SysPushMessageInfoController());
+		
+		instanceCache.put("CfgTableService", new CfgTableService());
+		instanceCache.put("CfgColumnService", new CfgColumnService());
+		instanceCache.put("CfgDatabaseService", new CfgDatabaseService());
+		instanceCache.put("CfgProjectService", new CfgProjectService());
+		instanceCache.put("CfgProjectModuleService", new CfgProjectModuleService());
+		instanceCache.put("CfgSqlService", new CfgSqlService());
+		instanceCache.put("DmPublishInfoService", new DmPublishInfoService());
+		instanceCache.put("SysAccountOnlineStatusService", new SysAccountOnlineStatusService());
+		instanceCache.put("SysAccountService", new SysAccountService());
+		instanceCache.put("SysResourceService", new SysResourceService());
+		instanceCache.put("SysUserService", new SysUserService());
+		instanceCache.put("SysPermissionService", new SysPermissionService());
+		instanceCache.put("SysFileService", new SysFileService());
+		instanceCache.put("SystemToolsService", new SystemToolsService());
+		instanceCache.put("SysPushMessageInfoService", new SysPushMessageInfoService());
+		
+		instanceCache.put("CfgDatabase", new CfgDatabase());
+		instanceCache.put("CfgTable", new ComTabledata());
+		instanceCache.put("CfgColumn", new ComColumndata());
+		instanceCache.put("CfgProject", new ComProject());
+		instanceCache.put("CfgProjectModule", new ComProjectModule());
+		instanceCache.put("CfgSql", new ComSqlScript());
+		instanceCache.put("CfgSqlParameter", new ComSqlScriptParameter());
+		instanceCache.put("CfgSqlResultset", new CfgSqlResultset());
+		instanceCache.put("CfgColumnCodeRule", new CfgColumnCodeRule());
+		instanceCache.put("CfgColumnCodeRuleDetail", new CfgColumnCodeRuleDetail());
+		instanceCache.put("CfgProjectHbmLinks", new CfgProjectHbmLinks());
+		instanceCache.put("CfgProjectSqlLinks", new CfgProjectSqlLinks());
+		instanceCache.put("CfgProjectTableLinks", new CfgProjectTableLinks());
+		instanceCache.put("DmPublishBasicData", new DmPublishBasicData());
+		instanceCache.put("DmPublishInfo", new DmPublishInfo());
+		instanceCache.put("SysUser", new SysUser());
+		instanceCache.put("SysAccount", new SysAccount());
+		instanceCache.put("SysAccountOnlineStatus", new SysAccountOnlineStatus());
+		instanceCache.put("SysDataDictionary", new SysDataDictionary());
+		instanceCache.put("SysOrg", new SysOrg());
+		instanceCache.put("SysDept", new SysDept());
+		instanceCache.put("SysPosition", new SysPosition());
+		instanceCache.put("SysRole", new SysRole());
+		instanceCache.put("SysPermission", new SysPermission());
+		instanceCache.put("SysUserPermissionCache", new SysUserPermissionCache());
+		instanceCache.put("SysPermissionPriority", new SysPermissionPriority());
+		instanceCache.put("SysReqLog", new SysReqLog());
+		instanceCache.put("SysOperSqlLog", new SysOperSqlLog());
+		instanceCache.put("SysResource", new SysResource());
+		instanceCache.put("SysFile", new SysFile());
+		instanceCache.put("SysHibernateHbm", new SysHibernateHbm());
+		instanceCache.put("SysUserGroup", new SysUserGroup());
+		instanceCache.put("SysUserGroupDetail", new SysUserGroupDetail());
+		instanceCache.put("SysPushMessageInfo", new SysPushMessageInfo());
+		instanceCache.put("SysDataPrivS", new SysDataPrivS());
+		instanceCache.put("SysDataLinks", new SysDataLinks());
+		instanceCache.put("SysUserRoleLinks", new SysUserRoleLinks());
+		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
+		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
 	}
 	
 	/**
-	 * 获得controller实例
+	 * 获得实例
 	 * @param name
 	 * @return
 	 */
-	public static Object getControllerInstance(String name){
-		return controllerCache.get(name);
+	public static Object getInstance(String name){
+		return instanceCache.get(name);
 	}
 	/**
-	 * 获得controller实例
+	 * 获得实例
 	 * @param name
 	 * @param clz
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getControllerInstance(String name, Class<T> clz){
-		return (T) controllerCache.get(name);
-	}
-	
-	// --------------------------------------------------------------------
-	/**
-	 * service层类的map缓存
-	 */
-	private static final Map<String, Object> serviceCache = new HashMap<String, Object>(15); 
-	static{
-		serviceCache.put("CfgTableService", new CfgTableService());
-		serviceCache.put("CfgColumnService", new CfgColumnService());
-		serviceCache.put("CfgDatabaseService", new CfgDatabaseService());
-		serviceCache.put("CfgProjectService", new CfgProjectService());
-		serviceCache.put("CfgProjectModuleService", new CfgProjectModuleService());
-		serviceCache.put("CfgSqlService", new CfgSqlService());
-		serviceCache.put("DmPublishInfoService", new DmPublishInfoService());
-		serviceCache.put("SysAccountOnlineStatusService", new SysAccountOnlineStatusService());
-		serviceCache.put("SysAccountService", new SysAccountService());
-		serviceCache.put("SysResourceService", new SysResourceService());
-		serviceCache.put("SysUserService", new SysUserService());
-		serviceCache.put("SysPermissionService", new SysPermissionService());
-		serviceCache.put("SysFileService", new SysFileService());
-		serviceCache.put("SystemToolsService", new SystemToolsService());
-		serviceCache.put("SysPushMessageInfoService", new SysPushMessageInfoService());
-	}
-	
-	/**
-	 * 获得service实例
-	 * @param name
-	 * @return
-	 */
-	public static Object getServiceInstance(String name){
-		return serviceCache.get(name);
-	}
-	/**
-	 * 获得service实例
-	 * @param name
-	 * @param clz
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getServiceInstance(String name, Class<T> clz){
-		return (T) serviceCache.get(name);
-	}
-	
-	// --------------------------------------------------------------------
-	/**
-	 * entity类的map缓存
-	 */
-	private static final Map<String, Object> entityCache = new HashMap<String, Object>(39); 
-	static{
-		entityCache.put("CfgDatabase", new CfgDatabase());
-		entityCache.put("CfgTable", new ComTabledata());
-		entityCache.put("CfgColumn", new ComColumndata());
-		entityCache.put("CfgProject", new ComProject());
-		entityCache.put("CfgProjectModule", new ComProjectModule());
-		entityCache.put("CfgSql", new ComSqlScript());
-		entityCache.put("CfgSqlParameter", new ComSqlScriptParameter());
-		entityCache.put("CfgSqlResultset", new CfgSqlResultset());
-		entityCache.put("CfgColumnCodeRule", new CfgColumnCodeRule());
-		entityCache.put("CfgColumnCodeRuleDetail", new CfgColumnCodeRuleDetail());
-		entityCache.put("CfgProjectHbmLinks", new CfgProjectHbmLinks());
-		entityCache.put("CfgProjectSqlLinks", new CfgProjectSqlLinks());
-		entityCache.put("CfgProjectTableLinks", new CfgProjectTableLinks());
-		entityCache.put("DmPublishBasicData", new DmPublishBasicData());
-		entityCache.put("DmPublishInfo", new DmPublishInfo());
-		entityCache.put("SysUser", new SysUser());
-		entityCache.put("SysAccount", new SysAccount());
-		entityCache.put("SysAccountOnlineStatus", new SysAccountOnlineStatus());
-		entityCache.put("SysDataDictionary", new SysDataDictionary());
-		entityCache.put("SysOrg", new SysOrg());
-		entityCache.put("SysDept", new SysDept());
-		entityCache.put("SysPosition", new SysPosition());
-		entityCache.put("SysRole", new SysRole());
-		entityCache.put("SysPermission", new SysPermission());
-		entityCache.put("SysUserPermissionCache", new SysUserPermissionCache());
-		entityCache.put("SysPermissionPriority", new SysPermissionPriority());
-		entityCache.put("SysReqLog", new SysReqLog());
-		entityCache.put("SysOperSqlLog", new SysOperSqlLog());
-		entityCache.put("SysResource", new SysResource());
-		entityCache.put("SysFile", new SysFile());
-		entityCache.put("SysHibernateHbm", new SysHibernateHbm());
-		entityCache.put("SysUserGroup", new SysUserGroup());
-		entityCache.put("SysUserGroupDetail", new SysUserGroupDetail());
-		entityCache.put("SysPushMessageInfo", new SysPushMessageInfo());
-		entityCache.put("SysDataPrivS", new SysDataPrivS());
-		entityCache.put("SysDataLinks", new SysDataLinks());
-		entityCache.put("SysUserRoleLinks", new SysUserRoleLinks());
-		entityCache.put("SysUserDeptLinks", new SysUserDeptLinks());
-		entityCache.put("SysUserPositionLinks", new SysUserDeptLinks());
-	}
-	
-	/**
-	 * 获得entity实例
-	 * @param name
-	 * @return
-	 */
-	public static Object getEntityInstance(String name){
-		return entityCache.get(name);
-	}
-	/**
-	 * 获得entity实例
-	 * @param name
-	 * @param clz
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getEntityInstance(String name, Class<T> clz){
-		return (T) entityCache.get(name);
+	public static <T> T getInstance(String name, Class<T> clz){
+		return (T) instanceCache.get(name);
 	}
 }

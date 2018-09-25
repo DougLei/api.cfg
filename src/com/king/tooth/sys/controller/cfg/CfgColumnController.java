@@ -8,10 +8,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.service.cfg.CfgColumnService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -32,10 +33,10 @@ public class CfgColumnController extends AbstractController{
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
-				resultObject = BuiltinObjectInstance.columnService.saveColumn(columns.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).saveColumn(columns.get(0));
 			}else{
 				for (ComColumndata column : columns) {
-					resultObject = BuiltinObjectInstance.columnService.saveColumn(column);
+					resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).saveColumn(column);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -58,10 +59,10 @@ public class CfgColumnController extends AbstractController{
 		analysisResourceProp(columns);
 		if(analysisResult == null){
 			if(columns.size() == 1){
-				resultObject = BuiltinObjectInstance.columnService.updateColumn(columns.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).updateColumn(columns.get(0));
 			}else{
 				for (ComColumndata column : columns) {
-					resultObject = BuiltinObjectInstance.columnService.updateColumn(column);
+					resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).updateColumn(column);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -84,7 +85,7 @@ public class CfgColumnController extends AbstractController{
 		if(StrUtils.isEmpty(columnIds)){
 			return "要删除的列id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.columnService.deleteColumn(columnIds);
+		resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).deleteColumn(columnIds);
 		processResultObject(BuiltinParameterKeys._IDS, columnIds);
 		return getResultObject();
 	}

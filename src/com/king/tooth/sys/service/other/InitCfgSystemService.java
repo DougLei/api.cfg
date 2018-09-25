@@ -17,6 +17,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
@@ -58,6 +59,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -608,24 +610,27 @@ public class InitCfgSystemService extends AbstractService{
 	private void initLogTables() {
 		// 判断是否存在日志表table
 		DBTableHandler tableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		List<String> logTableNames = tableHandler.filterTable(false, BuiltinObjectInstance.sysReqLog.toDropTable(), BuiltinObjectInstance.sysOperSqlLog.toDropTable());
+		List<String> logTableNames = tableHandler.filterTable(false, BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable(), BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable());
 		if(logTableNames != null && logTableNames.size() > 0){
 			// 不存在，则create
 			for (String logTableName : logTableNames) {
-				if(logTableName.equals(BuiltinObjectInstance.sysReqLog.toDropTable())){
-					tableHandler.createTable(BuiltinObjectInstance.sysReqLog.toCreateTable(), true);
-				}else if(logTableName.equals(BuiltinObjectInstance.sysOperSqlLog.toDropTable())){
-					tableHandler.createTable(BuiltinObjectInstance.sysOperSqlLog.toCreateTable(), true);
+				
+				
+				
+				if(logTableName.equals(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable())){
+					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable(), true);
+				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable())){
+					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable(), true);
 				}
 			}
 		}
 		
 		// 判断是否存在日志表的hbm
-		if(!HibernateUtil.hbmConfigIsExists(BuiltinObjectInstance.sysReqLog.getEntityName())){
-			createHbm(BuiltinObjectInstance.sysReqLog.toCreateTable());
+		if(!HibernateUtil.hbmConfigIsExists(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).getEntityName())){
+			createHbm(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable());
 		}
-		if(!HibernateUtil.hbmConfigIsExists(BuiltinObjectInstance.sysOperSqlLog.getEntityName())){
-			createHbm(BuiltinObjectInstance.sysOperSqlLog.toCreateTable());
+		if(!HibernateUtil.hbmConfigIsExists(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).getEntityName())){
+			createHbm(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
 		}
 	}
 	
@@ -642,7 +647,7 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateUtil.saveObject(hbm, null);
 		
 		// 插入资源数据
-		BuiltinObjectInstance.resourceService.saveSysResource(table);
+		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(table);
 		
 		// 将hbm配置内容，加入到sessionFactory中
 		HibernateUtil.appendNewConfig(hbm.getHbmContent());

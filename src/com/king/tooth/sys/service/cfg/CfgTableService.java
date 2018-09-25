@@ -14,7 +14,7 @@ import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -23,6 +23,7 @@ import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AbstractPublishService;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -255,7 +256,7 @@ public class CfgTableService extends AbstractPublishService {
 				// 删除hbm信息
 				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 				// 删除资源
-				BuiltinObjectInstance.resourceService.deleteSysResource(table.getId());
+				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(table.getId());
 				
 				// 判断该表是否存在
 				List<String> tableNames = dbTableHandler.filterTable(true, table.getTableName());
@@ -301,7 +302,7 @@ public class CfgTableService extends AbstractPublishService {
 				HibernateUtil.saveObject(hbm, null);
 				
 				// 3、插入资源数据
-				BuiltinObjectInstance.resourceService.saveSysResource(tb);
+				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(tb);
 			}
 			// 4、将hbm配置内容，加入到sessionFactory中
 			HibernateUtil.appendNewConfig(hbmContents);
@@ -393,7 +394,7 @@ public class CfgTableService extends AbstractPublishService {
 			// 删除hbm信息
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
 			// 删除资源
-			BuiltinObjectInstance.resourceService.deleteSysResource(tableId);
+			BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
 			// 修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为待创建状态，且置空oldInfoJson字段的值
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = ? and operStatus=?", tableId, ComColumndata.DELETED);
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", ComColumndata.UN_CREATED, tableId, ComColumndata.DELETED);

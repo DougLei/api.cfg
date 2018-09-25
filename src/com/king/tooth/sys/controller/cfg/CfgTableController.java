@@ -11,10 +11,11 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
@@ -36,10 +37,10 @@ public class CfgTableController extends AbstractPublishController{
 		analysisResourceProp(tables);
 		if(analysisResult == null){
 			if(tables.size() == 1){
-				resultObject = BuiltinObjectInstance.tableService.saveTable(tables.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(tables.get(0));
 			}else{
 				for (ComTabledata table : tables) {
-					resultObject = BuiltinObjectInstance.tableService.saveTable(table);
+					resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(table);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -62,10 +63,10 @@ public class CfgTableController extends AbstractPublishController{
 		analysisResourceProp(tables);
 		if(analysisResult == null){
 			if(tables.size() == 1){
-				resultObject = BuiltinObjectInstance.tableService.updateTable(tables.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(tables.get(0));
 			}else{
 				for (ComTabledata table : tables) {
-					resultObject = BuiltinObjectInstance.tableService.updateTable(table);
+					resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(table);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -87,7 +88,7 @@ public class CfgTableController extends AbstractPublishController{
 		String tableIds = request.getParameter(BuiltinParameterKeys._IDS);
 		String[] tableIdArr = tableIds.split(",");
 		for (String tableId : tableIdArr) {
-			resultObject = BuiltinObjectInstance.tableService.deleteTable(tableId);
+			resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).deleteTable(tableId);
 			if(resultObject != null){
 				break;
 			}
@@ -119,7 +120,7 @@ public class CfgTableController extends AbstractPublishController{
 			if(StrUtils.isEmpty(tableId)){
 				return "要建模的表id不能为空";
 			}
-			resultObject = BuiltinObjectInstance.tableService.buildModel(tableId, deleteTableIds, dbTableHandler);
+			resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).buildModel(tableId, deleteTableIds, dbTableHandler);
 		}else{
 			for(int i=0;i<len ;i++){
 				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
@@ -127,7 +128,7 @@ public class CfgTableController extends AbstractPublishController{
 					resultObject = "要建模的表id不能为空";
 					continue;
 				}
-				resultObject = BuiltinObjectInstance.tableService.buildModel(tableId, deleteTableIds, dbTableHandler);
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).buildModel(tableId, deleteTableIds, dbTableHandler);
 				if(resultObject != null){
 					break;
 				}
@@ -161,7 +162,7 @@ public class CfgTableController extends AbstractPublishController{
 			if(StrUtils.isEmpty(tableId)){
 				return "要取消建模的表id不能为空";
 			}
-			resultObject = BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, null, tableId, true);
+			resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, null, tableId, true);
 		}else{
 			for(int i=0;i<len ;i++){
 				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
@@ -169,7 +170,7 @@ public class CfgTableController extends AbstractPublishController{
 					resultObject = "要取消建模的表id不能为空";
 					continue;
 				}
-				resultObject = BuiltinObjectInstance.tableService.cancelBuildModel(dbTableHandler, null, tableId, true);
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, null, tableId, true);
 				if(resultObject != null){
 					break;
 				}
@@ -196,7 +197,7 @@ public class CfgTableController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的表id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.tableService.addProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).addProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -217,7 +218,7 @@ public class CfgTableController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的表id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.tableService.cancelProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelProjTableRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -239,7 +240,7 @@ public class CfgTableController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的表id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.tableService.publishTable(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).publishTable(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -260,7 +261,7 @@ public class CfgTableController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要取消发布的表id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.tableService.cancelPublishTable(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelPublishTable(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

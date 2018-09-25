@@ -7,10 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -30,7 +31,7 @@ public class CfgSqlParameterController extends AbstractPublishController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = BuiltinObjectInstance.sqlScriptService.saveSqlScriptParameter(sqlScriptParameters);
+			resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScriptParameter(sqlScriptParameters);
 			sqlScriptParameters.clear();
 		}
 		return getResultObject();
@@ -46,7 +47,7 @@ public class CfgSqlParameterController extends AbstractPublishController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = BuiltinObjectInstance.sqlScriptService.updateSqlScriptParameter(sqlScriptParameters);
+			resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScriptParameter(sqlScriptParameters);
 			sqlScriptParameters.clear();
 		}
 		return getResultObject();
@@ -63,7 +64,7 @@ public class CfgSqlParameterController extends AbstractPublishController{
 		if(StrUtils.isEmpty(sqlScriptParameterIds)){
 			return "要删除的sql脚本参数id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.sqlScriptService.deleteSqlScriptParameter(sqlScriptParameterIds);
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).deleteSqlScriptParameter(sqlScriptParameterIds);
 		processResultObject(BuiltinParameterKeys._IDS, sqlScriptParameterIds);
 		return getResultObject();
 	}

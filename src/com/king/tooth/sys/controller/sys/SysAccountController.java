@@ -10,11 +10,12 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
@@ -38,7 +39,7 @@ public class SysAccountController extends AbstractController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(1);// 标识为登陆日志
 		
 		SysAccount account = JsonUtil.toJavaObject(ijson.get(0), SysAccount.class);
-		SysAccountOnlineStatus accountOnlineStatus = BuiltinObjectInstance.accountService.login(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).login(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{
@@ -70,7 +71,7 @@ public class SysAccountController extends AbstractController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(2);// 标识为退出登陆日志
 		
 		String token = request.getHeader("_token");
-		BuiltinObjectInstance.accountService.loginOut(token);
+		BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginOut(token);
 		
 		JSONObject jsonObject = new JSONObject(1);
 		jsonObject.put("_token", token);
@@ -91,10 +92,10 @@ public class SysAccountController extends AbstractController{
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
-				resultObject = BuiltinObjectInstance.accountService.saveAccount(accounts.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(accounts.get(0));
 			}else{
 				for (SysAccount account : accounts) {
-					resultObject = BuiltinObjectInstance.accountService.saveAccount(account);
+					resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(account);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -117,10 +118,10 @@ public class SysAccountController extends AbstractController{
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
 			if(accounts.size() == 1){
-				resultObject = BuiltinObjectInstance.accountService.updateAccount(accounts.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(accounts.get(0));
 			}else{
 				for (SysAccount account : accounts) {
-					resultObject = BuiltinObjectInstance.accountService.updateAccount(account);
+					resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(account);
 					if(resultObject instanceof String){
 						break;
 					}
@@ -146,7 +147,7 @@ public class SysAccountController extends AbstractController{
 		
 		String[] accountIdArr = accountIds.split(",");
 		for (String accountId : accountIdArr) {
-			resultObject = BuiltinObjectInstance.accountService.deleteAccount(accountId);
+			resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteAccount(accountId);
 			if(resultObject != null){
 				break;
 			}
@@ -169,7 +170,7 @@ public class SysAccountController extends AbstractController{
 		if(StrUtils.isEmpty(jsonObject.getString("password"))){
 			return "新密码不能为空";
 		}
-		resultObject = BuiltinObjectInstance.accountService.uploadAccounLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
+		resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).uploadAccounLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
 		return getResultObject();
 	}
 }

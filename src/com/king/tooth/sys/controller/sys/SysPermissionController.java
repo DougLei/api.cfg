@@ -5,8 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.service.sys.SysPermissionService;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -32,7 +33,7 @@ public class SysPermissionController extends AbstractController{
 		boolean recursive = "true".equals(request.getParameter("recursive"));
 		int deep = (request.getParameter("deep")== null)? 0:Integer.valueOf(request.getParameter("deep"));
 		
-		resultObject = BuiltinObjectInstance.permissionService.calcPermissionByCode(code, recursive, deep);
+		resultObject = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).calcPermissionByCode(code, recursive, deep);
 		return getResultObject();
 	}
 }

@@ -9,10 +9,11 @@ import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
+import com.king.tooth.sys.service.sys.SysPushMessageInfoService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.websocket.pushmessage.PushMessageThread;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -64,7 +65,7 @@ public class SysPushMessageInfoController extends AbstractController{
 		if(StrUtils.isEmpty(id)){
 			return "要阅读的消息id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.sysPushMessageInfoService.readMessage(id);
+		resultObject = BuiltinResourceInstance.getInstance("SysPushMessageInfoService", SysPushMessageInfoService.class).readMessage(id);
 		return getResultObject();
 	}
 	
@@ -81,10 +82,10 @@ public class SysPushMessageInfoController extends AbstractController{
 		List<SysPushMessageInfo> sysPushMessageInfos = getDataInstanceList(ijson, SysPushMessageInfo.class, true);
 		if(analysisResult == null){
 			if(sysPushMessageInfos.size() == 1){
-				resultObject = BuiltinObjectInstance.sysPushMessageInfoService.updateMessageReadStatus(sysPushMessageInfos.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("SysPushMessageInfoService", SysPushMessageInfoService.class).updateMessageReadStatus(sysPushMessageInfos.get(0));
 			}else{
 				for (SysPushMessageInfo spmi : sysPushMessageInfos) {
-					resultObject = BuiltinObjectInstance.sysPushMessageInfoService.updateMessageReadStatus(spmi);
+					resultObject = BuiltinResourceInstance.getInstance("SysPushMessageInfoService", SysPushMessageInfoService.class).updateMessageReadStatus(spmi);
 					if(resultObject instanceof String){
 						break;
 					}

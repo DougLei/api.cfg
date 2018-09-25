@@ -9,7 +9,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -129,7 +129,7 @@ public class CfgSqlService extends AbstractPublishService {
 //				if(isDeveloper){
 					// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
 					sqlScript.setId(sqlScriptId);
-					BuiltinObjectInstance.resourceService.saveSysResource(sqlScript);
+					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(sqlScript);
 //				}
 				
 				// TODO 单项目，取消是否平台开发者的判断
@@ -183,7 +183,7 @@ public class CfgSqlService extends AbstractPublishService {
 //			if(isDeveloper && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 				// 如果修改了sql脚本的资源名，也要同步修改SysResource表中的资源名
-				BuiltinObjectInstance.resourceService.updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
+				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
 			}
 			if(operResult == null){
 				return HibernateUtil.updateObject(sqlScript, null);

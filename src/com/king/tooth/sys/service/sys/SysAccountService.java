@@ -13,6 +13,7 @@ import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
@@ -20,6 +21,7 @@ import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.cfg.CfgProjectModuleService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -242,7 +244,7 @@ public class SysAccountService extends AbstractService{
 			return false;
 		}
 		
-		SysUserPermissionCache sapc = BuiltinObjectInstance.permissionService.getSysUserPermissionCache(accountOnlineStatus);
+		SysUserPermissionCache sapc = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).getSysUserPermissionCache(accountOnlineStatus);
 		SysPermissionExtend permission = sapc.getPermissionObject();
 		
 		if((accountOnlineStatus.isNormal())
@@ -251,7 +253,7 @@ public class SysAccountService extends AbstractService{
 			return false;
 		}
 		
-		BuiltinObjectInstance.permissionService.filterPermission(permission, PermissionConstants.RT_MODULE);
+		BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).filterPermission(permission, PermissionConstants.RT_MODULE);
 		accountOnlineStatus.setProjectModules(processProjectModules(permission));
 		return true;
 	}
@@ -266,9 +268,9 @@ public class SysAccountService extends AbstractService{
 	private List<ProjectModuleExtend> processProjectModules(SysPermissionExtend permission) {
 		if(permission == BuiltinObjectInstance.allPermission){
 			// 证明是管理员或系统开发人员
-			return BuiltinObjectInstance.projectModuleService.getCurrentProjectOfModules();
+			return BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).getCurrentProjectOfModules();
 		}else{
-			return BuiltinObjectInstance.projectModuleService.getProjectModulesByPermission(permission);
+			return BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).getProjectModulesByPermission(permission);
 		}
 	}
 	

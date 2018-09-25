@@ -9,10 +9,11 @@ import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AbstractPublishController;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
@@ -34,11 +35,11 @@ public class CfgSqlController extends AbstractPublishController{
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
 			if(sqlScripts.size() == 1){
-				resultObject = BuiltinObjectInstance.sqlScriptService.saveSqlScript(sqlScripts.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScript(sqlScripts.get(0));
 				sqlScripts.get(0).clear();
 			}else{
 				for (ComSqlScript sqlScript : sqlScripts) {
-					resultObject = BuiltinObjectInstance.sqlScriptService.saveSqlScript(sqlScript);
+					resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScript(sqlScript);
 					sqlScript.clear();
 					if(resultObject instanceof String){
 						break;
@@ -62,11 +63,11 @@ public class CfgSqlController extends AbstractPublishController{
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
 			if(sqlScripts.size() == 1){
-				resultObject = BuiltinObjectInstance.sqlScriptService.updateSqlScript(sqlScripts.get(0));
+				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScript(sqlScripts.get(0));
 				sqlScripts.get(0).clear();
 			}else{
 				for (ComSqlScript sqlScript : sqlScripts) {
-					resultObject = BuiltinObjectInstance.sqlScriptService.updateSqlScript(sqlScript);
+					resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScript(sqlScript);
 					sqlScript.clear();
 					if(resultObject instanceof String){
 						break;
@@ -93,7 +94,7 @@ public class CfgSqlController extends AbstractPublishController{
 
 		String[] sqlScriptIdArr = sqlScriptIds.split(",");
 		for (String sqlScriptId : sqlScriptIdArr) {
-			resultObject = BuiltinObjectInstance.sqlScriptService.deleteSqlScript(sqlScriptId);
+			resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).deleteSqlScript(sqlScriptId);
 			if(resultObject != null){
 				break;
 			}
@@ -110,7 +111,7 @@ public class CfgSqlController extends AbstractPublishController{
 	 */
 	@RequestMapping
 	public Object immediateCreate(HttpServletRequest request, IJson ijson){
-		resultObject = BuiltinObjectInstance.sqlScriptService.immediateCreate(ijson);
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).immediateCreate(ijson);
 		if(resultObject == null){
 			resultObject = ijson.getJson();
 		}
@@ -131,7 +132,7 @@ public class CfgSqlController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的sql脚本id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.sqlScriptService.addProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).addProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -152,7 +153,7 @@ public class CfgSqlController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要操作的sql脚本id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.sqlScriptService.cancelProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).cancelProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -174,7 +175,7 @@ public class CfgSqlController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要发布的sql脚本id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.sqlScriptService.publishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).publishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
@@ -195,7 +196,7 @@ public class CfgSqlController extends AbstractPublishController{
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要取消发布的sql脚本id不能为空";
 		}
-		resultObject = BuiltinObjectInstance.sqlScriptService.cancelPublishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).cancelPublishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
