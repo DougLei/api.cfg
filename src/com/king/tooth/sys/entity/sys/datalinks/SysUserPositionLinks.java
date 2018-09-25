@@ -20,24 +20,6 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 @Table
 public class SysUserPositionLinks implements Serializable, ITable {
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_USER_POSITION_LINKS", 0);
-		table.setResourceName("SysUserPositionLinks");
-		table.setName("人员和职务的关联关系表");
-		table.setComments("人员和职务的关联关系表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		
-		table.setColumns(getColumnList());
-		return table;
-	}
-
-	public String toDropTable() {
-		return "SYS_USER_POSITION_LINKS";
-	}
-
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(7);
@@ -69,5 +51,23 @@ public class SysUserPositionLinks implements Serializable, ITable {
 		columns.add(isMainColumn);
 		
 		return columns;
+	}
+	
+	public ComTabledata toCreateTable() {
+		ComTabledata table = new ComTabledata("SYS_USER_POSITION_LINKS", 0);
+		table.setResourceName("SysUserPositionLinks");
+		table.setName("人员和职务的关联关系表");
+		table.setComments("人员和职务的关联关系表");
+		table.setIsBuiltin(1);
+		table.setIsNeedDeploy(1);
+		table.setIsCreated(1);
+		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
+		table.setColumns(getColumnList());
+		return table;
+	}
+
+	public String toDropTable() {
+		return "SYS_USER_POSITION_LINKS";
 	}
 }

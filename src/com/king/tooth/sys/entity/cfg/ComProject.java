@@ -102,7 +102,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 		descsColumn.setOrderCode(4);
 		columns.add(descsColumn);
 		
-		return null;
+		return columns;
 	}
 	
 	public ComTabledata toCreateTable() {

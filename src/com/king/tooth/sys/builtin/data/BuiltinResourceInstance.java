@@ -148,6 +148,15 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserRoleLinks", new SysUserRoleLinks());
 		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
+		
+		
+		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉
+		instanceCache.put("ComTabledata", new ComTabledata());
+		instanceCache.put("ComColumndata", new ComColumndata());
+		instanceCache.put("ComProject", new ComProject());
+		instanceCache.put("ComProjectModule", new ComProjectModule());
+		instanceCache.put("ComSqlScript", new ComSqlScript());
+		instanceCache.put("ComSqlScriptParameter", new ComSqlScriptParameter());
 	}
 	
 	/**
