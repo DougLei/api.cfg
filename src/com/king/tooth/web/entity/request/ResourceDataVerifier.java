@@ -1,6 +1,7 @@
 package com.king.tooth.web.entity.request;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +12,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.IMetadataInfo;
+import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -110,7 +111,21 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
-		return BuiltinResourceInstance.getInstance(tableResourceName, IMetadataInfo.class).getResourceMetadataInfos();
+		ITable table = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
+		List<ComColumndata> columns = table.getColumnList();
+		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
+		
+		for (ComColumndata column : columns) {
+			metadataInfos.add(new ResourceMetadataInfo(
+					column.getPropName(),
+					column.getColumnType(),
+					column.getLength(),
+					column.getPrecision(),
+					column.getIsUnique(),
+					column.getIsNullabled()));
+		}
+		columns.clear();
+		return metadataInfos;
 	}
 	
 	/**

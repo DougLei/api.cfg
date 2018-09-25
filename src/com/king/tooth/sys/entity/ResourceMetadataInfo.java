@@ -32,6 +32,17 @@ public class ResourceMetadataInfo {
 	private Integer isNullabled;
 	
 	
+	public ResourceMetadataInfo() {
+	}
+	public ResourceMetadataInfo(String name, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
+		this.name = name;
+		this.dataType = dataType;
+		this.length = length;
+		this.precision = precision==null?0:precision;
+		this.isUnique = isUnique==null?0:isUnique;
+		this.isNullabled = isNullabled==null?1:isNullabled;
+	}
+	
 	public String getName() {
 		return name;
 	}
