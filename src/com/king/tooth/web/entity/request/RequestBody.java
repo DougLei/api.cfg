@@ -32,9 +32,17 @@ public class RequestBody implements Serializable{
 	private IJson formData;
 	
 	/**
-	 * 请求的url参数键值对
+	 * 请求的url内置参数键值对
 	 */
-	private Map<String, String> requestUrlParams;
+	private Map<String, String> requestBuiltinParams;
+	/**
+	 * 请求的resource参数键值对
+	 */
+	private Map<String, String> requestResourceParams;
+	/**
+	 * 请求的parentResource参数键值对
+	 */
+	private Map<String, String> requestParentResourceParams;
 	
 	// -------------------------------------------------------------------------------------------------------------------------
 	/**
@@ -127,15 +135,6 @@ public class RequestBody implements Serializable{
 		return routeBody.getParentResourceName();
 	}
 	
-	/**
-	 * 获取子资源名
-	 * <p>_subResourceName指定的资源</p>
-	 * @return
-	 */
-	public String getSubResourceName(){
-		return requestUrlParams.get("_subResourceName");
-	}
-	
 	public boolean isGetRequest(){
 		return "get".equals(getRequestMethod());
 	}
@@ -156,8 +155,14 @@ public class RequestBody implements Serializable{
 		if(resourcePropCodeRule != null){
 			resourcePropCodeRule.clear();
 		}
-		if(requestUrlParams != null && requestUrlParams.size() > 0){
-			requestUrlParams.clear();
+		if(requestBuiltinParams != null && requestBuiltinParams.size() > 0){
+			requestBuiltinParams.clear();
+		}
+		if(requestResourceParams != null && requestResourceParams.size() > 0){
+			requestResourceParams.clear();
+		}
+		if(requestParentResourceParams != null && requestParentResourceParams.size() > 0){
+			requestParentResourceParams.clear();
 		}
 		if(formData != null && formData.size() > 0){
 			formData.clear();
@@ -167,11 +172,23 @@ public class RequestBody implements Serializable{
 		}
 	}
 	
-	public Map<String, String> getRequestUrlParams() {
-		return requestUrlParams;
+	public Map<String, String> getRequestBuiltinParams() {
+		return requestBuiltinParams;
 	}
-	public void setRequestUrlParams(Map<String, String> requestUrlParams) {
-		this.requestUrlParams = requestUrlParams;
+	public void setRequestBuiltinParams(Map<String, String> requestBuiltinParams) {
+		this.requestBuiltinParams = requestBuiltinParams;
+	}
+	public Map<String, String> getRequestResourceParams() {
+		return requestResourceParams;
+	}
+	public void setRequestResourceParams(Map<String, String> requestResourceParams) {
+		this.requestResourceParams = requestResourceParams;
+	}
+	public Map<String, String> getRequestParentResourceParams() {
+		return requestParentResourceParams;
+	}
+	public void setRequestParentResourceParams(Map<String, String> requestParentResourceParams) {
+		this.requestParentResourceParams = requestParentResourceParams;
 	}
 	public String getFormDataStr() {
 		if(formData == null){

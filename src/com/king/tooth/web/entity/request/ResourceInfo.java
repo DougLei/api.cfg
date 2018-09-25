@@ -36,9 +36,10 @@ public class ResourceInfo {
 	private SysResource reqResource;
 	
 	/**
-	 * 是否是主子资源关系
+	 * 是否系统内置的资源
+	 * <p>例如表资源、列资源、项目资源等</p>
 	 */
-	private boolean isParentSubResourceRelation;
+	private boolean isBuiltin;
 	
 	//------------------------------------------------------------------
 	public ResourceInfo() {
@@ -86,7 +87,6 @@ public class ResourceInfo {
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				isParentSubResourceRelation = true;
 				reqResource = BuiltinObjectInstance.resourceService.findResourceByResourceName(routeBody.getParentResourceName());
 				
 				if(reqResource.getResourceType() != resourceType){
@@ -140,7 +140,7 @@ public class ResourceInfo {
 	public SysResource getReqResource() {
 		return reqResource;
 	}
-	public boolean getIsParentSubResourceRelation() {
-		return isParentSubResourceRelation;
+	public boolean isBuiltin() {
+		return isBuiltin;
 	}
 }

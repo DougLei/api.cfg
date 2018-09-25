@@ -95,7 +95,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		}
 		
 		Log4jUtil.debug("[BuiltinParentsubQueryMethodProcesser.execAnalysisParam]解析出来，要执行的父子资源查询的hql语句为：{}", hql.toString());
-		Log4jUtil.debug("[BuiltinParentsubQueryMethodProcesser.execAnalysisParam]解析出来，要执行的执子表查询的hql参数值为：ParentId={}", parentResourceId);
+		Log4jUtil.debug("[BuiltinParentsubQueryMethodProcesser.execAnalysisParam]解析出来，要执行的执子表查询的hql参数值为：parentId={}", parentResourceId);
 	}
 	
 	/**

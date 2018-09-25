@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -13,6 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.EncodingConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -57,7 +59,7 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 			requestBody.clear();
 			return "系统要保存[POST]或修改[PUT]的表资源的formData(表单)数据不能为空";
 		}
-		requestBody.setRequestUrlParams(analysisUrlParams(request, requestBody));
+		analysisUrlParams(request, requestBody);
 		
 		String validResult = requestBody.validResourceData();
 		if(validResult != null){
@@ -89,7 +91,7 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 	 * @param requestBody 
 	 * @return 
 	 */
-	private Map<String, String> analysisUrlParams(HttpServletRequest request, RequestBody requestBody) {
+	private void analysisUrlParams(HttpServletRequest request, RequestBody requestBody) {
 		Map<String, String> urlParams = new HashMap<String, String>(16);
 		Enumeration<String> parameterNames = request.getParameterNames();
 		if(parameterNames != null && parameterNames.hasMoreElements()){
@@ -103,13 +105,15 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 			}
 		}
 		
-		// 记录请求体
+		// 记录请求url参数
 		if(urlParams.size() > 0){
 			CurrentThreadContext.getReqLogData().getReqLog().setReqData(JsonUtil.toJsonString(urlParams, false));
 		}
-		
 		processRouteData(requestBody, urlParams);
-		return urlParams;
+		
+		requestBody.setRequestBuiltinParams(analysisBuiltinParams(urlParams));
+		requestBody.setRequestParentResourceParams(analysisParentResourceParams(urlParams));
+		requestBody.setRequestResourceParams(analysisResourceParams(urlParams));
 	}
 	
 	/**
@@ -143,6 +147,86 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 //		if(requestBody.getResourceInfo().isTableResource()){
 //			urlParams.put("customerId", CurrentThreadContext.getCustomerId());// 客户主键
 //		}
+	}
+	
+	/**
+	 * 解析出内置的url参数
+	 * @param urlParams
+	 * @return
+	 */
+	private Map<String, String> analysisBuiltinParams(Map<String, String> urlParams) {
+		Map<String, String> builtinParams = null;
+		if(urlParams.size() > 0){
+			builtinParams = new HashMap<String, String>(urlParams.size());
+			for (String bufp : BuiltinParameterKeys.BUILTIN_URL_FUNC_PARAMS) {
+				builtinParams.put(bufp, urlParams.remove(bufp));
+			}
+		}else{
+			builtinParams = new HashMap<String, String>(1);
+		}
+		return builtinParams;
+	}
+	
+	/**
+	 * 解析出请求父资源属性的url参数【主子/递归】
+	 * <pre>
+	 * 系统处理逻辑说明：在请求的url中
+	 * 	父资源id的值可以使用   "_"+"名称"(例如:_root，以下就用_root说明) 的方式书写，实现占位符对象功能
+	 * 	在请求的url参数中，可以通过 _root.父资源属性名=xxx，设置查询父资源时的条件
+	 * 	其中:	_root变量必须以'_'下划线开头
+	 * 	_xxx中的xxx，可以自定义，在url参数中，必须用_xxx.父资源属性名=值来设置查询条件
+	 * </pre>
+	 * @param urlParams
+	 * @return
+	 */
+	private Map<String, String> analysisParentResourceParams(Map<String, String> urlParams) {
+		Map<String, String> parentResourceParams = null;
+		String parentResourceId = urlParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_ID);
+		if(StrUtils.isEmpty(parentResourceId)){
+			parentResourceParams = new HashMap<String, String>(1);
+		}else{
+			if(urlParams.size() > 0 && parentResourceId.startsWith("_")){
+				parentResourceParams = new HashMap<String, String>(urlParams.size());
+				parentResourceId += ".";
+				
+				// 在urlParams中寻找，是否有父资源的查询条件
+				Set<String> keys = urlParams.keySet();
+				for (String k : keys) {
+					if(k.startsWith(parentResourceId)){
+						parentResourceParams.put(k.replace(parentResourceId, ""), urlParams.get(k));
+					}
+				}
+				
+				// 如果找到父资源的查询条件，则将其从urlParams中移除
+				if(parentResourceParams.size() > 0){
+					keys = parentResourceParams.keySet();
+					for (String k : keys) {
+						urlParams.remove(parentResourceId+k);
+					}
+				}else{
+					parentResourceParams.put(ResourcePropNameConstants.ID, parentResourceId);
+				}
+			}else{
+				parentResourceParams = new HashMap<String, String>(2);
+				parentResourceParams.put(ResourcePropNameConstants.ID, parentResourceId);
+			}
+			
+			if(parentResourceParams.containsKey(ResourcePropNameConstants.ID)){
+				parentResourceParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, parentResourceParams.get(ResourcePropNameConstants.ID));
+			}else{
+				parentResourceParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, parentResourceId);
+			}
+		}
+		return parentResourceParams;
+	}
+	
+	/**
+	 * 解析出请求资源属性的url参数
+	 * @param urlParams
+	 * @return
+	 */
+	private Map<String, String> analysisResourceParams(Map<String, String> urlParams) {
+		return urlParams;
 	}
 
 	public void init(FilterConfig arg0) throws ServletException {

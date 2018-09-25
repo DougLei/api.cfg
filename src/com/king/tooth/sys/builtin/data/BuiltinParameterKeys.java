@@ -29,6 +29,19 @@ public class BuiltinParameterKeys {
 	
 	//------------------------------------------------------------------------------------
 	/**
+	 * 内置的url功能性参数
+	 */
+	public static final String[] BUILTIN_URL_FUNC_PARAMS = {"_focusedId", 
+		"_limit", "_start", "_rows", "_page", 
+		"_resultType", "_select", "_split", 
+		"_sort", 
+		"_subResourceName", "_subSort", 
+		"_recursive", "_deep", 
+		"_simpleModel",
+		"_refPropName"};
+	
+	//------------------------------------------------------------------------------------
+	/**
 	 * 存储在request中，客户端ip
 	 */
 	public static final String _CLIENT_IP = "_clientIp";

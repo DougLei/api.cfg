@@ -25,11 +25,13 @@ public abstract class RequestProcesser extends RequestProcesserCommon implements
 	 * @return ResponseEntity
 	 */
 	public final ResponseBody doRequestProcess(){
-		Log4jUtil.debug("请求的路由参数值为：{}", requestBody.getRequestUrlParams());
+		Log4jUtil.debug("请求的内置url参数为：{}", requestBody.getRequestBuiltinParams());
+		Log4jUtil.debug("请求的资源参数为：{}", requestBody.getRequestResourceParams());
+		Log4jUtil.debug("请求的父资源参数为：{}", requestBody.getRequestParentResourceParams());
 		Log4jUtil.debug("请求的请求体值为：{}", requestBody.getFormDataStr());
 		
 		// 初始化内置函数处理器的类实例
-		builtinTableResourceBMProcesser = new BuiltinTableResourceBMProcesser(requestBody.getRequestUrlParams(), hqlParameterValues);
+		builtinTableResourceBMProcesser = new BuiltinTableResourceBMProcesser(requestBody.getRequestBuiltinParams(), requestBody.getRequestResourceParams(), requestBody.getRequestParentResourceParams(), hqlParameterValues);
 		
 		doProcess();// 进行实际的业务处理，由子类实现
 		releaseInvalidMemory();

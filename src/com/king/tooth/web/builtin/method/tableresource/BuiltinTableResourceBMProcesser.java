@@ -1,6 +1,5 @@
 package com.king.tooth.web.builtin.method.tableresource;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,46 +47,48 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	/**
 	 * 解析请求的url参数集合
 	 * 调用不同的子类去处理参数
-	 * @param requestUrlParams
-	 * @param hqlParameterValues 查询条件参数值集合
+	 * @param requestBuiltinParams
+	 * @param requestResourceParams
+	 * @param requestParentResourceParams
+	 * @param hqlParameterValues
 	 */
-	private void analysisRequestUrlParams(Map<String, String> requestUrlParams, List<Object> hqlParameterValues) {
+	private void analysisRequestUrlParams(Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues) {
 		// 内置聚焦函数处理器实例
-		setFocusedIdProcesser(requestUrlParams);
+		setFocusedIdProcesser(requestBuiltinParams);
 		// 内置分页函数处理器实例
-		setPagerProcesser(requestUrlParams);
+		setPagerProcesser(requestBuiltinParams);
 		// 内置查询函数处理器实例
-		setQueryProcesser(requestUrlParams);
+		setQueryProcesser(requestBuiltinParams);
 		// 内置排序函数处理器实例
-		setSortProcesser(requestUrlParams);
+		setSortProcesser(requestBuiltinParams);
 		// 内置子资源数据集合查询函数处理器实例
-		setSublistMethodProcesser(requestUrlParams);
+		setSublistMethodProcesser(requestBuiltinParams);
 		// 内置递归函数处理器实例
-		setRecursiveProcesser(requestUrlParams, hqlParameterValues);
+		setRecursiveProcesser(requestBuiltinParams, requestParentResourceParams, hqlParameterValues);
 		// 内置父子资源链接查询函数处理器实例
-		setParentsubQueryMethodProcesser(requestUrlParams, hqlParameterValues);
+		setParentsubQueryMethodProcesser(requestBuiltinParams, requestParentResourceParams, hqlParameterValues);
 		// 最后剩下的数据，就都是条件查询的参数了【这个一定要放到最后被调用！】
 		// 内置查询条件函数处理器
-		setQuerycondProcesser(requestUrlParams, hqlParameterValues);
+		setQuerycondProcesser(requestResourceParams, hqlParameterValues);
 	}
 	
 	/**
 	 * 内置查询函数处理器实例
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
 	 */
-	private void setQueryProcesser(Map<String, String> requestUrlParams) {
-		String resultType = requestUrlParams.remove("_resultType");
-		String select = requestUrlParams.remove("_select");
-		String split = requestUrlParams.remove("_split");
+	private void setQueryProcesser(Map<String, String> requestBuiltinParams) {
+		String resultType = requestBuiltinParams.remove("_resultType");
+		String select = requestBuiltinParams.remove("_select");
+		String split = requestBuiltinParams.remove("_split");
 		queryProcesser = new BuiltinQueryMethodProcesser(resultType, select, split);
 		queryProcesser.setResourceName(resourceName);
 	}
 	/**
 	 * 内置排序函数处理器实例
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
 	 */
-	private void setSortProcesser(Map<String, String> requestUrlParams) {
-		String sort = requestUrlParams.remove("_sort");
+	private void setSortProcesser(Map<String, String> requestBuiltinParams) {
+		String sort = requestBuiltinParams.remove("_sort");
 		if(StrUtils.notEmpty(sort)){
 			sortProcesser = new BuiltinSortMethodProcesser(sort);
 			sortProcesser.setResourceName(resourceName);
@@ -95,25 +96,26 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	}
 	/**
 	 * 内置子列表资源查询函数处理器实例 
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
 	 * @param hqlParameterValues hql参数值集合
 	 */
-	public void setSublistMethodProcesser(Map<String, String> requestUrlParams) {
-		String subResourceName = requestUrlParams.remove("_subResourceName");
-		String refPropName = requestUrlParams.get("_refPropName");
-		String subSort = requestUrlParams.remove("_subSort");
+	public void setSublistMethodProcesser(Map<String, String> requestBuiltinParams) {
+		String subResourceName = requestBuiltinParams.remove("_subResourceName");
+		String refPropName = requestBuiltinParams.get("_refPropName");
+		String subSort = requestBuiltinParams.remove("_subSort");
 		if(StrUtils.notEmpty(subResourceName)){
 			sublistMethodProcesser = new BuiltinSublistMethodProcesser(subResourceName, refPropName, subSort);
 		}
 	}
 	/**
 	 * 内置递归函数处理器实例
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
+	 * @param requestParentResourceParams 
 	 * @param hqlParameterValues
 	 */
-	private void setRecursiveProcesser(Map<String, String> requestUrlParams, List<Object> hqlParameterValues) {
-		String recursive = requestUrlParams.remove("_recursive");
-		String deepLevel = requestUrlParams.remove("_deep");
+	private void setRecursiveProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues) {
+		String recursive = requestBuiltinParams.remove("_recursive");
+		String deepLevel = requestBuiltinParams.remove("_deep");
 		
 		if(StrUtils.notEmpty(parentResourceId)){
 			if(StrUtils.isEmpty(recursive)){
@@ -123,14 +125,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 				deepLevel = "2";// 默认递归查询钻取的深度为2
 			}
 			
-			Map<String, String> parentResourceQueryCond = null;
-			if(StrUtils.compareIsSame(resourceName, parentResourceName)){// 主资源名和资源名相同，是递归查询
-				parentResourceQueryCond = new HashMap<String, String>();
-				// 解析父资源查询条件参数
-				anlaysisParentResourceQueryCond(parentResourceQueryCond, requestUrlParams);
-			}
-			
-			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, parentResourceQueryCond);
+			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, requestParentResourceParams);
 			recursiveProcesser.setResourceName(resourceName);
 			recursiveProcesser.setParentResourceId(parentResourceId);
 			recursiveProcesser.setHqlParameterValues(hqlParameterValues);
@@ -138,22 +133,15 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	}
 	/**
 	 * 内置父子资源链接查询函数处理器实例 
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
+	 * @param requestParentResourceParams 
 	 * @param hqlParameterValues hql参数值集合
 	 */
-	private void setParentsubQueryMethodProcesser(Map<String, String> requestUrlParams, List<Object> hqlParameterValues) {
-		String isSimpleParentSubQueryModel = requestUrlParams.remove("_simpleModel");
-		String refPropName = requestUrlParams.remove("_refPropName");
+	private void setParentsubQueryMethodProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues) {
+		String isSimpleParentSubQueryModel = requestBuiltinParams.remove("_simpleModel");
+		String refPropName = requestBuiltinParams.remove("_refPropName");
 		if(StrUtils.notEmpty(parentResourceId) && StrUtils.notEmpty(parentResourceName)){
-			
-			Map<String, String> parentResourceQueryCond = null;
-			if(!StrUtils.compareIsSame(resourceName, parentResourceName)){// 主资源名和资源名不相同，是主子资源联合查询
-				parentResourceQueryCond = new HashMap<String, String>();
-				// 解析父资源查询条件参数
-				anlaysisParentResourceQueryCond(parentResourceQueryCond, requestUrlParams);
-			}
-			
-			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(parentResourceQueryCond, isSimpleParentSubQueryModel, refPropName, resourceName);
+			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(requestParentResourceParams, isSimpleParentSubQueryModel, refPropName, resourceName);
 			parentsubQueryMethodProcesser.setParentResourceId(parentResourceId);
 			parentsubQueryMethodProcesser.setParentResourceName(parentResourceName);
 			parentsubQueryMethodProcesser.setHqlParameterValues(hqlParameterValues);
@@ -162,30 +150,23 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	/**
 	 * 最后剩下的数据，就都是条件查询的参数了
 	 * 内置查询条件函数处理器
-	 * @param requestUrlParams
+	 * @param requestResourceParams
 	 * @param hqlParameterValues hql参数值集合
 	 */
-	private void setQuerycondProcesser(Map<String, String> requestUrlParams, List<Object> hqlParameterValues) {
-		if(requestUrlParams.size() > 0){
-			querycondProcesser = new BuiltinQueryCondMethodProcesser(requestUrlParams);
+	private void setQuerycondProcesser(Map<String, String> requestResourceParams, List<Object> hqlParameterValues) {
+		if(requestResourceParams.size() > 0){
+			querycondProcesser = new BuiltinQueryCondMethodProcesser(requestResourceParams);
 			querycondProcesser.setResourceName(resourceName);
 			querycondProcesser.setHqlParameterValues(hqlParameterValues);
 		}
 	}
 	
-	/**
-	 * 构造函数
-	 * @param requestUrlParams
-	 * @param queryCondParameterValues hql参数值集合
-	 * @param requestResourceType 请求的资源类型 @see ISysResource.XXX_RESOURCE_TYPE
-	 */
-	public BuiltinTableResourceBMProcesser(Map<String, String> requestUrlParams, List<Object> hqlParameterValues){
-		// 这三个key值来自      @see PlatformServlet.processSpecialData()
-		this.resourceName = requestUrlParams.remove(BuiltinParameterKeys.RESOURCE_NAME);
-		this.parentResourceName = requestUrlParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_NAME);
-		this.parentResourceId = requestUrlParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_ID);
+	public BuiltinTableResourceBMProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues){
+		this.resourceName = requestResourceParams.remove(BuiltinParameterKeys.RESOURCE_NAME);
+		this.parentResourceName = requestResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_NAME);
+		this.parentResourceId = requestParentResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_ID);
 		
-		analysisRequestUrlParams(requestUrlParams, hqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
+		analysisRequestUrlParams(requestBuiltinParams, requestResourceParams, requestParentResourceParams, hqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
 	}
 	
 	public BuiltinQueryMethodProcesser getQueryProcesser() {

@@ -1,6 +1,5 @@
 package com.king.tooth.sys.controller.sys;
 
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Controller;
@@ -24,7 +23,7 @@ public class SysPermissionController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object calcPermissionByCode(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object calcPermissionByCode(HttpServletRequest request, IJson ijson){
 		String code = request.getParameter("objcode");
 		if(StrUtils.isEmpty(code)){
 			return "计算权限的code值不能为空";

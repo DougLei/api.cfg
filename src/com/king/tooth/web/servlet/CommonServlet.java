@@ -28,7 +28,7 @@ public class CommonServlet extends HttpServlet implements Serializable{
 		
 		ResponseBody responseBody = null;
 		if(requestBody.getResourceInfo().isCodeResource()){
-			Object object = CodeResourceProcesser.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData(), requestBody.getRequestUrlParams());
+			Object object = CodeResourceProcesser.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData());
 			if(object instanceof String){
 				responseBody = new ResponseBody(object.toString());
 			}else{

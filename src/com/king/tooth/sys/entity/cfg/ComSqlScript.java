@@ -472,22 +472,8 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	 * @param sqlScriptActualParameters
 	 */
 	public void setActualParams(List<List<ComSqlScriptParameter>> actualParamsList) {
-		if((actualParamsList == null || actualParamsList.size() == 0)){
-			if(this.sqlParams == null || this.sqlParams.size() == 0){
-				return;
-			}
-			
-			// 检查，是否有必须的参数，但实际却没有传有
-			String requireParamName = null;
-			for (ComSqlScriptParameter ssp : sqlParams) {
-				if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT && ssp.getDefaultValue() == null){
-					requireParamName = ssp.getParameterName();
-					break;
-				}
-			}
-			if(requireParamName != null){
-				throw new IllegalArgumentException("在调用sql资源时，必须要传入的参数["+requireParamName+"]，请修改调用方式，传入该参数值");
-			}
+		if((actualParamsList == null || actualParamsList.size() == 0) && (this.sqlParams == null || this.sqlParams.size() == 0)){
+			return;
 		}
 		
 		// 如果实际传入了参数，但是配置的sql却没有任何参数，也是有问题的

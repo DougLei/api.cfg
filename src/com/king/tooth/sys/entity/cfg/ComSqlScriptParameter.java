@@ -121,7 +121,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 				actualInValue = defaultValue;
 			}
 			if(actualInValue == null){
-				throw new NullPointerException("调用sql脚本时，参数["+parameterName+"]的值为空，请联系后台系统开发人员");
+				throw new IllegalArgumentException("在调用sql资源时，必须要传入的参数["+parameterName+"]，请修改调用方式，传入该参数值");
 			}
 			if(isPlaceholder == 1){
 				if(BuiltinDataType.INTEGER.equals(parameterDataType)){

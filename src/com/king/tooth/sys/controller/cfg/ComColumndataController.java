@@ -1,7 +1,6 @@
 package com.king.tooth.sys.controller.cfg;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,7 +27,7 @@ public class ComColumndataController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object add(HttpServletRequest request, IJson ijson){
 		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class, true);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
@@ -54,7 +53,7 @@ public class ComColumndataController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object update(HttpServletRequest request, IJson ijson){
 		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class, true);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
@@ -80,7 +79,7 @@ public class ComColumndataController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String columnIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(columnIds)){
 			return "要删除的列id不能为空";

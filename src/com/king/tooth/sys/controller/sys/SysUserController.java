@@ -1,7 +1,6 @@
 package com.king.tooth.sys.controller.sys;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +28,7 @@ public class SysUserController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object add(HttpServletRequest request, IJson ijson){
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		analysisResourceProp(users);
 		if(analysisResult == null){
@@ -55,7 +54,7 @@ public class SysUserController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object update(HttpServletRequest request, IJson ijson){
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		analysisResourceProp(users);
 		if(analysisResult == null){
@@ -81,7 +80,7 @@ public class SysUserController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String userIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(userIds)){
 			return "要删除的用户id不能为空";
@@ -104,7 +103,7 @@ public class SysUserController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object openAccount(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object openAccount(HttpServletRequest request, IJson ijson){
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		if(users.size() == 1){
 			resultObject = BuiltinObjectInstance.userService.openAccount(users.get(0));
@@ -127,7 +126,7 @@ public class SysUserController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object updatePassword(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object updatePassword(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要修改密码的用户id不能为空";

@@ -1,7 +1,5 @@
 package com.king.tooth.sys.controller.other;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Controller;
@@ -24,7 +22,7 @@ public class SystemToolsController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object monitorHibernateClassMetadata(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object monitorHibernateClassMetadata(HttpServletRequest request, IJson ijson){
 		String[] resourceNameArr = null;
 		
 		String resourceNames = request.getParameter("resourceNames");
@@ -42,7 +40,7 @@ public class SystemToolsController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object getResourceInfo(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object getResourceInfo(HttpServletRequest request, IJson ijson){
 		String name = request.getParameter("name");
 		if(StrUtils.isEmpty(name)){
 			return "获取指定资源信息接口的url参数[name]的值不能为空";

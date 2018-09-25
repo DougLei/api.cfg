@@ -2,7 +2,6 @@ package com.king.tooth.sys.controller.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,7 +31,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object add(HttpServletRequest request, IJson ijson){
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
@@ -58,7 +57,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object update(HttpServletRequest request, IJson ijson){
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
@@ -84,7 +83,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String tableIds = request.getParameter(BuiltinParameterKeys._IDS);
 		String[] tableIdArr = tableIds.split(",");
 		for (String tableId : tableIdArr) {
@@ -104,7 +103,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object buildModel(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object buildModel(HttpServletRequest request, IJson ijson){
 //		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 //			return "建模功能目前只提供给平台开发人员使用";
 //		}
@@ -147,7 +146,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object cancelBuildModel(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object cancelBuildModel(HttpServletRequest request, IJson ijson){
 //		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 //			return "建模功能目前只提供给平台开发人员使用";
 //		}
@@ -189,7 +188,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object addProjTableRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object addProjTableRelation(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
@@ -210,7 +209,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object cancelProjTableRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object cancelProjTableRelation(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
@@ -231,7 +230,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object publish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object publish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
@@ -252,7 +251,7 @@ public class ComTabledataController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelPublish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object cancelPublish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}

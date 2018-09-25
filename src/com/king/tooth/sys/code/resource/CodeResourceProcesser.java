@@ -1,7 +1,5 @@
 package com.king.tooth.sys.code.resource;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
@@ -45,14 +43,14 @@ public class CodeResourceProcesser {
 	 * @param urlParams
 	 * @return 
 	 */
-	public static Object invokeCodeResource(String codeResourceKey, HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public static Object invokeCodeResource(String codeResourceKey, HttpServletRequest request, IJson ijson){
 		CodeResourceEntity codeResource = CodeResourceMapping.codeResourceMapping.get(codeResourceKey);
 		if(codeResource == null){
 			return "没有找到codeResourceKey值为["+codeResourceKey+"]的代码资源对象实例";
 		}
 		Log4jUtil.debug(" ========================> 此次请求调用的代码资源key为：{}", codeResourceKey);
 		
-		Object object = codeResource.invokeMethodForCodeResource(request, ijson, urlParams);
+		Object object = codeResource.invokeMethodForCodeResource(request, ijson);
 		if(object == null){
 			return "系统在调用codeResourceKey为["+codeResourceKey+"]的代码资源时，返回的结果为null，请联系开发人员";
 		}

@@ -1,7 +1,6 @@
 package com.king.tooth.sys.controller.cfg;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,7 +29,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object add(HttpServletRequest request, IJson ijson){
 		List<ComSqlScript> sqlScripts = getDataInstanceList(ijson, ComSqlScript.class, true);
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
@@ -58,7 +57,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object update(HttpServletRequest request, IJson ijson){
 		List<ComSqlScript> sqlScripts = getDataInstanceList(ijson, ComSqlScript.class, true);
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
@@ -86,7 +85,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String sqlScriptIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(sqlScriptIds)){
 			return "要删除的sql脚本id不能为空";
@@ -110,7 +109,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object immediateCreate(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object immediateCreate(HttpServletRequest request, IJson ijson){
 		resultObject = BuiltinObjectInstance.sqlScriptService.immediateCreate(ijson);
 		if(resultObject == null){
 			resultObject = ijson.getJson();
@@ -124,7 +123,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object addProjSqlScriptRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object addProjSqlScriptRelation(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
@@ -145,7 +144,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object cancelProjSqlScriptRelation(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object cancelProjSqlScriptRelation(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString("projectId"))){
 			return "要操作的项目id不能为空";
@@ -166,7 +165,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object publish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object publish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
@@ -187,7 +186,7 @@ public class ComSqlScriptController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelPublish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object cancelPublish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}

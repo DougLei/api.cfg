@@ -1,7 +1,6 @@
 package com.king.tooth.sys.controller.cfg;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,7 +29,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object add(HttpServletRequest request, IJson ijson){
 		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
@@ -56,7 +55,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object update(HttpServletRequest request, IJson ijson){
 		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
@@ -82,7 +81,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String databaseIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(databaseIds)){
 			return "要删除的数据库id不能为空";
@@ -105,7 +104,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object testLink(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object testLink(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "测试连接的数据库id不能为空";
@@ -127,7 +126,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object publish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object publish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 			return "发布功能，目前只提供给一般开发账户使用";
 		}
@@ -148,7 +147,7 @@ public class CfgDatabaseController extends AbstractPublishController{
 	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	public Object cancelPublish(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object cancelPublish(HttpServletRequest request, IJson ijson){
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
 			return "取消发布功能，目前只提供给一般开发账户使用";
 		}

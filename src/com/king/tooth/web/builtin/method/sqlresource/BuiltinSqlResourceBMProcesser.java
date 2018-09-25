@@ -53,44 +53,46 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 * 解析请求的url参数集合
 	 * 调用不同的子类去处理参数
 	 * @param reqSqlScriptResource
-	 * @param requestUrlParams
-	 * @param sqlParameterValues 查询条件参数值集合
+	 * @param requestBuiltinParams
+	 * @param requestResourceParams
+	 * @param requestParentResourceParams
+	 * @param sqlParameterValues
 	 */
-	private void analysisRequestUrlParams(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
+	private void analysisRequestUrlParams(ComSqlScript reqSqlScriptResource, Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<List<Object>> sqlParameterValues) {
 		// 内置聚焦函数处理器实例
-		setFocusedIdProcesser(requestUrlParams);
+		setFocusedIdProcesser(requestBuiltinParams);
 		// 内置分页函数处理器实例
-		setPagerProcesser(requestUrlParams);
+		setPagerProcesser(requestBuiltinParams);
 		// 内置查询函数处理器实例
-		setQueryProcesser(requestUrlParams);
+		setQueryProcesser(requestBuiltinParams);
 		// 内置排序函数处理器实例
-		setSortProcesser(requestUrlParams);
+		setSortProcesser(requestBuiltinParams);
 		// 内置递归函数处理器实例
-		setRecursiveProcesser(requestUrlParams, sqlParameterValues);
+		setRecursiveProcesser(requestBuiltinParams, requestParentResourceParams, sqlParameterValues);
 		// 内置sql脚本处理器实例
-		setSqlScriptMethodProcesser(reqSqlScriptResource, requestUrlParams, sqlParameterValues);
+		setSqlScriptMethodProcesser(reqSqlScriptResource, requestResourceParams, sqlParameterValues);
 		// 最后剩下的数据，就都是条件查询的参数了【这个一定要放到最后被调用！】
 		// 内置查询条件函数处理器
-		setQuerycondProcesser(requestUrlParams, sqlParameterValues);
+		setQuerycondProcesser(requestResourceParams, sqlParameterValues);
 	}
 	
 	/**
 	 * 解析sql脚本参数
 	 * @param sqlScript
-	 * @param requestUrlParams
+	 * @param requestResourceParams
 	 * @return
 	 */
-	private Map<String, String> analysisSqlScriptParam(ComSqlScript sqlScript, Map<String, String> requestUrlParams) {
+	private Map<String, String> analysisSqlScriptParam(ComSqlScript sqlScript, Map<String, String> requestResourceParams) {
 		Map<String, String> sqlScriptParams = null;
 		List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlParams();
-		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0 && requestUrlParams.size() > 0){
+		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0 && requestResourceParams.size() > 0){
 			sqlScriptParams = new HashMap<String, String>(16);// 默认初始长度为16
 			
-			Set<String> keys = requestUrlParams.keySet();
+			Set<String> keys = requestResourceParams.keySet();
 			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
 				for (String key : keys) {
 					if(key.equalsIgnoreCase(ssp.getParameterName())){
-						sqlScriptParams.put(key, requestUrlParams.get(key));
+						sqlScriptParams.put(key, requestResourceParams.get(key));
 						break;
 					}
 				}
@@ -99,7 +101,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 			if(sqlScriptParams.size() > 0){
 				keys = sqlScriptParams.keySet();
 				for (String key : keys) {
-					requestUrlParams.remove(key);
+					requestResourceParams.remove(key);
 				}
 			}
 		}
@@ -109,11 +111,11 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	/**
 	 * 内置sql脚本处理器实例
 	 * @param reqSqlScriptResource 
-	 * @param requestUrlParams
+	 * @param requestResourceParams
 	 * @param sqlParameterValues 
 	 */
-	public void setSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
-		Map<String, String> sqlScriptParams = analysisSqlScriptParam(reqSqlScriptResource, requestUrlParams);
+	public void setSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestResourceParams, List<List<Object>> sqlParameterValues) {
+		Map<String, String> sqlScriptParams = analysisSqlScriptParam(reqSqlScriptResource, requestResourceParams);
 		sqlScriptMethodProcesser = new BuiltinSqlScriptMethodProcesser(reqSqlScriptResource, sqlScriptParams, formData);
 		sqlScriptMethodProcesser.setResourceName(resourceName);
 		sqlScriptMethodProcesser.setParentResourceName(parentResourceName);
@@ -122,21 +124,21 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 
 	/**
 	 * 内置查询函数处理器实例
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
 	 */
-	private void setQueryProcesser(Map<String, String> requestUrlParams) {
-		String resultType = requestUrlParams.remove("_resultType");
-		String select = requestUrlParams.remove("_select");
-		String split = requestUrlParams.remove("_split");
+	private void setQueryProcesser(Map<String, String> requestBuiltinParams) {
+		String resultType = requestBuiltinParams.remove("_resultType");
+		String select = requestBuiltinParams.remove("_select");
+		String split = requestBuiltinParams.remove("_split");
 		queryProcesser = new BuiltinQueryMethodProcesser(resultType, select, split);
 		queryProcesser.setResourceName(resourceName);
 	}
 	/**
 	 * 内置排序函数处理器实例
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
 	 */
-	private void setSortProcesser(Map<String, String> requestUrlParams) {
-		String sort = requestUrlParams.remove("_sort");
+	private void setSortProcesser(Map<String, String> requestBuiltinParams) {
+		String sort = requestBuiltinParams.remove("_sort");
 		if(StrUtils.notEmpty(sort)){
 			sortProcesser = new BuiltinSortMethodProcesser(sort);
 			sortProcesser.setResourceName(resourceName);
@@ -145,12 +147,13 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	
 	/**
 	 * 内置递归函数处理器实例
-	 * @param requestUrlParams
+	 * @param requestBuiltinParams
+	 * @param requestParentResourceParams 
 	 * @param sqlParameterValues
 	 */
-	private void setRecursiveProcesser(Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
-		String recursive = requestUrlParams.remove("_recursive");
-		String deepLevel = requestUrlParams.remove("_deep");
+	private void setRecursiveProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestParentResourceParams, List<List<Object>> sqlParameterValues) {
+		String recursive = requestBuiltinParams.remove("_recursive");
+		String deepLevel = requestBuiltinParams.remove("_deep");
 		
 		if(StrUtils.notEmpty(parentResourceId)){
 			if(StrUtils.isEmpty(recursive)){
@@ -160,14 +163,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 				deepLevel = "2";// 默认递归查询钻取的深度为2
 			}
 			
-			Map<String, String> parentResourceQueryCond = null;
-			if(StrUtils.compareIsSame(resourceName, parentResourceName)){// 主资源名和资源名相同，是递归查询
-				parentResourceQueryCond = new HashMap<String, String>();
-				// 解析父资源查询条件参数
-				anlaysisParentResourceQueryCond(parentResourceQueryCond, requestUrlParams);
-			}
-			
-			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, parentResourceQueryCond);
+			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, requestParentResourceParams);
 			recursiveProcesser.setResourceName(resourceName);
 			recursiveProcesser.setParentResourceId(parentResourceId);
 			recursiveProcesser.setSqlParameterValues(sqlParameterValues);
@@ -177,32 +173,24 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	/**
 	 * 最后剩下的数据，就都是条件查询的参数了
 	 * 内置查询条件函数处理器
-	 * @param requestUrlParams
+	 * @param requestResourceParams
 	 * @param sqlParameterValues sql参数值集合
 	 */
-	private void setQuerycondProcesser(Map<String, String> requestUrlParams, List<List<Object>> sqlParameterValues) {
-		if(requestUrlParams.size() > 0){
-			querycondProcesser = new BuiltinQueryCondMethodProcesser(requestUrlParams);
+	private void setQuerycondProcesser(Map<String, String> requestResourceParams, List<List<Object>> sqlParameterValues) {
+		if(requestResourceParams.size() > 0){
+			querycondProcesser = new BuiltinQueryCondMethodProcesser(requestResourceParams);
 			querycondProcesser.setResourceName(resourceName);
 			querycondProcesser.setSqlParameterValues(sqlParameterValues);
 		}
 	}
 	
-	/**
-	 * 构造函数
-	 * @param reqSqlScriptResource 
-	 * @param requestUrlParams
-	 * @param sqlParameterValues sql参数值集合
-	 * @param requestFormData
-	 */
-	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestUrlParams, IJson formData, List<List<Object>> sqlParameterValues){
-		// 这三个key值来自      @see PlatformServlet.processSpecialData()
-		this.resourceName = requestUrlParams.remove(BuiltinParameterKeys.RESOURCE_NAME);
-		this.parentResourceName = requestUrlParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_NAME);
-		this.parentResourceId = requestUrlParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_ID);
+	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, IJson formData, Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<List<Object>> sqlParameterValues){
+		this.resourceName = requestResourceParams.remove(BuiltinParameterKeys.RESOURCE_NAME);
+		this.parentResourceName = requestResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_NAME);
+		this.parentResourceId = requestParentResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_ID);
 		this.formData = formData;
 		
-		analysisRequestUrlParams(reqSqlScriptResource, requestUrlParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
+		analysisRequestUrlParams(reqSqlScriptResource, requestBuiltinParams, requestResourceParams, requestParentResourceParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
 	}
 	
 	public BuiltinQueryMethodProcesser getQueryProcesser() {

@@ -31,7 +31,7 @@ public class ResourcePropCodeRule {
 	 * @param requestBody
 	 */
 	private void analysisResourcePropCodeRule(RequestBody requestBody) {
-		if(!requestBody.getResourceInfo().getIsParentSubResourceRelation() && requestBody.getResourceInfo().isTableResource() 
+		if(requestBody.getRouteBody().getParentResourceName() == null && requestBody.getResourceInfo().isTableResource() 
 				&& requestBody.isPostRequest()){
 			
 			// 内置的资源，不需要处理

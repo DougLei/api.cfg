@@ -76,9 +76,14 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private void initTableResourceMetadataInfos() {
-		resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled) from ComColumndata where tableId=? and operStatus=? order by orderCode asc", requestBody.getResourceInfo().getReqResource().getRefResourceId(), ComColumndata.CREATED);
-		if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
-			throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
+		if(requestBody.getResourceInfo().isBuiltin()){
+			// TODO
+			throw new NullPointerException("");
+		}else{
+			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled) from ComColumndata where tableId=? and operStatus=? order by orderCode asc", requestBody.getResourceInfo().getReqResource().getRefResourceId(), ComColumndata.CREATED);
+			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
+				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
+			}
 		}
 	}
 	
@@ -117,7 +122,11 @@ public class ResourceDataVerifier {
 	 */
 	private String validGetTableResourceMetadata() {
 		// TODO
-		
+		if(parentResourceName == null){
+			
+		}else{
+			
+		}
 		return null;
 	}
 
@@ -260,7 +269,7 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private String validDeleteTableResourceMetadata() {
-		if(StrUtils.isEmpty(requestBody.getRequestUrlParams().get(BuiltinParameterKeys._IDS))){
+		if(StrUtils.isEmpty(requestBody.getRequestResourceParams().get(BuiltinParameterKeys._IDS))){
 			return "要删除["+resourceName+"]资源时，_ids参数值不能为空";
 		}
 		return null;
@@ -290,20 +299,17 @@ public class ResourceDataVerifier {
 	// ------------------------------------------------------------------------------------------------
 	/**
 	 * 验证代码资源的元数据
+	 * <p>**代码资源的元数据验证，放到各个代码资源中去自行验证，这里不做统一处理**</p>
 	 * @return
 	 */
 	private String validCodeResourceMetadata() {
 		if(requestBody.isGetRequest()){
-			// TODO
 			return null;
 		}else if(requestBody.isPostRequest()){
-			// TODO
 			return null;
 		}else if(requestBody.isPutRequest()){
-			// TODO
 			return null;
 		}else if(requestBody.isDeleteRequest()){
-			// TODO
 			return null;
 		}
 		return "系统只支持[get、post、put、delete]四种请求方式";

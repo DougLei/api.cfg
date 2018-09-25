@@ -1,7 +1,6 @@
 package com.king.tooth.sys.controller.sys;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,7 +34,7 @@ public class SysPushMessageInfoController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object pushMessage(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object pushMessage(HttpServletRequest request, IJson ijson){
 		List<PushMessage> pushMessages = getDataInstanceList(ijson, PushMessage.class, false);
 		analysisResourceProp(pushMessages);
 		if(analysisResult == null){
@@ -60,7 +59,7 @@ public class SysPushMessageInfoController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object readMessage(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object readMessage(HttpServletRequest request, IJson ijson){
 		String id = request.getParameter(ResourcePropNameConstants.ID);
 		if(StrUtils.isEmpty(id)){
 			return "要阅读的消息id不能为空";
@@ -78,7 +77,7 @@ public class SysPushMessageInfoController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object updateMessageReadStatus(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object updateMessageReadStatus(HttpServletRequest request, IJson ijson){
 		List<SysPushMessageInfo> sysPushMessageInfos = getDataInstanceList(ijson, SysPushMessageInfo.class, true);
 		if(analysisResult == null){
 			if(sysPushMessageInfos.size() == 1){

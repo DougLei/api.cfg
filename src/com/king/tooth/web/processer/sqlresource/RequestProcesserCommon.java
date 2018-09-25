@@ -1,7 +1,9 @@
 package com.king.tooth.web.processer.sqlresource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 
@@ -121,7 +123,12 @@ public class RequestProcesserCommon extends CommonProcesser{
 		}
 		
 		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
-			setResponseBody(new ResponseBody(requestBody.getRequestUrlParams(), true));
+			Map<String, String> urlParams = new HashMap<String, String>(
+					requestBody.getRequestBuiltinParams().size() + requestBody.getRequestResourceParams().size() + requestBody.getRequestParentResourceParams().size());
+			urlParams.putAll(requestBody.getRequestBuiltinParams());
+			urlParams.putAll(requestBody.getRequestResourceParams());
+			urlParams.putAll(requestBody.getRequestParentResourceParams());
+			setResponseBody(new ResponseBody(urlParams, true));
 		}else{
 			String operType = null;
 			if(BuiltinDatabaseData.INSERT.equals(sqlDesc)){

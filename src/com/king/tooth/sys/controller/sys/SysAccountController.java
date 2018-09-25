@@ -1,7 +1,6 @@
 package com.king.tooth.sys.controller.sys;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,7 +34,7 @@ public class SysAccountController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object login(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object login(HttpServletRequest request, IJson ijson){
 		CurrentThreadContext.getReqLogData().getReqLog().setType(1);// 标识为登陆日志
 		
 		SysAccount account = JsonUtil.toJavaObject(ijson.get(0), SysAccount.class);
@@ -62,7 +61,7 @@ public class SysAccountController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object loginOut(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object loginOut(HttpServletRequest request, IJson ijson){
 		CurrentThreadContext.getReqLogData().getReqLog().setType(2);// 标识为退出登陆日志
 		
 		String token = request.getHeader("_token");
@@ -82,7 +81,7 @@ public class SysAccountController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object add(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object add(HttpServletRequest request, IJson ijson){
 		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
@@ -108,7 +107,7 @@ public class SysAccountController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object update(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object update(HttpServletRequest request, IJson ijson){
 		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
@@ -134,7 +133,7 @@ public class SysAccountController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object delete(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object delete(HttpServletRequest request, IJson ijson){
 		String accountIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(accountIds)){
 			return "要删除的账户id不能为空";
@@ -157,7 +156,7 @@ public class SysAccountController extends AbstractController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object updatePassword(HttpServletRequest request, IJson ijson, Map<String, String> urlParams){
+	public Object updatePassword(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
 			return "要修改密码的账户id不能为空";
