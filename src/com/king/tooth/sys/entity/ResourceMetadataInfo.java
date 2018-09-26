@@ -40,6 +40,9 @@ public class ResourceMetadataInfo {
 	
 	public ResourceMetadataInfo() {
 	}
+	public ResourceMetadataInfo(String name) {
+		this.name = name.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:name;
+	}
 	public ResourceMetadataInfo(String name, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, String descName) {
 		this.name = name.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:name;
 		this.dataType = dataType;

@@ -11,14 +11,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;
 
@@ -35,6 +38,10 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * sql脚本实际传入的参数集合
 	 */
 	private List<List<ComSqlScriptParameter>> actualParamsList;
+	/**
+	 * 针对select sql查询结果集的元数据信息集合
+	 */
+	private List<ResourceMetadataInfo> outSqlResultSetMetadataInfos;
 	
 	public SqlResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
 		super(requestBody, resourceName, parentResourceName);
@@ -44,6 +51,9 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	
 	public void clear(){
 		super.clear();
+		if(outSqlResultSetMetadataInfos != null && outSqlResultSetMetadataInfos.size() > 0){
+			outSqlResultSetMetadataInfos.clear();
+		}
 		if(actualParamsList != null && actualParamsList.size() > 0){
 			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
 				actualParams.clear();
@@ -85,6 +95,9 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		if(requestBody.isParentSubResourceQuery() && requestBody.isRecursiveQuery()){
 			parentResourceMetadataInfos = resourceMetadataInfos;
 		}
+		if(BuiltinDatabaseData.SELECT.equals(sql.getSqlScriptType())){
+			outSqlResultSetMetadataInfos = analysisSelectSqlResultSetMetadataInfos();
+		}
 	}
 	
 	/**
@@ -106,6 +119,20 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 						0, // sql脚本参数不能为空
 						sqlParam.getRemark()));
 			}
+		}
+		return metadataInfos;
+	}
+	
+	/**
+	 * 解析出select sql查询结果集的元数据信息集合
+	 * @param sqlParams
+	 * @return
+	 */
+	private List<ResourceMetadataInfo> analysisSelectSqlResultSetMetadataInfos() {
+		List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
+		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
+		for (CfgSqlResultset csr : outSqlResultSet) {
+			metadataInfos.add(new ResourceMetadataInfo(csr.getPropName()));
 		}
 		return metadataInfos;
 	}
@@ -368,7 +395,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					}
 				}
 			}else{
-				actualInValue = getSimpleSqlParameterValue(actualInValue);
+				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){
 			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(ssp.getParameterName());
@@ -376,7 +403,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				return "调用sql脚本时，内置参数["+ssp.getParameterName()+"]的值为空，请联系后台系统开发人员";
 			}
 			if(ssp.getIsPlaceholder() == 0){
-				actualInValue = getSimpleSqlParameterValue(actualInValue);
+				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else{
 			return "parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)]";
@@ -389,10 +416,11 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	/**
 	 * 获取简单的sql参数值
 	 * <p>目前就是对值加上''</p>
+	 * @param ssp
 	 * @param sqlParameterValue
 	 * @return
 	 */
-	private String getSimpleSqlParameterValue(Object sqlParameterValue){
+	private String getSimpleSqlParameterValue(ComSqlScriptParameter ssp, Object sqlParameterValue){
 		if(sqlParameterValue == null){
 			Log4jUtil.warn(ComSqlScriptParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
 			return "''";
@@ -400,19 +428,27 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		return "'"+sqlParameterValue.toString()+"'";
 	}
 	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * 验证get请求的sql资源数据
 	 * <p>主要验证请求的select sql，筛选的列名是否存在</p>
 	 * @return
 	 */
 	private String validGetSqlResourceMetadata() {
+		Set<String> requestResourcePropNames = requestBody.getRequestResourceParams().keySet();
+		for (String propName : requestResourcePropNames) {
+			if(validPropUnExists(propName, outSqlResultSetMetadataInfos)){
+				return "执行selec sql资源["+resourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
+			}
+		}
+		
+		if(requestBody.isParentSubResourceQuery()){
+			requestResourcePropNames = requestBody.getRequestParentResourceParams().keySet();
+			for (String propName : requestResourcePropNames) {
+				if(validPropUnExists(propName, outSqlResultSetMetadataInfos)){
+					return "执行selec sql资源["+parentResourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
+				}
+			}
+		}
 		return null;
 	}
 	
