@@ -21,16 +21,16 @@ public class CodeResourceEntity {
 	private static final Class[] methodParameterClassTypeArr = {HttpServletRequest.class, IJson.class};
 	
 	/**
-	 * 代码对应的实例
+	 * 代码对应的class
 	 */
-	private Object instance;
+	private Class clz;
 	/**
 	 * 方法名
 	 */
 	private String methodName;
 	
-	public CodeResourceEntity(Object instance, String methodName) {
-		this.instance = instance;
+	public CodeResourceEntity(Class clz, String methodName) {
+		this.clz = clz;
 		this.methodName = methodName;
 	}
 
@@ -43,11 +43,12 @@ public class CodeResourceEntity {
 	 public Object invokeMethodForCodeResource(HttpServletRequest request, IJson ijson){
 		Object object = null;
 		try {
-			Log4jUtil.debug(" ========================> 此次请求调用的类为：{}", instance.getClass());
+			Log4jUtil.debug(" ========================> 此次请求调用的类为：{}", clz.toString());
 			Log4jUtil.debug(" ========================> 此次请求调用的方法为：{}", methodName);
 			Log4jUtil.debug(" ========================> 此次请求调用的ijson为：{}", ijson);
 			Log4jUtil.debug(" ========================> 此次请求调用的urlParams为：{}", JsonUtil.toJsonString(request.getParameterMap(), false));
 			
+			Object instance = clz.newInstance();
 			Method method = instance.getClass().getDeclaredMethod(methodName, methodParameterClassTypeArr);
 			object = method.invoke(instance, new Object[]{request, ijson});
 		} catch (Exception e) {
