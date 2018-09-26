@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 public class Test {
 	
 	public static void main(String[] args) throws CloneNotSupportedException {
-		String a = "{\"float2\":2.232,\"float1\":2.0,\"int\":22.2,\"string\":\"我是字符串\",\"bool\": true  }";
+		String a = "{\"float2\":2.23z,\"float1\":2.z,\"int\":22.2,\"string\":\"我是字符串\",\"bool\": true  }";
 		JSONObject j = JSONObject.parseObject(a );
 		
 		System.out.println(j.get("string")+"==>"+j.get("string").getClass());

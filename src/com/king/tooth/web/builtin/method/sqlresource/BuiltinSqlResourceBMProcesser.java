@@ -1,21 +1,17 @@
 package com.king.tooth.web.builtin.method.sqlresource;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.AbstractCommonBuiltinBMProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.query.BuiltinQueryMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.querycond.BuiltinQueryCondMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.recursive.BuiltinRecursiveMethodProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sort.BuiltinSortMethodProcesser;
-import com.king.tooth.web.builtin.method.sqlresource.sqlscript.BuiltinSqlScriptMethodProcesser;
+import com.king.tooth.web.builtin.method.sqlresource.sqlscript.BuiltinSqlMethodProcesser;
 
 /**
  * sql资源的内置函数的处理器对外接口
@@ -42,12 +38,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	/**
 	 * 内置sql脚本处理器
 	 */
-	private BuiltinSqlScriptMethodProcesser sqlScriptMethodProcesser;
-	
-	/**
-	 * 请求体
-	 */
-	private IJson formData;
+	private BuiltinSqlMethodProcesser sqlScriptMethodProcesser;
 	
 	/**
 	 * 解析请求的url参数集合
@@ -70,42 +61,10 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		// 内置递归函数处理器实例
 		setRecursiveProcesser(requestBuiltinParams, requestParentResourceParams, sqlParameterValues);
 		// 内置sql脚本处理器实例
-		setSqlScriptMethodProcesser(reqSqlScriptResource, requestResourceParams, sqlParameterValues);
+		setSqlScriptMethodProcesser(reqSqlScriptResource, sqlParameterValues);
 		// 最后剩下的数据，就都是条件查询的参数了【这个一定要放到最后被调用！】
 		// 内置查询条件函数处理器
 		setQuerycondProcesser(requestResourceParams, sqlParameterValues);
-	}
-	
-	/**
-	 * 解析sql脚本参数
-	 * @param sqlScript
-	 * @param requestResourceParams
-	 * @return
-	 */
-	private Map<String, String> analysisSqlScriptParam(ComSqlScript sqlScript, Map<String, String> requestResourceParams) {
-		Map<String, String> sqlScriptParams = null;
-		List<ComSqlScriptParameter> sqlScriptParameters = sqlScript.getSqlParams();
-		if(sqlScriptParameters != null && sqlScriptParameters.size() > 0 && requestResourceParams.size() > 0){
-			sqlScriptParams = new HashMap<String, String>(16);// 默认初始长度为16
-			
-			Set<String> keys = requestResourceParams.keySet();
-			for (ComSqlScriptParameter ssp : sqlScriptParameters) {
-				for (String key : keys) {
-					if(key.equalsIgnoreCase(ssp.getParameterName())){
-						sqlScriptParams.put(key, requestResourceParams.get(key));
-						break;
-					}
-				}
-			}
-			
-			if(sqlScriptParams.size() > 0){
-				keys = sqlScriptParams.keySet();
-				for (String key : keys) {
-					requestResourceParams.remove(key);
-				}
-			}
-		}
-		return sqlScriptParams;
 	}
 	
 	/**
@@ -114,9 +73,8 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 * @param requestResourceParams
 	 * @param sqlParameterValues 
 	 */
-	public void setSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestResourceParams, List<List<Object>> sqlParameterValues) {
-		Map<String, String> sqlScriptParams = analysisSqlScriptParam(reqSqlScriptResource, requestResourceParams);
-		sqlScriptMethodProcesser = new BuiltinSqlScriptMethodProcesser(reqSqlScriptResource, sqlScriptParams, formData);
+	public void setSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, List<List<Object>> sqlParameterValues) {
+		sqlScriptMethodProcesser = new BuiltinSqlMethodProcesser(reqSqlScriptResource);
 		sqlScriptMethodProcesser.setResourceName(resourceName);
 		sqlScriptMethodProcesser.setParentResourceName(parentResourceName);
 		sqlScriptMethodProcesser.setSqlParameterValues(sqlParameterValues);
@@ -184,11 +142,10 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		}
 	}
 	
-	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, IJson formData, Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<List<Object>> sqlParameterValues){
+	public BuiltinSqlResourceBMProcesser(ComSqlScript reqSqlScriptResource, Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<List<Object>> sqlParameterValues){
 		this.resourceName = requestResourceParams.remove(BuiltinParameterKeys.RESOURCE_NAME);
 		this.parentResourceName = requestResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_NAME);
 		this.parentResourceId = requestParentResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_ID);
-		this.formData = formData;
 		
 		analysisRequestUrlParams(reqSqlScriptResource, requestBuiltinParams, requestResourceParams, requestParentResourceParams, sqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
 	}
@@ -217,9 +174,9 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		}
 		return querycondProcesser;
 	}
-	public BuiltinSqlScriptMethodProcesser getSqlScriptMethodProcesser() {
+	public BuiltinSqlMethodProcesser getSqlScriptMethodProcesser() {
 		if(sqlScriptMethodProcesser == null){
-			sqlScriptMethodProcesser = new BuiltinSqlScriptMethodProcesser();
+			sqlScriptMethodProcesser = new BuiltinSqlMethodProcesser();
 		}
 		return sqlScriptMethodProcesser;
 	}

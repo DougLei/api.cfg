@@ -63,7 +63,6 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 		
 		String validResult = requestBody.validResourceData();
 		if(validResult != null){
-			requestBody.clear();
 			return validResult;
 		}
 		requestBody.analysisResourcePropCodeRule();

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.web.entity.request.valid.data.ResourceDataVerifier;
 import com.king.tooth.web.servlet.route.RouteBody;
 
 /**
@@ -108,8 +109,15 @@ public class RequestBody implements Serializable{
 	 * @return
 	 */
 	public String validResourceData() {
-		resourceDataVerifier = new ResourceDataVerifier(this);
-		return resourceDataVerifier.doValidResourceData();
+		try {
+			resourceDataVerifier = new ResourceDataVerifier();
+			return resourceDataVerifier.doValidResourceData(this);
+		} finally {
+			if(resourceDataVerifier != null){
+				resourceDataVerifier.clear();
+				resourceDataVerifier = null;
+			}
+		}
 	}
 	
 	/**

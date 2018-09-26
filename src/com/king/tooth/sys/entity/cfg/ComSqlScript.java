@@ -22,7 +22,6 @@ import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -267,6 +266,9 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public List<List<ComSqlScriptParameter>> getSqlParamsList() {
 		return sqlParamsList;
 	}
+	public void setSqlParamsList(List<List<ComSqlScriptParameter>> sqlParamsList) {
+		this.sqlParamsList = sqlParamsList;
+	}
 	public List<List<CfgSqlResultset>> getInSqlResultsetsList() {
 		return inSqlResultsetsList;
 	}
@@ -466,79 +468,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		publish.setPublishResourceName(sqlScriptResourceName);
 		publish.setResourceType(SQLSCRIPT);
 		return publish;
-	}
-	
-	/**
-	 * 将调用sql资源时，实际传过来的值存到参数集合中(sql参数集合/procedure sql参数集合)
-	 * 
-	 * <p>同时还要验证参数</p>
-	 * <p>1.是否sql脚本没有参数，而调用的时候传入了参数</p>
-	 * <p>2.是否sql脚本的参数，和传入的参数数量一致[有默认值的参数，或参数值来源为系统内置的参数，可以在调用sql脚本的时候不传入]</p>
-	 * @param sqlScriptActualParameters
-	 */
-	public void setActualParams(List<List<ComSqlScriptParameter>> actualParamsList) {
-		if((actualParamsList == null || actualParamsList.size() == 0) && (this.sqlParams == null || this.sqlParams.size() == 0)){
-			return;
-		}
-		
-		// 如果实际传入了参数，但是配置的sql却没有任何参数，也是有问题的
-		if(this.sqlParams == null || this.sqlParams.size() == 0){
-			throw new IllegalArgumentException("在调用sql资源时，传入的实际参数集合为：["+JsonUtil.toJsonString(actualParamsList, false)+"]，但是被调用的sql资源["+this.sqlScriptResourceName+"]却不存在任何sql脚本的参数对象集合。请检查该sql资源是否确实有参数配置，并确认合法调用sql资源，或联系后端系统开发人员");
-		}
-		
-		List<ComSqlScriptParameter> sqlParams;
-		
-		// 如果没有传入任何参数，还能进入到这里，说明配置的参数要么是系统内置，要么是有默认值的
-		if((actualParamsList == null || actualParamsList.size() == 0)){
-			sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(1);
-			sqlParams = this.sqlParams;
-			sqlParamsList.add(sqlParams);
-			
-			for (ComSqlScriptParameter ssp : sqlParams) {
-				ssp.analysisActualInValue();
-			}
-		}
-		// 否则就去解析实际的参数，将其和配置的参数进行匹配
-		else{
-			sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(actualParamsList.size());
-			
-			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
-				sqlParams = cloneSqlParams();
-				sqlParamsList.add(sqlParams);
-				
-				for (ComSqlScriptParameter ssp : sqlParams) {
-					if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
-						ssp.analysisActualInValue();
-					}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
-						for (ComSqlScriptParameter ssap : actualParams) {
-							if(ssp.getParameterName().equals(ssap.getParameterName())){
-								ssp.setActualInValue(ssap.getActualInValue());
-								break;
-							}
-						}
-						ssp.analysisActualInValue();
-					}
-				}
-			}
-			this.sqlParams.clear();
-		}
-	}
-	
-	/**
-	 * 克隆sql参数集合
-	 * @param sqlScriptParameterList
-	 * @return
-	 */
-	private List<ComSqlScriptParameter> cloneSqlParams() {
-		List<ComSqlScriptParameter> sqlParams = new ArrayList<ComSqlScriptParameter>(this.sqlParams.size());
-		try {
-			for (ComSqlScriptParameter sqlParam : this.sqlParams) {
-				sqlParams.add((ComSqlScriptParameter)sqlParam.clone());
-			}
-		} catch (CloneNotSupportedException e) {
-			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e));
-		}
-		return sqlParams;
 	}
 	
 	public Map<Integer, List<String>> getParameterNameRecordMap() {

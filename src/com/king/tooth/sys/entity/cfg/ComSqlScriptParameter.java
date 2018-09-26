@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.BasicEntity;
@@ -13,8 +12,6 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.util.DateUtil;
-import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -113,62 +110,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		if(isNeedAnalysisResourceProp){ // 在调用sql脚本时，不需要解析
 			analysisResourceProp();
 		}
-	}
-	
-	/**
-	 * 解析实际传入的参数值
-	 * @return
-	 */
-	public void analysisActualInValue() {
-		if(parameterFrom == ComSqlScriptParameter.USER_INPUT){
-			if(actualInValue == null){
-				actualInValue = defaultValue;
-			}
-			if(actualInValue == null){
-				throw new IllegalArgumentException("在调用sql资源时，必须要传入的参数["+parameterName+"]，请修改调用方式，传入该参数值");
-			}
-			if(isPlaceholder == 1){
-				if(BuiltinDataType.INTEGER.equals(parameterDataType)){
-					actualInValue = Integer.valueOf(actualInValue.toString());
-				}else if(BuiltinDataType.DOUBLE.equals(parameterDataType)){
-					actualInValue = Double.valueOf(actualInValue.toString());
-				}else if(BuiltinDataType.DATE.equals(parameterDataType)){
-					actualInValue = DateUtil.parseTimestamp(actualInValue.toString());
-				}else if(BuiltinDataType.BOOLEAN.equals(parameterDataType)){
-					actualInValue = ("true".equals(actualInValue.toString()))? "1":"0";
-				}else if(getIsTableType() == 1){
-					actualInValue = IJsonUtil.getIJson(actualInValue.toString());
-				}else{
-					actualInValue = actualInValue.toString();
-				}
-			}else{
-				actualInValue = getSimpleSqlParameterValue(actualInValue);
-			}
-		}else if(parameterFrom == ComSqlScriptParameter.SYSTEM_BUILTIN){
-			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(parameterName);
-			if(actualInValue == null){
-				throw new NullPointerException("调用sql脚本时，内置参数["+parameterName+"]的值为空，请联系后台系统开发人员");
-			}
-			if(isPlaceholder == 0){
-				actualInValue = getSimpleSqlParameterValue(actualInValue);
-			}
-		}else{
-			throw new IllegalArgumentException("parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)]");
-		}
-	}
-	
-	/**
-	 * 获取简单的sql参数值
-	 * <p>目前就是对值加上''</p>
-	 * @param sqlParameterValue
-	 * @return
-	 */
-	private String getSimpleSqlParameterValue(Object sqlParameterValue){
-		if(sqlParameterValue == null){
-			Log4jUtil.warn(ComSqlScriptParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
-			return "";
-		}
-		return "'"+sqlParameterValue.toString()+"'";
 	}
 	
 	public String getParameterName() {

@@ -1,6 +1,5 @@
-package com.king.tooth.web.entity.request;
+package com.king.tooth.web.entity.request.valid.data;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,64 +16,41 @@ import com.king.tooth.sys.entity.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.request.RequestBody;
 
 /**
- * 资源的数据校验类
+ * 表资源的数据校验类
  * @author DougLei
  */
-public class ResourceDataVerifier {
+public class TableResourceVerifier extends AbstractResourceVerifier{
 	
-	private RequestBody requestBody;
-	private String resourceName;
-	private String parentResourceName;
-	
-	/**
-	 * 资源的元数据信息集合
-	 */
-	private List<ResourceMetadataInfo> resourceMetadataInfos;
-	/**
-	 * 父资源的元数据信息集合
-	 */
-	private List<ResourceMetadataInfo> parentResourceMetadataInfos;
-	
-	public ResourceDataVerifier(RequestBody requestBody) {
-		this.requestBody = requestBody;
-		resourceName = requestBody.getRouteBody().getResourceName();
-		parentResourceName = requestBody.getRouteBody().getParentResourceName();
+	public TableResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
+		super(requestBody, resourceName, parentResourceName);
 	}
 
-	//------------------------------------------------------------------
-	public void clear(){
-		if(parentResourceMetadataInfos != null && parentResourceMetadataInfos.size() > 0){
-			parentResourceMetadataInfos.clear();
-		}
-		if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
-			resourceMetadataInfos.clear();
-		}
+	public String doValid(){
+		return doValidTableResourceMetadata();
 	}
 	
 	/**
-	 * 校验请求资源的数据
-	 * @param requestBody
+	 * 验证表资源的元数据
 	 * @return
 	 */
-	public String doValidResourceData() {
-		if(requestBody.getResourceInfo().isTableResource()){
-			initTableResourceMetadataInfos();
-			return validTableResourceMetadata();
+	private String doValidTableResourceMetadata() {
+		initTableResourceMetadataInfos();
+		if(requestBody.isGetRequest()){
+			return validGetTableResourceMetadata();
+		}else if(requestBody.isPostRequest()){
+			return validPostTableResourceMetadata(false);
+		}else if(requestBody.isPutRequest()){
+			return validPutTableResourceMetadata();
+		}else if(requestBody.isDeleteRequest()){
+			return validDeleteTableResourceMetadata();
 		}
-		if(requestBody.getResourceInfo().isSqlResource()){
-			initSqlResourceMetadataInfos();
-			return validSqlResourceMetadata();
-		}
-		if(requestBody.getResourceInfo().isCodeResource()){
-			return validCodeResourceMetadata();
-		}
-		return "系统目前只存在[表、sql脚本、代码]三种资源类型，本次请求的资源类型为["+requestBody.getResourceInfo().getResourceType()+"]，请联系后台系统开发人员";
+		return "系统只支持[get、post、put、delete]四种请求方式";
 	}
 	
 	/**
@@ -138,7 +114,7 @@ public class ResourceDataVerifier {
 	}
 	
 	/**
-	 * 初始化基础的元数据信息
+	 * 初始化表资源基础的元数据信息
 	 * @param resourceMetadataInfos
 	 */
 	private void initBasicMetadataInfos(List<ResourceMetadataInfo> resourceMetadataInfos) {
@@ -149,35 +125,6 @@ public class ResourceDataVerifier {
 		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_date", BuiltinDataType.DATE, 0, 0, 0, 1, "最后修改时间"));
 		resourceMetadataInfos.add(new ResourceMetadataInfo("create_user_id", BuiltinDataType.STRING, 32, 0, 0, 1, "创建人主键"));
 		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_user_id", BuiltinDataType.STRING, 32, 0, 0, 1, "最后修改人主键"));
-	}
-	
-	/**
-	 * 初始化sql资源元数据信息集合
-	 * @return
-	 */
-	private void initSqlResourceMetadataInfos() {
-		resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(parameterName as name,parameterDataType as dataType,length as length,precision as precision, remark as descName) from ComSqlScriptParameter where sqlScriptId=? order by orderCode asc", requestBody.getResourceInfo().getReqResource().getRefResourceId(), ComColumndata.CREATED);
-		if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
-			throw new NullPointerException("没有查询到sql资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
-		}
-	}
-
-	// ------------------------------------------------------------------------------------------------
-	/**
-	 * 验证表资源的元数据
-	 * @return
-	 */
-	private String validTableResourceMetadata() {
-		if(requestBody.isGetRequest()){
-			return validGetTableResourceMetadata();
-		}else if(requestBody.isPostRequest()){
-			return validPostTableResourceMetadata(false);
-		}else if(requestBody.isPutRequest()){
-			return validPutTableResourceMetadata();
-		}else if(requestBody.isDeleteRequest()){
-			return validDeleteTableResourceMetadata();
-		}
-		return "系统只支持[get、post、put、delete]四种请求方式";
 	}
 	
 	/**
@@ -218,13 +165,7 @@ public class ResourceDataVerifier {
 				}
 			}
 		}
-		
-		for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
-			if(propName.equals(rmi.getName())){
-				return false;
-			}
-		}
-		return true;
+		return validPropUnExists(propName, resourceMetadataInfos);
 	}
 
 	/**
@@ -256,7 +197,6 @@ public class ResourceDataVerifier {
 				}
 			}
 			
-			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
 				dataValue = data.get(rmi.getName());
 				dataValueIsNull = StrUtils.isEmpty(dataValue);
@@ -271,7 +211,7 @@ public class ResourceDataVerifier {
 					if(BuiltinDataType.CLOB.equals(rmi.getDataType()) || BuiltinDataType.BLOB.equals(rmi.getDataType())){
 						continue;
 					}
-					validDataIsLegalResult = validDataIsLegal("表", dataValue, rmi, (i+1));
+					validDataIsLegalResult = validDataIsLegal(dataValue, rmi, (i+1));
 					if(validDataIsLegalResult != null){
 						return validDataIsLegalResult;
 					}
@@ -306,51 +246,6 @@ public class ResourceDataVerifier {
 	}
 	
 	/**
-	 * 验证数据是否合法
-	 * @param resourceTypeDesc
-	 * @param dataValue
-	 * @param rmi
-	 * @param index
-	 * @return
-	 */
-	private String validDataIsLegal(String resourceTypeDesc, Object dataValue, ResourceMetadataInfo rmi, int index){
-		// 验证数据类型、数据长度、数据精度
-		if(BuiltinDataType.BOOLEAN.equals(rmi.getDataType())){
-			if(!(dataValue instanceof Boolean)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
-			}
-		}else if(BuiltinDataType.INTEGER.equals(rmi.getDataType())){
-			if(!(dataValue instanceof Integer)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
-			}
-			if(dataValue.toString().length() > rmi.getLength()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
-			}
-		}else if(BuiltinDataType.DOUBLE.equals(rmi.getDataType())){
-			if(!(dataValue instanceof BigDecimal)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
-			}
-			dataValueStr = dataValue.toString();
-			if((dataValueStr.length()-1) > rmi.getLength()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
-			}
-			if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
-			}
-		}else if(BuiltinDataType.DATE.equals(rmi.getDataType())){
-			if(!DateUtil.valueIsDateFormat(dataValue)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
-			}
-		}else if(BuiltinDataType.STRING.equals(rmi.getDataType())){
-			if(StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
-			}
-		}
-		return null;
-	}
-	private String dataValueStr;
-	
-	/**
 	 * 验证数据是否已经存在
 	 * @param propName
 	 * @param dataValue
@@ -378,45 +273,5 @@ public class ResourceDataVerifier {
 			return "要删除["+resourceName+"]资源时，"+BuiltinParameterKeys._IDS+"参数值不能为空";
 		}
 		return null;
-	}
-	// ------------------------------------------------------------------------------------------------
-	/**
-	 * 验证sql资源的元数据
-	 * @return
-	 */
-	private String validSqlResourceMetadata() {
-		if(requestBody.isGetRequest()){
-			// TODO
-			return null;
-		}else if(requestBody.isPostRequest()){
-			// TODO
-			return null;
-		}else if(requestBody.isPutRequest()){
-			// TODO
-			return null;
-		}else if(requestBody.isDeleteRequest()){
-			// TODO
-			return null;
-		}
-		return "系统只支持[get、post、put、delete]四种请求方式";
-	}
-	
-	// ------------------------------------------------------------------------------------------------
-	/**
-	 * 验证代码资源的元数据
-	 * <p>**代码资源的元数据验证，放到各个代码资源中去自行验证，这里不做统一处理**</p>
-	 * @return
-	 */
-	private String validCodeResourceMetadata() {
-		if(requestBody.isGetRequest()){
-			return null;
-		}else if(requestBody.isPostRequest()){
-			return null;
-		}else if(requestBody.isPutRequest()){
-			return null;
-		}else if(requestBody.isDeleteRequest()){
-			return null;
-		}
-		return "系统只支持[get、post、put、delete]四种请求方式";
 	}
 }
