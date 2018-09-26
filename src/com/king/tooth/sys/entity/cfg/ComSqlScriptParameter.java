@@ -83,6 +83,10 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 * 参数的顺序值
 	 */
 	private Integer orderCode;
+	/**
+	 * 备注
+	 */
+	private String remark;
 	
 	//------------------------------------------------------------------------------
 	
@@ -262,6 +266,13 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public void setSqlScriptId(String sqlScriptId) {
 		this.sqlScriptId = sqlScriptId;
 	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
@@ -270,7 +281,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -333,6 +344,11 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		orderCodeColumn.setName("参数的顺序值");
 		orderCodeColumn.setComments("参数的顺序值");
 		columns.add(orderCodeColumn);
+		
+		ComColumndata remarkColumn = new ComColumndata("remark", BuiltinDataType.INTEGER, 80);
+		remarkColumn.setName("备注");
+		remarkColumn.setComments("备注");
+		columns.add(remarkColumn);
 		
 		return columns;
 	}

@@ -129,8 +129,8 @@ public class ResourceDataVerifier {
 					column.getColumnType(),
 					column.getLength(),
 					column.getPrecision(),
-					0, // column.getIsUnique()
-					1, // column.getIsNullabled()
+					0, // column.getIsUnique()，基础字段，不需要验证是否唯一，所以设置为0
+					1, // column.getIsNullabled()，基础字段，不需要验证是否可为空，所以设置为1
 					column.getName()));
 		}
 		table.clear();
@@ -156,7 +156,7 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private void initSqlResourceMetadataInfos() {
-		resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(parameterName as name,parameterDataType as dataType,length as length,precision as precision) from ComSqlScriptParameter where sqlScriptId=? order by orderCode asc", requestBody.getResourceInfo().getReqResource().getRefResourceId(), ComColumndata.CREATED);
+		resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(parameterName as name,parameterDataType as dataType,length as length,precision as precision, remark as descName) from ComSqlScriptParameter where sqlScriptId=? order by orderCode asc", requestBody.getResourceInfo().getReqResource().getRefResourceId(), ComColumndata.CREATED);
 		if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
 			throw new NullPointerException("没有查询到sql资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 		}
@@ -263,7 +263,7 @@ public class ResourceDataVerifier {
 				
 				// 验证不能为空
 				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
-					return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"("+rmi.getDescName()+")]的值不能为空";
+					return "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值不能为空";
 				}
 				
 				if(!dataValueIsNull){
@@ -280,7 +280,7 @@ public class ResourceDataVerifier {
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintProps.add(rmi);
 						if(validDataIsExists(rmi.getName(), dataValue)){
-							return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"("+rmi.getDescName()+")]的值["+dataValue+"]已经存在，不能重复添加";
+							return "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
 						}
 					}
 				}
@@ -295,7 +295,7 @@ public class ResourceDataVerifier {
 					if(StrUtils.notEmpty(dataValue)){
 						for(int j=i+1;j<size;j++){
 							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getName()))){
-								return "保存表资源["+resourceName+"]时，第"+(i+1)+"个对象和第"+(j+1)+"个对象，属性名为["+uniqueConstraintProp.getName()+"("+uniqueConstraintProp.getDescName()+")]的值重复，操作失败";
+								return "第"+(i+1)+"个对象和第"+(j+1)+"个对象，["+uniqueConstraintProp.getDescName()+"] 的值重复，操作失败";
 							}
 						}
 					}
@@ -317,33 +317,33 @@ public class ResourceDataVerifier {
 		// 验证数据类型、数据长度、数据精度
 		if(BuiltinDataType.BOOLEAN.equals(rmi.getDataType())){
 			if(!(dataValue instanceof Boolean)){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为布尔值类型";
+				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
 			}
 		}else if(BuiltinDataType.INTEGER.equals(rmi.getDataType())){
 			if(!(dataValue instanceof Integer)){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为整数类型";
+				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 			}
 			if(dataValue.toString().length() > rmi.getLength()){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值长度，大于实际配置的长度限制";
+				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 		}else if(BuiltinDataType.DOUBLE.equals(rmi.getDataType())){
 			if(!(dataValue instanceof BigDecimal)){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为浮点类型";
+				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
 			}
 			dataValueStr = dataValue.toString();
 			if((dataValueStr.length()-1) > rmi.getLength()){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值长度，大于实际配置的长度限制";
+				return "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 			if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值的精度，大于实际配置的精度限制";
+				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 			}
 		}else if(BuiltinDataType.DATE.equals(rmi.getDataType())){
 			if(!DateUtil.valueIsDateFormat(dataValue)){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值不合法，应为日期类型";
+				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 			}
 		}else if(BuiltinDataType.STRING.equals(rmi.getDataType())){
 			if(StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
-				return "操作"+resourceTypeDesc+"资源["+resourceName+"]时，第"+index+"个对象，属性名为["+rmi.getName()+"]的值长度，大于实际配置的长度限制";
+				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 		}
 		return null;
