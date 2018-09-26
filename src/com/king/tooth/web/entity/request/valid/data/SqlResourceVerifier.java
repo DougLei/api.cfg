@@ -42,6 +42,10 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * 针对select sql查询结果集的元数据信息集合
 	 */
 	private List<ResourceMetadataInfo> outSqlResultSetMetadataInfos;
+	/**
+	 * 针对procedure sql传入表对象的元数据信息集合
+	 */
+	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList;
 	
 	public SqlResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
 		super(requestBody, resourceName, parentResourceName);
@@ -51,6 +55,14 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	
 	public void clear(){
 		super.clear();
+		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
+			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
+				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
+					inSqlResultSetMetadataInfos.clear();
+				}
+			}
+			inSqlResultSetMetadataInfoList.clear();
+		}
 		if(outSqlResultSetMetadataInfos != null && outSqlResultSetMetadataInfos.size() > 0){
 			outSqlResultSetMetadataInfos.clear();
 		}
@@ -96,7 +108,10 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			parentResourceMetadataInfos = resourceMetadataInfos;
 		}
 		if(BuiltinDatabaseData.SELECT.equals(sql.getSqlScriptType())){
-			outSqlResultSetMetadataInfos = analysisSelectSqlResultSetMetadataInfos();
+			outSqlResultSetMetadataInfos = analysisSelectSqlOutResultSetMetadataInfos();
+		}
+		if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
+			inSqlResultSetMetadataInfoList = analysisProcedureSqlInResultSetMetadataInfoList();
 		}
 	}
 	
@@ -124,17 +139,48 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	}
 	
 	/**
-	 * 解析出select sql查询结果集的元数据信息集合
+	 * 解析出select sql输出查询结果集的元数据信息集合
 	 * @param sqlParams
 	 * @return
 	 */
-	private List<ResourceMetadataInfo> analysisSelectSqlResultSetMetadataInfos() {
+	private List<ResourceMetadataInfo> analysisSelectSqlOutResultSetMetadataInfos() {
 		List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
 		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
 		for (CfgSqlResultset csr : outSqlResultSet) {
 			metadataInfos.add(new ResourceMetadataInfo(csr.getPropName()));
 		}
 		return metadataInfos;
+	}
+	
+	/**
+	 * 解析出procedure sql传入表对象的元数据信息集合
+	 * @return
+	 */
+	private List<List<ResourceMetadataInfo>> analysisProcedureSqlInResultSetMetadataInfoList() {
+		List<List<CfgSqlResultset>> inSqlResultsetsList = sql.getInSqlResultsetsList();
+		if(inSqlResultsetsList != null && inSqlResultsetsList.size() > 0){
+			List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsetsList.size());
+			
+			List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = null;
+			for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
+				if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+					inSqlResultSetMetadataInfos = new ArrayList<ResourceMetadataInfo>(inSqlResultsets.size());
+					for (CfgSqlResultset crs : inSqlResultsets) {
+						inSqlResultSetMetadataInfos.add(new ResourceMetadataInfo(
+											crs.getPropName(),
+											crs.getDataType(),
+											0, // 系统还未实现解析该值  sqlParam.getLength()
+											0, // 系统还未实现解析该值  sqlParam.getPrecision() 
+											0, // 不需要唯一约束
+											0, // 不需要是否不能为空约束
+											null));
+					}
+				}
+				inSqlResultSetMetadataInfoList.add(inSqlResultSetMetadataInfos);
+			}
+			return inSqlResultSetMetadataInfoList;
+		}
+		return null;
 	}
 	
 	/**
