@@ -15,9 +15,11 @@ import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -87,6 +89,7 @@ public class ResourceDataVerifier {
 			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
 				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 			}
+			initBasicMetadataInfos(resourceMetadataInfos);
 		}
 		
 		if(requestBody.isParentSubResourceQuery()){
@@ -100,6 +103,7 @@ public class ResourceDataVerifier {
 					if(parentResourceMetadataInfos == null || parentResourceMetadataInfos.size() == 0){
 						throw new NullPointerException("没有查询到父表资源["+parentResourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 					}
+					initBasicMetadataInfos(parentResourceMetadataInfos);
 				}
 			}
 		}
@@ -111,10 +115,12 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
-		ITable table = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
-		List<ComColumndata> columns = table.getColumnList();
-		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
+		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
+		ComTabledata table = itable.toCreateTable();
+		DynamicBasicColumnUtil.initBasicColumnToTable(table);
 		
+		List<ComColumndata> columns = table.getColumns();
+		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
 		for (ComColumndata column : columns) {
 			metadataInfos.add(new ResourceMetadataInfo(
 					column.getPropName(),
@@ -124,8 +130,22 @@ public class ResourceDataVerifier {
 					column.getIsUnique(),
 					column.getIsNullabled()));
 		}
-		columns.clear();
+		table.clear();
 		return metadataInfos;
+	}
+	
+	/**
+	 * 初始化基础的元数据信息
+	 * @param resourceMetadataInfos
+	 */
+	private void initBasicMetadataInfos(List<ResourceMetadataInfo> resourceMetadataInfos) {
+		resourceMetadataInfos.add(new ResourceMetadataInfo(ResourcePropNameConstants.ID, BuiltinDataType.STRING, 32, 0, 0, 0));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("customer_id", BuiltinDataType.STRING, 32, 0, 0, 1));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("project_id", BuiltinDataType.STRING, 32, 0, 0, 1));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("create_date", BuiltinDataType.DATE, 0, 0, 0, 1));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_date", BuiltinDataType.DATE, 0, 0, 0, 1));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("create_user_id", BuiltinDataType.STRING, 32, 0, 0, 1));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_user_id", BuiltinDataType.STRING, 32, 0, 0, 1));
 	}
 	
 	/**

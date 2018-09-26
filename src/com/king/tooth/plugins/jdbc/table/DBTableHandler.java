@@ -9,8 +9,6 @@ import java.util.List;
 
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
-import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
-import com.king.tooth.plugins.jdbc.util.DynamicDataLinkTableUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
@@ -20,6 +18,8 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
+import com.king.tooth.util.build.model.DynamicDataLinkTableUtil;
 
 /**
  * 对数据库表的操作
@@ -150,7 +150,7 @@ public class DBTableHandler {
 			StringBuilder createTableSql = new StringBuilder();
 			for (ComTabledata tabledata : tabledatas) {
 				if(isNeedInitBasicColumns){
-					DynamicBasicDataColumnUtil.initBasicColumnToTable(tabledata);
+					DynamicBasicColumnUtil.initBasicColumnToTable(tabledata);
 				}
 				tableOper.installCreateTableSql(tabledata);
 				createTableSql.append(tableOper.getCreateTableSql()).append(";")

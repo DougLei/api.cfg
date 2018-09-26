@@ -212,7 +212,7 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 			}
 			
 			if(parentResourceParams.containsKey(ResourcePropNameConstants.ID)){
-				parentResourceParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, parentResourceParams.get(ResourcePropNameConstants.ID));
+				parentResourceParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, parentResourceParams.remove(ResourcePropNameConstants.ID));
 			}else{
 				parentResourceParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, parentResourceId);
 			}

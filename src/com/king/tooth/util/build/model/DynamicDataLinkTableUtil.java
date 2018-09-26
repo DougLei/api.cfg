@@ -1,4 +1,4 @@
-package com.king.tooth.plugins.jdbc.util;
+package com.king.tooth.util.build.model;
 
 import java.util.ArrayList;
 import java.util.List;

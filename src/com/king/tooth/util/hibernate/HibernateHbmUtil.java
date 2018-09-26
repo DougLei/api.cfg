@@ -6,9 +6,9 @@ import java.util.Map;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.plugins.jdbc.util.DynamicBasicDataColumnUtil;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.freemarker.FreemarkerUtil;
 
 /**
@@ -48,7 +48,7 @@ public class HibernateHbmUtil {
 	 */
 	public static String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns, String freemarkerFtlPath){
 		if(isNeedInitBasicColumns){
-			DynamicBasicDataColumnUtil.initBasicColumnToTable(table);
+			DynamicBasicColumnUtil.initBasicColumnToTable(table);
 		}
 		Map<String, Object> dataModel = new HashMap<String, Object>(3);
 		dataModel.put("table", table);

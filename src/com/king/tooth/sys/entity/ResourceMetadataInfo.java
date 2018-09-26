@@ -1,5 +1,7 @@
 package com.king.tooth.sys.entity;
 
+import com.king.tooth.constants.ResourcePropNameConstants;
+
 
 /**
  * 资源元数据信息对象
@@ -35,7 +37,7 @@ public class ResourceMetadataInfo {
 	public ResourceMetadataInfo() {
 	}
 	public ResourceMetadataInfo(String name, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
-		this.name = name;
+		this.name = name.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:name;
 		this.dataType = dataType;
 		this.length = length;
 		this.precision = precision==null?0:precision;
