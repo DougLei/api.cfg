@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.util.StrUtils;
 
 
 /**
@@ -32,17 +33,21 @@ public class ResourceMetadataInfo {
 	 * 是否可为空
 	 */
 	private Integer isNullabled;
-	
+	/**
+	 * 汉字描述名
+	 */
+	private String descName;
 	
 	public ResourceMetadataInfo() {
 	}
-	public ResourceMetadataInfo(String name, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
+	public ResourceMetadataInfo(String name, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, String descName) {
 		this.name = name.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:name;
 		this.dataType = dataType;
 		this.length = length;
 		this.precision = precision==null?0:precision;
 		this.isUnique = isUnique==null?0:isUnique;
 		this.isNullabled = isNullabled==null?1:isNullabled;
+		this.descName = StrUtils.isEmpty(descName)?name:descName;
 	}
 	
 	public String getName() {
@@ -80,5 +85,11 @@ public class ResourceMetadataInfo {
 	}
 	public void setIsNullabled(Integer isNullabled) {
 		this.isNullabled = isNullabled;
+	}
+	public String getDescName() {
+		return descName;
+	}
+	public void setDescName(String descName) {
+		this.descName = descName;
 	}
 }

@@ -85,7 +85,7 @@ public class ResourceDataVerifier {
 		if(requestBody.getResourceInfo().getReqResource().isBuiltinResource()){
 			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource().getResourceName());
 		}else{
-			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled) from ComColumndata where tableId=? and operStatus=? order by orderCode asc", requestBody.getResourceInfo().getReqResource().getRefResourceId(), ComColumndata.CREATED);
+			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql , requestBody.getResourceInfo().getReqResource().getRefResourceId());
 			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
 				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 			}
@@ -99,7 +99,7 @@ public class ResourceDataVerifier {
 				if(requestBody.getResourceInfo().getReqParentResource().isBuiltinResource()){
 					parentResourceMetadataInfos = getBuiltinTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource().getResourceName());
 				}else{
-					parentResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled) from ComColumndata where tableId=? and operStatus=? order by orderCode asc", requestBody.getResourceInfo().getReqParentResource().getRefResourceId(), ComColumndata.CREATED);
+					parentResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, requestBody.getResourceInfo().getReqParentResource().getRefResourceId());
 					if(parentResourceMetadataInfos == null || parentResourceMetadataInfos.size() == 0){
 						throw new NullPointerException("没有查询到父表资源["+parentResourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 					}
@@ -108,6 +108,8 @@ public class ResourceDataVerifier {
 			}
 		}
 	}
+	/** 查询表资源元数据信息集合的hql */
+	private static final String queryTableMetadataInfosHql = "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and operStatus="+ComColumndata.CREATED+" order by orderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
@@ -127,8 +129,9 @@ public class ResourceDataVerifier {
 					column.getColumnType(),
 					column.getLength(),
 					column.getPrecision(),
-					column.getIsUnique(),
-					column.getIsNullabled()));
+					0, // column.getIsUnique()
+					1, // column.getIsNullabled()
+					column.getName()));
 		}
 		table.clear();
 		return metadataInfos;
@@ -139,13 +142,13 @@ public class ResourceDataVerifier {
 	 * @param resourceMetadataInfos
 	 */
 	private void initBasicMetadataInfos(List<ResourceMetadataInfo> resourceMetadataInfos) {
-		resourceMetadataInfos.add(new ResourceMetadataInfo(ResourcePropNameConstants.ID, BuiltinDataType.STRING, 32, 0, 0, 0));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("customer_id", BuiltinDataType.STRING, 32, 0, 0, 1));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("project_id", BuiltinDataType.STRING, 32, 0, 0, 1));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("create_date", BuiltinDataType.DATE, 0, 0, 0, 1));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_date", BuiltinDataType.DATE, 0, 0, 0, 1));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("create_user_id", BuiltinDataType.STRING, 32, 0, 0, 1));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_user_id", BuiltinDataType.STRING, 32, 0, 0, 1));
+		resourceMetadataInfos.add(new ResourceMetadataInfo(ResourcePropNameConstants.ID, BuiltinDataType.STRING, 32, 0, 0, 1, "主键"));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("customer_id", BuiltinDataType.STRING, 32, 0, 0, 1, "所属租户主键"));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("project_id", BuiltinDataType.STRING, 32, 0, 0, 1, "所属项目主键"));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("create_date", BuiltinDataType.DATE, 0, 0, 0, 1, "创建时间"));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_date", BuiltinDataType.DATE, 0, 0, 0, 1, "最后修改时间"));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("create_user_id", BuiltinDataType.STRING, 32, 0, 0, 1, "创建人主键"));
+		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_user_id", BuiltinDataType.STRING, 32, 0, 0, 1, "最后修改人主键"));
 	}
 	
 	/**
@@ -233,7 +236,7 @@ public class ResourceDataVerifier {
 		IJson ijson = requestBody.getFormData();
 		int size = ijson.size();
 		
-		Set<String> uniqueConstraintPropName = new HashSet<String>(resourceMetadataInfos.size());
+		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
 		JSONObject data = null;
 		boolean dataValueIsNull;
 		Set<String> propKeys = null;
@@ -242,7 +245,7 @@ public class ResourceDataVerifier {
 		for(int i=0;i<size;i++){
 			data = ijson.get(i);
 			if(isValidIdPropIsNull && StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
-				return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"属性值不能为空";
+				return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 			}
 			
 			// 验证每个对象的属性，是否存在
@@ -260,7 +263,7 @@ public class ResourceDataVerifier {
 				
 				// 验证不能为空
 				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
-					return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"]的值不能为空";
+					return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"("+rmi.getDescName()+")]的值不能为空";
 				}
 				
 				if(!dataValueIsNull){
@@ -275,9 +278,9 @@ public class ResourceDataVerifier {
 					
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
-						uniqueConstraintPropName.add(rmi.getName());
+						uniqueConstraintProps.add(rmi);
 						if(validDataIsExists(rmi.getName(), dataValue)){
-							return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"]的值["+dataValue+"]已经存在，不能重复添加";
+							return "操作表资源["+resourceName+"]时，第"+(i+1)+"个对象，属性名为["+rmi.getName()+"("+rmi.getDescName()+")]的值["+dataValue+"]已经存在，不能重复添加";
 						}
 					}
 				}
@@ -285,22 +288,20 @@ public class ResourceDataVerifier {
 		}
 		
 		// 验证一次提交的数组中，是否有重复的值，违反了唯一约束
-		if(size > 1 && uniqueConstraintPropName.size()>0){
-			for (String propName : uniqueConstraintPropName) {
+		if(size > 1 && uniqueConstraintProps.size()>0){
+			for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
 				for(int i=0;i<size-1;i++){
-					dataValue = ijson.get(i).get(propName);
+					dataValue = ijson.get(i).get(uniqueConstraintProp.getName());
 					if(StrUtils.notEmpty(dataValue)){
 						for(int j=i+1;j<size;j++){
-							if(dataValue.equals(ijson.get(j).get(propName))){
-								uniqueConstraintPropName.clear();
-								return "保存表资源["+resourceName+"]时，第"+(i+1)+"个对象和第"+(j+1)+"个对象，属性名为["+propName+"]的值相同，不能重复添加";
+							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getName()))){
+								return "保存表资源["+resourceName+"]时，第"+(i+1)+"个对象和第"+(j+1)+"个对象，属性名为["+uniqueConstraintProp.getName()+"("+uniqueConstraintProp.getDescName()+")]的值重复，操作失败";
 							}
 						}
 					}
 				}
 			}
 		}
-		uniqueConstraintPropName.clear();
 		return null;
 	}
 	
@@ -356,7 +357,7 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	private boolean validDataIsExists(String propName, Object dataValue) {
-		long count = (long)HibernateUtil.executeUniqueQueryByHqlArr("select count(1) from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		long count = (long)HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		return (count > 0);
 	}
 

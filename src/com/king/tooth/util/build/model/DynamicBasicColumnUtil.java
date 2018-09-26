@@ -33,8 +33,8 @@ public class DynamicBasicColumnUtil {
 		
 		// projectId
 		ComColumndata projectIdColumn = new ComColumndata("project_id", BuiltinDataType.STRING, 32);
-		projectIdColumn.setName("关联的项目主键");
-		projectIdColumn.setComments("关联的项目主键");
+		projectIdColumn.setName("所属项目主键");
+		projectIdColumn.setComments("所属项目主键");
 		table.getColumns().add(projectIdColumn);
 		
 		if(table.getIsResource() != null && table.getIsResource() == 1){

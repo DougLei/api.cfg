@@ -25,7 +25,7 @@ public class CfgColumnService extends AbstractService{
 		if(StrUtils.isEmpty(column.getTableId())){
 			return "关联的表id不能为空";
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where id = ?", column.getTableId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where "+ResourcePropNameConstants.ID+" = ?", column.getTableId());
 		if(count != 1){
 			return "关联的id=["+column.getTableId()+"]的表信息不存在";
 		}
