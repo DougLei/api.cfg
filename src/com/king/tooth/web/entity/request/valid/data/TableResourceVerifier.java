@@ -151,24 +151,6 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	}
 	
 	/**
-	 * 验证属性是否不存在
-	 * @param validBuiltinParams 是否验证内置参数，是get请求的时候才需要为true，其他请求都是false
-	 * @param propName
-	 * @param resourceMetadataInfos
-	 * @return
-	 */
-	private boolean validPropUnExists(boolean validBuiltinParams, String propName, List<ResourceMetadataInfo> resourceMetadataInfos){
-		if(validBuiltinParams){
-			for (String builtinParams : BuiltinParameterKeys.BUILTIN_PARAMS) { // 内置的参数不做是否存在的验证，因为肯定不存在，是后台使用的一些参数
-				if(propName.equals(builtinParams)){
-					return false;
-				}
-			}
-		}
-		return validPropUnExists(propName, resourceMetadataInfos);
-	}
-
-	/**
 	 * 验证post请求的表资源数据
 	 * @param isValidIdPropIsNull 是否验证id属性为空
 	 * @return

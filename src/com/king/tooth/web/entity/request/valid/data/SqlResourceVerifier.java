@@ -498,7 +498,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	private String validGetSqlResourceMetadata() {
 		Set<String> requestResourcePropNames = requestBody.getRequestResourceParams().keySet();
 		for (String propName : requestResourcePropNames) {
-			if(validPropUnExists(propName, outSqlResultSetMetadataInfos)){
+			if(validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
 				return "执行selec sql资源["+resourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
 			}
 		}
@@ -506,7 +506,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		if(requestBody.isParentSubResourceQuery()){
 			requestResourcePropNames = requestBody.getRequestParentResourceParams().keySet();
 			for (String propName : requestResourcePropNames) {
-				if(validPropUnExists(propName, outSqlResultSetMetadataInfos)){
+				if(validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
 					return "执行selec sql资源["+parentResourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
 				}
 			}

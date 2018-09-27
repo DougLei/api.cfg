@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.ResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
@@ -36,11 +37,19 @@ public abstract class AbstractResourceVerifier {
 	
 	/**
 	 * 验证属性是否不存在
+	 * @param validBuiltinParams 是否验证内置参数，是get请求的时候才需要为true，其他请求都是false
 	 * @param propName
 	 * @param resourceMetadataInfos
 	 * @return
 	 */
-	protected boolean validPropUnExists(String propName, List<ResourceMetadataInfo> resourceMetadataInfos){
+	protected boolean validPropUnExists(boolean validBuiltinParams, String propName, List<ResourceMetadataInfo> resourceMetadataInfos){
+		if(validBuiltinParams){
+			for (String builtinParams : BuiltinParameterKeys.BUILTIN_PARAMS) { // 内置的参数不做是否存在的验证，因为肯定不存在，是后台使用的一些参数
+				if(propName.equals(builtinParams)){
+					return false;
+				}
+			}
+		}
 		for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
 			if(propName.equals(rmi.getName())){
 				return false;
