@@ -107,12 +107,8 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		if(requestBody.isParentSubResourceQuery() && requestBody.isRecursiveQuery()){
 			parentResourceMetadataInfos = resourceMetadataInfos;
 		}
-		if(BuiltinDatabaseData.SELECT.equals(sql.getSqlScriptType())){
-			outSqlResultSetMetadataInfos = analysisSelectSqlOutResultSetMetadataInfos();
-		}
-		if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
-			inSqlResultSetMetadataInfoList = analysisProcedureSqlInResultSetMetadataInfoList();
-		}
+		inSqlResultSetMetadataInfoList = analysisProcedureSqlInResultSetMetadataInfoList();
+		outSqlResultSetMetadataInfos = analysisSelectSqlOutResultSetMetadataInfos();
 	}
 	
 	/**
@@ -139,46 +135,52 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	}
 	
 	/**
+	 * 解析出procedure sql传入表对象的元数据信息集合
+	 * @return
+	 */
+	private List<List<ResourceMetadataInfo>> analysisProcedureSqlInResultSetMetadataInfoList() {
+		if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
+			List<List<CfgSqlResultset>> inSqlResultsetsList = sql.getInSqlResultsetsList();
+			if(inSqlResultsetsList != null && inSqlResultsetsList.size() > 0){
+				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsetsList.size());
+				
+				List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = null;
+				for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
+					if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+						inSqlResultSetMetadataInfos = new ArrayList<ResourceMetadataInfo>(inSqlResultsets.size());
+						for (CfgSqlResultset crs : inSqlResultsets) {
+							// TODO
+							inSqlResultSetMetadataInfos.add(new ResourceMetadataInfo(
+												crs.getPropName(),
+												crs.getDataType(),
+												0, // 系统还未实现解析该值  sqlParam.getLength()
+												0, // 系统还未实现解析该值  sqlParam.getPrecision() 
+												0, // 不需要唯一约束
+												0, // 不需要是否不能为空约束
+												null));
+						}
+					}
+					inSqlResultSetMetadataInfoList.add(inSqlResultSetMetadataInfos);
+				}
+				return inSqlResultSetMetadataInfoList;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * 解析出select sql输出查询结果集的元数据信息集合
 	 * @param sqlParams
 	 * @return
 	 */
 	private List<ResourceMetadataInfo> analysisSelectSqlOutResultSetMetadataInfos() {
-		List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
-		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
-		for (CfgSqlResultset csr : outSqlResultSet) {
-			metadataInfos.add(new ResourceMetadataInfo(csr.getPropName()));
-		}
-		return metadataInfos;
-	}
-	
-	/**
-	 * 解析出procedure sql传入表对象的元数据信息集合
-	 * @return
-	 */
-	private List<List<ResourceMetadataInfo>> analysisProcedureSqlInResultSetMetadataInfoList() {
-		List<List<CfgSqlResultset>> inSqlResultsetsList = sql.getInSqlResultsetsList();
-		if(inSqlResultsetsList != null && inSqlResultsetsList.size() > 0){
-			List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsetsList.size());
-			
-			List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = null;
-			for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
-				if(inSqlResultsets != null && inSqlResultsets.size() > 0){
-					inSqlResultSetMetadataInfos = new ArrayList<ResourceMetadataInfo>(inSqlResultsets.size());
-					for (CfgSqlResultset crs : inSqlResultsets) {
-						inSqlResultSetMetadataInfos.add(new ResourceMetadataInfo(
-											crs.getPropName(),
-											crs.getDataType(),
-											0, // 系统还未实现解析该值  sqlParam.getLength()
-											0, // 系统还未实现解析该值  sqlParam.getPrecision() 
-											0, // 不需要唯一约束
-											0, // 不需要是否不能为空约束
-											null));
-					}
-				}
-				inSqlResultSetMetadataInfoList.add(inSqlResultSetMetadataInfos);
+		if(BuiltinDatabaseData.SELECT.equals(sql.getSqlScriptType())){
+			List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
+			List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
+			for (CfgSqlResultset csr : outSqlResultSet) {
+				metadataInfos.add(new ResourceMetadataInfo(csr.getPropName()));
 			}
-			return inSqlResultSetMetadataInfoList;
+			return metadataInfos;
 		}
 		return null;
 	}
@@ -435,6 +437,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					}else{// 否则就是post请求，直接判断，不需要转换
 						if(ssp.getIsTableType() == 1){
 							actualInValue = IJsonUtil.getIJson(dataValueStr);
+							return validProcedureSqlInResultSet(ssp, rmi, index, (IJson)actualInValue);
 						}else{
 							return validDataIsLegal(actualInValue, rmi, index);
 						}
@@ -458,6 +461,19 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	}
 	private Object actualInValue;
 	private String dataValueStr;
+	
+	/**
+	 * 验证存储过程传入的结果集
+	 * @param ssp
+	 * @param rmi
+	 * @param index
+	 * @param ijson
+	 * @return
+	 */
+	private String validProcedureSqlInResultSet(ComSqlScriptParameter ssp, ResourceMetadataInfo rmi, int index, IJson ijson) {
+		// TODO
+		return null;
+	}
 	
 	/**
 	 * 获取简单的sql参数值
