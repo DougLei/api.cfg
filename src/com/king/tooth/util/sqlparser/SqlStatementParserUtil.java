@@ -762,7 +762,4 @@ public class SqlStatementParserUtil {
 			return selectSqlStatement.getResultColumnList();
 		}
 	}
-	
-	
-	
 }
