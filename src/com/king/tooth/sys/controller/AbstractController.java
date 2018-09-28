@@ -109,17 +109,9 @@ public abstract class AbstractController {
 		if(resultObject == null){
 			return "系统异常，操作结果记录对象[resultObject]为空，请联系开发人员";
 		}
-//		if(resultObject instanceof String){
-//			return resultObject.toString();
-//		}
-		
 		if(resultJsonArray != null && resultJsonArray.size() > 0){
 			return resultJsonArray;
 		}
-//		if(resultObject instanceof JSONArray){
-//			return (JSONArray) resultObject;
-//		}
-//		return (JSONObject) resultObject;
 		return resultObject;
 	}
 	
