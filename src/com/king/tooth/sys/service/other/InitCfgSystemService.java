@@ -28,7 +28,6 @@ import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectHbmLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -114,7 +113,6 @@ public class InitCfgSystemService extends AService{
 		tables.add(new SysHibernateHbm().toCreateTable());
 		tables.add(new ComSqlScript().toCreateTable());
 		tables.add(new CfgProjectSqlLinks().toCreateTable());
-		tables.add(new CfgProjectHbmLinks().toCreateTable());
 		tables.add(new SysAccount().toCreateTable());
 		tables.add(new SysDataDictionary().toCreateTable());
 		tables.add(new SysResource().toCreateTable());
@@ -512,8 +510,6 @@ public class InitCfgSystemService extends AService{
 	 * @param coreTableHbmContents
 	 */
 	private void addOtherCoreTableHbmContents(List<String> coreTableHbmContents) {
-		ComTabledata comProjectSysHibernateHbmLinksTable = new CfgProjectHbmLinks().toCreateTable();
-		coreTableHbmContents.add(HibernateHbmUtil.createHbmMappingContent(comProjectSysHibernateHbmLinksTable, true));
 	}
 	
 	/**

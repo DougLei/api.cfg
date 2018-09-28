@@ -25,7 +25,6 @@ import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectHbmLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -115,7 +114,6 @@ public class BuiltinResourceInstance {
 		instanceCache.put("CfgSqlResultset", new CfgSqlResultset());
 		instanceCache.put("CfgColumnCodeRule", new CfgColumnCodeRule());
 		instanceCache.put("CfgColumnCodeRuleDetail", new CfgColumnCodeRuleDetail());
-		instanceCache.put("CfgProjectHbmLinks", new CfgProjectHbmLinks());
 		instanceCache.put("CfgProjectSqlLinks", new CfgProjectSqlLinks());
 		instanceCache.put("CfgProjectTableLinks", new CfgProjectTableLinks());
 		instanceCache.put("SysUser", new SysUser());

@@ -22,12 +22,10 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 关联的数据库主键
-	 * <p>如果发布到项目中，这个字段必须有值</p>
 	 */
 	private String refDatabaseId;
 	/**
 	 * 关联的表主键
-	 * <p>如果在被发布到项目中，这个字段有无值均可</p>
 	 */
 	private String refTableId;
 	/**
@@ -68,12 +66,12 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", BuiltinDataType.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
-		refDatabaseIdColumn.setComments("关联的数据库主键：如果发布到项目中，这个字段必须有值");
+		refDatabaseIdColumn.setComments("关联的数据库主键");
 		columns.add(refDatabaseIdColumn);
 		
 		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinDataType.STRING, 32);
 		refTableIdColumn.setName("关联的表主键");
-		refTableIdColumn.setComments("关联的表主键：如果在被发布到项目中，这个字段有无值均可");
+		refTableIdColumn.setComments("关联的表主键");
 		columns.add(refTableIdColumn);
 		
 		ComColumndata hbmContentColumn = new ComColumndata("hbm_content", BuiltinDataType.CLOB, 0);
