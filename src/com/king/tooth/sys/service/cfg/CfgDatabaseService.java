@@ -4,7 +4,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -12,7 +12,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class CfgDatabaseService extends AbstractService {
+public class CfgDatabaseService extends AService {
 	
 	/**
 	 * 验证数据库数据是否存在

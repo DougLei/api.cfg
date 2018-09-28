@@ -6,7 +6,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -15,7 +15,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class SysAccountOnlineStatusService extends AbstractService{
+public class SysAccountOnlineStatusService extends AService{
 	
 	/**
 	 * 根据token值，验证账户的在线状态

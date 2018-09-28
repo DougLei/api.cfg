@@ -5,7 +5,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -14,7 +14,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class CfgColumnService extends AbstractService{
+public class CfgColumnService extends AService{
 
 	/**
 	 * 验证列关联的表是否存在

@@ -46,7 +46,7 @@ public class CfgProjectSqlLinks implements Serializable, ITable {
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setResourceName("CfgProjectSqlLinks");
 		table.setName("项目和sql脚本的关系表");
 		table.setComments("项目和sql脚本的关系表");
@@ -56,7 +56,7 @@ public class CfgProjectSqlLinks implements Serializable, ITable {
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "CFG_PROJECT_SQL_LINKS";
 	}
 }

@@ -77,7 +77,7 @@ public class TableImpl extends AbstractTableHandler{
 			createCommentSql.append(" 'MS_Description','")
 							.append(table.getComments())
 						    .append("','user','dbo','table','")
-						    .append(table.getTableName())
+						    .append(table.toGetTableName())
 						    .append("',null,null; ");
 		}
 	}

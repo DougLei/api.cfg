@@ -12,7 +12,7 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
@@ -23,7 +23,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class SysPermissionService extends AbstractService{
+public class SysPermissionService extends AService{
 	
 	/**
 	 * 得到系统权限的优先级集合

@@ -200,10 +200,10 @@ public class DBTableHandler {
 				pst.setString(2, "U");
 			}
 			for (ComTabledata table : tabledatas) {
-				pst.setString(1, table.getTableName());
+				pst.setString(1, table.toGetTableName());
 				rs = pst.executeQuery();
 				if(rs.next() && (rs.getInt(1) > 0)){
-					tableNames.add(table.getTableName());
+					tableNames.add(table.toGetTableName());
 				}
 			}
 		} catch (Exception e) {

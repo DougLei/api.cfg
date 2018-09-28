@@ -99,14 +99,14 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("资源信息表");
 		table.setComments("资源信息表");
 		table.setColumns(getColumnList());
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "SYS_RESOURCE";
 	}
 

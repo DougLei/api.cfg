@@ -420,7 +420,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("字段编码规则表");
 		table.setComments("字段编码规则表");
 		
@@ -428,7 +428,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "CFG_COLUMN_CODE_RULE_DETAIL";
 	}
 

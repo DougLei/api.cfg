@@ -9,7 +9,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -18,7 +18,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class CfgProjectModuleService extends AbstractService {
+public class CfgProjectModuleService extends AService {
 
 	/**
 	 * 验证模块编码是否存在

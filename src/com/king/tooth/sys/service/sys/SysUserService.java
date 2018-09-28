@@ -10,7 +10,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysUser;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -22,7 +22,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class SysUserService extends AbstractService{
+public class SysUserService extends AService{
 	
 	private static final String sysUserDeptLinks = "SysUserDeptLinks";
 	private static final String sysUserPositionLinks = "SysUserPositionLinks";

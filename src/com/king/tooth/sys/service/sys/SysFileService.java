@@ -30,7 +30,7 @@ import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.sys.SysFile;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -44,7 +44,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class SysFileService extends AbstractService{
+public class SysFileService extends AService{
 	
 	/**
 	 * 上传文件

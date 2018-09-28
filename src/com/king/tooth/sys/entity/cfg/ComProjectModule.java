@@ -186,14 +186,14 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntityProp
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("项目模块信息表");
 		table.setComments("项目模块信息表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "COM_PROJECT_MODULE";
 	}
 

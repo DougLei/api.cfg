@@ -13,7 +13,7 @@ import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
@@ -27,7 +27,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("unchecked")
 @Service
-public class CfgSqlService extends AbstractService {
+public class CfgSqlService extends AService {
 	
 	/**
 	 * 根据id，获取sql脚本资源对象

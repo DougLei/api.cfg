@@ -31,11 +31,6 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 	 */
 	private String refTableId;
 	/**
-	 * hbm资源名
-	 * <p>即对应的表的资源名</p>
-	 */
-	private String resourceName;
-	/**
 	 * hbm内容
 	 */
 	private String content;
@@ -46,17 +41,10 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 	}
 	public SysHibernateHbm(ComTabledata table) {
 		this.setRefTableId(table.getId());
-		this.setResourceName(table.getResourceName());
 	}
 	
 	public String getRefTableId() {
 		return refTableId;
-	}
-	public String getResourceName() {
-		return resourceName;
-	}
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
 	}
 	public void setRefTableId(String refTableId) {
 		this.refTableId = refTableId;
@@ -88,11 +76,6 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 		refTableIdColumn.setComments("关联的表主键：如果在被发布到项目中，这个字段有无值均可");
 		columns.add(refTableIdColumn);
 		
-		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name", BuiltinDataType.STRING, 60);
-		hbmResourceNameColumn.setName("hbm资源名");
-		hbmResourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
-		columns.add(hbmResourceNameColumn);
-		
 		ComColumndata hbmContentColumn = new ComColumndata("hbm_content", BuiltinDataType.CLOB, 0);
 		hbmContentColumn.setName("hbm内容");
 		hbmContentColumn.setComments("hbm内容");
@@ -102,7 +85,7 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("hibernate的hbm内容表");
 		table.setComments("hibernate的hbm内容表");
 		
@@ -110,7 +93,7 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 		return table;
 	}
 	
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "SYS_HIBERNATE_HBM";
 	}
 

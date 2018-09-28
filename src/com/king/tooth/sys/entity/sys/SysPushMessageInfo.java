@@ -238,7 +238,7 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("推送消息信息表");
 		table.setComments("推送消息信息表");
 		
@@ -247,7 +247,7 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		return table;
 	}
 	
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "SYS_PUSH_MESSAGE_INFO";
 	}
 	

@@ -4,7 +4,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -14,7 +14,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class SysResourceService extends AbstractService{
+public class SysResourceService extends AService{
 	
 	/**
 	 * 保存资源信息

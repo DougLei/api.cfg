@@ -9,7 +9,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 服务处理器的抽象类
  * @author DougLei
  */
-public abstract class AbstractService {
+public abstract class AService {
 
 	/**
 	 * 根据id，查询获取对应的数据对象

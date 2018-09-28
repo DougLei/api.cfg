@@ -213,7 +213,7 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("账户表");
 		table.setComments("账户表");
 		
@@ -222,7 +222,7 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "SYS_ACCOUNT";
 	}
 

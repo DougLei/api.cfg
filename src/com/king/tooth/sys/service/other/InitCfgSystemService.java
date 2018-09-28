@@ -55,7 +55,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -74,7 +74,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("unchecked")
 @Service
-public class InitCfgSystemService extends AbstractService{
+public class InitCfgSystemService extends AService{
 
 	/**
 	 * 系统首次启动时，初始化系统的基础数据
@@ -464,13 +464,13 @@ public class InitCfgSystemService extends AbstractService{
 	private void initLogTables() {
 		// 判断是否存在日志表table
 		DBTableHandler tableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		List<String> logTableNames = tableHandler.filterTable(false, BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable(), BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable());
+		List<String> logTableNames = tableHandler.filterTable(false, BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toGetTableName(), BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toGetTableName());
 		if(logTableNames != null && logTableNames.size() > 0){
 			// 不存在，则create
 			for (String logTableName : logTableNames) {
-				if(logTableName.equals(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable())){
+				if(logTableName.equals(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toGetTableName())){
 					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable(), true);
-				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable())){
+				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toGetTableName())){
 					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable(), true);
 				}
 			}

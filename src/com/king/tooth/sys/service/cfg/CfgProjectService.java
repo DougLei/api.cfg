@@ -5,7 +5,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.ComProject;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -13,7 +13,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class CfgProjectService extends AbstractService {
+public class CfgProjectService extends AService {
 	
 	/**
 	 * 验证项目关联的数据库是否存在

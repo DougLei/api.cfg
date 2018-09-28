@@ -212,7 +212,7 @@ public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnaly
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("数据库信息表");
 		table.setComments("数据库信息表");
 		
@@ -220,7 +220,7 @@ public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnaly
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "CFG_DATABASE";
 	}
 

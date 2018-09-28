@@ -266,7 +266,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("表信息表");
 		table.setComments("表信息表");
 		
@@ -274,7 +274,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "COM_TABLEDATA";
 	}
 	

@@ -20,7 +20,7 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.cfg.CfgProjectModuleService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CryptographyUtil;
@@ -35,7 +35,7 @@ import com.king.tooth.util.websocket.pushmessage.PushMessageUtil;
  * @author DougLei
  */
 @Service
-public class SysAccountService extends AbstractService{
+public class SysAccountService extends AService{
 	
 	/**
 	 * 验证账户的状态

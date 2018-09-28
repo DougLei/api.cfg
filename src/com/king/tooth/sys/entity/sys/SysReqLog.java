@@ -254,7 +254,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable() + "_" + yyyyMM);
+		ComTabledata table = new ComTabledata(toGetTableName() + "_" + yyyyMM);
 		table.setName("请求日志信息表");
 		table.setComments("请求日志信息表");
 		
@@ -263,7 +263,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "SYS_REQ_LOG" +"_"+ yyyyMM;
 	}
 

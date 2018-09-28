@@ -13,7 +13,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -23,7 +23,7 @@ import com.king.tooth.util.hibernate.HibernateHbmUtil;
  * 同步表到服务器数据库的工具类
  * @author DougLei
  */
-public final class SyncTableToServerDBTool extends AbstractService{
+public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
@@ -64,8 +64,8 @@ public final class SyncTableToServerDBTool extends AbstractService{
 			SysHibernateHbm hbm;
 			SysResource resource;
 			for (ComTabledata table : tables) {
-				if(dbTableHandler.filterTable(true, table.getTableName()).size() == 1){
-					System.err.println("表名为["+table.getTableName()+"]的表，在服务器数据库中已经存在，不能能再进行操作");
+				if(dbTableHandler.filterTable(true, table.toGetTableName()).size() == 1){
+					System.err.println("表名为["+table.toGetTableName()+"]的表，在服务器数据库中已经存在，不能能再进行操作");
 					continue;
 				}
 				
@@ -76,7 +76,7 @@ public final class SyncTableToServerDBTool extends AbstractService{
 				hbm = new SysHibernateHbm(table);
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 				hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, false, "C:\\devlopment\\api\\projects\\api.cfg\\resources\\hibernateMapping\\template\\hibernate.hbm.xml.ftl"));
-				hbmId = executeInsertSysHibernateHbmSql(st, hbm);
+				hbmId = executeInsertSysHibernateHbmSql(st, hbm, table.getResourceName());
 				
 				// 3、获取插入资源数据的sql，并执行
 				resource = table.turnToResource();
@@ -102,14 +102,15 @@ public final class SyncTableToServerDBTool extends AbstractService{
 	 * 获取插入SysHibernateHbm表的sql语句，并执行
 	 * @param st
 	 * @param hbm
+	 * @param resourceName 
 	 * @return
 	 * @throws SQLException 
 	 */
-	private static String executeInsertSysHibernateHbmSql(Statement st, SysHibernateHbm hbm) throws SQLException {
+	private static String executeInsertSysHibernateHbmSql(Statement st, SysHibernateHbm hbm, String resourceName) throws SQLException {
 		String id = ResourceHandlerUtil.getIdentity();
 		// 先尝试删除之前的数据，再添加新的数据
-		st.executeUpdate("delete sys_hibernate_hbm where resource_name = '"+hbm.getResourceName()+"'");
-		st.executeUpdate("insert into sys_hibernate_hbm(ref_database_id, ref_table_id, resource_name, id, customer_id, project_id, is_enabled, request_method, is_created, create_date, last_update_date, create_user_id, last_update_user_id) values('5k7f1ef02728y7018f9df0e9edcr8d37','builtinResource','"+hbm.getResourceName()+"','"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
+		st.executeUpdate("delete sys_hibernate_hbm where resource_name = '"+resourceName+"'");
+		st.executeUpdate("insert into sys_hibernate_hbm(ref_database_id, ref_table_id, id, customer_id, project_id, is_enabled, request_method, is_created, create_date, last_update_date, create_user_id, last_update_user_id) values('5k7f1ef02728y7018f9df0e9edcr8d37','builtinResource','"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
 		return id;
 	}
 	

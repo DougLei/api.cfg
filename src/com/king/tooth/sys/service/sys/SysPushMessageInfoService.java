@@ -5,7 +5,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
-import com.king.tooth.sys.service.AbstractService;
+import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -13,7 +13,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class SysPushMessageInfoService extends AbstractService{
+public class SysPushMessageInfoService extends AService{
 
 	/**
 	 * 阅读消息

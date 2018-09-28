@@ -374,7 +374,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+		ComTabledata table = new ComTabledata(toGetTableName());
 		table.setName("用户信息表");
 		table.setComments("用户信息表");
 		
@@ -383,7 +383,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		return table;
 	}
 
-	public String toDropTable() {
+	public String toGetTableName() {
 		return "SYS_USER";
 	}
 
