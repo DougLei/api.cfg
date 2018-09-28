@@ -91,7 +91,7 @@ public class SysPermissionPriority extends BasicEntity implements ITable, IEntit
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_PERMISSION_PRIORITY", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("权限优先级信息表");
 		table.setComments("权限优先级信息表");
 		table.setIsBuiltin(1);

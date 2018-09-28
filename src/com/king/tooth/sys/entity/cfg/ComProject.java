@@ -106,7 +106,7 @@ public class ComProject extends AbstractSysResource implements ITable, IEntityPr
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_PROJECT", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("项目信息表表");
 		table.setComments("项目信息表表");
 		table.setIsResource(1);

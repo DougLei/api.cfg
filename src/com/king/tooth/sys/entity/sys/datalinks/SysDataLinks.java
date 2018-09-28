@@ -59,7 +59,7 @@ public class SysDataLinks implements Serializable, ITable {
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_DATA_LINKS", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setResourceName("SysDataLinks");
 		table.setName("数据关联关系信息表");
 		table.setComments("数据关联关系信息表");

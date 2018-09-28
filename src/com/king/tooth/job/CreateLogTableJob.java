@@ -102,7 +102,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			hbm = new SysHibernateHbm();
 			hbm.tableTurnToHbm(logTable);
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
-			hbm.setHbmContent(hbmContents.get(i++));
+			hbm.setContent(hbmContents.get(i++));
 			HibernateUtil.saveObject(hbm, null);
 			
 			// 3、插入资源数据

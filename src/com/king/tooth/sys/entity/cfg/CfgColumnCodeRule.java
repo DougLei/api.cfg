@@ -101,7 +101,7 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_COLUMN_CODE_RULE", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("字段编码规则表");
 		table.setComments("字段编码规则表");
 		table.setIsBuiltin(1);

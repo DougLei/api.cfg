@@ -194,7 +194,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_SQL_RESULTSET", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("sql结果集信息表");
 		table.setComments("sql结果集信息表");
 		table.setIsBuiltin(1);

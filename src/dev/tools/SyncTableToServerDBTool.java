@@ -76,7 +76,7 @@ public final class SyncTableToServerDBTool extends AbstractService{
 				hbm = new SysHibernateHbm();
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 				hbm.tableTurnToHbm(table);
-				hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, false, "C:\\devlopment\\api\\projects\\api.cfg\\resources\\hibernateMapping\\template\\hibernate.hbm.xml.ftl"));
+				hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, false, "C:\\devlopment\\api\\projects\\api.cfg\\resources\\hibernateMapping\\template\\hibernate.hbm.xml.ftl"));
 				hbmId = executeInsertSysHibernateHbmSql(st, hbm);
 				
 				// 3、获取插入资源数据的sql，并执行
@@ -84,8 +84,7 @@ public final class SyncTableToServerDBTool extends AbstractService{
 				executeInsertSysResourceSql(st, resource);
 				
 				// 5.将hbm的内容也保存到对应数据的hbmContent字段中
-				hbm.getHbmContent();
-				pst.setClob(1, new StringReader(hbm.getHbmContent()));
+				pst.setClob(1, new StringReader(hbm.getContent()));
 				pst.setString(2, hbmId);
 				pst.executeUpdate();
 				
@@ -110,8 +109,8 @@ public final class SyncTableToServerDBTool extends AbstractService{
 	private static String executeInsertSysHibernateHbmSql(Statement st, SysHibernateHbm hbm) throws SQLException {
 		String id = ResourceHandlerUtil.getIdentity();
 		// 先尝试删除之前的数据，再添加新的数据
-		st.executeUpdate("delete sys_hibernate_hbm where hbm_resource_name = '"+hbm.getHbmResourceName()+"'");
-		st.executeUpdate("insert into sys_hibernate_hbm(ref_database_id, ref_table_id, hbm_resource_name, id, customer_id, project_id, is_enabled, req_resource_method, is_builtin, is_need_deploy, belong_platform_type, is_created, create_date, last_update_date, create_user_id, last_update_user_id) values('5k7f1ef02728y7018f9df0e9edcr8d37','builtinResource','"+hbm.getHbmResourceName()+"','"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, "+hbm.getIsNeedDeploy()+", "+hbm.getBelongPlatformType()+", "+hbm.getIsCreated()+", getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
+		st.executeUpdate("delete sys_hibernate_hbm where hbm_resource_name = '"+hbm.getResourceName()+"'");
+		st.executeUpdate("insert into sys_hibernate_hbm(ref_database_id, ref_table_id, hbm_resource_name, id, customer_id, project_id, is_enabled, req_resource_method, is_builtin, is_need_deploy, belong_platform_type, is_created, create_date, last_update_date, create_user_id, last_update_user_id) values('5k7f1ef02728y7018f9df0e9edcr8d37','builtinResource','"+hbm.getResourceName()+"','"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, "+hbm.getIsNeedDeploy()+", "+hbm.getBelongPlatformType()+", "+hbm.getIsCreated()+", getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
 		return id;
 	}
 	

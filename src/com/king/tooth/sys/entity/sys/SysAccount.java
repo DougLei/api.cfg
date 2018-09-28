@@ -216,7 +216,7 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ACCOUNT", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("账户表");
 		table.setComments("账户表");
 		table.setIsBuiltin(1);

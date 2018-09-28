@@ -108,7 +108,7 @@ public class SysUserGroup extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_USER_GROUP", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("用户组表");
 		table.setComments("用户组表");
 		table.setIsBuiltin(1);

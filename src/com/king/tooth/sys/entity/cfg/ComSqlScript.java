@@ -337,7 +337,7 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("sql脚本信息表");
 		table.setComments("sql脚本信息表");
 		table.setIsResource(1);

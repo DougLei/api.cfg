@@ -191,7 +191,7 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_PERMISSION", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("权限信息表");
 		table.setComments("权限信息表");
 		table.setIsBuiltin(1);

@@ -216,7 +216,7 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_DATABASE", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("数据库信息表");
 		table.setComments("数据库信息表");
 		table.setIsResource(1);

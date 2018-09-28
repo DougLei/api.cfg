@@ -295,7 +295,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("COM_SQL_SCRIPT_PARAMETER", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("sql脚本参数信息表");
 		table.setComments("sql脚本参数信息表");
 		table.setIsBuiltin(1);

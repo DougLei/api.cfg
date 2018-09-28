@@ -120,7 +120,7 @@ public class SysRole extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ROLE", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("角色表");
 		table.setComments("角色表");
 		table.setIsBuiltin(1);

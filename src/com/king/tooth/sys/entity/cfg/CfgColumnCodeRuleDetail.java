@@ -421,7 +421,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_COLUMN_CODE_RULE_DETAIL", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("字段编码规则表");
 		table.setComments("字段编码规则表");
 		table.setIsBuiltin(1);

@@ -23,8 +23,6 @@ public class HbmOperTest {
 		table2.setColumns(columns);
 //		table2.setTableName("DatabaseTest");
 		table2.setTableType(BuiltinDatabaseData.PARENT_SUB_TABLE);
-		table2.setParentTableName("Parent");
-		table2.setParentTableId("12312");
 		tabledatas.add(table2);
 		
 		

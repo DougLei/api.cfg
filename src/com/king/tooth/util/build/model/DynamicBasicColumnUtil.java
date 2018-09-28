@@ -80,7 +80,7 @@ public class DynamicBasicColumnUtil {
 			table.getColumns().add(refDataIdColumn);
 		}
 		
-		if(table.getIsDatalinkTable() == 0 && !table.getTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
+		if(!table.getTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
 			ComColumndata createDateColumn = new ComColumndata("create_date", BuiltinDataType.DATE, 0);
 			createDateColumn.setName("创建时间");
 			createDateColumn.setComments("创建时间");

@@ -19,7 +19,6 @@ import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
-import com.king.tooth.util.build.model.DynamicDataLinkTableUtil;
 
 /**
  * 对数据库表的操作
@@ -145,8 +144,6 @@ public class DBTableHandler {
 			return null;
 		}
 		if(tabledatas != null && tabledatas.size() > 0){
-			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
-			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, true);
 			StringBuilder createTableSql = new StringBuilder();
 			for (ComTabledata tabledata : tabledatas) {
 				if(isNeedInitBasicColumns){
@@ -171,8 +168,6 @@ public class DBTableHandler {
 	public String getDropTableSql(List<ComTabledata> tabledatas){
 		if(tabledatas != null && tabledatas.size() > 0){
 			StringBuilder dropTableSql = new StringBuilder();
-			// 处理主子表，如果有主子表数据，则要添加对应的关系表tabledata实例
-			DynamicDataLinkTableUtil.processParentSubTable(tabledatas, false);
 			List<String> tableNames = filterTableIsExists(tabledatas);
 			if(tableNames!= null && tableNames.size() > 0){
 				for (String tn: tableNames) {

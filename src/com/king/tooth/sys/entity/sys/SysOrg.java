@@ -128,7 +128,7 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ORG", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("组织机构表");
 		table.setComments("组织机构表");
 		table.setIsBuiltin(1);

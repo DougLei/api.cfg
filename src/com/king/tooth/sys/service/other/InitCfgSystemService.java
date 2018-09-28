@@ -301,7 +301,7 @@ public class InitCfgSystemService extends AbstractService{
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.setRefTableId("builtinResource");
 			hbm.tableTurnToHbm(table);
-			hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, true));
+			hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
 			// 保存到资源表中
@@ -553,7 +553,7 @@ public class InitCfgSystemService extends AbstractService{
 		
 		CurrentThreadContext.setDatabaseId(database.getId());
 		// 获取当前系统的SysHibernateHbm映射文件对象
-		String sql = "select hbm_content from sys_hibernate_hbm where ref_database_id = '"+database.getId()+"' and hbm_resource_name = 'SysHibernateHbm' and is_enabled = 1";
+		String sql = "select content from sys_hibernate_hbm where ref_database_id = '"+database.getId()+"' and resource_name = 'SysHibernateHbm' and is_enabled = 1";
 		String hbmContent = null;
 		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
@@ -577,7 +577,7 @@ public class InitCfgSystemService extends AbstractService{
 		HibernateUtil.appendNewConfig(hbmContent);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
-		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourcePropNameConstants.ID+") from SysHibernateHbm where isEnabled = 1 and hbmResourceName != 'SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
+		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourcePropNameConstants.ID+") from SysHibernateHbm where isEnabled = 1 and resourceName != 'SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
 		if(count == 0){
 			return;
 		}
@@ -585,7 +585,7 @@ public class InitCfgSystemService extends AbstractService{
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", (i+1)+"", "select hbmContent from SysHibernateHbm where isEnabled = 1 and hbmResourceName !='SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
+			hbmContents = HibernateUtil.executeListQueryByHql("100", (i+1)+"", "select content from SysHibernateHbm where isEnabled = 1 and resourceName !='SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");
@@ -643,14 +643,14 @@ public class InitCfgSystemService extends AbstractService{
 		SysHibernateHbm hbm = new SysHibernateHbm(); 
 		hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 		hbm.tableTurnToHbm(table);
-		hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(table, true));
+		hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 		HibernateUtil.saveObject(hbm, null);
 		
 		// 插入资源数据
 		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(table);
 		
 		// 将hbm配置内容，加入到sessionFactory中
-		HibernateUtil.appendNewConfig(hbm.getHbmContent());
+		HibernateUtil.appendNewConfig(hbm.getContent());
 		
 		// 清空缓存
 		table.clear();

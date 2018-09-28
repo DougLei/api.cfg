@@ -119,7 +119,7 @@ public class DmPublishBasicData extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("DM_PUBLISH_BASIC_DATA", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("发布的基础数据信息表");
 		table.setComments("发布的基础数据信息表");
 		table.setIsBuiltin(1);

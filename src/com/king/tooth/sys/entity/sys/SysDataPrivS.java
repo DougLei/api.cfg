@@ -99,7 +99,7 @@ public class SysDataPrivS extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_DATA_PRIV_S", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("数据权限信息表（简单）");
 		table.setComments("数据权限信息表（简单）");
 		table.setIsBuiltin(1);

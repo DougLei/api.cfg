@@ -298,7 +298,7 @@ public class CfgTableService extends AbstractPublishService {
 				hbm = new SysHibernateHbm();
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 				hbm.tableTurnToHbm(tb);
-				hbm.setHbmContent(hbmContents.get(i++));
+				hbm.setContent(hbmContents.get(i++));
 				HibernateUtil.saveObject(hbm, null);
 				
 				// 3、插入资源数据
@@ -471,15 +471,11 @@ public class CfgTableService extends AbstractPublishService {
 		List<SysHibernateHbm> hbms = new ArrayList<SysHibernateHbm>(tables.size());
 		for (ComTabledata tb : tables) {
 			SysHibernateHbm hbm = new SysHibernateHbm();
-			if(tb.getIsDatalinkTable() == 0){
-				hbm.setId(tableId);
-			}else{
-				hbm.setId(ResourceHandlerUtil.getIdentity());
-			}
+			hbm.setId(tableId);
 			hbm.tableTurnToHbm(tb);
 			hbm.setRefDatabaseId(project.getRefDatabaseId());
 			hbm.setProjectId(projectId);
-			hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(tb, false));
+			hbm.setContent(HibernateHbmUtil.createHbmMappingContent(tb, false));
 			hbms.add(hbm);
 		}
 		ResourceHandlerUtil.clearTables(tables);
@@ -641,15 +637,11 @@ public class CfgTableService extends AbstractPublishService {
 			
 			for(ComTabledata tempTb : tmpTables) {
 				hbm = new SysHibernateHbm();
-				if(tempTb.getIsDatalinkTable() == 0){
-					hbm.setId(tb.getId());
-				}else{
-					hbm.setId(ResourceHandlerUtil.getIdentity());
-				}
+				hbm.setId(tb.getId());
 				hbm.tableTurnToHbm(tempTb);
 				hbm.setRefDatabaseId(databaseId);
 				hbm.setProjectId(projectId);
-				hbm.setHbmContent(HibernateHbmUtil.createHbmMappingContent(tempTb, false));
+				hbm.setContent(HibernateHbmUtil.createHbmMappingContent(tempTb, false));
 				hbms.add(hbm);
 			}
 			ResourceHandlerUtil.clearTables(tmpTables);

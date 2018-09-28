@@ -210,7 +210,7 @@ public class CfgDatabaseService extends AbstractPublishService {
 			hbm.tableTurnToHbm(table);
 			hbm.setId(table.getId());
 			hbm.setRefDatabaseId(databaseId);
-			hbm.setHbmContent(table.getHbmContent());
+			hbm.setContent(table.getHbmContent());
 			hbm.setRefDataId(table.getId());
 			hbm.setCreateDate(currentDate);
 			hbm.setLastUpdateDate(currentDate);

@@ -397,7 +397,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_ACCOUNT_ONLINE_STATUS", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("账户在线状态信息表");
 		table.setComments("账户在线状态信息表");
 		table.setIsBuiltin(1);

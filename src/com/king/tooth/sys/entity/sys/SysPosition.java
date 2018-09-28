@@ -96,7 +96,7 @@ public class SysPosition extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_POSITION", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("职务表");
 		table.setComments("职务表");
 		table.setIsBuiltin(1);

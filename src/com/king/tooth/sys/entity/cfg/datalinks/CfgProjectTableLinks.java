@@ -47,7 +47,7 @@ public class CfgProjectTableLinks implements Serializable, ITable {
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("CFG_PROJECT_TABLE_LINKS", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setResourceName("CfgProjectTableLinks");
 		table.setName("项目和表的关系表");
 		table.setComments("项目和表的关系表");

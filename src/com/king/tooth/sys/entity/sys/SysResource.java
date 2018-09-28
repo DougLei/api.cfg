@@ -82,7 +82,7 @@ public class SysResource extends AbstractSysResource implements ITable{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_RESOURCE", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("资源信息表");
 		table.setComments("资源信息表");
 		table.setIsResource(1);

@@ -141,7 +141,7 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata("SYS_DEPT", 0);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("部门表");
 		table.setComments("部门表");
 		table.setIsBuiltin(1);
