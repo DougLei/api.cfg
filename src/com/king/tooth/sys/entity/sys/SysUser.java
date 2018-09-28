@@ -10,7 +10,6 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -378,10 +377,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("用户信息表");
 		table.setComments("用户信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
 		
 		table.setColumns(getColumnList());
 		return table;

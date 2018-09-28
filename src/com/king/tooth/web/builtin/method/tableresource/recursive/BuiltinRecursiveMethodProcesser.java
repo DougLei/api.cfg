@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
@@ -97,7 +97,7 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 			hql.append(" from ").append(resourceName).append(" where ");
 			
 			Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-			BuiltinQueryCondFuncUtil.installQueryCondHql(ISysResource.TABLE, resourceName, queryCondParamsSet , hqlParameterValues, hql);
+			BuiltinQueryCondFuncUtil.installQueryCondHql(ResourceInfoConstants.TABLE, resourceName, queryCondParamsSet , hqlParameterValues, hql);
 			return true;
 		}
 		return false;

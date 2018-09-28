@@ -8,7 +8,6 @@ import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -123,10 +122,7 @@ public class SysRole extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("角色表");
 		table.setComments("角色表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
 		
 		table.setColumns(getColumnList());
 		return table;

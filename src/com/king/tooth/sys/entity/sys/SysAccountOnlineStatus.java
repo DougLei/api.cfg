@@ -9,7 +9,6 @@ import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -400,10 +399,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("账户在线状态信息表");
 		table.setComments("账户在线状态信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
 		
 		table.setColumns(getColumnList());
 		return table;

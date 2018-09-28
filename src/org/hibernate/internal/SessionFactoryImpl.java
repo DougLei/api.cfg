@@ -1328,8 +1328,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	 * @throws HibernateException
 	 */
 	public void close() throws HibernateException {
-		clearCache();
-		
 		if ( isClosed ) {
 			LOG.trace( "Already closed" );
 			return;
@@ -2073,15 +2071,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 	}  
 	
 	/**
-	 * <pre>
-	 *   hibernate所有关联资源名集合
-	 *   	主子表对应的关系表名，即主子资源对应的关系资源名集合
-	 *   	在进行主子资源调用的时候，可以在该缓存中查找是否有对应的关系资源：如果有，就调用；如果没有，就调用通用的关系资源
-	 * </pre>
-	 */
-	private transient final List<String> hibernateDataLinkResourceNameList = new ArrayList<String>();
-	
-	/**
 	 * 【数据流方式】添加新的配置文件
 	 * @author DougLei
 	 * @param input
@@ -2103,37 +2092,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 		appendNewHbmConfig(cfg);
 	}
 	
-	/**
-	 * <pre>
-	 * 	重新加载 hibernate每个映射配置文件中entity-name和property数组的缓存
-	 * 		@see hibernateDefineResourcePropNameMap
-	 * </pre>
-	 */
-	public void reloadHibernateDefineResourcePropName(){
-		clearCache();
-	}
-	
-	/**
-	 * 判断指定的关联关系资源名，是否存在于   hibernateDataLinkResourceNameList 缓存中
-	 * @param datalinkResourceName
-	 * @return
-	 */
-	public boolean isExistsInHibernateDataLinkResourceNameList(String datalinkResourceName){
-		if(StrUtils.isEmpty(datalinkResourceName)){
-			throw new NullPointerException("用来判断是否存在于   hibernateDataLinkResourceNameList 缓存中的关联关系资源名不能为空!");
-		}
-		return hibernateDataLinkResourceNameList.contains(datalinkResourceName);
-	}
-	
-	/**
-	 * 清除DougLei在SessionFactoryImpl类中添加的缓存
-	 */
-	private void clearCache() {
-		if(hibernateDataLinkResourceNameList != null && hibernateDataLinkResourceNameList.size() > 0){
-			hibernateDataLinkResourceNameList.clear();
-		}
-	}
-
 	/**
 	 * 清空sessionFactory中的集合
 	 */
@@ -2217,7 +2175,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 		identifierGenerators.remove(entityName);
 		imports.remove(entityName);
 		entityNameResolvers.remove(entityName);
-		hibernateDataLinkResourceNameList.remove(entityName);
 	}
 	
 	/**
@@ -2230,7 +2187,6 @@ public final class SessionFactoryImpl implements SessionFactoryImplementor {
 				break;
 			}
 			classMetadata.remove(entityName);
-			hibernateDataLinkResourceNameList.remove(entityName);
 		}
 	}
 	

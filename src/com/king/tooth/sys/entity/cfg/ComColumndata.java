@@ -10,9 +10,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
@@ -411,10 +409,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0); 
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		table.setColumns(getColumnList());
 		return table;
@@ -470,10 +464,6 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 * 系统内置的列名
 	 */
 	private static final String[] BUILTIN_COLUMNNAMES = {"id", "customer_id", "project_id", "create_date", "last_update_date", "create_user_id", "last_update_user_id"};
-	
-	public SysResource turnToResource() {
-		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
-	}
 	
 	// --------------------------------------------------------------------------------------
 	/**

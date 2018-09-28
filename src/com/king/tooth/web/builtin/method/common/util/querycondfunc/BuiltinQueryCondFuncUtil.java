@@ -9,7 +9,7 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.entity.HqlQueryCondFuncEntity;
@@ -105,9 +105,9 @@ public class BuiltinQueryCondFuncUtil {
 		String dbScriptStatements = null;
 		IQueryCondFuncEntity queryCondFuncEntity = null;
 		for (Entry<String, String> entry : queryCondParamsSet) {
-			if(requestResourceType == ISysResource.TABLE){
+			if(requestResourceType == ResourceInfoConstants.TABLE){
 				queryCondFuncEntity = new HqlQueryCondFuncEntity(entry.getKey(), entry.getValue());
-			}else if(requestResourceType == ISysResource.SQLSCRIPT){
+			}else if(requestResourceType == ResourceInfoConstants.SQL){
 				queryCondFuncEntity = new SqlQueryCondFuncEntity(entry.getKey(), entry.getValue());
 			}
 			

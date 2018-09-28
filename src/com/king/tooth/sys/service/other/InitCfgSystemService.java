@@ -18,7 +18,6 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
@@ -32,8 +31,6 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectHbmLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
-import com.king.tooth.sys.entity.dm.DmPublishBasicData;
-import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
@@ -128,8 +125,6 @@ public class InitCfgSystemService extends AbstractService{
 		tables.add(new SysUser().toCreateTable());
 		tables.add(new ComColumndata().toCreateTable());
 		tables.add(new ComTabledata().toCreateTable());
-		tables.add(new DmPublishInfo().toCreateTable());
-		tables.add(new DmPublishBasicData().toCreateTable());
 		tables.add(new ComSqlScriptParameter().toCreateTable());
 		tables.add(new CfgProjectTableLinks().toCreateTable());
 		tables.add(new SysRole().toCreateTable());
@@ -183,9 +178,6 @@ public class InitCfgSystemService extends AbstractService{
 		List<ComTabledata> tmpTables = new ArrayList<ComTabledata>();
 		DBTableHandler dbHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 		for (ComTabledata table : tables) {
-			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
-				continue;
-			}
 			tmpTables.add(table);
 		}
 		dbHandler.dropTable(tmpTables);// 尝试先删除表
@@ -201,9 +193,6 @@ public class InitCfgSystemService extends AbstractService{
 		List<ComTabledata> tables = getAllTables();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
 		for (ComTabledata table : tables) {
-			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
-				continue;
-			}
 			hbmContents.add(HibernateHbmUtil.createHbmMappingContent(table, true));// 记录hbm内容
 		}
 		// 将hbmContents加入到hibernate sessionFactory中
@@ -259,8 +248,6 @@ public class InitCfgSystemService extends AbstractService{
 		appDatabase.setIp(SysConfig.getSystemConfig("db.default.ip"));
 		appDatabase.setPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
 		appDatabase.analysisResourceProp();
-		appDatabase.setIsBuiltin(1);
-		appDatabase.setIsNeedDeploy(1);
 		HibernateUtil.saveObject(appDatabase, null);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -271,17 +258,11 @@ public class InitCfgSystemService extends AbstractService{
 		project.setProjName("自动化配置项目(内置)");
 		project.setProjCode("AutoConfigProj");
 		project.analysisResourceProp();
-		project.setIsBuiltin(1);
-		project.setIsNeedDeploy(1);
 		HibernateUtil.saveObject(project, normalAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中
 		insertHbm(adminAccountId);
-		// 添加数据字典基础数据
-		insertBasicDataDictionary(adminAccountId);
-		// 添加要发布的基础数据
-		insertPublishBasicData(adminAccountId);
 	}
 	
 	/**
@@ -293,14 +274,10 @@ public class InitCfgSystemService extends AbstractService{
 		SysHibernateHbm hbm;
 		SysResource resource;
 		for (ComTabledata table : tables) {
-			if(table.getBelongPlatformType() == ISysResource.APP_PLATFORM){
-				continue;
-			}
 			// 创建对应的hbm文件，并保存
-			hbm = new SysHibernateHbm();
+			hbm = new SysHibernateHbm(table);
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.setRefTableId("builtinResource");
-			hbm.tableTurnToHbm(table);
 			hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
@@ -310,129 +287,6 @@ public class InitCfgSystemService extends AbstractService{
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
 		ResourceHandlerUtil.clearTables(tables);
-	}
-	
-	/**
-	 * 添加数据字典的基础数据
-	 * @param adminAccountId 
-	 */
-	private void insertBasicDataDictionary(String adminAccountId) {
-		// CfgDatabase.dbType 数据库类型
-		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
-		
-		// ComTabledata.tableType 表类型
-		insertDataDictionary(adminAccountId, "comcolumndata.tabletype", "单表", "1", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.tabletype", "树表", "2", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.tabletype", "主子表", "3", 3, ISysResource.CONFIG_PLATFORM);
-		
-		// ComTabledata.dbType 数据库类型
-		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "oracle", "oracle", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comcolumndata.dbtype", "sqlserver", "sqlserver", 2, ISysResource.CONFIG_PLATFORM);
-		
-		// SysReqLog.operType 操作的类型
-		insertDataDictionary(adminAccountId, "comoperlog.opertype", "查询", "select", 1, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comoperlog.opertype", "增加", "insert", 2, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comoperlog.opertype", "修改", "update", 3, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comoperlog.opertype", "删除", "delete", 4, ISysResource.COMMON_PLATFORM);
-		
-		// SysAccount.accountType 账户类型
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "管理员", "1", 1, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "普通账户", "2", 2, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysaccount.accounttype", "平台开发账户", "3", 3, ISysResource.COMMON_PLATFORM);
-		
-		// SysAccount.accountStatus 账户状态
-		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "启用", "1", 1, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysaccount.accountstatus", "禁用", "2", 2, ISysResource.COMMON_PLATFORM);
-		
-		// SysResource.resourceType 资源类型
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "表资源", "1", 1, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "sql脚本资源", "2", 2, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "代码资源", "3", 3, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "数据库资源", "4", 4, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目资源", "5", 5, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "项目模块资源", "6", 6, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "comsysresource.resourcetype", "基础数据资源", "7", 7, ISysResource.COMMON_PLATFORM);
-		
-		// SqlScriptParameter.parameterFrom sql脚本参数的来源
-		insertDataDictionary(adminAccountId, "comSqlScriptParameter.parameterFrom", "用户输入", "0", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comSqlScriptParameter.parameterFrom", "系统内置", "1", 2, ISysResource.CONFIG_PLATFORM);
-		
-		// SqlScriptParameter.inOut sql脚本参数in/out类型
-		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输入参数(in)", "1", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输出参数(out)", "2", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "comSqlScriptParameter.inOut", "输入输出参数(in_out)", "3", 3, ISysResource.CONFIG_PLATFORM);
-		
-		// SysReqLog.type 请求日志的请求类型
-		insertDataDictionary(adminAccountId, "SysReqLog.type", "login", "1", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "SysReqLog.type", "loginOut", "2", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "SysReqLog.type", "sql", "3", 3, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "SysReqLog.type", "file", "4", 4, ISysResource.CONFIG_PLATFORM);
-		
-		// System.builtinQueryParameter 系统内置查询参数
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前系统时间", "_currentDate", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前租户id", "_currentCustomerId", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前项目id", "_currentProjectId", 3, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前账户id", "_accountId", 4, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前账户名", "_accountName", 5, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户id", "_currentUserId", 6, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属组织id", "_currentOrgId", 7, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属部门id", "_currentDeptId", 8, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "System.builtinQueryParameter", "当前用户所属岗位id", "_currentPositionId", 9, ISysResource.CONFIG_PLATFORM);
-		
-		// system.dataType 系统内置数据类型
-		insertDataDictionary(adminAccountId, "system.dataType", "字符串", "string", 1, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.dataType", "布尔值", "boolean", 2, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.dataType", "整型", "integer", 3, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.dataType", "浮点型", "double", 4, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.dataType", "日期", "date", 5, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.dataType", "字符大字段", "clob", 6, ISysResource.CONFIG_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.dataType", "二进制大字段", "blob", 7, ISysResource.CONFIG_PLATFORM);
-		
-		// system.dataType 系统内置权限类型
-		insertDataDictionary(adminAccountId, "system.permissionType", "角色", "role", 1, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.permissionType", "帐号", "account", 2, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.permissionType", "部门", "dept", 3, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.permissionType", "岗位", "position", 4, ISysResource.COMMON_PLATFORM);
-		insertDataDictionary(adminAccountId, "system.permissionType", "帐号组", "accountGroup", 5, ISysResource.COMMON_PLATFORM);
-	}
-	/**
-	 * 添加数据字典
-	 * @param code
-	 * @param codeCaption
-	 * @param codeValue
-	 * @param orderCode
-	 * @param belongPlatformType
-	 * @return
-	 */
-	private void insertDataDictionary(String adminAccountId, String code, String codeCaption, String codeValue, int orderCode, int belongPlatformType){
-		SysDataDictionary dataDictionary = new SysDataDictionary();
-		dataDictionary.setCode(code.toLowerCase());
-		dataDictionary.setCaption(codeCaption);
-		dataDictionary.setVal(codeValue);
-		dataDictionary.setOrderCode(orderCode);
-		HibernateUtil.saveObject(dataDictionary, adminAccountId);
-		
-		// 同时，不是配置系统的数据，则添加要发布的基础的数据字典数据
-		if(belongPlatformType != ISysResource.CONFIG_PLATFORM){
-			dataDictionary.setId(ResourceHandlerUtil.getIdentity());
-			HibernateUtil.saveObject(dataDictionary.turnToPublishBasicData(belongPlatformType), adminAccountId);
-		}
-	}
-	
-	/**
-	 * 添加要发布的基础数据
-	 * @param adminAccountId
-	 */
-	private void insertPublishBasicData(String adminAccountId) {
-		// 添加一条要发布的管理员账户信息
-		SysAccount admin = new SysAccount();
-		admin.setId(ResourceHandlerUtil.getIdentity());
-		admin.setType(1);
-		admin.setLoginName("admin");
-		admin.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
-		admin.setValidDate(BuiltinObjectInstance.validDate);
-		HibernateUtil.saveObject(admin.turnToPublishBasicData(ISysResource.APP_PLATFORM), adminAccountId);
 	}
 	
 	/**
@@ -614,9 +468,6 @@ public class InitCfgSystemService extends AbstractService{
 		if(logTableNames != null && logTableNames.size() > 0){
 			// 不存在，则create
 			for (String logTableName : logTableNames) {
-				
-				
-				
 				if(logTableName.equals(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable())){
 					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable(), true);
 				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable())){
@@ -640,9 +491,8 @@ public class InitCfgSystemService extends AbstractService{
 	 */
 	private void createHbm(ComTabledata table){
 		// 插入hbm
-		SysHibernateHbm hbm = new SysHibernateHbm(); 
+		SysHibernateHbm hbm = new SysHibernateHbm(table); 
 		hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
-		hbm.tableTurnToHbm(table);
 		hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 		HibernateUtil.saveObject(hbm, null);
 		

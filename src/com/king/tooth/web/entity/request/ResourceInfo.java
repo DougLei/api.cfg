@@ -1,9 +1,9 @@
 package com.king.tooth.web.entity.request;
 
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.code.resource.CodeResourceProcesser;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
@@ -63,21 +63,21 @@ public class ResourceInfo {
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
 				throw new IllegalArgumentException("系统目前不支持处理[主子/递归]方式调用code资源");
 			}
-			resourceType = ISysResource.CODE;
+			resourceType = ResourceInfoConstants.CODE;
 		}else{
 			reqResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getResourceName());
 			resourceType = reqResource.getResourceType();
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
-			if(ISysResource.SQLSCRIPT == resourceType){
+			if(ResourceInfoConstants.SQL == resourceType){
 				sqlScriptResource = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(reqResource.getRefResourceId());
 				
-				if("none".equals(sqlScriptResource.getReqResourceMethod())){
+				if("none".equals(sqlScriptResource.getRequestMethod())){
 					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，不支持任何方式的请求");
 				}
 				
-				if(!requestMethod.equals(sqlScriptResource.getReqResourceMethod())){
-					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，只支持["+sqlScriptResource.getReqResourceMethod()+"]方式的请求");
+				if(!requestMethod.equals(sqlScriptResource.getRequestMethod())){
+					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，只支持["+sqlScriptResource.getRequestMethod()+"]方式的请求");
 				}
 				
 				if(BuiltinDatabaseData.VIEW.equals(sqlScriptResource.getSqlScriptType())){
@@ -92,7 +92,7 @@ public class ResourceInfo {
 				if(reqParentResource.getResourceType() != resourceType){
 					throw new IllegalArgumentException("系统目前不支持处理不同类型的资源混合调用");
 				}
-				if(reqParentResource.getResourceType() == ISysResource.SQLSCRIPT && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
+				if(reqParentResource.getResourceType() == ResourceInfoConstants.SQL && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
 					throw new IllegalArgumentException("系统目前不支持处理[主子]方式调用sql资源");
 				}
 			}
@@ -108,7 +108,7 @@ public class ResourceInfo {
 	 * @return
 	 */
 	public boolean isTableResource(){
-		return resourceType == ISysResource.TABLE;
+		return resourceType == ResourceInfoConstants.TABLE;
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class ResourceInfo {
 	 * @return
 	 */
 	public boolean isSqlResource(){
-		return resourceType == ISysResource.SQLSCRIPT;
+		return resourceType == ResourceInfoConstants.SQL;
 	}
 	
 	/**
@@ -124,7 +124,7 @@ public class ResourceInfo {
 	 * @return
 	 */
 	public boolean isCodeResource(){
-		return resourceType == ISysResource.CODE;
+		return resourceType == ResourceInfoConstants.CODE;
 	}
 	
 	//------------------------------------------------------------------

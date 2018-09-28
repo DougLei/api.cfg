@@ -5,13 +5,14 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
@@ -22,7 +23,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComTabledata extends AbstractSysResource implements ITable, IEntityPropAnalysis{
+public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity, ISysResource{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -50,19 +51,27 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 */
 	private String comments;
 	/**
-	 * 是否是核心表
-	 * <p>这个由后端开发人员控制，在发布时会用到</p>
+	 * 是否被创建
+	 * <p>默认值为0</p>
+	 * <p>该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0</p>
 	 */
-	private Integer isCore;
-	/**
-	 * 是否是资源
-	 * <p>这个字段由开发人员控制，不开放给用户</p>
-	 */
-	private Integer isResource;
+	private Integer isCreated;
 	/**
 	 * 是否建模
+	 * <p>默认值为0</p>
+	 * <p>该字段在建模时，值改为1，后续修改字段信息等，该值改为0，用来标识是否建模，是否需要alter table xxx</p>
 	 */
 	private Integer isBuildModel;
+	/**
+	 * 是否有效
+	 */
+	private Integer isEnabled;
+	/**
+	 * 请求资源的方法
+	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
+	 * <p>默认值：all</p>
+	 */
+	private String requestMethod;
 	
 	//-----------------------------------------------------------------------
 	
@@ -77,13 +86,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	 */
 	@JSONField(serialize = false)
 	private String dbType;
-	/**
-	 * 关联的数据库id
-	 * 该字段在发布的时候用到
-	 * @see turnToPublish()
-	 */
-	@JSONField(serialize = false)
-	private String refDatabaseId;
 
 	/**
 	 * 表对应的hbmContent
@@ -96,6 +98,7 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	public ComTabledata(String tableName) {
 		this.tableName = tableName;
+		this.isCreated = 1;
 		analysisResourceProp();
 	}
 	
@@ -105,6 +108,18 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 			name = resourceName;
 		}
 		return name;
+	}
+	public Integer getIsCreated() {
+		return isCreated;
+	}
+	public void setIsCreated(Integer isCreated) {
+		this.isCreated = isCreated;
+	}
+	public Integer getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(Integer isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 	public void setName(String name) {
 		this.name = name;
@@ -154,26 +169,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
-	public Integer getIsResource() {
-		return isResource;
-	}
-	public void setIsResource(Integer isResource) {
-		this.isResource = isResource;
-	}
-	public void clear(){
-		if(columns != null && columns.size()>0){
-			columns.clear();
-		}
-	}
-	public void setRefDatabaseId(String refDatabaseId) {
-		this.refDatabaseId = refDatabaseId;
-	}
-	public Integer getIsCore() {
-		return isCore;
-	}
-	public void setIsCore(Integer isCore) {
-		this.isCore = isCore;
-	}
 	public String getHbmContent() {
 		return hbmContent;
 	}
@@ -185,6 +180,18 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	public void setIsBuildModel(Integer isBuildModel) {
 		this.isBuildModel = isBuildModel;
+	}
+	public String getRequestMethod() {
+		return requestMethod;
+	}
+	public void setRequestMethod(String requestMethod) {
+		this.requestMethod = requestMethod;
+	}
+	
+	public void clear(){
+		if(columns != null && columns.size()>0){
+			columns.clear();
+		}
 	}
 	
 	@JSONField(serialize = false)
@@ -262,11 +269,6 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("表信息表");
 		table.setComments("表信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		table.setColumns(getColumnList());
 		return table;
@@ -301,31 +303,12 @@ public class ComTabledata extends AbstractSysResource implements ITable, IEntity
 	}
 	
 	public SysResource turnToResource() {
-		SysResource resource = super.turnToResource();
-		resource.setResourceType(TABLE);
+		SysResource resource = new SysResource();
+		resource.setRefResourceId(id);
+		resource.setResourceType(ResourceInfoConstants.TABLE);
 		resource.setResourceName(resourceName);
+		resource.setIsEnabled(isEnabled);
+		resource.setRequestMethod(requestMethod);
 		return resource;
-	}
-	
-	public SysResource turnToPublishResource(String projectId, String refResourceId) {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
-	}
-	
-	@JSONField(serialize = false)
-	public Integer getResourceType() {
-		return TABLE;
-	}
-	
-	/**
-	 * 目前只在ComTabledataService类的batchPublishTable()中用到
-	 */
-	public DmPublishInfo turnToPublish() {
-		DmPublishInfo publish = new DmPublishInfo();
-		publish.setPublishDatabaseId(refDatabaseId);
-		publish.setPublishProjectId(projectId);
-		publish.setPublishResourceId(id);
-		publish.setPublishResourceName(resourceName);
-		publish.setResourceType(TABLE);
-		return publish;
 	}
 }

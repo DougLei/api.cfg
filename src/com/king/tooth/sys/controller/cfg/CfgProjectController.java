@@ -7,14 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
-import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractPublishController;
+import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.service.cfg.CfgProjectService;
-import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -22,7 +20,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class CfgProjectController extends AbstractPublishController{
+public class CfgProjectController extends AbstractController{
 	
 	/**
 	 * 添加项目
@@ -96,51 +94,6 @@ public class CfgProjectController extends AbstractPublishController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, projectIds);
-		return getResultObject();
-	}
-	
-	//--------------------------------------------------------------------------------------------------------
-	/**
-	 * 发布项目
-	 * <p>【发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	public Object publish(HttpServletRequest request, IJson ijson){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-			return "发布功能，目前只提供给一般开发账户使用";
-		}
-		
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要发布的项目id不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).publishProjectAll(jsonObject.getString(ResourcePropNameConstants.ID));
-		if(resultObject == null){
-			resultObject = jsonObject;
-		}
-		return getResultObject();
-	}
-	
-	/**
-	 * 取消发布项目
-	 * <p>【取消发布项目的所有信息，包括项目信息，模块信息，表信息，sql脚本信息等】</p>
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	public Object cancelPublish(HttpServletRequest request, IJson ijson){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-			return "取消发布功能，目前只提供给一般开发账户使用";
-		}
-		
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要取消发布的项目id不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).cancelPublishProjectAll(jsonObject.getString(ResourcePropNameConstants.ID));
-		if(resultObject == null){
-			resultObject = jsonObject;
-		}
 		return getResultObject();
 	}
 }

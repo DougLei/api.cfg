@@ -12,9 +12,8 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
@@ -59,13 +58,13 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private void initTableResourceMetadataInfos() {
 		if(requestBody.getResourceInfo().getReqResource().isBuiltinResource()){
-			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource().getResourceName());
+			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName);
 		}else{
 			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql , requestBody.getResourceInfo().getReqResource().getRefResourceId());
 			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
 				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 			}
-			initBasicMetadataInfos(resourceMetadataInfos);
+			DynamicBasicColumnUtil.initBasicMetadataInfos(resourceName, resourceMetadataInfos);
 		}
 		
 		if(requestBody.isParentSubResourceQuery()){
@@ -73,13 +72,13 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 				parentResourceMetadataInfos = resourceMetadataInfos;
 			}else{
 				if(requestBody.getResourceInfo().getReqParentResource().isBuiltinResource()){
-					parentResourceMetadataInfos = getBuiltinTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource().getResourceName());
+					parentResourceMetadataInfos = getBuiltinTableResourceMetadataInfos(parentResourceName);
 				}else{
 					parentResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, requestBody.getResourceInfo().getReqParentResource().getRefResourceId());
 					if(parentResourceMetadataInfos == null || parentResourceMetadataInfos.size() == 0){
 						throw new NullPointerException("没有查询到父表资源["+parentResourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 					}
-					initBasicMetadataInfos(parentResourceMetadataInfos);
+					DynamicBasicColumnUtil.initBasicMetadataInfos(parentResourceName, parentResourceMetadataInfos);
 				}
 			}
 		}
@@ -94,10 +93,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
 		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
-		ComTabledata table = itable.toCreateTable();
-		DynamicBasicColumnUtil.initBasicColumnToTable(table);
-		
-		List<ComColumndata> columns = table.getColumns();
+		List<ComColumndata> columns = itable.getColumnList();
 		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
 		for (ComColumndata column : columns) {
 			metadataInfos.add(new ResourceMetadataInfo(
@@ -109,22 +105,9 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 					1, // column.getIsNullabled()，基础字段，不需要验证是否可为空，所以设置为1
 					column.getName()));
 		}
-		table.clear();
+		DynamicBasicColumnUtil.initBasicMetadataInfos(tableResourceName, metadataInfos);
+		columns.clear();
 		return metadataInfos;
-	}
-	
-	/**
-	 * 初始化表资源基础的元数据信息
-	 * @param resourceMetadataInfos
-	 */
-	private void initBasicMetadataInfos(List<ResourceMetadataInfo> resourceMetadataInfos) {
-		resourceMetadataInfos.add(new ResourceMetadataInfo(ResourcePropNameConstants.ID, BuiltinDataType.STRING, 32, 0, 0, 1, "主键"));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("customer_id", BuiltinDataType.STRING, 32, 0, 0, 1, "所属租户主键"));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("project_id", BuiltinDataType.STRING, 32, 0, 0, 1, "所属项目主键"));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("create_date", BuiltinDataType.DATE, 0, 0, 0, 1, "创建时间"));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_date", BuiltinDataType.DATE, 0, 0, 0, 1, "最后修改时间"));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("create_user_id", BuiltinDataType.STRING, 32, 0, 0, 1, "创建人主键"));
-		resourceMetadataInfos.add(new ResourceMetadataInfo("last_update_user_id", BuiltinDataType.STRING, 32, 0, 0, 1, "最后修改人主键"));
 	}
 	
 	/**

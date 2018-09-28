@@ -3,16 +3,14 @@ package com.king.tooth.sys.entity.sys;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
-import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.dm.DmPublishBasicData;
-import com.king.tooth.sys.entity.dm.DmPublishInfo;
 
 /**
  * 资源信息表
@@ -20,7 +18,7 @@ import com.king.tooth.sys.entity.dm.DmPublishInfo;
  */
 @SuppressWarnings("serial")
 @Table
-public class SysResource extends AbstractSysResource implements ITable{
+public class SysResource extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 引用的资源主键
@@ -34,6 +32,16 @@ public class SysResource extends AbstractSysResource implements ITable{
 	 * 资源名
 	 */
 	private String resourceName;
+	/**
+	 * 是否有效
+	 */
+	private Integer isEnabled;
+	/**
+	 * 请求资源的方法
+	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
+	 * <p>默认值：all</p>
+	 */
+	private String requestMethod;
 	
 	//-------------------------------------------------------------------------
 	
@@ -55,7 +63,19 @@ public class SysResource extends AbstractSysResource implements ITable{
 	public void setResourceType(Integer resourceType) {
 		this.resourceType = resourceType;
 	}
-
+	public Integer getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(Integer isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+	public String getRequestMethod() {
+		return requestMethod;
+	}
+	public void setRequestMethod(String requestMethod) {
+		this.requestMethod = requestMethod;
+	}
+	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
@@ -63,19 +83,16 @@ public class SysResource extends AbstractSysResource implements ITable{
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", BuiltinDataType.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");
 		refResourceIdColumn.setComments("引用的资源主键");
-		refResourceIdColumn.setOrderCode(1);
 		columns.add(refResourceIdColumn);
 		
 		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
-		resourceNameColumn.setOrderCode(2);
 		columns.add(resourceNameColumn);
 		
 		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinDataType.INTEGER, 1);
 		resourceTypeColumn.setName("资源类型");
 		resourceTypeColumn.setComments("资源类型");
-		resourceTypeColumn.setOrderCode(3);
 		columns.add(resourceTypeColumn);
 		
 		return columns;
@@ -85,13 +102,6 @@ public class SysResource extends AbstractSysResource implements ITable{
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("资源信息表");
 		table.setComments("资源信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
-		
 		table.setColumns(getColumnList());
 		return table;
 	}
@@ -103,33 +113,6 @@ public class SysResource extends AbstractSysResource implements ITable{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "SysResource";
-	}
-	
-	public void analysisResourceData() {
-	}
-	
-	public SysResource turnToResource() {
-		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
-	}
-	
-	public SysResource turnToPublishResource(String projectId, String refResourceId) {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
-	}
-	
-	public DmPublishInfo turnToPublish() {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublish功能");
-	}
-	
-	/**
-	 * 转换为要发布的基础数据资源对象
-	 * @return
-	 */
-	public DmPublishBasicData turnToPublishBasicData(Integer belongPlatformType){
-		DmPublishBasicData publishBasicData = new DmPublishBasicData();
-		publishBasicData.setBasicDataResourceName(getEntityName());
-		publishBasicData.setBasicDataJsonStr(JSONObject.toJSONString(this));
-		publishBasicData.setBelongPlatformType(belongPlatformType);
-		return publishBasicData;
 	}
 	
 	/**

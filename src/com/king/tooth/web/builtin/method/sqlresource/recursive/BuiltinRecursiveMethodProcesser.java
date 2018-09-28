@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
@@ -88,7 +88,7 @@ public class BuiltinRecursiveMethodProcesser extends AbstractSqlResourceBuiltinM
 		if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合，即对递归查询的第一层数据进行筛选的查询条件
 			firstRecursiveQuerySql.append(" and ");
 			Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-			BuiltinQueryCondFuncUtil.installQueryCondHql(ISysResource.SQLSCRIPT, resourceName, queryCondParamsSet , firstRecursiveQueryParams, firstRecursiveQuerySql);
+			BuiltinQueryCondFuncUtil.installQueryCondHql(ResourceInfoConstants.SQL, resourceName, queryCondParamsSet , firstRecursiveQueryParams, firstRecursiveQuerySql);
 		}
 	}
 	

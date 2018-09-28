@@ -7,7 +7,6 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -51,11 +50,7 @@ public class CfgProjectSqlLinks implements Serializable, ITable {
 		table.setResourceName("CfgProjectSqlLinks");
 		table.setName("项目和sql脚本的关系表");
 		table.setComments("项目和sql脚本的关系表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
-		table.setIsCore(1);
+		
 		
 		table.setColumns(getColumnList());
 		return table;

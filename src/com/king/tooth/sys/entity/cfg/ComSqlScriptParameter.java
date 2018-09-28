@@ -10,7 +10,6 @@ import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -298,10 +297,6 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("sql脚本参数信息表");
 		table.setComments("sql脚本参数信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0); 
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		table.setColumns(getColumnList());
 		return table;

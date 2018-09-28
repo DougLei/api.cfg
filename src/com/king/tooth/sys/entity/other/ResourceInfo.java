@@ -2,7 +2,7 @@ package com.king.tooth.sys.entity.other;
 
 import java.util.Map;
 
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.JsonUtil;
 
 /**
@@ -37,9 +37,9 @@ public class ResourceInfo {
 	private String msg;
 	
 	public void setResourceType(Integer resourceType) {
-		if(resourceType == ISysResource.TABLE){
+		if(resourceType == ResourceInfoConstants.TABLE){
 			this.resourceType = "表资源";
-		}else if(resourceType == ISysResource.SQLSCRIPT){
+		}else if(resourceType == ResourceInfoConstants.SQL){
 			this.resourceType = "sql脚本资源";
 		}else{
 			this.resourceType = resourceType.toString();

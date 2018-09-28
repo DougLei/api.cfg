@@ -199,10 +199,6 @@ public class HibernateUtil {
 	 * @return
 	 */
 	public static String getDataLinkResourceName(String parentResourceName, String resourceName){
-		String datalinkResourceName = parentResourceName + resourceName + "Links";
-		if(getSessionFactory().isExistsInHibernateDataLinkResourceNameList(datalinkResourceName)){
-			return datalinkResourceName;
-		}
 		return "SysDataLinks";
 	}
 	

@@ -11,10 +11,9 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractPublishController;
+import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
-import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -22,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class CfgSqlController extends AbstractPublishController{
+public class CfgSqlController extends AbstractController{
 	
 	/**
 	 * 添加sql脚本
@@ -154,49 +153,6 @@ public class CfgSqlController extends AbstractPublishController{
 			return "要操作的sql脚本id不能为空";
 		}
 		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).cancelProjSqlScriptRelation(jsonObject.getString("projectId"), jsonObject.getString(ResourcePropNameConstants.ID));
-		if(resultObject == null){
-			resultObject = jsonObject;
-		}
-		return getResultObject();
-	}
-	
-	//--------------------------------------------------------------------------------------------------------
-	/**
-	 * 发布sql脚本
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	public Object publish(HttpServletRequest request, IJson ijson){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-			return "发布功能，目前只提供给一般开发账户使用";
-		}
-		
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要发布的sql脚本id不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).publishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
-		if(resultObject == null){
-			resultObject = jsonObject;
-		}
-		return getResultObject();
-	}
-	
-	/**
-	 * 取消发布sql脚本
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	public Object cancelPublish(HttpServletRequest request, IJson ijson){
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-			return "取消发布功能，目前只提供给一般开发账户使用";
-		}
-		
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要取消发布的sql脚本id不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).cancelPublishSqlScript(jsonObject.getString(ResourcePropNameConstants.ID));
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}

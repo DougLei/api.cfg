@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.ReflectUtil;
 
 /**
@@ -114,9 +114,9 @@ public class RouteProcesserAdapter implements Serializable {
 	 * @return
 	 */
 	private String getResourceProcessPackageName(int processResourceType) {
-		if(processResourceType == ISysResource.TABLE){
+		if(processResourceType == ResourceInfoConstants.TABLE){
 			return TABLE_RESOURCE_PROCESSER_PACKAGE_NAME;
-		}else if(processResourceType == ISysResource.SQLSCRIPT){
+		}else if(processResourceType == ResourceInfoConstants.SQL){
 			return SQL_RESOURCE_PROCESSER_PACKAGE_NAME;
 		}
 		throw new IllegalArgumentException("[processResourceType="+processResourceType+"]，没有匹配到对应的资源类型处理器，请检查[api.platform.processer.properties]配置文件中，key为route.processer.adapter.json的数据中，processResourceTypes的值是否配置正确");

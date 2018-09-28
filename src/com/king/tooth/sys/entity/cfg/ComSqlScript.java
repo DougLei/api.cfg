@@ -10,17 +10,18 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.IPublish;
+import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
-import com.king.tooth.sys.entity.dm.DmPublishInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -36,7 +37,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComSqlScript extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
+public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity, ISysResource{
 	/**
 	 * 数据库类型
 	 */
@@ -77,6 +78,21 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	private String parameterNameRecords;
 	@JSONField(serialize = false)
 	private List<SqlScriptParameterNameRecord> parameterNameRecordList;
+	
+	/**
+	 * 是否被创建
+	 */
+	private Integer isCreated;
+	/**
+	 * 是否有效
+	 */
+	private Integer isEnabled;
+	/**
+	 * 请求资源的方法
+	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
+	 * <p>默认值：all</p>
+	 */
+	private String requestMethod;
 	
 	//--------------------------------------------------------
 	
@@ -145,14 +161,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	@JSONField(serialize = false)
 	private List<List<CfgSqlResultset>> outSqlResultsetsList;
 	
-	/**
-	 * 关联的数据库id
-	 * 该字段在发布的时候用到
-	 * @see turnToPublish()
-	 */
-	@JSONField(serialize = false)
-	private String refDatabaseId;
-	
 	public void setSqlScriptResourceName(String sqlScriptResourceName) {
 		this.sqlScriptResourceName = sqlScriptResourceName;
 	}
@@ -214,9 +222,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 	public List<FinalSqlScriptStatement> getFinalSqlScriptList() {
 		return finalSqlScriptList;
 	}
-	public void setRefDatabaseId(String refDatabaseId) {
-		this.refDatabaseId = refDatabaseId;
-	}
 	public int getIsAnalysisParameters() {
 		return isAnalysisParameters;
 	}
@@ -243,6 +248,24 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		if(gsqlParser == null){
 			gsqlParser = SqlStatementParserUtil.getGsqlParser(this.sqlScriptContent.replaceAll("\n", " ").replace("\t", " ").replaceAll("\r", " "));
 		}
+	}
+	public Integer getIsCreated() {
+		return isCreated;
+	}
+	public void setIsCreated(Integer isCreated) {
+		this.isCreated = isCreated;
+	}
+	public Integer getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(Integer isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+	public String getRequestMethod() {
+		return requestMethod;
+	}
+	public void setRequestMethod(String requestMethod) {
+		this.requestMethod = requestMethod;
 	}
 	public TGSqlParser getGsqlParser() {
 		initGsqlParser();
@@ -340,12 +363,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("sql脚本信息表");
 		table.setComments("sql脚本信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
 		
 		table.setColumns(getColumnList());
 		return table;
@@ -439,37 +456,6 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 		this.finalSqlScriptList = SqlStatementParserUtil.getFinalSqlScriptList(sqlScriptResource, sqlParameterValues);
 	}
 	
-	public SysResource turnToResource() {
-		SysResource resource = super.turnToResource();
-		resource.setResourceType(SQLSCRIPT);
-		resource.setResourceName(sqlScriptResourceName);
-		return resource;
-	}
-	
-	public SysResource turnToPublishResource(String projectId, String refResourceId) {
-		SysResource resource = turnToResource();
-		resource.setId(ResourceHandlerUtil.getIdentity());
-		resource.setRefDataId(id);
-		resource.setProjectId(projectId);
-		resource.setRefResourceId(refResourceId);
-		return resource;
-	}
-	
-	@JSONField(serialize = false)
-	public Integer getResourceType() {
-		return SQLSCRIPT;
-	}
-	
-	public DmPublishInfo turnToPublish() {
-		DmPublishInfo publish = new DmPublishInfo();
-		publish.setPublishDatabaseId(refDatabaseId);
-		publish.setPublishProjectId(projectId);
-		publish.setPublishResourceId(id);
-		publish.setPublishResourceName(sqlScriptResourceName);
-		publish.setResourceType(SQLSCRIPT);
-		return publish;
-	}
-	
 	public Map<Integer, List<String>> getParameterNameRecordMap() {
 		analysisParameterNameRecordMap();
 		return parameterNameRecordMap;
@@ -535,5 +521,15 @@ public class ComSqlScript extends AbstractSysResource implements ITable, IEntity
 			inSqlResultsetsList = new ArrayList<List<CfgSqlResultset>>();
 		}
 		inSqlResultsetsList.add(sqlResultSets);
+	}
+	
+	public SysResource turnToResource() {
+		SysResource resource = new SysResource();
+		resource.setRefResourceId(id);
+		resource.setResourceType(ResourceInfoConstants.SQL);
+		resource.setResourceName(sqlScriptResourceName);
+		resource.setIsEnabled(isEnabled);
+		resource.setRequestMethod(requestMethod);
+		return resource;
 	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
-import com.king.tooth.sys.entity.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;

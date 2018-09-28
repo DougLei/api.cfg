@@ -5,20 +5,16 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.database.DBFile;
-import com.king.tooth.sys.entity.dm.DmPublishInfo;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
@@ -30,7 +26,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgDatabase extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
+public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 数字库名
@@ -219,12 +215,6 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("数据库信息表");
 		table.setComments("数据库信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
 		
 		table.setColumns(getColumnList());
 		return table;
@@ -327,14 +317,6 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 		return result;
 	}
 	
-	public SysResource turnToResource() {
-		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
-	}
-	
-	public SysResource turnToPublishResource(String projectId, String refResourceId) {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
-	}
-	
 	/**
 	 * 比较数据库的连接信息是否一致
 	 * 用在保存/修改数据库信息的时候，要确保数据库连接信息的唯一性
@@ -371,26 +353,5 @@ public class CfgDatabase extends AbstractSysResource implements ITable, IEntityP
 			}
 		}
 		return false;
-	}
-
-	@JSONField(serialize = false)
-	public Integer getResourceType() {
-		return DATABASE;
-	}
-	
-	public DmPublishInfo turnToPublish() {
-		DmPublishInfo publish = new DmPublishInfo();
-		publish.setPublishDatabaseId(id);
-		publish.setPublishResourceId(id);
-		publish.setPublishResourceName(instanceName);
-		publish.setResourceType(DATABASE);
-		return publish;
-	}
-	
-	public JSONObject toPublishEntityJson(String projectId) {
-		JSONObject json = toEntityJson();
-		json.put("refDataId", json.getString(ResourcePropNameConstants.ID));
-		processPublishEntityJson(json);
-		return json;
 	}
 }

@@ -9,7 +9,7 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractPublishController;
+import com.king.tooth.sys.controller.AbstractController;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.util.StrUtils;
@@ -19,7 +19,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class CfgSqlParameterController extends AbstractPublishController{
+public class CfgSqlParameterController extends AbstractController{
 	
 	/**
 	 * 添加sql脚本参数

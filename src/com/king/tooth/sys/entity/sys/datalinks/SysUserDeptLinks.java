@@ -7,7 +7,6 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -58,10 +57,7 @@ public class SysUserDeptLinks implements Serializable, ITable {
 		table.setResourceName("SysUserDeptLinks");
 		table.setName("人员和部门的关联关系表表");
 		table.setComments("人员和部门的关联关系表表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
+		
 		
 		table.setColumns(getColumnList());
 		return table;

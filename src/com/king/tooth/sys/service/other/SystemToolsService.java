@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.annotation.Service;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.other.ResourceInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -42,11 +42,11 @@ public class SystemToolsService {
 		ResourceInfo resourceInfo = new ResourceInfo();
 		resourceInfo.setResourceName(resource.getResourceName());
 		resourceInfo.setResourceType(resourceType);
-		resourceInfo.setReqResourceMethod(resource.getReqResourceMethod().toUpperCase());
+		resourceInfo.setReqResourceMethod(resource.getRequestMethod().toUpperCase());
 		
-		if(resourceType == ISysResource.TABLE){
+		if(resourceType == ResourceInfoConstants.TABLE){
 			setTableResourceStruct(resource.getRefResourceId(), resourceInfo);
-		}else if(resourceType == ISysResource.SQLSCRIPT){
+		}else if(resourceType == ResourceInfoConstants.SQL){
 			setSqlResourceStruct(resource.getRefResourceId(), resourceInfo);
 		}else{
 			resourceInfo.setMsg("系统目前不存在类型为["+resourceType+"]的资源，请联系系统开发人员");

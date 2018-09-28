@@ -10,7 +10,6 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
@@ -197,10 +196,6 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("sql结果集信息表");
 		table.setComments("sql结果集信息表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(0); 
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		table.setColumns(getColumnList());
 		return table;

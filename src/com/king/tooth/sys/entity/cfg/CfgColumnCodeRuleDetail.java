@@ -13,7 +13,6 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -424,10 +423,6 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEnt
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("字段编码规则表");
 		table.setComments("字段编码规则表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		table.setColumns(getColumnList());
 		return table;

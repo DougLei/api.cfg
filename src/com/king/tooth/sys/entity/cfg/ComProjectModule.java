@@ -6,12 +6,10 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
-import com.king.tooth.sys.entity.AbstractSysResource;
+import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.IPublish;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.dm.DmPublishInfo;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -20,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComProjectModule extends AbstractSysResource implements ITable, IEntityPropAnalysis, IPublish{
+public class ComProjectModule extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 关联的项目主键
@@ -64,13 +62,6 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	private String functionTree;
 	
 	//-----------------------------------------------
-	/**
-	 * 关联的数据库id
-	 * 该字段在发布的时候用到
-	 * @see turnToPublish()
-	 */
-	@JSONField(serialize = false)
-	private String refDatabaseId;
 	
 	public String getParentId() {
 		return parentId;
@@ -116,9 +107,6 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	}
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
-	}
-	public void setRefDatabaseId(String refDatabaseId) {
-		this.refDatabaseId = refDatabaseId;
 	}
 	public String getBody() {
 		return body;
@@ -201,12 +189,6 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("项目模块信息表");
 		table.setComments("项目模块信息表");
-		table.setIsResource(1);
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(COMMON_PLATFORM);
-		table.setIsCore(1);
 		
 		table.setColumns(getColumnList());
 		return table;
@@ -220,14 +202,6 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 		return "ComProjectModule";
 	}
 	
-	public SysResource turnToResource() {
-		throw new IllegalArgumentException("该资源目前不支持turnToResource功能");
-	}
-	
-	public SysResource turnToPublishResource(String projectId, String refResourceId) {
-		throw new IllegalArgumentException("该资源目前不支持turnToPublishResource功能");
-	}
-	
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(code)){
 			return "模块编码不能为空";
@@ -237,20 +211,5 @@ public class ComProjectModule extends AbstractSysResource implements ITable, IEn
 	
 	public String analysisResourceProp() {
 		return validNotNullProps();
-	}
-	
-	@JSONField(serialize = false)
-	public Integer getResourceType() {
-		return PROJECT_MODULE;
-	}
-	
-	public DmPublishInfo turnToPublish() {
-		DmPublishInfo publish = new DmPublishInfo();
-		publish.setPublishDatabaseId(refDatabaseId);
-		publish.setPublishProjectId(refProjectId);
-		publish.setPublishResourceId(id);
-		publish.setPublishResourceName(code);
-		publish.setResourceType(PROJECT_MODULE);
-		return publish;
 	}
 }

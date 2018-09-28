@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -69,7 +69,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 				hql.append(" in( select p_.").append(ResourcePropNameConstants.ID)
 				   .append(" from ").append(parentResourceName).append(" p_ where ");
 				Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
+				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
 				hql.append(" ) ");
 			}else{
 				hql.append(" =? ");
@@ -84,7 +84,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 			
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
 				Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
+				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, "p_");
 			}else{ // 否则就直接查询
 				hql.append("p_.")
 				   .append(ResourcePropNameConstants.ID)
@@ -110,7 +110,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		StringBuilder hql = new StringBuilder();
 		if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
 			Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, alias);
+			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, parentResourceName, queryCondParamsSet , hqlParameterValues, hql, alias);
 		}else{// 否则就直接查询
 			hql.append(alias).append(".").append(ResourcePropNameConstants.ID).append(" = ?");
 			hqlParameterValues.add(parentResourceId);

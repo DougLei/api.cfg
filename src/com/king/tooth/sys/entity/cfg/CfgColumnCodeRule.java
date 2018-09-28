@@ -11,7 +11,6 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
@@ -104,10 +103,6 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("字段编码规则表");
 		table.setComments("字段编码规则表");
-		table.setIsBuiltin(1);
-		table.setIsNeedDeploy(1);
-		table.setIsCreated(1);
-		table.setBelongPlatformType(ISysResource.COMMON_PLATFORM);
 		
 		table.setColumns(getColumnList());
 		return table;

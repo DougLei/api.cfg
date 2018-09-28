@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
@@ -38,7 +38,7 @@ public class BuiltinQueryCondMethodProcesser extends AbstractSqlResourceBuiltinM
 		Set<Entry<String, String>> se = this.queryCondParams.entrySet();
 		// 解析请求的查询条件参数集合,整理成sql
 		List<Object> queryCondParameters = new ArrayList<Object>();
-		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ISysResource.SQLSCRIPT, resourceName, se, queryCondParameters, sql, alias);
+		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.SQL, resourceName, se, queryCondParameters, sql, alias);
 		
 		if(sqlParameterValues.size() > 0){
 			sqlParameterValues.get(0).addAll(queryCondParameters);
