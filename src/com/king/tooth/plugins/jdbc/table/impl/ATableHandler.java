@@ -7,13 +7,14 @@ import com.king.tooth.constants.database.DatabaseConstraintConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DBUtil;
 
 /**
  * 数据表操作的抽象类(创建/删除)
  * @author DougLei
  */
-public abstract class AbstractTableHandler {
+public abstract class ATableHandler {
 
 	/**
 	 * 创建表的createTableSql
@@ -29,6 +30,13 @@ public abstract class AbstractTableHandler {
 	 * 操作列的operColumnSql
 	 */
 	protected final StringBuilder operColumnSql = new StringBuilder();
+	
+	/**
+	 * 操作表数据类型的sql
+	 * <p>create或drop</p>
+	 * <p>sqlserver是表类型、oracle是游标</p>
+	 */
+	protected final StringBuilder operTableDataTypeSql = new StringBuilder();
 	
 	/**
 	 * 组装创建表的sql语句
@@ -256,15 +264,17 @@ public abstract class AbstractTableHandler {
 	 * </pre>
 	 * @param column
 	 * @param columnSql
+	 * @return 返回此次调用方法解析出的字段类型结果，不论columnSql参数是否为null
 	 */
-	protected abstract void analysisColumnType(ComColumndata column, StringBuilder columnSql);
+	protected abstract String analysisColumnType(ComColumndata column, StringBuilder columnSql);
 	
 	/**
 	 * 解析字段长度
 	 * @param column
-	 * @param columnSql
+	 * @param columnSql 
+	 * @return 返回此次调用方法解析出的字段长度结果，不论columnSql参数是否为null
 	 */
-	protected abstract void analysisColumnLength(ComColumndata column, StringBuilder columnSql);
+	protected abstract String analysisColumnLength(ComColumndata column, StringBuilder columnSql);
 	
 	// ----------------------------------------------------------------------------------------------------------------------------------
 	/**
@@ -318,6 +328,18 @@ public abstract class AbstractTableHandler {
 			operColumnSql.setLength(0);
 		}
 	}
+	
+	/**
+	 * 获取操作表数据类型的sql
+	 * @return
+	 */
+	public String getOperTableDataTypeSql() {
+		try {
+			return operTableDataTypeSql.toString();
+		} finally {
+			operTableDataTypeSql.setLength(0);
+		}
+	}
 
 	/**
 	 * 获取修改表名的sql
@@ -326,4 +348,47 @@ public abstract class AbstractTableHandler {
 	 * @return
 	 */
 	public abstract String getReTableNameSql(String newTableName, String oldTableName);
+
+	// --------------------------------------------------------------------------------------
+	/**
+	 * 组装列的信息，包括数据类型、长度、精度、唯一约束，是否可为空等
+	 * @param column
+	 * @return
+	 */
+	protected String installColumnInfo(ComColumndata column) {
+		StringBuilder tmpBuffer = new StringBuilder();
+		tmpBuffer.append(" ").append(analysisColumnType(column, null)).append(analysisColumnLength(column, null));
+		if(StrUtils.notEmpty(column.getDefaultValue())){
+			tmpBuffer.append(" default (");
+			if(BuiltinDataType.STRING.equals(column.getColumnType())){
+				tmpBuffer.append("'").append(column.getDefaultValue()).append("'");
+			}else{
+				tmpBuffer.append(column.getDefaultValue());
+			}
+			tmpBuffer.append(")");
+		}
+		if(column.getIsNullabled() == 0){
+			tmpBuffer.append(" not null");
+		}
+		if(column.getIsUnique() == 1){
+			tmpBuffer.append(" unique");
+		}else{
+			if(column.getIsPrimaryKey() == 1){
+				tmpBuffer.append(" primary key");
+			}
+		}
+		return tmpBuffer.toString();
+	}
+	
+	/**
+	 * 组装创建表数据类型的sql语句
+	 * @param table
+	 */
+	public abstract void installCreateTableDataTypeSql(ComTabledata table);
+	
+	/**
+	 * 组装删除表数据类型的sql语句
+	 * @param table
+	 */
+	public abstract void installDropTableDataTypeSql(ComTabledata table);
 }

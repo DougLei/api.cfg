@@ -1,8 +1,10 @@
 package com.king.tooth.plugins.jdbc.table.impl.sqlserver;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.database.DatabaseConstraintConstants;
-import com.king.tooth.plugins.jdbc.table.impl.AbstractTableHandler;
+import com.king.tooth.plugins.jdbc.table.impl.ATableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
@@ -12,30 +14,35 @@ import com.king.tooth.util.database.DBUtil;
  * sqlserver创建表操作的实现类
  * @author DougLei
  */
-public class TableImpl extends AbstractTableHandler{
+public class TableImpl extends ATableHandler{
 
-	protected void analysisColumnType(ComColumndata column, StringBuilder columnSql) {
+	protected String analysisColumnType(ComColumndata column, StringBuilder columnSql) {
+		StringBuilder tmpBuffer = new StringBuilder();
 		String columnType = column.getColumnType();
 		if(BuiltinDataType.STRING.equals(columnType)){
-			columnSql.append("varchar");
+			tmpBuffer.append("varchar");
 		}else if(BuiltinDataType.BOOLEAN.equals(columnType)){
-			columnSql.append("char(1)");
+			tmpBuffer.append("char(1)");
 		}else if(BuiltinDataType.INTEGER.equals(columnType)){
-			columnSql.append("int");
+			tmpBuffer.append("int");
 		}else if(BuiltinDataType.DOUBLE.equals(columnType)){
-			columnSql.append("decimal");
+			tmpBuffer.append("decimal");
 		}else if(BuiltinDataType.DATE.equals(columnType)){
-			columnSql.append("datetime");
+			tmpBuffer.append("datetime");
 		}else if(BuiltinDataType.CLOB.equals(columnType)){
-			columnSql.append("text");
+			tmpBuffer.append("text");
 		}else if(BuiltinDataType.BLOB.equals(columnType)){
-			columnSql.append("image");
+			tmpBuffer.append("image");
 		}else{
 			throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成sqlserver对应的数据类型");
 		}
+		if(columnSql != null){
+			columnSql.append(tmpBuffer);
+		}
+		return tmpBuffer.toString();
 	}
 
-	protected void analysisColumnLength(ComColumndata column, StringBuilder columnSql) {
+	protected String analysisColumnLength(ComColumndata column, StringBuilder columnSql) {
 		// 验证哪些类型，sqlserver不需要加长度限制
 		String columnType = column.getColumnType();
 		if(BuiltinDataType.INTEGER.equals(columnType) 
@@ -43,27 +50,31 @@ public class TableImpl extends AbstractTableHandler{
 				|| BuiltinDataType.CLOB.equals(columnType)
 				|| BuiltinDataType.BLOB.equals(columnType)
 				|| BuiltinDataType.BOOLEAN.equals(columnType)){
-			return;
+			return null;
 		}
 		
+		StringBuilder tmpBuffer = new StringBuilder();
 		Integer length = column.getLength();
 		if(BuiltinDataType.STRING.equals(columnType)){
 			if(length < 0 || length > 8000){
-				columnSql.append("(8000)");
-//				columnSql.append("(max)"); // sqlserver的varchar最大长度配置为max，值可以为2G。目前系统不提供这种支持，如果要存储大数据，就用大字段text存储
+				tmpBuffer.append("(8000)");
 			}else{
-				columnSql.append("(").append(length).append(")");
+				tmpBuffer.append("(").append(length).append(")");
 			}
 		}else if(length > 0){
-			columnSql.append("(");
-			columnSql.append(length);
+			tmpBuffer.append("(");
+			tmpBuffer.append(length);
 			
 			Integer precision = column.getPrecision();
 			if(precision != null && precision > 0){
-				columnSql.append(",").append(precision);
+				tmpBuffer.append(",").append(precision);
 			}
-			columnSql.append(")");
+			tmpBuffer.append(")");
 		}
+		if(columnSql != null){
+			columnSql.append(tmpBuffer);
+		}
+		return tmpBuffer.toString();
 	}
 	
 	protected void analysisTableComments(ComTabledata table, boolean isAdd) {
@@ -144,5 +155,20 @@ public class TableImpl extends AbstractTableHandler{
 	
 	public String getReTableNameSql(String newTableName, String oldTableName) {
 		return "exec sp_rename '"+oldTableName+"', '"+newTableName+"'";
+	}
+
+	// --------------------------------------------------------------------------------------
+	public void installCreateTableDataTypeSql(ComTabledata table) {
+		operTableDataTypeSql.append("create type ").append(table.getTableName()).append(" as table(");
+		List<ComColumndata> columns = table.getColumns();
+		for (ComColumndata column : columns) {
+			operTableDataTypeSql.append(" ").append(column.getColumnName()).append(installColumnInfo(column)).append(",");
+		}
+		operTableDataTypeSql.setLength(operTableDataTypeSql.length()-1);
+		operTableDataTypeSql.append(")");
+	}
+
+	public void installDropTableDataTypeSql(ComTabledata table) {
+		operTableDataTypeSql.append("drop type ").append(table.getTableName());
 	}
 }

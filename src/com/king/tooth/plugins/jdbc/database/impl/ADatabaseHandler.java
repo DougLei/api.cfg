@@ -7,7 +7,7 @@ import com.king.tooth.sys.entity.cfg.CfgDatabase;
  * 数据库操作的抽象类(创建/删除)
  * @author DougLei
  */
-public abstract class AbstractDatabaseHandler {
+public abstract class ADatabaseHandler {
 
 	/**
 	 * 操作数据库的sql

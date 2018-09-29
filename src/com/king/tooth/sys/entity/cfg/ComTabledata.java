@@ -297,4 +297,16 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		resource.setRequestMethod(requestMethod);
 		return resource;
 	}
+	
+	// ---------------------------------------------------------
+	/**
+	 * 单表
+	 * <p>@see type属性</p>
+	 */
+	public static final Integer SINGLE_TABLE = 1;
+	/**
+	 * 表数据类型
+	 * <p>@see type属性</p>
+	 */
+	public static final Integer TABLE_DATATYPE = 2;
 }

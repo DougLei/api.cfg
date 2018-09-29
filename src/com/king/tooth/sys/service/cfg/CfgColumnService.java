@@ -95,11 +95,7 @@ public class CfgColumnService extends AService{
 			column.setOperStatus(ComColumndata.MODIFIED);
 			column.analysisOldColumnInfo(oldColumn, column);
 			
-			// 如果是平台的开发者,只要修改列信息，就要同时修改对应表的状态，以备后期重新建模
-			// TODO 单项目，取消是否平台开发者的判断
-//			if(CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-				modifyTableIsBuildModel(column.getTableId(), null, 0);
-//			}
+			modifyTableIsBuildModel(column.getTableId(), null, 0);
 			return HibernateUtil.updateObject(column, null);
 		}
 		return operResult;

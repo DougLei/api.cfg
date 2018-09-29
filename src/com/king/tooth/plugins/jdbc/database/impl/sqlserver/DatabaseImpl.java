@@ -1,6 +1,6 @@
 package com.king.tooth.plugins.jdbc.database.impl.sqlserver;
 
-import com.king.tooth.plugins.jdbc.database.impl.AbstractDatabaseHandler;
+import com.king.tooth.plugins.jdbc.database.impl.ADatabaseHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.util.StrUtils;
 
@@ -8,7 +8,7 @@ import com.king.tooth.util.StrUtils;
  * sqlserver创建表操作的实现类
  * @author DougLei
  */
-public class DatabaseImpl extends AbstractDatabaseHandler{
+public class DatabaseImpl extends ADatabaseHandler{
 
 	public String installCreateDatabaseSql(CfgDatabase database) {
 		operDatabaseSql.setLength(0);

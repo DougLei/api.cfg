@@ -89,7 +89,7 @@ public class CreateLogTableJob implements Job, Serializable{
 	 */
 	private void createLogTables(Date currentDate, List<ComTabledata> logTables, DBTableHandler dbTableHandler){
 		// create日志表
-		dbTableHandler.createTable(logTables, true); 
+		dbTableHandler.batchCreateTable(logTables, true); 
 		
 		// 获取日志表的hbmContent以及CfgHibernateHbm对象
 		List<String> hbmContents = new ArrayList<String>(logTableSize);

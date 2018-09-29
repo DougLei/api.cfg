@@ -176,8 +176,8 @@ public class InitCfgSystemService extends AService{
 		for (ComTabledata table : tables) {
 			tmpTables.add(table);
 		}
-		dbHandler.dropTable(tmpTables);// 尝试先删除表
-		dbHandler.createTable(tmpTables, true);// 开始创建表
+		dbHandler.batchDropTable(tmpTables);// 尝试先删除表
+		dbHandler.batchCreateTable(tmpTables, true);// 开始创建表
 		ResourceHandlerUtil.clearTables(tmpTables);
 		ResourceHandlerUtil.clearTables(tables);
 	}

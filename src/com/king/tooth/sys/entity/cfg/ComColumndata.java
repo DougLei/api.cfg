@@ -442,15 +442,20 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 			if(result == null){
 				for(String builtinColumnName: BUILTIN_COLUMNNAMES){
 					if(columnName.equalsIgnoreCase(builtinColumnName)){
-						result = "不能添加系统内置的列名:"+columnName;
-						break;
+						return "不能添加系统内置的列名:"+columnName;
 					}
 				}
 			}
 		}
 		if(result == null){
 			if((BuiltinDataType.CLOB.equals(columnType) || BuiltinDataType.BLOB.equals(columnType)) && (isUnique != null && isUnique == 1)){
-				result = "列["+columnName+"]，属于大字段类型，禁止添加唯一约束";
+				return "列["+columnName+"]，属于大字段类型，禁止添加唯一约束";
+			}
+			if(isPrimaryKey != null && isPrimaryKey == 1){
+				return "列["+columnName+"]，无法设置为主键，系统已内置名为id的主键，如确实需要创建主键，请联系后端系统开发人员";
+			}
+			if((isUnique != null && isUnique == 1) && (isPrimaryKey != null && isPrimaryKey == 1)){
+				return "列["+columnName+"]，唯一约束和主键约束，只能指定一个";
 			}
 		}
 		if(result == null){

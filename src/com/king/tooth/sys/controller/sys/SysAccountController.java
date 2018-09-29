@@ -51,11 +51,6 @@ public class SysAccountController extends AController{
 			json.put("modules", accountOnlineStatus.getProjectModules());
 			resultObject = json;
 		}
-		
-		// TODO 不知道为什么有时就会出现登录名不能为空的错误，这里就临时这样处理一下，后期研究
-		if("登陆名不能为空".equals(analysisResult)){
-			analysisResult = null;
-		}
 		return getResultObject();
 	}
 	

@@ -18,7 +18,6 @@ import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.NamingProcessUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateHbmUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -155,6 +154,10 @@ public class CfgTableService extends AService {
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
 		
+		if(oldTable.getIsCreated() == 1){
+			return "表["+oldTable.getTableName()+"]已经完成建模，无法删除，请先进行取消建模操作，再进行删除操作";
+		}
+		
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("CfgProjectTableLinks", null, tableId);
 		if(datalinks.size() > 1){
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
@@ -169,10 +172,6 @@ public class CfgTableService extends AService {
 			List<Object> projNames = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), projectIds);
 			projectIds.clear();
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
-		}
-		
-		if(oldTable.getIsCreated() == 1){
-			cancelBuildModel(new DBTableHandler(CurrentThreadContext.getDatabaseInstance()), oldTable, true);
 		}
 		
 		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComTabledata where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
@@ -194,74 +193,78 @@ public class CfgTableService extends AService {
 			if(table.getIsBuildModel() == 1){
 				return "表["+table.getTableName()+"]已经完成建模，且在无表名被修改、或任何字段信息被修改的情况下，无法重复进行建模操作";
 			}
-			
 			boolean isNeedInitBasicColumns = false;
 			List<ComColumndata> columns = HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =? order by orderCode asc", tableId);
-			List<ComTabledata> tables = null;
-			if(table.getIsCreated() == 0){
-				// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
-				deleteTableIds.add(tableId);
-				removeDeleteColumns(columns);
-				table.setColumns(columns);
-				// 1、建表
-				tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
-			}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
-				tables = new ArrayList<ComTabledata>(1);
-				tables.add(table);
-				
-				// 删除hbm信息
-				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
-				// 删除资源
-				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(table.getId());
-				
-				// 判断该表是否存在
-				List<String> tableNames = dbTableHandler.filterTable(true, table.getTableName());
-				if(tableNames.size() == 0){// 如果不存在，则create
+			
+			if(table.getType() == ComTabledata.SINGLE_TABLE){
+				if(table.getIsCreated() == 0){
 					// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 					deleteTableIds.add(tableId);
-					removeDeleteColumns(columns);
 					table.setColumns(columns);
 					// 1、建表
-					tables = dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
-				}else{// 如果存在，则update
-					tableNames.clear();
+					dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
+				}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
+					// 删除hbm信息
+					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+					// 删除资源
+					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(table.getId());
 					
-					String oldTableName = table.getOldTableName();
-					if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
-						// 修改表名
-						dbTableHandler.reTableName(table.getTableName(), oldTableName);
-						// 移除hibernate中之前表的缓存
-						HibernateUtil.removeConfig(NamingProcessUtil.tableNameTurnClassName(oldTableName));
+					// 判断该表是否存在
+					List<String> tableNames = dbTableHandler.filterTable(true, table.getTableName());
+					if(tableNames.size() == 0){// 如果不存在，则create
+						// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
+						deleteTableIds.add(tableId);
+						removeDeleteColumns(columns);
+						table.setColumns(columns);
+						// 1、建表
+						dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
+					}else{// 如果存在，则update
+						tableNames.clear();
+						
+						String oldTableName = table.getOldTableName();
+						if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
+							// 修改表名
+							dbTableHandler.reTableName(table.getTableName(), oldTableName);
+							// 移除hibernate中之前表的缓存
+							HibernateUtil.removeConfig(NamingProcessUtil.tableNameTurnClassName(oldTableName));
+						}
+						
+						// 修改数据库中的列
+						dbTableHandler.modifyColumn(table.getTableName(), columns, true);
+						table.setColumns(columns);
+						isNeedInitBasicColumns = true;
 					}
-					
-					// 修改数据库中的列
-					dbTableHandler.modifyColumn(table.getTableName(), columns, true);
-					table.setColumns(columns);
-					isNeedInitBasicColumns = true;
+				}else{
+					return "建模时，表["+table.getTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
 				}
-			}else{
-				return "建模时，表["+table.getTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
-			}
-			
-			List<String> hbmContents = new ArrayList<String>(tables.size());
-			CfgHibernateHbm hbm;
-			int i = 0;
-			for (ComTabledata tb : tables) {
-				
-				hbmContents.add(HibernateHbmUtil.createHbmMappingContent(tb, isNeedInitBasicColumns));
 				
 				// 2、插入hbm
-				hbm = new CfgHibernateHbm(tb);
+				CfgHibernateHbm hbm = new CfgHibernateHbm(table);
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
-				hbm.setContent(hbmContents.get(i++));
+				hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, isNeedInitBasicColumns));
 				HibernateUtil.saveObject(hbm, null);
 				
 				// 3、插入资源数据
-				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(tb);
+				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(table);
+				
+				// 4、将hbm配置内容，加入到sessionFactory中
+				HibernateUtil.appendNewConfig(hbm.getContent());
+			}else if(table.getType() == ComTabledata.TABLE_DATATYPE){
+				if(table.getIsCreated() == 0){
+					table.setColumns(columns);
+					dbTableHandler.createTableDataType(table);
+				}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
+					dbTableHandler.dropTableDataType(table);
+					
+					removeDeleteColumns(columns);
+					table.setColumns(columns);
+					dbTableHandler.createTableDataType(table);
+				}else{
+					return "建模时，表["+table.getTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
+				}
+			}else{
+				return "系统目前不支持值为["+table.getType()+"]的表类型，请联系后端开发人员";
 			}
-			// 4、将hbm配置内容，加入到sessionFactory中
-			HibernateUtil.appendNewConfig(hbmContents);
-			hbmContents.clear();
 			
 			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1，且置空oldTableName字段
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated=1, isBuildModel =1, oldTableName=null where "+ResourcePropNameConstants.ID+" = ?", tableId);
@@ -270,7 +273,7 @@ public class CfgTableService extends AService {
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = ? and operStatus=?", tableId, ComColumndata.DELETED);
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", ComColumndata.CREATED, tableId, ComColumndata.DELETED);
 			
-			ResourceHandlerUtil.clearTables(tables);
+			table.clear();
 		} catch (Exception e) {
 			batchCancelBuildModel(dbTableHandler, deleteTableIds, false);// 如果建模出现异常，要将一起建模操作过的表都删除掉
 			return ExceptionUtil.getErrMsg(e);
@@ -321,8 +324,10 @@ public class CfgTableService extends AService {
 		if(table == null){
 			table = getObjectById(tableId, ComTabledata.class);
 		}
-		cancelBuildModel(dbTableHandler, table, deleteRelationDatas);
-		return null;
+		if(table.getIsCreated() == 0){
+			return "表["+table.getTableName()+"]还未建模，无法进行取消建模操作";
+		}
+		return cancelBuildModel(dbTableHandler, table, deleteRelationDatas);
 	}
 	
 	/**
@@ -333,27 +338,34 @@ public class CfgTableService extends AService {
 	 * 											   如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
 	 * 											   如果是重新建模，或取消建模，这个值应该传递为true，因为这个是必要操作
 	 */
-	private void cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, boolean deleteRelationDatas){
-		// drop表
-		String[] tableResourceNames = dbTableHandler.dropTable(table).split(",");
-		
-		// 从sessionFactory中移除映射
-		for (String tableResourceName : tableResourceNames) {
-			HibernateUtil.removeConfig(tableResourceName);
+	private String cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, boolean deleteRelationDatas){
+		if(table.getType() == ComTabledata.SINGLE_TABLE){
+			// drop表
+			dbTableHandler.dropTable(table);
+			// 从sessionFactory中移除映射
+			HibernateUtil.removeConfig(table.getTableName());
+		}else if(table.getType() == ComTabledata.TABLE_DATATYPE){
+			dbTableHandler.dropTableDataType(table);
+		}else{
+			return "系统目前不支持值为["+table.getType()+"]的表类型，请联系后端开发人员";
 		}
 		
 		if(deleteRelationDatas){
 			String tableId = table.getId();
 			// 修改表是否创建的状态，以及是否建模的字段值，均改为0，且置空oldTableName字段
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated =0, isBuildModel=0, oldTableName=null  where "+ResourcePropNameConstants.ID+" = ?", tableId);
-			// 删除hbm信息
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
-			// 删除资源
-			BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
 			// 修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为待创建状态，且置空oldInfoJson字段的值
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComColumndata where tableId = ? and operStatus=?", tableId, ComColumndata.DELETED);
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComColumndata set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", ComColumndata.UN_CREATED, tableId, ComColumndata.DELETED);
+			
+			if(table.getType() == ComTabledata.SINGLE_TABLE){
+				// 删除hbm信息
+				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
+				// 删除资源
+				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
+			}
 		}
+		return null;
 	}
 	
 	/**
