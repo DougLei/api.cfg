@@ -8,7 +8,7 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.cache.SysConfig;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -148,53 +148,53 @@ public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnaly
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9+7);
 		
-		ComColumndata displayNameColumn = new ComColumndata("display_name", BuiltinDataType.STRING, 100);
+		ComColumndata displayNameColumn = new ComColumndata("display_name", DataTypeConstants.STRING, 100);
 		displayNameColumn.setName("数字库名");
 		displayNameColumn.setComments("数字库名");
 		columns.add(displayNameColumn);
 		
-		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.STRING, 10);
+		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.STRING, 10);
 		typeColumn.setName("数据库类型");
 		typeColumn.setComments("数据库类型");
 		typeColumn.setIsNullabled(0);
 		columns.add(typeColumn);
 		
-		ComColumndata instanceNameColumn = new ComColumndata("instance_name", BuiltinDataType.STRING, 20);
+		ComColumndata instanceNameColumn = new ComColumndata("instance_name", DataTypeConstants.STRING, 20);
 		instanceNameColumn.setName("数据库实例名");
 		instanceNameColumn.setComments("数据库实例名：oracle中是实例名、sqlserver中就是数据库名");
 		instanceNameColumn.setIsNullabled(0);
 		columns.add(instanceNameColumn);
 		
-		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name", BuiltinDataType.STRING, 20);
+		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name", DataTypeConstants.STRING, 20);
 		loginUserNameColumn.setName("数据库登录名");
 		loginUserNameColumn.setComments("数据库登录名");
 		loginUserNameColumn.setIsNullabled(0);
 		columns.add(loginUserNameColumn);
 		
-		ComColumndata loginPasswordColumn = new ComColumndata("login_password", BuiltinDataType.STRING, 32);
+		ComColumndata loginPasswordColumn = new ComColumndata("login_password", DataTypeConstants.STRING, 32);
 		loginPasswordColumn.setName("数据库登录密码");
 		loginPasswordColumn.setComments("数据库登录密码");
 		loginPasswordColumn.setIsNullabled(0);
 		columns.add(loginPasswordColumn);
 		
-		ComColumndata ipColumn = new ComColumndata("ip", BuiltinDataType.STRING, 20);
+		ComColumndata ipColumn = new ComColumndata("ip", DataTypeConstants.STRING, 20);
 		ipColumn.setName("数据库ip");
 		ipColumn.setComments("数据库ip");
 		ipColumn.setIsNullabled(0);
 		columns.add(ipColumn);
 		
-		ComColumndata portColumn = new ComColumndata("port", BuiltinDataType.INTEGER, 5);
+		ComColumndata portColumn = new ComColumndata("port", DataTypeConstants.INTEGER, 5);
 		portColumn.setName("数据库端口");
 		portColumn.setComments("数据库端口");
 		portColumn.setIsNullabled(0);
 		columns.add(portColumn);
 		
-		ComColumndata mainFileContentColumn = new ComColumndata("main_file_content", BuiltinDataType.STRING, 800);
+		ComColumndata mainFileContentColumn = new ComColumndata("main_file_content", DataTypeConstants.STRING, 800);
 		mainFileContentColumn.setName("数据库文件配置内容");
 		mainFileContentColumn.setComments("数据库文件配置内容(json串)");
 		columns.add(mainFileContentColumn);
 		
-		ComColumndata tmplogFileContentColumn = new ComColumndata("tmplog_file_content", BuiltinDataType.STRING, 800);
+		ComColumndata tmplogFileContentColumn = new ComColumndata("tmplog_file_content", DataTypeConstants.STRING, 800);
 		tmplogFileContentColumn.setName("数据库临时/日志文件配置内容");
 		tmplogFileContentColumn.setComments("数据库临时/日志文件配置内容(json串)");
 		columns.add(tmplogFileContentColumn);

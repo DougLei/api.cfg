@@ -3,9 +3,9 @@ package com.king.tooth.plugins.jdbc.table.impl.sqlserver;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.database.DatabaseConstraintConstants;
 import com.king.tooth.plugins.jdbc.table.impl.ATableHandler;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.database.DBUtil;
@@ -19,19 +19,19 @@ public class TableImpl extends ATableHandler{
 	protected String analysisColumnType(ComColumndata column, StringBuilder columnSql) {
 		StringBuilder tmpBuffer = new StringBuilder();
 		String columnType = column.getColumnType();
-		if(BuiltinDataType.STRING.equals(columnType)){
+		if(DataTypeConstants.STRING.equals(columnType)){
 			tmpBuffer.append("varchar");
-		}else if(BuiltinDataType.BOOLEAN.equals(columnType)){
+		}else if(DataTypeConstants.BOOLEAN.equals(columnType)){
 			tmpBuffer.append("char(1)");
-		}else if(BuiltinDataType.INTEGER.equals(columnType)){
+		}else if(DataTypeConstants.INTEGER.equals(columnType)){
 			tmpBuffer.append("int");
-		}else if(BuiltinDataType.DOUBLE.equals(columnType)){
+		}else if(DataTypeConstants.DOUBLE.equals(columnType)){
 			tmpBuffer.append("decimal");
-		}else if(BuiltinDataType.DATE.equals(columnType)){
+		}else if(DataTypeConstants.DATE.equals(columnType)){
 			tmpBuffer.append("datetime");
-		}else if(BuiltinDataType.CLOB.equals(columnType)){
+		}else if(DataTypeConstants.CLOB.equals(columnType)){
 			tmpBuffer.append("text");
-		}else if(BuiltinDataType.BLOB.equals(columnType)){
+		}else if(DataTypeConstants.BLOB.equals(columnType)){
 			tmpBuffer.append("image");
 		}else{
 			throw new IllegalArgumentException("系统目前不支持将["+columnType+"]转换成sqlserver对应的数据类型");
@@ -45,17 +45,17 @@ public class TableImpl extends ATableHandler{
 	protected String analysisColumnLength(ComColumndata column, StringBuilder columnSql) {
 		// 验证哪些类型，sqlserver不需要加长度限制
 		String columnType = column.getColumnType();
-		if(BuiltinDataType.INTEGER.equals(columnType) 
-				|| BuiltinDataType.DATE.equals(columnType)
-				|| BuiltinDataType.CLOB.equals(columnType)
-				|| BuiltinDataType.BLOB.equals(columnType)
-				|| BuiltinDataType.BOOLEAN.equals(columnType)){
+		if(DataTypeConstants.INTEGER.equals(columnType) 
+				|| DataTypeConstants.DATE.equals(columnType)
+				|| DataTypeConstants.CLOB.equals(columnType)
+				|| DataTypeConstants.BLOB.equals(columnType)
+				|| DataTypeConstants.BOOLEAN.equals(columnType)){
 			return null;
 		}
 		
 		StringBuilder tmpBuffer = new StringBuilder();
 		Integer length = column.getLength();
-		if(BuiltinDataType.STRING.equals(columnType)){
+		if(DataTypeConstants.STRING.equals(columnType)){
 			if(length < 0 || length > 8000){
 				tmpBuffer.append("(8000)");
 			}else{
@@ -114,7 +114,7 @@ public class TableImpl extends ATableHandler{
 	protected void addDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
 		operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
 				 	 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.DEFAULT_VALUE));
-		if(BuiltinDataType.STRING.equals(column.getColumnType())){
+		if(DataTypeConstants.STRING.equals(column.getColumnType())){
 			operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
 		}else{
 			operColumnSql.append(" default ").append(column.getDefaultValue());

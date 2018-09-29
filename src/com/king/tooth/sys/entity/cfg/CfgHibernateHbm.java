@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -74,22 +74,22 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(4+7);
 		
-		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", BuiltinDataType.STRING, 32);
+		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键");
 		columns.add(refDatabaseIdColumn);
 		
-		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", BuiltinDataType.STRING, 32);
+		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", DataTypeConstants.STRING, 32);
 		refTableIdColumn.setName("关联的表主键");
 		refTableIdColumn.setComments("关联的表主键");
 		columns.add(refTableIdColumn);
 		
-		ComColumndata contentColumn = new ComColumndata("content", BuiltinDataType.CLOB, 0);
+		ComColumndata contentColumn = new ComColumndata("content", DataTypeConstants.CLOB, 0);
 		contentColumn.setName("hbm内容");
 		contentColumn.setComments("hbm内容");
 		columns.add(contentColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("hbm资源名");
 		resourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
 		columns.add(resourceNameColumn);

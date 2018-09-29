@@ -201,18 +201,13 @@ public class SqlStatementParserUtil {
 		}
 		
 		// 保存输入结果集信息
-		List<List<CfgSqlResultset>> inSqlResultsetsList = sqlScript.getInSqlResultsetsList();
-		if(inSqlResultsetsList != null && inSqlResultsetsList.size() > 0){
-			for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
-				if(inSqlResultsets != null && inSqlResultsets.size() > 0){
-					for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
-						inSqlResultset.setSqlId(sqlScriptId);
-						HibernateUtil.saveObject(inSqlResultset, null);
-					}
-					inSqlResultsets.clear();
-				}
+		List<CfgSqlResultset> inSqlResultsets = sqlScript.getInSqlResultsets();
+		if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+			for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
+				inSqlResultset.setSqlId(sqlScriptId);
+				HibernateUtil.saveObject(inSqlResultset, null);
 			}
-			inSqlResultsetsList.clear();
+			inSqlResultsets.clear();
 		}
 	}
 
@@ -269,7 +264,7 @@ public class SqlStatementParserUtil {
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
-				parameter = new ComSqlScriptParameter(parameterName, dataType, param.getMode(), (i+1), true);
+				parameter = new ComSqlScriptParameter(parameterName, dataType, true, param.getMode(), (i+1), true);
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
 				processProcedureTableParam(parameter, sqlScript);
@@ -338,7 +333,7 @@ public class SqlStatementParserUtil {
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
-				parameter = new ComSqlScriptParameter(parameterName , dataType, param.getMode(), (i+1), true);
+				parameter = new ComSqlScriptParameter(parameterName , dataType, true, param.getMode(), (i+1), true);
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
 				parameter.setDefaultValue(defaultValue);
@@ -367,12 +362,10 @@ public class SqlStatementParserUtil {
 			}
 			parameter.setIsTableType(1);
 			
-			List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(1);
 			CfgSqlResultset sqlResultSet = new CfgSqlResultset(null, 0, CfgSqlResultset.IN);
 			sqlResultSet.setSqlParameterId(parameter.getId());
 			sqlResultSet.setTableId(table.getId());
-			sqlResultSets.add(sqlResultSet);
-			sqlScript.addInSqlResultsets(sqlResultSets);
+			sqlScript.addInSqlResultsets(sqlResultSet);
 		}
 	}
 	/** 查询表数据类型的对应的表对象hql */

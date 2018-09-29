@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -247,124 +247,124 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(27);
 		
-		ComColumndata nikeNameColumn = new ComColumndata("nike_name", BuiltinDataType.STRING, 50);
+		ComColumndata nikeNameColumn = new ComColumndata("nike_name", DataTypeConstants.STRING, 50);
 		nikeNameColumn.setName("昵称");
 		nikeNameColumn.setComments("昵称");
 		nikeNameColumn.setOrderCode(2);
 		columns.add(nikeNameColumn);
 		
-		ComColumndata realNameColumn = new ComColumndata("real_name", BuiltinDataType.STRING, 100);
+		ComColumndata realNameColumn = new ComColumndata("real_name", DataTypeConstants.STRING, 100);
 		realNameColumn.setName("真实姓名");
 		realNameColumn.setComments("真实姓名");
 		realNameColumn.setOrderCode(3);
 		columns.add(realNameColumn);
 		
-		ComColumndata ageColumn = new ComColumndata("age", BuiltinDataType.INTEGER, 1);
+		ComColumndata ageColumn = new ComColumndata("age", DataTypeConstants.INTEGER, 1);
 		ageColumn.setName("年龄");
 		ageColumn.setComments("年龄");
 		ageColumn.setOrderCode(4);
 		columns.add(ageColumn);
 		
-		ComColumndata sexColumn = new ComColumndata("sex", BuiltinDataType.INTEGER, 1);
+		ComColumndata sexColumn = new ComColumndata("sex", DataTypeConstants.INTEGER, 1);
 		sexColumn.setName("性别");
 		sexColumn.setComments("性别");
 		sexColumn.setOrderCode(5);
 		columns.add(sexColumn);
 		
-		ComColumndata officePhoneColumn = new ComColumndata("office_phone", BuiltinDataType.STRING, 32);
+		ComColumndata officePhoneColumn = new ComColumndata("office_phone", DataTypeConstants.STRING, 32);
 		officePhoneColumn.setName("办公电话");
 		officePhoneColumn.setComments("办公电话");
 		officePhoneColumn.setOrderCode(6);
 		columns.add(officePhoneColumn);
 		
-		ComColumndata telColumn = new ComColumndata("tel", BuiltinDataType.STRING, 20);
+		ComColumndata telColumn = new ComColumndata("tel", DataTypeConstants.STRING, 20);
 		telColumn.setName("手机号");
 		telColumn.setComments("手机号");
 		telColumn.setOrderCode(7);
 		columns.add(telColumn);
 		
-		ComColumndata emailColumn = new ComColumndata("email", BuiltinDataType.STRING, 80);
+		ComColumndata emailColumn = new ComColumndata("email", DataTypeConstants.STRING, 80);
 		emailColumn.setName("邮箱");
 		emailColumn.setComments("邮箱");
 		emailColumn.setOrderCode(8);
 		columns.add(emailColumn);
 		
-		ComColumndata workAddrColumn = new ComColumndata("work_addr", BuiltinDataType.STRING, 200);
+		ComColumndata workAddrColumn = new ComColumndata("work_addr", DataTypeConstants.STRING, 200);
 		workAddrColumn.setName("办公地点");
 		workAddrColumn.setComments("办公地点");
 		workAddrColumn.setOrderCode(9);
 		columns.add(workAddrColumn);
 		
-		ComColumndata liveAddrColumn = new ComColumndata("live_addr", BuiltinDataType.STRING, 200);
+		ComColumndata liveAddrColumn = new ComColumndata("live_addr", DataTypeConstants.STRING, 200);
 		liveAddrColumn.setName("居住地点");
 		liveAddrColumn.setComments("居住地点");
 		liveAddrColumn.setOrderCode(10);
 		columns.add(liveAddrColumn);
 		
-		ComColumndata idCardNoColumn = new ComColumndata("id_card_no", BuiltinDataType.STRING, 40);
+		ComColumndata idCardNoColumn = new ComColumndata("id_card_no", DataTypeConstants.STRING, 40);
 		idCardNoColumn.setName("身份证号码");
 		idCardNoColumn.setComments("身份证号码");
 		idCardNoColumn.setOrderCode(11);
 		columns.add(idCardNoColumn);
 		
-		ComColumndata employedDateColumn = new ComColumndata("employed_date", BuiltinDataType.DATE, 0);
+		ComColumndata employedDateColumn = new ComColumndata("employed_date", DataTypeConstants.DATE, 0);
 		employedDateColumn.setName("入职时间");
 		employedDateColumn.setComments("入职时间");
 		employedDateColumn.setOrderCode(12);
 		columns.add(employedDateColumn);
 		
-		ComColumndata userStatusColumn = new ComColumndata("user_status", BuiltinDataType.INTEGER, 1);
+		ComColumndata userStatusColumn = new ComColumndata("user_status", DataTypeConstants.INTEGER, 1);
 		userStatusColumn.setName("人员状态");
 		userStatusColumn.setComments("人员状态:0:其他(默认)、1.在职、2.离职、3.休假");
 		userStatusColumn.setDefaultValue("0");
 		userStatusColumn.setOrderCode(13);
 		columns.add(userStatusColumn);
 		
-		ComColumndata monthSalarColumn = new ComColumndata("month_salar", BuiltinDataType.DOUBLE, 10);
+		ComColumndata monthSalarColumn = new ComColumndata("month_salar", DataTypeConstants.DOUBLE, 10);
 		monthSalarColumn.setName("月薪");
 		monthSalarColumn.setComments("月薪");
 		monthSalarColumn.setPrecision(2);
 		monthSalarColumn.setOrderCode(14);
 		columns.add(monthSalarColumn);
 		
-		ComColumndata workNoColumn = new ComColumndata("work_no", BuiltinDataType.STRING, 32);
+		ComColumndata workNoColumn = new ComColumndata("work_no", DataTypeConstants.STRING, 32);
 		workNoColumn.setName("工号");
 		workNoColumn.setComments("工号");
 		workNoColumn.setIsNullabled(0);
 		workNoColumn.setOrderCode(15);
 		columns.add(workNoColumn);
 		
-		ComColumndata secretLevelColumn = new ComColumndata("secret_level", BuiltinDataType.INTEGER, 1);
+		ComColumndata secretLevelColumn = new ComColumndata("secret_level", DataTypeConstants.INTEGER, 1);
 		secretLevelColumn.setName("密级");
 		secretLevelColumn.setComments("密级");
 		secretLevelColumn.setOrderCode(16);
 		columns.add(secretLevelColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", BuiltinDataType.STRING, 2000);
+		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 2000);
 		descsColumn.setName("描述");
 		descsColumn.setComments("描述");
 		descsColumn.setOrderCode(17);
 		columns.add(descsColumn);
 		
-		ComColumndata deptIdColumn = new ComColumndata("dept_id", BuiltinDataType.STRING, 32);
+		ComColumndata deptIdColumn = new ComColumndata("dept_id", DataTypeConstants.STRING, 32);
 		deptIdColumn.setName("主要所属的部门id");
 		deptIdColumn.setComments("主要所属的部门id：关系表中，isMain=1的部门id");
 		deptIdColumn.setOrderCode(18);
 		columns.add(deptIdColumn);
 		
-		ComColumndata positionIdColumn = new ComColumndata("position_id", BuiltinDataType.STRING, 32);
+		ComColumndata positionIdColumn = new ComColumndata("position_id", DataTypeConstants.STRING, 32);
 		positionIdColumn.setName("主要所属的职务id");
 		positionIdColumn.setComments("主要所属的岗位id：关系表中，isMain=1的职务id");
 		positionIdColumn.setOrderCode(19);
 		columns.add(positionIdColumn);
 		
-		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinDataType.STRING, 32);
+		ComColumndata orgIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 32);
 		orgIdColumn.setName("主要所属的组织id");
 		orgIdColumn.setComments("即所属主要部门关联的组织id");
 		orgIdColumn.setOrderCode(20);
 		columns.add(orgIdColumn);
 		
-		ComColumndata isDeleteColumn = new ComColumndata("is_delete", BuiltinDataType.INTEGER, 1);
+		ComColumndata isDeleteColumn = new ComColumndata("is_delete", DataTypeConstants.INTEGER, 1);
 		isDeleteColumn.setName("是否被删除");
 		isDeleteColumn.setComments("逻辑删除，默认值为0");
 		isDeleteColumn.setDefaultValue("0");

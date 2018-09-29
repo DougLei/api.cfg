@@ -10,9 +10,13 @@ import com.king.tooth.util.StrUtils;
  */
 public class ResourceMetadataInfo {
 	/**
+	 * 列名
+	 */
+	private String columnName;
+	/**
 	 * 属性名
 	 */
-	private String name;
+	private String propName;
 	/**
 	 * 数据类型
 	 */
@@ -40,24 +44,24 @@ public class ResourceMetadataInfo {
 	
 	public ResourceMetadataInfo() {
 	}
-	public ResourceMetadataInfo(String name) {
-		this.name = name.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:name;
+	public ResourceMetadataInfo(String propName) {
+		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 	}
-	public ResourceMetadataInfo(String name, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, String descName) {
-		this.name = name.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:name;
+	public ResourceMetadataInfo(String columnName, String propName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, String descName) {
+		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 		this.dataType = dataType;
 		this.length = length;
 		this.precision = precision==null?0:precision;
 		this.isUnique = isUnique==null?0:isUnique;
 		this.isNullabled = isNullabled==null?1:isNullabled;
-		this.descName = StrUtils.isEmpty(descName)?name:descName;
+		this.descName = StrUtils.isEmpty(descName)?propName:descName;
 	}
 	
-	public String getName() {
-		return name;
+	public String getPropName() {
+		return propName;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setPropName(String propName) {
+		this.propName = propName;
 	}
 	public String getDataType() {
 		return dataType;
@@ -94,5 +98,11 @@ public class ResourceMetadataInfo {
 	}
 	public void setDescName(String descName) {
 		this.descName = descName;
+	}
+	public String getColumnName() {
+		return columnName;
+	}
+	public void setColumnName(String columnName) {
+		this.columnName = columnName;
 	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
@@ -106,7 +106,7 @@ public class SqlParameterParserUtil {
 				}
 				parameterNames.add(parameterName);
 				
-				sqlScriptParameter = new ComSqlScriptParameter(parameterName, BuiltinDataType.STRING, 0, (i+1), true);
+				sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, (i+1), true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			parameterPlaceholderIndex.clear();

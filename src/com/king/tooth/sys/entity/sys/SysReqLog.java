@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -177,74 +177,74 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
 		
-		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.INTEGER, 1);
+		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("请求类型");
 		typeColumn.setComments("1：login、2：loginOut、3：sql、4：file...");
 		typeColumn.setDefaultValue("3");
 		typeColumn.setOrderCode(1);
 		columns.add(typeColumn);
 		
-		ComColumndata methodColumn = new ComColumndata("method", BuiltinDataType.STRING, 8);
+		ComColumndata methodColumn = new ComColumndata("method", DataTypeConstants.STRING, 8);
 		methodColumn.setName("请求方式");
 		methodColumn.setComments("get/post/delete/update");
 		methodColumn.setOrderCode(2);
 		columns.add(methodColumn);
 		
-		ComColumndata apiAddrColumn = new ComColumndata("api_addr", BuiltinDataType.STRING, 300);
+		ComColumndata apiAddrColumn = new ComColumndata("api_addr", DataTypeConstants.STRING, 300);
 		apiAddrColumn.setName("请求的接口地址");
 		apiAddrColumn.setComments("请求的接口地址");
 		apiAddrColumn.setOrderCode(3);
 		columns.add(apiAddrColumn);
 		
-		ComColumndata clientIpColumn = new ComColumndata("client_ip", BuiltinDataType.STRING, 20);
+		ComColumndata clientIpColumn = new ComColumndata("client_ip", DataTypeConstants.STRING, 20);
 		clientIpColumn.setName("请求的客户端ip");
 		clientIpColumn.setComments("请求的客户端ip");
 		clientIpColumn.setOrderCode(4);
 		columns.add(clientIpColumn);
 		
-		ComColumndata clientMacColumn = new ComColumndata("client_mac", BuiltinDataType.STRING, 50);
+		ComColumndata clientMacColumn = new ComColumndata("client_mac", DataTypeConstants.STRING, 50);
 		clientMacColumn.setName("请求的客户端mac");
 		clientMacColumn.setComments("请求的客户端max");
 		clientMacColumn.setOrderCode(5);
 		columns.add(clientMacColumn);
 		
-		ComColumndata reqDataColumn = new ComColumndata("req_data", BuiltinDataType.CLOB, 0);
+		ComColumndata reqDataColumn = new ComColumndata("req_data", DataTypeConstants.CLOB, 0);
 		reqDataColumn.setName("请求的数据");
 		reqDataColumn.setComments("请求的数据");
 		reqDataColumn.setOrderCode(6);
 		columns.add(reqDataColumn);
 		
-		ComColumndata respDataColumn = new ComColumndata("resp_data", BuiltinDataType.CLOB, 0);
+		ComColumndata respDataColumn = new ComColumndata("resp_data", DataTypeConstants.CLOB, 0);
 		respDataColumn.setName("响应的数据");
 		respDataColumn.setComments("响应的数据");
 		respDataColumn.setOrderCode(7);
 		columns.add(respDataColumn);
 		
-		ComColumndata reqDateColumn = new ComColumndata("req_date", BuiltinDataType.DATE, 0);
+		ComColumndata reqDateColumn = new ComColumndata("req_date", DataTypeConstants.DATE, 0);
 		reqDateColumn.setName("响应的时间");
 		reqDateColumn.setComments("响应的时间");
 		reqDateColumn.setOrderCode(8);
 		columns.add(reqDateColumn);
 		
-		ComColumndata respDateColumn = new ComColumndata("resp_date", BuiltinDataType.DATE, 0);
+		ComColumndata respDateColumn = new ComColumndata("resp_date", DataTypeConstants.DATE, 0);
 		respDateColumn.setName("响应的时间");
 		respDateColumn.setComments("响应的时间");
 		respDateColumn.setOrderCode(9);
 		columns.add(respDateColumn);
 		
-		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", BuiltinDataType.INTEGER, 1);
+		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", DataTypeConstants.INTEGER, 1);
 		resourceTypeColumn.setName("请求的资源类型");
 		resourceTypeColumn.setComments("请求的资源类型");
 		resourceTypeColumn.setOrderCode(10);
 		columns.add(resourceTypeColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("请求的资源名");
 		resourceNameColumn.setComments("请求的资源名");
 		resourceNameColumn.setOrderCode(11);
 		columns.add(resourceNameColumn);
 		
-		ComColumndata parentResourceNameColumn = new ComColumndata("parent_resource_name", BuiltinDataType.STRING, 60);
+		ComColumndata parentResourceNameColumn = new ComColumndata("parent_resource_name", DataTypeConstants.STRING, 60);
 		parentResourceNameColumn.setName("请求的父资源名");
 		parentResourceNameColumn.setComments("请求的父资源名");
 		parentResourceNameColumn.setOrderCode(12);

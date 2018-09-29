@@ -3,7 +3,7 @@ package com.king.tooth.web.entity.request.valid.data;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
@@ -51,7 +51,7 @@ public abstract class AbstractResourceVerifier {
 			}
 		}
 		for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
-			if(propName.equals(rmi.getName())){
+			if(propName.equals(rmi.getPropName())){
 				return false;
 			}
 		}
@@ -68,18 +68,18 @@ public abstract class AbstractResourceVerifier {
 	 */
 	protected String validDataIsLegal(Object dataValue, ResourceMetadataInfo rmi, int index){
 		// 验证数据类型、数据长度、数据精度
-		if(BuiltinDataType.BOOLEAN.equals(rmi.getDataType())){
+		if(DataTypeConstants.BOOLEAN.equals(rmi.getDataType())){
 			if(!(dataValue instanceof Boolean)){
 				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
 			}
-		}else if(BuiltinDataType.INTEGER.equals(rmi.getDataType())){
+		}else if(DataTypeConstants.INTEGER.equals(rmi.getDataType())){
 			if(!(dataValue instanceof Integer)){
 				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 			}
 			if(dataValue.toString().length() > rmi.getLength()){
 				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
-		}else if(BuiltinDataType.DOUBLE.equals(rmi.getDataType())){
+		}else if(DataTypeConstants.DOUBLE.equals(rmi.getDataType())){
 			if(!(dataValue instanceof BigDecimal)){
 				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
 			}
@@ -90,11 +90,11 @@ public abstract class AbstractResourceVerifier {
 			if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
 				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 			}
-		}else if(BuiltinDataType.DATE.equals(rmi.getDataType())){
+		}else if(DataTypeConstants.DATE.equals(rmi.getDataType())){
 			if(!DateUtil.valueIsDateFormat(dataValue)){
 				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 			}
-		}else if(BuiltinDataType.STRING.equals(rmi.getDataType())){
+		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){
 			if(StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
 				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}

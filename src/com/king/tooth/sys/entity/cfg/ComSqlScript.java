@@ -10,10 +10,10 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -151,7 +151,7 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	 * <p>传入</p>
 	 */
 	@JSONField(serialize = false)
-	private List<List<CfgSqlResultset>> inSqlResultsetsList;
+	private List<CfgSqlResultset> inSqlResultsets;
 	/**
 	 * sql结果集信息集合
 	 * <p>传出</p>
@@ -290,11 +290,11 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	public void setSqlParamsList(List<List<ComSqlScriptParameter>> sqlParamsList) {
 		this.sqlParamsList = sqlParamsList;
 	}
-	public List<List<CfgSqlResultset>> getInSqlResultsetsList() {
-		return inSqlResultsetsList;
+	public List<CfgSqlResultset> getInSqlResultsets() {
+		return inSqlResultsets;
 	}
-	public void setInSqlResultsetsList(List<List<CfgSqlResultset>> inSqlResultsetsList) {
-		this.inSqlResultsetsList = inSqlResultsetsList;
+	public void setInSqlResultsets(List<CfgSqlResultset> inSqlResultsets) {
+		this.inSqlResultsets = inSqlResultsets;
 	}
 	public List<List<CfgSqlResultset>> getOutSqlResultsetsList() {
 		return outSqlResultsetsList;
@@ -307,61 +307,61 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(11+7);
 		
-		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinDataType.STRING, 16);
+		ComColumndata dbTypeColumn = new ComColumndata("db_type", DataTypeConstants.STRING, 16);
 		dbTypeColumn.setName("数据库类型");
 		dbTypeColumn.setComments("数据库类型");
 		columns.add(dbTypeColumn);
 		
-		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption", BuiltinDataType.STRING, 50);
+		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption", DataTypeConstants.STRING, 50);
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
 		sqlScriptCaptionColumn.setComments("sql脚本的标题");
 		columns.add(sqlScriptCaptionColumn);
 		
-		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name", BuiltinDataType.STRING, 60);
+		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name", DataTypeConstants.STRING, 60);
 		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
 		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
 		sqlScriptResourceNameColumn.setIsNullabled(0);
 		columns.add(sqlScriptResourceNameColumn);
 		
-		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", BuiltinDataType.STRING, 80);
+		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", DataTypeConstants.STRING, 80);
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
 		columns.add(sqlScriptTypeColumn);
 		
-		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", BuiltinDataType.CLOB, 0);
+		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", DataTypeConstants.CLOB, 0);
 		sqlScriptContentColumn.setName("sql脚本内容");
 		sqlScriptContentColumn.setComments("sql脚本内容");
 		sqlScriptContentColumn.setIsNullabled(0);
 		columns.add(sqlScriptContentColumn);
 		
-		ComColumndata objectNameColumn = new ComColumndata("object_name", BuiltinDataType.STRING, 80);
+		ComColumndata objectNameColumn = new ComColumndata("object_name", DataTypeConstants.STRING, 80);
 		objectNameColumn.setName("sql对象名称");
 		objectNameColumn.setComments("存储过程、视图等");
 		columns.add(objectNameColumn);
 		
-		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinDataType.STRING, 4000);
+		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", DataTypeConstants.STRING, 4000);
 		parameterNameRecordsColumn.setName("sql参数名的记录");
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
 		columns.add(parameterNameRecordsColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 200);
+		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 200);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		columns.add(commentsColumn);
 		
-		ComColumndata isCreatedColumn = new ComColumndata("is_created", BuiltinDataType.INTEGER, 1);
+		ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
 		isCreatedColumn.setName("是否被创建");
 		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
 		isCreatedColumn.setDefaultValue("0");
 		columns.add(isCreatedColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.INTEGER, 1);
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
 		
-		ComColumndata requestMethodColumn = new ComColumndata("request_method", BuiltinDataType.STRING, 30);
+		ComColumndata requestMethodColumn = new ComColumndata("request_method", DataTypeConstants.STRING, 30);
 		requestMethodColumn.setName("请求资源的方法");
 		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 		requestMethodColumn.setDefaultValue("all");
@@ -490,13 +490,8 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	}
 	
 	public void clear(){
-		if(inSqlResultsetsList != null){
-			for (List<CfgSqlResultset> sqlResultSets : inSqlResultsetsList) {
-				if(sqlResultSets != null){
-					sqlResultSets.clear();
-				}
-			}
-			inSqlResultsetsList.clear();
+		if(inSqlResultsets != null){
+			inSqlResultsets.clear();
 		}
 		if(outSqlResultsetsList != null){
 			for (List<CfgSqlResultset> sqlResultSets : outSqlResultsetsList) {
@@ -525,13 +520,13 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	
 	/**
 	 * 解析sql时，添加一个输入的结果集信息
-	 * @param sqlResultSets
+	 * @param sqlResultSet
 	 */
-	public void addInSqlResultsets(List<CfgSqlResultset> sqlResultSets) {
-		if(inSqlResultsetsList == null){
-			inSqlResultsetsList = new ArrayList<List<CfgSqlResultset>>();
+	public void addInSqlResultsets(CfgSqlResultset sqlResultSet) {
+		if(inSqlResultsets == null){
+			inSqlResultsets = new ArrayList<CfgSqlResultset>();
 		}
-		inSqlResultsetsList.add(sqlResultSets);
+		inSqlResultsets.add(sqlResultSet);
 	}
 	
 	public SysResource turnToResource() {

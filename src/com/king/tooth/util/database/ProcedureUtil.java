@@ -12,7 +12,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.database.SQLServerDataTypeConstants;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.IExecute;
@@ -20,6 +20,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
@@ -47,7 +48,7 @@ public class ProcedureUtil {
 		boolean isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType());
 		String sqlScriptId = sqlScript.getId();
 		
-		List<List<CfgSqlResultset>> inSqlResultSetsList = sqlScript.getInSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getInSqlResultsetsList();
+		List<CfgSqlResultset> inSqlResultSets = sqlScript.getInSqlResultsets()==null?new ArrayList<CfgSqlResultset>(5):sqlScript.getInSqlResultsets();
 		List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getOutSqlResultsetsList();
 		
 		List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
@@ -63,7 +64,7 @@ public class ProcedureUtil {
 			int count = 1;
 			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
 				json = new JSONObject(10);
-				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, sqlParams, callProcedure, json);
+				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSets, outSqlResultSetsList, sqlParams, callProcedure, json);
 				jsonArray.add(json);
 				
 				Log4jUtil.debug("第{}次执行procedure名为：{}", count, procedureName);
@@ -74,7 +75,7 @@ public class ProcedureUtil {
 			jsonArray = new JSONArray(1);
 			callProcedure = callProcedure(procedureName, null);
 			json = new JSONObject(10);
-			execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSetsList, outSqlResultSetsList, null, callProcedure, json);
+			execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSets, outSqlResultSetsList, null, callProcedure, json);
 			jsonArray.add(json);
 			
 			Log4jUtil.debug("执行procedure名为：{}", procedureName);
@@ -125,13 +126,13 @@ public class ProcedureUtil {
 	 * @param isOracle
 	 * @param isSqlServer
 	 * @param sqlScriptId
-	 * @param inSqlResultSetsList
+	 * @param inSqlResultSets
 	 * @param outSqlResultSetsList
 	 * @param sqlParams
 	 * @param callProcedure
 	 * @param json
 	 */
-	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final List<List<CfgSqlResultset>> inSqlResultSetsList, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
+	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
 		new DBLink(CurrentThreadContext.getDatabaseInstance()).doExecute(new IExecute() {
 			private int inSqlResultsetIndex = 0;
 			
@@ -209,19 +210,19 @@ public class ProcedureUtil {
 			 */
 			private void setSqlServerParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
 				if(parameter.getIsTableType() == 1){
-					List<CfgSqlResultset> inSqlResultSets = inSqlResultSetsList.get(inSqlResultsetIndex);
+					List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = inSqlResultSets.get(inSqlResultsetIndex).getInSqlResultSetMetadataInfos();
 					
 					SQLServerDataTable table = new SQLServerDataTable();
-					for (CfgSqlResultset inSqlResultSet : inSqlResultSets) {
+					for (ResourceMetadataInfo inSqlResultSetMetadataInfo : inSqlResultSetMetadataInfos) {
 						// 添加列信息：列名，列类型
-						table.addColumnMetadata(inSqlResultSet.getColumnName(), DBUtil.getDatabaseDataTypeCode(inSqlResultSet.getDataType(), 0, isOracle, isSqlServer));
+						table.addColumnMetadata(inSqlResultSetMetadataInfo.getColumnName(), DBUtil.getDatabaseDataTypeCode(inSqlResultSetMetadataInfo.getDataType(), 0, isOracle, isSqlServer));
 					}
 					
 					if(actualInValue != null){
 						IJson ijson = (IJson) actualInValue;
 						int arrLength = ijson.size();
 						if(arrLength > 0){
-							int objLength = inSqlResultSets.size();
+							int objLength = inSqlResultSetMetadataInfos.size();
 							JSONObject json;
 							Object[] valueArr;
 							for(int i =0; i<arrLength; i++){
@@ -229,10 +230,10 @@ public class ProcedureUtil {
 								if(json != null && json.size()>0){
 									valueArr = new Object[json.size()];
 									for(int j=0; j<objLength; j++){
-										if(SQLServerDataTypeConstants.DATETIME.equals(inSqlResultSets.get(j).getDataType())){
-											valueArr[j] = DateUtil.parseTimestamp(json.getString(inSqlResultSets.get(j).getPropName()));
+										if(DataTypeConstants.DATE.equals(inSqlResultSetMetadataInfos.get(j).getDataType())){
+											valueArr[j] = DateUtil.parseTimestamp(json.getString(inSqlResultSetMetadataInfos.get(j).getPropName()));
 										}else{
-											valueArr[j] = json.get(inSqlResultSets.get(j).getPropName());
+											valueArr[j] = json.get(inSqlResultSetMetadataInfos.get(j).getPropName());
 										}
 									}
 									table.addRow(valueArr);
@@ -358,7 +359,7 @@ public class ProcedureUtil {
 					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
 						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, CfgSqlResultset.OUT);
-						csr.setSqlScriptId(sqlScriptId);
+						csr.setSqlId(sqlScriptId);
 						
 						if(isSqlServer){
 							csr.setBatchOrder(outSqlResultsetIndex);

@@ -9,19 +9,17 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.jdbc.Work;
-
 import oracle.jdbc.OracleTypes;
 
-import com.king.tooth.constants.database.OracleDataTypeConstants;
-import com.king.tooth.constants.database.SQLServerDataTypeConstants;
+import org.hibernate.jdbc.Work;
+
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-
 /**
  * 数据库工具类
  * @author DougLei
@@ -163,7 +161,7 @@ public class DBUtil {
 		});
 	}
 	
-	//----------------------------------------------------------------------------
+	// -----------------------------------------------------------------------------------
 	/**
 	 * 获取数据库数据类型对应的编码
 	 * <p>目前在调用存储过程的时候用到</p>
@@ -175,55 +173,32 @@ public class DBUtil {
 	 */
 	public static int getDatabaseDataTypeCode(String dataType, Integer isTableType, boolean isOracle, boolean isSqlServer){
 		if(isOracle){
-			if(OracleDataTypeConstants.VARCHAR2.equals(dataType)){
+			if(DataTypeConstants.STRING.equals(dataType)){
 				return OracleTypes.VARCHAR;
-			}else if(OracleDataTypeConstants.CHAR.equals(dataType)){
+			}else if(DataTypeConstants.CHAR.equals(dataType)){
 				return OracleTypes.CHAR;
-			}else if(OracleDataTypeConstants.NUMBER.equals(dataType)){
+			}else if(DataTypeConstants.INTEGER.equals(dataType) || DataTypeConstants.DOUBLE.equals(dataType)){
 				return OracleTypes.NUMBER;
-			}else if(OracleDataTypeConstants.DATE.equals(dataType)){
+			}else if(DataTypeConstants.DATE.equals(dataType)){
 				return OracleTypes.TIMESTAMP;
 			}else if(isTableType == 1){
 				return OracleTypes.CURSOR;
 			}
 			throw new IllegalArgumentException("系统目前不支持[oracle]数据库的["+dataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：[varchar2、char、number、date]");
 		}else if(isSqlServer){
-			if(SQLServerDataTypeConstants.VARCHAR.equals(dataType)){
+			if(DataTypeConstants.STRING.equals(dataType)){
 				return Types.VARCHAR;
-			}else if(SQLServerDataTypeConstants.CHAR.equals(dataType)){
+			}else if(DataTypeConstants.CHAR.equals(dataType)){
 				return Types.CHAR;
-			}else if(SQLServerDataTypeConstants.INT.equals(dataType)){
+			}else if(DataTypeConstants.INTEGER.equals(dataType)){
 				return Types.INTEGER;
-			}else if(SQLServerDataTypeConstants.DECIMAL.equals(dataType)){
+			}else if(DataTypeConstants.DOUBLE.equals(dataType)){
 				return Types.DECIMAL;
-			}else if(SQLServerDataTypeConstants.DATETIME.equals(dataType)){
+			}else if(DataTypeConstants.DATE.equals(dataType)){
 				return Types.TIMESTAMP;
 			}
 			throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库的["+dataType+"]数据类型转换，请联系管理员");
 		}
 		throw new IllegalArgumentException("系统目前只支持[oracle和sqlserver]数据库的数据类型转换，请联系管理员");
-	}
-	
-	/**
-	 * 根据xtype，获得sqlserver对应的数据类型
-	 * <p>select name, xtype from systypes where name in('varchar','char','int','decimal','datetime')</p>
-	 * @param xtype
-	 * @return
-	 */
-	public static String getSqlServerDataType(int xtype){
-		switch(xtype){
-			case 56:
-				return SQLServerDataTypeConstants.INT;
-			case 61:
-				return SQLServerDataTypeConstants.DATETIME;
-			case 106:
-				return SQLServerDataTypeConstants.DECIMAL;
-			case 167:
-				return SQLServerDataTypeConstants.VARCHAR;
-			case 175:
-				return SQLServerDataTypeConstants.CHAR;
-			default:
-				throw new IllegalArgumentException("系统目前不支持[sqlserver]数据库[xtype="+xtype+"]的类型转换，请联系管理员");
-		}
 	}
 }

@@ -11,8 +11,10 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -43,7 +45,7 @@ public class CfgSqlService extends AService {
 			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员");
 		}
 		sqlScript.setSqlParams(findSqlParams(sqlScriptId));
-		sqlScript.setInSqlResultsetsList(findInSqlResultsetsList(sqlScript));
+		sqlScript.setInSqlResultsets(findInSqlResultsetsList(sqlScript));
 		sqlScript.setOutSqlResultsetsList(findOutSqlResultsetsList(sqlScript));
 		return sqlScript;
 	}
@@ -318,30 +320,37 @@ public class CfgSqlService extends AService {
 	
 	//--------------------------------------------------------------------------------------------------------
 	/**
-	 * 根据sql脚本id，查询对应的传入类型的结果集信息集合
+	 * 根据sql脚本id，查询对应的传入表类型的结果集信息集合
 	 * @param sqlScript
 	 * @return
 	 */
-	private List<List<CfgSqlResultset>> findInSqlResultsetsList(ComSqlScript sqlScript) {
-		List<List<CfgSqlResultset>> sqlResultsetsList = null;
+	private List<CfgSqlResultset> findInSqlResultsetsList(ComSqlScript sqlScript) {
+		List<CfgSqlResultset> sqlResultsetsList = null;
 		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
 			List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
 			if(sqlParams != null && sqlParams.size() > 0){
-				sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
+				sqlResultsetsList = new ArrayList<CfgSqlResultset>(sqlParams.size());
+				CfgSqlResultset cfgSqlResultset = null;
 				for (ComSqlScriptParameter sqlParam : sqlParams) {
 					// 只有表类型，再查询其结果集信息
 					if(sqlParam.getIsTableType() == 1){
-						sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
-								CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = 1 and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), sqlParam.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+						cfgSqlResultset = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSqlResultset.class, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = ? and projectId=? and customerId=?", sqlScript.getId(), sqlParam.getId(), CfgSqlResultset.IN, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+						cfgSqlResultset.setInSqlResultSetMetadataInfos(HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, cfgSqlResultset.getTableId()));
+						if(cfgSqlResultset.getInSqlResultSetMetadataInfos() == null || cfgSqlResultset.getInSqlResultSetMetadataInfos().size() == 0){
+							throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+sqlParam.getParameterName()+"]，引用的表类型没有查询到任何列信息，请联系系统管理员");
+						}
+						sqlResultsetsList.add(cfgSqlResultset);
 					}
 				}
 			}
 		}
 		return sqlResultsetsList;
 	}
+	/** 查询表资源元数据信息集合的hql */
+	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and isEnabled=1 and operStatus="+ComColumndata.CREATED+" order by orderCode asc";
 	
 	/**
-	 * 根据sql脚本id，查询对应的传出类型的结果集信息集合
+	 * 根据sql脚本id，查询对应的传出表类型的结果集信息集合
 	 * @param sqlScript
 	 * @return
 	 */

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -72,22 +72,22 @@ public class SysDataPrivS extends BasicEntity implements ITable, IEntity{
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
 		
-		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", BuiltinDataType.STRING, 32);
+		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", DataTypeConstants.STRING, 32);
 		refDataIdColumn.setName("主体id");
 		refDataIdColumn.setComments("主体id：比如用户id，账户id，角色id，部门id，岗位id，用户组id等");
 		columns.add(refDataIdColumn);
 		
-		ComColumndata refDataTypeColumn = new ComColumndata("ref_data_type", BuiltinDataType.STRING, 20);
+		ComColumndata refDataTypeColumn = new ComColumndata("ref_data_type", DataTypeConstants.STRING, 20);
 		refDataTypeColumn.setName("主体类型");
 		refDataTypeColumn.setComments("主体类型：比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等");
 		columns.add(refDataTypeColumn);
 		
-		ComColumndata refIdColumn = new ComColumndata("ref_id", BuiltinDataType.STRING, 32);
+		ComColumndata refIdColumn = new ComColumndata("ref_id", DataTypeConstants.STRING, 32);
 		refIdColumn.setName("关联的数据id");
 		refIdColumn.setComments("关联的数据id：比如部门id");
 		columns.add(refIdColumn);
 		
-		ComColumndata refTypeColumn = new ComColumndata("ref_type", BuiltinDataType.STRING, 20);
+		ComColumndata refTypeColumn = new ComColumndata("ref_type", DataTypeConstants.STRING, 20);
 		refTypeColumn.setName("关联的数据类型");
 		refTypeColumn.setComments("关联的数据类型：比如部门dept");
 		columns.add(refTypeColumn);

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -99,45 +99,45 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
 		
-		ComColumndata codeColumn = new ComColumndata("code", BuiltinDataType.STRING, 50);
+		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 50);
 		codeColumn.setName("编码");
 		codeColumn.setComments("编码");
 		codeColumn.setOrderCode(1);
 		columns.add(codeColumn);
 		
-		ComColumndata parentIdColumn = new ComColumndata("parent_id", BuiltinDataType.STRING, 32);
+		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父编码主键");
 		parentIdColumn.setComments("父编码主键(可为空)");
 		parentIdColumn.setOrderCode(2);
 		columns.add(parentIdColumn);
 		
-		ComColumndata captionColumn = new ComColumndata("caption", BuiltinDataType.STRING, 200);
+		ComColumndata captionColumn = new ComColumndata("caption", DataTypeConstants.STRING, 200);
 		captionColumn.setName("显示的文本");
 		captionColumn.setComments("显示的文本");
 		captionColumn.setOrderCode(3);
 		columns.add(captionColumn);
 		
-		ComColumndata valColumn = new ComColumndata("val", BuiltinDataType.STRING, 400);
+		ComColumndata valColumn = new ComColumndata("val", DataTypeConstants.STRING, 400);
 		valColumn.setName("后台操作的值");
 		valColumn.setComments("后台操作的值(value)");
 		valColumn.setOrderCode(4);
 		columns.add(valColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", BuiltinDataType.INTEGER, 4);
+		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.STRING, 150);
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.STRING, 150);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效：默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		isEnabledColumn.setOrderCode(6);
 		columns.add(isEnabledColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 150);
+		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 150);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		commentsColumn.setOrderCode(7);

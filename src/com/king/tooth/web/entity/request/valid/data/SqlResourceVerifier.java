@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
@@ -122,6 +122,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			metadataInfos = new ArrayList<ResourceMetadataInfo>(sqlParams.size());
 			for (ComSqlScriptParameter sqlParam : sqlParams) {
 				metadataInfos.add(new ResourceMetadataInfo(
+						null,
 						sqlParam.getParameterName(),
 						sqlParam.getParameterDataType(),
 						sqlParam.getLength(),
@@ -140,27 +141,11 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private List<List<ResourceMetadataInfo>> analysisProcedureSqlInResultSetMetadataInfoList() {
 		if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
-			List<List<CfgSqlResultset>> inSqlResultsetsList = sql.getInSqlResultsetsList();
-			if(inSqlResultsetsList != null && inSqlResultsetsList.size() > 0){
-				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsetsList.size());
-				
-				List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = null;
-				for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
-					if(inSqlResultsets != null && inSqlResultsets.size() > 0){
-						inSqlResultSetMetadataInfos = new ArrayList<ResourceMetadataInfo>(inSqlResultsets.size());
-						for (CfgSqlResultset crs : inSqlResultsets) {
-							// TODO
-							inSqlResultSetMetadataInfos.add(new ResourceMetadataInfo(
-												crs.getPropName(),
-												crs.getDataType(),
-												0, // 系统还未实现解析该值  sqlParam.getLength()
-												0, // 系统还未实现解析该值  sqlParam.getPrecision() 
-												0, // 不需要唯一约束
-												0, // 不需要是否不能为空约束
-												null));
-						}
-					}
-					inSqlResultSetMetadataInfoList.add(inSqlResultSetMetadataInfos);
+			List<CfgSqlResultset> inSqlResultsets = sql.getInSqlResultsets();
+			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsets.size());
+				for (CfgSqlResultset cfgSqlResultset : inSqlResultsets) {
+					inSqlResultSetMetadataInfoList.add(cfgSqlResultset.getInSqlResultSetMetadataInfos());
 				}
 				return inSqlResultSetMetadataInfoList;
 			}
@@ -205,7 +190,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				
 				Set<String> parameterNames = inSqlParams.keySet();
 				for (String parameterName : parameterNames) {
-					ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
+					ssp = new ComSqlScriptParameter(parameterName, null, false, 0, -1, false);
 					ssp.setActualInValue(processActualValue(inSqlParams.get(parameterName).trim()));
 					sqlScriptActualParameters.add(ssp);
 				}
@@ -226,7 +211,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					
 					Set<String> parameterNames = json.keySet();
 					for (String parameterName : parameterNames) {
-						ssp = new ComSqlScriptParameter(parameterName, null, 0, -1, false);
+						ssp = new ComSqlScriptParameter(parameterName, null, false, 0, -1, false);
 						ssp.setActualInValue(json.getString(parameterName).trim());
 						sqlScriptActualParameters.add(ssp);
 					}
@@ -322,7 +307,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				
 				for (ComSqlScriptParameter ssp : sqlParams) {
 					for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
-						if(ssp.getParameterName().equals(rmi.getName())){
+						if(ssp.getParameterName().equals(rmi.getPropName())){
 							if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
 								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), null, index++);
 							}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
@@ -394,14 +379,14 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				dataValueStr = actualInValue.toString();
 				
 				// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
-				if(BuiltinDataType.DATE.equals(ssp.getParameterDataType())){
+				if(DataTypeConstants.DATE.equals(ssp.getParameterDataType())){
 					if(!DateUtil.valueIsDateFormat(actualInValue)){
 						return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 					}
 					actualInValue = DateUtil.parseTimestamp(dataValueStr);
 				}else{
 					if(isGetRequest){// get请求，值都是string类型，需要进行转换
-						if(BuiltinDataType.INTEGER.equals(ssp.getParameterDataType())){
+						if(DataTypeConstants.INTEGER.equals(ssp.getParameterDataType())){
 							try {
 								actualInValue = Integer.valueOf(dataValueStr);
 								if(dataValueStr.length() > rmi.getLength()){
@@ -410,7 +395,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 							} catch (NumberFormatException e) {
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 							}
-						}else if(BuiltinDataType.DOUBLE.equals(ssp.getParameterDataType())){
+						}else if(DataTypeConstants.DOUBLE.equals(ssp.getParameterDataType())){
 							try {
 								actualInValue = BigDecimal.valueOf(Double.valueOf(dataValueStr));
 								if((dataValueStr.length()-1) > rmi.getLength()){
@@ -422,12 +407,12 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 							} catch (NumberFormatException e) {
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
 							}
-						}else if(BuiltinDataType.BOOLEAN.equals(ssp.getParameterDataType())){
+						}else if(DataTypeConstants.BOOLEAN.equals(ssp.getParameterDataType())){
 							if(!"true".equals(dataValueStr) && !"false".equals(dataValueStr)){
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
 							}
 							actualInValue = ("true".equals(dataValueStr))? "1":"0";
-						}else if(BuiltinDataType.STRING.equals(ssp.getParameterDataType())){
+						}else if(DataTypeConstants.STRING.equals(ssp.getParameterDataType())){
 							if(StrUtils.calcStrLength(dataValueStr) > rmi.getLength()){
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 							}

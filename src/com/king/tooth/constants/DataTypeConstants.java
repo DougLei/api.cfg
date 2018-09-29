@@ -1,10 +1,15 @@
-package com.king.tooth.sys.builtin.data;
+package com.king.tooth.constants;
 
 /**
  * 内置的数据类型
  * @author DougLei
  */
-public class BuiltinDataType {
+public class DataTypeConstants {
+	
+	/**
+	 * char
+	 */
+	public static final String CHAR = "char";
 	
 	/**
 	 * string

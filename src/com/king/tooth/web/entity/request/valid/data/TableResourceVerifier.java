@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
@@ -84,7 +84,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		}
 	}
 	/** 查询表资源元数据信息集合的hql */
-	private static final String queryTableMetadataInfosHql = "select new map(propName as name,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and operStatus="+ComColumndata.CREATED+" order by orderCode asc";
+	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and isEnabled=1 and operStatus="+ComColumndata.CREATED+" order by orderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
@@ -97,6 +97,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
 		for (ComColumndata column : columns) {
 			metadataInfos.add(new ResourceMetadataInfo(
+					column.getColumnName(),
 					column.getPropName(),
 					column.getColumnType(),
 					column.getLength(),
@@ -163,7 +164,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 			}
 			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
-				dataValue = data.get(rmi.getName());
+				dataValue = data.get(rmi.getPropName());
 				dataValueIsNull = StrUtils.isEmpty(dataValue);
 				
 				// 验证不能为空
@@ -173,7 +174,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 				
 				if(!dataValueIsNull){
 					// 两个大字段类型不用检查
-					if(BuiltinDataType.CLOB.equals(rmi.getDataType()) || BuiltinDataType.BLOB.equals(rmi.getDataType())){
+					if(DataTypeConstants.CLOB.equals(rmi.getDataType()) || DataTypeConstants.BLOB.equals(rmi.getDataType())){
 						continue;
 					}
 					validDataIsLegalResult = validDataIsLegal(dataValue, rmi, (i+1));
@@ -184,7 +185,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintProps.add(rmi);
-						if(validDataIsExists(rmi.getName(), dataValue)){
+						if(validDataIsExists(rmi.getPropName(), dataValue)){
 							return "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
 						}
 					}
@@ -196,10 +197,10 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		if(size > 1 && uniqueConstraintProps.size()>0){
 			for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
 				for(int i=0;i<size-1;i++){
-					dataValue = ijson.get(i).get(uniqueConstraintProp.getName());
+					dataValue = ijson.get(i).get(uniqueConstraintProp.getPropName());
 					if(StrUtils.notEmpty(dataValue)){
 						for(int j=i+1;j<size;j++){
-							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getName()))){
+							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
 								return "第"+(i+1)+"个对象和第"+(j+1)+"个对象，["+uniqueConstraintProp.getDescName()+"] 的值重复，操作失败";
 							}
 						}

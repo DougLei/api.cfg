@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -47,12 +47,12 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
 		
-		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", BuiltinDataType.STRING, 32);
+		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", DataTypeConstants.STRING, 32);
 		userGroupIdColumn.setName("用户组主键");
 		userGroupIdColumn.setComments("用户组主键");
 		columns.add(userGroupIdColumn);
 		
-		ComColumndata userIdColumn = new ComColumndata("user_id", BuiltinDataType.STRING, 32);
+		ComColumndata userIdColumn = new ComColumndata("user_id", DataTypeConstants.STRING, 32);
 		userIdColumn.setName("人员主键");
 		userIdColumn.setComments("人员主键");
 		columns.add(userIdColumn);

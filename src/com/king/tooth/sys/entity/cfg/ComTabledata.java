@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -186,12 +186,12 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(10+7);
 		
-		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 100);
+		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
 		columns.add(nameColumn);
 		
-		ComColumndata tableNameColumn = new ComColumndata("table_name", BuiltinDataType.STRING, 80);
+		ComColumndata tableNameColumn = new ComColumndata("table_name", DataTypeConstants.STRING, 80);
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			tableNameColumn.setLength(30);
 		}
@@ -200,7 +200,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		tableNameColumn.setComments("表名");
 		columns.add(tableNameColumn);
 		
-		ComColumndata oldTableNameColumn = new ComColumndata("old_table_name", BuiltinDataType.STRING, 80);
+		ComColumndata oldTableNameColumn = new ComColumndata("old_table_name", DataTypeConstants.STRING, 80);
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			oldTableNameColumn.setLength(30);
 		}
@@ -208,41 +208,41 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		oldTableNameColumn.setComments("如果修改了表名，这里记录之前的表名");
 		columns.add(oldTableNameColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		columns.add(resourceNameColumn);
 		
-		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.INTEGER, 1);
+		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("表类型");
 		typeColumn.setComments("1:单表、2、表类型/游标类型");
 		typeColumn.setDefaultValue("1");
 		columns.add(typeColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 200);
+		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 200);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		columns.add(commentsColumn);
 		
-		ComColumndata isCreatedColumn = new ComColumndata("is_created", BuiltinDataType.INTEGER, 1);
+		ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
 		isCreatedColumn.setName("是否被创建");
 		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
 		isCreatedColumn.setDefaultValue("0");
 		columns.add(isCreatedColumn);
 		
-		ComColumndata isBuildModelColumn = new ComColumndata("is_build_model", BuiltinDataType.INTEGER, 1);
+		ComColumndata isBuildModelColumn = new ComColumndata("is_build_model", DataTypeConstants.INTEGER, 1);
 		isBuildModelColumn.setName("是否建模");
 		isBuildModelColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值改为0，用来标识是否建模，是否需要alter table xxx");
 		isBuildModelColumn.setDefaultValue("0");
 		columns.add(isBuildModelColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.INTEGER, 1);
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
 		
-		ComColumndata requestMethodColumn = new ComColumndata("request_method", BuiltinDataType.STRING, 30);
+		ComColumndata requestMethodColumn = new ComColumndata("request_method", DataTypeConstants.STRING, 30);
 		requestMethodColumn.setName("请求资源的方法");
 		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 		requestMethodColumn.setDefaultValue("all");

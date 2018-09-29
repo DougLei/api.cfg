@@ -3,8 +3,8 @@ package com.king.tooth.plugins.jdbc.table.impl;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.database.DatabaseConstraintConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.util.StrUtils;
@@ -105,7 +105,7 @@ public abstract class ATableHandler {
 					         .append(";");
 			}
 			if(column.getDefaultValue() != null){
-				if(BuiltinDataType.DATE.equals(column.getColumnType())){
+				if(DataTypeConstants.DATE.equals(column.getColumnType())){
 					throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
 				}
 				addDefaultValueConstraint(tableName, column, operColumnSql);
@@ -360,7 +360,7 @@ public abstract class ATableHandler {
 		tmpBuffer.append(" ").append(analysisColumnType(column, null)).append(analysisColumnLength(column, null));
 		if(StrUtils.notEmpty(column.getDefaultValue())){
 			tmpBuffer.append(" default (");
-			if(BuiltinDataType.STRING.equals(column.getColumnType())){
+			if(DataTypeConstants.STRING.equals(column.getColumnType())){
 				tmpBuffer.append("'").append(column.getDefaultValue()).append("'");
 			}else{
 				tmpBuffer.append(column.getDefaultValue());

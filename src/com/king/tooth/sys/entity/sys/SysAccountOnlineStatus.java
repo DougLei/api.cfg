@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -306,88 +306,88 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
 		
-		ComColumndata accountIdColumn = new ComColumndata("account_id", BuiltinDataType.STRING, 32);
+		ComColumndata accountIdColumn = new ComColumndata("account_id", DataTypeConstants.STRING, 32);
 		accountIdColumn.setName("当前账户id");
 		accountIdColumn.setComments("当前账户id");
 		columns.add(accountIdColumn);
 		
-		ComColumndata accountNameColumn = new ComColumndata("account_name", BuiltinDataType.STRING, 32);
+		ComColumndata accountNameColumn = new ComColumndata("account_name", DataTypeConstants.STRING, 32);
 		accountNameColumn.setName("当前账户名");
 		accountNameColumn.setComments("当前账户名");
 		columns.add(accountNameColumn);
 		
-		ComColumndata accountTypeColumn = new ComColumndata("account_type", BuiltinDataType.INTEGER, 1);
+		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
 		accountTypeColumn.setName("当前账户类型");
 		accountTypeColumn.setComments("当前账户类型：冗余SysAccount表的accountType值");
 		columns.add(accountTypeColumn);
 		
-		ComColumndata userIdColumn = new ComColumndata("user_id", BuiltinDataType.STRING, 32);
+		ComColumndata userIdColumn = new ComColumndata("user_id", DataTypeConstants.STRING, 32);
 		userIdColumn.setName("当前用户id");
 		userIdColumn.setComments("当前用户id");
 		columns.add(userIdColumn);
 		
-		ComColumndata userSecretLevelColumn = new ComColumndata("user_secret_level", BuiltinDataType.INTEGER, 1);
+		ComColumndata userSecretLevelColumn = new ComColumndata("user_secret_level", DataTypeConstants.INTEGER, 1);
 		userSecretLevelColumn.setName("当前用户密级");
 		userSecretLevelColumn.setComments("当前用户密级");
 		columns.add(userSecretLevelColumn);
 		
-		ComColumndata orgIdColumn = new ComColumndata("org_id", BuiltinDataType.STRING, 200);
+		ComColumndata orgIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 200);
 		orgIdColumn.setName("当前用户所属组织id");
 		orgIdColumn.setComments("当前用户所属组织id，可以有多个，用,隔开");
 		columns.add(orgIdColumn);
 		
-		ComColumndata deptIdColumn = new ComColumndata("dept_id", BuiltinDataType.STRING, 200);
+		ComColumndata deptIdColumn = new ComColumndata("dept_id", DataTypeConstants.STRING, 200);
 		deptIdColumn.setName("当前用户所属部门id");
 		deptIdColumn.setComments("当前用户所属部门id，可以有多个，用,隔开");
 		columns.add(deptIdColumn);
 		
-		ComColumndata positionIdColumn = new ComColumndata("position_id", BuiltinDataType.STRING, 200);
+		ComColumndata positionIdColumn = new ComColumndata("position_id", DataTypeConstants.STRING, 200);
 		positionIdColumn.setName("当前用户所属岗位id");
 		positionIdColumn.setComments("当前用户所属岗位id，可以有多个，用,隔开");
 		columns.add(positionIdColumn);
 		
-		ComColumndata roleIdColumn = new ComColumndata("role_id", BuiltinDataType.STRING, 400);
+		ComColumndata roleIdColumn = new ComColumndata("role_id", DataTypeConstants.STRING, 400);
 		roleIdColumn.setName("当前用户所属角色id");
 		roleIdColumn.setComments("当前用户所属角色id，可以有多个，用,隔开");
 		columns.add(roleIdColumn);
 		
-		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", BuiltinDataType.STRING, 400);
+		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", DataTypeConstants.STRING, 400);
 		userGroupIdColumn.setName("当前用户所属用户组id");
 		userGroupIdColumn.setComments("当前用户所属用户组id，可以有多个，用,隔开");
 		columns.add(userGroupIdColumn);
 		
-		ComColumndata tokenColumn = new ComColumndata("token", BuiltinDataType.STRING, 32);
+		ComColumndata tokenColumn = new ComColumndata("token", DataTypeConstants.STRING, 32);
 		tokenColumn.setName("token值");
 		tokenColumn.setComments("token值");
 		columns.add(tokenColumn);
 		
-		ComColumndata loginIpColumn = new ComColumndata("login_ip", BuiltinDataType.STRING, 20);
+		ComColumndata loginIpColumn = new ComColumndata("login_ip", DataTypeConstants.STRING, 20);
 		loginIpColumn.setName("登录的客户端ip");
 		loginIpColumn.setComments("登录的客户端ip");
 		columns.add(loginIpColumn);
 		
-		ComColumndata loginMacColumn = new ComColumndata("login_mac", BuiltinDataType.STRING, 50);
+		ComColumndata loginMacColumn = new ComColumndata("login_mac", DataTypeConstants.STRING, 50);
 		loginMacColumn.setName("登录的客户端mac");
 		loginMacColumn.setComments("登录的客户端mac");
 		columns.add(loginMacColumn);
 		
-		ComColumndata loginDateColumn = new ComColumndata("login_date", BuiltinDataType.DATE, 0);
+		ComColumndata loginDateColumn = new ComColumndata("login_date", DataTypeConstants.DATE, 0);
 		loginDateColumn.setName("登录的时间");
 		loginDateColumn.setComments("登录的时间");
 		columns.add(loginDateColumn);
 		
-		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times", BuiltinDataType.INTEGER, 3);
+		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times", DataTypeConstants.INTEGER, 3);
 		tryLoginTimesColumn.setName("本次尝试登录的次数");
 		tryLoginTimesColumn.setComments("本次尝试登录的次数");
 		tryLoginTimesColumn.setDefaultValue("0");
 		columns.add(tryLoginTimesColumn);
 		
-		ComColumndata lastOperDateColumn = new ComColumndata("last_oper_date", BuiltinDataType.DATE, 0);
+		ComColumndata lastOperDateColumn = new ComColumndata("last_oper_date", DataTypeConstants.DATE, 0);
 		lastOperDateColumn.setName("最后一次操作的时间");
 		lastOperDateColumn.setComments("最后一次操作的时间");
 		columns.add(lastOperDateColumn);
 		
-		ComColumndata confProjectIdColumn = new ComColumndata("conf_project_id", BuiltinDataType.STRING, 32);
+		ComColumndata confProjectIdColumn = new ComColumndata("conf_project_id", DataTypeConstants.STRING, 32);
 		confProjectIdColumn.setName("配置的项目id");
 		confProjectIdColumn.setComments("配置的项目id：配置系统使用");
 		columns.add(confProjectIdColumn);
