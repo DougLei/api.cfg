@@ -24,12 +24,17 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	/**
 	 * 关联的sql脚本id
 	 */
-	private String sqlScriptId;
+	private String sqlId;
 	/**
 	 * 关联的sql脚本参数id
 	 * <p>oracle通过输出参数返回结果集,[oracle使用字段]</p>
 	 */
 	private String sqlParameterId;
+	/**
+	 * 关联的表id
+	 * <p>存储过程参数有表/游标参数类型时，这个记录对应的表类型id，数据验证的时候，用这个id去查询对应的表列信息</p>
+	 */
+	private String tableId;
 	/**
 	 * 结果集批次顺序
 	 * <p>sqlserver直接返回结果集，所以这里用批次顺序来区分返回的结果集，第几个结果集[sqlserver使用字段]</p>
@@ -44,11 +49,6 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	 * 列名
 	 */
 	private String columnName;
-	/**
-	 * 列的数据类型
-	 * <p>存储过程传入表参数时，需要知道每个列的数据类型[sqlserver使用字段]</p>
-	 */
-	private String dataType;
 	/**
 	 * 属性名
 	 */
@@ -79,11 +79,17 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public CfgSqlResultset() {
 	}
 
-	public String getSqlScriptId() {
-		return sqlScriptId;
+	public String getSqlId() {
+		return sqlId;
 	}
-	public void setSqlScriptId(String sqlScriptId) {
-		this.sqlScriptId = sqlScriptId;
+	public void setSqlId(String sqlId) {
+		this.sqlId = sqlId;
+	}
+	public String getTableId() {
+		return tableId;
+	}
+	public void setTableId(String tableId) {
+		this.tableId = tableId;
 	}
 	public String getSqlParameterId() {
 		return sqlParameterId;
@@ -115,12 +121,6 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
-	public String getDataType() {
-		return dataType;
-	}
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-	}
 	public String getPropName() {
 		return propName;
 	}
@@ -142,17 +142,22 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(9+7);
 		
-		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", BuiltinDataType.STRING, 32);
-		sqlScriptIdColumn.setName("关联的sql脚本id");
-		sqlScriptIdColumn.setComments("关联的sql脚本id");
-		columns.add(sqlScriptIdColumn);
+		ComColumndata sqlIdColumn = new ComColumndata("sql_id", BuiltinDataType.STRING, 32);
+		sqlIdColumn.setName("关联的sql脚本id");
+		sqlIdColumn.setComments("关联的sql脚本id");
+		columns.add(sqlIdColumn);
 		
 		ComColumndata sqlParameterIdColumn = new ComColumndata("sql_parameter_id", BuiltinDataType.STRING, 32);
 		sqlParameterIdColumn.setName("关联的sql脚本参数id");
 		sqlParameterIdColumn.setComments("oracle通过输出参数返回结果集,[oracle使用字段]");
 		columns.add(sqlParameterIdColumn);
+		
+		ComColumndata tableIdColumn = new ComColumndata("table_id", BuiltinDataType.STRING, 32);
+		tableIdColumn.setName("关联的表id");
+		tableIdColumn.setComments("存储过程参数有表/游标参数类型时，这个记录对应的表类型id，数据验证的时候，用这个id去查询对应的表列信息");
+		columns.add(tableIdColumn);
 		
 		ComColumndata batchOrderColumn = new ComColumndata("batch_order", BuiltinDataType.INTEGER, 1);
 		batchOrderColumn.setName("结果集批次顺序");
@@ -168,11 +173,6 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		columnNameColumn.setName("列名");
 		columnNameColumn.setComments("列名");
 		columns.add(columnNameColumn);
-		
-		ComColumndata dataTypeColumn = new ComColumndata("data_type", BuiltinDataType.STRING, 20);
-		dataTypeColumn.setName("列的数据类型");
-		dataTypeColumn.setComments("存储过程传入表参数时，需要知道每个列的数据类型[sqlserver使用字段]");
-		columns.add(dataTypeColumn);
 		
 		ComColumndata propNameColumn = new ComColumndata("prop_name", BuiltinDataType.STRING, 40);
 		propNameColumn.setName("属性名");

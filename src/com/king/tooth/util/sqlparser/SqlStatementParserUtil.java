@@ -19,17 +19,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.database.DBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -207,7 +206,7 @@ public class SqlStatementParserUtil {
 			for (List<CfgSqlResultset> inSqlResultsets : inSqlResultsetsList) {
 				if(inSqlResultsets != null && inSqlResultsets.size() > 0){
 					for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
-						inSqlResultset.setSqlScriptId(sqlScriptId);
+						inSqlResultset.setSqlId(sqlScriptId);
 						HibernateUtil.saveObject(inSqlResultset, null);
 					}
 					inSqlResultsets.clear();
@@ -273,23 +272,13 @@ public class SqlStatementParserUtil {
 				parameter = new ComSqlScriptParameter(parameterName, dataType, param.getMode(), (i+1), true);
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
-				processOracleProcCursorParam(parameter, sqlScript);
+				processProcedureTableParam(parameter, sqlScript);
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
 			}
 			
 			sqlScript.setSqlParams(sqlScriptParameterList);
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
-		}
-	}
-	/**
-	 * 处理oracle存储过程的游标类型参数，如果是游标类型，则要在参数中标识出来
-	 * @param parameter
-	 * @param sqlScript 
-	 */
-	private static void processOracleProcCursorParam(ComSqlScriptParameter parameter, ComSqlScript sqlScript) {
-		if(BuiltinDataType.ORACLE_CURSOR_TYPE.equals(parameter.getParameterDataType())){
-			parameter.setIsTableType(1);
 		}
 	}
 	
@@ -353,7 +342,7 @@ public class SqlStatementParserUtil {
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
 				parameter.setDefaultValue(defaultValue);
-				processSqlServerProcTableParam(parameter, sqlScript);
+				processProcedureTableParam(parameter, sqlScript);
 				sqlScriptParameterList.add(parameter);
 				parameterNameRecord.addParameterName(parameterName);
 			}
@@ -361,40 +350,33 @@ public class SqlStatementParserUtil {
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
 		}
 	}
+	
 	/**
-	 * 处理sqlserver存储过程的表类型参数，如果是表类型，则要在参数中标识出来
+	 * 处理存储过程的表类型参数，如果是表类型，则要在参数中标识出来
 	 * @param parameter
 	 * @param sqlScript 
 	 */
-	@SuppressWarnings("unchecked")
-	private static void processSqlServerProcTableParam(ComSqlScriptParameter parameter, ComSqlScript sqlScript) {
-		int count = (int) HibernateUtil.executeUniqueQueryBySqlArr(sqlserver_queryDefinedTableTypeIsExistsSql, parameter.getParameterDataType());
-		if(count == 1){
+	private static void processProcedureTableParam(ComSqlScriptParameter parameter, ComSqlScript sqlScript) {
+		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, queryTableDataTypeOfTable, ComTabledata.TABLE_DATATYPE, parameter.getParameterDataType());
+		if(table != null){
+			if(table.getIsEnabled() == 0){
+				throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+parameter.getParameterName()+"]，引用的表类型被禁用，请联系系统管理员");
+			}
+			if(table.getIsCreated() == 0 || table.getIsBuildModel() == 0){
+				throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+parameter.getParameterName()+"]，引用的表类型还未建模，请联系系统管理员");
+			}
 			parameter.setIsTableType(1);
 			
-			List<Object[]> columnList = HibernateUtil.executeListQueryBySqlArr(sqlserver_queryDefinedTableTypeColumnInfoSql, "tt_"+parameter.getParameterDataType()+"_%");
-			if(columnList == null || columnList.size() == 0){
-				throw new NullPointerException("sqlserver中，自定义的表类型["+parameter.getParameterDataType()+"]，不存在任何列信息，请检查");
-			}
-			
-			List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(columnList.size());
-			int index = 0;
-			CfgSqlResultset sqlResultSet;
-			for (Object[] objArr : columnList) {
-				sqlResultSet = new CfgSqlResultset(objArr[0].toString(), index++, CfgSqlResultset.IN);
-				sqlResultSets.add(sqlResultSet);
-				
-				sqlResultSet.setSqlParameterId(parameter.getId());
-				sqlResultSet.setDataType(DBUtil.getSqlServerDataType(Integer.valueOf(objArr[1].toString())));
-			}
-			columnList.clear();
+			List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(1);
+			CfgSqlResultset sqlResultSet = new CfgSqlResultset(null, 0, CfgSqlResultset.IN);
+			sqlResultSet.setSqlParameterId(parameter.getId());
+			sqlResultSet.setTableId(table.getId());
+			sqlResultSets.add(sqlResultSet);
 			sqlScript.addInSqlResultsets(sqlResultSets);
 		}
 	}
-	// sqlserver查询自定义的表类型是否存在
-	private static final String sqlserver_queryDefinedTableTypeIsExistsSql = "select count(1) from sys.types where is_user_defined=1 and name = ? and is_table_type=1";
-	// sqlserver查询自定义的表类型的列信息
-	private static final String sqlserver_queryDefinedTableTypeColumnInfoSql = "select cast(c.name as varchar) name, cast(c.xtype as varchar) xtype from syscolumns c left join sysobjects o on (c.id = o.id) where o.name like ? and o.xtype = 'TT' order by c.colorder asc";
+	/** 查询表数据类型的对应的表对象hql */
+	private static final String queryTableDataTypeOfTable = "from ComTabledata where type=? and tableName = ?";
 	
 
 	/**
@@ -721,7 +703,7 @@ public class SqlStatementParserUtil {
 					throw new IllegalArgumentException("在资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源中，请指定具体查询的列名，禁止使用["+column.toString()+"]查询");
 				}
 				csr = new CfgSqlResultset(columnName, (i+1), CfgSqlResultset.OUT);
-				csr.setSqlScriptId(sql.getId());
+				csr.setSqlId(sql.getId());
 				sqlResultSets.add(csr);
 				
 				if(!includeIdColumn && csr.getPropName() == ResourcePropNameConstants.ID){
@@ -743,7 +725,7 @@ public class SqlStatementParserUtil {
 			
 			String sqlScriptId = sql.getId();
 			for (CfgSqlResultset sqlResultSet : sqlResultSets) {
-				sqlResultSet.setSqlScriptId(sqlScriptId);
+				sqlResultSet.setSqlId(sqlScriptId);
 				HibernateUtil.saveObject(sqlResultSet, null);// 将每条结果集信息保存到数据库
 			}
 			sqlResultSets.clear();

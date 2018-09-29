@@ -36,6 +36,9 @@ public class NamingProcessUtil {
 	 * @return
 	 */
 	private static String databaseNamingToCodeNaming(String databaseNaming, boolean turnToPropname){
+		if(StrUtils.isEmpty(databaseNaming)){
+			return null;
+		}
 		StringBuilder sb = new StringBuilder();
 		databaseNaming = databaseNaming.trim().toLowerCase();
 		if(databaseNaming.startsWith("_")){
@@ -88,6 +91,9 @@ public class NamingProcessUtil {
 	 * @return
 	 */
 	private static String codeNamingToDatabaseNaming(String codeNaming){
+		if(StrUtils.isEmpty(codeNaming)){
+			return null;
+		}
 		StringBuilder sb = new StringBuilder();
 		try {
 			sb.append(codeNaming.charAt(0));
@@ -115,6 +121,9 @@ public class NamingProcessUtil {
 	 * @return
 	 */
 	public static String extractDbObjName(String dbObjectName){
+		if(StrUtils.isEmpty(dbObjectName)){
+			return null;
+		}
 		StringBuilder sb = new StringBuilder();
 		StringBuilder suffix = new StringBuilder();
 		try {
