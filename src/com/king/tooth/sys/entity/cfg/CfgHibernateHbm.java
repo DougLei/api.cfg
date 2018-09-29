@@ -72,7 +72,7 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(18);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(4+7);
 		
 		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", BuiltinDataType.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");

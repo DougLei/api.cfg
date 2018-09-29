@@ -66,19 +66,13 @@ public class ResourceInfo {
 			resourceType = ResourceInfoConstants.CODE;
 		}else{
 			reqResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getResourceName());
+			validIsSupportRequestMethod(requestMethod, reqResource.getRequestMethod(), reqResource.getResourceName(), reqResource.getResourceTypeDesc());
+			
 			resourceType = reqResource.getResourceType();
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ResourceInfoConstants.SQL == resourceType){
 				sqlScriptResource = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(reqResource.getRefResourceId());
-				
-				if("none".equals(sqlScriptResource.getRequestMethod())){
-					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，不支持任何方式的请求");
-				}
-				
-				if(!requestMethod.equals(sqlScriptResource.getRequestMethod())){
-					throw new IllegalArgumentException("请求的名为["+sqlScriptResource.getSqlScriptResourceName()+"]的sql资源，只支持["+sqlScriptResource.getRequestMethod()+"]方式的请求");
-				}
 				
 				if(BuiltinDatabaseData.VIEW.equals(sqlScriptResource.getSqlScriptType())){
 					throw new IllegalArgumentException("系统目前不支持直接处理视图类型的sql资源");
@@ -88,6 +82,7 @@ public class ResourceInfo {
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
 				reqParentResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getParentResourceName());
+				validIsSupportRequestMethod(requestMethod, reqParentResource.getRequestMethod(), reqParentResource.getResourceName(), reqParentResource.getResourceTypeDesc());
 				
 				if(reqParentResource.getResourceType() != resourceType){
 					throw new IllegalArgumentException("系统目前不支持处理不同类型的资源混合调用");
@@ -101,6 +96,29 @@ public class ResourceInfo {
 		// 记录日志，请求的资源类型
 		CurrentThreadContext.getReqLogData().getReqLog().setType(resourceType);
 		CurrentThreadContext.getReqLogData().getReqLog().setResourceType(resourceType);
+	}
+	
+	/**
+	 * 验证是否支持请求的方式
+	 * @param actualRequestMethod
+	 * @param resourceSupportRequestMethod
+	 * @param resourceName
+	 * @param resourceType
+	 */
+	private void validIsSupportRequestMethod(String actualRequestMethod, String resourceSupportRequestMethod, String resourceName, String resourceType) {
+		if("all".equals(resourceSupportRequestMethod)){
+			return;
+		}
+		if("none".equals(resourceSupportRequestMethod)){
+			throw new IllegalArgumentException("请求的名为["+resourceName+"]的"+resourceType+"，不支持任何方式的请求");
+		}
+		String[] supportRequestMethodArr = resourceSupportRequestMethod.split(",");
+		for (String srm : supportRequestMethodArr) {
+			if(srm.equals(actualRequestMethod)){
+				return;
+			}
+		}
+		throw new IllegalArgumentException("请求的名为["+resourceName+"]的"+resourceType+"，只支持["+resourceSupportRequestMethod+"]方式的请求");
 	}
 	
 	/**

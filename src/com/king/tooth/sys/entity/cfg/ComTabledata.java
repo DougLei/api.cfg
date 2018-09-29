@@ -64,6 +64,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	private Integer isBuildModel;
 	/**
 	 * 是否有效
+	 * <p>默认值为1</p>
 	 */
 	private Integer isEnabled;
 	/**
@@ -183,7 +184,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(23);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(10+7);
 		
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
@@ -223,11 +224,29 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		commentsColumn.setComments("注释");
 		columns.add(commentsColumn);
 		
+		ComColumndata isCreatedColumn = new ComColumndata("is_created", BuiltinDataType.INTEGER, 1);
+		isCreatedColumn.setName("是否被创建");
+		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
+		isCreatedColumn.setDefaultValue("0");
+		columns.add(isCreatedColumn);
+		
 		ComColumndata isBuildModelColumn = new ComColumndata("is_build_model", BuiltinDataType.INTEGER, 1);
 		isBuildModelColumn.setName("是否建模");
-		isBuildModelColumn.setComments("默认值为0");
+		isBuildModelColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值改为0，用来标识是否建模，是否需要alter table xxx");
 		isBuildModelColumn.setDefaultValue("0");
 		columns.add(isBuildModelColumn);
+		
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.INTEGER, 1);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		columns.add(isEnabledColumn);
+		
+		ComColumndata requestMethodColumn = new ComColumndata("request_method", BuiltinDataType.STRING, 30);
+		requestMethodColumn.setName("请求资源的方法");
+		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
+		requestMethodColumn.setDefaultValue("all");
+		columns.add(requestMethodColumn);
 		
 		return columns;
 	}

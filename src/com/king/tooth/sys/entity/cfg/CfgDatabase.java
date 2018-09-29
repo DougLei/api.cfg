@@ -60,29 +60,29 @@ public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnaly
 	/**
 	 * 数据库文件配置内容(json串)
 	 */
-	private String cfgMainFileContent;
+	private String mainFileContent;
 	@JSONField(serialize = false)
 	private DBFile mainFile;
 	/**
 	 * 数据库临时/日志文件配置内容(json串)
 	 */
-	private String cfgTmplogFileContent;
+	private String tmplogFileContent;
 	@JSONField(serialize = false)
 	private DBFile tmpLogFile;
 	
 	//------------------------------------------------------------------------
 	
-	public String getCfgMainFileContent() {
+	public String getMainFileContent() {
 		if(mainFile != null){
-			cfgMainFileContent = mainFile.toJsonString();
+			mainFileContent = mainFile.toJsonString();
 		}
-		return cfgMainFileContent;
+		return mainFileContent;
 	}
-	public String getCfgTmplogFileContent() {
+	public String getTmplogFileContent() {
 		if(tmpLogFile != null){
-			cfgTmplogFileContent = tmpLogFile.toJsonString();
+			tmplogFileContent = tmpLogFile.toJsonString();
 		}
-		return cfgTmplogFileContent;
+		return tmplogFileContent;
 	}
 	public String getType() {
 		return type;
@@ -114,13 +114,13 @@ public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnaly
 	public String getLoginPassword() {
 		return loginPassword;
 	}
-	public void setCfgMainFileContent(String cfgMainFileContent) {
-		this.cfgMainFileContent = cfgMainFileContent;
-		this.mainFile = JsonUtil.parseObject(cfgMainFileContent, DBFile.class);
+	public void setMainFileContent(String mainFileContent) {
+		this.mainFileContent = mainFileContent;
+		this.mainFile = JsonUtil.parseObject(mainFileContent, DBFile.class);
 	}
-	public void setCfgTmplogFileContent(String cfgTmplogFileContent) {
-		this.cfgTmplogFileContent = cfgTmplogFileContent;
-		this.tmpLogFile = JsonUtil.parseObject(cfgTmplogFileContent, DBFile.class);
+	public void setTmplogFileContent(String tmplogFileContent) {
+		this.tmplogFileContent = tmplogFileContent;
+		this.tmpLogFile = JsonUtil.parseObject(tmplogFileContent, DBFile.class);
 	}
 	public String getDisplayName() {
 		if(StrUtils.isEmpty(displayName)){
@@ -146,67 +146,58 @@ public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnaly
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(9+7);
 		
 		ComColumndata displayNameColumn = new ComColumndata("display_name", BuiltinDataType.STRING, 100);
 		displayNameColumn.setName("数字库名");
 		displayNameColumn.setComments("数字库名");
-		displayNameColumn.setOrderCode(2);
 		columns.add(displayNameColumn);
 		
 		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.STRING, 10);
 		typeColumn.setName("数据库类型");
 		typeColumn.setComments("数据库类型");
 		typeColumn.setIsNullabled(0);
-		typeColumn.setOrderCode(3);
 		columns.add(typeColumn);
 		
 		ComColumndata instanceNameColumn = new ComColumndata("instance_name", BuiltinDataType.STRING, 20);
 		instanceNameColumn.setName("数据库实例名");
 		instanceNameColumn.setComments("数据库实例名：oracle中是实例名、sqlserver中就是数据库名");
 		instanceNameColumn.setIsNullabled(0);
-		instanceNameColumn.setOrderCode(4);
 		columns.add(instanceNameColumn);
 		
 		ComColumndata loginUserNameColumn = new ComColumndata("login_user_name", BuiltinDataType.STRING, 20);
 		loginUserNameColumn.setName("数据库登录名");
 		loginUserNameColumn.setComments("数据库登录名");
 		loginUserNameColumn.setIsNullabled(0);
-		loginUserNameColumn.setOrderCode(5);
 		columns.add(loginUserNameColumn);
 		
 		ComColumndata loginPasswordColumn = new ComColumndata("login_password", BuiltinDataType.STRING, 32);
 		loginPasswordColumn.setName("数据库登录密码");
 		loginPasswordColumn.setComments("数据库登录密码");
 		loginPasswordColumn.setIsNullabled(0);
-		loginPasswordColumn.setOrderCode(6);
 		columns.add(loginPasswordColumn);
 		
 		ComColumndata ipColumn = new ComColumndata("ip", BuiltinDataType.STRING, 20);
 		ipColumn.setName("数据库ip");
 		ipColumn.setComments("数据库ip");
 		ipColumn.setIsNullabled(0);
-		ipColumn.setOrderCode(7);
 		columns.add(ipColumn);
 		
 		ComColumndata portColumn = new ComColumndata("port", BuiltinDataType.INTEGER, 5);
 		portColumn.setName("数据库端口");
 		portColumn.setComments("数据库端口");
 		portColumn.setIsNullabled(0);
-		portColumn.setOrderCode(8);
 		columns.add(portColumn);
 		
-		ComColumndata cfgMainFileContentColumn = new ComColumndata("cfg_main_file_content", BuiltinDataType.STRING, 800);
-		cfgMainFileContentColumn.setName("数据库文件配置内容");
-		cfgMainFileContentColumn.setComments("数据库文件配置内容(json串)");
-		cfgMainFileContentColumn.setOrderCode(9);
-		columns.add(cfgMainFileContentColumn);
+		ComColumndata mainFileContentColumn = new ComColumndata("main_file_content", BuiltinDataType.STRING, 800);
+		mainFileContentColumn.setName("数据库文件配置内容");
+		mainFileContentColumn.setComments("数据库文件配置内容(json串)");
+		columns.add(mainFileContentColumn);
 		
-		ComColumndata cfgTmplogFileContentColumn = new ComColumndata("cfg_tmplog_file_content", BuiltinDataType.STRING, 800);
-		cfgTmplogFileContentColumn.setName("数据库临时/日志文件配置内容");
-		cfgTmplogFileContentColumn.setComments("数据库临时/日志文件配置内容(json串)");
-		cfgTmplogFileContentColumn.setOrderCode(10);
-		columns.add(cfgTmplogFileContentColumn);
+		ComColumndata tmplogFileContentColumn = new ComColumndata("tmplog_file_content", BuiltinDataType.STRING, 800);
+		tmplogFileContentColumn.setName("数据库临时/日志文件配置内容");
+		tmplogFileContentColumn.setComments("数据库临时/日志文件配置内容(json串)");
+		columns.add(tmplogFileContentColumn);
 		
 		return columns;
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -78,7 +79,7 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(5+7);
 		
 		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", BuiltinDataType.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");
@@ -94,6 +95,18 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 		resourceTypeColumn.setName("资源类型");
 		resourceTypeColumn.setComments("资源类型");
 		columns.add(resourceTypeColumn);
+		
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.INTEGER, 1);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		columns.add(isEnabledColumn);
+		
+		ComColumndata requestMethodColumn = new ComColumndata("request_method", BuiltinDataType.STRING, 30);
+		requestMethodColumn.setName("请求资源的方法");
+		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
+		requestMethodColumn.setDefaultValue("all");
+		columns.add(requestMethodColumn);
 		
 		return columns;
 	}
@@ -127,4 +140,19 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 	 * <p>系统内置资源的refResourceId的值为内置资源标识</p>
 	 */
 	private static final String BUILTIN_RESOURCE = "builtinResource";
+
+	/**
+	 * 获取资源描述
+	 * @return
+	 */
+	public String getResourceTypeDesc() {
+		if(ResourceInfoConstants.TABLE == resourceType){
+			return "表资源";
+		}else if(ResourceInfoConstants.SQL == resourceType){
+			return "SQL资源";
+		}else if(ResourceInfoConstants.CODE == resourceType){
+			return "代码资源";
+		}
+		return resourceType+"资源";
+	}
 }

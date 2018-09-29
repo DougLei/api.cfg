@@ -65,12 +65,6 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	 * <p>[存储过程、视图等]</p>
 	 */
 	private String objectName;
-	
-	/**
-	 * 备注
-	 */
-	private String comments;
-	
 	/**
 	 * sql参数名的记录
 	 * <p>记录，第几个sql，都有哪些参数名，程序内部使用，不开放给用户</p>
@@ -78,6 +72,10 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	private String parameterNameRecords;
 	@JSONField(serialize = false)
 	private List<SqlScriptParameterNameRecord> parameterNameRecordList;
+	/**
+	 * 备注
+	 */
+	private String comments;
 	
 	/**
 	 * 是否被创建
@@ -307,7 +305,7 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(11+7);
 		
 		ComColumndata dbTypeColumn = new ComColumndata("db_type", BuiltinDataType.STRING, 16);
 		dbTypeColumn.setName("数据库类型");
@@ -336,25 +334,38 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 		sqlScriptContentColumn.setIsNullabled(0);
 		columns.add(sqlScriptContentColumn);
 		
-		ComColumndata sqlScriptParametersColumn = new ComColumndata("sql_script_parameters", BuiltinDataType.STRING, 9999);
-		sqlScriptParametersColumn.setName("sql脚本的参数对象集合");
-		sqlScriptParametersColumn.setComments("sql脚本的参数(json串)");
-		columns.add(sqlScriptParametersColumn);
-		
 		ComColumndata objectNameColumn = new ComColumndata("object_name", BuiltinDataType.STRING, 80);
 		objectNameColumn.setName("sql对象名称");
 		objectNameColumn.setComments("存储过程、视图等");
 		columns.add(objectNameColumn);
+		
+		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinDataType.STRING, 4000);
+		parameterNameRecordsColumn.setName("sql参数名的记录");
+		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
+		columns.add(parameterNameRecordsColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 200);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		columns.add(commentsColumn);
 		
-		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", BuiltinDataType.STRING, 9999);
-		parameterNameRecordsColumn.setName("sql参数名的记录");
-		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
-		columns.add(parameterNameRecordsColumn);
+		ComColumndata isCreatedColumn = new ComColumndata("is_created", BuiltinDataType.INTEGER, 1);
+		isCreatedColumn.setName("是否被创建");
+		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
+		isCreatedColumn.setDefaultValue("0");
+		columns.add(isCreatedColumn);
+		
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", BuiltinDataType.INTEGER, 1);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		columns.add(isEnabledColumn);
+		
+		ComColumndata requestMethodColumn = new ComColumndata("request_method", BuiltinDataType.STRING, 30);
+		requestMethodColumn.setName("请求资源的方法");
+		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
+		requestMethodColumn.setDefaultValue("all");
+		columns.add(requestMethodColumn);
 		
 		return columns;
 	}
