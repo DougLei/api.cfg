@@ -11,7 +11,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.service.cfg.CfgDatabaseService;
 import com.king.tooth.util.StrUtils;
@@ -21,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class CfgDatabaseController extends AbstractController{
+public class CfgDatabaseController extends AController{
 	
 	/**
 	 * 添加数据库

@@ -11,7 +11,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.util.StrUtils;
@@ -21,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class CfgSqlController extends AbstractController{
+public class CfgSqlController extends AController{
 	
 	/**
 	 * 添加sql脚本

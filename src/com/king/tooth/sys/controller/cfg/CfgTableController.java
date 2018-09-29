@@ -13,7 +13,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -24,7 +24,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class CfgTableController extends AbstractController{
+public class CfgTableController extends AController{
 	
 	/**
 	 * 添加表
@@ -105,10 +105,6 @@ public class CfgTableController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object buildModel(HttpServletRequest request, IJson ijson){
-//		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-//			return "建模功能目前只提供给平台开发人员使用";
-//		}
-		
 		// 获取数据库连接对象，准备进行create表、drop表的操作
 		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 		
@@ -148,10 +144,6 @@ public class CfgTableController extends AbstractController{
 	 */
 	@RequestMapping
 	public Object cancelBuildModel(HttpServletRequest request, IJson ijson){
-//		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isDeveloper()){
-//			return "建模功能目前只提供给平台开发人员使用";
-//		}
-		
 		// 获取数据库连接对象，准备进行create表、drop表的操作
 		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 		

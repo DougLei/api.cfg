@@ -10,7 +10,7 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.service.cfg.CfgColumnService;
 import com.king.tooth.util.StrUtils;
@@ -20,7 +20,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class CfgColumnController extends AbstractController{
+public class CfgColumnController extends AController{
 	
 	/**
 	 * 添加列

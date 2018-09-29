@@ -13,7 +13,7 @@ import com.king.tooth.util.JsonUtil;
  * 控制器的父类
  * @author DougLei
  */
-public abstract class AbstractController {
+public abstract class AController {
 	
 	/**
 	 * 解析的结果

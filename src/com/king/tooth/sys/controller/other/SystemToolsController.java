@@ -6,7 +6,7 @@ import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.service.other.SystemToolsService;
 import com.king.tooth.util.StrUtils;
 
@@ -15,7 +15,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @Controller
-public class SystemToolsController extends AbstractController{
+public class SystemToolsController extends AController{
 	
 	/**
 	 * 监听hibernate类元数据

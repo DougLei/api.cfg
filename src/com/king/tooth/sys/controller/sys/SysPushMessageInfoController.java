@@ -10,7 +10,7 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.controller.AbstractController;
+import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
 import com.king.tooth.sys.service.sys.SysPushMessageInfoService;
@@ -25,7 +25,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Controller
-public class SysPushMessageInfoController extends AbstractController{
+public class SysPushMessageInfoController extends AController{
 	
 	/**
 	 * 推送消息
