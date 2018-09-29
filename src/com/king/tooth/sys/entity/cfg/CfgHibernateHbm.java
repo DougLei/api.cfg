@@ -42,6 +42,7 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	}
 	public CfgHibernateHbm(ComTabledata table) {
 		this.setRefTableId(table.getId());
+		this.resourceName = table.getResourceName();
 	}
 	
 	public String getRefTableId() {
@@ -83,15 +84,15 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 		refTableIdColumn.setComments("关联的表主键");
 		columns.add(refTableIdColumn);
 		
-		ComColumndata hbmContentColumn = new ComColumndata("hbm_content", BuiltinDataType.CLOB, 0);
-		hbmContentColumn.setName("hbm内容");
-		hbmContentColumn.setComments("hbm内容");
-		columns.add(hbmContentColumn);
+		ComColumndata contentColumn = new ComColumndata("content", BuiltinDataType.CLOB, 0);
+		contentColumn.setName("hbm内容");
+		contentColumn.setComments("hbm内容");
+		columns.add(contentColumn);
 		
-		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name", BuiltinDataType.STRING, 60);
-		hbmResourceNameColumn.setName("hbm资源名");
-		hbmResourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
-		columns.add(hbmResourceNameColumn);
+		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
+		resourceNameColumn.setName("hbm资源名");
+		resourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
+		columns.add(resourceNameColumn);
 		
 		return columns;
 	}
@@ -106,7 +107,7 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public String toDropTable() {
-		return "SYS_HIBERNATE_HBM";
+		return "CFG_HIBERNATE_HBM";
 	}
 
 	@JSONField(serialize = false)

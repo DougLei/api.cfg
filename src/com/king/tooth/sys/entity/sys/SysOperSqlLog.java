@@ -97,7 +97,7 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable() + "_" + SysReqLog.yyyyMM);
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("操作sql日志信息表");
 		table.setComments("操作sql日志信息表");
 		
