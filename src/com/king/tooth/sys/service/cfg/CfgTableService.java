@@ -9,10 +9,10 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -37,9 +37,9 @@ public class CfgTableService extends AService {
 	 * @return operResult
 	 */
 	private String validTableNameIsExists(ComTabledata table) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ? and customerId=?", table.toGetTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ? and customerId=?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
-			return "您已经创建过相同表名["+table.toGetTableName()+"]的数据";
+			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
 		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysResource where resourceName = ? and projectId = ? and customerId = ?", table.getResourceName(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
@@ -91,7 +91,7 @@ public class CfgTableService extends AService {
 			
 			operResult = validTableRefProjIsExists(projectId);
 			if(operResult == null){
-				operResult = validTableIsExistsInDatabase(projectId, table.toGetTableName());
+				operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 			}
 			if(operResult == null){
 				JSONObject tableJsonObject = HibernateUtil.saveObject(table, null);
@@ -116,12 +116,12 @@ public class CfgTableService extends AService {
 			return "没有找到id为["+table.getId()+"]的表对象信息";
 		}
 		String operResult = null;
-		if(!oldTable.toGetTableName().equals(table.toGetTableName())){
+		if(!oldTable.getTableName().equals(table.getTableName())){
 			operResult = validTableNameIsExists(table);
 			if(operResult == null){
 				table.setIsBuildModel(0);
 				if(StrUtils.isEmpty(oldTable.getOldTableName()) && oldTable.getIsCreated() == 1 && oldTable.getIsBuildModel() == 1){
-					table.setOldTableName(oldTable.toGetTableName());
+					table.setOldTableName(oldTable.getTableName());
 				}
 			}
 		}
@@ -133,8 +133,8 @@ public class CfgTableService extends AService {
 				return "表关联的项目id不能为空！";
 			}
 			operResult = validTableRefProjIsExists(projectId);
-			if(operResult == null && !oldTable.toGetTableName().equals(table.toGetTableName())){
-				operResult = validTableIsExistsInDatabase(projectId, table.toGetTableName());
+			if(operResult == null && !oldTable.getTableName().equals(table.getTableName())){
+				operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 			}
 			
 			if(operResult == null){
@@ -192,7 +192,7 @@ public class CfgTableService extends AService {
 		try {
 			ComTabledata table = getObjectById(tableId, ComTabledata.class);
 			if(table.getIsBuildModel() == 1){
-				return "表["+table.toGetTableName()+"]已经完成建模，且在无表名被修改、或任何字段信息被修改的情况下，无法重复进行建模操作";
+				return "表["+table.getTableName()+"]已经完成建模，且在无表名被修改、或任何字段信息被修改的情况下，无法重复进行建模操作";
 			}
 			
 			boolean isNeedInitBasicColumns = false;
@@ -210,12 +210,12 @@ public class CfgTableService extends AService {
 				tables.add(table);
 				
 				// 删除hbm信息
-				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
+				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 				// 删除资源
 				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(table.getId());
 				
 				// 判断该表是否存在
-				List<String> tableNames = dbTableHandler.filterTable(true, table.toGetTableName());
+				List<String> tableNames = dbTableHandler.filterTable(true, table.getTableName());
 				if(tableNames.size() == 0){// 如果不存在，则create
 					// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 					deleteTableIds.add(tableId);
@@ -229,29 +229,29 @@ public class CfgTableService extends AService {
 					String oldTableName = table.getOldTableName();
 					if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
 						// 修改表名
-						dbTableHandler.reTableName(table.toGetTableName(), oldTableName);
+						dbTableHandler.reTableName(table.getTableName(), oldTableName);
 						// 移除hibernate中之前表的缓存
 						HibernateUtil.removeConfig(NamingProcessUtil.tableNameTurnClassName(oldTableName));
 					}
 					
 					// 修改数据库中的列
-					dbTableHandler.modifyColumn(table.toGetTableName(), columns, true);
+					dbTableHandler.modifyColumn(table.getTableName(), columns, true);
 					table.setColumns(columns);
 					isNeedInitBasicColumns = true;
 				}
 			}else{
-				return "建模时，表["+table.toGetTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
+				return "建模时，表["+table.getTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
 			}
 			
 			List<String> hbmContents = new ArrayList<String>(tables.size());
-			SysHibernateHbm hbm;
+			CfgHibernateHbm hbm;
 			int i = 0;
 			for (ComTabledata tb : tables) {
 				
 				hbmContents.add(HibernateHbmUtil.createHbmMappingContent(tb, isNeedInitBasicColumns));
 				
 				// 2、插入hbm
-				hbm = new SysHibernateHbm(tb);
+				hbm = new CfgHibernateHbm(tb);
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 				hbm.setContent(hbmContents.get(i++));
 				HibernateUtil.saveObject(hbm, null);
@@ -296,7 +296,7 @@ public class CfgTableService extends AService {
 	 * <p>目前用在建模失败的时候，要进行的批量撤销，且忽略所有异常</p>
 	 * @param dbTableHandler
 	 * @param deleteTableIds
-	 * @param modifyRelationDatas 是否修改相关数据，例如资源数据，SysHibernateHbm数据；如果是在建模的时候，这个值应该是false，因为相关数据会被rollback；其他时候，这个值应该是true
+	 * @param modifyRelationDatas 是否修改相关数据，例如资源数据，CfgHibernateHbm数据；如果是在建模的时候，这个值应该是false，因为相关数据会被rollback；其他时候，这个值应该是true
 	 */
 	private void batchCancelBuildModel(DBTableHandler dbTableHandler, List<String> deleteTableIds, boolean modifyRelationDatas) {
 		if(deleteTableIds != null && deleteTableIds.size() > 0){
@@ -347,7 +347,7 @@ public class CfgTableService extends AService {
 			// 修改表是否创建的状态，以及是否建模的字段值，均改为0，且置空oldTableName字段
 			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isCreated =0, isBuildModel=0, oldTableName=null  where "+ResourcePropNameConstants.ID+" = ?", tableId);
 			// 删除hbm信息
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
+			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
 			// 删除资源
 			BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
 			// 修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为待创建状态，且置空oldInfoJson字段的值
@@ -364,7 +364,7 @@ public class CfgTableService extends AService {
 	 */
 	public String addProjTableRelation(String projectId, String tableId) {
 		ComTabledata table = getObjectById(tableId, ComTabledata.class);
-		String operResult = validTableIsExistsInDatabase(projectId, table.toGetTableName());
+		String operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 		if(operResult == null){
 			HibernateUtil.saveDataLinks("CfgProjectTableLinks", projectId, tableId);
 		}

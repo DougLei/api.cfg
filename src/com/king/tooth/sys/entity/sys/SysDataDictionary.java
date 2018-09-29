@@ -147,7 +147,7 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("数据字典表");
 		table.setComments("数据字典表");
 		
@@ -156,7 +156,7 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_DATA_DICTIONARY";
 	}
 

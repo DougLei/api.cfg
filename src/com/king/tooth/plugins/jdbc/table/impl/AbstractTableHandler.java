@@ -37,7 +37,7 @@ public abstract class AbstractTableHandler {
 	 * @param tabledata
 	 */
 	public void installCreateTableSql(ComTabledata tabledata) {
-		String tableName = tabledata.toGetTableName();
+		String tableName = tabledata.getTableName();
 		analysisTable(tabledata);
 		analysisTableComments(tabledata, true);// 解析表注释
 		createTableSql.append(" ( ");
@@ -48,7 +48,7 @@ public abstract class AbstractTableHandler {
 			analysisColumnLength(column, createTableSql);
 			analysisColumnProps(tableName, column, createTableSql, operColumnSql);
 			createTableSql.append(",");
-			analysisColumnComments(tabledata.toGetTableName(), column, true, createCommentSql);// 解析列注释
+			analysisColumnComments(tabledata.getTableName(), column, true, createCommentSql);// 解析列注释
 		}
 		createTableSql.setLength(createTableSql.length() - 1);
 		createTableSql.append(")");
@@ -59,7 +59,7 @@ public abstract class AbstractTableHandler {
 	 * @param table
 	 */
 	private void analysisTable(ComTabledata table){
-		createTableSql.append("create table ").append(table.toGetTableName());
+		createTableSql.append("create table ").append(table.getTableName());
 	}
 	
 	/**

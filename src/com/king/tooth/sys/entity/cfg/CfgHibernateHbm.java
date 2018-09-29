@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.sys;
+package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,6 @@ import com.king.tooth.sys.builtin.data.BuiltinDataType;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
 
 /**
  * hibernate的hbm内容表
@@ -18,7 +16,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
  */
 @SuppressWarnings("serial")
 @Table
-public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
+public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	
 	/**
 	 * 关联的数据库主键
@@ -32,12 +30,17 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 	 * hbm内容
 	 */
 	private String content;
+	/**
+	 * 资源名
+	 * <p>冗余，即表资源名</p>
+	 */
+	private String resourceName;
 
 	//-------------------------------------------------------------------------
 	
-	public SysHibernateHbm() {
+	public CfgHibernateHbm() {
 	}
-	public SysHibernateHbm(ComTabledata table) {
+	public CfgHibernateHbm(ComTabledata table) {
 		this.setRefTableId(table.getId());
 	}
 	
@@ -59,6 +62,12 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 	public void setContent(String content) {
 		this.content = content;
 	}
+	public String getResourceName() {
+		return resourceName;
+	}
+	public void setResourceName(String resourceName) {
+		this.resourceName = resourceName;
+	}
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
@@ -79,11 +88,16 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 		hbmContentColumn.setComments("hbm内容");
 		columns.add(hbmContentColumn);
 		
+		ComColumndata hbmResourceNameColumn = new ComColumndata("hbm_resource_name", BuiltinDataType.STRING, 60);
+		hbmResourceNameColumn.setName("hbm资源名");
+		hbmResourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
+		columns.add(hbmResourceNameColumn);
+		
 		return columns;
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("hibernate的hbm内容表");
 		table.setComments("hibernate的hbm内容表");
 		
@@ -91,12 +105,12 @@ public class SysHibernateHbm extends BasicEntity implements ITable, IEntity{
 		return table;
 	}
 	
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_HIBERNATE_HBM";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysHibernateHbm";
+		return "CfgHibernateHbm";
 	}
 }

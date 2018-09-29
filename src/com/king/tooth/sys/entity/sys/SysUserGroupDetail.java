@@ -61,7 +61,7 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("用户组明细表");
 		table.setComments("用户组明细表");
 		
@@ -70,7 +70,7 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_USER_GROUP_DETAIL";
 	}
 

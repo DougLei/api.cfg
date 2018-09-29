@@ -12,8 +12,8 @@ import org.quartz.JobExecutionException;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.service.cfg.CfgTableService;
@@ -91,15 +91,15 @@ public class CreateLogTableJob implements Job, Serializable{
 		// create日志表
 		dbTableHandler.createTable(logTables, true); 
 		
-		// 获取日志表的hbmContent以及SysHibernateHbm对象
+		// 获取日志表的hbmContent以及CfgHibernateHbm对象
 		List<String> hbmContents = new ArrayList<String>(logTableSize);
-		SysHibernateHbm hbm;
+		CfgHibernateHbm hbm;
 		int i = 0;
 		for (ComTabledata logTable : logTables) {
 			hbmContents.add(HibernateHbmUtil.createHbmMappingContent(logTable, false));
 			
 			// 2、插入hbm
-			hbm = new SysHibernateHbm(logTable);
+			hbm = new CfgHibernateHbm(logTable);
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.setContent(hbmContents.get(i++));
 			HibernateUtil.saveObject(hbm, null);

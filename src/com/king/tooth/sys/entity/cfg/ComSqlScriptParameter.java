@@ -294,7 +294,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("sql脚本参数信息表");
 		table.setComments("sql脚本参数信息表");
 		
@@ -302,7 +302,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		return table;
 	}
 	
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "COM_SQL_SCRIPT_PARAMETER";
 	}
 	

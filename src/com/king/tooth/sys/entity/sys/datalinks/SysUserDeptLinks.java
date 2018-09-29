@@ -53,7 +53,7 @@ public class SysUserDeptLinks implements Serializable, ITable {
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setResourceName("SysUserDeptLinks");
 		table.setName("人员和部门的关联关系表表");
 		table.setComments("人员和部门的关联关系表表");
@@ -63,7 +63,7 @@ public class SysUserDeptLinks implements Serializable, ITable {
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_USER_DEPT_LINKS";
 	}
 }

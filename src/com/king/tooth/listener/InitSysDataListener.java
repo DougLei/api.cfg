@@ -50,9 +50,9 @@ public class InitSysDataListener implements ServletContextListener {
 	 */
 	private void initSysCoreDataInfos() {
 		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
-			new InitCfgSystemService().loadSysBasicDatasBySysFirstStart();
+			new InitCfgSystemService().firstStart();
 		}else{
-			new InitCfgSystemService().loadHbmsByStart();
+			new InitCfgSystemService().start();
 		}
 	}
 

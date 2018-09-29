@@ -102,14 +102,14 @@ public class ComProject extends BasicEntity implements ITable, IEntityPropAnalys
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("项目信息表表");
 		table.setComments("项目信息表表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "COM_PROJECT";
 	}
 

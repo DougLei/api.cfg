@@ -21,6 +21,7 @@ import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -36,7 +37,6 @@ import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDataPrivS;
 import com.king.tooth.sys.entity.sys.SysDept;
 import com.king.tooth.sys.entity.sys.SysFile;
-import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysOrg;
 import com.king.tooth.sys.entity.sys.SysPermission;
@@ -62,8 +62,6 @@ import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
-import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.util.hibernate.HibernateHbmUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -78,7 +76,7 @@ public class InitCfgSystemService extends AService{
 	/**
 	 * 系统首次启动时，初始化系统的基础数据
 	 */
-	public void loadSysBasicDatasBySysFirstStart() {
+	public void firstStart() {
 		Log4jUtil.info("loadSysBasicDatasBySysFirstStart..........");
 		try {
 			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
@@ -110,7 +108,7 @@ public class InitCfgSystemService extends AService{
 		tables.add(new CfgDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
 		tables.add(new ComProjectModule().toCreateTable());
-		tables.add(new SysHibernateHbm().toCreateTable());
+		tables.add(new CfgHibernateHbm().toCreateTable());
 		tables.add(new ComSqlScript().toCreateTable());
 		tables.add(new CfgProjectSqlLinks().toCreateTable());
 		tables.add(new SysAccount().toCreateTable());
@@ -207,7 +205,7 @@ public class InitCfgSystemService extends AService{
 		// 添加管理账户【1.管理账户】
 		SysAccount admin = new SysAccount();
 		admin.setId("16ed21bd7a7a41f5bea2ebaa258908cf");/* 在同步数据的时候，为了和服务器数据库中的id一致，这里写成固定值，即服务器数据库中，账户admin的id */
-		admin.setType(1);
+		admin.setType(SysAccount.ADMIN);
 		admin.setLoginName("admin");
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		admin.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
@@ -216,8 +214,8 @@ public class InitCfgSystemService extends AService{
 	
 		// 添加普通账户【2.普通账户】
 		SysAccount normal = new SysAccount();
-		normal.setId("59c2c378b845447d8f675ef29b55cb63");
-		normal.setType(2);
+		normal.setId("59c2c378b845447d8f675ef29b55cb63");/* 同上原因 */
+		normal.setType(SysAccount.NORMAL);
 		normal.setLoginName("normal");
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		normal.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
@@ -226,8 +224,8 @@ public class InitCfgSystemService extends AService{
 		
 		// 添加平台开发账户【3.平台开发账户】
 		SysAccount developer = new SysAccount();
-		developer.setId("93d02915eb764d978e3cae6987b5fc7a");
-		developer.setType(3);
+		developer.setId("93d02915eb764d978e3cae6987b5fc7a");/* 同上原因 */
+		developer.setType(SysAccount.DEVELOPER);
 		developer.setLoginName("developer");
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 		developer.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
@@ -269,11 +267,11 @@ public class InitCfgSystemService extends AService{
 	 */
 	private void insertHbm(String adminAccountId) {
 		List<ComTabledata> tables = getAllTables();
-		SysHibernateHbm hbm;
+		CfgHibernateHbm hbm;
 		SysResource resource;
 		for (ComTabledata table : tables) {
 			// 创建对应的hbm文件，并保存
-			hbm = new SysHibernateHbm(table);
+			hbm = new CfgHibernateHbm(table);
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 			hbm.setRefTableId("builtinResource");
 			hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
@@ -314,86 +312,22 @@ public class InitCfgSystemService extends AService{
 	 * 系统每次启动时，加载hbm的配置信息
 	 * 主要是hbm内容
 	 */
-	public void loadHbmsByStart() {
+	public void start() {
 		Log4jUtil.info("loadHbmsByStart..........");
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统数据库的所有hbm映射文件
 			loadCurrentSysDatabaseHbms();
-			
-			// 再加载系统中所有数据库信息，创建动态数据源，动态sessionFactory，以及将各个数据库中的核心hbm加载进对应的sessionFactory中
-			// 同时建立数据库和项目的关联关系，为之后的发布操作做准备
-			List<CfgDatabase> databases = HibernateUtil.extendExecuteListQueryByHqlArr(CfgDatabase.class, null, null, "from CfgDatabase where isEnabled = 1 and belongPlatformType = 2 and isCreated =1");
-			if(databases != null && databases.size()> 0){
-				// 查询获取核心表的hbm资源
-				List<String> coreTableHbmContents = HibernateUtil.executeListQueryByHql(null, null, "select h.hbmContent from SysHibernateHbm h, ComTabledata t where h.refTableId = t."+ResourcePropNameConstants.ID+" and t.isCore=1 and t.isEnabled=1 and h.isEnabled=1", null);
-				HibernateUtil.closeCurrentThreadSession();
-				if(coreTableHbmContents == null || coreTableHbmContents.size() == 0){
-					throw new NullPointerException("没有查询到核心表的hbm资源，请检查配置系统数据库中的数据是否正确");
-				}
-				addOtherCoreTableHbmContents(coreTableHbmContents);
-				
-				String projDatabaseRelationQueryHql = "select "+ResourcePropNameConstants.ID+" from ComProject where isEnabled=1 and isCreated=1 and refDatabaseId= ?";
-				String testLinkResult;
-				for (CfgDatabase database : databases) {
-					database.analysisResourceProp();
-					testLinkResult = database.testDbLink();
-					if(testLinkResult.startsWith("err")){
-						Log4jUtil.error(testLinkResult);
-						continue;
-					}
-					Log4jUtil.info("测试连接数据库[dbType="+database.getType()+" ， dbInstanceName="+database.getInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getIp()+" ， dbPort="+database.getPort()+"]：" + testLinkResult);
-					Log4jUtil.info("给该数据库的连接数据源，添加核心的hbm内容");
-					DynamicDBUtil.addDataSource(database);// 创建对应的动态数据源和sessionFactory
-					loadCoreHbmContentsToDatabase(database, coreTableHbmContents);// 加载当前数据库中的hbm到sessionFactory中
-					loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database);
-				}
-				coreTableHbmContents.clear();
-			}else{
-				HibernateUtil.closeCurrentThreadSession();
-			}
-			
 			// 清空用户在线数据表
 			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus", null);
 		} catch (Exception e) {
 			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
+		} finally{
+			HibernateUtil.closeCurrentThreadSession();
 		}
 	}
 	
-	/**
-	 * 加载项目id和数据库id的关联关系
-	 * @param projDatabaseRelationQueryHql
-	 * @param database
-	 * @return
-	 */
-	private void loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, CfgDatabase database) {
-		// 加载数据库和项目的关联关系映射
-		CurrentThreadContext.setDatabaseId(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());// 设置当前操作的项目，获得对应的sessionFactory，即配置系统
-		boolean isExists = loadProjIdWithDatabaseIdRelation(projDatabaseRelationQueryHql, database.getId());
-		HibernateUtil.closeCurrentThreadSession();
-		Log4jUtil.info("数据库[dbType="+database.getType()+" ， dbInstanceName="+database.getInstanceName()+" ， loginUserName="+database.getLoginUserName()+" ， loginPassword="+database.getLoginPassword()+" ， dbIp="+database.getIp()+" ， dbPort="+database.getPort()+"]的数据库，是否存在发布的项目："+ isExists );
-	}
-	/**
-	 * 加载项目id和数据库id的关联关系
-	 * @param projDatabaseRelationQueryHql
-	 * @param databaseId
-	 */
-	private boolean loadProjIdWithDatabaseIdRelation(String projDatabaseRelationQueryHql, String databaseId) {
-		List<Object> projIds = HibernateUtil.executeListQueryByHqlArr(null, null, projDatabaseRelationQueryHql, databaseId);
-		if(projIds != null && projIds.size() > 0){
-			for (Object projId : projIds) {
-				if(StrUtils.isEmpty(projId)){
-					continue;
-				}
-				ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(projId.toString(), databaseId);
-			}
-			projIds.clear();
-			return true;
-		}
-		return false;
-	}
-
 	/**
 	 * 加载当前系统数据库的所有hbm映射文件
 	 * @param database 指定数据库的id
@@ -404,15 +338,15 @@ public class InitCfgSystemService extends AService{
 		CfgDatabase database = BuiltinObjectInstance.currentSysBuiltinDatabaseInstance;
 		
 		CurrentThreadContext.setDatabaseId(database.getId());
-		// 获取当前系统的SysHibernateHbm映射文件对象
-		String sql = "select content from sys_hibernate_hbm where ref_database_id = '"+database.getId()+"' and resource_name = 'SysHibernateHbm' and is_enabled = 1";
+		// 获取当前系统的CfgHibernateHbm映射文件对象
+		String sql = "select content from sys_hibernate_hbm where ref_database_id = '"+database.getId()+"' and resource_name = 'CfgHibernateHbm'";
 		String hbmContent = null;
 		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
 		}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
 			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
 			if(clob == null){
-				throw new NullPointerException("数据库名为["+database.getDisplayName()+"]，实例名为["+database.getInstanceName()+"]，ip为["+database.getIp()+"]，端口为["+database.getPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到SysHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
+				throw new NullPointerException("数据库名为["+database.getDisplayName()+"]，实例名为["+database.getInstanceName()+"]，ip为["+database.getIp()+"]，端口为["+database.getPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到CfgHibernateHbm的hbm文件内容，请检查：[" + sql + "]");
 			}
 			
 			Reader reader = clob.getCharacterStream();
@@ -429,15 +363,15 @@ public class InitCfgSystemService extends AService{
 		HibernateUtil.appendNewConfig(hbmContent);
 		
 		// 查询databaseId指定的库下有多少hbm数据，分页查询并加载到sessionFactory中
-		int count = ((Long) HibernateUtil.executeUniqueQueryByHql("select count("+ResourcePropNameConstants.ID+") from SysHibernateHbm where isEnabled = 1 and resourceName != 'SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null)).intValue();
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgHibernateHbm where resourceName != 'CfgHibernateHbm' and refDatabaseId = ?", database.getId());
 		if(count == 0){
 			return;
 		}
-		int loopCount = count/100 + 1;
+		long loopCount = count/100 + 1;
 		List<Object> hbmContents = null;
 		List<String> hcs = null;
 		for(int i=0;i<loopCount;i++){
-			hbmContents = HibernateUtil.executeListQueryByHql("100", (i+1)+"", "select content from SysHibernateHbm where isEnabled = 1 and resourceName !='SysHibernateHbm' and refDatabaseId = '"+database.getId()+"'", null);
+			hbmContents = HibernateUtil.executeListQueryByHqlArr("100", (i+1)+"", "select content from CfgHibernateHbm where resourceName !='CfgHibernateHbm' and refDatabaseId = ?", database.getId());
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
 				hcs.add(obj+"");
@@ -449,9 +383,6 @@ public class InitCfgSystemService extends AService{
 		
 		// 初始化日志表
 		initLogTables();
-		
-		// 关闭session
-		HibernateUtil.closeCurrentThreadSession();
 	}
 	
 	/**
@@ -462,13 +393,13 @@ public class InitCfgSystemService extends AService{
 	private void initLogTables() {
 		// 判断是否存在日志表table
 		DBTableHandler tableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		List<String> logTableNames = tableHandler.filterTable(false, BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toGetTableName(), BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toGetTableName());
+		List<String> logTableNames = tableHandler.filterTable(false, BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable(), BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable());
 		if(logTableNames != null && logTableNames.size() > 0){
 			// 不存在，则create
 			for (String logTableName : logTableNames) {
-				if(logTableName.equals(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toGetTableName())){
+				if(logTableName.equals(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable())){
 					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable(), true);
-				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toGetTableName())){
+				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable())){
 					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable(), true);
 				}
 			}
@@ -489,7 +420,7 @@ public class InitCfgSystemService extends AService{
 	 */
 	private void createHbm(ComTabledata table){
 		// 插入hbm
-		SysHibernateHbm hbm = new SysHibernateHbm(table); 
+		CfgHibernateHbm hbm = new CfgHibernateHbm(table); 
 		hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 		hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 		HibernateUtil.saveObject(hbm, null);
@@ -502,23 +433,5 @@ public class InitCfgSystemService extends AService{
 		
 		// 清空缓存
 		table.clear();
-	}
-	
-	/**
-	 * 添加其他核心表的hbm资源
-	 * <p>主要针对只在运行系统中会存在的资源，例如ComProjectSysHibernateHbmLinks关系表等</p>
-	 * @param coreTableHbmContents
-	 */
-	private void addOtherCoreTableHbmContents(List<String> coreTableHbmContents) {
-	}
-	
-	/**
-	 * 给指定数据库加载核心hbm映射文件
-	 * @param database 指定数据库
-	 * @param coreTableHbmContents
-	 */
-	private void loadCoreHbmContentsToDatabase(CfgDatabase database, List<String> coreTableHbmContents){
-		CurrentThreadContext.setDatabaseId(database.getId());
-		HibernateUtil.appendNewConfig(coreTableHbmContents);
 	}
 }

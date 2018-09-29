@@ -269,7 +269,9 @@ _currentSecretLevel                                     --当前用户密级
 _currentOrgId                                           --当前用户所属组织id，如果是在sql脚本中使用该参数时，请使用in操作符，并用()括起来，例org_id in ($_currentOrgId$)
 _currentDeptId                                          --当前用户所属部门id，同上
 _currentPositionId                                      --当前用户所属岗位id，同上
+_currentRoleId                                          --当前用户所属角色id，同上
 _currentUserGroupId                                     --当前用户所属用户组id，同上
+_currentSecretLevel										--当前用户密级
 ```
 
 ### (二)、表资源的内置参数
@@ -285,7 +287,9 @@ _currentSecretLevel                                     --当前用户密级
 _currentOrgId                                           --当前用户所属组织id
 _currentDeptId                                          --当前用户所属部门id
 _currentPositionId                                      --当前用户所属岗位id
+_currentRoleId                                          --当前用户所属角色id，同上
 _currentUserGroupId                                     --当前用户所属用户组id，同上
+_currentSecretLevel										--当前用户密级
 ```
 
 ### (三)、消息推送系统接口

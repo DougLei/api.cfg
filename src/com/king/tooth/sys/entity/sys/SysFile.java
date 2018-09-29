@@ -277,7 +277,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("文件表");
 		table.setComments("文件表");
 		
@@ -286,7 +286,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_FILE";
 	}
 

@@ -46,7 +46,7 @@ public class SysUserRoleLinks implements Serializable, ITable {
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setResourceName("SysUserRoleLinks");
 		table.setName("系统用戶和角色的关联关系表");
 		table.setComments("系统用戶和角色的关联关系表");
@@ -56,7 +56,7 @@ public class SysUserRoleLinks implements Serializable, ITable {
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_USER_ROLE_LINKS";
 	}
 }

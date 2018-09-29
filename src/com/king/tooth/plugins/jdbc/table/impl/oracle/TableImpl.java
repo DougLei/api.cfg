@@ -64,7 +64,7 @@ public class TableImpl extends AbstractTableHandler{
 	protected void analysisTableComments(ComTabledata table, boolean isAdd) {
 		if(table.getComments() != null){
 			createCommentSql.append("comment on table ")
-							.append(table.toGetTableName())
+							.append(table.getTableName())
 							.append(" is '")
 							.append(table.getComments())
 							.append("';");

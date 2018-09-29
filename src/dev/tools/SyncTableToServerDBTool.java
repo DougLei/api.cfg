@@ -9,9 +9,9 @@ import java.sql.Statement;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.entity.sys.SysFile;
-import com.king.tooth.sys.entity.sys.SysHibernateHbm;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -61,11 +61,11 @@ public final class SyncTableToServerDBTool extends AService{
 			pst = conn.prepareStatement("update sys_hibernate_hbm set hbm_content = ? where id = ?");
 			
 			String hbmId;
-			SysHibernateHbm hbm;
+			CfgHibernateHbm hbm;
 			SysResource resource;
 			for (ComTabledata table : tables) {
-				if(dbTableHandler.filterTable(true, table.toGetTableName()).size() == 1){
-					System.err.println("表名为["+table.toGetTableName()+"]的表，在服务器数据库中已经存在，不能能再进行操作");
+				if(dbTableHandler.filterTable(true, table.getTableName()).size() == 1){
+					System.err.println("表名为["+table.getTableName()+"]的表，在服务器数据库中已经存在，不能能再进行操作");
 					continue;
 				}
 				
@@ -73,10 +73,10 @@ public final class SyncTableToServerDBTool extends AService{
 				dbTableHandler.createTable(table, true);
 				
 				// 2、获取hbm文件， 组装hbm对象，获取插入hbm数据的sql，并执行
-				hbm = new SysHibernateHbm(table);
+				hbm = new CfgHibernateHbm(table);
 				hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 				hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, false, "C:\\devlopment\\api\\projects\\api.cfg\\resources\\hibernateMapping\\template\\hibernate.hbm.xml.ftl"));
-				hbmId = executeInsertSysHibernateHbmSql(st, hbm, table.getResourceName());
+				hbmId = executeInsertCfgHibernateHbmSql(st, hbm, table.getResourceName());
 				
 				// 3、获取插入资源数据的sql，并执行
 				resource = table.turnToResource();
@@ -99,14 +99,14 @@ public final class SyncTableToServerDBTool extends AService{
 	}
 	
 	/**
-	 * 获取插入SysHibernateHbm表的sql语句，并执行
+	 * 获取插入CfgHibernateHbm表的sql语句，并执行
 	 * @param st
 	 * @param hbm
 	 * @param resourceName 
 	 * @return
 	 * @throws SQLException 
 	 */
-	private static String executeInsertSysHibernateHbmSql(Statement st, SysHibernateHbm hbm, String resourceName) throws SQLException {
+	private static String executeInsertCfgHibernateHbmSql(Statement st, CfgHibernateHbm hbm, String resourceName) throws SQLException {
 		String id = ResourceHandlerUtil.getIdentity();
 		// 先尝试删除之前的数据，再添加新的数据
 		st.executeUpdate("delete sys_hibernate_hbm where resource_name = '"+resourceName+"'");

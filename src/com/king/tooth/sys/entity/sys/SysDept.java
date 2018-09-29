@@ -140,7 +140,7 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("部门表");
 		table.setComments("部门表");
 		
@@ -149,7 +149,7 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_DEPT";
 	}
 

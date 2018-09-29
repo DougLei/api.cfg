@@ -406,7 +406,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
 		
@@ -414,7 +414,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "COM_COLUMNDATA";
 	}
 

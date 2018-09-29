@@ -100,7 +100,7 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("字段编码规则表");
 		table.setComments("字段编码规则表");
 		
@@ -108,7 +108,7 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "CFG_COLUMN_CODE_RULE";
 	}
 

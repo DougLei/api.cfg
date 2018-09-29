@@ -87,13 +87,6 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	@JSONField(serialize = false)
 	private String dbType;
 
-	/**
-	 * 表对应的hbmContent
-	 * 在发布数据库时使用
-	 */
-	@JSONField(serialize = false)
-	private String hbmContent;
-	
 	public ComTabledata() {
 	}
 	public ComTabledata(String tableName) {
@@ -168,12 +161,6 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	}
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
-	}
-	public String getHbmContent() {
-		return hbmContent;
-	}
-	public void setHbmContent(String hbmContent) {
-		this.hbmContent = hbmContent;
 	}
 	public Integer getIsBuildModel() {
 		return isBuildModel;
@@ -266,7 +253,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("表信息表");
 		table.setComments("表信息表");
 		
@@ -274,7 +261,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "COM_TABLEDATA";
 	}
 	

@@ -76,7 +76,7 @@ public class SysUserPermissionCache extends BasicEntity implements ITable, IEnti
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("系统用户权限缓存表");
 		table.setComments("系统用户权限缓存表");
 		
@@ -85,7 +85,7 @@ public class SysUserPermissionCache extends BasicEntity implements ITable, IEnti
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_USER_PERMISSION_CACHE";
 	}
 

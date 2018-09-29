@@ -36,7 +36,7 @@ public class DynamicBasicColumnUtil {
 		projectIdColumn.setComments("所属项目主键");
 		table.getColumns().add(projectIdColumn);
 		
-		if(!table.toGetTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
+		if(!table.getTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
 			ComColumndata createDateColumn = new ComColumndata("create_date", BuiltinDataType.DATE, 0);
 			createDateColumn.setName("创建时间");
 			createDateColumn.setComments("创建时间");

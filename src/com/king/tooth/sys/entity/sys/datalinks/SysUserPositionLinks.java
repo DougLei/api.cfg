@@ -53,7 +53,7 @@ public class SysUserPositionLinks implements Serializable, ITable {
 	}
 	
 	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toGetTableName());
+		ComTabledata table = new ComTabledata(toDropTable());
 		table.setResourceName("SysUserPositionLinks");
 		table.setName("人员和职务的关联关系表");
 		table.setComments("人员和职务的关联关系表");
@@ -63,7 +63,7 @@ public class SysUserPositionLinks implements Serializable, ITable {
 		return table;
 	}
 
-	public String toGetTableName() {
+	public String toDropTable() {
 		return "SYS_USER_POSITION_LINKS";
 	}
 }
