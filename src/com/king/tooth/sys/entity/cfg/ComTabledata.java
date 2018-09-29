@@ -45,7 +45,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	 * 表类型：1:单表、2、表类型/游标类型
 	 * <p>默认值:1</p>
 	 */
-	private Integer tableType;
+	private Integer type;
 	/**
 	 * 注释
 	 */
@@ -138,14 +138,14 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	public void setColumns(List<ComColumndata> columns) {
 		this.columns = columns;
 	}
-	public Integer getTableType() {
-		return tableType;
-	}
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
 	}
-	public void setTableType(Integer tableType) {
-		this.tableType = tableType;
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
 	}
 	public String getComments() {
 		return comments;
@@ -188,7 +188,6 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		ComColumndata nameColumn = new ComColumndata("name", BuiltinDataType.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
-		nameColumn.setOrderCode(1);
 		columns.add(nameColumn);
 		
 		ComColumndata tableNameColumn = new ComColumndata("table_name", BuiltinDataType.STRING, 80);
@@ -198,7 +197,6 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		tableNameColumn.setName("表名");
 		tableNameColumn.setIsNullabled(0);
 		tableNameColumn.setComments("表名");
-		tableNameColumn.setOrderCode(2);
 		columns.add(tableNameColumn);
 		
 		ComColumndata oldTableNameColumn = new ComColumndata("old_table_name", BuiltinDataType.STRING, 80);
@@ -207,41 +205,23 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		}
 		oldTableNameColumn.setName("旧表名");
 		oldTableNameColumn.setComments("如果修改了表名，这里记录之前的表名");
-		oldTableNameColumn.setOrderCode(2);
 		columns.add(oldTableNameColumn);
 		
 		ComColumndata resourceNameColumn = new ComColumndata("resource_name", BuiltinDataType.STRING, 60);
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
-		resourceNameColumn.setOrderCode(3);
 		columns.add(resourceNameColumn);
 		
-		ComColumndata tableTypeColumn = new ComColumndata("table_type", BuiltinDataType.INTEGER, 1);
-		tableTypeColumn.setName("表类型");
-		tableTypeColumn.setComments("1:单表、2、表类型/游标类型");
-		tableTypeColumn.setDefaultValue("1");
-		tableTypeColumn.setOrderCode(4);
-		columns.add(tableTypeColumn);
+		ComColumndata typeColumn = new ComColumndata("type", BuiltinDataType.INTEGER, 1);
+		typeColumn.setName("表类型");
+		typeColumn.setComments("1:单表、2、表类型/游标类型");
+		typeColumn.setDefaultValue("1");
+		columns.add(typeColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", BuiltinDataType.STRING, 200);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
-		commentsColumn.setOrderCode(10);
 		columns.add(commentsColumn);
-		
-		ComColumndata isCoreColumn = new ComColumndata("is_core", BuiltinDataType.INTEGER, 1);
-		isCoreColumn.setName("是否是核心表");
-		isCoreColumn.setComments("是否是核心表:这个由后端开发人员控制，在发布时会用到");
-		isCoreColumn.setDefaultValue("0");
-		isCoreColumn.setOrderCode(11);
-		columns.add(isCoreColumn);
-		
-		ComColumndata isResourceColumn = new ComColumndata("is_resource", BuiltinDataType.INTEGER, 1);
-		isResourceColumn.setName("是否是资源");
-		isResourceColumn.setComments("是否是资源:这个字段由开发人员控制，不开放给用户");
-		isResourceColumn.setDefaultValue("0");
-		isResourceColumn.setOrderCode(12);
-		columns.add(isResourceColumn);
 		
 		ComColumndata isBuildModelColumn = new ComColumndata("is_build_model", BuiltinDataType.INTEGER, 1);
 		isBuildModelColumn.setName("是否建模");

@@ -3,7 +3,6 @@ package test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 
@@ -22,7 +21,6 @@ public class HbmOperTest {
 		table2.setId("123121111");
 		table2.setColumns(columns);
 //		table2.setTableName("DatabaseTest");
-		table2.setTableType(BuiltinDatabaseData.PARENT_SUB_TABLE);
 		tabledatas.add(table2);
 		
 		
