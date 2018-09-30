@@ -327,6 +327,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					}	
 				}
 				index=1;
+				inSqlResultSetMetadataInfoIndex = 0;
 			}
 			this.sqlParams.clear();
 		}
@@ -421,8 +422,12 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 						}
 					}else{// 否则就是post请求，直接判断，不需要转换
 						if(ssp.getIsTableType() == 1){
+							if(inSqlResultSetMetadataInfoList == null || inSqlResultSetMetadataInfoList.size() == 0){
+								return "["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
+							}
+							
 							actualInValue = IJsonUtil.getIJson(dataValueStr);
-							return validProcedureSqlInResultSet(ssp, rmi, index, (IJson)actualInValue);
+							return validProcedureSqlInResultSet(ssp, index, (IJson)actualInValue);
 						}else{
 							return validDataIsLegal(actualInValue, rmi, index);
 						}
@@ -440,7 +445,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else{
-			return "parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)]";
+			return "parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)]，请联系后端系统开发人员";
 		}
 		return null;
 	}
@@ -450,15 +455,22 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	/**
 	 * 验证存储过程传入的结果集
 	 * @param ssp
-	 * @param rmi
 	 * @param index
 	 * @param ijson
 	 * @return
 	 */
-	private String validProcedureSqlInResultSet(ComSqlScriptParameter ssp, ResourceMetadataInfo rmi, int index, IJson ijson) {
-		// TODO
+	private String validProcedureSqlInResultSet(ComSqlScriptParameter ssp, int index, IJson ijson) {
+		List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = inSqlResultSetMetadataInfoList.get(inSqlResultSetMetadataInfoIndex++);
+		if(inSqlResultSetMetadataInfos == null || inSqlResultSetMetadataInfos.size() == 0){
+			return "第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
+		}
+		if(ijson != null && ijson.size() > 0){
+			return validTableResourceMetadata("操作第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表对象中，", ijson, false, false);
+		}
 		return null;
 	}
+	/** 如果调用存储过程，传入表参数类型，这里记录表参数元数据集合的下标，用来取对应的元数据集合来做数据验证 */
+	private int inSqlResultSetMetadataInfoIndex = 0;
 	
 	/**
 	 * 获取简单的sql参数值

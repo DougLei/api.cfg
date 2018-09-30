@@ -1,13 +1,20 @@
 package com.king.tooth.web.entity.request.valid.data;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.RequestBody;
 
 /**
@@ -104,6 +111,95 @@ public abstract class AbstractResourceVerifier {
 		return null;
 	}
 	private String dataValueStr;
+	
+	/**
+	 * 验证表资源的元数据
+	 * @param ijson
+	 * @param isValidIdPropIsNull 是否验证id属性为空
+	 * @param isValidUniqueInDb 是否在数据库中验证值唯一(如果是表类型，则不需要去数据库的实际表中验证是否唯一，因为目前也无法验证)
+	 * @return
+	 */
+	protected String validTableResourceMetadata(String desc, IJson ijson, boolean isValidIdPropIsNull, boolean isValidUniqueInDb){
+		int size = ijson.size();
+		
+		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
+		JSONObject data = null;
+		boolean dataValueIsNull;
+		Set<String> propKeys = null;
+		Object dataValue = null;
+		String validDataIsLegalResult = null;
+		for(int i=0;i<size;i++){
+			data = ijson.get(i);
+			if(isValidIdPropIsNull && StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
+				return desc + "第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
+			}
+			
+			// 验证每个对象的属性，是否存在
+			propKeys = data.keySet();
+			for (String propName : propKeys) {
+				if(validPropUnExists(false, propName, resourceMetadataInfos)){
+					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
+				}
+			}
+			
+			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
+				dataValue = data.get(rmi.getPropName());
+				dataValueIsNull = StrUtils.isEmpty(dataValue);
+				
+				// 验证不能为空
+				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
+					return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值不能为空";
+				}
+				
+				if(!dataValueIsNull){
+					// 两个大字段类型不用检查
+					if(DataTypeConstants.CLOB.equals(rmi.getDataType()) || DataTypeConstants.BLOB.equals(rmi.getDataType())){
+						continue;
+					}
+					validDataIsLegalResult = validDataIsLegal(dataValue, rmi, (i+1));
+					if(validDataIsLegalResult != null){
+						return validDataIsLegalResult;
+					}
+					
+					// 验证唯一约束
+					if(rmi.getIsUnique() == 1){
+						uniqueConstraintProps.add(rmi);
+						if(isValidUniqueInDb && validDataIsExists(rmi.getPropName(), dataValue)){
+							return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
+						}
+					}
+				}
+			}
+		}
+		
+		// 验证一次提交的数组中，是否有重复的值，违反了唯一约束
+		if(size > 1 && uniqueConstraintProps.size()>0){
+			for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
+				for(int i=0;i<size-1;i++){
+					dataValue = ijson.get(i).get(uniqueConstraintProp.getPropName());
+					if(StrUtils.notEmpty(dataValue)){
+						for(int j=i+1;j<size;j++){
+							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
+								return desc + "第"+(i+1)+"个对象和第"+(j+1)+"个对象，["+uniqueConstraintProp.getDescName()+"] 的值重复，操作失败";
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 验证数据是否已经存在
+	 * @param propName
+	 * @param dataValue
+	 * @return
+	 */
+	private boolean validDataIsExists(String propName, Object dataValue) {
+		long count = (long)HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		return (count > 0);
+	}
 	
 	public void clear(){
 		if(parentResourceMetadataInfos != null && parentResourceMetadataInfos.size() > 0){
