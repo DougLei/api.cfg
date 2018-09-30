@@ -378,7 +378,6 @@ public class InitCfgSystemService extends AService{
 					hcs.add(obj.toString());
 				}
 			}
-			System.out.println(hcs);
 			HibernateUtil.appendNewConfig(hcs);
 			hbmContents.clear();
 			hcs.clear();
