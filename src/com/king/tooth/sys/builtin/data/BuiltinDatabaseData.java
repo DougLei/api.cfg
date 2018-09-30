@@ -6,21 +6,6 @@ package com.king.tooth.sys.builtin.data;
  */
 public class BuiltinDatabaseData {
 	
-	// -----------------------------------------------------------------------------
-	/**
-	 * 表类型：1:单表
-	 */
-	public static final int SINGLE_TABLE = 1;
-	/**
-	 * 表类型：2:树表
-	 */
-	public static final int TREE_TABLE = 2;
-	/**
-	 * 表类型：3:父子关系表
-	 */
-	public static final int PARENT_SUB_TABLE = 3;
-	
-	// -----------------------------------------------------------------------------
 	/**
 	 * 数据库类型：oracle
 	 */
