@@ -359,7 +359,7 @@ public class ProcedureUtil {
 					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
 						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, CfgSqlResultset.OUT);
-						csr.setSqlId(sqlScriptId);
+						csr.setSqlScriptId(sqlScriptId);
 						
 						if(isSqlServer){
 							csr.setBatchOrder(outSqlResultsetIndex);

@@ -25,7 +25,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	/**
 	 * 关联的sql脚本id
 	 */
-	private String sqlId;
+	private String sqlScriptId;
 	/**
 	 * 关联的sql脚本参数id
 	 * <p>oracle通过输出参数返回结果集,[oracle使用字段]</p>
@@ -87,11 +87,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public CfgSqlResultset() {
 	}
 
-	public String getSqlId() {
-		return sqlId;
+	public String getSqlScriptId() {
+		return sqlScriptId;
 	}
-	public void setSqlId(String sqlId) {
-		this.sqlId = sqlId;
+	public void setSqlScriptId(String sqlScriptId) {
+		this.sqlScriptId = sqlScriptId;
 	}
 	public String getTableId() {
 		return tableId;
@@ -158,10 +158,10 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(9+7);
 		
-		ComColumndata sqlIdColumn = new ComColumndata("sql_id", DataTypeConstants.STRING, 32);
-		sqlIdColumn.setName("关联的sql脚本id");
-		sqlIdColumn.setComments("关联的sql脚本id");
-		columns.add(sqlIdColumn);
+		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", DataTypeConstants.STRING, 32);
+		sqlScriptIdColumn.setName("关联的sql脚本id");
+		sqlScriptIdColumn.setComments("关联的sql脚本id");
+		columns.add(sqlScriptIdColumn);
 		
 		ComColumndata sqlParameterIdColumn = new ComColumndata("sql_parameter_id", DataTypeConstants.STRING, 32);
 		sqlParameterIdColumn.setName("关联的sql脚本参数id");

@@ -204,7 +204,7 @@ public class SqlStatementParserUtil {
 		List<CfgSqlResultset> inSqlResultsets = sqlScript.getInSqlResultsets();
 		if(inSqlResultsets != null && inSqlResultsets.size() > 0){
 			for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
-				inSqlResultset.setSqlId(sqlScriptId);
+				inSqlResultset.setSqlScriptId(sqlScriptId);
 				HibernateUtil.saveObject(inSqlResultset, null);
 			}
 			inSqlResultsets.clear();
@@ -696,7 +696,7 @@ public class SqlStatementParserUtil {
 					throw new IllegalArgumentException("在资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源中，请指定具体查询的列名，禁止使用["+column.toString()+"]查询");
 				}
 				csr = new CfgSqlResultset(columnName, (i+1), CfgSqlResultset.OUT);
-				csr.setSqlId(sql.getId());
+				csr.setSqlScriptId(sql.getId());
 				sqlResultSets.add(csr);
 				
 				if(!includeIdColumn && csr.getPropName() == ResourcePropNameConstants.ID){
@@ -718,7 +718,7 @@ public class SqlStatementParserUtil {
 			
 			String sqlScriptId = sql.getId();
 			for (CfgSqlResultset sqlResultSet : sqlResultSets) {
-				sqlResultSet.setSqlId(sqlScriptId);
+				sqlResultSet.setSqlScriptId(sqlScriptId);
 				HibernateUtil.saveObject(sqlResultSet, null);// 将每条结果集信息保存到数据库
 			}
 			sqlResultSets.clear();

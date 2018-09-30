@@ -60,6 +60,11 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntityProp
 	 * 排序值
 	 */
 	private Integer orderCode;
+	/**
+	 * 是否有效
+	 * <p>默认值为1</p>
+	 */
+	private Integer isEnabled;
 	
 	//-----------------------------------------------
 	
@@ -120,10 +125,16 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntityProp
 	public void setStructTree(String structTree) {
 		this.structTree = structTree;
 	}
+	public Integer getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(Integer isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(9+7);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(10+7);
 		
 		ComColumndata refProjectIdColumn = new ComColumndata("ref_project_id", DataTypeConstants.STRING, 32);
 		refProjectIdColumn.setName("关联的项目主键");
@@ -172,6 +183,12 @@ public class ComProjectModule extends BasicEntity implements ITable, IEntityProp
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
 		columns.add(orderCodeColumn);
+		
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		columns.add(isEnabledColumn);
 		
 		return columns;
 	}
