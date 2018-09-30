@@ -56,7 +56,7 @@ public class Boolean implements UserType{
 	 */
 	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
 		if(StrUtils.notEmpty(value)){
-			if(value.toString().equals("true")){
+			if(value.toString().equals("true") || value.toString().equals("1")){
 				st.setString(index, "1");
 			}else{
 				st.setString(index, "0");
