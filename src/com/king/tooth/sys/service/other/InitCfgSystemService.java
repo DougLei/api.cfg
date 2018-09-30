@@ -77,7 +77,7 @@ public class InitCfgSystemService extends AService{
 	 * 系统首次启动时，初始化系统的基础数据
 	 */
 	public void firstStart() {
-		Log4jUtil.info("loadSysBasicDatasBySysFirstStart..........");
+		Log4jUtil.info("firstStart..........");
 		try {
 			processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 			initDatabaseInfo();// 初始化数据库信息
@@ -313,7 +313,7 @@ public class InitCfgSystemService extends AService{
 	 * 主要是hbm内容
 	 */
 	public void start() {
-		Log4jUtil.info("loadHbmsByStart..........");
+		Log4jUtil.info("start..........");
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
 			// 先加载当前系统数据库的所有hbm映射文件
@@ -374,8 +374,11 @@ public class InitCfgSystemService extends AService{
 			hbmContents = HibernateUtil.executeListQueryByHqlArr("100", (i+1)+"", "select content from CfgHibernateHbm where resourceName !='CfgHibernateHbm' and refDatabaseId = ?", database.getId());
 			hcs = new ArrayList<String>(hbmContents.size());
 			for (Object obj : hbmContents) {
-				hcs.add(obj+"");
+				if(obj != null){
+					hcs.add(obj.toString());
+				}
 			}
+			System.out.println(hcs);
 			HibernateUtil.appendNewConfig(hcs);
 			hbmContents.clear();
 			hcs.clear();
