@@ -339,7 +339,7 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 		objectNameColumn.setComments("存储过程、视图等");
 		columns.add(objectNameColumn);
 		
-		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", DataTypeConstants.STRING, 4000);
+		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", DataTypeConstants.STRING, 8000);
 		parameterNameRecordsColumn.setName("sql参数名的记录");
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
 		columns.add(parameterNameRecordsColumn);
