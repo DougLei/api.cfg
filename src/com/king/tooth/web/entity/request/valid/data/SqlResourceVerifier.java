@@ -69,7 +69,9 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		}
 		if(actualParamsList != null && actualParamsList.size() > 0){
 			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
-				actualParams.clear();
+				if(actualParams != null && actualParams.size() > 0){
+					actualParams.clear();
+				}
 			}
 			actualParamsList.clear();
 		}
@@ -319,10 +321,12 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 							if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
 								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), null, index);
 							}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
-								for (ComSqlScriptParameter ssap : actualParams) {
-									if(ssp.getParameterName().equals(ssap.getParameterName())){
-										ssp.setActualInValue(ssap.getActualInValue());
-										break;
+								if(actualParams != null){
+									for (ComSqlScriptParameter ssap : actualParams) {
+										if(ssp.getParameterName().equals(ssap.getParameterName())){
+											ssp.setActualInValue(ssap.getActualInValue());
+											break;
+										}
 									}
 								}
 								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), rmi, index);

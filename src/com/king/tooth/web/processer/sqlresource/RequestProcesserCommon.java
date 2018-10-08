@@ -9,6 +9,7 @@ import org.hibernate.Query;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
@@ -132,11 +133,11 @@ public class RequestProcesserCommon extends CommonProcesser{
 		}else{
 			String operType = null;
 			if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getSqlScriptType())){
-				operType = "_add";
+				operType = "_" + OperDataTypeConstants.ADD;
 			}else if(SqlStatementTypeConstants.UPDATE.equals(sqlScript.getSqlScriptType())){
-				operType = "_edit";
+				operType = "_" + OperDataTypeConstants.EDIT;
 			}else if(SqlStatementTypeConstants.DELETE.equals(sqlScript.getSqlScriptType())){
-				operType = "_delete";
+				operType = "_" + OperDataTypeConstants.DELETE;
 			}
 			
 			IJson ijson = requestBody.getFormData();

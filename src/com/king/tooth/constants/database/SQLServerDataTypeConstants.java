@@ -9,6 +9,8 @@ public class SQLServerDataTypeConstants {
 	public static final String VARCHAR = "varchar";
 	
 	public static final String CHAR = "char";
+
+	public static final String BIT = "bit";
 	
 	public static final String INT = "int";
 	

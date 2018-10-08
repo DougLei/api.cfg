@@ -136,6 +136,8 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			return DataTypeConstants.STRING;
 		}else if(SQLServerDataTypeConstants.CHAR.equals(dbDataType)){
 			return DataTypeConstants.CHAR;
+		}else if(SQLServerDataTypeConstants.BIT.equals(dbDataType)){
+			return DataTypeConstants.BOOLEAN;
 		}else if(SQLServerDataTypeConstants.INT.equals(dbDataType)){
 			return DataTypeConstants.INTEGER;
 		}else if(SQLServerDataTypeConstants.DECIMAL.equals(dbDataType)){
@@ -143,7 +145,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		}else if(SQLServerDataTypeConstants.DATETIME.equals(dbDataType)){
 			return DataTypeConstants.DATE;
 		}
-		throw new IllegalArgumentException("系统目前不支持数据库的["+dbDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：oracle数据库[varchar2、char、number、date]、sqlserver数据库[varchar、char、int、decimal、datetime]");
+		throw new IllegalArgumentException("系统目前不支持数据库的["+dbDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：oracle数据库[varchar2、char、number、date]、sqlserver数据库[varchar、char、bit、int、decimal、datetime]");
 	}
 	
 	public String getParameterName() {

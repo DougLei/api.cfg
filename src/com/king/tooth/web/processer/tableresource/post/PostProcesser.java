@@ -1,6 +1,7 @@
 package com.king.tooth.web.processer.tableresource.post;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -53,7 +54,7 @@ public abstract class PostProcesser extends RequestProcesser {
 	 */
 	protected void saveData(String resourceName, JSONObject data){
 		HibernateUtil.saveObject(resourceName, data, null);
-		data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_add");
+		data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.ADD);
 	}
 	
 	/**

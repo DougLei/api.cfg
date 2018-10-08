@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -43,7 +44,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 				hqlParameterValues.remove(0);
 			}
 			params.clear();
-			updatedJsonObj.put(ResourcePropNameConstants.FOCUSED_OPER, updatedJsonObj.getString(ResourcePropNameConstants.ID) + "_edit");
+			updatedJsonObj.put(ResourcePropNameConstants.FOCUSED_OPER, updatedJsonObj.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.EDIT);
 		}
 		installResponseBodyForUpdateData(null, json.getJson(), true);
 		return true;

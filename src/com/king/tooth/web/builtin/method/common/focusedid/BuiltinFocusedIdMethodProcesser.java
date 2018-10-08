@@ -3,6 +3,7 @@ package com.king.tooth.web.builtin.method.common.focusedid;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.AbstractBuiltinCommonMethod;
@@ -44,23 +45,23 @@ public class BuiltinFocusedIdMethodProcesser extends AbstractBuiltinCommonMethod
 			if(tmp.length == 1){
 				throw new IllegalArgumentException("定位数据时，传入的focusedId值格式不正确，请联系后端系统开发人员："+fid);
 			}
-			if("add".equals(tmp[1])){
+			if(OperDataTypeConstants.ADD.equals(tmp[1])){
 				if(addFocusedIds == null){
 					addFocusedIds = new ArrayList<Object>(focusedIdArr.length);
 				}
 				addFocusedIds.add(tmp[0]);
-			}else if("edit".equals(tmp[1])){
+			}else if(OperDataTypeConstants.EDIT.equals(tmp[1])){
 				if(editFocusedIds == null){
 					editFocusedIds = new ArrayList<Object>(focusedIdArr.length);
 				}
 				editFocusedIds.add(tmp[0]);
-			}else if("delete".equals(tmp[1])){
+			}else if(OperDataTypeConstants.DELETE.equals(tmp[1])){
 				if(deleteFocusedIds == null){
 					deleteFocusedIds = new ArrayList<Object>(focusedIdArr.length);
 				}
 				deleteFocusedIds.add(tmp[0]);
 			}else{
-				throw new IllegalArgumentException("定位数据时，传入的focusedId值出现异常，不应存在非_add或_edit的数据，请联系系统开发人员："+fid);
+				throw new IllegalArgumentException("定位数据时，传入的focusedId值出现异常，不应存在非_"+OperDataTypeConstants.ADD+"或_"+OperDataTypeConstants.EDIT+"或_"+OperDataTypeConstants.DELETE+"的数据，请联系系统开发人员："+fid);
 			}
 			focusedIdBuffer.append(tmp[0]).append(",");
 		}
@@ -76,6 +77,9 @@ public class BuiltinFocusedIdMethodProcesser extends AbstractBuiltinCommonMethod
 	}
 	public List<Object> getEditFocusedIds() {
 		return editFocusedIds;
+	}
+	public List<Object> getDeleteFocusedIds() {
+		return deleteFocusedIds;
 	}
 	public String[] getFocusedId() {
 		return focusedId;
