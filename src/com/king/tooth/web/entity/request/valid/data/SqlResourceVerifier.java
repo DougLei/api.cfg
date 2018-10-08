@@ -287,7 +287,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		int index = 1;
 		// 如果没有传入任何参数，还能进入到这里，说明配置的参数要么是系统内置，要么是有默认值的
 		if((actualParamsList == null || actualParamsList.size() == 0)){
-			// 如果配置了参数，但是没有传入任何参数
+			// 如果配置了sql参数，但是实际调用的时候没有传入任何参数
 			for (ComSqlScriptParameter sqlParam : this.sqlParams) {
 				if(sqlParam.getParameterFrom() == ComSqlScriptParameter.USER_INPUT && StrUtils.isEmpty(sqlParam.getDefaultValue())){
 					return "在调用sql资源时，必须传入名为"+sqlParam.getParameterName()+"的参数值";
@@ -378,6 +378,9 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		
 		if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){
 			if(ssp.getActualInValue() == null){
+				if(StrUtils.isEmpty(ssp.getDefaultValue())){
+					return "第"+index+"个对象，必须传入名为"+ssp.getParameterName()+"的参数值";
+				}
 				ssp.setActualInValue(ssp.getDefaultValue());
 			}
 			if(rmi != null){
