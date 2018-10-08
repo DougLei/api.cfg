@@ -1,7 +1,7 @@
 package com.king.tooth.sys.service;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -52,7 +52,7 @@ public abstract class AService {
 		}else{
 			return "删除数据时，传入的id数据数组长度小于1";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, hql.toString());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, hql.toString());
 		hql.setLength(0);
 		return null;
 	}

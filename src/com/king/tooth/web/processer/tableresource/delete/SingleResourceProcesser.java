@@ -3,7 +3,7 @@ package com.king.tooth.web.processer.tableresource.delete;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -19,7 +19,7 @@ public final class SingleResourceProcesser extends DeleteProcesser {
 	protected boolean doDeleteProcess() {
 		String deleteHql = getDeleteHql().toString();
 		List<Object> tmpParameters = new ArrayList<Object>(hqlParameterValues);
-		HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.DELETE, deleteHql, tmpParameters);
+		HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.DELETE, deleteHql, tmpParameters);
 		installResponseBodyForDeleteData(hqlParameterValues, true);
 		return true;
 	}

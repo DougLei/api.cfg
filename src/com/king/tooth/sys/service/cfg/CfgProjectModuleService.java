@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
@@ -76,7 +76,7 @@ public class CfgProjectModuleService extends AService {
 	public String deleteProjectModule(String projectModuleId) {
 		getObjectById(projectModuleId, ComProjectModule.class);
 		
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProjectModule where "+ResourcePropNameConstants.ID+" = '"+projectModuleId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComProjectModule where "+ResourcePropNameConstants.ID+" = '"+projectModuleId+"'");
 		return null;
 	}
 	

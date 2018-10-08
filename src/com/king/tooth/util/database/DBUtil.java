@@ -14,6 +14,7 @@ import oracle.jdbc.OracleTypes;
 import org.hibernate.jdbc.Work;
 
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.util.CloseUtil;
@@ -122,18 +123,18 @@ public class DBUtil {
 					ComSqlScript tmpSql = sqls.get(0);
 					if(isSqlServler){
 						pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
-						if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType())){
+						if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType())){
 							pst.setString(2, "P");
-						}else if(BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
+						}else if(SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
 							pst.setString(2, "V");
 						}else{
 							throw new IllegalArgumentException("系统目前不支持在sqlserver数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");
 						}
 					}else if(isOracle){
 						pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
-						if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType())){
+						if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType())){
 							pst.setString(2, "PROCEDURE");
-						}else if(BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
+						}else if(SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
 							pst.setString(2, "VIEW");
 						}else{
 							throw new IllegalArgumentException("系统目前不支持在oracle数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");

@@ -1,7 +1,7 @@
 package com.king.tooth.web.entity.request;
 
 import com.king.tooth.constants.ResourceInfoConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -74,7 +74,7 @@ public class ResourceInfo {
 			if(ResourceInfoConstants.SQL == resourceType){
 				sqlScriptResource = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(reqResource.getRefResourceId());
 				
-				if(BuiltinDatabaseData.VIEW.equals(sqlScriptResource.getSqlScriptType())){
+				if(SqlStatementTypeConstants.VIEW.equals(sqlScriptResource.getSqlScriptType())){
 					throw new IllegalArgumentException("系统目前不支持直接处理视图类型的sql资源");
 				}
 			}

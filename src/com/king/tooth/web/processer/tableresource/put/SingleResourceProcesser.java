@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -35,7 +35,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 			hqlParameterValues.addAll(0, params);// 将set的值，以及where id条件的值一并存储到参数集合，统一调用
 			
 			tmpParameters = new ArrayList<Object>(hqlParameterValues);
-			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql, tmpParameters);
+			HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql, tmpParameters);
 			
 			// 将set的值，以及where id条件的值从hql参数集合移除
 			tmpCount = params.size();

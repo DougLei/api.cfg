@@ -27,7 +27,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.EncodingConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.service.AService;
@@ -317,7 +317,7 @@ public class SysFileService extends AService{
 			}
 			updateDownloadCountHql.setLength(updateDownloadCountHql.length()-1);
 			updateDownloadCountHql.append(")");
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, updateDownloadCountHql.toString(), fileIdArr);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, updateDownloadCountHql.toString(), fileIdArr);
 			
 			File tmpFile;
 			if(fileIdArr.length == 1){

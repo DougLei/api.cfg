@@ -1,6 +1,6 @@
 package com.king.tooth.web.processer.sqlresource.post;
 
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.web.processer.sqlresource.RequestProcesser;
 
 /**
@@ -10,7 +10,7 @@ import com.king.tooth.web.processer.sqlresource.RequestProcesser;
 public final class SingleResourceProcesser extends RequestProcesser {
 
 	protected boolean doProcess() {
-		doModifyProcess(BuiltinDatabaseData.INSERT);
+		doModifyProcess(SqlStatementTypeConstants.INSERT);
 		return true;
 	}
 

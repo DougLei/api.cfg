@@ -10,8 +10,8 @@ import org.hibernate.Query;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -95,7 +95,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
-		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程
 			JSONArray jsonArray = ProcedureUtil.executeProcedure(sqlScript);
 			
 			if(jsonArray != null && jsonArray.size() > 0){
@@ -131,13 +131,13 @@ public class RequestProcesserCommon extends CommonProcesser{
 			setResponseBody(new ResponseBody(urlParams, true));
 		}else{
 			String operType = null;
-			if(BuiltinDatabaseData.INSERT.equals(sqlDesc)){
+			if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getSqlScriptType())){
 				operType = "_add";
-			}else if(BuiltinDatabaseData.UPDATE.equals(sqlDesc)){
+			}else if(SqlStatementTypeConstants.UPDATE.equals(sqlScript.getSqlScriptType())){
 				operType = "_edit";
+			}else if(SqlStatementTypeConstants.DELETE.equals(sqlScript.getSqlScriptType())){
+				operType = "_delete";
 			}
-			
-			// TODO XXXX
 			
 			IJson ijson = requestBody.getFormData();
 			if(operType != null){

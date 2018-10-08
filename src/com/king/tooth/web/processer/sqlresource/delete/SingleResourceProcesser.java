@@ -1,6 +1,6 @@
 package com.king.tooth.web.processer.sqlresource.delete;
 
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.web.processer.sqlresource.RequestProcesser;
 
 /**
@@ -14,7 +14,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 	}
 	
 	protected boolean doProcess() {
-		doModifyProcess(BuiltinDatabaseData.DELETE);
+		doModifyProcess(SqlStatementTypeConstants.DELETE);
 		return true;
 	}
 }

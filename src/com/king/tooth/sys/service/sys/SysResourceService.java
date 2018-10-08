@@ -1,7 +1,7 @@
 package com.king.tooth.sys.service.sys;
 
 import com.king.tooth.annotation.Service;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AService;
@@ -31,7 +31,7 @@ public class SysResourceService extends AService{
 	 * @param resourceId
 	 */
 	public void deleteSysResource(String resourceId){
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysResource where refResourceId = ? and projectId = ?", resourceId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysResource where refResourceId = ? and projectId = ?", resourceId, CurrentThreadContext.getProjectId());
 	}
 	
 	/**
@@ -60,6 +60,6 @@ public class SysResourceService extends AService{
 	 * @param resourceName
 	 */
 	public void updateResourceName(String refResourceId, String resourceName) {
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysResource set resourceName = ? where refResourceId = ? and projectId = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysResource set resourceName = ? where refResourceId = ? and projectId = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
 	}
 }

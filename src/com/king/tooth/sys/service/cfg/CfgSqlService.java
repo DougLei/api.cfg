@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -187,15 +188,15 @@ public class CfgSqlService extends AService {
 			projectIds.clear();
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScript where "+ResourcePropNameConstants.ID+" = ?", sql.getId());
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sql.getId());
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sql.getId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComSqlScript where "+ResourcePropNameConstants.ID+" = ?", sql.getId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sql.getId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sql.getId());
 		HibernateUtil.deleteDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		
 		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(sqlScriptId);
 			
 		// 删除sql脚本资源时，如果是视图、存储过程等，还需要drop对应的对象【删除数据库对象】
-		if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType()) || BuiltinDatabaseData.VIEW.equals(sql.getSqlScriptType())){
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sql.getSqlScriptType())){
 			DBUtil.dropObject(sql);
 		}
 
@@ -217,7 +218,7 @@ public class CfgSqlService extends AService {
 		ComSqlScript tmpSql;
 		for(int i=0;i<len ;i++){
 			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), ComSqlScript.class);
-			if(BuiltinDatabaseData.PROCEDURE.equals(tmpSql.getSqlScriptType()) || BuiltinDatabaseData.VIEW.equals(tmpSql.getSqlScriptType())){
+			if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
 				sqls.add(tmpSql);
 				updateHql.append("'").append(tmpSql.getId()).append("',");
 			}else{
@@ -229,7 +230,7 @@ public class CfgSqlService extends AService {
 		
 		try {
 			DBUtil.createObjects(sqls);
-			HibernateUtil.executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), null);
+			HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql.toString(), null);
 		} catch (Exception e) {
 			return ExceptionUtil.getErrMsg(e);
 		} finally {
@@ -326,7 +327,7 @@ public class CfgSqlService extends AService {
 	 */
 	private List<CfgSqlResultset> findInSqlResultsetsList(ComSqlScript sqlScript) {
 		List<CfgSqlResultset> sqlResultsetsList = null;
-		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){
 			List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
 			if(sqlParams != null && sqlParams.size() > 0){
 				sqlResultsetsList = new ArrayList<CfgSqlResultset>(sqlParams.size());
@@ -358,14 +359,14 @@ public class CfgSqlService extends AService {
 		List<List<CfgSqlResultset>> sqlResultsetsList = null;
 		
 		// 查询语句，直接查询结果集
-		if(BuiltinDatabaseData.SELECT.equals(sqlScript.getSqlScriptType())){
+		if(SqlStatementTypeConstants.SELECT.equals(sqlScript.getSqlScriptType())){
 			sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
 			sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
 					CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and inOut = 2 and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 		}
 		
 		// 存储过程，要判断是否有返回结果集，再查询对应的结果集
-		else if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){
+		else if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){
 			// oracle的存储过程返回结果集，通过输出参数
 			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType())){
 				List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();

@@ -12,9 +12,9 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -415,17 +415,17 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 			String[] sqlScriptArr = SqlStatementParserUtil.parseSqlScript(this.gsqlParser, this);
 			
 			if(isAnalysisParameters == 1){
-				HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", id);// 删除之前的参数
-				if(BuiltinDatabaseData.SELECT.equals(sqlScriptType) || BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType)){
-					HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", id);// 删除之前的所有结果集信息(select/存储过程/视图)
+				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", id);// 删除之前的参数
+				if(SqlStatementTypeConstants.SELECT.equals(sqlScriptType) || SqlStatementTypeConstants.PROCEDURE.equals(sqlScriptType) || SqlStatementTypeConstants.VIEW.equals(sqlScriptType)){
+					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", id);// 删除之前的所有结果集信息(select/存储过程/视图)
 				}
 				
 				// 如果是存储过程，则用另一个方法处理，解析出参数
-				if(BuiltinDatabaseData.PROCEDURE.equals(this.sqlScriptType)){ 
+				if(SqlStatementTypeConstants.PROCEDURE.equals(this.sqlScriptType)){ 
 					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this);
 				}
 				// 如果是视图，则不用解析参数，只要解析出视图名即可
-				else if(BuiltinDatabaseData.VIEW.equals(this.sqlScriptType)){ 
+				else if(SqlStatementTypeConstants.VIEW.equals(this.sqlScriptType)){ 
 					SqlStatementParserUtil.analysisViewName(this);
 				}
 				// 否则是一般sql脚本，解析[$xxx$]的参数
@@ -438,7 +438,7 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 			}
 			
 			if(isImmediateCreate == 1 
-					&& (BuiltinDatabaseData.PROCEDURE.equals(sqlScriptType) || BuiltinDatabaseData.VIEW.equals(sqlScriptType) || BuiltinDatabaseData.SQLSERVER_CREATE_TYPE.equals(sqlScriptType))){
+					&& (SqlStatementTypeConstants.PROCEDURE.equals(sqlScriptType) || SqlStatementTypeConstants.VIEW.equals(sqlScriptType) || SqlStatementTypeConstants.SQLSERVER_CREATE_TYPE.equals(sqlScriptType))){
 				List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
 				sqls.add(this);
 				DBUtil.createObjects(sqls);

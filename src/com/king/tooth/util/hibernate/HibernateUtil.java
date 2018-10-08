@@ -15,8 +15,8 @@ import org.hibernate.internal.SessionFactoryImpl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
@@ -227,8 +227,6 @@ public class HibernateUtil {
 			
 			// 日志记录发出的hql/sql语句
 			CurrentThreadContext.toReqLogDataAddOperSqlLog("insert " + entityName, data);
-			
-			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_add");
 			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
@@ -278,7 +276,7 @@ public class HibernateUtil {
 			updateHql.append(" where ").append(ResourcePropNameConstants.ID).append(" =?");
 			parameters.add(updateId);
 			
-			executeUpdateByHql(BuiltinDatabaseData.UPDATE, updateHql.toString(), parameters);
+			executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql.toString(), parameters);
 			
 			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_edit");
 			Log4jUtil.debug("修改数据成功[{}]", data);
@@ -342,7 +340,7 @@ public class HibernateUtil {
 			hql += " and rightId=?";
 			params.add(rightId);
 		}
-		executeUpdateByHql(BuiltinDatabaseData.DELETE, hql, params);
+		executeUpdateByHql(SqlStatementTypeConstants.DELETE, hql, params);
 	}
 	
 	//------------------------------------------------------------------------------------------------------
@@ -350,7 +348,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param hqlDes @see BuiltinDatabaseData
+	 * @param hqlDes @see SqlStatementTypeConstants
 	 * @param modifyHql
 	 * @param parameters
 	 * @return 

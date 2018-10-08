@@ -22,6 +22,10 @@ public class BuiltinFocusedIdMethodProcesser extends AbstractBuiltinCommonMethod
 	 */
 	private List<Object> editFocusedIds;
 	/**
+	 * 删除数据-聚焦的数据id
+	 */
+	private List<Object> deleteFocusedIds;
+	/**
 	 * 所有聚焦的数据id
 	 */
 	private String[] focusedId;
@@ -38,7 +42,7 @@ public class BuiltinFocusedIdMethodProcesser extends AbstractBuiltinCommonMethod
 		for (String fid : focusedIdArr) {
 			tmp = fid.split("_");
 			if(tmp.length == 1){
-				throw new IllegalArgumentException("定位数据时，传入的focusedId值格式不正确，请联系系统开发人员："+fid);
+				throw new IllegalArgumentException("定位数据时，传入的focusedId值格式不正确，请联系后端系统开发人员："+fid);
 			}
 			if("add".equals(tmp[1])){
 				if(addFocusedIds == null){
@@ -50,6 +54,11 @@ public class BuiltinFocusedIdMethodProcesser extends AbstractBuiltinCommonMethod
 					editFocusedIds = new ArrayList<Object>(focusedIdArr.length);
 				}
 				editFocusedIds.add(tmp[0]);
+			}else if("delete".equals(tmp[1])){
+				if(deleteFocusedIds == null){
+					deleteFocusedIds = new ArrayList<Object>(focusedIdArr.length);
+				}
+				deleteFocusedIds.add(tmp[0]);
 			}else{
 				throw new IllegalArgumentException("定位数据时，传入的focusedId值出现异常，不应存在非_add或_edit的数据，请联系系统开发人员："+fid);
 			}
@@ -82,6 +91,9 @@ public class BuiltinFocusedIdMethodProcesser extends AbstractBuiltinCommonMethod
 		}
 		if(editFocusedIds != null && editFocusedIds.size() > 0){
 			editFocusedIds.clear();
+		}
+		if(deleteFocusedIds != null && deleteFocusedIds.size() > 0){
+			deleteFocusedIds.clear();
 		}
 	}
 }

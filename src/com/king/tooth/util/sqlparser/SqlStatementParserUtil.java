@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -131,34 +132,34 @@ public class SqlStatementParserUtil {
 		 
 		 switch(sqlStatementType){
 	         case sstselect:
-	        	 typeMap.put("type", BuiltinDatabaseData.SELECT);
+	        	 typeMap.put("type", SqlStatementTypeConstants.SELECT);
 	        	 typeMap.put("isUnique", "true");
 	        	 typeMap.put("reqMethod", "get");
 	        	 break;
 	         case sstupdate:
-	        	 typeMap.put("type", BuiltinDatabaseData.UPDATE);
+	        	 typeMap.put("type", SqlStatementTypeConstants.UPDATE);
 	        	 break;
 	         case sstinsert:
-	        	 typeMap.put("type", BuiltinDatabaseData.INSERT);
+	        	 typeMap.put("type", SqlStatementTypeConstants.INSERT);
 	        	 break;
 	         case sstdelete:
-	        	 typeMap.put("type", BuiltinDatabaseData.DELETE);
+	        	 typeMap.put("type", SqlStatementTypeConstants.DELETE);
 	        	 break;
 	         case sstplsql_createprocedure:
-	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
+	        	 typeMap.put("type", SqlStatementTypeConstants.PROCEDURE);
 	        	 typeMap.put("isUnique", "true");
 	        	 break;
 	         case sstmssqlcreateprocedure:
-	        	 typeMap.put("type", BuiltinDatabaseData.PROCEDURE);
+	        	 typeMap.put("type", SqlStatementTypeConstants.PROCEDURE);
 	        	 typeMap.put("isUnique", "true");
 	        	 break;
 	         case sstcreateview:
-	        	 typeMap.put("type", BuiltinDatabaseData.VIEW);
+	        	 typeMap.put("type", SqlStatementTypeConstants.VIEW);
 	        	 typeMap.put("isUnique", "true");
 	        	 typeMap.put("reqMethod", "none");
 	        	 break;
 	         case sstmssqlcreatetype:
-	        	 typeMap.put("type", BuiltinDatabaseData.SQLSERVER_CREATE_TYPE);
+	        	 typeMap.put("type", SqlStatementTypeConstants.SQLSERVER_CREATE_TYPE);
 	        	 typeMap.put("isUnique", "true");
 	        	 typeMap.put("reqMethod", "none");
 	        	 break;
@@ -388,7 +389,7 @@ public class SqlStatementParserUtil {
 	 * @param 
 	 */
 	public static List<FinalSqlScriptStatement> getFinalSqlScriptList(ComSqlScript sqlScript, List<List<Object>> sqlParameterValues) {
-		if(BuiltinDatabaseData.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 存储过程，不解析最终的sql语句
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 存储过程，不解析最终的sql语句
 			return null;
 		}
 		
@@ -670,7 +671,7 @@ public class SqlStatementParserUtil {
 	 * @param sql
 	 */
 	public static void analysisSelectSqlResultSetList(ComSqlScript sql) {
-		if(BuiltinDatabaseData.SELECT.equals(sql.getSqlScriptType())){ 
+		if(SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){ 
 			TGSqlParser sqlParser = sql.getGsqlParser();
 			TSelectSqlStatement selectSqlStatement = (TSelectSqlStatement) sqlParser.sqlstatements.get(0);
 			TResultColumnList columns = analysisResultColumnList(selectSqlStatement);

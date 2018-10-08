@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysUser;
@@ -306,25 +306,25 @@ public class SysUserService extends AService{
 	public String deleteUser(String userId) {
 		SysUser user = getObjectById(userId, SysUser.class);
 		// 删除用户
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysUser set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysUser set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
 		
 		// 删除账户
 		if(accountIsExists(userId)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
 			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteTokenInfoByAccountId(userId);
 		}
 		// 删除所属的部门
 		if(StrUtils.notEmpty(user.getDeptId())){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserDeptLinks where leftId = ?", userId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserDeptLinks where leftId = ?", userId);
 		}
 		// 删除所属的职务
 		if(StrUtils.notEmpty(user.getPositionId())){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserPositionLinks where leftId = ?", userId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserPositionLinks where leftId = ?", userId);
 		}
 		// 删除所属的角色
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserRoleLinks where leftId = ?", userId);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserRoleLinks where leftId = ?", userId);
 		// 删除所属的用户组
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysUserGroupDetail where userId = ?", userId);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserGroupDetail where userId = ?", userId);
 		
 		return null;
 	}

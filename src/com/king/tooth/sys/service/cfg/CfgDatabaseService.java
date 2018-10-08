@@ -2,7 +2,7 @@ package com.king.tooth.sys.service.cfg;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -72,7 +72,7 @@ public class CfgDatabaseService extends AService {
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgDatabase where "+ResourcePropNameConstants.ID+" = '"+databaseId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgDatabase where "+ResourcePropNameConstants.ID+" = '"+databaseId+"'");
 		return null;
 	}
 	

@@ -2,7 +2,7 @@ package com.king.tooth.sys.service.cfg;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.service.AService;
@@ -99,7 +99,7 @@ public class CfgProjectService extends AService {
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete ComProject where "+ResourcePropNameConstants.ID+" = '"+projectId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComProject where "+ResourcePropNameConstants.ID+" = '"+projectId+"'");
 		return null;
 	}
 
@@ -111,12 +111,12 @@ public class CfgProjectService extends AService {
 	 */
 	public String cancelRelation(String projectId, String relationType) {
 		if("all".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectTableLinks where leftId = ?", projectId);
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectSqlLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProjectTableLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProjectSqlLinks where leftId = ?", projectId);
 		}else if("table".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectTableLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProjectTableLinks where leftId = ?", projectId);
 		}else if("sql".equals(relationType)){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete CfgProjectSqlLinks where leftId = ?", projectId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProjectSqlLinks where leftId = ?", projectId);
 		}else{
 			return "请传入正确的realtionType";
 		}

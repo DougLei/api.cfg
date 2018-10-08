@@ -2,7 +2,7 @@ package com.king.tooth.sys.service.cfg;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
 import com.king.tooth.sys.service.AService;
@@ -128,7 +128,7 @@ public class CfgColumnService extends AService{
 			}else{
 				return "删除数据时，传入的id数据数组长度小于1";
 			}
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, hql.toString());
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, hql.toString());
 			hql.setLength(0);
 			
 			modifyTableIsBuildModel(null, idArr[0], 0);
@@ -148,6 +148,6 @@ public class CfgColumnService extends AService{
 		if(StrUtils.isEmpty(tableId)){
 			tableId = getObjectById(columnId, ComColumndata.class).getTableId();
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update ComTabledata set isBuildModel = "+isBuildModel+" where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update ComTabledata set isBuildModel = "+isBuildModel+" where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
 	}
 }

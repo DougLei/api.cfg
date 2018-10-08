@@ -11,7 +11,7 @@ import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
@@ -347,7 +347,7 @@ public class SysAccountService extends AService{
 	 */
 	public void loginOut(String token) {
 		// 删除对应的SysAccountOnlineStatus数据
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where token = ? ", token);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysAccountOnlineStatus where token = ? ", token);
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
 		
@@ -371,7 +371,7 @@ public class SysAccountService extends AService{
 		if(newPwd.equals(account.getLoginPwd())){
 			return "新密码不能和旧密码相同";
 		}
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPwd, accountId);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPwd, accountId);
 		
 		JSONObject json = new JSONObject(2);
 		json.put(ResourcePropNameConstants.ID, accountId);
@@ -484,7 +484,7 @@ public class SysAccountService extends AService{
 	 * @return
 	 */
 	public Object deleteAccount(String accountId) {
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where " + ResourcePropNameConstants.ID+"=? and customerId=?", new Date(), accountId, CurrentThreadContext.getCustomerId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where " + ResourcePropNameConstants.ID+"=? and customerId=?", new Date(), accountId, CurrentThreadContext.getCustomerId());
 		deleteTokenInfoByAccountId(accountId);
 		return null;
 	}
@@ -497,7 +497,7 @@ public class SysAccountService extends AService{
 	public void deleteTokenInfoByAccountId(String accountId) {
 		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr(null, null, "select token from SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
 		if(tokens != null && tokens.size() > 0){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.DELETE, "delete SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
 			// 移除传递的token和对应项目id的映射缓存
 			for (Object token : tokens) {
 				TokenRefProjectIdMapping.removeMapping(token+"");

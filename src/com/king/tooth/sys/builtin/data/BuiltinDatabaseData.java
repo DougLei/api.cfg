@@ -80,38 +80,6 @@ public class BuiltinDatabaseData {
 	}
 	
 	// -----------------------------------------------------------------------------
-	// sql语句的类型
-	/**
-	 * select
-	 */
-	public static final String SELECT = "select";
-	/**
-	 * insert
-	 */
-	public static final String INSERT = "insert";
-	/**
-	 * update
-	 */
-	public static final String UPDATE = "update";
-	/**
-	 * delete
-	 */
-	public static final String DELETE = "delete";
-	/**
-	 * view
-	 */
-	public static final String VIEW = "view";
-	/**
-	 * procedure
-	 */
-	public static final String PROCEDURE = "procedure";
-	/**
-	 * sqlserver create type
-	 * <p>sqlserver创建自定义类型</p>
-	 */
-	public static final String SQLSERVER_CREATE_TYPE = "createType";
-	
-	// -----------------------------------------------------------------------------
 	// 查询数据是否存在的sql语句
 	/**
 	 * sqlserver查询对象是否存在

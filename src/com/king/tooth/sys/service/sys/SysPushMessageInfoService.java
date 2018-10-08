@@ -3,7 +3,7 @@ package com.king.tooth.sys.service.sys;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -25,7 +25,7 @@ public class SysPushMessageInfoService extends AService{
 
 		// 修改阅读状态为已读
 		if(spmi.getIsReaded() == 0){
-			HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysPushMessageInfo set isReaded=1 where " + ResourcePropNameConstants.ID + "=?", id);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysPushMessageInfo set isReaded=1 where " + ResourcePropNameConstants.ID + "=?", id);
 		}
 		return spmi;
 	}
@@ -38,7 +38,7 @@ public class SysPushMessageInfoService extends AService{
 	 */
 	public Object updateMessageReadStatus(SysPushMessageInfo sysPushMessageInfo) {
 		SysPushMessageInfo spmi = getObjectById(sysPushMessageInfo.getId(), SysPushMessageInfo.class);
-		HibernateUtil.executeUpdateByHqlArr(BuiltinDatabaseData.UPDATE, "update SysPushMessageInfo set isReaded=? where " + ResourcePropNameConstants.ID + "=?", sysPushMessageInfo.getIsReaded(), spmi.getId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysPushMessageInfo set isReaded=? where " + ResourcePropNameConstants.ID + "=?", sysPushMessageInfo.getIsReaded(), spmi.getId());
 		
 		JSONObject json = new JSONObject(2);
 		json.put(ResourcePropNameConstants.ID, sysPushMessageInfo.getId());

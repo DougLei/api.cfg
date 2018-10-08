@@ -9,9 +9,9 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
@@ -141,7 +141,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private List<List<ResourceMetadataInfo>> analysisProcedureSqlInResultSetMetadataInfoList() {
-		if(BuiltinDatabaseData.PROCEDURE.equals(sql.getSqlScriptType())){
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType())){
 			List<CfgSqlResultset> inSqlResultsets = sql.getInSqlResultsets();
 			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
 				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsets.size());
@@ -160,7 +160,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private List<ResourceMetadataInfo> analysisSelectSqlOutResultSetMetadataInfos() {
-		if(BuiltinDatabaseData.SELECT.equals(sql.getSqlScriptType())){
+		if(SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){
 			List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
 			List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
 			for (CfgSqlResultset csr : outSqlResultSet) {
