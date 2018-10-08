@@ -17,6 +17,7 @@ import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.util.DataValidUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
@@ -381,23 +382,24 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				
 				// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
 				if(DataTypeConstants.DATE.equals(ssp.getParameterDataType())){
-					if(!DateUtil.valueIsDateFormat(actualInValue)){
+					if(DataValidUtil.isDate(actualInValue)){
+						actualInValue = DateUtil.parseTimestamp(dataValueStr);
+					}else{
 						return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 					}
-					actualInValue = DateUtil.parseTimestamp(dataValueStr);
 				}else{
 					if(isGetRequest){// get请求，值都是string类型，需要进行转换
 						if(DataTypeConstants.INTEGER.equals(ssp.getParameterDataType())){
-							try {
+							if(DataValidUtil.isInteger(dataValueStr)){
 								actualInValue = Integer.valueOf(dataValueStr);
 								if(dataValueStr.length() > rmi.getLength()){
 									return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 								}
-							} catch (NumberFormatException e) {
+							}else{
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 							}
 						}else if(DataTypeConstants.DOUBLE.equals(ssp.getParameterDataType())){
-							try {
+							if(DataValidUtil.isBigDecimal(dataValueStr)){
 								actualInValue = BigDecimal.valueOf(Double.valueOf(dataValueStr));
 								if((dataValueStr.length()-1) > rmi.getLength()){
 									return "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
@@ -405,14 +407,15 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 								if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
 									return "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 								}
-							} catch (NumberFormatException e) {
+							}else{
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
 							}
 						}else if(DataTypeConstants.BOOLEAN.equals(ssp.getParameterDataType())){
-							if(!"true".equals(dataValueStr) && !"false".equals(dataValueStr)){
+							if(DataValidUtil.isBoolean(dataValueStr)){
+								actualInValue = ("true".equals(dataValueStr))? "1":"0";
+							}else{
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
 							}
-							actualInValue = ("true".equals(dataValueStr))? "1":"0";
 						}else if(DataTypeConstants.STRING.equals(ssp.getParameterDataType())){
 							if(StrUtils.calcStrLength(dataValueStr) > rmi.getLength()){
 								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
@@ -429,7 +432,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 							actualInValue = IJsonUtil.getIJson(dataValueStr);
 							return validProcedureSqlInResultSet(ssp, index, (IJson)actualInValue);
 						}else{
-							return validDataIsLegal(actualInValue, rmi, index);
+							return validDataIsLegal("", actualInValue, rmi, index);
 						}
 					}
 				}

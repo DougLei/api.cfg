@@ -11,7 +11,7 @@ import javax.servlet.ServletContextListener;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.code.resource.CodeResourceMapping;
-import com.king.tooth.sys.service.other.InitCfgSystemService;
+import com.king.tooth.sys.service.other.InitSystemService;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
 import com.king.tooth.web.processer.ProcesserConfig;
 import com.king.tooth.web.servlet.route.RouteBodyAnalysis;
@@ -50,9 +50,9 @@ public class InitSysDataListener implements ServletContextListener {
 	 */
 	private void initSysCoreDataInfos() {
 		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
-			new InitCfgSystemService().firstStart();
+			new InitSystemService().firstStart();
 		}else{
-			new InitCfgSystemService().start();
+			new InitSystemService().start();
 		}
 	}
 

@@ -1,6 +1,5 @@
 package com.king.tooth.web.entity.request.valid.data;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.DataValidUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.RequestBody;
@@ -67,46 +66,46 @@ public abstract class AbstractResourceVerifier {
 	
 	/**
 	 * 验证数据是否合法
-	 * @param resourceTypeDesc
+	 * @param desc
 	 * @param dataValue
 	 * @param rmi
 	 * @param index
 	 * @return
 	 */
-	protected String validDataIsLegal(Object dataValue, ResourceMetadataInfo rmi, int index){
+	protected String validDataIsLegal(String desc, Object dataValue, ResourceMetadataInfo rmi, int index){
 		// 验证数据类型、数据长度、数据精度
 		if(DataTypeConstants.BOOLEAN.equals(rmi.getDataType())){
-			if(!(dataValue instanceof Boolean)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
+			if(!DataValidUtil.isBoolean(dataValue)){
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
 			}
 		}else if(DataTypeConstants.INTEGER.equals(rmi.getDataType())){
-			if(!(dataValue instanceof Integer)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
+			if(!DataValidUtil.isInteger(dataValue)){
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 			}
 			if(dataValue.toString().length() > rmi.getLength()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 		}else if(DataTypeConstants.DOUBLE.equals(rmi.getDataType())){
-			if(!(dataValue instanceof BigDecimal)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
+			if(!DataValidUtil.isBigDecimal(dataValue)){
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
 			}
 			dataValueStr = dataValue.toString();
 			if((dataValueStr.length()-1) > rmi.getLength()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 			if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 			}
 		}else if(DataTypeConstants.DATE.equals(rmi.getDataType())){
-			if(!DateUtil.valueIsDateFormat(dataValue)){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
+			if(!DataValidUtil.isDate(dataValue)){
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 			}
 		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){
 			if(StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
-				return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 		}else{
-			return "第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+rmi.getDataType()+"]数据类型，请联系后端开发人员";
+			return desc + "第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+rmi.getDataType()+"]数据类型，请联系后端开发人员";
 		}
 		return null;
 	}
@@ -114,6 +113,7 @@ public abstract class AbstractResourceVerifier {
 	
 	/**
 	 * 验证表资源的元数据
+	 * @param desc
 	 * @param ijson
 	 * @param isValidIdPropIsNull 是否验证id属性为空
 	 * @param isValidUniqueInDb 是否在数据库中验证值唯一(如果是表类型，则不需要去数据库的实际表中验证是否唯一，因为目前也无法验证)
@@ -156,7 +156,7 @@ public abstract class AbstractResourceVerifier {
 					if(DataTypeConstants.CLOB.equals(rmi.getDataType()) || DataTypeConstants.BLOB.equals(rmi.getDataType())){
 						continue;
 					}
-					validDataIsLegalResult = validDataIsLegal(dataValue, rmi, (i+1));
+					validDataIsLegalResult = validDataIsLegal(desc, dataValue, rmi, (i+1));
 					if(validDataIsLegalResult != null){
 						return validDataIsLegalResult;
 					}
