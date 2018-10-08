@@ -287,6 +287,13 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		int index = 1;
 		// 如果没有传入任何参数，还能进入到这里，说明配置的参数要么是系统内置，要么是有默认值的
 		if((actualParamsList == null || actualParamsList.size() == 0)){
+			// 如果配置了参数，但是没有传入任何参数
+			for (ComSqlScriptParameter sqlParam : this.sqlParams) {
+				if(sqlParam.getParameterFrom() == ComSqlScriptParameter.USER_INPUT && StrUtils.isEmpty(sqlParam.getDefaultValue())){
+					return "在调用sql资源时，必须传入名为"+sqlParam.getParameterName()+"的参数值";
+				}
+			}
+			
 			sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(1);
 			sqlParams = this.sqlParams;
 			sqlParamsList.add(sqlParams);
@@ -310,7 +317,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
 						if(ssp.getParameterName().equals(rmi.getPropName())){
 							if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
-								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), null, index++);
+								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), null, index);
 							}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
 								for (ComSqlScriptParameter ssap : actualParams) {
 									if(ssp.getParameterName().equals(ssap.getParameterName())){
@@ -318,7 +325,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 										break;
 									}
 								}
-								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), rmi, index++);
+								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), rmi, index);
 							}
 							if(analysisActualInValueResult != null){
 								return analysisActualInValueResult;
@@ -327,7 +334,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 						}
 					}	
 				}
-				index=1;
+				index++;
 				inSqlResultSetMetadataInfoIndex = 0;
 			}
 			this.sqlParams.clear();
@@ -365,7 +372,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	public String analysisActualInValue(ComSqlScriptParameter ssp, boolean isGetRequest, ResourceMetadataInfo rmi, int index) {
-		if(!ssp.getParameterDataType().equals(rmi.getDataType())){
+		if(rmi != null && !ssp.getParameterDataType().equals(rmi.getDataType())){
 			return "第"+index+"个对象，["+rmi.getDescName()+"] 参数，配置的数据类型("+ssp.getParameterDataType()+")和实际加载的数据类型("+rmi.getDataType()+")不一致，请联系后端系统开发人员";
 		}
 		
@@ -373,71 +380,73 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			if(ssp.getActualInValue() == null){
 				ssp.setActualInValue(ssp.getDefaultValue());
 			}
-			actualInValue = ssp.getActualInValue();
-			if(actualInValue == null){
-				return "在调用sql资源时，必须要传入的参数["+ssp.getParameterName()+"]，请修改调用方式，传入该参数值";
-			}
-			if(ssp.getIsPlaceholder() == 1){
-				dataValueStr = actualInValue.toString();
-				
-				// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
-				if(DataTypeConstants.DATE.equals(ssp.getParameterDataType())){
-					if(DataValidUtil.isDate(actualInValue)){
-						actualInValue = DateUtil.parseTimestamp(dataValueStr);
+			if(rmi != null){
+				actualInValue = ssp.getActualInValue();
+				if(actualInValue == null){
+					return "在调用sql资源时，必须要传入的参数["+ssp.getParameterName()+"]，请修改调用方式，传入该参数值";
+				}
+				if(ssp.getIsPlaceholder() == 1){
+					dataValueStr = actualInValue.toString();
+					
+					// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
+					if(DataTypeConstants.DATE.equals(ssp.getParameterDataType())){
+						if(DataValidUtil.isDate(actualInValue)){
+							actualInValue = DateUtil.parseTimestamp(dataValueStr);
+						}else{
+							return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
+						}
 					}else{
-						return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
-					}
-				}else{
-					if(isGetRequest){// get请求，值都是string类型，需要进行转换
-						if(DataTypeConstants.INTEGER.equals(ssp.getParameterDataType())){
-							if(DataValidUtil.isInteger(dataValueStr)){
-								actualInValue = Integer.valueOf(dataValueStr);
-								if(dataValueStr.length() > rmi.getLength()){
+						if(isGetRequest){// get请求，值都是string类型，需要进行转换
+							if(DataTypeConstants.INTEGER.equals(ssp.getParameterDataType())){
+								if(DataValidUtil.isInteger(dataValueStr)){
+									actualInValue = Integer.valueOf(dataValueStr);
+									if(rmi.getLength() != -1 && dataValueStr.length() > rmi.getLength()){
+										return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+									}
+								}else{
+									return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
+								}
+							}else if(DataTypeConstants.DOUBLE.equals(ssp.getParameterDataType())){
+								if(DataValidUtil.isBigDecimal(dataValueStr)){
+									actualInValue = BigDecimal.valueOf(Double.valueOf(dataValueStr));
+									if(rmi.getLength() != -1 && (dataValueStr.length()-1) > rmi.getLength()){
+										return "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
+									}
+									if(rmi.getPrecision() != -1 && dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
+										return "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
+									}
+								}else{
+									return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
+								}
+							}else if(DataTypeConstants.BOOLEAN.equals(ssp.getParameterDataType())){
+								if(DataValidUtil.isBoolean(dataValueStr)){
+									actualInValue = ("true".equals(dataValueStr))? "1":"0";
+								}else{
+									return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
+								}
+							}else if(DataTypeConstants.STRING.equals(ssp.getParameterDataType())){
+								if(rmi.getLength() != -1 && StrUtils.calcStrLength(dataValueStr) > rmi.getLength()){
 									return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 								}
 							}else{
-								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
+								return "第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+ssp.getParameterDataType()+"]数据类型，请联系后端开发人员";
 							}
-						}else if(DataTypeConstants.DOUBLE.equals(ssp.getParameterDataType())){
-							if(DataValidUtil.isBigDecimal(dataValueStr)){
-								actualInValue = BigDecimal.valueOf(Double.valueOf(dataValueStr));
-								if((dataValueStr.length()-1) > rmi.getLength()){
-									return "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
+						}else{// 否则就是post请求，直接判断，不需要转换
+							if(ssp.getIsTableType() == 1){
+								if(inSqlResultSetMetadataInfoList == null || inSqlResultSetMetadataInfoList.size() == 0){
+									return "["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
 								}
-								if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
-									return "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
-								}
+								
+								actualInValue = IJsonUtil.getIJson(dataValueStr);
+								return validProcedureSqlInResultSet(ssp, index, (IJson)actualInValue);
 							}else{
-								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
+								return validDataIsLegal("", actualInValue, rmi, index);
 							}
-						}else if(DataTypeConstants.BOOLEAN.equals(ssp.getParameterDataType())){
-							if(DataValidUtil.isBoolean(dataValueStr)){
-								actualInValue = ("true".equals(dataValueStr))? "1":"0";
-							}else{
-								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
-							}
-						}else if(DataTypeConstants.STRING.equals(ssp.getParameterDataType())){
-							if(StrUtils.calcStrLength(dataValueStr) > rmi.getLength()){
-								return "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
-							}
-						}else{
-							return "第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+ssp.getParameterDataType()+"]数据类型，请联系后端开发人员";
-						}
-					}else{// 否则就是post请求，直接判断，不需要转换
-						if(ssp.getIsTableType() == 1){
-							if(inSqlResultSetMetadataInfoList == null || inSqlResultSetMetadataInfoList.size() == 0){
-								return "["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
-							}
-							
-							actualInValue = IJsonUtil.getIJson(dataValueStr);
-							return validProcedureSqlInResultSet(ssp, index, (IJson)actualInValue);
-						}else{
-							return validDataIsLegal("", actualInValue, rmi, index);
 						}
 					}
+				}else{
+					actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 				}
-			}else{
-				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){
 			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(ssp.getParameterName());

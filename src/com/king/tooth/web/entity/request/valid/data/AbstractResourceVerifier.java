@@ -82,7 +82,7 @@ public abstract class AbstractResourceVerifier {
 			if(!DataValidUtil.isInteger(dataValue)){
 				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 			}
-			if(dataValue.toString().length() > rmi.getLength()){
+			if(rmi.getLength() != -1 && dataValue.toString().length() > rmi.getLength()){
 				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 		}else if(DataTypeConstants.DOUBLE.equals(rmi.getDataType())){
@@ -90,10 +90,10 @@ public abstract class AbstractResourceVerifier {
 				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
 			}
 			dataValueStr = dataValue.toString();
-			if((dataValueStr.length()-1) > rmi.getLength()){
+			if(rmi.getLength() != -1 && (dataValueStr.length()-1) > rmi.getLength()){
 				return desc + "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
-			if(dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
+			if(rmi.getPrecision() != -1 && dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
 				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 			}
 		}else if(DataTypeConstants.DATE.equals(rmi.getDataType())){
@@ -101,7 +101,7 @@ public abstract class AbstractResourceVerifier {
 				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 			}
 		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){
-			if(StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
+			if(rmi.getLength() != -1 && StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
 				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 		}else{
