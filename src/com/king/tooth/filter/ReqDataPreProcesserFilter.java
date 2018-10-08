@@ -61,10 +61,10 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 		}
 		analysisUrlParams(request, requestBody);
 		
-//		String validResult = requestBody.validResourceData();
-//		if(validResult != null){
-//			return validResult;
-//		}
+		String validResult = requestBody.validResourceData();
+		if(validResult != null){
+			return validResult;
+		}
 		requestBody.analysisResourcePropCodeRule();
 		return requestBody;
 	}
