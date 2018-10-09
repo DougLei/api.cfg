@@ -115,11 +115,11 @@ public abstract class AbstractResourceVerifier {
 	 * 验证表资源的元数据
 	 * @param desc
 	 * @param ijson
-	 * @param isValidIdPropIsNull 是否验证id属性为空
+	 * @param isUpdate 是否是修改，如果是修改，则要验证id属性为空
 	 * @param isValidUniqueInDb 是否在数据库中验证值唯一(如果是表类型，则不需要去数据库的实际表中验证是否唯一，因为目前也无法验证)
 	 * @return
 	 */
-	protected String validTableResourceMetadata(String desc, IJson ijson, boolean isValidIdPropIsNull, boolean isValidUniqueInDb){
+	protected String validTableResourceMetadata(String desc, IJson ijson, boolean isUpdate, boolean isValidUniqueInDb){
 		int size = ijson.size();
 		
 		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
@@ -130,7 +130,7 @@ public abstract class AbstractResourceVerifier {
 		String validDataIsLegalResult = null;
 		for(int i=0;i<size;i++){
 			data = ijson.get(i);
-			if(isValidIdPropIsNull && StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
+			if(isUpdate && StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
 				return desc + "第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 			}
 			
@@ -164,7 +164,7 @@ public abstract class AbstractResourceVerifier {
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintProps.add(rmi);
-						if(isValidUniqueInDb && validDataIsExists(rmi.getPropName(), dataValue)){
+						if(isValidUniqueInDb && validDataIsExists(rmi.getPropName(), dataValue, isUpdate)){
 							return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
 						}
 					}
@@ -194,11 +194,16 @@ public abstract class AbstractResourceVerifier {
 	 * 验证数据是否已经存在
 	 * @param propName
 	 * @param dataValue
+	 * @param isUpdate 是否是修改，如果是修改，要验证数据数量大于1的，属于重复添加(过滤当前数据)；如果是添加，则是验证数据数量大于0的，属于重复添加
 	 * @return
 	 */
-	private boolean validDataIsExists(String propName, Object dataValue) {
+	private boolean validDataIsExists(String propName, Object dataValue, boolean isUpdate) {
 		long count = (long)HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		return (count > 0);
+		if(isUpdate){
+			return (count > 1);
+		}else{
+			return (count > 0);
+		}
 	}
 	
 	public void clear(){

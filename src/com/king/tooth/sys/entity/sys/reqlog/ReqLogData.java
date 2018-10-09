@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.log.RecordLogThread;
+import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -31,7 +32,12 @@ public class ReqLogData implements Serializable{
 	 */
 	public void recordLogs(){
 		if(reqLog == null){
-			throw new NullPointerException("[ReqLogData.recordLogs()]时，reqLog对象为空，请检查系统逻辑");
+			Log4jUtil.error("[ReqLogData.recordLogs()]时，reqLog对象为空，请检查系统逻辑");
+			return;
+		}
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus() == null){
+			Log4jUtil.error("[ReqLogData.recordLogs()]时，CurrentThreadContext.getCurrentAccountOnlineStatus()对象为空，请检查系统逻辑");
+			return;
 		}
 		// 新线程保存日志数据
 		new RecordLogThread(HibernateUtil.openNewSession(),

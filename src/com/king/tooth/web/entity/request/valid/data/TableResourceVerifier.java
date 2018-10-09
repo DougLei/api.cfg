@@ -131,12 +131,12 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	
 	/**
 	 * 验证post请求的表资源数据
-	 * @param isValidIdPropIsNull 是否验证id属性为空
+	 * @param isUpdate 是否是修改，如果是修改，则要验证id属性为空
 	 * @return
 	 */
-	private String validPostTableResourceMetadata(boolean isValidIdPropIsNull) {
+	private String validPostTableResourceMetadata(boolean isUpdate) {
 		IJson ijson = requestBody.getFormData();
-		return validTableResourceMetadata("操作表资源["+resourceName+"]时，", ijson, isValidIdPropIsNull, true);
+		return validTableResourceMetadata("操作表资源["+resourceName+"]时，", ijson, isUpdate, true);
 	}
 	
 	/**
