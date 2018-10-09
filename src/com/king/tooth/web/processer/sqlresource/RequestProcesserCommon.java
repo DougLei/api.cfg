@@ -132,11 +132,11 @@ public class RequestProcesserCommon extends CommonProcesser{
 			setResponseBody(new ResponseBody(urlParams, true));
 		}else{
 			String operType = null;
-			if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getSqlScriptType())){
+			if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getConfType())){
 				operType = "_" + OperDataTypeConstants.ADD;
-			}else if(SqlStatementTypeConstants.UPDATE.equals(sqlScript.getSqlScriptType())){
+			}else if(SqlStatementTypeConstants.UPDATE.equals(sqlScript.getConfType())){
 				operType = "_" + OperDataTypeConstants.EDIT;
-			}else if(SqlStatementTypeConstants.DELETE.equals(sqlScript.getSqlScriptType())){
+			}else if(SqlStatementTypeConstants.DELETE.equals(sqlScript.getConfType())){
 				operType = "_" + OperDataTypeConstants.DELETE;
 			}
 			

@@ -57,6 +57,11 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	 */
 	private String sqlScriptType;
 	/**
+	 * 配置的sql脚本类型
+	 * <p>默认和sql脚本类型一样，用户可以根据sql脚本的内容修改为insert/update/delete三个值之一，解决定位查询focuseid中id+_add/_edit/_delete</p>
+	 */
+	private String confType;
+	/**
 	 * sql脚本内容
 	 */
 	private String sqlScriptContent;
@@ -290,6 +295,12 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	public void setSqlParamsList(List<List<ComSqlScriptParameter>> sqlParamsList) {
 		this.sqlParamsList = sqlParamsList;
 	}
+	public String getConfType() {
+		return confType;
+	}
+	public void setConfType(String confType) {
+		this.confType = confType;
+	}
 	public List<CfgSqlResultset> getInSqlResultsets() {
 		return inSqlResultsets;
 	}
@@ -327,6 +338,11 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
 		columns.add(sqlScriptTypeColumn);
+		
+		ComColumndata confTypeColumn = new ComColumndata("conf_type", DataTypeConstants.STRING, 80);
+		confTypeColumn.setName("配置的sql脚本类型");
+		confTypeColumn.setComments("默认和sql脚本类型一样，用户可以根据sql脚本的内容修改为insert/update/delete三个值之一，解决定位查询focuseid中id+_add/_edit/_delete");
+		columns.add(confTypeColumn);
 		
 		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", DataTypeConstants.CLOB, 0);
 		sqlScriptContentColumn.setName("sql脚本内容");
