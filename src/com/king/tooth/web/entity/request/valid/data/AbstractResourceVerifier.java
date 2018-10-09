@@ -124,13 +124,15 @@ public abstract class AbstractResourceVerifier {
 		
 		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
 		JSONObject data = null;
+		Object dataIdValue = null;
 		boolean dataValueIsNull;
 		Set<String> propKeys = null;
 		Object dataValue = null;
 		String validDataIsLegalResult = null;
 		for(int i=0;i<size;i++){
 			data = ijson.get(i);
-			if(isUpdate && StrUtils.isEmpty(data.get(ResourcePropNameConstants.ID))){
+			dataIdValue = data.get(ResourcePropNameConstants.ID);
+			if(isUpdate && StrUtils.isEmpty(dataIdValue)){
 				return desc + "第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 			}
 			
@@ -164,7 +166,7 @@ public abstract class AbstractResourceVerifier {
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintProps.add(rmi);
-						if(isValidUniqueInDb && validDataIsExists(rmi.getPropName(), dataValue, isUpdate)){
+						if(isValidUniqueInDb && validDataIsExists(rmi.getPropName(), dataValue, isUpdate, dataIdValue)){
 							return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
 						}
 					}
@@ -194,15 +196,26 @@ public abstract class AbstractResourceVerifier {
 	 * 验证数据是否已经存在
 	 * @param propName
 	 * @param dataValue
-	 * @param isUpdate 是否是修改，如果是修改，要验证数据数量大于1的，属于重复添加(过滤当前数据)；如果是添加，则是验证数据数量大于0的，属于重复添加
+	 * @param isUpdate 是否是修改
+	 * @param dataIdValue 
 	 * @return
 	 */
-	private boolean validDataIsExists(String propName, Object dataValue, boolean isUpdate) {
-		long count = (long)HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+	private boolean validDataIsExists(String propName, Object dataValue, boolean isUpdate, Object dataIdValue) {
+		Object id = HibernateUtil.executeUniqueQueryByHqlArr("select "+ResourcePropNameConstants.ID+" from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(isUpdate){
-			return (count > 1);
+			// 如果是修改的话，要先判断是否能查询到数据，如果查询不到数据，则证明不存在
+			if(id == null){
+				return false;
+			}
+			// 如果查询到数据，再判断查询到的数据id是否和当前操作的数据id一致，如果一致，忽略唯一性验证
+			if(id.toString().equals(dataIdValue.toString())){
+				return false;
+			}
+			// 否则就是数据出现重复
+			return true;
 		}else{
-			return (count > 0);
+			// 如果是添加的话，则只要查询到数据，就是已存在
+			return (id != null);
 		}
 	}
 	
