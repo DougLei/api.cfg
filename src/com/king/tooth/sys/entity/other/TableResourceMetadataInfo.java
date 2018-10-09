@@ -7,7 +7,7 @@ import com.king.tooth.util.StrUtils;
  * 表资源元数据信息对象
  * @author DougLei
  */
-public class TableResourceMetadataInfo extends AResourceMetadataInfo{
+public class TableResourceMetadataInfo extends ResourceMetadataInfo{
 
 	public TableResourceMetadataInfo(String propName) {
 		super(propName);

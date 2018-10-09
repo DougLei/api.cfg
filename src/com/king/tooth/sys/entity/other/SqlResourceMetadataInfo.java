@@ -6,7 +6,7 @@ import com.king.tooth.util.StrUtils;
  * sql资源元数据信息对象
  * @author DougLei
  */
-public class SqlResourceMetadataInfo extends AResourceMetadataInfo{
+public class SqlResourceMetadataInfo extends ResourceMetadataInfo{
 
 	public SqlResourceMetadataInfo(String propName) {
 		super(propName);

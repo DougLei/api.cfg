@@ -6,7 +6,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
  * 资源元数据信息对象
  * @author DougLei
  */
-public abstract class AResourceMetadataInfo {
+public class ResourceMetadataInfo {
 	/**
 	 * 列名
 	 */
@@ -40,12 +40,12 @@ public abstract class AResourceMetadataInfo {
 	 */
 	protected String descName;
 	
-	public AResourceMetadataInfo() {
+	public ResourceMetadataInfo() {
 	}
-	public AResourceMetadataInfo(String propName) {
+	public ResourceMetadataInfo(String propName) {
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 	}
-	public AResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
+	public ResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
 		this.columnName = columnName;
 		this.dataType = dataType;
 		this.length = length;

@@ -6,7 +6,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.other.AResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.other.TableResourceMetadataInfo;
 
 /**
@@ -65,7 +65,7 @@ public class DynamicBasicColumnUtil {
 	 * @param resourceName
 	 * @param resourceMetadataInfos
 	 */
-	public static void initBasicMetadataInfos(String resourceName, List<AResourceMetadataInfo> resourceMetadataInfos) {
+	public static void initBasicMetadataInfos(String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos) {
 		resourceMetadataInfos.add(new TableResourceMetadataInfo("ID", DataTypeConstants.STRING, 32, 0, 0, 1, ResourcePropNameConstants.ID, "主键"));
 		resourceMetadataInfos.add(new TableResourceMetadataInfo("CUSTOMER_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "customerId", "所属租户主键"));
 		resourceMetadataInfos.add(new TableResourceMetadataInfo("PROJECT_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "projectId", "所属项目主键"));
