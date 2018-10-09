@@ -15,7 +15,7 @@ import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.AResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -336,7 +336,7 @@ public class CfgSqlService extends AService {
 					// 只有表类型，再查询其结果集信息
 					if(sqlParam.getIsTableType() == 1){
 						cfgSqlResultset = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSqlResultset.class, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = ? and projectId=? and customerId=?", sqlScript.getId(), sqlParam.getId(), CfgSqlResultset.IN, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-						cfgSqlResultset.setInSqlResultSetMetadataInfos(HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, cfgSqlResultset.getTableId()));
+						cfgSqlResultset.setInSqlResultSetMetadataInfos(HibernateUtil.extendExecuteListQueryByHqlArr(AResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, cfgSqlResultset.getTableId()));
 						if(cfgSqlResultset.getInSqlResultSetMetadataInfos() == null || cfgSqlResultset.getInSqlResultSetMetadataInfos().size() == 0){
 							throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+sqlParam.getParameterName()+"]，引用的表类型没有查询到任何列信息，请联系系统管理员");
 						}

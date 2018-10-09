@@ -11,7 +11,7 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.AResourceMetadataInfo;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -72,7 +72,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	 * <p>通过tableId查询可以得到</p>
 	 */
 	@JSONField(serialize = false)
-	private List<ResourceMetadataInfo> inSqlResultSetMetadataInfos;
+	private List<AResourceMetadataInfo> inSqlResultSetMetadataInfos;
 	
 	public CfgSqlResultset(String columnName, int orderCode, int inOut) {
 		this.orderCode = orderCode;
@@ -147,10 +147,10 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setInOut(Integer inOut) {
 		this.inOut = inOut;
 	}
-	public List<ResourceMetadataInfo> getInSqlResultSetMetadataInfos() {
+	public List<AResourceMetadataInfo> getInSqlResultSetMetadataInfos() {
 		return inSqlResultSetMetadataInfos;
 	}
-	public void setInSqlResultSetMetadataInfos(List<ResourceMetadataInfo> inSqlResultSetMetadataInfos) {
+	public void setInSqlResultSetMetadataInfos(List<AResourceMetadataInfo> inSqlResultSetMetadataInfos) {
 		this.inSqlResultSetMetadataInfos = inSqlResultSetMetadataInfos;
 	}
 	

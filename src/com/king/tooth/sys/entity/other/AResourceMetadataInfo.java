@@ -1,60 +1,57 @@
 package com.king.tooth.sys.entity.other;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.util.StrUtils;
-
 
 /**
  * 资源元数据信息对象
  * @author DougLei
  */
-public class ResourceMetadataInfo {
+public abstract class AResourceMetadataInfo {
 	/**
 	 * 列名
 	 */
-	private String columnName;
+	protected String columnName;
 	/**
 	 * 属性名
 	 */
-	private String propName;
+	protected String propName;
 	/**
 	 * 数据类型
 	 */
-	private String dataType;
+	protected String dataType;
 	/**
 	 * 长度
 	 */
-	private Integer length;
+	protected Integer length;
 	/**
 	 * 数据精度
 	 */
-	private Integer precision;
+	protected Integer precision;
 	/**
 	 * 是否唯一
 	 */
-	private Integer isUnique;
+	protected Integer isUnique;
 	/**
 	 * 是否可为空
 	 */
-	private Integer isNullabled;
+	protected Integer isNullabled;
 	/**
 	 * 汉字描述名
 	 */
-	private String descName;
+	protected String descName;
 	
-	public ResourceMetadataInfo() {
+	public AResourceMetadataInfo() {
 	}
-	public ResourceMetadataInfo(String propName) {
+	public AResourceMetadataInfo(String propName) {
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 	}
-	public ResourceMetadataInfo(String columnName, String propName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, String descName) {
-		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
+	public AResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
+		this.columnName = columnName;
 		this.dataType = dataType;
 		this.length = length;
 		this.precision = precision==null?0:precision;
 		this.isUnique = isUnique==null?0:isUnique;
 		this.isNullabled = isNullabled==null?1:isNullabled;
-		this.descName = StrUtils.isEmpty(descName)?propName:descName;
 	}
 	
 	public String getPropName() {

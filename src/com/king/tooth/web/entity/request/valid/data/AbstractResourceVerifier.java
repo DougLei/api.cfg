@@ -9,7 +9,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.AResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DataValidUtil;
 import com.king.tooth.util.StrUtils;
@@ -35,11 +35,11 @@ public abstract class AbstractResourceVerifier {
 	/**
 	 * 资源的元数据信息集合
 	 */
-	protected List<ResourceMetadataInfo> resourceMetadataInfos;
+	protected List<AResourceMetadataInfo> resourceMetadataInfos;
 	/**
 	 * 父资源的元数据信息集合
 	 */
-	protected List<ResourceMetadataInfo> parentResourceMetadataInfos;
+	protected List<AResourceMetadataInfo> parentResourceMetadataInfos;
 	
 	/**
 	 * 验证属性是否不存在
@@ -48,7 +48,7 @@ public abstract class AbstractResourceVerifier {
 	 * @param resourceMetadataInfos
 	 * @return
 	 */
-	protected boolean validPropUnExists(boolean validBuiltinParams, String propName, List<ResourceMetadataInfo> resourceMetadataInfos){
+	protected boolean validPropUnExists(boolean validBuiltinParams, String propName, List<AResourceMetadataInfo> resourceMetadataInfos){
 		if(validBuiltinParams){
 			for (String builtinParams : BuiltinParameterKeys.BUILTIN_PARAMS) { // 内置的参数不做是否存在的验证，因为肯定不存在，是后台使用的一些参数
 				if(propName.equals(builtinParams)){
@@ -56,7 +56,7 @@ public abstract class AbstractResourceVerifier {
 				}
 			}
 		}
-		for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
+		for (AResourceMetadataInfo rmi : resourceMetadataInfos) {
 			if(propName.equals(rmi.getPropName())){
 				return false;
 			}
@@ -72,7 +72,7 @@ public abstract class AbstractResourceVerifier {
 	 * @param index
 	 * @return
 	 */
-	protected String validDataIsLegal(String desc, Object dataValue, ResourceMetadataInfo rmi, int index){
+	protected String validDataIsLegal(String desc, Object dataValue, AResourceMetadataInfo rmi, int index){
 		// 验证数据类型、数据长度、数据精度
 		if(DataTypeConstants.BOOLEAN.equals(rmi.getDataType())){
 			if(!DataValidUtil.isBoolean(dataValue)){
@@ -122,7 +122,7 @@ public abstract class AbstractResourceVerifier {
 	protected String validTableResourceMetadata(String desc, IJson ijson, boolean isUpdate, boolean isValidUniqueInDb){
 		int size = ijson.size();
 		
-		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
+		Set<AResourceMetadataInfo> uniqueConstraintProps = new HashSet<AResourceMetadataInfo>(resourceMetadataInfos.size());
 		JSONObject data = null;
 		Object dataIdValue = null;
 		boolean dataValueIsNull;
@@ -144,7 +144,7 @@ public abstract class AbstractResourceVerifier {
 				}
 			}
 			
-			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
+			for (AResourceMetadataInfo rmi : resourceMetadataInfos) {
 				dataValue = data.get(rmi.getPropName());
 				dataValueIsNull = StrUtils.isEmpty(dataValue);
 				
@@ -176,7 +176,7 @@ public abstract class AbstractResourceVerifier {
 		
 		// 验证一次提交的数组中，是否有重复的值，违反了唯一约束
 		if(size > 1 && uniqueConstraintProps.size()>0){
-			for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
+			for (AResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
 				for(int i=0;i<size-1;i++){
 					dataValue = ijson.get(i).get(uniqueConstraintProp.getPropName());
 					if(StrUtils.notEmpty(dataValue)){

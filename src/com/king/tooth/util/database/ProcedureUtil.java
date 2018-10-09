@@ -20,7 +20,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.AResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
@@ -210,10 +210,10 @@ public class ProcedureUtil {
 			 */
 			private void setSqlServerParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
 				if(parameter.getIsTableType() == 1){
-					List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = inSqlResultSets.get(inSqlResultsetIndex).getInSqlResultSetMetadataInfos();
+					List<AResourceMetadataInfo> inSqlResultSetMetadataInfos = inSqlResultSets.get(inSqlResultsetIndex).getInSqlResultSetMetadataInfos();
 					
 					SQLServerDataTable table = new SQLServerDataTable();
-					for (ResourceMetadataInfo inSqlResultSetMetadataInfo : inSqlResultSetMetadataInfos) {
+					for (AResourceMetadataInfo inSqlResultSetMetadataInfo : inSqlResultSetMetadataInfos) {
 						// 添加列信息：列名，列类型
 						table.addColumnMetadata(inSqlResultSetMetadataInfo.getColumnName(), DBUtil.getDatabaseDataTypeCode(inSqlResultSetMetadataInfo.getDataType(), 0, isOracle, isSqlServer));
 					}

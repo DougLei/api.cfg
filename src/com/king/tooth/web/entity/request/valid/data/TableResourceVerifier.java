@@ -9,7 +9,8 @@ import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.AResourceMetadataInfo;
+import com.king.tooth.sys.entity.other.TableResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -55,7 +56,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		if(requestBody.getResourceInfo().getReqResource().isBuiltinResource()){
 			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName);
 		}else{
-			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql , requestBody.getResourceInfo().getReqResource().getRefResourceId());
+			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(AResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql , requestBody.getResourceInfo().getReqResource().getRefResourceId());
 			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
 				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 			}
@@ -69,7 +70,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 				if(requestBody.getResourceInfo().getReqParentResource().isBuiltinResource()){
 					parentResourceMetadataInfos = getBuiltinTableResourceMetadataInfos(parentResourceName);
 				}else{
-					parentResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, requestBody.getResourceInfo().getReqParentResource().getRefResourceId());
+					parentResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(AResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, requestBody.getResourceInfo().getReqParentResource().getRefResourceId());
 					if(parentResourceMetadataInfos == null || parentResourceMetadataInfos.size() == 0){
 						throw new NullPointerException("没有查询到父表资源["+parentResourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 					}
@@ -86,19 +87,19 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 * @param tableResourceName
 	 * @return
 	 */
-	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
+	private List<AResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
 		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
 		List<ComColumndata> columns = itable.getColumnList();
-		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
+		List<AResourceMetadataInfo> metadataInfos = new ArrayList<AResourceMetadataInfo>(columns.size());
 		for (ComColumndata column : columns) {
-			metadataInfos.add(new ResourceMetadataInfo(
+			metadataInfos.add(new TableResourceMetadataInfo(
 					column.getColumnName(),
-					column.getPropName(),
 					column.getColumnType(),
 					column.getLength(),
 					column.getPrecision(),
 					0, // column.getIsUnique()，基础字段，不需要验证是否唯一，所以设置为0
 					1, // column.getIsNullabled()，基础字段，不需要验证是否可为空，所以设置为1
+					column.getPropName(),
 					column.getName()));
 		}
 		DynamicBasicColumnUtil.initBasicMetadataInfos(tableResourceName, metadataInfos);
