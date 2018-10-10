@@ -379,6 +379,21 @@ public class SysAccountService extends AService{
 		return json;
 	}
 	
+	/**
+	 * 重置账户登陆密码
+	 * @param accountId
+	 * @return
+	 */
+	public Object resetPassword(String accountId) {
+		SysAccount account = getObjectById(accountId, SysAccount.class);
+		String defaultPassword = CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", defaultPassword, accountId);
+		
+		JSONObject json = new JSONObject(1);
+		json.put(ResourcePropNameConstants.ID, accountId);
+		return json;
+	}
+	
 	//-----------------------------------------------------------
 
 	/**

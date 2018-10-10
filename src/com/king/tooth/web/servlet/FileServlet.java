@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.service.sys.SysFileService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.FileUtil;
@@ -23,7 +24,7 @@ import com.king.tooth.web.entity.resulttype.ResponseBody;
 public class FileServlet extends HttpServlet{
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		CurrentThreadContext.getReqLogData().getReqLog().setType(4);// 标识日志的类型为文件
+		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.EXCEL);// 标识日志的类型为excel
 		
 		ResponseBody responseBody = null;
 		if(FileUtil.saveToService){

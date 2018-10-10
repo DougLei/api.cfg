@@ -80,11 +80,14 @@ public class CodeResourceMapping {
 		// 用户操作
 		put("/user/open_account/post", SysUserController.class, "openAccount");
 		put("/user/update_pwd/post", SysUserController.class, "updatePassword");
+		put("/user/pwd/reset/put", SysUserController.class, "resetPassword");
+		put("/user/account/reset/put", SysUserController.class, "resetAccount");
 		
 		// 账户操作
 		put("/login/post", SysAccountController.class, "login");
 		put("/login_out/post", SysAccountController.class, "loginOut");
 		put("/account/update_pwd/post", SysAccountController.class, "updatePassword");
+		put("/account/pwd/reset/put", SysAccountController.class, "resetPassword");
 		
 		// 权限操作
 		put("/permission/get", SysPermissionController.class, "calcPermissionByCode");

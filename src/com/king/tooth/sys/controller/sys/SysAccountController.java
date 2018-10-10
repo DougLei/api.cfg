@@ -15,6 +15,7 @@ import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
+import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.JsonUtil;
@@ -36,7 +37,7 @@ public class SysAccountController extends AController{
 	 */
 	@RequestMapping
 	public Object login(HttpServletRequest request, IJson ijson){
-		CurrentThreadContext.getReqLogData().getReqLog().setType(1);// 标识为登陆日志
+		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.LOGIN);// 标识为登陆日志
 		
 		SysAccount account = JsonUtil.toJavaObject(ijson.get(0), SysAccount.class);
 		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).login(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
@@ -63,7 +64,7 @@ public class SysAccountController extends AController{
 	 */
 	@RequestMapping
 	public Object loginOut(HttpServletRequest request, IJson ijson){
-		CurrentThreadContext.getReqLogData().getReqLog().setType(2);// 标识为退出登陆日志
+		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.LOGIN_OUT);// 标识为退出登陆日志
 		
 		String token = request.getHeader("_token");
 		BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginOut(token);
@@ -166,6 +167,21 @@ public class SysAccountController extends AController{
 			return "新密码不能为空";
 		}
 		resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).uploadAccounLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
+		return getResultObject();
+	}
+	
+	/**
+	 * 重置账户登陆密码
+	 * <p>请求方式：PUT</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object resetPassword(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
+			return "要重置密码的账户id不能为空";
+		}
+		resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).resetPassword(jsonObject.getString(ResourcePropNameConstants.ID));
 		return getResultObject();
 	}
 }

@@ -149,6 +149,12 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		this.isDelete = isDelete;
 	}
 	
+	public SysAccount(String id) {
+		this.id = id;
+	}
+	public SysAccount() {
+	}
+	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
 		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);

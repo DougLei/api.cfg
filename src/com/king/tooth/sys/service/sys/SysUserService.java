@@ -54,6 +54,40 @@ public class SysUserService extends AService{
 	}
 	
 	/**
+	 * 重置用户登陆密码
+	 * @param userId
+	 * @return
+	 */
+	public Object resetPassword(String userId) {
+		if(!accountIsExists(userId)){
+			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
+		}
+		return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).resetPassword(userId);
+	}
+	
+	/**
+	 * 重置用户的账户信息，即将用户的工号、手机号、邮箱三个字段的值，重新更新到账户的帐号、手机号、邮箱三个字段的值，同时重置账户的登陆密码为初始密码
+	 * @param userId
+	 * @return
+	 */
+	public Object resetAccount(String userId) {
+		if(!accountIsExists(userId)){
+			return "该用户不存在账户信息，无法重置，或先创建关联的账户信息";
+		}
+		SysUser user = getObjectById(userId, SysUser.class);
+		SysAccount account = getObjectById(userId, SysAccount.class);
+		account.setLoginName(user.getWorkNo());
+		account.setTel(user.getTel());
+		account.setEmail(user.getEmail());
+		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+		HibernateUtil.updateObject(account, null);
+		
+		JSONObject json = new JSONObject(1);
+		json.put(ResourcePropNameConstants.ID, userId);
+		return json;
+	}
+	
+	/**
 	 * 验证工号是否已经存在
 	 * @param user
 	 * @return 

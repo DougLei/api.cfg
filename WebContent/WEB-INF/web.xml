@@ -133,6 +133,16 @@
 			<url-pattern>/file/*</url-pattern>
 		</servlet-mapping>
 		
+		<!-- 名为excelServlet的，导入导出excel的servlet控制器 -->
+		<servlet>
+			<servlet-name>excelServlet</servlet-name>
+			<servlet-class>com.king.tooth.web.servlet.ExcelServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>excelServlet</servlet-name>
+			<url-pattern>/excel/*</url-pattern>
+		</servlet-mapping>
+		
 <!-- ****************************************************************************************************  -->		
 
 </web-app>
