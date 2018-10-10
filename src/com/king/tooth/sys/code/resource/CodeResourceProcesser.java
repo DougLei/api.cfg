@@ -52,7 +52,7 @@ public class CodeResourceProcesser {
 		
 		Object object = codeResource.invokeMethodForCodeResource(request, ijson);
 		if(object == null){
-			return "系统在调用codeResourceKey为["+codeResourceKey+"]的代码资源时，返回的结果为null，请联系开发人员";
+			return "系统在调用codeResourceKey为["+codeResourceKey+"]的代码资源时，返回的结果为null，请联系后端系统开发人员";
 		}
 		return object;
 	}

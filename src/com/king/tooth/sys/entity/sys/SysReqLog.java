@@ -28,12 +28,6 @@ import com.king.tooth.util.ResourceHandlerUtil;
 @Table
 public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	
-	public static final Integer LOGIN = 1;
-	public static final Integer LOGIN_OUT = 2;
-	public static final Integer SQL = 3;
-	public static final Integer FILE = 4;
-	public static final Integer EXCEL = 5;
-	
 	/**
 	 * 请求类型
 	 * <p>1：login、2：loginOut、3：sql、4：file、5、excel...</p>
@@ -313,4 +307,10 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	public static String getYearMonth(Date currentDate){
 		return DateUtil.formatDate(currentDate, ymSdf);
 	}
+	
+	public static final Integer LOGIN = 1;
+	public static final Integer LOGIN_OUT = 2;
+	public static final Integer SQL = 3;
+	public static final Integer FILE = 4;
+	public static final Integer EXCEL = 5;
 }

@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysReqLog;
+import com.king.tooth.sys.service.sys.SysExcelImportExportInfoService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
@@ -33,14 +35,12 @@ public class ExcelServlet extends HttpServlet{
 				// 导入
 				if("import".equals(uri[3])){
 					operDesc = "导入";
-//					result = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).upload(request);
-					result = "";
+					result = BuiltinResourceInstance.getInstance("SysExcelImportExportInfoService", SysExcelImportExportInfoService.class).importExcel(request);
 				}
 				// 导出
 				else if("export".equals(uri[3])){
 					operDesc = "导出";
-//					result = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).delete(request);
-					result = "";
+					result = BuiltinResourceInstance.getInstance("SysExcelImportExportInfoService", SysExcelImportExportInfoService.class).exportExcel(request);
 				}
 				
 				if(result == null){

@@ -162,51 +162,43 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		ComColumndata loginNameColumn = new ComColumndata("login_name", DataTypeConstants.STRING, 30);
 		loginNameColumn.setName("登录名");
 		loginNameColumn.setComments("登录名");
-		loginNameColumn.setOrderCode(1);
 		columns.add(loginNameColumn);
 		
 		ComColumndata loginPwdColumn = new ComColumndata("login_pwd", DataTypeConstants.STRING, 32);
 		loginPwdColumn.setName("登录密码");
 		loginPwdColumn.setComments("登录密码");
-		loginPwdColumn.setOrderCode(2);
 		columns.add(loginPwdColumn);
 		
 		ComColumndata loginPwdKeyColumn = new ComColumndata("login_pwd_key", DataTypeConstants.STRING, 32);
 		loginPwdKeyColumn.setName("登录密码的密钥");
 		loginPwdKeyColumn.setComments("登录密码的密钥：和loginPwd结合，得到每个账户独有的密码");
-		loginPwdKeyColumn.setOrderCode(3);
 		columns.add(loginPwdKeyColumn);
 		
 		ComColumndata telColumn = new ComColumndata("tel", DataTypeConstants.STRING, 20);
 		telColumn.setName("手机号");
 		telColumn.setComments("手机号");
-		telColumn.setOrderCode(4);
 		columns.add(telColumn);
 		
 		ComColumndata emailColumn = new ComColumndata("email", DataTypeConstants.STRING, 80);
 		emailColumn.setName("邮箱");
 		emailColumn.setComments("邮箱");
-		emailColumn.setOrderCode(5);
 		columns.add(emailColumn);
 
 		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("账户类型");
 		typeColumn.setComments("账户类型:1.管理员、2.普通账户、3.平台开发账户(配置系统使用)，默认值是：2");
 		typeColumn.setDefaultValue("2");
-		typeColumn.setOrderCode(6);
 		columns.add(typeColumn);
 		
 		ComColumndata statusColumn = new ComColumndata("status", DataTypeConstants.INTEGER, 1);
 		statusColumn.setName("账户状态");
 		statusColumn.setComments("账户状态:1.启用、2.禁用，默认值是：1");
 		statusColumn.setDefaultValue("1");
-		statusColumn.setOrderCode(7);
 		columns.add(statusColumn);
 		
 		ComColumndata validDateColumn = new ComColumndata("valid_date", DataTypeConstants.DATE, 0);
 		validDateColumn.setName("账户有效期限");
 		validDateColumn.setComments("账户有效期限");
-		validDateColumn.setOrderCode(8);
 		columns.add(validDateColumn);
 		
 		ComColumndata isDeleteColumn = new ComColumndata("is_delete", DataTypeConstants.INTEGER, 1);
@@ -222,7 +214,6 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("账户表");
 		table.setComments("账户表");
-		
 		
 		table.setColumns(getColumnList());
 		return table;

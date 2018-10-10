@@ -33,6 +33,7 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDataPrivS;
 import com.king.tooth.sys.entity.sys.SysDept;
+import com.king.tooth.sys.entity.sys.SysExcelImportExportInfo;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysOrg;
@@ -59,6 +60,7 @@ import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.sys.service.other.SystemToolsService;
 import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
 import com.king.tooth.sys.service.sys.SysAccountService;
+import com.king.tooth.sys.service.sys.SysExcelImportExportInfoService;
 import com.king.tooth.sys.service.sys.SysFileService;
 import com.king.tooth.sys.service.sys.SysPermissionService;
 import com.king.tooth.sys.service.sys.SysPushMessageInfoService;
@@ -103,6 +105,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysFileService", new SysFileService());
 		instanceCache.put("SystemToolsService", new SystemToolsService());
 		instanceCache.put("SysPushMessageInfoService", new SysPushMessageInfoService());
+		instanceCache.put("SysExcelImportExportInfoService", new SysExcelImportExportInfoService());
 		
 		instanceCache.put("CfgDatabase", new CfgDatabase());
 		instanceCache.put("CfgTable", new ComTabledata());
@@ -140,6 +143,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserRoleLinks", new SysUserRoleLinks());
 		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
+		instanceCache.put("SysExcelImportExportInfo", new SysExcelImportExportInfo());
 		
 		
 		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉
