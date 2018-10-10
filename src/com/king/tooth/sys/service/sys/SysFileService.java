@@ -163,7 +163,7 @@ public class SysFileService extends AService{
 				uploadFileInfo.count++;
 				
 				fileSizeKB = fi.getSize()/1024;// 由B转换为KB
-				if(fileSizeKB > FileUtil.fileMaxSize){
+				if(FileUtil.fileMaxSize != -1 && fileSizeKB > FileUtil.fileMaxSize){
 					uploadFileInfo.errMsg = "文件的大小为"+(fileSizeKB/1024)+"M，系统限制单个文件的大小不能超过"+(FileUtil.fileMaxSize/1024)+"M，请修改后再上传";
 				}
 			}

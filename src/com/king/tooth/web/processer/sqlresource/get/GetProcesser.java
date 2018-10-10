@@ -216,7 +216,8 @@ public abstract class GetProcesser extends RequestProcesser{
 				List addList = removeDatas(list, addFocusedIds, idColumnIndex);
 				
 				if(addFocusedIds.size() > 0){
-					coreSqlBuffer.append(" where s_.").append(ResourcePropNameConstants.ID).append(" in (");
+					coreSqlBuffer.append(builtinQueryCondMethodProcesser.getIsUsed()?" and":" where")
+					             .append(" s_.").append(ResourcePropNameConstants.ID).append(" in (");
 					for (Object fid : addFocusedIds) {
 						coreSqlParams.add(fid);
 						coreSqlBuffer.append("?,");

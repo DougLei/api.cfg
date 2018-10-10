@@ -1,6 +1,8 @@
 package com.king.tooth.util;
 
 import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 字符串工具类
@@ -122,6 +124,14 @@ public class StrUtils {
 		if(isEmpty(str)){
 			return 0;
 		}
-		return str.length();
+		int len = str.length();
+		Matcher matcher = doubleCharPattern.matcher(str);
+		while(matcher.find()){
+			len++;
+		}
+		return len;
 	}
+	/** 匹配双字节字符的正则表达式，包括汉字 */
+	private static final Pattern doubleCharPattern = Pattern.compile("[^x00-xff]");
+	// [\u4e00-\u9fa5]  匹配汉字的正则表达式
 }

@@ -97,8 +97,8 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 					column.getColumnType(),
 					column.getLength(),
 					column.getPrecision(),
-					0, // column.getIsUnique()，基础字段，不需要验证是否唯一，所以设置为0
-					1, // column.getIsNullabled()，基础字段，不需要验证是否可为空，所以设置为1
+					column.getIsUnique(), 
+					column.getIsNullabled(),
 					column.getPropName(),
 					column.getName()));
 		}
