@@ -76,6 +76,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	private Integer type;
 	/**
 	 * 是否是导入文件
+	 * <p>默认值为0</p>
 	 */
 	private Integer isImport;
 	/**
@@ -270,7 +271,8 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		
 		ComColumndata isImportColumn = new ComColumndata("is_import", DataTypeConstants.INTEGER, 1);
 		isImportColumn.setName("是否是导入文件");
-		isImportColumn.setComments("是否是导入文件");
+		isImportColumn.setComments("默认值为0");
+		isImportColumn.setDefaultValue("0");
 		columns.add(isImportColumn);
 		
 		ComColumndata remarkColumn = new ComColumndata("remark", DataTypeConstants.STRING, 2000);

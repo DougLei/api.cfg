@@ -11,7 +11,7 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.sys.SysFile;
+import com.king.tooth.sys.entity.sys.SysExcelImportExportInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -27,7 +27,7 @@ public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new SysFile().toCreateTable()
+				new SysExcelImportExportInfo().toCreateTable()
 				);
 	}
 	
@@ -58,7 +58,7 @@ public final class SyncTableToServerDBTool extends AService{
 		try {
 			conn = dblink.getConnection();
 			st = conn.createStatement();
-			pst = conn.prepareStatement("update sys_hibernate_hbm set hbm_content = ? where id = ?");
+			pst = conn.prepareStatement("update cfg_hibernate_hbm set content = ? where id = ?");
 			
 			String hbmId;
 			CfgHibernateHbm hbm;
@@ -110,7 +110,7 @@ public final class SyncTableToServerDBTool extends AService{
 		String id = ResourceHandlerUtil.getIdentity();
 		// 先尝试删除之前的数据，再添加新的数据
 		st.executeUpdate("delete cfg_hibernate_hbm where resource_name = '"+resourceName+"'");
-		st.executeUpdate("insert into cfg_hibernate_hbm(ref_database_id, ref_table_id, id, customer_id, project_id, is_enabled, request_method, is_created, create_date, last_update_date, create_user_id, last_update_user_id) values('5k7f1ef02728y7018f9df0e9edcr8d37','builtinResource','"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', 1, getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
+		st.executeUpdate("insert into cfg_hibernate_hbm(ref_database_id, ref_table_id, resource_name, id, customer_id, project_id, create_date, last_update_date, create_user_id, last_update_user_id) values('5k7f1ef02728y7018f9df0e9edcr8d37','builtinResource', '"+hbm.getResourceName()+"','"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb', getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
 		return id;
 	}
 	

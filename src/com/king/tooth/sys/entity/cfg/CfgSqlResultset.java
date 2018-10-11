@@ -68,7 +68,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	
 	/**
 	 * 是否excel导出
-	 * <p>默认值为0，如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出</p>
+	 * <p>如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出</p>
 	 */
 	private Integer isExportExcel;
 	/**
@@ -234,8 +234,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		
 		ComColumndata isExportExcelColumn = new ComColumndata("is_export_excel", DataTypeConstants.INTEGER, 1);
 		isExportExcelColumn.setName("是否excel导出");
-		isExportExcelColumn.setComments("默认值为0，如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出");
-		isExportExcelColumn.setDefaultValue("0");
+		isExportExcelColumn.setComments("如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出");
 		columns.add(isExportExcelColumn);
 		
 		ComColumndata exportExcelOrderCodeColumn = new ComColumndata("export_excel_order_code", DataTypeConstants.INTEGER, 4);
