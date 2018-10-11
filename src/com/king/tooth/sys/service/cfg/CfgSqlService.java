@@ -15,7 +15,7 @@ import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.ResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -154,9 +154,9 @@ public class CfgSqlService extends AService {
 				operResult = validSameResourceNameSqlScriptInProject(sqlScript.getSqlScriptResourceName(), projectId);
 			}
 				
-			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName()) || !oldSqlScript.getRequestMethod().equals(sqlScript.getRequestMethod())){
 				// 如果修改了sql脚本的资源名，也要同步修改SysResource表中的资源名
-				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceName(sqlScript.getId(), sqlScript.getSqlScriptResourceName());
+				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getSqlScriptResourceName(), sqlScript.getRequestMethod());
 			}
 			if(operResult == null){
 				return HibernateUtil.updateObject(sqlScript, null);

@@ -6,8 +6,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
-import com.king.tooth.sys.entity.other.TableResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.TableResourceMetadataInfo;
 
 /**
  * 动态的基础字段的工具类

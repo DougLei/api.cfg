@@ -7,11 +7,12 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.ResourceMetadataInfo;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -65,6 +66,17 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	 */
 	private Integer inOut;
 	
+	/**
+	 * 是否excel导出
+	 * <p>默认值为0，如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出</p>
+	 */
+	private Integer isExportExcel;
+	/**
+	 * excel导出排序
+	 * <p>该字段值和order_code的值一致</p>
+	 */
+	private Integer exportExcelOrderCode;
+	
 	//------------------------------------------------------------------------------
 	
 	/**
@@ -74,10 +86,15 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	@JSONField(serialize = false)
 	private List<ResourceMetadataInfo> inSqlResultSetMetadataInfos;
 	
-	public CfgSqlResultset(String columnName, int orderCode, int inOut) {
+	public CfgSqlResultset(String sqlScriptType, String columnName, int orderCode, int inOut) {
+		this.columnName = columnName;
 		this.orderCode = orderCode;
 		this.inOut = inOut;
-		this.columnName = columnName;
+		
+		this.exportExcelOrderCode = orderCode;
+		if(inOut == OUT && SqlStatementTypeConstants.SELECT.equals(sqlScriptType)){
+			this.isExportExcel = 1;
+		}
 		if("id".equalsIgnoreCase(columnName)){
 			this.propName = ResourcePropNameConstants.ID;
 		}else{
@@ -153,10 +170,22 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setInSqlResultSetMetadataInfos(List<ResourceMetadataInfo> inSqlResultSetMetadataInfos) {
 		this.inSqlResultSetMetadataInfos = inSqlResultSetMetadataInfos;
 	}
+	public Integer getIsExportExcel() {
+		return isExportExcel;
+	}
+	public void setIsExportExcel(Integer isExportExcel) {
+		this.isExportExcel = isExportExcel;
+	}
+	public Integer getExportExcelOrderCode() {
+		return exportExcelOrderCode;
+	}
+	public void setExportExcelOrderCode(Integer exportExcelOrderCode) {
+		this.exportExcelOrderCode = exportExcelOrderCode;
+	}
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(9+7);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(11+7);
 		
 		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", DataTypeConstants.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -202,6 +231,17 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		inOutColumn.setName("传入还是传出");
 		inOutColumn.setComments("标识是传入的结果集信息，还是传出的结果集信息，in=1、out=2");
 		columns.add(inOutColumn);
+		
+		ComColumndata isExportExcelColumn = new ComColumndata("is_export_excel", DataTypeConstants.INTEGER, 1);
+		isExportExcelColumn.setName("是否excel导出");
+		isExportExcelColumn.setComments("默认值为0，如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出");
+		isExportExcelColumn.setDefaultValue("0");
+		columns.add(isExportExcelColumn);
+		
+		ComColumndata exportExcelOrderCodeColumn = new ComColumndata("export_excel_order_code", DataTypeConstants.INTEGER, 4);
+		exportExcelOrderCodeColumn.setName("excel导出排序");
+		exportExcelOrderCodeColumn.setComments("默认和order_code的值一致");
+		columns.add(exportExcelOrderCodeColumn);
 		
 		return columns;
 	}

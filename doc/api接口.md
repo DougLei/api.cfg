@@ -138,7 +138,8 @@
   "descs":"",                                --描述
   "deptId":"",                               --部门id
   "positionId":"",                           --岗位id
-  "isCreateAccount":""                       --是否创建账户信息，1是0否
+  "isCreateAccount":"",                      --是否创建账户信息，1是0否
+  "isSyncLoginName":""                       --如果修改了工号，是否同步修改账户的登录名，1是0否
 }
 ```
 

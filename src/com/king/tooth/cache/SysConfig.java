@@ -14,7 +14,7 @@ public class SysConfig implements Serializable{
 	
 	/**
 	 * web系统在磁盘中的根目录
-	 * <p>例如：C:\devlopment\MyTomcat\apache-tomcat-7.0.63\webapps\api.xxx\</p>
+	 * <p>例如：C:\devlopment\MyTomcat\apache-tomcat-7.0.63\webapps\项目名\</p>
 	 */
 	public transient static String WEB_SYSTEM_CONTEXT_REALPATH;
 	

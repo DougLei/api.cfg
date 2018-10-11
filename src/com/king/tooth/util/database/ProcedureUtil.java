@@ -20,7 +20,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.other.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
@@ -41,12 +41,13 @@ public class ProcedureUtil {
 	 * @param sqlScript
 	 * @return
 	 */
-	public static JSONArray executeProcedure(final ComSqlScript sqlScript) {
+	public static JSONArray executeProcedure(ComSqlScript sqlScript) {
 		JSONArray jsonArray = null;
 		
 		boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType());
 		boolean isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType());
 		String sqlScriptId = sqlScript.getId();
+		String sqlScriptType = sqlScript.getSqlScriptType();
 		
 		List<CfgSqlResultset> inSqlResultSets = sqlScript.getInSqlResultsets()==null?new ArrayList<CfgSqlResultset>(5):sqlScript.getInSqlResultsets();
 		List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getOutSqlResultsetsList();
@@ -64,7 +65,7 @@ public class ProcedureUtil {
 			int count = 1;
 			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
 				json = new JSONObject(10);
-				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSets, outSqlResultSetsList, sqlParams, callProcedure, json);
+				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, sqlScriptType, inSqlResultSets, outSqlResultSetsList, sqlParams, callProcedure, json);
 				jsonArray.add(json);
 				
 				Log4jUtil.debug("第{}次执行procedure名为：{}", count, procedureName);
@@ -75,7 +76,7 @@ public class ProcedureUtil {
 			jsonArray = new JSONArray(1);
 			callProcedure = callProcedure(procedureName, null);
 			json = new JSONObject(10);
-			execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, inSqlResultSets, outSqlResultSetsList, null, callProcedure, json);
+			execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, sqlScriptType, inSqlResultSets, outSqlResultSetsList, null, callProcedure, json);
 			jsonArray.add(json);
 			
 			Log4jUtil.debug("执行procedure名为：{}", procedureName);
@@ -126,13 +127,14 @@ public class ProcedureUtil {
 	 * @param isOracle
 	 * @param isSqlServer
 	 * @param sqlScriptId
+	 * @param sqlScriptType
 	 * @param inSqlResultSets
 	 * @param outSqlResultSetsList
 	 * @param sqlParams
 	 * @param callProcedure
 	 * @param json
 	 */
-	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
+	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final String sqlScriptType, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
 		new DBLink(CurrentThreadContext.getDatabaseInstance()).doExecute(new IExecute() {
 			private int inSqlResultsetIndex = 0;
 			
@@ -358,7 +360,7 @@ public class ProcedureUtil {
 					List<CfgSqlResultset> sqlResultSets = new ArrayList<CfgSqlResultset>(len);
 					CfgSqlResultset csr = null;
 					for(int i=1;i<=len;i++){
-						csr = new CfgSqlResultset(rsmd.getColumnName(i), i, CfgSqlResultset.OUT);
+						csr = new CfgSqlResultset(sqlScriptType, rsmd.getColumnName(i), i, CfgSqlResultset.OUT);
 						csr.setSqlScriptId(sqlScriptId);
 						
 						if(isSqlServer){

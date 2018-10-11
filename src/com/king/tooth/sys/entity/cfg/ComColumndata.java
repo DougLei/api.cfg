@@ -108,6 +108,17 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	@JSONField(serialize = false)
 	private JSONObject oldColumnInfo;
 	
+	/**
+	 * 是否excel导出
+	 * <p>默认为1，标识都导出</p>
+	 */
+	private Integer isExportExcel;
+	/**
+	 * excel导出排序
+	 * <p>默认和order_code的值一致</p>
+	 */
+	private Integer exportExcelOrderCode;
+	
 	//-------------------------------------------------------------------------
 	
 	/**
@@ -244,6 +255,18 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public JSONObject getOldColumnInfo() {
 		return oldColumnInfo;
 	}
+	public Integer getIsExportExcel() {
+		return isExportExcel;
+	}
+	public void setIsExportExcel(Integer isExportExcel) {
+		this.isExportExcel = isExportExcel;
+	}
+	public Integer getExportExcelOrderCode() {
+		return exportExcelOrderCode;
+	}
+	public void setExportExcelOrderCode(Integer exportExcelOrderCode) {
+		this.exportExcelOrderCode = exportExcelOrderCode;
+	}
 	
 	/**
 	 * 解析出旧的列信息
@@ -296,7 +319,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(20+7);
 		
 		ComColumndata tableIdColumn = new ComColumndata("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -402,6 +425,18 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);
 		
+		ComColumndata isExportExcelColumn = new ComColumndata("is_export_excel", DataTypeConstants.INTEGER, 1);
+		isExportExcelColumn.setName("是否excel导出");
+		isExportExcelColumn.setComments("默认为1，标识都导出");
+		isExportExcelColumn.setDefaultValue("1");
+		columns.add(isExportExcelColumn);
+		
+		ComColumndata exportExcelOrderCodeColumn = new ComColumndata("export_excel_order_code", DataTypeConstants.INTEGER, 4);
+		exportExcelOrderCodeColumn.setName("excel导出排序");
+		exportExcelOrderCodeColumn.setComments("默认和order_code的值一致");
+		exportExcelOrderCodeColumn.setDefaultValue("0");
+		columns.add(exportExcelOrderCodeColumn);
+		
 		return columns;
 	}
 	
@@ -433,6 +468,9 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		if(DataTypeConstants.STRING.equals(columnType) && (length == null || length < 1)){
 			return "字段长度不能为空！";
 		}
+		if(orderCode !=null && orderCode < 0){
+			return "字段排序值必须大于0！";
+		}
 		return null;
 	}
 	
@@ -461,6 +499,9 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
+			if(this.exportExcelOrderCode == null){
+				this.exportExcelOrderCode = this.orderCode;
+			}
 		}
 		return result;
 	}

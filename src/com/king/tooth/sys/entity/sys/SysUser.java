@@ -116,6 +116,12 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	@JSONField(serialize = false)
 	private int isCreateAccount;
 	
+	/**
+	 * 如果修改了工号，是否同步修改账户的登录名，1是0否
+	 */
+	@JSONField(serialize = false)
+	private int isSyncLoginName;
+	
 	public String getNikeName() {
 		return nikeName;
 	}
@@ -235,6 +241,12 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	}
 	public void setIsCreateAccount(int isCreateAccount) {
 		this.isCreateAccount = isCreateAccount;
+	}
+	public int getIsSyncLoginName() {
+		return isSyncLoginName;
+	}
+	public void setIsSyncLoginName(int isSyncLoginName) {
+		this.isSyncLoginName = isSyncLoginName;
 	}
 	public Integer getIsDelete() {
 		return isDelete;

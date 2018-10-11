@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.other;
+package com.king.tooth.sys.service.tools;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,6 +37,7 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDataPrivS;
 import com.king.tooth.sys.entity.sys.SysDept;
+import com.king.tooth.sys.entity.sys.SysExcelImportExportInfo;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysOrg;
@@ -142,6 +143,7 @@ public class InitSystemService extends AService{
 		tables.add(new CfgSqlResultset().toCreateTable());
 		tables.add(new SysPushMessageInfo().toCreateTable());
 		tables.add(new SysDataPrivS().toCreateTable());
+		tables.add(new SysExcelImportExportInfo().toCreateTable());
 		return tables;
 	}
 	

@@ -1,5 +1,6 @@
-package com.king.tooth.sys.entity.other;
+package com.king.tooth.sys.entity.tools;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import com.king.tooth.constants.ResourceInfoConstants;
@@ -9,7 +10,8 @@ import com.king.tooth.util.JsonUtil;
  * 资源信息对象
  * @author DougLei
  */
-public class ResourceInfo {
+@SuppressWarnings("serial")
+public class ResourceInfo implements Serializable{
 	
 	/**
 	 * 资源名

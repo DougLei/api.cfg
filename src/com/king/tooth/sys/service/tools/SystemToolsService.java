@@ -1,4 +1,4 @@
-package com.king.tooth.sys.service.other;
+package com.king.tooth.sys.service.tools;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Map;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourceInfoConstants;
-import com.king.tooth.sys.entity.other.ResourceInfo;
 import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.tools.ResourceInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;

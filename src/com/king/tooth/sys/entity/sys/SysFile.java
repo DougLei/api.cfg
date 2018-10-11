@@ -229,7 +229,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		ComColumndata saveTypeColumn = new ComColumndata("save_type", DataTypeConstants.STRING, 10);
 		saveTypeColumn.setName("文件的存储方式");
 		saveTypeColumn.setComments("文件的存储方式：db:存储在数据库，service:存储在系统服务器上...");
-		saveTypeColumn.setDefaultValue(service);
+		saveTypeColumn.setDefaultValue(SERVICE);
 		columns.add(saveTypeColumn);
 		
 		ComColumndata contentColumn = new ComColumndata("content", DataTypeConstants.BLOB, 0);
@@ -298,9 +298,9 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	/**
 	 * 保存文件到数据库中
 	 */
-	public static final String db = "db";
+	public static final String DB = "db";
 	/**
 	 * 保存文件到服务器上
 	 */
-	public static final String service = "service";
+	public static final String SERVICE = "service";
 }

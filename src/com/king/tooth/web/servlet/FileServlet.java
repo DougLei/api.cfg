@@ -66,7 +66,7 @@ public class FileServlet extends HttpServlet{
 				responseBody = new ResponseBody("请求操作文件的api路径格式错误，请检查：[/file/upload][/file/download][/file/delete]");
 			}
 		}else{
-			responseBody = new ResponseBody("目前系统还不支持to["+FileUtil.fileSaveType+"]方式的保存文件");
+			responseBody = new ResponseBody("目前系统还不支持["+FileUtil.saveType+"]方式的保存文件，请联系后端系统开发人员");
 		}
 		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
 	}

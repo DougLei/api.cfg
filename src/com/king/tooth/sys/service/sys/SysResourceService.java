@@ -55,11 +55,12 @@ public class SysResourceService extends AService{
 	}
 
 	/**
-	 * 修改资源名
+	 * 更新资源信息
 	 * @param refResourceId
 	 * @param resourceName
+	 * @param resourceRequestMethod
 	 */
-	public void updateResourceName(String refResourceId, String resourceName) {
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysResource set resourceName = ? where refResourceId = ? and projectId = ?", resourceName, refResourceId, CurrentThreadContext.getProjectId());
+	public void updateResourceInfo(String refResourceId, String resourceName, String resourceRequestMethod) {
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysResource set resourceName = ?, resourceName = ? where refResourceId = ? and projectId = ?", resourceName, resourceRequestMethod, refResourceId, CurrentThreadContext.getProjectId());
 	}
 }

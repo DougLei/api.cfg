@@ -10,11 +10,11 @@ import com.king.tooth.sys.controller.cfg.CfgProjectModuleController;
 import com.king.tooth.sys.controller.cfg.CfgSqlController;
 import com.king.tooth.sys.controller.cfg.CfgSqlParameterController;
 import com.king.tooth.sys.controller.cfg.CfgTableController;
-import com.king.tooth.sys.controller.other.SystemToolsController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
 import com.king.tooth.sys.controller.sys.SysPermissionController;
 import com.king.tooth.sys.controller.sys.SysPushMessageInfoController;
 import com.king.tooth.sys.controller.sys.SysUserController;
+import com.king.tooth.sys.controller.tools.SystemToolsController;
 
 /**
  * 代码资源映射

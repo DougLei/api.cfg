@@ -10,11 +10,11 @@ import com.king.tooth.sys.controller.cfg.CfgProjectModuleController;
 import com.king.tooth.sys.controller.cfg.CfgSqlController;
 import com.king.tooth.sys.controller.cfg.CfgSqlParameterController;
 import com.king.tooth.sys.controller.cfg.CfgTableController;
-import com.king.tooth.sys.controller.other.SystemToolsController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
 import com.king.tooth.sys.controller.sys.SysPermissionController;
 import com.king.tooth.sys.controller.sys.SysPushMessageInfoController;
 import com.king.tooth.sys.controller.sys.SysUserController;
+import com.king.tooth.sys.controller.tools.SystemToolsController;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
@@ -57,15 +57,16 @@ import com.king.tooth.sys.service.cfg.CfgProjectModuleService;
 import com.king.tooth.sys.service.cfg.CfgProjectService;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.sys.service.cfg.CfgTableService;
-import com.king.tooth.sys.service.other.SystemToolsService;
 import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
 import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.sys.service.sys.SysExcelImportExportInfoService;
+import com.king.tooth.sys.service.sys.SysExcelService;
 import com.king.tooth.sys.service.sys.SysFileService;
 import com.king.tooth.sys.service.sys.SysPermissionService;
 import com.king.tooth.sys.service.sys.SysPushMessageInfoService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.sys.service.sys.SysUserService;
+import com.king.tooth.sys.service.tools.SystemToolsService;
 
 /**
  * 系统内置的资源实例
@@ -106,6 +107,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SystemToolsService", new SystemToolsService());
 		instanceCache.put("SysPushMessageInfoService", new SysPushMessageInfoService());
 		instanceCache.put("SysExcelImportExportInfoService", new SysExcelImportExportInfoService());
+		instanceCache.put("SysExcelService", new SysExcelService());
 		
 		instanceCache.put("CfgDatabase", new CfgDatabase());
 		instanceCache.put("CfgTable", new ComTabledata());

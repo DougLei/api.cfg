@@ -142,6 +142,28 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 	private static final String BUILTIN_RESOURCE = "builtinResource";
 
 	/**
+	 * 是否是表资源
+	 * @return
+	 */
+	public boolean isTableResource(){
+		return resourceType == ResourceInfoConstants.TABLE;
+	}
+	/**
+	 * 是否是sql资源
+	 * @return
+	 */
+	public boolean isSqlResource(){
+		return resourceType == ResourceInfoConstants.SQL;
+	}
+	/**
+	 * 是否是代码资源
+	 * @return
+	 */
+	public boolean isCodeResource(){
+		return resourceType == ResourceInfoConstants.CODE;
+	}
+	
+	/**
 	 * 获取资源描述
 	 * @return
 	 */

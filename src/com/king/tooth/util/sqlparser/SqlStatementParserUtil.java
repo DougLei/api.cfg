@@ -364,7 +364,7 @@ public class SqlStatementParserUtil {
 			}
 			parameter.setIsTableType(1);
 			
-			CfgSqlResultset sqlResultSet = new CfgSqlResultset(null, 0, CfgSqlResultset.IN);
+			CfgSqlResultset sqlResultSet = new CfgSqlResultset(sqlScript.getSqlScriptType(), null, 0, CfgSqlResultset.IN);
 			sqlResultSet.setSqlParameterId(parameter.getId());
 			sqlResultSet.setTableId(table.getId());
 			sqlScript.addInSqlResultsets(sqlResultSet);
@@ -697,7 +697,7 @@ public class SqlStatementParserUtil {
 				if("*".equals(columnName)){
 					throw new IllegalArgumentException("在资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源中，请指定具体查询的列名，禁止使用["+column.toString()+"]查询");
 				}
-				csr = new CfgSqlResultset(columnName, (i+1), CfgSqlResultset.OUT);
+				csr = new CfgSqlResultset(sql.getSqlScriptType(), columnName, (i+1), CfgSqlResultset.OUT);
 				csr.setSqlScriptId(sql.getId());
 				sqlResultSets.add(csr);
 				

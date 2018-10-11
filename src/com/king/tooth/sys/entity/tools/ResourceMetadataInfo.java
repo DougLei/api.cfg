@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.other;
+package com.king.tooth.sys.entity.tools;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
 
