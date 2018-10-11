@@ -11,6 +11,7 @@ import com.king.tooth.sys.controller.cfg.CfgSqlController;
 import com.king.tooth.sys.controller.cfg.CfgSqlParameterController;
 import com.king.tooth.sys.controller.cfg.CfgTableController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
+import com.king.tooth.sys.controller.sys.SysExcelController;
 import com.king.tooth.sys.controller.sys.SysPermissionController;
 import com.king.tooth.sys.controller.sys.SysPushMessageInfoController;
 import com.king.tooth.sys.controller.sys.SysUserController;
@@ -91,6 +92,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysPermissionController", new SysPermissionController());
 		instanceCache.put("SystemToolsController", new SystemToolsController());
 		instanceCache.put("SysPushMessageInfoController", new SysPushMessageInfoController());
+		instanceCache.put("SysExcelController", new SysExcelController());
 		
 		instanceCache.put("CfgTableService", new CfgTableService());
 		instanceCache.put("CfgColumnService", new CfgColumnService());

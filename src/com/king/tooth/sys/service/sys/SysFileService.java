@@ -85,6 +85,7 @@ public class SysFileService extends AService{
 							sysFile = new SysFile();
 							sysFile.setRefDataId(uploadFileInfo.refDataId);
 							sysFile.setBatch(uploadFileInfo.batch);
+							sysFile.setIsImport(uploadFileInfo.isImport);
 							sysFile.setCode(FileUtil.getFileCode());
 							sysFile.setSaveType(FileUtil.saveType);
 							sysfileMap.put(index, sysFile);
@@ -165,7 +166,7 @@ public class SysFileService extends AService{
 			}
 		}
 		
-		if(StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
+		if(uploadFileInfo.isImport == 0 && StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
 			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id格式错误，即参数名为refDataId的值格式错误：不能为空，或长度不符合要求(32位uuid)";
 		}
 		if(StrUtils.isEmpty(uploadFileInfo.batch) || uploadFileInfo.batch.length() != 32){
@@ -180,9 +181,9 @@ public class SysFileService extends AService{
 				uploadFileInfo.count++;
 				logJsonObject.put(fi.getFieldName(), new FileInfo(fi.getName(), (fi.getSize() + " B")));
 				
-				if(uploadFileInfo.isImport == 0){
+				if(uploadFileInfo.isImport == 0 && FileUtil.fileMaxSize != -1){
 					fileSizeKB = fi.getSize()/1024;// 由B转换为KB
-					if(FileUtil.fileMaxSize != -1 && fileSizeKB > FileUtil.fileMaxSize){
+					if(fileSizeKB > FileUtil.fileMaxSize){
 						uploadFileInfo.errMsg = "文件的大小为"+(fileSizeKB/1024)+"M，系统限制单个文件的大小不能超过"+(FileUtil.fileMaxSize/1024)+"M，请修改后再上传";
 					}
 				}

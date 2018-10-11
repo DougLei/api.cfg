@@ -75,6 +75,10 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	 */
 	private Integer type;
 	/**
+	 * 是否是导入文件
+	 */
+	private Integer isImport;
+	/**
 	 * 备注
 	 */
 	private String remark;
@@ -173,6 +177,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setType(Integer type) {
 		this.type = type;
 	}
+	public Integer getIsImport() {
+		return isImport;
+	}
+	public void setIsImport(Integer isImport) {
+		this.isImport = isImport;
+	}
 	public String getRemark() {
 		return remark;
 	}
@@ -194,7 +204,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(22);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(16+7);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", DataTypeConstants.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
@@ -257,6 +267,11 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		typeColumn.setName("文件类型");
 		typeColumn.setComments("由用户自定义");
 		columns.add(typeColumn);
+		
+		ComColumndata isImportColumn = new ComColumndata("is_import", DataTypeConstants.INTEGER, 1);
+		isImportColumn.setName("是否是导入文件");
+		isImportColumn.setComments("是否是导入文件");
+		columns.add(isImportColumn);
 		
 		ComColumndata remarkColumn = new ComColumndata("remark", DataTypeConstants.STRING, 2000);
 		remarkColumn.setName("备注");

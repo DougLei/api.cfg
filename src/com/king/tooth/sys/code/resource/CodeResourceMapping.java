@@ -11,6 +11,7 @@ import com.king.tooth.sys.controller.cfg.CfgSqlController;
 import com.king.tooth.sys.controller.cfg.CfgSqlParameterController;
 import com.king.tooth.sys.controller.cfg.CfgTableController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
+import com.king.tooth.sys.controller.sys.SysExcelController;
 import com.king.tooth.sys.controller.sys.SysPermissionController;
 import com.king.tooth.sys.controller.sys.SysPushMessageInfoController;
 import com.king.tooth.sys.controller.sys.SysUserController;
@@ -101,6 +102,11 @@ public class CodeResourceMapping {
 		put("/message/read/get", SysPushMessageInfoController.class, "readMessage");
 		// 修改消息的阅读状态
 		put("/message/read_status/update/put", SysPushMessageInfoController.class, "updateMessageReadStatus");
+		
+		// 导入excel
+		put("/excel/import/post", SysExcelController.class, "importExcel");
+		// 导出excel
+		put("/excel/export/post", SysExcelController.class, "exportExcel");
 	}
 	
 	/**
