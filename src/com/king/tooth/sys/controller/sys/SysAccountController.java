@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
-import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -149,39 +148,6 @@ public class SysAccountController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, accountIds);
-		return getResultObject();
-	}
-	
-	/**
-	 * 修改密码
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	@RequestMapping
-	public Object updatePassword(HttpServletRequest request, IJson ijson){
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要修改密码的账户id不能为空";
-		}
-		if(StrUtils.isEmpty(jsonObject.getString("password"))){
-			return "新密码不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).uploadAccounLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
-		return getResultObject();
-	}
-	
-	/**
-	 * 重置账户登陆密码
-	 * <p>请求方式：PUT</p>
-	 * @return
-	 */
-	@RequestMapping
-	public Object resetPassword(HttpServletRequest request, IJson ijson){
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要重置密码的账户id不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).resetPassword(jsonObject.getString(ResourcePropNameConstants.ID));
 		return getResultObject();
 	}
 }

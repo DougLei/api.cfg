@@ -122,40 +122,7 @@ public class SysUserController extends AController{
 	}
 	
 	/**
-	 * 修改密码
-	 * <p>请求方式：POST</p>
-	 * @return
-	 */
-	@RequestMapping
-	public Object updatePassword(HttpServletRequest request, IJson ijson){
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要修改密码的用户id不能为空";
-		}
-		if(StrUtils.isEmpty(jsonObject.getString("password"))){
-			return "新密码不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).uploadUserLoginPwd(jsonObject.getString(ResourcePropNameConstants.ID), jsonObject.getString("password"));
-		return getResultObject();
-	}
-	
-	/**
-	 * 重置用户登陆密码
-	 * <p>请求方式：PUT</p>
-	 * @return
-	 */
-	@RequestMapping
-	public Object resetPassword(HttpServletRequest request, IJson ijson){
-		JSONObject jsonObject = getJSONObject(ijson);
-		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
-			return "要重置密码的用户id不能为空";
-		}
-		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).resetPassword(jsonObject.getString(ResourcePropNameConstants.ID));
-		return getResultObject();
-	}
-	
-	/**
-	 * 重置用户的账户信息，即将用户的工号、手机号、邮箱三个字段的值，重新更新到账户的帐号、手机号、邮箱三个字段的值，同时重置账户的登陆密码为初始密码
+	 * 重置用户关联账户的信息，即将用户的工号、手机号、邮箱三个字段的值，重新更新到账户的帐号、手机号、邮箱三个字段的值，同时重置账户的登陆密码为初始密码
 	 * <p>请求方式：PUT</p>
 	 * @return
 	 */
@@ -166,6 +133,33 @@ public class SysUserController extends AController{
 			return "重置用户的账户信息时，传入的用户id不能为空";
 		}
 		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).resetAccount(jsonObject.getString(ResourcePropNameConstants.ID));
+		return getResultObject();
+	}
+	
+	/**
+	 * 修改用户关联账户的登录密码
+	 * <p>请求方式：PUT</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object updatePassword(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
+		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updatePassword(jsonObject);
+		return getResultObject();
+	}
+	
+	/**
+	 * 重置用户关联账户的登陆密码
+	 * <p>请求方式：PUT</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object resetPassword(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
+		if(StrUtils.isEmpty(jsonObject.getString(ResourcePropNameConstants.ID))){
+			return "要重置密码的用户id不能为空";
+		}
+		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).resetPassword(jsonObject.getString(ResourcePropNameConstants.ID));
 		return getResultObject();
 	}
 }

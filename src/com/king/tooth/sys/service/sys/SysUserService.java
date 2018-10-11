@@ -41,31 +41,6 @@ public class SysUserService extends AService{
 	}
 	
 	/**
-	 * 修改用户关联的账户密码
-	 * @param userId
-	 * @param newLoginPwd
-	 * @return
-	 */
-	public Object uploadUserLoginPwd(String userId, String newLoginPwd){
-		if(!accountIsExists(userId)){
-			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
-		}
-		return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).uploadAccounLoginPwd(userId, newLoginPwd);
-	}
-	
-	/**
-	 * 重置用户登陆密码
-	 * @param userId
-	 * @return
-	 */
-	public Object resetPassword(String userId) {
-		if(!accountIsExists(userId)){
-			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
-		}
-		return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).resetPassword(userId);
-	}
-	
-	/**
 	 * 重置用户的账户信息，即将用户的工号、手机号、邮箱三个字段的值，重新更新到账户的帐号、手机号、邮箱三个字段的值，同时重置账户的登陆密码为初始密码
 	 * @param userId
 	 * @return
@@ -81,6 +56,72 @@ public class SysUserService extends AService{
 		account.setEmail(user.getEmail());
 		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 		HibernateUtil.updateObject(account, null);
+		
+		JSONObject json = new JSONObject(1);
+		json.put(ResourcePropNameConstants.ID, userId);
+		return json;
+	}
+	
+	/**
+	 * 修改用户关联账户的登录密码
+	 * @param jsonObject
+	 * @return
+	 */
+	public Object updatePassword(JSONObject jsonObject){
+		Object userId = jsonObject.get(ResourcePropNameConstants.ID);
+		if(StrUtils.isEmpty(userId)){
+			return "要修改密码的用户id不能为空";
+		}
+		Object oldPassword = jsonObject.get("oldPassword");
+		if(StrUtils.isEmpty(oldPassword)){
+			return "旧密码不能为空";
+		}
+		Object password = jsonObject.get("password");
+		if(StrUtils.isEmpty(password)){
+			return "新密码不能为空";
+		}
+		Object confirmPassword = jsonObject.get("confirmPassword");
+		if(StrUtils.isEmpty(confirmPassword)){
+			return "确认密码不能为空";
+		}
+		if(!password.equals(confirmPassword)){
+			return "两次新密码不一致";
+		}
+		
+		String userIdStr = userId.toString();
+		if(!accountIsExists(userIdStr)){
+			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
+		}
+		
+		SysAccount account = getObjectById(userIdStr, SysAccount.class);
+		if(!CryptographyUtil.encodeMd5(oldPassword.toString(), account.getLoginPwdKey()).equals(account.getLoginPwd())){
+			return "旧密码错误";
+		}
+		
+		String newPassword = CryptographyUtil.encodeMd5(password.toString(), account.getLoginPwdKey());
+		if(newPassword.equals(account.getLoginPwd())){
+			return "新密码不能和旧密码相同";
+		}
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPassword, userIdStr);
+		
+		JSONObject json = new JSONObject(2);
+		json.put(ResourcePropNameConstants.ID, userIdStr);
+		json.put("password", newPassword);
+		return json;
+	}
+	
+	/**
+	 * 重置用户关联账户的登陆密码
+	 * @param userId
+	 * @return
+	 */
+	public Object resetPassword(String userId) {
+		if(!accountIsExists(userId)){
+			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
+		}
+		SysAccount account = getObjectById(userId, SysAccount.class);
+		String defaultPassword = CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", defaultPassword, userId);
 		
 		JSONObject json = new JSONObject(1);
 		json.put(ResourcePropNameConstants.ID, userId);
@@ -220,38 +261,37 @@ public class SysUserService extends AService{
 		
 		String accountId = user.getId();
 		boolean accountIsExists = accountIsExists(accountId);
-		boolean modifyAccountInfo = false;// 标识是否修改账户信息
+		boolean isCreateAccount = (user.getIsCreateAccount()==1);// 标识是否创建/修改账户信息
 		SysAccount account = null;
-		if(accountIsExists){
-			account = getObjectById(accountId, SysAccount.class);
-		}else if(user.getIsCreateAccount() == 1){
-			account = new SysAccount();
+		if(isCreateAccount){
+			if(accountIsExists){
+				account = getObjectById(accountId, SysAccount.class);
+			}else{
+				account = new SysAccount(accountId);
+			}
 		}
 		
 		String result = null;
 		if(!oldUser.getWorkNo().equals(user.getWorkNo())){
-			modifyAccountInfo = true;
 			result = validWorkNoIsExists(user);
-			if(result == null && user.getIsCreateAccount() == 1){
+			if(result == null && isCreateAccount && user.getIsSyncLoginName() == 1){
 				account.setLoginName(user.getWorkNo());
 			}
 		}
 		if(result == null && (StrUtils.notEmpty(oldUser.getEmail()) && !oldUser.getEmail().equals(user.getEmail())) || (StrUtils.isEmpty(oldUser.getEmail()) && StrUtils.notEmpty(user.getEmail()))){
-			modifyAccountInfo = true;
 			result = validEmailIsExists(user);
-			if(result == null && user.getIsCreateAccount() == 1){
+			if(result == null && isCreateAccount){
 				account.setEmail(user.getEmail());
 			}
 		}
 		if(result == null && (StrUtils.notEmpty(oldUser.getTel()) && !oldUser.getTel().equals(user.getTel())) || (StrUtils.isEmpty(oldUser.getTel()) && StrUtils.notEmpty(user.getTel()))){
-			modifyAccountInfo = true;
 			result = validTelIsExists(user);
-			if(result == null && user.getIsCreateAccount() == 1){
+			if(result == null && isCreateAccount){
 				account.setTel(user.getTel());
 			}
 		}
 		if(result == null){
-			if(account != null && modifyAccountInfo){
+			if(isCreateAccount){
 				if(accountIsExists){
 					HibernateUtil.updateObject(account, null);
 				}else{

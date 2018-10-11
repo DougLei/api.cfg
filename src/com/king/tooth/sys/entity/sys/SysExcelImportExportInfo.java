@@ -26,9 +26,10 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 	 */
 	private Integer operType;
 	/**
-	 * excel文件名
+	 * 关联的文件id
+	 * <p>文件表中的数据id</p>
 	 */
-	private String fileName;
+	private String refFileId;
 	/**
 	 * 是否成功
 	 */
@@ -46,11 +47,11 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 	public void setOperType(Integer operType) {
 		this.operType = operType;
 	}
-	public String getFileName() {
-		return fileName;
+	public String getRefFileId() {
+		return refFileId;
 	}
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setRefFileId(String refFileId) {
+		this.refFileId = refFileId;
 	}
 	public Integer getIsSuccess() {
 		return isSuccess;
@@ -74,10 +75,10 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 		operTypeColumn.setComments("1：导入、2、导出");
 		columns.add(operTypeColumn);
 		
-		ComColumndata fileNameColumn = new ComColumndata("file_name", DataTypeConstants.STRING, 200);
-		fileNameColumn.setName("excel文件名");
-		fileNameColumn.setComments("excel文件名");
-		columns.add(fileNameColumn);
+		ComColumndata refFileIdColumn = new ComColumndata("ref_file_id", DataTypeConstants.STRING, 32);
+		refFileIdColumn.setName("关联的文件id");
+		refFileIdColumn.setComments("文件表中的数据id");
+		columns.add(refFileIdColumn);
 		
 		ComColumndata isSuccessColumn = new ComColumndata("is_success", DataTypeConstants.INTEGER, 1);
 		isSuccessColumn.setName("是否成功");

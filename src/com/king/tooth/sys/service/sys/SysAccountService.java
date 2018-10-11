@@ -360,43 +360,6 @@ public class SysAccountService extends AService{
 	//-----------------------------------------------------------------------------------------------
 	
 	/**
-	 * 修改账户密码
-	 * @param accountId
-	 * @param newLoginPwd
-	 * @return
-	 */
-	public Object uploadAccounLoginPwd(String accountId, String newLoginPwd){
-		SysAccount account = getObjectById(accountId, SysAccount.class);
-		String newPwd = CryptographyUtil.encodeMd5(newLoginPwd, account.getLoginPwdKey());
-		if(newPwd.equals(account.getLoginPwd())){
-			return "新密码不能和旧密码相同";
-		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPwd, accountId);
-		
-		JSONObject json = new JSONObject(2);
-		json.put(ResourcePropNameConstants.ID, accountId);
-		json.put("password", newPwd);
-		return json;
-	}
-	
-	/**
-	 * 重置账户登陆密码
-	 * @param accountId
-	 * @return
-	 */
-	public Object resetPassword(String accountId) {
-		SysAccount account = getObjectById(accountId, SysAccount.class);
-		String defaultPassword = CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey());
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", defaultPassword, accountId);
-		
-		JSONObject json = new JSONObject(1);
-		json.put(ResourcePropNameConstants.ID, accountId);
-		return json;
-	}
-	
-	//-----------------------------------------------------------
-
-	/**
 	 * 验证登录名是否已经存在
 	 * @param loginName
 	 * @return 

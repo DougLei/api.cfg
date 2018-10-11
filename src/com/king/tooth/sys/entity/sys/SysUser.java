@@ -117,7 +117,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	private int isCreateAccount;
 	
 	/**
-	 * 如果修改了工号，是否同步修改账户的登录名，1是0否
+	 * 如果修改了用户工号，是否同步修改账户的登录名，这个要配合上面的isCreateAccount一起使用，即当isCreateAccount=1时，该值=1才有效，1是0否
 	 */
 	@JSONField(serialize = false)
 	private int isSyncLoginName;
