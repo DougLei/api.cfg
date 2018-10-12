@@ -20,6 +20,18 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	 */
 	private String excelFileSuffix;
 	
+	public String getExcelFilePath() {
+		return excelFilePath;
+	}
+	public void setExcelFilePath(String excelFilePath) {
+		this.excelFilePath = excelFilePath;
+	}
+	public String getExcelFileSuffix() {
+		return excelFileSuffix;
+	}
+	public void setExcelFileSuffix(String excelFileSuffix) {
+		this.excelFileSuffix = excelFileSuffix;
+	}
 	
 	public String validNotNullProps() {
 		return null;

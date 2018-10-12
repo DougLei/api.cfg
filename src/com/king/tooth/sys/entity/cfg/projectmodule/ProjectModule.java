@@ -9,12 +9,13 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ProjectModule implements Serializable{
+public class ProjectModule implements Serializable, Comparable<ProjectModule>{
 	private String id;
 	private String text;
 	private String link;
 	private String icon;
-	private Boolean hide;
+	private boolean hide;
+	private int orderCode;
 	
 	public String getId() {
 		return id;
@@ -28,33 +29,40 @@ public class ProjectModule implements Serializable{
 	public String getIcon() {
 		return icon;
 	}
-	public Boolean getHide() {
+	public boolean getHide() {
 		return hide;
 	}
-	
-	public void setId(Object id) {
-		if(StrUtils.notEmpty(id)){
-			this.id = id.toString();
-		}
+	public int getOrderCode() {
+		return orderCode;
 	}
-	public void setText(Object text) {
-		if(StrUtils.notEmpty(text)){
-			this.text = text.toString();
-		}
+	public void setId(String id) {
+		this.id = id;
 	}
-	public void setLink(Object link) {
-		if(StrUtils.notEmpty(link)){
-			this.link = link.toString();
-		}
+	public void setText(String text) {
+		this.text = text;
 	}
-	public void setIcon(Object icon) {
-		if(StrUtils.notEmpty(icon)){
-			this.icon = icon.toString();
-		}
+	public void setLink(String link) {
+		this.link = link;
+	}
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 	public void setHide(Object hide) {
 		if(StrUtils.notEmpty(hide)){
 			this.hide = hide.toString().equals("0");
+		}
+	}
+	public void setOrderCode(int orderCode) {
+		this.orderCode = orderCode;
+	}
+	
+	public int compareTo(ProjectModule pm) {
+		if(this.orderCode > pm.getOrderCode()){
+			return 1;
+		}else if(this.orderCode < pm.getOrderCode()){
+			return -1;
+		}else{
+			return 0;
 		}
 	}
 }

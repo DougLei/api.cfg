@@ -310,5 +310,4 @@ public class ResourceHandlerUtil {
 		}
 		return null;
 	}
-	
 }

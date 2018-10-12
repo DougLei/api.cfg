@@ -233,7 +233,7 @@ public class SysAccountService extends AService{
 	 * @return 是否有权限，如果没有权限，则也属于登陆失败
 	 */
 	private boolean processPermission(SysAccountOnlineStatus accountOnlineStatus) {
-		// 管理员或系统开发人员，不做权限控制，返回ALL，标识可以访问所有功能
+		// 管理员或系统开发人员，不做权限控制，查询所有有效模块
 		if(accountOnlineStatus.isAdministrator() || accountOnlineStatus.isDeveloper()){
 			accountOnlineStatus.setProjectModules(processProjectModules(BuiltinObjectInstance.allPermission));
 			return true;
@@ -273,7 +273,7 @@ public class SysAccountService extends AService{
 			return BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).getProjectModulesByPermission(permission);
 		}
 	}
-	
+
 	/**
 	 * 处理账户在线状态对象的基础数据
 	 * @param accountOnlineStatus
