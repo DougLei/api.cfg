@@ -222,7 +222,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		codeColumn.setComments("文件编码：在上传的时候，修改后的文件名");
 		columns.add(codeColumn);
 		
-		ComColumndata sizesColumn = new ComColumndata("sizes", DataTypeConstants.STRING, 30);
+		ComColumndata sizesColumn = new ComColumndata("sizes", DataTypeConstants.STRING, 80);
 		sizesColumn.setName("文件大小");
 		sizesColumn.setComments("文件大小，单位为b");
 		columns.add(sizesColumn);

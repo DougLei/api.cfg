@@ -53,6 +53,9 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 		if(StrUtils.isEmpty(excelFileSuffix)){
 			return "要导入的excel文件后缀不能为空";
 		}
+		if(!"xls".equals(excelFileSuffix) && !"xlsx".equals(excelFileSuffix)){
+			return "系统目前只支持导入后缀为[xls]或[xlsx]的excel文件";
+		}
 		if(sheetResourceNames == null || sheetResourceNames.length == 0){
 			return "要导入的excel文件中，配置的每个sheet对应的resourceName不能为空";
 		}
@@ -64,6 +67,6 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ImportExcel";
+		return "ImportExcel1";
 	}
 }

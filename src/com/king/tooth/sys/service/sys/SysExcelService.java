@@ -19,9 +19,51 @@ public class SysExcelService extends AService{
 	 * @return
 	 */
 	public Object importExcel(ImportExcel importExcel) {
+		if(importExcel.getExcelFileSuffix().equals("xls")){
+			return importXLSExcel(importExcel);
+		}else if(importExcel.getExcelFileSuffix().equals("xlsx")){
+			return importXLSXExcel(importExcel);
+		}
 		return null;
 	}
 
+	/**
+	 * 导入xls后缀的excel
+	 * @param importExcel
+	 * @return
+	 */
+	private Object importXLSExcel(ImportExcel importExcel) {
+		return null;
+	}
+
+	/**
+	 * 导入xlsx后缀的excel
+	 * @param importExcel
+	 * @return
+	 */
+	private Object importXLSXExcel(ImportExcel importExcel) {
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// ---------------------------------------------------------------------
 	
 	/**
