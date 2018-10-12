@@ -90,11 +90,14 @@ public abstract class AController {
 	 * @param list
 	 */
 	protected void analysisResourceProp(List<? extends IEntityPropAnalysis> list){
+		int index = 1;
 		for (IEntityPropAnalysis iEntityPropAnalysis : list) {
 			analysisResult = iEntityPropAnalysis.analysisResourceProp();
 			if(analysisResult != null){
+				analysisResult = "传入的第"+index+"个["+iEntityPropAnalysis.getEntityName()+"]对象，" + analysisResult;
 				break;
 			}
+			index++;
 		}
 	}
 	

@@ -72,7 +72,7 @@ public class SysFileService extends AService{
 				}else if(uploadFileInfo.errMsg != null){
 					return uploadFileInfo.errMsg;
 				}else{
-					String uploadDir = validUploadDirIsExists();
+					String uploadDir = validUploadDirIsExists(uploadFileInfo);
 					filePathList = new ArrayList<String>(uploadFileInfo.count);
 					Map<Integer, SysFile> sysfileMap = new HashMap<Integer, SysFile>(uploadFileInfo.count);
 					SysFile sysFile;
@@ -282,10 +282,16 @@ public class SysFileService extends AService{
 	/**
 	 * 验证上传文件的目录是否存在
 	 * <p>如果不存在，则创建</p>
+	 * @param uploadFileInfo 
 	 */
-	private String validUploadDirIsExists() {
+	private String validUploadDirIsExists(UploadFileInfo uploadFileInfo) {
 		if(SysFile.SERVICE.equals(FileUtil.saveType)){
-			String uploadDir = FileUtil.savePath + FileUtil.getFileDirName();
+			String uploadDir;
+			if(uploadFileInfo.isImport == 0){
+				uploadDir = FileUtil.savePath + FileUtil.getFileDirName();
+			}else{
+				uploadDir = FileUtil.importSavePath + FileUtil.getFileDirName();
+			}
 			File dir = new File(uploadDir);
 			if(!dir.exists()){
 				dir.mkdirs();

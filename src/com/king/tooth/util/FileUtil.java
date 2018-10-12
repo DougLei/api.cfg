@@ -33,6 +33,11 @@ public class FileUtil {
 	 * @see api.platform.file.properties
 	 */
 	public static final String savePath;
+	/**
+	 * 系统导入文件是，在服务器上的保存路径
+	 * <p>同上</p>
+	 */
+	public static final String importSavePath;
 	
 	/**
 	 * 上传文件的最大大小，单位kb，默认10240KB，即10M
@@ -46,6 +51,7 @@ public class FileUtil {
 	static{
 		saveType = ResourceHandlerUtil.initConfValue("file.save.type", SysFile.SERVICE);
 		savePath = ResourceHandlerUtil.initConfValue("file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "uploadFile") + File.separator;
+		importSavePath = ResourceHandlerUtil.initConfValue("import.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "importFile") + File.separator;
 		fileMaxSize = Long.valueOf(ResourceHandlerUtil.initConfValue("file.max.size", "10240"));
 		
 		saveToDB = SysFile.DB.equals(saveType);

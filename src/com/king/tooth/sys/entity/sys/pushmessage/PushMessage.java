@@ -211,4 +211,9 @@ public class PushMessage implements IEntityPropAnalysis{
 	 */
 	public void clear() {
 	}
+	
+	@JSONField(serialize = false)
+	public String getEntityName() {
+		return "PushMessage";
+	}
 }

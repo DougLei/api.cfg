@@ -2,7 +2,9 @@ package com.king.tooth.sys.entity.tools.excel;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 导入excel类
@@ -19,6 +21,11 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	 * excel文件后缀
 	 */
 	private String excelFileSuffix;
+	/**
+	 * 每个sheet映射的资源名
+	 * <p>按照excel中sheet从左到右的顺序，依次对应要导入的资源名</p>
+	 */
+	private String[] sheetResourceNames;
 	
 	public String getExcelFilePath() {
 		return excelFilePath;
@@ -32,11 +39,31 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	public void setExcelFileSuffix(String excelFileSuffix) {
 		this.excelFileSuffix = excelFileSuffix;
 	}
+	public String[] getSheetResourceNames() {
+		return sheetResourceNames;
+	}
+	public void setSheetResourceNames(String[] sheetResourceNames) {
+		this.sheetResourceNames = sheetResourceNames;
+	}
 	
 	public String validNotNullProps() {
+		if(StrUtils.isEmpty(excelFilePath)){
+			return "要导入的excel文件路径不能为空";
+		}
+		if(StrUtils.isEmpty(excelFileSuffix)){
+			return "要导入的excel文件后缀不能为空";
+		}
+		if(sheetResourceNames == null || sheetResourceNames.length == 0){
+			return "要导入的excel文件中，配置的每个sheet对应的resourceName不能为空";
+		}
 		return null;
 	}
 	public String analysisResourceProp() {
-		return null;
+		return validNotNullProps();
+	}
+	
+	@JSONField(serialize = false)
+	public String getEntityName() {
+		return "ImportExcel";
 	}
 }

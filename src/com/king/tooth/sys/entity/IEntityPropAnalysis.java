@@ -20,4 +20,6 @@ public interface IEntityPropAnalysis {
 	 * @return 解析结果，如果为null，标识解析通过
 	 */
 	public String analysisResourceProp();
+	
+	public String getEntityName();
 }
