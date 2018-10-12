@@ -14,7 +14,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.tools.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.util.DataValidUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;

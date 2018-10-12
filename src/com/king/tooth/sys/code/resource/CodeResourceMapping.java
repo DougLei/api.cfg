@@ -92,9 +92,9 @@ public class CodeResourceMapping {
 		put("/permission/get", SysPermissionController.class, "calcPermissionByCode");
 		
 		// 监听hibernate类元数据
-		put("/hibernate_classmetadata/monitor/get", SystemToolsController.class, "monitorHibernateClassMetadata");
+		put("/hibernate/classmetadata/monitor/get", SystemToolsController.class, "monitorHibernateClassMetadata");
 		// 获取指定资源信息
-		put("/resource_info/get/get", SystemToolsController.class, "getResourceInfo");
+		put("/resource/info/search/get", SystemToolsController.class, "getResourceInfo");
 		
 		// 消息推送
 		put("/message/push/post", SysPushMessageInfoController.class, "pushMessage");

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.tools;
+package com.king.tooth.sys.entity.tools.resource;
 
 import com.king.tooth.util.StrUtils;
 
@@ -6,6 +6,7 @@ import com.king.tooth.util.StrUtils;
  * sql资源元数据信息对象
  * @author DougLei
  */
+@SuppressWarnings("serial")
 public class SqlResourceMetadataInfo extends ResourceMetadataInfo{
 
 	public SqlResourceMetadataInfo(String propName) {

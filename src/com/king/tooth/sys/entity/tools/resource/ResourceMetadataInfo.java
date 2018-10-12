@@ -1,4 +1,6 @@
-package com.king.tooth.sys.entity.tools;
+package com.king.tooth.sys.entity.tools.resource;
+
+import java.io.Serializable;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
 
@@ -6,7 +8,8 @@ import com.king.tooth.constants.ResourcePropNameConstants;
  * 资源元数据信息对象
  * @author DougLei
  */
-public class ResourceMetadataInfo {
+@SuppressWarnings("serial")
+public class ResourceMetadataInfo implements Serializable{
 	/**
 	 * 列名
 	 */

@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.tools;
+package com.king.tooth.sys.entity.tools.resource;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.StrUtils;
@@ -7,6 +7,7 @@ import com.king.tooth.util.StrUtils;
  * 表资源元数据信息对象
  * @author DougLei
  */
+@SuppressWarnings("serial")
 public class TableResourceMetadataInfo extends ResourceMetadataInfo{
 
 	public TableResourceMetadataInfo(String propName) {

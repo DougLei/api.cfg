@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.tools;
+package com.king.tooth.sys.entity.tools.resource;
 
 import java.io.Serializable;
 import java.util.Map;

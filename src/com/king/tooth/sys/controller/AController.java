@@ -37,7 +37,7 @@ public abstract class AController {
 	 */
 	private void vaildIJsonNotNull(IJson ijson){
 		if(ijson == null || ijson.size() == 0){
-			throw new NullPointerException("操作的数据不能为空");
+			throw new NullPointerException("提交的数据不能为空");
 		}
 	}
 	

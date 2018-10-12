@@ -498,6 +498,11 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 					return "列["+columnName+"]，唯一约束和主键约束，只能指定一个";
 				}
 			}
+			if(!DataTypeConstants.INTEGER.equals(columnType) || !DataTypeConstants.DOUBLE.equals(columnType)){
+				if(precision != null && precision != 0){
+					return "列["+columnName+"]，非数字类型，禁止添加精度";
+				}
+			}
 		}
 		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();

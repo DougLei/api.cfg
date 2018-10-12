@@ -3,6 +3,7 @@ package com.king.tooth.sys.service.sys;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Service;
+import com.king.tooth.sys.entity.tools.excel.ImportExcel;
 import com.king.tooth.sys.service.AService;
 
 /**
@@ -14,10 +15,10 @@ public class SysExcelService extends AService{
 	
 	/**
 	 * 导入excel
-	 * @param request
+	 * @param importExcel
 	 * @return
 	 */
-	public Object importExcel(HttpServletRequest request) {
+	public Object importExcel(ImportExcel importExcel) {
 		
 		return null;
 	}

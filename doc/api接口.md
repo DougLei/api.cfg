@@ -1742,7 +1742,7 @@
 #### 1. 监听hibernate类元数据
 
 - 功能描述: 监听hibernate类元数据
-- api地址: /common/hibernate_classmetadata/monitor
+- api地址: /common/hibernate/classmetadata/monitor
 - 请求类型: GET
 - 请求头:
 ```
@@ -1759,7 +1759,7 @@
 #### 2. 获取指定资源的信息
 
 - 功能描述: 获取指定资源的信息，包括资源的结构信息
-- api地址: /common/resource_info/get
+- api地址: /common/resource/info/search
 - 请求类型: GET
 - 请求头:
 ```
