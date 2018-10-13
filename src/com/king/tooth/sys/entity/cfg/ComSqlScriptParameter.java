@@ -323,7 +323,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		orderCodeColumn.setComments("参数的顺序值");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata remarkColumn = new ComColumndata("remark", DataTypeConstants.INTEGER, 80);
+		ComColumndata remarkColumn = new ComColumndata("remark", DataTypeConstants.STRING, 80);
 		remarkColumn.setName("备注");
 		remarkColumn.setComments("备注");
 		columns.add(remarkColumn);
