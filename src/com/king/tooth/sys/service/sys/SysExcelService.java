@@ -42,8 +42,8 @@ public class SysExcelService extends AService{
 		String currentResourceName = null;
 		int i, j, batchImportCount, sheetIndex=0, columnIndex=0;
 		List<ResourceMetadataInfo> resourceMetadataInfos = null;
-		List<JSONObject> objJsons = null;
-		JSONObject objJson = null;
+		List<JSONObject> jsons = null;
+		JSONObject json = null;
 		Object value = null;
 		
 		Sheet sheet = null;// excel sheet对象
@@ -59,7 +59,7 @@ public class SysExcelService extends AService{
 			if(sheet.getRow(1) != null){
 				batchImportCount = importExcel.calcBatchImportCount(rowCount-1);
 				resourceMetadataInfos = ResourceHandlerUtil.getResourceMetadataInfos(currentResourceName);
-				objJsons = new ArrayList<JSONObject>(batchImportCount);
+				jsons = new ArrayList<JSONObject>(batchImportCount);
 				
 				for(i=1;i<rowCount;i++){
 					row = sheet.getRow(i);
@@ -68,8 +68,8 @@ public class SysExcelService extends AService{
 						if(columnCount > resourceMetadataInfos.size()){
 							return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+1)+"行数据的列数量("+columnCount+"个)大于资源["+currentResourceName+"]配置的导入字段数量("+resourceMetadataInfos.size()+"个)，系统无法匹配，请调整配置，或sheet中的列";
 						}
-						objJson = new JSONObject(columnCount);
-						objJsons.add(objJson);
+						json = new JSONObject(columnCount);
+						jsons.add(json);
 						
 						for (j=0; j<columnCount; j++) {
 							cell = row.getCell(j);
@@ -79,36 +79,31 @@ public class SysExcelService extends AService{
 								if(value instanceof String && value.toString().startsWith("error:")){
 									return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+1)+"行数据的第"+(j+1)+"列，数据值验证失败，失败原因为：" + value.toString().replace("error:", "");
 								}
-								objJson.put(resourceMetadataInfos.get(columnIndex).getPropName(), value);
+								json.put(resourceMetadataInfos.get(columnIndex).getPropName(), value);
 							}
 							columnIndex++;
 						}
 						columnIndex=0;
 					}
 					
-					if(objJsons.size() == batchImportCount && !importExcel.isAllImportByOnce()){
-						for (JSONObject json : objJsons) {
-							HibernateUtil.saveObject(currentResourceName, json, null);
-						}
-						objJsons.clear();
+					if(jsons.size() == batchImportCount && !importExcel.isAllImportByOnce()){
+						saveData(currentResourceName, jsons);
 					}
 				}
-				if(objJsons.size() > 0){
-					for (JSONObject json : objJsons) {
-						HibernateUtil.saveObject(currentResourceName, json, null);
-					}
-					objJsons.clear();
-				}
+				saveData(currentResourceName, jsons);
 			}
 			sheetIndex++;
 		}
-		if(objJsons.size() > 0){
-			for (JSONObject json : objJsons) {
-				HibernateUtil.saveObject(currentResourceName, json, null);
-			}
-			objJsons.clear();
-		}
+		saveData(currentResourceName, jsons);
 		return null;
+	}
+	private void saveData(String resourceName, List<JSONObject> jsons){
+		if(jsons.size() > 0){
+			for (JSONObject json : jsons) {
+				HibernateUtil.saveObject(resourceName, json, null);
+			}
+			jsons.clear();
+		}
 	}
 
 	// ---------------------------------------------------------------------

@@ -239,6 +239,13 @@ public class ResourceHandlerUtil {
 		}
 		return resourceMetadataInfos;
 	}
+	private static final String queryTableMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and isEnabled=1 and operStatus="+ComColumndata.CREATED;
+	/** 查询表资源元数据信息集合的hql */
+	private static final String queryTableMetadataInfosHql = queryTableMetadataInfosHqlHead + " order by orderCode asc";
+	/** 查询表资源配置的导入excel的元数据信息集合的hql */
+	private static final String queryTableImportMetadataInfosHql = queryTableMetadataInfosHqlHead + " and isImportExcel=1 order by importExcelOrderCode asc";
+	/** 查询表资源配置的导出excel的元数据信息集合的hql */
+	private static final String queryTableExportMetadataInfosHql = queryTableMetadataInfosHqlHead + " and isExportExcel=1 order by exportExcelOrderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
@@ -264,8 +271,6 @@ public class ResourceHandlerUtil {
 		columns.clear();
 		return metadataInfos;
 	}
-	/** 查询表资源元数据信息集合的hql */
-	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and isEnabled=1 and operStatus="+ComColumndata.CREATED+" order by orderCode asc";
 	
 	// ------------------------------------------------------------------------------------------
 	/**
