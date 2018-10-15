@@ -22,6 +22,11 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	 */
 	private String excelFileSuffix;
 	/**
+	 * 一次批量导入的数量
+	 * <p>例如excel中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为200条，如果值为-1，则一次全部导入</p>
+	 */
+	private int batchImportCount;
+	/**
 	 * 每个sheet映射的资源名
 	 * <p>按照excel中sheet从左到右的顺序，依次对应要导入的资源名</p>
 	 */
@@ -38,6 +43,12 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	}
 	public void setExcelFileSuffix(String excelFileSuffix) {
 		this.excelFileSuffix = excelFileSuffix;
+	}
+	public void setBatchImportCount(int batchImportCount) {
+		this.batchImportCount = batchImportCount;
+	}
+	public int getBatchImportCount() {
+		return batchImportCount;
 	}
 	public String[] getSheetResourceNames() {
 		return sheetResourceNames;
@@ -76,5 +87,28 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ImportExcel1";
+	}
+	
+	/**
+	 * 计算一次批量导入的数据数量
+	 * @param rowCount
+	 * @return
+	 */
+	public int calcBatchImportCount(int rowCount){
+		if(batchImportCount == 0 || batchImportCount < -1){
+			return 200;
+		}else if(batchImportCount == -1){
+			return rowCount;
+		}else{
+			return batchImportCount;
+		}
+	}
+	
+	/**
+	 * 是否一次性全部导入
+	 * @return
+	 */
+	public boolean isAllImportByOnce(){
+		return batchImportCount == -1;
 	}
 }

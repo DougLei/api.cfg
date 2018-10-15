@@ -105,4 +105,14 @@ public class ResourceMetadataInfo implements Serializable{
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
+	
+	/**
+	 * 验证并解析数据
+	 * <p>如果返回的字符串以error:开头，表示验证失败</p>
+	 * @param val
+	 * @return
+	 */
+	public Object analyzeData(Object val){
+		return null;
+	}
 }
