@@ -31,7 +31,10 @@ public class JSONArrayExtend implements IJson{
 	}
 	
 	public JSONObject get(int index) {
-		return jsonArray.getJSONObject(index);
+		if(jsonArray != null && jsonArray.size() > 0){
+			return jsonArray.getJSONObject(index);
+		}
+		return null;
 	}
 	
 	public int size() {
@@ -68,5 +71,12 @@ public class JSONArrayExtend implements IJson{
 			return null;
 		}
 		return jsonArray.toJSONString();
+	}
+
+	public void add(JSONObject json) {
+		if(jsonArray == null){
+			jsonArray = new JSONArray();
+		}
+		jsonArray.add(json);
 	}
 }

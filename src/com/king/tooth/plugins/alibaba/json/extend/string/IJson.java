@@ -54,5 +54,15 @@ public interface IJson extends Serializable{
 	 */
 	void clear();
 	
+	/**
+	 * 添加
+	 * @param json
+	 */
+	void add(JSONObject json);
+	
+	/**
+	 * toString
+	 * @return
+	 */
 	String toString();
 }

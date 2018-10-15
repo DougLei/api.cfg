@@ -61,4 +61,8 @@ public class JSONObjectExtend implements IJson{
 		}
 		return jsonObject.toJSONString();
 	}
+
+	public void add(JSONObject json) {
+		jsonObject = json;
+	}
 }

@@ -1,5 +1,7 @@
 package test.poi.imports.excel;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -13,6 +15,10 @@ public class ImportExcel1 {
           //工作表对象
           Sheet sheet = workbook.getSheetAt(0);
           
-          System.out.println(sheet.getRow(0).getCell(0).getCellType());
+          Cell cell = sheet.getRow(0).getCell(0);
+          
+          
+          cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+          System.out.println(DateUtil.getJavaCalendar(cell.getNumericCellValue(), false).getTime());
 	}
 }

@@ -141,14 +141,15 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public ComColumndata() {
 	}
 	public ComColumndata(String columnName, String columnType, Integer length) {
-		this(columnName, columnType, length, true);
+		this(columnName, columnType, length, 1, 1);
 	}
-	private ComColumndata(String columnName, String columnType, Integer length, boolean isIgnoreCheckBuiltinColumnName) {
-		this.columnName = columnName;
+	private ComColumndata(String columnName, String columnType, Integer length, Integer isImportExcel, Integer isExportExcel) {
+		this.columnName = columnName.trim().toUpperCase();
+		this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		this.columnType = columnType;
 		this.length = length;
-		this.isIgnoreCheckBuiltinColumnName = isIgnoreCheckBuiltinColumnName;
-		analysisResourceProp();
+		this.isImportExcel = isImportExcel;
+		this.isExportExcel = isExportExcel;
 	}
 	
 	public String getName() {
@@ -503,7 +504,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		if(DataTypeConstants.STRING.equals(columnType) && (length == null || length < 1)){
 			return "字段长度不能为空！";
 		}
-		if(orderCode !=null && orderCode < 0){
+		if(orderCode == null || orderCode < 1){
 			return "字段排序值不能为空，且必须大于0！";
 		}
 		return null;

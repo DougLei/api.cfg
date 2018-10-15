@@ -108,11 +108,12 @@ public class ResourceMetadataInfo implements Serializable{
 	
 	/**
 	 * 验证并解析数据
-	 * <p>如果返回的字符串以error:开头，表示验证失败</p>
+	 * <p>如果返回的字符串以analyzeError:开头，表示验证失败</p>
 	 * @param val
 	 * @return
 	 */
 	public Object analyzeData(Object val){
-		return null;
+		return analyzeErrorMessageHead;
 	}
+	private static final String analyzeErrorMessageHead = "analyzeError:";
 }

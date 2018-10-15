@@ -23,7 +23,6 @@ import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.SqlResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
-import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -201,41 +200,34 @@ public class ResourceHandlerUtil {
 	
 	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取资源的元数据信息集合
-	 * @param resource
-	 * @return
-	 */
-	public static List<ResourceMetadataInfo> getResourceMetadataInfos(String resourceName){
-		SysResource resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
-		if(resource.isTableResource()){
-			return getTableResourceMetadataInfos(resource);
-		}else if(resource.isSqlResource()){
-			
-		}else if(resource.isCodeResource()){
-			
-		}
-		return null;
-	}
-	
-	// ------------------------------------------------------------------------------------------
-	/**
 	 * 获取表资源的元数据信息集合
 	 * @param resource
+	 * @param operType 1:数据验证、2:excel导入、3:excel导出
 	 * @return
 	 */
-	public static List<ResourceMetadataInfo> getTableResourceMetadataInfos(SysResource resource){
+	public static List<ResourceMetadataInfo> getTableResourceMetadataInfos(SysResource resource, int operType){
 		List<ResourceMetadataInfo> resourceMetadataInfos = null;
 		String resourceId = resource.getRefResourceId();
 		String resourceName = resource.getResourceName();
 		
 		if(resource.isBuiltinResource()){
-			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName);
+			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName, operType);
 		}else{
-			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql , resourceId);
+			String hql = null;
+			if(operType == 1){
+				hql = queryTableMetadataInfosHql;
+			}else if(operType == 2){
+				hql = queryTableImportMetadataInfosHql;
+			}else if(operType == 3){
+				hql = queryTableExportMetadataInfosHql;
+			}
+			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, hql, resourceId);
 			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
 				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 			}
-			DynamicBasicColumnUtil.initBasicMetadataInfos(resourceName, resourceMetadataInfos);
+			if(operType == 1){
+				DynamicBasicColumnUtil.initBasicMetadataInfos(resourceName, resourceMetadataInfos);
+			}
 		}
 		return resourceMetadataInfos;
 	}
@@ -250,24 +242,31 @@ public class ResourceHandlerUtil {
 	/**
 	 * 获取内置表资源的元数据信息集合
 	 * @param tableResourceName
+	 * @param operType @see getTableResourceMetadataInfos() operType 
 	 * @return
 	 */
-	private static List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
+	private static List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName, int operType){
 		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
 		List<ComColumndata> columns = itable.getColumnList();
 		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
 		for (ComColumndata column : columns) {
-			metadataInfos.add(new TableResourceMetadataInfo(
-					column.getColumnName(),
-					column.getColumnType(),
-					column.getLength(),
-					column.getPrecision(),
-					column.getIsUnique(), 
-					column.getIsNullabled(),
-					column.getPropName(),
-					column.getName()));
+			if((operType == 1)
+					|| (operType == 2 && (column.getIsImportExcel() != null && column.getIsImportExcel() == 1))
+					|| (operType == 3 && (column.getIsExportExcel() != null && column.getIsExportExcel() == 1))){
+				metadataInfos.add(new TableResourceMetadataInfo(
+						column.getColumnName(),
+						column.getColumnType(),
+						column.getLength(),
+						column.getPrecision(),
+						column.getIsUnique(), 
+						column.getIsNullabled(),
+						column.getPropName(),
+						column.getName()));
+			}
 		}
-		DynamicBasicColumnUtil.initBasicMetadataInfos(tableResourceName, metadataInfos);
+		if(operType == 1){
+			DynamicBasicColumnUtil.initBasicMetadataInfos(tableResourceName, metadataInfos);
+		}
 		columns.clear();
 		return metadataInfos;
 	}

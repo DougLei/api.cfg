@@ -45,13 +45,13 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private void initTableResourceMetadataInfos() {
-		resourceMetadataInfos = ResourceHandlerUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource());
+		resourceMetadataInfos = ResourceHandlerUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource(), 1);
 		
 		if(requestBody.isParentSubResourceQuery()){
 			if(requestBody.isRecursiveQuery()){
 				parentResourceMetadataInfos = resourceMetadataInfos;
 			}else{
-				parentResourceMetadataInfos = ResourceHandlerUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource());
+				parentResourceMetadataInfos = ResourceHandlerUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource(), 1);
 			}
 		}
 	}

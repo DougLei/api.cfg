@@ -23,7 +23,7 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	private String excelFileSuffix;
 	/**
 	 * 一次批量导入的数量
-	 * <p>例如excel中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为200条，如果值为-1，则一次全部导入</p>
+	 * <p>例如excel中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为300条，如果值为-1，则一次全部导入</p>
 	 */
 	private int batchImportCount;
 	/**
@@ -96,7 +96,7 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	 */
 	public int calcBatchImportCount(int rowCount){
 		if(batchImportCount == 0 || batchImportCount < -1){
-			return 200;
+			return 300;
 		}else if(batchImportCount == -1){
 			return rowCount;
 		}else{
