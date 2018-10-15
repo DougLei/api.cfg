@@ -23,6 +23,7 @@ import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.SqlResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -196,6 +197,24 @@ public class ResourceHandlerUtil {
 			}
 			tables.clear();
 		}
+	}
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取资源的元数据信息集合
+	 * @param resource
+	 * @return
+	 */
+	public static List<ResourceMetadataInfo> getResourceMetadataInfos(String resourceName){
+		SysResource resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
+		if(resource.isTableResource()){
+			return getTableResourceMetadataInfos(resource);
+		}else if(resource.isSqlResource()){
+			
+		}else if(resource.isCodeResource()){
+			
+		}
+		return null;
 	}
 	
 	// ------------------------------------------------------------------------------------------

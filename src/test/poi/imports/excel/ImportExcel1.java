@@ -13,8 +13,6 @@ public class ImportExcel1 {
           //工作表对象
           Sheet sheet = workbook.getSheetAt(0);
           
-          System.out.println(sheet.getLastRowNum());
-          System.out.println(sheet.getRow(0).getLastCellNum());
-          System.out.println(sheet.getRow(0).getCell(1));
+          System.out.println(sheet.getRow(0).getCell(0).getCellType());
 	}
 }
