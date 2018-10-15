@@ -101,7 +101,7 @@ public class SysFileService extends AService{
 								
 								sysFile.setActName(fileName);
 								sysFile.setSizes(file.getSize()+"");
-								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1));
+								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase());
 								sysFile.setFileItem(file);
 								if(FileUtil.saveToService){
 									sysFile.setSavePath(uploadDir + File.separator + sysFile.getCode() + "." + sysFile.getSuffix());

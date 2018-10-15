@@ -59,6 +59,14 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 		if(sheetResourceNames == null || sheetResourceNames.length == 0){
 			return "要导入的excel文件中，配置的每个sheet对应的resourceName不能为空";
 		}
+		
+		int index = 1;
+		for (String resourceName : sheetResourceNames) {
+			if(StrUtils.isEmpty(resourceName)){
+				return "sheetResourceNames数组中，第"+index+"个值不能为空";
+			}
+			index++;
+		}
 		return null;
 	}
 	public String analysisResourceProp() {

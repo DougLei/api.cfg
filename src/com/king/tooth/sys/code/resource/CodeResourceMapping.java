@@ -51,23 +51,11 @@ public class CodeResourceMapping {
 	private static void initActionCodeResource() {
 		// 数据库操作
 		put("/database/test_link/post", CfgDatabaseController.class, "testLink");
-		put("/database/publish/add/post", CfgDatabaseController.class, "publish");
-		put("/database/publish/cancel/post", CfgDatabaseController.class, "cancelPublish");
-		
-		// 项目操作
-		put("/project/publish/add/post", CfgProjectController.class, "publish");
-		put("/project/publish/cancel/post", CfgProjectController.class, "cancelPublish");
-		
-		// 项目模块操作
-		put("/project_module/publish/add/post", CfgProjectModuleController.class, "publish");
-		put("/project_module/publish/cancel/post", CfgProjectModuleController.class, "cancelPublish");
 		
 		// 表操作
 		put("ComTabledata_post_buildModel", CfgTableController.class, "buildModel");
 		put("/table/model/create/post", CfgTableController.class, "buildModel");
 		put("/table/model/drop/post", CfgTableController.class, "cancelBuildModel");
-		put("/table/publish/add/post", CfgTableController.class, "publish");
-		put("/table/publish/cancel/post", CfgTableController.class, "cancelPublish");
 		put("/project/table/relation/add/post", CfgTableController.class, "addProjTableRelation");
 		put("/project/table/relation/cancel/post", CfgTableController.class, "cancelProjTableRelation");
 		
@@ -75,8 +63,6 @@ public class CodeResourceMapping {
 		put("/sql/object/create/post", CfgSqlController.class, "immediateCreate");
 		put("/project/sql/relation/add/post", CfgSqlController.class, "addProjSqlScriptRelation");
 		put("/project/sql/relation/cancel/post", CfgSqlController.class, "cancelProjSqlScriptRelation");
-		put("/sql/publish/add/post", CfgSqlController.class, "publish");
-		put("/sql/publish/cancel/post", CfgSqlController.class, "cancelPublish");
 		
 		// 用户操作
 		put("/user/account/open/post", SysUserController.class, "openAccount");

@@ -355,16 +355,16 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 								}
 							}else if(DataTypeConstants.DOUBLE.equals(ssp.getParameterDataType())){
-								if(DataValidUtil.isBigDecimal(dataValueStr)){
+								if(DataValidUtil.isNumber(dataValueStr)){
 									actualInValue = BigDecimal.valueOf(Double.valueOf(dataValueStr));
 									if(rmi.getLength() != -1 && (dataValueStr.length()-1) > rmi.getLength()){
 										return desc+"第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
 									}
-									if(rmi.getPrecision() != -1 && dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
+									if(rmi.getPrecision() != -1 && dataValueStr.indexOf(".")!=-1 &&  dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
 										return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 									}
 								}else{
-									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型";
+									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";
 								}
 							}else if(DataTypeConstants.BOOLEAN.equals(ssp.getParameterDataType())){
 								if(DataValidUtil.isBoolean(dataValueStr)){

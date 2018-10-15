@@ -38,6 +38,10 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 	 * 结果信息
 	 */
 	private String resultMessage;
+	/**
+	 * 提交的对象内容json串
+	 */
+	private String submitObjJson;
 	
 	//-------------------------------------------------------------------------
 	
@@ -65,10 +69,16 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 	public void setResultMessage(String resultMessage) {
 		this.resultMessage = resultMessage;
 	}
-
+	public String getSubmitObjJson() {
+		return submitObjJson;
+	}
+	public void setSubmitObjJson(String submitObjJson) {
+		this.submitObjJson = submitObjJson;
+	}
+	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(4+7);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(5+7);
 		
 		ComColumndata operTypeColumn = new ComColumndata("oper_type", DataTypeConstants.INTEGER, 1);
 		operTypeColumn.setName("操作类型");
@@ -89,6 +99,11 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 		resultMessageColumn.setName("结果信息");
 		resultMessageColumn.setComments("结果信息");
 		columns.add(resultMessageColumn);
+		
+		ComColumndata submitObjJsonColumn = new ComColumndata("submit_obj_json", DataTypeConstants.STRING, 4000);
+		submitObjJsonColumn.setName("提交的对象内容json串");
+		submitObjJsonColumn.setComments("提交的对象内容json串");
+		columns.add(submitObjJsonColumn);
 		
 		return columns;
 	}

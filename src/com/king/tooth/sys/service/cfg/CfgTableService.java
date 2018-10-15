@@ -154,7 +154,7 @@ public class CfgTableService extends AService {
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
 		
-		if(oldTable.getIsCreated() == 1){
+		if(oldTable.getIsBuildModel() == 1){
 			return "表["+oldTable.getTableName()+"]已经完成建模，无法删除，请先进行取消建模操作，再进行删除操作";
 		}
 		

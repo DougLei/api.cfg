@@ -48,6 +48,16 @@ public class DataValidUtil {
 	private static final Pattern doubleTypePattern = Pattern.compile("(\\+|-)?[0-9]+.[0-9]+");
 	
 	/**
+	 * 是否是数字类型
+	 * <p>整型/浮点型</p>
+	 * @param val
+	 * @return
+	 */
+	public static boolean isNumber(Object val){
+		return isInteger(val) || isBigDecimal(val);
+	}
+	
+	/**
 	 * 是否是boolean
 	 * @param val
 	 * @return
