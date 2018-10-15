@@ -454,7 +454,7 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		isImportExcelColumn.setDefaultValue("1");
 		columns.add(isImportExcelColumn);
 		
-		ComColumndata importExcelOrderCodeColumn = new ComColumndata("export_excel_order_code", DataTypeConstants.INTEGER, 4);
+		ComColumndata importExcelOrderCodeColumn = new ComColumndata("import_excel_order_code", DataTypeConstants.INTEGER, 4);
 		importExcelOrderCodeColumn.setName("excel导入排序");
 		importExcelOrderCodeColumn.setComments("默认和order_code的值一致");
 		importExcelOrderCodeColumn.setDefaultValue("0");
