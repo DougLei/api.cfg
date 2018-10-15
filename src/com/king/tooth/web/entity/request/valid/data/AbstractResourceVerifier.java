@@ -11,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.DataValidUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.RequestBody;
@@ -65,53 +65,6 @@ public abstract class AbstractResourceVerifier {
 	}
 	
 	/**
-	 * 验证数据是否合法
-	 * @param desc
-	 * @param dataValue
-	 * @param rmi
-	 * @param index
-	 * @return
-	 */
-	protected String validDataIsLegal(String desc, Object dataValue, ResourceMetadataInfo rmi, int index){
-		// 验证数据类型、数据长度、数据精度
-		if(DataTypeConstants.BOOLEAN.equals(rmi.getDataType())){
-			if(!DataValidUtil.isBoolean(dataValue)){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
-			}
-		}else if(DataTypeConstants.INTEGER.equals(rmi.getDataType())){
-			if(!DataValidUtil.isInteger(dataValue)){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
-			}
-			if(rmi.getLength() != -1 && dataValue.toString().length() > rmi.getLength()){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
-			}
-		}else if(DataTypeConstants.DOUBLE.equals(rmi.getDataType())){
-			if(!DataValidUtil.isNumber(dataValue)){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";
-			}
-			dataValueStr = dataValue.toString();
-			if(rmi.getLength() != -1 && (dataValueStr.length()-1) > rmi.getLength()){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
-			}
-			if(rmi.getPrecision() != -1 && dataValueStr.indexOf(".")!=-1 && dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
-			}
-		}else if(DataTypeConstants.DATE.equals(rmi.getDataType())){
-			if(!DataValidUtil.isDate(dataValue)){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
-			}
-		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){
-			if(rmi.getLength() != -1 && StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
-				return desc + "第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
-			}
-		}else{
-			return desc + "第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+rmi.getDataType()+"]数据类型，请联系后端开发人员";
-		}
-		return null;
-	}
-	private String dataValueStr;
-	
-	/**
 	 * 验证表资源的元数据
 	 * @param desc
 	 * @param ijson
@@ -158,9 +111,9 @@ public abstract class AbstractResourceVerifier {
 					if(DataTypeConstants.CLOB.equals(rmi.getDataType()) || DataTypeConstants.BLOB.equals(rmi.getDataType())){
 						continue;
 					}
-					validDataIsLegalResult = validDataIsLegal(desc, dataValue, rmi, (i+1));
+					validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(dataValue, rmi);
 					if(validDataIsLegalResult != null){
-						return validDataIsLegalResult;
+						return desc + "第"+(i+1)+"个对象，" + validDataIsLegalResult;
 					}
 					
 					// 验证唯一约束
@@ -188,6 +141,10 @@ public abstract class AbstractResourceVerifier {
 					}
 				}
 			}
+		}
+		
+		if(uniqueConstraintProps.size() > 0){
+			uniqueConstraintProps.clear();
 		}
 		return null;
 	}

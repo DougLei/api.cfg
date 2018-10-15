@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -330,6 +331,52 @@ public class ResourceHandlerUtil {
 				metadataInfos.add(new SqlResourceMetadataInfo(csr.getPropName()));
 			}
 			return metadataInfos;
+		}
+		return null;
+	}
+	
+	// --------------------------------------------------------------------------
+	/**
+	 * 验证数据是否合法
+	 * @param dataValue
+	 * @param rmi
+	 * @return
+	 */
+	public static String validDataIsLegal(Object dataValue, ResourceMetadataInfo rmi){
+		String dataValueStr;
+		// 验证数据类型、数据长度、数据精度
+		if(DataTypeConstants.BOOLEAN.equals(rmi.getDataType())){
+			if(!DataValidUtil.isBoolean(dataValue)){
+				return "["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
+			}
+		}else if(DataTypeConstants.INTEGER.equals(rmi.getDataType())){
+			if(!DataValidUtil.isInteger(dataValue)){
+				return "["+rmi.getDescName()+"] 的值不合法，应为整数类型";
+			}
+			if(rmi.getLength() != -1 && dataValue.toString().length() > rmi.getLength()){
+				return "["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+			}
+		}else if(DataTypeConstants.DOUBLE.equals(rmi.getDataType())){
+			if(!DataValidUtil.isNumber(dataValue)){
+				return "["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";
+			}
+			dataValueStr = dataValue.toString();
+			if(rmi.getLength() != -1 && (dataValueStr.length()-1) > rmi.getLength()){
+				return "["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
+			}
+			if(rmi.getPrecision() != -1 && dataValueStr.indexOf(".")!=-1 && dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
+				return "["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
+			}
+		}else if(DataTypeConstants.DATE.equals(rmi.getDataType())){
+			if(!DataValidUtil.isDate(dataValue)){
+				return "["+rmi.getDescName()+"] 的值不合法，应为日期类型";
+			}
+		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){
+			if(rmi.getLength() != -1 && StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
+				return "["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+			}
+		}else{
+			return "["+rmi.getDescName()+"]，系统目前不支持["+rmi.getDataType()+"]数据类型，请联系后端开发人员";
 		}
 		return null;
 	}

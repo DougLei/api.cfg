@@ -388,7 +388,11 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 								actualInValue = IJsonUtil.getIJson(dataValueStr);
 								return validProcedureSqlInResultSet(desc, ssp, index, (IJson)actualInValue);
 							}else{
-								return validDataIsLegal(desc, actualInValue, rmi, index);
+								validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(actualInValue, rmi);
+								if(validDataIsLegalResult != null){
+									return desc + "第"+index+"个对象，" + validDataIsLegalResult;
+								}
+								return null;
 							}
 						}
 					}
@@ -412,6 +416,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	}
 	private Object actualInValue;
 	private String dataValueStr;
+	private String validDataIsLegalResult;
 	
 	/**
 	 * 验证存储过程传入的结果集

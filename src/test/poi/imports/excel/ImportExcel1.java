@@ -10,15 +10,15 @@ import com.king.tooth.util.PoiExcelUtil;
 public class ImportExcel1 {
 	public static void main(String[] args) {
 	      Workbook workbook = null;
-          workbook = (Workbook) PoiExcelUtil.getWorkBookInstance("C:\\Users\\StoneKing\\Desktop\\import.xlsx", null);
+          workbook = (Workbook) PoiExcelUtil.getWorkBookInstance("C:\\Users\\Administrator\\Desktop\\import.xlsx", null);
           
           //工作表对象
           Sheet sheet = workbook.getSheetAt(0);
           
           Cell cell = sheet.getRow(0).getCell(0);
           
-          
-          cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-          System.out.println(DateUtil.getJavaCalendar(cell.getNumericCellValue(), false).getTime());
+          System.out.println(cell.getCellType() == Cell.CELL_TYPE_NUMERIC);
+          System.out.println(DateUtil.isCellDateFormatted(cell));
+          System.out.println(cell.getDateCellValue());
 	}
 }

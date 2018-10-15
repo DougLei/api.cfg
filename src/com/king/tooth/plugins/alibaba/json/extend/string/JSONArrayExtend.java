@@ -16,7 +16,11 @@ public class JSONArrayExtend implements IJson{
 	 */
 	public JSONArrayExtend() {
 	}
-	
+	public JSONArrayExtend(int initialCapacity) {
+		this.jsonArray = new JSONArray(initialCapacity);
+	}
+
+
 	/**
 	 * 构造的同时，parse(data)
 	 * @param data
