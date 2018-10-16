@@ -48,6 +48,12 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	 * 备注
 	 */
 	private String comments;
+	/**
+	 * 数据类型，默认值为1
+	 * <p>1:系统内置</p>
+	 * <p>2:用户定义</p>
+	 */
+	private Integer dataFlag;
 	
 	//-------------------------------------------------------------------------
 	public SysDataDictionary() {
@@ -94,54 +100,59 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
+	public Integer getDataFlag() {
+		return dataFlag;
+	}
+	public void setDataFlag(Integer dataFlag) {
+		this.dataFlag = dataFlag;
+	}
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(8+7);
 		
 		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 50);
 		codeColumn.setName("编码");
 		codeColumn.setComments("编码");
-		codeColumn.setOrderCode(1);
 		columns.add(codeColumn);
 		
 		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父编码主键");
 		parentIdColumn.setComments("父编码主键(可为空)");
-		parentIdColumn.setOrderCode(2);
 		columns.add(parentIdColumn);
 		
 		ComColumndata captionColumn = new ComColumndata("caption", DataTypeConstants.STRING, 200);
 		captionColumn.setName("显示的文本");
 		captionColumn.setComments("显示的文本");
-		captionColumn.setOrderCode(3);
 		columns.add(captionColumn);
 		
 		ComColumndata valColumn = new ComColumndata("val", DataTypeConstants.STRING, 400);
 		valColumn.setName("后台操作的值");
 		valColumn.setComments("后台操作的值(value)");
-		valColumn.setOrderCode(4);
 		columns.add(valColumn);
 		
 		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setDefaultValue("0");
-		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
 		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.STRING, 150);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效：默认值为1");
 		isEnabledColumn.setDefaultValue("1");
-		isEnabledColumn.setOrderCode(6);
 		columns.add(isEnabledColumn);
 		
 		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 150);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
-		commentsColumn.setOrderCode(7);
 		columns.add(commentsColumn);
+		
+		ComColumndata dataFlagColumn = new ComColumndata("data_flag", DataTypeConstants.INTEGER, 2);
+		dataFlagColumn.setName("数据类型");
+		dataFlagColumn.setComments("默认值为1，1:系统内置，2:用户定义");
+		dataFlagColumn.setDefaultValue("1");
+		columns.add(dataFlagColumn);
 		
 		return columns;
 	}

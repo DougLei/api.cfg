@@ -91,9 +91,10 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	public ComTabledata() {
 	}
 	public ComTabledata(String tableName) {
-		this.tableName = tableName;
+		this.tableName = tableName.trim().toUpperCase();
+		this.resourceName = NamingProcessUtil.tableNameTurnClassName(tableName);
 		this.isCreated = 1;
-		analysisResourceProp();
+		this.isBuildModel = 1;
 	}
 	
 	//-------------------------------------------------------------------------

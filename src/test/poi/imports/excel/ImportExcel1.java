@@ -10,7 +10,7 @@ import com.king.tooth.util.PoiExcelUtil;
 public class ImportExcel1 {
 	public static void main(String[] args) {
 	      Workbook workbook = null;
-          workbook = (Workbook) PoiExcelUtil.getWorkBookInstance("C:\\Users\\Administrator\\Desktop\\import.xlsx", null);
+          workbook = (Workbook) PoiExcelUtil.getWorkBookInstance("C:\\Users\\StoneKing\\Desktop\\import.xlsx", null);
           
           //工作表对象
           Sheet sheet = workbook.getSheetAt(0);
