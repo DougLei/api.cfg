@@ -20,7 +20,7 @@ public class DynamicBasicColumnUtil {
 	 * @param table
 	 */
 	public static void initBasicColumnToTable(ComTabledata table){
-		ComColumndata idColumn = new ComColumndata(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 32);
+		ComColumndata idColumn = new ComColumndata(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 50);
 		idColumn.setIsPrimaryKey(1);
 		idColumn.setIsNullabled(0);
 		idColumn.setName("主键");
