@@ -53,4 +53,25 @@ public class DataTypeConstants {
 	 * <p>即表类型</p>
 	 */
 	public static final String ORACLE_CURSOR_TYPE = "sys_refcursor";
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	/**
+	 * 是否是合法的数据类型，即是否是系统支持的数据类型
+	 * @param dataType
+	 * @return
+	 */
+	public static boolean isLegalDataType(String dataType){
+		if(CHAR.equals(dataType) 
+				|| STRING.equals(dataType)
+				|| BOOLEAN.equals(dataType)
+				|| INTEGER.equals(dataType)
+				|| DOUBLE.equals(dataType)
+				|| DATE.equals(dataType)
+				|| CLOB.equals(dataType)
+				|| BLOB.equals(dataType)
+				|| ORACLE_CURSOR_TYPE.equals(dataType)){
+			return true;
+		}
+		return false;
+	}
 }

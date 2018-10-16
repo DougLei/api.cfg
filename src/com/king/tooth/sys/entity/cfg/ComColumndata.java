@@ -501,6 +501,9 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		if(StrUtils.isEmpty(columnType)){
 			return "字段类型不能为空！";
 		}
+		if(!DataTypeConstants.isLegalDataType(columnType)){
+			return "数据类型不合法，目前系统支持的数据类型值包括:[char]、[string]、[boolean]、[integer]、[double]、[date]、[clob]、[blob]";
+		}
 		if((DataTypeConstants.STRING.equals(columnType) 
 				|| DataTypeConstants.CHAR.equals(columnType) 
 				|| DataTypeConstants.DOUBLE.equals(columnType)

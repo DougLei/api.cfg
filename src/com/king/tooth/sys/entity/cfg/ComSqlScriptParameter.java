@@ -362,6 +362,9 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 			if(StrUtils.isEmpty(parameterDataType)){
 				return "sql脚本参数的数据类型不能为空";
 			}
+			if(!DataTypeConstants.isLegalDataType(parameterDataType)){
+				return "sql脚本参数的数据类型不合法，目前系统支持的数据类型值包括:[char]、[string]、[boolean]、[integer]、[double]、[date]、[clob]、[blob]、[sys_refcursor]";
+			}
 			if((DataTypeConstants.STRING.equals(parameterDataType) 
 					|| DataTypeConstants.CHAR.equals(parameterDataType) 
 					|| DataTypeConstants.DOUBLE.equals(parameterDataType)
