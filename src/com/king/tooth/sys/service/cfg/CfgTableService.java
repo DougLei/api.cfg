@@ -177,6 +177,8 @@ public class CfgTableService extends AService {
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComTabledata where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
 		HibernateUtil.deleteDataLinks("CfgProjectTableLinks", null, tableId);
+		// 删除资源
+		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
 		return null;
 	}
 	
