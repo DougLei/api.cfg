@@ -132,7 +132,7 @@ public class CfgTableController extends AController{
 			}
 		}
 		if(resultObject == null){
-			resultObject = ijson.getJson(OperDataTypeConstants.ADD);
+			resultObject = ijson.getJson(OperDataTypeConstants.EDIT);
 		}
 		deleteTableIds.clear();
 		return getResultObject();
