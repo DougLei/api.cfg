@@ -227,7 +227,7 @@ public class ResourceHandlerUtil {
 				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
 			}
 			if(operType == 1){
-				DynamicBasicColumnUtil.initBasicMetadataInfos(resourceName, resourceMetadataInfos);
+				DynamicBasicColumnUtil.initBasicMetadataInfos(0, resourceName, resourceMetadataInfos);
 			}
 		}
 		return resourceMetadataInfos;
@@ -266,7 +266,7 @@ public class ResourceHandlerUtil {
 			}
 		}
 		if(operType == 1){
-			DynamicBasicColumnUtil.initBasicMetadataInfos(tableResourceName, metadataInfos);
+			DynamicBasicColumnUtil.initBasicMetadataInfos(1, tableResourceName, metadataInfos);
 		}
 		columns.clear();
 		return metadataInfos;

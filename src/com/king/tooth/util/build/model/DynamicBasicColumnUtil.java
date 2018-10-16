@@ -20,7 +20,7 @@ public class DynamicBasicColumnUtil {
 	 * @param table
 	 */
 	public static void initBasicColumnToTable(ComTabledata table){
-		ComColumndata idColumn = new ComColumndata(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 50);
+		ComColumndata idColumn = new ComColumndata(ResourcePropNameConstants.ID, DataTypeConstants.STRING, table.getIsBuildIn()==1?32:50);
 		idColumn.setIsPrimaryKey(1);
 		idColumn.setIsNullabled(0);
 		idColumn.setName("主键");
@@ -62,11 +62,12 @@ public class DynamicBasicColumnUtil {
 	
 	/**
 	 * 初始化表资源基础的元数据信息
+	 * @param isBuildIn
 	 * @param resourceName
 	 * @param resourceMetadataInfos
 	 */
-	public static void initBasicMetadataInfos(String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos) {
-		resourceMetadataInfos.add(new TableResourceMetadataInfo("ID", DataTypeConstants.STRING, 32, 0, 0, 1, ResourcePropNameConstants.ID, "主键"));
+	public static void initBasicMetadataInfos(int isBuildIn, String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos) {
+		resourceMetadataInfos.add(new TableResourceMetadataInfo("ID", DataTypeConstants.STRING, isBuildIn==1?32:50, 0, 0, 1, ResourcePropNameConstants.ID, "主键"));
 		resourceMetadataInfos.add(new TableResourceMetadataInfo("CUSTOMER_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "customerId", "所属租户主键"));
 		resourceMetadataInfos.add(new TableResourceMetadataInfo("PROJECT_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "projectId", "所属项目主键"));
 		if(!resourceName.endsWith("Links")){// 不是关系表，才要这些字段

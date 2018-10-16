@@ -77,6 +77,13 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	//-----------------------------------------------------------------------
 	
 	/**
+	 * 是否内置
+	 * <p>代码开发的都为内置，其余的都不是</p>
+	 */
+	@JSONField(serialize = false)
+	private int isBuildIn;
+	
+	/**
 	 * 列集合
 	 */
 	@JSONField(serialize = false)
@@ -95,6 +102,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		this.resourceName = NamingProcessUtil.tableNameTurnClassName(tableName);
 		this.isCreated = 1;
 		this.isBuildModel = 1;
+		this.isBuildIn = 1;
 	}
 	
 	//-------------------------------------------------------------------------
@@ -176,6 +184,13 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	public void setRequestMethod(String requestMethod) {
 		this.requestMethod = requestMethod;
 	}
+	public int getIsBuildIn() {
+		return isBuildIn;
+	}
+	public void setIsBuildIn(int isBuildIn) {
+		this.isBuildIn = isBuildIn;
+	}
+	
 	
 	public void clear(){
 		if(columns != null && columns.size()>0){
