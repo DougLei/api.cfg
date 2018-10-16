@@ -49,11 +49,15 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	 */
 	private String comments;
 	/**
-	 * 数据类型，默认值为1
+	 * 数据标识，默认值为1
 	 * <p>1:系统内置</p>
 	 * <p>2:用户定义</p>
 	 */
 	private Integer dataFlag;
+	/**
+	 * 是否删除
+	 */
+	private Integer isDelete;
 	
 	//-------------------------------------------------------------------------
 	public SysDataDictionary() {
@@ -106,10 +110,16 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 	public void setDataFlag(Integer dataFlag) {
 		this.dataFlag = dataFlag;
 	}
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(8+7);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(9+7);
 		
 		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 50);
 		codeColumn.setName("编码");
@@ -149,10 +159,16 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 		columns.add(commentsColumn);
 		
 		ComColumndata dataFlagColumn = new ComColumndata("data_flag", DataTypeConstants.INTEGER, 2);
-		dataFlagColumn.setName("数据类型");
+		dataFlagColumn.setName("数据标识");
 		dataFlagColumn.setComments("默认值为1，1:系统内置，2:用户定义");
 		dataFlagColumn.setDefaultValue("1");
 		columns.add(dataFlagColumn);
+		
+		ComColumndata isDeleteColumn = new ComColumndata("is_delete", DataTypeConstants.INTEGER, 1);
+		isDeleteColumn.setName("是否删除");
+		isDeleteColumn.setComments("是否删除");
+		isDeleteColumn.setDefaultValue("0");
+		columns.add(isDeleteColumn);
 		
 		return columns;
 	}
@@ -161,7 +177,6 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 		ComTabledata table = new ComTabledata(toDropTable());
 		table.setName("数据字典表");
 		table.setComments("数据字典表");
-		
 		
 		table.setColumns(getColumnList());
 		return table;
