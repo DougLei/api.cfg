@@ -147,7 +147,7 @@ public class SysDataDictionary extends BasicEntity implements ITable, IEntity{
 		orderCodeColumn.setDefaultValue("0");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.STRING, 150);
+		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效：默认值为1");
 		isEnabledColumn.setDefaultValue("1");
