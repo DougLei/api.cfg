@@ -1,5 +1,6 @@
 package com.king.tooth.sys.service.sys;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,9 +19,12 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.excel.ImportExcel;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.PoiExcelUtil;
@@ -204,10 +208,69 @@ public class SysExcelService extends AService{
 	private List<ResourceMetadataInfo> getImportExcelTableResourceMetadataInfos(String resourceName){
 		SysResource resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
 		if(resource.isTableResource()){
-			return ResourceHandlerUtil.getTableResourceMetadataInfos(resource, 2);
+			return getTableResourceMetadataInfos(resource, 1);
 		}else{
 			throw new IllegalArgumentException("系统目前只支持表资源的excel导入");
 		}
+	}
+	
+	/**
+	 * 查询导入导出时，表资源的元数据信息集合
+	 * @param resource
+	 * @param isImport 是否导入，如果不是导入，就是导出
+	 * @return
+	 */
+	private List<ResourceMetadataInfo> getTableResourceMetadataInfos(SysResource resource, int isImport){
+		List<ResourceMetadataInfo> resourceMetadataInfos = null;
+		String resourceId = resource.getRefResourceId();
+		String resourceName = resource.getResourceName();
+		
+		if(resource.isBuiltinResource()){
+			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName, isImport);
+		}else{
+			String hql = null;
+			if(isImport == 1){
+				hql = queryTableImportMetadataInfosHql;
+			}else{
+				hql = queryTableExportMetadataInfosHql;
+			}
+			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, hql, resourceId);
+			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
+				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
+			}
+		}
+		return resourceMetadataInfos;
+	}
+	/** 查询表资源配置的导入excel的元数据信息集合的hql */
+	private static final String queryTableImportMetadataInfosHql = ResourceHandlerUtil.queryTableMetadataInfosHqlHead + " and isImportExcel=1 order by importExcelOrderCode asc";
+	/** 查询表资源配置的导出excel的元数据信息集合的hql */
+	private static final String queryTableExportMetadataInfosHql = ResourceHandlerUtil.queryTableMetadataInfosHqlHead + " and isExportExcel=1 order by exportExcelOrderCode asc";
+	
+	/**
+	 * 获取内置表资源的元数据信息集合
+	 * @param tableResourceName
+	 * @return
+	 */
+	private static List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName, int isImport){
+		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
+		List<ComColumndata> columns = itable.getColumnList();
+		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
+		for (ComColumndata column : columns) {
+			if((isImport == 1 && (column.getIsImportExcel() != null && column.getIsImportExcel() == 1))
+					|| (isImport == 0 && (column.getIsExportExcel() != null && column.getIsExportExcel() == 1))){
+				metadataInfos.add(new TableResourceMetadataInfo(
+						column.getColumnName(),
+						column.getColumnType(),
+						column.getLength(),
+						column.getPrecision(),
+						column.getIsUnique(), 
+						column.getIsNullabled(),
+						column.getPropName(),
+						column.getName()));
+			}
+		}
+		columns.clear();
+		return metadataInfos;
 	}
 	
 	/**
