@@ -1,6 +1,7 @@
 package com.king.tooth.util;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -75,19 +76,46 @@ public class DataValidUtil {
 	}
 	
 	/**
-	 * 是否是date
+	 * 是否是代码date
 	 * @param val
 	 * @return
 	 */
-	public static boolean isDate(Object val) {
+	public static boolean isCodeDate(Object val) {
 		if(val != null){
-			String tmpVal = val.toString();
-			if(dateTypePattern.matcher(tmpVal).matches()){
+			if(val instanceof Date){
 				return true;
 			}
-			if(timeZoneTypePattern.matcher(tmpVal).matches()){
+			return isDate(val.toString());
+		}
+		return false;
+	}
+	
+	/**
+	 * 是否是SQLdate
+	 * @param val
+	 * @return
+	 */
+	public static boolean isSqlDate(Object val) {
+		if(val != null){
+			if(val instanceof java.sql.Date || val instanceof java.sql.Timestamp){
 				return true;
 			}
+			return isDate(val.toString());
+		}
+		return false;
+	}
+	
+	/**
+	 * 字符串是否是日期类型
+	 * @param val
+	 * @return
+	 */
+	private static boolean isDate(String val){
+		if(dateTypePattern.matcher(val).matches()){
+			return true;
+		}
+		if(timeZoneTypePattern.matcher(val).matches()){
+			return true;
 		}
 		return false;
 	}

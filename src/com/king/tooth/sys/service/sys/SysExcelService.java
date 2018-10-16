@@ -99,7 +99,7 @@ public class SysExcelService extends AService{
 			}
 			sheetIndex++;
 		}
-		return null;
+		return importExcel;
 	}
 	
 	/**
@@ -143,20 +143,20 @@ public class SysExcelService extends AService{
 				
 				// 验证不能为空
 				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
-					return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+1)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值不能为空";
+					return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值不能为空";
 				}
 				
 				if(!dataValueIsNull){
 					validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(dataValue, rmi);
 					if(validDataIsLegalResult != null){
-						return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+1)+"行，第"+columnIndex+"列" + validDataIsLegalResult;
+						return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+2)+"行，第"+columnIndex+"列" + validDataIsLegalResult;
 					}
 					
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintProps.add(rmi);
 						if(validDataIsExists(resourceName, rmi.getPropName(), dataValue, dataIdValue)){
-							return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+1)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值已经存在，不能重复添加";
+							return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值已经存在，不能重复添加";
 						}
 					}
 				}
@@ -173,7 +173,7 @@ public class SysExcelService extends AService{
 					if(StrUtils.notEmpty(dataValue)){
 						for(int j=i+1;j<size;j++){
 							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
-								return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+1)+"行和第"+(j+1)+"行的，第"+columnIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
+								return "导入excel文件，第"+(sheetIndex+1)+"个sheet中，第"+(i+2)+"行和第"+(j+2)+"行的，第"+columnIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
 							}
 						}
 					}

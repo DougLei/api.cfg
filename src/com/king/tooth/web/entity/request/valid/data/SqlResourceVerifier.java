@@ -338,7 +338,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					
 					// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
 					if(DataTypeConstants.DATE.equals(ssp.getParameterDataType())){
-						if(DataValidUtil.isDate(actualInValue)){
+						if(DataValidUtil.isCodeDate(actualInValue)){
 							actualInValue = DateUtil.parseTimestamp(dataValueStr);
 						}else{
 							return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";

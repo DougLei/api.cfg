@@ -96,18 +96,18 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	 */
 	public int calcBatchImportCount(int rowCount){
 		if(batchImportCount == 0 || batchImportCount < -1){
-			return 300;
+			batchImportCount = 300;
 		}else if(batchImportCount == -1){
-			return rowCount;
-		}else{
-			return batchImportCount;
+			batchImportCount = rowCount;
 		}
+		return batchImportCount;
 	}
 	
 	/**
 	 * 是否一次性全部导入
 	 * @return
 	 */
+	@JSONField(serialize = false)
 	public boolean isAllImportByOnce(){
 		return batchImportCount == -1;
 	}

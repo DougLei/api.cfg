@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
@@ -131,7 +132,7 @@ public class CfgTableController extends AController{
 			}
 		}
 		if(resultObject == null){
-			resultObject = ijson.getJson();
+			resultObject = ijson.getJson(OperDataTypeConstants.ADD);
 		}
 		deleteTableIds.clear();
 		return getResultObject();

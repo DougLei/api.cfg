@@ -529,7 +529,10 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 				return "列["+columnName+"]，无法设置为主键，系统已内置名为id的主键，如确实需要创建主键，请联系后端系统开发人员";
 			}
 			if((isUnique != null && isUnique == 1)){
-				isNullabled = 0;// 如果有唯一性约束，则自动加上非空约束
+				if(isNullabled != null && isNullabled == 1){
+					return "列["+columnName+"]，在唯一约束下，不能为空";
+				}
+				
 				if(isPrimaryKey != null && isPrimaryKey == 1){
 					return "列["+columnName+"]，唯一约束和主键约束，只能指定一个";
 				}

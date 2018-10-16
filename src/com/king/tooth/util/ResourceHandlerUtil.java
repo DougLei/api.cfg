@@ -346,7 +346,7 @@ public class ResourceHandlerUtil {
 				return "["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 			}
 		}else if(DataTypeConstants.DATE.equals(rmi.getDataType())){
-			if(!DataValidUtil.isDate(dataValue)){
+			if(!DataValidUtil.isCodeDate(dataValue)){
 				return "["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 			}
 		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){
