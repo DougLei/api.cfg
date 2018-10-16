@@ -30,20 +30,15 @@ public class SysExcelController extends AController{
 		List<ImportExcel> importExcels = getDataInstanceList(ijson, ImportExcel.class, true);
 		analysisResourceProp(importExcels);
 		if(analysisResult == null){
-			if(importExcels.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importExcels.get(0));
-			}else{
-				for (ImportExcel importExcel : importExcels) {
-					resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importExcel);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ImportExcel importExcel : importExcels) {
+				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importExcel);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add((JSONObject) resultObject);
 			}
-			importExcels.clear();
 		}
-		return getResultObject();
+		return getResultObject(importExcels, null);
 	}
 	
 	/**
@@ -53,6 +48,6 @@ public class SysExcelController extends AController{
 	 */
 	@RequestMapping
 	public Object exportExcel(HttpServletRequest request, IJson ijson){
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

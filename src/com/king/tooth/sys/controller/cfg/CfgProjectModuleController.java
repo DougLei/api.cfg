@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -32,20 +32,15 @@ public class CfgProjectModuleController extends AController{
 		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
-			if(projectModules.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).saveProjectModule(projectModules.get(0));
-			}else{
-				for (ComProjectModule projectModule : projectModules) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).saveProjectModule(projectModule);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComProjectModule projectModule : projectModules) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).saveProjectModule(projectModule);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			projectModules.clear();
 		}
-		return getResultObject();
+		return getResultObject(projectModules, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -58,20 +53,15 @@ public class CfgProjectModuleController extends AController{
 		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
 		analysisResourceProp(projectModules);
 		if(analysisResult == null){
-			if(projectModules.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).updateProjectModule(projectModules.get(0));
-			}else{
-				for (ComProjectModule projectModule : projectModules) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).updateProjectModule(projectModule);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComProjectModule projectModule : projectModules) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).updateProjectModule(projectModule);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			projectModules.clear();
 		}
-		return getResultObject();
+		return getResultObject(projectModules, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -94,6 +84,6 @@ public class CfgProjectModuleController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, projectModuleIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

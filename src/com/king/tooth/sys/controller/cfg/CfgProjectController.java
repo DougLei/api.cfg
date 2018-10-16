@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -32,20 +32,15 @@ public class CfgProjectController extends AController{
 		List<ComProject> projects = getDataInstanceList(ijson, ComProject.class, true);
 		analysisResourceProp(projects);
 		if(analysisResult == null){
-			if(projects.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).saveProject(projects.get(0));
-			}else{
-				for (ComProject project : projects) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).saveProject(project);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComProject project : projects) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).saveProject(project);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			projects.clear();
 		}
-		return getResultObject();
+		return getResultObject(projects, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -58,20 +53,15 @@ public class CfgProjectController extends AController{
 		List<ComProject> projects = getDataInstanceList(ijson, ComProject.class, true);
 		analysisResourceProp(projects);
 		if(analysisResult == null){
-			if(projects.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).updateProject(projects.get(0));
-			}else{
-				for (ComProject project : projects) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).updateProject(project);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComProject project : projects) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).updateProject(project);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			projects.clear();
 		}
-		return getResultObject();
+		return getResultObject(projects, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -94,6 +84,6 @@ public class CfgProjectController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, projectIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

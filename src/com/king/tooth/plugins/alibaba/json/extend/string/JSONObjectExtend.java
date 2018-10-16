@@ -1,7 +1,6 @@
 package com.king.tooth.plugins.alibaba.json.extend.string;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourcePropNameConstants;
 
 /**
  * com.alibaba.fastjson.JSONObject的扩展
@@ -65,12 +64,5 @@ public class JSONObjectExtend implements IJson{
 
 	public void add(JSONObject json) {
 		jsonObject = json;
-	}
-	
-	public Object getJson(String focusedOper) {
-		if(jsonObject != null && jsonObject.get(ResourcePropNameConstants.ID) != null){
-			jsonObject.put(ResourcePropNameConstants.ID, jsonObject.get(ResourcePropNameConstants.ID) + "_" + focusedOper);
-		}
-		return jsonObject;
 	}
 }

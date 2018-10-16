@@ -2,7 +2,6 @@ package com.king.tooth.plugins.alibaba.json.extend.string;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourcePropNameConstants;
 
 /**
  * com.alibaba.fastjson.JSONArray的扩展
@@ -84,19 +83,5 @@ public class JSONArrayExtend implements IJson{
 			jsonArray = new JSONArray();
 		}
 		jsonArray.add(json);
-	}
-	
-	public Object getJson(String focusedOper) {
-		if(jsonArray != null && jsonArray.size() > 0){
-			JSONObject tmpJson;
-			int size = jsonArray.size();
-			for (int i = 0; i < size ; i++) {
-				tmpJson = jsonArray.getJSONObject(i);
-				if(tmpJson.get(ResourcePropNameConstants.ID) != null){
-					tmpJson.put(ResourcePropNameConstants.ID, tmpJson.get(ResourcePropNameConstants.ID) + "_" + focusedOper);
-				}
-			}
-		}
-		return jsonArray;
 	}
 }

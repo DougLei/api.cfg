@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -51,7 +52,7 @@ public class SysAccountController extends AController{
 			json.put("modules", accountOnlineStatus.getProjectModules());
 			resultObject = json;
 		}
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -71,7 +72,7 @@ public class SysAccountController extends AController{
 		JSONObject jsonObject = new JSONObject(1);
 		jsonObject.put("_token", token);
 		resultObject = jsonObject;
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	//------------------------------------------------------------------------------------------------------------------------------------------
@@ -86,20 +87,15 @@ public class SysAccountController extends AController{
 		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
-			if(accounts.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(accounts.get(0));
-			}else{
-				for (SysAccount account : accounts) {
-					resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(account);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (SysAccount account : accounts) {
+				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(account);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			accounts.clear();
 		}
-		return getResultObject();
+		return getResultObject(accounts, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -112,20 +108,15 @@ public class SysAccountController extends AController{
 		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
 		analysisResourceProp(accounts);
 		if(analysisResult == null){
-			if(accounts.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(accounts.get(0));
-			}else{
-				for (SysAccount account : accounts) {
-					resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(account);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (SysAccount account : accounts) {
+				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(account);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			accounts.clear();
 		}
-		return getResultObject();
+		return getResultObject(accounts, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -148,6 +139,6 @@ public class SysAccountController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, accountIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

@@ -501,8 +501,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		if(StrUtils.isEmpty(columnType)){
 			return "字段类型不能为空！";
 		}
-		if(DataTypeConstants.STRING.equals(columnType) && (length == null || length < 1)){
-			return "字段长度不能为空！";
+		if((DataTypeConstants.STRING.equals(columnType) 
+				|| DataTypeConstants.CHAR.equals(columnType) 
+				|| DataTypeConstants.DOUBLE.equals(columnType)
+				|| DataTypeConstants.INTEGER.equals(columnType)) 
+					&& (length == null || length < 1)){
+			return "字段长度不能为空，且必须大于0！";
 		}
 		if(orderCode == null || orderCode < 1){
 			return "字段排序值不能为空，且必须大于0！";
@@ -529,15 +533,14 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 				return "列["+columnName+"]，无法设置为主键，系统已内置名为id的主键，如确实需要创建主键，请联系后端系统开发人员";
 			}
 			if((isUnique != null && isUnique == 1)){
-				if(isNullabled != null && isNullabled == 1){
+				if(isNullabled == null || isNullabled == 1){
 					return "列["+columnName+"]，在唯一约束下，不能为空";
 				}
-				
 				if(isPrimaryKey != null && isPrimaryKey == 1){
 					return "列["+columnName+"]，唯一约束和主键约束，只能指定一个";
 				}
 			}
-			if(!DataTypeConstants.INTEGER.equals(columnType) || !DataTypeConstants.DOUBLE.equals(columnType)){
+			if(!DataTypeConstants.INTEGER.equals(columnType) && !DataTypeConstants.DOUBLE.equals(columnType)){
 				if(precision != null && precision != 0){
 					return "列["+columnName+"]，非数字类型，禁止添加精度";
 				}

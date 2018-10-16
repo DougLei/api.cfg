@@ -34,6 +34,6 @@ public class SysPermissionController extends AController{
 		int deep = (request.getParameter("deep")== null)? 0:Integer.valueOf(request.getParameter("deep"));
 		
 		resultObject = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).calcPermissionByCode(code, recursive, deep);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

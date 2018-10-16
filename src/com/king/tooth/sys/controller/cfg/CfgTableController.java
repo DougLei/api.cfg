@@ -37,20 +37,15 @@ public class CfgTableController extends AController{
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
-			if(tables.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(tables.get(0));
-			}else{
-				for (ComTabledata table : tables) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(table);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComTabledata table : tables) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(table);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			tables.clear();
 		}
-		return getResultObject();
+		return getResultObject(tables, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -63,20 +58,15 @@ public class CfgTableController extends AController{
 		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
-			if(tables.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(tables.get(0));
-			}else{
-				for (ComTabledata table : tables) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(table);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComTabledata table : tables) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(table);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			tables.clear();
 		}
-		return getResultObject();
+		return getResultObject(tables, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -95,9 +85,8 @@ public class CfgTableController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, tableIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
-	
 
 	/**
 	 * 建模
@@ -106,36 +95,27 @@ public class CfgTableController extends AController{
 	 */
 	@RequestMapping
 	public Object buildModel(HttpServletRequest request, IJson ijson){
-		// 获取数据库连接对象，准备进行create表、drop表的操作
+		// 获取数据库连接对象，准备进行create表操作
 		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		
-		int len = ijson.size();
-		List<String> deleteTableIds = new ArrayList<String>(len);// 记录每个建模的表id
-		String tableId;
-		if(len == 1){
-			tableId = ijson.get(0).getString(ResourcePropNameConstants.ID);
-			if(StrUtils.isEmpty(tableId)){
+		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
+		for (ComTabledata table : tables) {
+			if(StrUtils.isEmpty(table.getId())){
 				return "要建模的表id不能为空";
 			}
-			resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).buildModel(tableId, deleteTableIds, dbTableHandler);
-		}else{
-			for(int i=0;i<len ;i++){
-				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
-				if(StrUtils.isEmpty(tableId)){
-					resultObject = "要建模的表id不能为空";
-					continue;
-				}
-				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).buildModel(tableId, deleteTableIds, dbTableHandler);
-				if(resultObject != null){
+		}
+		
+		List<String> deleteTableIds = new ArrayList<String>(tables.size());// 记录每个建模的表id
+		if(analysisResult == null){
+			for (ComTabledata table : tables) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).buildModel(table.getId(), deleteTableIds, dbTableHandler);
+				if(resultObject instanceof String){
 					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
 		}
-		if(resultObject == null){
-			resultObject = ijson.getJson(OperDataTypeConstants.EDIT);
-		}
 		deleteTableIds.clear();
-		return getResultObject();
+		return getResultObject(tables, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -147,32 +127,23 @@ public class CfgTableController extends AController{
 	public Object cancelBuildModel(HttpServletRequest request, IJson ijson){
 		// 获取数据库连接对象，准备进行create表、drop表的操作
 		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		
-		int len = ijson.size();
-		String tableId;
-		if(len == 1){
-			tableId = ijson.get(0).getString(ResourcePropNameConstants.ID);
-			if(StrUtils.isEmpty(tableId)){
+		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
+		for (ComTabledata table : tables) {
+			if(StrUtils.isEmpty(table.getId())){
 				return "要取消建模的表id不能为空";
 			}
-			resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, null, tableId, true);
-		}else{
-			for(int i=0;i<len ;i++){
-				tableId = ijson.get(i).getString(ResourcePropNameConstants.ID);
-				if(StrUtils.isEmpty(tableId)){
-					resultObject = "要取消建模的表id不能为空";
-					continue;
-				}
-				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, null, tableId, true);
-				if(resultObject != null){
+		}
+		
+		if(analysisResult == null){
+			for (ComTabledata table : tables) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, null, table.getId(), true);
+				if(resultObject instanceof String){
 					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
 		}
-		if(resultObject == null){
-			resultObject = ijson.getJson();
-		}
-		return getResultObject();
+		return getResultObject(tables, OperDataTypeConstants.EDIT);
 	}
 	
 	
@@ -194,7 +165,7 @@ public class CfgTableController extends AController{
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -215,6 +186,6 @@ public class CfgTableController extends AController{
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

@@ -40,7 +40,7 @@ public class SysPushMessageInfoService extends AService{
 		SysPushMessageInfo spmi = getObjectById(sysPushMessageInfo.getId(), SysPushMessageInfo.class);
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysPushMessageInfo set isReaded=? where " + ResourcePropNameConstants.ID + "=?", sysPushMessageInfo.getIsReaded(), spmi.getId());
 		
-		JSONObject json = new JSONObject(2);
+		JSONObject json = new JSONObject(3);
 		json.put(ResourcePropNameConstants.ID, sysPushMessageInfo.getId());
 		json.put("isReaded", sysPushMessageInfo.getIsReaded());
 		return json;

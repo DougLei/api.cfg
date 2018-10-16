@@ -266,7 +266,7 @@ public class SqlStatementParserUtil {
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
-				parameter = new ComSqlScriptParameter(parameterName, dataType, true, param.getMode(), (i+1), true);
+				parameter = new ComSqlScriptParameter(parameterName, dataType, true, param.getMode(), (i+1), true, true);
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
 				processProcedureTableParam(parameter, sqlScript);
@@ -335,7 +335,7 @@ public class SqlStatementParserUtil {
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
-				parameter = new ComSqlScriptParameter(parameterName , dataType, true, param.getMode(), (i+1), true);
+				parameter = new ComSqlScriptParameter(parameterName , dataType, true, param.getMode(), (i+1), true, true);
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
 				parameter.setDefaultValue(defaultValue);

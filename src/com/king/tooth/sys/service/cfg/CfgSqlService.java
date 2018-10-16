@@ -3,7 +3,6 @@ package com.king.tooth.sys.service.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
@@ -49,6 +48,16 @@ public class CfgSqlService extends AService {
 		sqlScript.setInSqlResultsets(findInSqlResultsetsList(sqlScript));
 		sqlScript.setOutSqlResultsetsList(findOutSqlResultsetsList(sqlScript));
 		return sqlScript;
+	}
+	
+	/**
+	 * 根据sql脚本id，查询对应的参数集合
+	 * @param sqlScriptId
+	 * @return
+	 */
+	private List<ComSqlScriptParameter> findSqlParams(String sqlScriptId) {
+		return HibernateUtil.extendExecuteListQueryByHqlArr(
+				ComSqlScriptParameter.class, null, null, "from ComSqlScriptParameter where sqlScriptId = ? and projectId=? and customerId=? order by orderCode asc", sqlScriptId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 	}
 	
 	/**
@@ -267,46 +276,43 @@ public class CfgSqlService extends AService {
 		return null;
 	}
 	
+	// ---------------------------------------------------------------------------------------------------------
+	
 	/**
-	 * 根据sql脚本id，查询对应的参数集合
-	 * @param sqlScriptId
+	 * 根据id，验证是否存在对应的sql脚本对象
+	 * @param sqlId
 	 * @return
 	 */
-	private List<ComSqlScriptParameter> findSqlParams(String sqlScriptId) {
-		return HibernateUtil.extendExecuteListQueryByHqlArr(
-				ComSqlScriptParameter.class, null, null, "from ComSqlScriptParameter where sqlScriptId = ? and projectId=? and customerId=? order by orderCode asc", sqlScriptId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+	private boolean validSqlIsExistsById(String sqlId) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where "+ResourcePropNameConstants.ID+"=? and customerId = ?", sqlId, CurrentThreadContext.getCustomerId());
+		if(count > 0){
+			return true;
+		}
+		return false;
 	}
 	
 	/**
 	 * 添加sql脚本参数
-	 * @param sqlScriptParameters
+	 * @param sqlParam
 	 * @return
 	 */
-	public Object saveSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
-		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
-		getObjectById(sqlScriptId, ComSqlScript.class);
-		
-		JSONArray jsonArray = new JSONArray(sqlScriptParameters.size());
-		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
-			jsonArray.add(HibernateUtil.saveObject(comSqlScriptParameter, null));
+	public Object saveSqlScriptParameter(ComSqlScriptParameter sqlParam) {
+		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
+			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
 		}
-		return jsonArray;
+		return HibernateUtil.saveObject(sqlParam, null);
 	}
 
 	/**
 	 * 修改sql脚本参数
-	 * @param sqlScriptParameters
+	 * @param sqlParam
 	 * @return
 	 */
-	public Object updateSqlScriptParameter(List<ComSqlScriptParameter> sqlScriptParameters) {
-		String sqlScriptId = sqlScriptParameters.get(0).getSqlScriptId();
-		getObjectById(sqlScriptId, ComSqlScript.class);
-		
-		JSONArray jsonArray = new JSONArray(sqlScriptParameters.size());
-		for (ComSqlScriptParameter comSqlScriptParameter : sqlScriptParameters) {
-			jsonArray.add(HibernateUtil.updateObject(comSqlScriptParameter, null));
+	public Object updateSqlScriptParameter(ComSqlScriptParameter sqlParam) {
+		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
+			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
 		}
-		return jsonArray;
+		return HibernateUtil.updateObject(sqlParam, null);
 	}
 
 	/**
@@ -315,8 +321,7 @@ public class CfgSqlService extends AService {
 	 * @return
 	 */
 	public String deleteSqlScriptParameter(String sqlScriptParameterIds) {
-		deleteDataById("ComSqlScriptParameter", sqlScriptParameterIds);
-		return null;
+		return deleteDataById("ComSqlScriptParameter", sqlScriptParameterIds);
 	}
 	
 	//--------------------------------------------------------------------------------------------------------

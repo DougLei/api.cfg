@@ -38,14 +38,6 @@ public interface IJson extends Serializable{
 	Object getJson();
 	
 	/**
-	 * 获取自身的json对象
-	 * <p>JSONObject或JSONArray</p>
-	 * @param focusedOper 给定位id查询数据的时候使用  值@see OperDataTypeConstants
-	 * @return
-	 */
-	Object getJson(String focusedOper);
-	
-	/**
 	 * 是否是对象
 	 * @return
 	 */

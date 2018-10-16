@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -33,20 +34,15 @@ public class CfgDatabaseController extends AController{
 		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
-			if(databases.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).saveDatabase(databases.get(0));
-			}else{
-				for (CfgDatabase database : databases) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).saveDatabase(database);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (CfgDatabase database : databases) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).saveDatabase(database);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			databases.clear();
 		}
-		return getResultObject();
+		return getResultObject(databases, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -59,20 +55,15 @@ public class CfgDatabaseController extends AController{
 		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
 		analysisResourceProp(databases);
 		if(analysisResult == null){
-			if(databases.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).updateDatabase(databases.get(0));
-			}else{
-				for (CfgDatabase database : databases) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).updateDatabase(database);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (CfgDatabase database : databases) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).updateDatabase(database);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			databases.clear();
 		}
-		return getResultObject();
+		return getResultObject(databases, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -95,7 +86,7 @@ public class CfgDatabaseController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, databaseIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -110,13 +101,10 @@ public class CfgDatabaseController extends AController{
 			return "测试连接的数据库id不能为空";
 		}
 		resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).databaseLinkTest(jsonObject.getString(ResourcePropNameConstants.ID));
+		
 		String linkMsg = resultObject.toString();
-		if(linkMsg.startsWith("ok:")){
-			jsonObject.put("linkMsg", linkMsg.replaceAll("ok:", ""));
-			resultObject = jsonObject;
-			return getResultObject();
-		}else{
-			return resultObject;
-		}
+		resultObject = null;
+		processResultObject("linkMsg", linkMsg);
+		return getResultObject(null, null);
 	}
 }

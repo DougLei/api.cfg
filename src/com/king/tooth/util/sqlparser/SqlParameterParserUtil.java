@@ -106,7 +106,7 @@ public class SqlParameterParserUtil {
 				}
 				parameterNames.add(parameterName);
 				
-				sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, (i+1), true);
+				sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, (i+1), true, true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			parameterPlaceholderIndex.clear();

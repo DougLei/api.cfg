@@ -100,9 +100,15 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	@JSONField(serialize = false)
 	private Object acutalOutValue;
 	
+	/**
+	 * 构造对象时，是否忽略验证不能为空的属性
+	 */
+	@JSONField(serialize = false)
+	private boolean isIgnoreValidNotNullProps;
+	
 	public ComSqlScriptParameter() {
 	}
-	public ComSqlScriptParameter(String parameterName, String parameterDataType, boolean isDbDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp) {
+	public ComSqlScriptParameter(String parameterName, String parameterDataType, boolean isDbDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp, boolean isIgnoreValidNotNullProps) {
 		this.id = ResourceHandlerUtil.getIdentity();
 		this.parameterName = parameterName;
 		if(isDbDataType){
@@ -112,6 +118,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		}
 		this.inOut = inOut;
 		this.orderCode = orderCode;
+		this.isIgnoreValidNotNullProps = isIgnoreValidNotNullProps;
 		if(isNeedAnalysisResourceProp){ // 在调用sql脚本时，不需要解析
 			analysisResourceProp();
 		}
@@ -345,26 +352,47 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	}
 	
 	public String validNotNullProps() {
+		if(!isIgnoreValidNotNullProps){
+			if(StrUtils.isEmpty(sqlScriptId)){
+				return "sql脚本参数对象，关联的sql脚本id不能为空";
+			}
+			if(StrUtils.isEmpty(parameterName)){
+				return "sql脚本参数名不能为空";
+			}
+			if(StrUtils.isEmpty(parameterDataType)){
+				return "sql脚本参数的数据类型不能为空";
+			}
+			if((DataTypeConstants.STRING.equals(parameterDataType) 
+					|| DataTypeConstants.CHAR.equals(parameterDataType) 
+					|| DataTypeConstants.DOUBLE.equals(parameterDataType)
+					|| DataTypeConstants.INTEGER.equals(parameterDataType)) 
+						&& (length == null || length < 1)){
+				return "sql脚本参数的长度不能为空，且必须大于0！";
+			}
+		}
 		return null;
 	}
 	
 	public String analysisResourceProp() {
-		if(parameterDataType == null){
-			parameterDataType = DataTypeConstants.STRING;
-		}
-		
-		if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){
-			parameterFrom = 1;
-		}
-		
-		if(inOut == 0 || inOut == 5 || inOut == 1){// in (inOut == 0是sqlserver的input，inOut == 5是sqlserver的readonly，inOut == 1是oracle的input)
-			inOut = 1;
-		}else if(inOut == 4 || inOut == 2){// out (inOut == 4是sqlserver的output，inOut == 2是oracle的output)
-			inOut = 2;
-		}else if(inOut == 3){// in out (inOut==3是oracle的in out)
-			inOut = 3;
-		}else{
-			throw new IllegalArgumentException("系统在解析存储过程参数的时候，无法处理inOut="+inOut+"的类型，请联系后台系统开发人员");
+		String result = validNotNullProps();
+		if(result == null){
+			if(parameterDataType == null){
+				parameterDataType = DataTypeConstants.STRING;
+			}
+			
+			if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){
+				parameterFrom = 1;
+			}
+			
+			if(inOut == 0 || inOut == 5 || inOut == 1){// in (inOut == 0是sqlserver的input，inOut == 5是sqlserver的readonly，inOut == 1是oracle的input)
+				inOut = 1;
+			}else if(inOut == 4 || inOut == 2){// out (inOut == 4是sqlserver的output，inOut == 2是oracle的output)
+				inOut = 2;
+			}else if(inOut == 3){// in out (inOut==3是oracle的in out)
+				inOut = 3;
+			}else{
+				throw new IllegalArgumentException("系统在解析存储过程参数的时候，无法处理inOut="+inOut+"的类型，请联系后台系统开发人员");
+			}
 		}
 		return null;
 	}

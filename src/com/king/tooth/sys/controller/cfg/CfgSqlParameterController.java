@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -31,10 +32,15 @@ public class CfgSqlParameterController extends AController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScriptParameter(sqlScriptParameters);
-			sqlScriptParameters.clear();
+			for (ComSqlScriptParameter sqlParam : sqlScriptParameters) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScriptParameter(sqlParam);
+				if(resultObject instanceof String){
+					break;
+				}
+				resultJsonArray.add(resultObject);
+			}
 		}
-		return getResultObject();
+		return getResultObject(sqlScriptParameters, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -47,10 +53,15 @@ public class CfgSqlParameterController extends AController{
 		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
 		analysisResourceProp(sqlScriptParameters);
 		if(analysisResult == null){
-			resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScriptParameter(sqlScriptParameters);
-			sqlScriptParameters.clear();
+			for (ComSqlScriptParameter sqlParam : sqlScriptParameters) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScriptParameter(sqlParam);
+				if(resultObject instanceof String){
+					break;
+				}
+				resultJsonArray.add(resultObject);
+			}
 		}
-		return getResultObject();
+		return getResultObject(sqlScriptParameters, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -66,6 +77,6 @@ public class CfgSqlParameterController extends AController{
 		}
 		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).deleteSqlScriptParameter(sqlScriptParameterIds);
 		processResultObject(BuiltinParameterKeys._IDS, sqlScriptParameterIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

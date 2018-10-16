@@ -4,9 +4,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -33,22 +35,16 @@ public class CfgSqlController extends AController{
 		List<ComSqlScript> sqlScripts = getDataInstanceList(ijson, ComSqlScript.class, true);
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
-			if(sqlScripts.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScript(sqlScripts.get(0));
-				sqlScripts.get(0).clear();
-			}else{
-				for (ComSqlScript sqlScript : sqlScripts) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScript(sqlScript);
-					sqlScript.clear();
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComSqlScript sqlScript : sqlScripts) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScript(sqlScript);
+				sqlScript.clear();
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			sqlScripts.clear();
 		}
-		return getResultObject();
+		return getResultObject(sqlScripts, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -61,22 +57,16 @@ public class CfgSqlController extends AController{
 		List<ComSqlScript> sqlScripts = getDataInstanceList(ijson, ComSqlScript.class, true);
 		analysisResourceProp(sqlScripts);
 		if(analysisResult == null){
-			if(sqlScripts.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScript(sqlScripts.get(0));
-				sqlScripts.get(0).clear();
-			}else{
-				for (ComSqlScript sqlScript : sqlScripts) {
-					resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScript(sqlScript);
-					sqlScript.clear();
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (ComSqlScript sqlScript : sqlScripts) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScript(sqlScript);
+				sqlScript.clear();
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			sqlScripts.clear();
 		}
-		return getResultObject();
+		return getResultObject(sqlScripts, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -99,7 +89,7 @@ public class CfgSqlController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, sqlScriptIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -110,11 +100,17 @@ public class CfgSqlController extends AController{
 	 */
 	@RequestMapping
 	public Object immediateCreate(HttpServletRequest request, IJson ijson){
+		vaildIJsonNotNull(ijson);
 		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).immediateCreate(ijson);
 		if(resultObject == null){
-			resultObject = ijson.getJson();
+			int size = ijson.size();
+			ijsonIsArray = ijson.isArray();
+			resultJsonArray = new JSONArray(size);
+			for (int i = 0; i < size; i++) {
+				resultJsonArray.add(ijson.get(i));
+			}
 		}
-		return getResultObject();
+		return getResultObject(null, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -135,7 +131,7 @@ public class CfgSqlController extends AController{
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -156,6 +152,6 @@ public class CfgSqlController extends AController{
 		if(resultObject == null){
 			resultObject = jsonObject;
 		}
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

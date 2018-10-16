@@ -4,9 +4,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -49,7 +49,7 @@ public class SysPushMessageInfoController extends AController{
 					CurrentThreadContext.getCustomerId(), batchNum).start();// 启动推送消息的线程
 			resultObject = ijson.getJson();
 		}
-		return getResultObject();
+		return getResultObject(pushMessages, null);
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class SysPushMessageInfoController extends AController{
 			return "要阅读的消息id不能为空";
 		}
 		resultObject = BuiltinResourceInstance.getInstance("SysPushMessageInfoService", SysPushMessageInfoService.class).readMessage(id);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -81,19 +81,14 @@ public class SysPushMessageInfoController extends AController{
 	public Object updateMessageReadStatus(HttpServletRequest request, IJson ijson){
 		List<SysPushMessageInfo> sysPushMessageInfos = getDataInstanceList(ijson, SysPushMessageInfo.class, true);
 		if(analysisResult == null){
-			if(sysPushMessageInfos.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("SysPushMessageInfoService", SysPushMessageInfoService.class).updateMessageReadStatus(sysPushMessageInfos.get(0));
-			}else{
-				for (SysPushMessageInfo spmi : sysPushMessageInfos) {
-					resultObject = BuiltinResourceInstance.getInstance("SysPushMessageInfoService", SysPushMessageInfoService.class).updateMessageReadStatus(spmi);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (SysPushMessageInfo spmi : sysPushMessageInfos) {
+				resultObject = BuiltinResourceInstance.getInstance("SysPushMessageInfoService", SysPushMessageInfoService.class).updateMessageReadStatus(spmi);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			sysPushMessageInfos.clear();
 		}
-		return getResultObject();
+		return getResultObject(sysPushMessageInfos, OperDataTypeConstants.EDIT);
 	}
 }

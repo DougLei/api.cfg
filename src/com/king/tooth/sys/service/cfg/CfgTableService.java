@@ -189,7 +189,7 @@ public class CfgTableService extends AService {
 	 * @param dbTableHandler
 	 * @return
 	 */
-	public String buildModel(String tableId, List<String> deleteTableIds, DBTableHandler dbTableHandler){
+	public Object buildModel(String tableId, List<String> deleteTableIds, DBTableHandler dbTableHandler){
 		try {
 			ComTabledata table = getObjectById(tableId, ComTabledata.class);
 			if(table.getIsBuildModel() == 1){
@@ -280,7 +280,10 @@ public class CfgTableService extends AService {
 			batchCancelBuildModel(dbTableHandler, deleteTableIds, false);// 如果建模出现异常，要将一起建模操作过的表都删除掉
 			return ExceptionUtil.getErrMsg(e);
 		}
-		return null;
+		
+		JSONObject json = new JSONObject(2);
+		json.put(ResourcePropNameConstants.ID, tableId);
+		return json;
 	}
 	
 	/**
@@ -322,14 +325,21 @@ public class CfgTableService extends AService {
 	 * 											   如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
 	 * 											   如果是重新建模，或取消建模，这个值应该传递为true，因为这个是必要操作
 	 */
-	public String cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, String tableId, boolean deleteRelationDatas){
+	public Object cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, String tableId, boolean deleteRelationDatas){
 		if(table == null){
 			table = getObjectById(tableId, ComTabledata.class);
 		}
 		if(table.getIsCreated() == 0){
 			return "表["+table.getTableName()+"]还未建模，无法进行取消建模操作";
 		}
-		return cancelBuildModel(dbTableHandler, table, deleteRelationDatas);
+		
+		String cancelBuildModelResult = cancelBuildModel(dbTableHandler, table, deleteRelationDatas);
+		if(cancelBuildModelResult == null){
+			JSONObject json = new JSONObject(2);
+			json.put(ResourcePropNameConstants.ID, tableId);
+			return json;
+		}
+		return cancelBuildModelResult;
 	}
 	
 	/**

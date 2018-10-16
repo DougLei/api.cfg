@@ -57,7 +57,7 @@ public class SysUserService extends AService{
 		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 		HibernateUtil.updateObject(account, null);
 		
-		JSONObject json = new JSONObject(1);
+		JSONObject json = new JSONObject(2);
 		json.put(ResourcePropNameConstants.ID, userId);
 		return json;
 	}
@@ -104,7 +104,7 @@ public class SysUserService extends AService{
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPassword, userIdStr);
 		
-		JSONObject json = new JSONObject(2);
+		JSONObject json = new JSONObject(3);
 		json.put(ResourcePropNameConstants.ID, userIdStr);
 		json.put("password", newPassword);
 		return json;
@@ -123,7 +123,7 @@ public class SysUserService extends AService{
 		String defaultPassword = CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey());
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", defaultPassword, userId);
 		
-		JSONObject json = new JSONObject(1);
+		JSONObject json = new JSONObject(2);
 		json.put(ResourcePropNameConstants.ID, userId);
 		return json;
 	}
@@ -399,7 +399,6 @@ public class SysUserService extends AService{
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserRoleLinks where leftId = ?", userId);
 		// 删除所属的用户组
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserGroupDetail where userId = ?", userId);
-		
 		return null;
 	}
 }

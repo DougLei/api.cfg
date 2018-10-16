@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -33,20 +34,15 @@ public class SysUserController extends AController{
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		analysisResourceProp(users);
 		if(analysisResult == null){
-			if(users.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).saveUser(users.get(0));
-			}else{
-				for (SysUser user : users) {
-					resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).saveUser(user);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (SysUser user : users) {
+				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).saveUser(user);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			users.clear();
 		}
-		return getResultObject();
+		return getResultObject(users, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -59,20 +55,15 @@ public class SysUserController extends AController{
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
 		analysisResourceProp(users);
 		if(analysisResult == null){
-			if(users.size() == 1){
-				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updateUser(users.get(0));
-			}else{
-				for (SysUser user : users) {
-					resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updateUser(user);
-					if(resultObject instanceof String){
-						break;
-					}
-					resultJsonArray.add((JSONObject) resultObject);
+			for (SysUser user : users) {
+				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updateUser(user);
+				if(resultObject instanceof String){
+					break;
 				}
+				resultJsonArray.add(resultObject);
 			}
-			users.clear();
 		}
-		return getResultObject();
+		return getResultObject(users, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -95,7 +86,7 @@ public class SysUserController extends AController{
 			}
 		}
 		processResultObject(BuiltinParameterKeys._IDS, userIds);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -106,19 +97,14 @@ public class SysUserController extends AController{
 	@RequestMapping
 	public Object openAccount(HttpServletRequest request, IJson ijson){
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
-		if(users.size() == 1){
-			resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).openAccount(users.get(0));
-		}else{
-			for (SysUser user : users) {
-				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).openAccount(user);
-				if(resultObject instanceof String){
-					break;
-				}
-				resultJsonArray.add((JSONObject) resultObject);
+		for (SysUser user : users) {
+			resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).openAccount(user);
+			if(resultObject instanceof String){
+				break;
 			}
+			resultJsonArray.add(resultObject);
 		}
-		users.clear();
-		return getResultObject();
+		return getResultObject(users, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -133,7 +119,7 @@ public class SysUserController extends AController{
 			return "重置用户的账户信息时，传入的用户id不能为空";
 		}
 		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).resetAccount(jsonObject.getString(ResourcePropNameConstants.ID));
-		return getResultObject();
+		return getResultObject(null, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -145,7 +131,7 @@ public class SysUserController extends AController{
 	public Object updatePassword(HttpServletRequest request, IJson ijson){
 		JSONObject jsonObject = getJSONObject(ijson);
 		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updatePassword(jsonObject);
-		return getResultObject();
+		return getResultObject(null, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -160,6 +146,6 @@ public class SysUserController extends AController{
 			return "要重置密码的用户id不能为空";
 		}
 		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).resetPassword(jsonObject.getString(ResourcePropNameConstants.ID));
-		return getResultObject();
+		return getResultObject(null, OperDataTypeConstants.EDIT);
 	}
 }

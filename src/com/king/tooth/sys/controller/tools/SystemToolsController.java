@@ -32,7 +32,7 @@ public class SystemToolsController extends AController{
 		}
 		
 		resultObject = BuiltinResourceInstance.getInstance("SystemToolsService", SystemToolsService.class).monitorHibernateClassMetadata(resourceNameArr);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 	
 	/**
@@ -48,6 +48,6 @@ public class SystemToolsController extends AController{
 		}
 		
 		resultObject = BuiltinResourceInstance.getInstance("SystemToolsService", SystemToolsService.class).getResourceInfo(name);
-		return getResultObject();
+		return getResultObject(null, null);
 	}
 }

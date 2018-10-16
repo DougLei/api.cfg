@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.JsonUtil;
@@ -20,22 +21,25 @@ public abstract class AController {
 	 * <p>包括解析的结果</p>
 	 */
 	protected String analysisResult;
-	
 	/**
 	 * 处理结果对象
 	 */
 	protected Object resultObject;
-	
 	/**
 	 * 结果jsonArray对象
 	 */
 	protected JSONArray resultJsonArray;
+	/**
+	 * 请求的json数据是否是数组
+	 * <p>不是数组，就是对象</p>
+	 */
+	protected boolean ijsonIsArray;
 	
 	/**
 	 * 验证ijson参数是否为空
 	 * @param ijson
 	 */
-	private void vaildIJsonNotNull(IJson ijson){
+	protected void vaildIJsonNotNull(IJson ijson){
 		if(ijson == null || ijson.size() == 0){
 			throw new NullPointerException("提交的数据不能为空");
 		}
@@ -50,39 +54,17 @@ public abstract class AController {
 	 */
 	protected <T> List<T> getDataInstanceList(IJson ijson, Class<T> targetClass, boolean clearIJsonData){
 		vaildIJsonNotNull(ijson);
-		if(ijson.isArray()){
-			resultJsonArray = new JSONArray(ijson.size());
-		}
+		ijsonIsArray = ijson.isArray();
+		resultJsonArray = new JSONArray(ijson.size());
 		
 		List<T> list = new ArrayList<T>(ijson.size());
 		for(int i=0;i<ijson.size();i++){
 			list.add(JsonUtil.parseObject(ijson.get(i).toJSONString(), targetClass));
 		}
-		
 		if(clearIJsonData){
 			ijson.clear();
 		}
 		return list;
-	}
-	
-	/**
-	 * 根据json串，获取ijson对象昂
-	 * @param ijson
-	 * @return
-	 */
-	protected IJson getIJson(IJson ijson){
-		vaildIJsonNotNull(ijson);
-		return ijson;
-	}
-	
-	/**
-	 * 根据json串，获取JSONObject对象
-	 * @param ijson
-	 * @return
-	 */
-	protected JSONObject getJSONObject(IJson ijson){
-		vaildIJsonNotNull(ijson);
-		return ijson.get(0);
 	}
 	
 	/**
@@ -102,32 +84,75 @@ public abstract class AController {
 	}
 	
 	/**
-	 * 获得最后的结果对象
+	 * 根据json串，获取JSONObject对象
+	 * @param ijson
 	 * @return
 	 */
-	protected Object getResultObject(){
-		if(analysisResult != null){
-			return analysisResult;
-		}
-		if(resultObject == null){
-			return "系统异常，操作结果记录对象[resultObject]为空，请联系开发人员";
-		}
-		if(resultJsonArray != null && resultJsonArray.size() > 0){
-			return resultJsonArray;
-		}
-		return resultObject;
+	protected JSONObject getJSONObject(IJson ijson){
+		vaildIJsonNotNull(ijson);
+		return ijson.get(0);
 	}
 	
 	/**
 	 * 处理ResultObject
+	 * <p>单个操作的时候，或删除数据的时候</p>
 	 * @param key
 	 * @param value
 	 */
 	protected void processResultObject(String key, Object value){
 		if(resultObject == null){
-			JSONObject jsonObject = new JSONObject(1);
-			jsonObject.put(key, value);
-			resultObject = jsonObject;
+			if(resultJsonArray == null){
+				resultJsonArray = new JSONArray(1);
+			}
+			JSONObject json = new JSONObject(1);
+			json.put(key, value);
+			resultJsonArray.add(json);
+		}
+	}
+	
+	/**
+	 * 获得最后的结果对象
+	 * @param clearList 会清空该list
+	 * @param operDataType 操作数据类型 @see OperDataTypeConstants，用作定位，如果传递null，则不会处理
+	 * @return
+	 */
+	protected Object getResultObject(List<? extends Object> clearList, String operDataType){
+		if(clearList != null && clearList.size() > 0){
+			clearList.clear();
+		}
+		
+		if(analysisResult != null){ 
+			return analysisResult;
+		}
+		if(resultObject instanceof String){
+			return resultObject;
+		}
+		
+		if(operDataType != null){
+			if(!ijsonIsArray && resultObject instanceof JSONObject){
+				JSONObject json = (JSONObject) resultObject;
+				if(json.get(ResourcePropNameConstants.ID) != null){
+					json.put(ResourcePropNameConstants.FOCUSED_OPER, json.get(ResourcePropNameConstants.ID) + "_" + operDataType);
+				}
+			}else if(resultJsonArray != null && resultJsonArray.size() > 0){
+				JSONObject json;
+				int size = resultJsonArray.size();
+				for(int i=0;i<size;i++){
+					json = resultJsonArray.getJSONObject(i);
+					if(json.get(ResourcePropNameConstants.ID) != null){
+						json.put(ResourcePropNameConstants.FOCUSED_OPER, json.get(ResourcePropNameConstants.ID) + "_" + operDataType);
+					}
+				}
+			}
+		}
+		
+		if(ijsonIsArray){
+			return resultJsonArray;
+		}else{
+			if(resultObject != null && !(resultObject instanceof String)){
+				return resultObject;
+			}
+			return resultJsonArray.get(0);
 		}
 	}
 }
