@@ -126,9 +126,7 @@ public class CfgSqlService extends AService {
 			}
 			
 			if(operResult == null){
-				if(sqlScript.getIsImmediateCreate() == 1 
-						&& (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) 
-								|| SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
 					DBUtil.createObject(sqlScript);
 					sqlScript.setIsCreated(1);
 				}
@@ -175,9 +173,10 @@ public class CfgSqlService extends AService {
 				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getSqlScriptResourceName(), sqlScript.getRequestMethod());
 			}
 			if(operResult == null){
-				if(sqlScript.getIsImmediateCreate() == 1 
-						&& (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) 
-								|| SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+					if(oldSqlScript.getObjectName().equals(sqlScript.getObjectName())){
+						sqlScript.setIsCoverSqlObject(true);
+					}
 					DBUtil.createObject(sqlScript);
 					sqlScript.setIsCreated(1);
 				}
@@ -219,9 +218,9 @@ public class CfgSqlService extends AService {
 			
 		// 删除sql脚本资源时，如果是视图、存储过程等，还需要drop对应的对象【删除数据库对象】
 		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sql.getSqlScriptType())){
+			sql.setIsCoverSqlObject(true);
 			DBUtil.dropObject(sql);
 		}
-
 		sql.clear();
 		return null;
 	}
@@ -280,6 +279,7 @@ public class CfgSqlService extends AService {
 		for(int i=0;i<len ;i++){
 			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), ComSqlScript.class);
 			if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
+				tmpSql.setIsCoverSqlObject(true);
 				sqls.add(tmpSql);
 				updateHql.append("'").append(tmpSql.getId()).append("',");
 			}else{

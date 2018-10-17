@@ -1605,8 +1605,7 @@
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
-  "isImmediateCreate":"",                               --是否立即创建存储过程、视图等
-  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
+  "isImmediateCreate":""                                --是否立即创建存储过程、视图等
 }
 ```
 
@@ -1630,8 +1629,7 @@
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
-  "isImmediateCreate":"",                               --是否立即创建存储过程、视图等
-  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
+  "isImmediateCreate":""                                --是否立即创建存储过程、视图等
 }
 ```
 
@@ -1667,8 +1665,7 @@
 - 请求体: 
 ```
 {
-  "Id":"",                                              --主键
-  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
+  "Id":""                                               --主键
 }
 ```
 
@@ -1687,8 +1684,7 @@
 - 请求体: 
 ```
 {
-  "Id":"",                                              --主键
-  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
+  "Id":""                                               --主键
 }
 ```
 
