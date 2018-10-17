@@ -109,26 +109,26 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	private JSONObject oldColumnInfo;
 	
 	/**
-	 * 是否excel导入
+	 * 是否导入
 	 * <p>默认为1，标识都导入</p>
 	 */
-	private Integer isImportExcel;
+	private Integer isImport;
 	/**
-	 * excel导入排序
+	 * 导入排序
 	 * <p>默认和order_code的值一致</p>
 	 */
-	private Integer importExcelOrderCode;
+	private Integer importOrderCode;
 	
 	/**
-	 * 是否excel导出
+	 * 是否导出
 	 * <p>默认为1，标识都导出</p>
 	 */
-	private Integer isExportExcel;
+	private Integer isExport;
 	/**
-	 * excel导出排序
+	 * 导出排序
 	 * <p>默认和order_code的值一致</p>
 	 */
-	private Integer exportExcelOrderCode;
+	private Integer exportOrderCode;
 	
 	//-------------------------------------------------------------------------
 	
@@ -143,13 +143,13 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public ComColumndata(String columnName, String columnType, Integer length) {
 		this(columnName, columnType, length, 1, 1);
 	}
-	private ComColumndata(String columnName, String columnType, Integer length, Integer isImportExcel, Integer isExportExcel) {
+	private ComColumndata(String columnName, String columnType, Integer length, Integer isImport, Integer isExport) {
 		this.columnName = columnName.trim().toUpperCase();
 		this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		this.columnType = columnType;
 		this.length = length;
-		this.isImportExcel = isImportExcel;
-		this.isExportExcel = isExportExcel;
+		this.isImport = isImport;
+		this.isExport = isExport;
 	}
 	
 	public String getName() {
@@ -267,29 +267,29 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	public JSONObject getOldColumnInfo() {
 		return oldColumnInfo;
 	}
-	public Integer getIsImportExcel() {
-		return isImportExcel;
+	public Integer getIsImport() {
+		return isImport;
 	}
-	public void setIsImportExcel(Integer isImportExcel) {
-		this.isImportExcel = isImportExcel;
+	public void setIsImport(Integer isImport) {
+		this.isImport = isImport;
 	}
-	public Integer getImportExcelOrderCode() {
-		return importExcelOrderCode;
+	public Integer getImportOrderCode() {
+		return importOrderCode;
 	}
-	public void setImportExcelOrderCode(Integer importExcelOrderCode) {
-		this.importExcelOrderCode = importExcelOrderCode;
+	public void setImportOrderCode(Integer importOrderCode) {
+		this.importOrderCode = importOrderCode;
 	}
-	public Integer getIsExportExcel() {
-		return isExportExcel;
+	public Integer getIsExport() {
+		return isExport;
 	}
-	public void setIsExportExcel(Integer isExportExcel) {
-		this.isExportExcel = isExportExcel;
+	public void setIsExport(Integer isExport) {
+		this.isExport = isExport;
 	}
-	public Integer getExportExcelOrderCode() {
-		return exportExcelOrderCode;
+	public Integer getExportOrderCode() {
+		return exportOrderCode;
 	}
-	public void setExportExcelOrderCode(Integer exportExcelOrderCode) {
-		this.exportExcelOrderCode = exportExcelOrderCode;
+	public void setExportOrderCode(Integer exportOrderCode) {
+		this.exportOrderCode = exportOrderCode;
 	}
 	
 	/**
@@ -449,29 +449,29 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);
 		
-		ComColumndata isImportExcelColumn = new ComColumndata("is_import_excel", DataTypeConstants.INTEGER, 1);
-		isImportExcelColumn.setName("是否excel导入");
-		isImportExcelColumn.setComments("默认为1，标识都导入");
-		isImportExcelColumn.setDefaultValue("1");
-		columns.add(isImportExcelColumn);
+		ComColumndata isImportColumn = new ComColumndata("is_import", DataTypeConstants.INTEGER, 1);
+		isImportColumn.setName("是否导入");
+		isImportColumn.setComments("默认为1，标识都导入");
+		isImportColumn.setDefaultValue("1");
+		columns.add(isImportColumn);
 		
-		ComColumndata importExcelOrderCodeColumn = new ComColumndata("import_excel_order_code", DataTypeConstants.INTEGER, 4);
-		importExcelOrderCodeColumn.setName("excel导入排序");
-		importExcelOrderCodeColumn.setComments("默认和order_code的值一致");
-		importExcelOrderCodeColumn.setDefaultValue("0");
-		columns.add(importExcelOrderCodeColumn);
+		ComColumndata importOrderCodeColumn = new ComColumndata("import_order_code", DataTypeConstants.INTEGER, 4);
+		importOrderCodeColumn.setName("导入排序");
+		importOrderCodeColumn.setComments("默认和order_code的值一致");
+		importOrderCodeColumn.setDefaultValue("0");
+		columns.add(importOrderCodeColumn);
 		
-		ComColumndata isExportExcelColumn = new ComColumndata("is_export_excel", DataTypeConstants.INTEGER, 1);
-		isExportExcelColumn.setName("是否excel导出");
-		isExportExcelColumn.setComments("默认为1，标识都导出");
-		isExportExcelColumn.setDefaultValue("1");
-		columns.add(isExportExcelColumn);
+		ComColumndata isExportColumn = new ComColumndata("is_export", DataTypeConstants.INTEGER, 1);
+		isExportColumn.setName("是否导出");
+		isExportColumn.setComments("默认为1，标识都导出");
+		isExportColumn.setDefaultValue("1");
+		columns.add(isExportColumn);
 		
-		ComColumndata exportExcelOrderCodeColumn = new ComColumndata("export_excel_order_code", DataTypeConstants.INTEGER, 4);
-		exportExcelOrderCodeColumn.setName("excel导出排序");
-		exportExcelOrderCodeColumn.setComments("默认和order_code的值一致");
-		exportExcelOrderCodeColumn.setDefaultValue("0");
-		columns.add(exportExcelOrderCodeColumn);
+		ComColumndata exportOrderCodeColumn = new ComColumndata("export_order_code", DataTypeConstants.INTEGER, 4);
+		exportOrderCodeColumn.setName("导出排序");
+		exportOrderCodeColumn.setComments("默认和order_code的值一致");
+		exportOrderCodeColumn.setDefaultValue("0");
+		columns.add(exportOrderCodeColumn);
 		
 		return columns;
 	}
@@ -552,11 +552,11 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		if(result == null){
 			this.columnName = columnName.trim().toUpperCase();
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
-			if(this.importExcelOrderCode == null){
-				this.importExcelOrderCode = this.orderCode;
+			if(this.importOrderCode == null){
+				this.importOrderCode = this.orderCode;
 			}
-			if(this.exportExcelOrderCode == null){
-				this.exportExcelOrderCode = this.orderCode;
+			if(this.exportOrderCode == null){
+				this.exportOrderCode = this.orderCode;
 			}
 		}
 		return result;

@@ -67,15 +67,15 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	private Integer inOut;
 	
 	/**
-	 * 是否excel导出
+	 * 是否导出
 	 * <p>如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出</p>
 	 */
-	private Integer isExportExcel;
+	private Integer isExport;
 	/**
-	 * excel导出排序
+	 * 导出排序
 	 * <p>该字段值和order_code的值一致</p>
 	 */
-	private Integer exportExcelOrderCode;
+	private Integer exportOrderCode;
 	
 	//------------------------------------------------------------------------------
 	
@@ -91,9 +91,9 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		this.orderCode = orderCode;
 		this.inOut = inOut;
 		
-		this.exportExcelOrderCode = orderCode;
+		this.exportOrderCode = orderCode;
 		if(inOut == OUT && SqlStatementTypeConstants.SELECT.equals(sqlScriptType)){
-			this.isExportExcel = 1;
+			this.isExport = 1;
 		}
 		if("id".equalsIgnoreCase(columnName)){
 			this.propName = ResourcePropNameConstants.ID;
@@ -170,17 +170,17 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setInSqlResultSetMetadataInfos(List<ResourceMetadataInfo> inSqlResultSetMetadataInfos) {
 		this.inSqlResultSetMetadataInfos = inSqlResultSetMetadataInfos;
 	}
-	public Integer getIsExportExcel() {
-		return isExportExcel;
+	public Integer getIsExport() {
+		return isExport;
 	}
-	public void setIsExportExcel(Integer isExportExcel) {
-		this.isExportExcel = isExportExcel;
+	public void setIsExport(Integer isExport) {
+		this.isExport = isExport;
 	}
-	public Integer getExportExcelOrderCode() {
-		return exportExcelOrderCode;
+	public Integer getExportOrderCode() {
+		return exportOrderCode;
 	}
-	public void setExportExcelOrderCode(Integer exportExcelOrderCode) {
-		this.exportExcelOrderCode = exportExcelOrderCode;
+	public void setExportOrderCode(Integer exportOrderCode) {
+		this.exportOrderCode = exportOrderCode;
 	}
 	
 	@JSONField(serialize = false)
@@ -232,15 +232,15 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		inOutColumn.setComments("标识是传入的结果集信息，还是传出的结果集信息，in=1、out=2");
 		columns.add(inOutColumn);
 		
-		ComColumndata isExportExcelColumn = new ComColumndata("is_export_excel", DataTypeConstants.INTEGER, 1);
-		isExportExcelColumn.setName("是否excel导出");
-		isExportExcelColumn.setComments("如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出");
-		columns.add(isExportExcelColumn);
+		ComColumndata isExportColumn = new ComColumndata("is_export", DataTypeConstants.INTEGER, 1);
+		isExportColumn.setName("是否导出");
+		isExportColumn.setComments("如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出");
+		columns.add(isExportColumn);
 		
-		ComColumndata exportExcelOrderCodeColumn = new ComColumndata("export_excel_order_code", DataTypeConstants.INTEGER, 4);
-		exportExcelOrderCodeColumn.setName("excel导出排序");
-		exportExcelOrderCodeColumn.setComments("默认和order_code的值一致");
-		columns.add(exportExcelOrderCodeColumn);
+		ComColumndata exportOrderCodeColumn = new ComColumndata("export_order_code", DataTypeConstants.INTEGER, 4);
+		exportOrderCodeColumn.setName("导出排序");
+		exportOrderCodeColumn.setComments("默认和order_code的值一致");
+		columns.add(exportOrderCodeColumn);
 		
 		return columns;
 	}

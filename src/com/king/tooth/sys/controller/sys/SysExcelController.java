@@ -9,8 +9,8 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.tools.excel.ImportExcel;
-import com.king.tooth.sys.entity.tools.excel.ImportExcelTemplate;
+import com.king.tooth.sys.entity.sys.file.ImportFile;
+import com.king.tooth.sys.entity.sys.file.ImportFileTemplate;
 import com.king.tooth.sys.service.sys.SysExcelService;
 
 /**
@@ -27,18 +27,18 @@ public class SysExcelController extends AController{
 	 */
 	@RequestMapping
 	public Object importExcel(HttpServletRequest request, IJson ijson){
-		List<ImportExcel> importExcels = getDataInstanceList(ijson, ImportExcel.class, true);
-		analysisResourceProp(importExcels);
+		List<ImportFile> importFiles = getDataInstanceList(ijson, ImportFile.class, true);
+		analysisResourceProp(importFiles);
 		if(analysisResult == null){
-			for (ImportExcel importExcel : importExcels) {
-				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importExcel);
+			for (ImportFile importFile : importFiles) {
+				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importFile);
 				if(resultObject instanceof String){
 					break;
 				}
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(importExcels, null);
+		return getResultObject(importFiles, null);
 	}
 	
 	/**
@@ -48,18 +48,18 @@ public class SysExcelController extends AController{
 	 */
 	@RequestMapping
 	public Object createImportExcelTemplate(HttpServletRequest request, IJson ijson){
-		List<ImportExcelTemplate> importExcelTemplates = getDataInstanceList(ijson, ImportExcelTemplate.class, true);
-		analysisResourceProp(importExcelTemplates);
+		List<ImportFileTemplate> importFileTemplates = getDataInstanceList(ijson, ImportFileTemplate.class, true);
+		analysisResourceProp(importFileTemplates);
 		if(analysisResult == null){
-			for (ImportExcelTemplate importExcelTemplate : importExcelTemplates) {
-				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createImportExcelTemplate(importExcelTemplate);
+			for (ImportFileTemplate importFileTemplate : importFileTemplates) {
+				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createImportExcelTemplate(importFileTemplate);
 				if(resultObject instanceof String){
 					break;
 				}
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(importExcelTemplates, null);
+		return getResultObject(importFileTemplates, null);
 	}
 	
 	/**
