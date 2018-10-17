@@ -83,9 +83,9 @@ public class SysExcelService extends AService{
 		return resourceMetadataInfos;
 	}
 	/** 查询表资源配置的导入excel的元数据信息集合的hql */
-	private static final String queryTableImportMetadataInfosHql = ResourceHandlerUtil.queryTableMetadataInfosHqlHead + " and isImportExcel=1 order by importExcelOrderCode asc";
+	private static final String queryTableImportMetadataInfosHql = ResourceHandlerUtil.queryTableMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
 	/** 查询表资源配置的导出excel的元数据信息集合的hql */
-	private static final String queryTableExportMetadataInfosHql = ResourceHandlerUtil.queryTableMetadataInfosHqlHead + " and isExportExcel=1 order by exportExcelOrderCode asc";
+	private static final String queryTableExportMetadataInfosHql = ResourceHandlerUtil.queryTableMetadataInfosHqlHead + " and isImport=1 order by exportOrderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
