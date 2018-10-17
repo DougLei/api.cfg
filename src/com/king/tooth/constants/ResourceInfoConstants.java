@@ -1,5 +1,7 @@
 package com.king.tooth.constants;
 
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+
 /**
  * 资源信息常量
  * @author DougLei
@@ -63,4 +65,9 @@ public class ResourceInfoConstants {
 	 */
 	public static final String NONE = "none";
 	
+	// ----------------------------------------------------------------------------
+	/**
+	 * 查询表资源元数据信息集合的hql语句头
+	 */
+	public static final String queryTableMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and isEnabled=1 and operStatus="+ComColumndata.CREATED;
 }

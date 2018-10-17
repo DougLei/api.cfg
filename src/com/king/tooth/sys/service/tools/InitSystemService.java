@@ -181,8 +181,21 @@ public class InitSystemService extends AService{
 		}
 		dbHandler.batchDropTable(tmpTables);// 尝试先删除表
 		dbHandler.batchCreateTable(tmpTables, true);// 开始创建表
-		ResourceHandlerUtil.clearTables(tmpTables);
-		ResourceHandlerUtil.clearTables(tables);
+		clearTables(tmpTables);
+		clearTables(tables);
+	}
+	
+	/**
+	 * 清除表信息
+	 * @param tables
+	 */
+	private void clearTables(List<ComTabledata> tables){
+		if(tables != null && tables.size() > 0){
+			for (ComTabledata table : tables) {
+				table.clear();
+			}
+			tables.clear();
+		}
 	}
 	
 	/**
@@ -197,7 +210,7 @@ public class InitSystemService extends AService{
 		// 将hbmContents加入到hibernate sessionFactory中
 		HibernateUtil.appendNewConfig(hbmContents);
 		hbmContents.clear();
-		ResourceHandlerUtil.clearTables(tables);
+		clearTables(tables);
 	}
 	
 	/**
@@ -285,7 +298,7 @@ public class InitSystemService extends AService{
 			resource.setRefResourceId("builtinResource");
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
-		ResourceHandlerUtil.clearTables(tables);
+		clearTables(tables);
 	}
 	
 	/**

@@ -126,6 +126,13 @@ public class CfgSqlService extends AService {
 			}
 			
 			if(operResult == null){
+				if(sqlScript.getIsImmediateCreate() == 1 
+						&& (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) 
+								|| SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+					DBUtil.createObject(sqlScript);
+					sqlScript.setIsCreated(1);
+				}
+				
 				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
 				String sqlScriptId = sqlScriptJsonObject.getString(ResourcePropNameConstants.ID);
 				
@@ -168,6 +175,12 @@ public class CfgSqlService extends AService {
 				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getSqlScriptResourceName(), sqlScript.getRequestMethod());
 			}
 			if(operResult == null){
+				if(sqlScript.getIsImmediateCreate() == 1 
+						&& (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) 
+								|| SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+					DBUtil.createObject(sqlScript);
+					sqlScript.setIsCreated(1);
+				}
 				return HibernateUtil.updateObject(sqlScript, null);
 			}
 		}
@@ -219,7 +232,7 @@ public class CfgSqlService extends AService {
 	 * @param ijson
 	 * @return
 	 */
-	public Object immediateCreate(IJson ijson) {
+	public Object createSqlObject(IJson ijson) {
 		int len = ijson.size();
 		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(len);
 		
@@ -231,7 +244,7 @@ public class CfgSqlService extends AService {
 				sqls.add(tmpSql);
 				updateHql.append("'").append(tmpSql.getId()).append("',");
 			}else{
-				return "创建资源名为["+tmpSql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中创建 [存储过程] 和 [视图]";
+				return "创建资源名为["+tmpSql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中创建[create] [存储过程] 和 [视图]";
 			}
 		}
 		updateHql.setLength(updateHql.length()-1);
@@ -239,6 +252,45 @@ public class CfgSqlService extends AService {
 		
 		try {
 			DBUtil.createObjects(sqls);
+			HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql.toString(), null);
+		} catch (Exception e) {
+			return ExceptionUtil.getErrMsg(e);
+		} finally {
+			for (ComSqlScript sql : sqls) {
+				sql.clear();
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	/**
+	 * 删除sql脚本对象
+	 * <p>存储过程、视图等</p>
+	 * @param ijson
+	 * @return
+	 */
+	public Object dropSqlObject(IJson ijson) {
+		int len = ijson.size();
+		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(len);
+		
+		StringBuilder updateHql = new StringBuilder("update ComSqlScript set isCreated=0 where id in (");
+		ComSqlScript tmpSql;
+		for(int i=0;i<len ;i++){
+			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), ComSqlScript.class);
+			if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
+				sqls.add(tmpSql);
+				updateHql.append("'").append(tmpSql.getId()).append("',");
+			}else{
+				return "删除资源名为["+tmpSql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中删除[drop] [存储过程] 和 [视图]";
+			}
+		}
+		updateHql.setLength(updateHql.length()-1);
+		updateHql.append(")");
+		
+		try {
+			DBUtil.dropObjects(sqls);
 			HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql.toString(), null);
 		} catch (Exception e) {
 			return ExceptionUtil.getErrMsg(e);

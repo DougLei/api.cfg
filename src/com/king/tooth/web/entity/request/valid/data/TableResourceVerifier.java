@@ -1,11 +1,21 @@
 package com.king.tooth.web.entity.request.valid.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
-import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
+import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.RequestBody;
 
 /**
@@ -45,16 +55,66 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private void initTableResourceMetadataInfos() {
-		resourceMetadataInfos = ResourceHandlerUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource());
+		resourceMetadataInfos = getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource());
 		
 		if(requestBody.isParentSubResourceQuery()){
 			if(requestBody.isRecursiveQuery()){
 				parentResourceMetadataInfos = resourceMetadataInfos;
 			}else{
-				parentResourceMetadataInfos = ResourceHandlerUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource());
+				parentResourceMetadataInfos = getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource());
 			}
 		}
 	}
+	
+	/**
+	 * 获取表资源的元数据信息集合
+	 * @param resource
+	 * @return
+	 */
+	private List<ResourceMetadataInfo> getTableResourceMetadataInfos(SysResource resource){
+		List<ResourceMetadataInfo> resourceMetadataInfos = null;
+		String resourceId = resource.getRefResourceId();
+		String resourceName = resource.getResourceName();
+		
+		if(resource.isBuiltinResource()){
+			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName);
+		}else{
+			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, resourceId);
+			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
+				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
+			}
+			DynamicBasicColumnUtil.initBasicMetadataInfos(0, resourceName, resourceMetadataInfos);
+		}
+		return resourceMetadataInfos;
+	}
+	/** 查询表资源元数据信息集合的hql */
+	private static final String queryTableMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " order by orderCode asc";
+	
+	/**
+	 * 获取内置表资源的元数据信息集合
+	 * @param tableResourceName
+	 * @return
+	 */
+	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
+		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
+		List<ComColumndata> columns = itable.getColumnList();
+		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
+		for (ComColumndata column : columns) {
+			metadataInfos.add(new TableResourceMetadataInfo(
+					column.getColumnName(),
+					column.getColumnType(),
+					column.getLength(),
+					column.getPrecision(),
+					column.getIsUnique(), 
+					column.getIsNullabled(),
+					column.getPropName(),
+					column.getName()));
+		}
+		DynamicBasicColumnUtil.initBasicMetadataInfos(1, tableResourceName, metadataInfos);
+		columns.clear();
+		return metadataInfos;
+	}
+	
 	
 	/**
 	 * 验证get请求的表资源数据

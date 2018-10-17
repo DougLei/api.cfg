@@ -22,7 +22,6 @@ import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateHbmUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -74,7 +73,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			} finally{
 				// 关闭连接
 				HibernateUtil.closeCurrentThreadSession();
-				ResourceHandlerUtil.clearTables(logTables);
+				clearTables(logTables);
 			}
 		}else{
 			Log4jUtil.info("不是月初，无需创建新的日志表");
@@ -111,5 +110,18 @@ public class CreateLogTableJob implements Job, Serializable{
 		// 4、将hbm配置内容，加入到sessionFactory中
 		HibernateUtil.appendNewConfig(hbmContents);
 		hbmContents.clear();
+	}
+	
+	/**
+	 * 清除表信息
+	 * @param tables
+	 */
+	private void clearTables(List<ComTabledata> tables){
+		if(tables != null && tables.size() > 0){
+			for (ComTabledata table : tables) {
+				table.clear();
+			}
+			tables.clear();
+		}
 	}
 }

@@ -1605,7 +1605,8 @@
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
-  "isImmediateCreate":""                                --是否立即创建存储过程、视图等
+  "isImmediateCreate":"",                               --是否立即创建存储过程、视图等
+  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
 }
 ```
 
@@ -1629,7 +1630,8 @@
   "sqlScriptResourceName": "",                          --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
-  "isImmediateCreate":""                                --是否立即创建存储过程、视图等
+  "isImmediateCreate":"",                               --是否立即创建存储过程、视图等
+  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
 }
 ```
 
@@ -1652,7 +1654,7 @@
 
 #### 4. 创建sql脚本对象
 
-- 功能描述: 在数据库中创建存储过程、视图等，如果已存在，会覆盖创建 【支持批量操作】
+- 功能描述: 在数据库中创建存储过程、视图等，如果已存在，会提示已经存在 【支持批量操作】
 - api地址: /common/sql/object/create
 - 请求类型: POST
 - 请求头:
@@ -1665,7 +1667,28 @@
 - 请求体: 
 ```
 {
-  "Id":""                                               --主键
+  "Id":"",                                              --主键
+  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
+}
+```
+
+#### 5. 删除sql脚本对象
+
+- 功能描述: 在数据库中删除存储过程、视图等 【支持批量操作】
+- api地址: /common/sql/object/drop
+- 请求类型: POST
+- 请求头:
+```
+{
+  "_token":"5k7f1ef06728y6016f9d10e91dcr1d37"           --登录时返回的token值
+}
+```
+- 请求url参数: 无
+- 请求体: 
+```
+{
+  "Id":"",                                              --主键
+  "isCoverSqlObject":""                                 --是否覆盖sql对象，1是0否
 }
 ```
 

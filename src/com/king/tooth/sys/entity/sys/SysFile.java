@@ -330,7 +330,6 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		return "SysFile";
 	}
 
-	public static final String SAVE_TYPE_DB = "db";
 	public static final String SAVE_TYPE_SERVICE = "service";
 	
 	public static final int BUILD_IN_TYPE_NORMAL = 1;

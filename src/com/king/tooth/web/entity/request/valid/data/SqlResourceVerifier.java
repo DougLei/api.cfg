@@ -9,12 +9,15 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.SqlResourceMetadataInfo;
 import com.king.tooth.util.DataValidUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -105,13 +108,76 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private void initSqlResourceMetadataInfos() {
-		resourceMetadataInfos = ResourceHandlerUtil.getSqlResourceParamsMetadataInfos(sqlParams);
+		resourceMetadataInfos = getSqlResourceParamsMetadataInfos(sqlParams);
 		if(requestBody.isParentSubResourceQuery() && requestBody.isRecursiveQuery()){
 			parentResourceMetadataInfos = resourceMetadataInfos;
 		}
-		inSqlResultSetMetadataInfoList = ResourceHandlerUtil.getSqlInResultSetMetadataInfoList(sql);
-		outSqlResultSetMetadataInfos = ResourceHandlerUtil.getSqlOutResultSetMetadataInfos(sql);
+		inSqlResultSetMetadataInfoList = getSqlInResultSetMetadataInfoList(sql);
+		outSqlResultSetMetadataInfos = getSqlOutResultSetMetadataInfos(sql);
 	}
+	
+	/**
+	 * 获取sql资源的参数元数据信息集合
+	 * @param sqlParams
+	 * @return
+	 */
+	private List<ResourceMetadataInfo> getSqlResourceParamsMetadataInfos(List<ComSqlScriptParameter> sqlParams){
+		List<ResourceMetadataInfo> metadataInfos = null;
+		if(sqlParams != null && sqlParams.size() > 0){
+			metadataInfos = new ArrayList<ResourceMetadataInfo>(sqlParams.size());
+			for (ComSqlScriptParameter sqlParam : sqlParams) {
+				metadataInfos.add(new SqlResourceMetadataInfo(
+						null,
+						sqlParam.getParameterDataType(),
+						sqlParam.getLength(),
+						sqlParam.getPrecision(),
+						0, // sql脚本参数不需要唯一约束
+						0, // sql脚本参数不能为空
+						sqlParam.getParameterName(),
+						sqlParam.getRemark()));
+			}
+		}
+		return metadataInfos;
+	}
+	
+	/**
+	 * 获取sql资源的传入表对象参数的元数据信息集合
+	 * <p>主要针对procedure</p>
+	 * @param sql
+	 * @return
+	 */
+	private List<List<ResourceMetadataInfo>> getSqlInResultSetMetadataInfoList(ComSqlScript sql){
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType())){
+			List<CfgSqlResultset> inSqlResultsets = sql.getInSqlResultsets();
+			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsets.size());
+				for (CfgSqlResultset cfgSqlResultset : inSqlResultsets) {
+					inSqlResultSetMetadataInfoList.add(cfgSqlResultset.getInSqlResultSetMetadataInfos());
+				}
+				return inSqlResultSetMetadataInfoList;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取sql资源传出的结果集元数据信息集合
+	 * <p>主要针对select</p>
+	 * @param sql
+	 * @return
+	 */
+	private List<ResourceMetadataInfo> getSqlOutResultSetMetadataInfos(ComSqlScript sql){
+		if(SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){
+			List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
+			List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
+			for (CfgSqlResultset csr : outSqlResultSet) {
+				metadataInfos.add(new SqlResourceMetadataInfo(csr.getPropName()));
+			}
+			return metadataInfos;
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 初始化sql脚本实际传入的参数集合

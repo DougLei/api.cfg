@@ -26,7 +26,6 @@ import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.database.DBUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.sqlparser.SqlParameterParserUtil;
 import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
@@ -98,6 +97,13 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	private String requestMethod;
 	
 	//--------------------------------------------------------
+	
+	/**
+	 * 是否覆盖sql对象
+	 * <p>针对存储过程、视图，如果在创建时，已经出现同名的，是覆盖，还是提示已存在</p>
+	 */
+	@JSONField(serialize = false)
+	private boolean isCoverSqlObject;
 	
 	/**
 	 * 是否解析参数
@@ -280,6 +286,12 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	public void setSqlScriptType(String sqlScriptType) {
 		this.sqlScriptType = sqlScriptType;
 	}
+	public boolean getIsCoverSqlObject() {
+		return isCoverSqlObject;
+	}
+	public void setIsCoverSqlObject(boolean isCoverSqlObject) {
+		this.isCoverSqlObject = isCoverSqlObject;
+	}
 	public List<SqlScriptParameterNameRecord> getParameterNameRecordList() {
 		return parameterNameRecordList;
 	}
@@ -451,15 +463,6 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 				}
 				// 如果是select语句，还要解析出查询结果字段集合，如果select语句查询的是*，则抛出异常，不能这样写，这样写不规范
 				SqlStatementParserUtil.analysisSelectSqlResultSetList(this);
-			}
-			
-			if(isImmediateCreate == 1 
-					&& (SqlStatementTypeConstants.PROCEDURE.equals(sqlScriptType) || SqlStatementTypeConstants.VIEW.equals(sqlScriptType) || SqlStatementTypeConstants.SQLSERVER_CREATE_TYPE.equals(sqlScriptType))){
-				List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
-				sqls.add(this);
-				DBUtil.createObjects(sqls);
-				sqls.clear();
-				this.isCreated = 1;
 			}
 		}
 		return result;

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DataValidUtil;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.FileUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -228,19 +230,8 @@ public class SysFileService extends AService{
 	private Object uploadFile(Map<Integer, SysFile> sysfileMap) throws IOException {
 		if(FileUtil.saveToService){
 			return uploadFileToService(sysfileMap);
-		}else if(FileUtil.saveToDB){
-			return uploadFileToDB(sysfileMap);
 		}
-		return "目前file.save.type的值，只支持配置为：[service]或[db]";
-	}
-	
-	/**
-	 * 保存文件到数据库中
-	 * @param sysfileMap
-	 * @return
-	 */
-	private Object uploadFileToDB(Map<Integer, SysFile> sysfileMap) {
-		return "系统目前不支持向数据库中上传文件";
+		return "目前file.save.type的值，只支持配置为：[service]";
 	}
 	
 	/**
@@ -291,9 +282,9 @@ public class SysFileService extends AService{
 		if(SysFile.SAVE_TYPE_SERVICE.equals(FileUtil.saveType)){
 			String uploadDir;
 			if(uploadFileInfo.isImport == 0){
-				uploadDir = FileUtil.fileSavePath + FileUtil.getFileDirName();
+				uploadDir = FileUtil.fileSavePath + DateUtil.formatDate(new Date());
 			}else{
-				uploadDir = FileUtil.importFileSavePath + FileUtil.getFileDirName();
+				uploadDir = FileUtil.importFileSavePath + DateUtil.formatDate(new Date());
 			}
 			File dir = new File(uploadDir);
 			if(!dir.exists()){
@@ -359,8 +350,6 @@ public class SysFileService extends AService{
 					while((len = fis.read(b)) > 0){
 						out.write(b, 0, len);
 					}
-				}else if(SysFile.SAVE_TYPE_DB.equals(sysFile.getSaveType())){
-					return "系统目前不支持从数据库中下载文件";
 				}
 			}else{
 				response.setHeader("Content-Disposition", "attachment;filename=【批量下载】["+FileUtil.getFileCode()+"].zip");
@@ -380,10 +369,6 @@ public class SysFileService extends AService{
 						}
 						zos.closeEntry();
 						input.close();
-					}else if(SysFile.SAVE_TYPE_DB.equals(sysFile.getSaveType())){
-						zos.putNextEntry(new ZipEntry(sysFile.getActName().substring(0, sysFile.getActName().lastIndexOf(".")) + ".txt" ));
-						zos.write(new String("【"+sysFile.getActName()+"】文件下载失败：系统目前不支持从数据库中下载文件").getBytes(EncodingConstants.UTF_8));
-						continue;
 					}
 				}
 			}

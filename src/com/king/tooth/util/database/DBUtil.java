@@ -72,7 +72,20 @@ public class DBUtil {
 	/**
 	 * 创建数据库对象
 	 * <p>存储过程、视图等</p>
+	 * @param sql
+	 * @param isCover
+	 */
+	public static void createObject(ComSqlScript sql) {
+		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
+		sqls.add(sql);
+		createObjects(sqls);
+		sqls.clear();
+	}
+	/**
+	 * 创建数据库对象
+	 * <p>存储过程、视图等</p>
 	 * @param sqls
+	 * @param isCover
 	 */
 	public static void createObjects(List<ComSqlScript> sqls) {
 		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
@@ -87,6 +100,7 @@ public class DBUtil {
 	 * 删除数据库对象
 	 * <p>存储过程、视图等</p>
 	 * @param sqls
+	 * @param isCover
 	 */
 	public static void dropObject(ComSqlScript sql){
 		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
@@ -94,11 +108,11 @@ public class DBUtil {
 		dropObjects(sqls);
 		sqls.clear();
 	}
-	
 	/**
 	 * 删除数据库对象
 	 * <p>存储过程、视图等</p>
 	 * @param sqls
+	 * @param isCover
 	 */
 	public static void dropObjects(List<ComSqlScript> sqls){
 		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
@@ -110,8 +124,12 @@ public class DBUtil {
 	}
 	
 	/**
-	 * 处理数据库对象，如果存在则删除，再根据参数(isCreate)决定是否重新创建
+	 * 处理数据库对象
 	 * <p>存储过程、视图等</p>
+	 * @param sqls
+	 * @param isCreate 是否创建
+	 * @param isSqlServler
+	 * @param isOracle
 	 */
 	private static void processDBObjects(final List<ComSqlScript> sqls, final boolean isCreate, final boolean isSqlServler, final boolean isOracle) {
 		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
@@ -148,7 +166,11 @@ public class DBUtil {
 						// 如果已经存在对象，则删除
 						rs = pst.executeQuery();
 						if(rs.next() && (rs.getInt(1) > 0)){
-							st.executeUpdate("drop " + sql.getSqlScriptType() + " " + sql.getObjectName());
+							if(sql.getIsCoverSqlObject()){
+								st.executeUpdate("drop " + sql.getSqlScriptType() + " " + sql.getObjectName());
+							}else{
+								throw new IllegalArgumentException("系统中已经存在名为["+sql.getObjectName()+"]的" + sql.getSqlScriptType());
+							}
 						}
 						
 						if(isCreate){

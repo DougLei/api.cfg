@@ -10,6 +10,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * poi操作excel的工具类
@@ -18,12 +19,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class PoiExcelUtil {
 	
 	/**
-	 * 获取poi操作excel文件的workbook对象实例
+	 * 获取poi操作excel文件的【读】workbook对象实例
 	 * @param excelFilePath excel文件的绝对路径
 	 * @param excelFileSuffix excel文件的后缀
 	 * @return
 	 */
-	public static final Object getWorkBookInstance(String excelFilePath, String excelFileSuffix){
+	public static final Object getReadWorkBookInstance(String excelFilePath, String excelFileSuffix){
 		File file = new File(excelFilePath);
 		if(file.exists()){
 			if(excelFileSuffix == null || !(excelFileSuffix.equalsIgnoreCase("xls") || excelFileSuffix.equalsIgnoreCase("xlsx"))){
@@ -38,6 +39,8 @@ public class PoiExcelUtil {
 					workbook = new HSSFWorkbook(in);
 				}else if("xlsx".equals(excelFileSuffix)){
 					workbook = WorkbookFactory.create(in);
+				}else{
+					return "系统不支持后缀为["+excelFileSuffix+"]的excel文件，系统支持的后缀包括：[xls , xlsx]";
 				}
 			} catch (FileNotFoundException e) {
 				Log4jUtil.debug("[PoiExcelUtil.getWorkBookInstance]出现异常:{}", ExceptionUtil.getErrMsg(e));
@@ -58,5 +61,23 @@ public class PoiExcelUtil {
 		}else{
 			return "在路径["+excelFilePath+"]下，没有找到要操作的excel文件";
 		}
+	}
+	
+	/**
+	 * 获取poi操作excel文件的【写】workbook对象实例
+	 * @param excelFilePath excel文件的绝对路径
+	 * @param excelFileSuffix excel文件的后缀
+	 * @return
+	 */
+	public static final Object getWriteWorkBookInstance(String excelFileSuffix){
+		Workbook workbook = null;
+		if("xls".equals(excelFileSuffix)){
+			workbook = new HSSFWorkbook();
+		}else if("xlsx".equals(excelFileSuffix)){
+			workbook = new XSSFWorkbook();
+		}else{
+			return "系统不支持后缀为["+excelFileSuffix+"]的excel文件，系统支持的后缀包括：[xls , xlsx]";
+		}
+		return workbook;
 	}
 }

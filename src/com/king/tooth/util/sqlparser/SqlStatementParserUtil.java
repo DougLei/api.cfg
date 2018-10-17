@@ -159,11 +159,6 @@ public class SqlStatementParserUtil {
 	        	 typeMap.put("isUnique", "true");
 	        	 typeMap.put("reqMethod", "none");
 	        	 break;
-	         case sstmssqlcreatetype:
-	        	 typeMap.put("type", SqlStatementTypeConstants.SQLSERVER_CREATE_TYPE);
-	        	 typeMap.put("isUnique", "true");
-	        	 typeMap.put("reqMethod", "none");
-	        	 break;
 	         default:
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);
 	        	 typeMap.put("type", sqlStatementType.toString());

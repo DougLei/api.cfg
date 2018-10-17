@@ -1,8 +1,6 @@
 package com.king.tooth.util;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,22 +9,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
-import com.king.tooth.sys.entity.tools.resource.SqlResourceMetadataInfo;
-import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
-import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 资源工具类
@@ -186,134 +171,6 @@ public class ResourceHandlerUtil {
 	}
 	
 	// ------------------------------------------------------------------------------------------
-	/**
-	 * 清除表信息
-	 * @param tables
-	 */
-	public static void clearTables(List<ComTabledata> tables){
-		if(tables != null && tables.size() > 0){
-			for (ComTabledata table : tables) {
-				table.clear();
-			}
-			tables.clear();
-		}
-	}
-	
-	// ------------------------------------------------------------------------------------------
-	/**
-	 * 获取表资源的元数据信息集合
-	 * @param resource
-	 * @return
-	 */
-	public static List<ResourceMetadataInfo> getTableResourceMetadataInfos(SysResource resource){
-		List<ResourceMetadataInfo> resourceMetadataInfos = null;
-		String resourceId = resource.getRefResourceId();
-		String resourceName = resource.getResourceName();
-		
-		if(resource.isBuiltinResource()){
-			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName);
-		}else{
-			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, resourceId);
-			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
-				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
-			}
-			DynamicBasicColumnUtil.initBasicMetadataInfos(0, resourceName, resourceMetadataInfos);
-		}
-		return resourceMetadataInfos;
-	}
-	public static final String queryTableMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and isEnabled=1 and operStatus="+ComColumndata.CREATED;
-	/** 查询表资源元数据信息集合的hql */
-	private static final String queryTableMetadataInfosHql = queryTableMetadataInfosHqlHead + " order by orderCode asc";
-	
-	/**
-	 * 获取内置表资源的元数据信息集合
-	 * @param tableResourceName
-	 * @return
-	 */
-	private static List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
-		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
-		List<ComColumndata> columns = itable.getColumnList();
-		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
-		for (ComColumndata column : columns) {
-			metadataInfos.add(new TableResourceMetadataInfo(
-					column.getColumnName(),
-					column.getColumnType(),
-					column.getLength(),
-					column.getPrecision(),
-					column.getIsUnique(), 
-					column.getIsNullabled(),
-					column.getPropName(),
-					column.getName()));
-		}
-		DynamicBasicColumnUtil.initBasicMetadataInfos(1, tableResourceName, metadataInfos);
-		columns.clear();
-		return metadataInfos;
-	}
-	
-	// ------------------------------------------------------------------------------------------
-	/**
-	 * 获取sql资源的参数元数据信息集合
-	 * @param sqlParams
-	 * @return
-	 */
-	public static List<ResourceMetadataInfo> getSqlResourceParamsMetadataInfos(List<ComSqlScriptParameter> sqlParams){
-		List<ResourceMetadataInfo> metadataInfos = null;
-		if(sqlParams != null && sqlParams.size() > 0){
-			metadataInfos = new ArrayList<ResourceMetadataInfo>(sqlParams.size());
-			for (ComSqlScriptParameter sqlParam : sqlParams) {
-				metadataInfos.add(new SqlResourceMetadataInfo(
-						null,
-						sqlParam.getParameterDataType(),
-						sqlParam.getLength(),
-						sqlParam.getPrecision(),
-						0, // sql脚本参数不需要唯一约束
-						0, // sql脚本参数不能为空
-						sqlParam.getParameterName(),
-						sqlParam.getRemark()));
-			}
-		}
-		return metadataInfos;
-	}
-	
-	/**
-	 * 获取sql资源的传入表对象参数的元数据信息集合
-	 * <p>主要针对procedure</p>
-	 * @param sql
-	 * @return
-	 */
-	public static List<List<ResourceMetadataInfo>> getSqlInResultSetMetadataInfoList(ComSqlScript sql){
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType())){
-			List<CfgSqlResultset> inSqlResultsets = sql.getInSqlResultsets();
-			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
-				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsets.size());
-				for (CfgSqlResultset cfgSqlResultset : inSqlResultsets) {
-					inSqlResultSetMetadataInfoList.add(cfgSqlResultset.getInSqlResultSetMetadataInfos());
-				}
-				return inSqlResultSetMetadataInfoList;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * 获取sql资源传出的结果集元数据信息集合
-	 * <p>主要针对select</p>
-	 * @param sql
-	 * @return
-	 */
-	public static List<ResourceMetadataInfo> getSqlOutResultSetMetadataInfos(ComSqlScript sql){
-		if(SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){
-			List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
-			List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
-			for (CfgSqlResultset csr : outSqlResultSet) {
-				metadataInfos.add(new SqlResourceMetadataInfo(csr.getPropName()));
-			}
-			return metadataInfos;
-		}
-		return null;
-	}
-	
-	// --------------------------------------------------------------------------
 	/**
 	 * 验证数据是否合法
 	 * @param dataValue

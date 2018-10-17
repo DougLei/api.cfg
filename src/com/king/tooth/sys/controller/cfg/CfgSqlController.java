@@ -99,9 +99,9 @@ public class CfgSqlController extends AController{
 	 * @return
 	 */
 	@RequestMapping
-	public Object immediateCreate(HttpServletRequest request, IJson ijson){
+	public Object createSqlObject(HttpServletRequest request, IJson ijson){
 		vaildIJsonNotNull(ijson);
-		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).immediateCreate(ijson);
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).createSqlObject(ijson);
 		if(resultObject == null){
 			int size = ijson.size();
 			ijsonIsArray = ijson.isArray();
@@ -112,6 +112,28 @@ public class CfgSqlController extends AController{
 		}
 		return getResultObject(null, OperDataTypeConstants.EDIT);
 	}
+	
+	/**
+	 * 删除sql脚本对象
+	 * <p>存储过程、视图等</p>
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object dropSqlObject(HttpServletRequest request, IJson ijson){
+		vaildIJsonNotNull(ijson);
+		resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).dropSqlObject(ijson);
+		if(resultObject == null){
+			int size = ijson.size();
+			ijsonIsArray = ijson.isArray();
+			resultJsonArray = new JSONArray(size);
+			for (int i = 0; i < size; i++) {
+				resultJsonArray.add(ijson.get(i));
+			}
+		}
+		return getResultObject(null, OperDataTypeConstants.EDIT);
+	}
+	
 	
 	/**
 	 * 建立项目和sql脚本的关联关系

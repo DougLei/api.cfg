@@ -60,7 +60,8 @@ public class CodeResourceMapping {
 		put("/project/table/relation/cancel/post", CfgTableController.class, "cancelProjTableRelation");
 		
 		// sql脚本操作
-		put("/sql/object/create/post", CfgSqlController.class, "immediateCreate");
+		put("/sql/object/create/post", CfgSqlController.class, "createSqlObject");
+		put("/sql/object/drop/post", CfgSqlController.class, "dropSqlObject");
 		put("/project/sql/relation/add/post", CfgSqlController.class, "addProjSqlScriptRelation");
 		put("/project/sql/relation/cancel/post", CfgSqlController.class, "cancelProjSqlScriptRelation");
 		

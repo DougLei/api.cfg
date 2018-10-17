@@ -1,7 +1,6 @@
 package com.king.tooth.util;
 
 import java.io.File;
-import java.util.Date;
 import java.util.UUID;
 
 import com.king.tooth.cache.SysConfig;
@@ -14,14 +13,10 @@ import com.king.tooth.sys.entity.sys.SysFile;
 public class FileUtil {
 	
 	/**
-	 * 系统保存文件的方式：db[存储在数据库]，service[存储在系统服务器上]，默认是service
+	 * 系统保存文件的方式：service[存储在系统服务器上]，默认是service，目前也只支持保存到服务器上
 	 * @see api.platform.file.properties
 	 */
 	public static final String saveType;
-	/**
-	 * 是否保存到数据库
-	 */
-	public static final boolean saveToDB;
 	/**
 	 * 是否保存到服务器
 	 */
@@ -57,24 +52,16 @@ public class FileUtil {
 		exportFileSavePath = ResourceHandlerUtil.initConfValue("export.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "export") + File.separator;
 		fileMaxSize = Long.valueOf(ResourceHandlerUtil.initConfValue("file.max.size", "10240"));
 		
-		saveToDB = SysFile.SAVE_TYPE_DB.equals(saveType);
 		saveToService = SysFile.SAVE_TYPE_SERVICE.equals(saveType);
 	}
 	//--------------------------------------------------------------------
 	
 	/**
 	 * 获取文件编码
+	 * <p>32位uuid，即在系统中文件的编号名，防止乱码</p>
 	 * @return
 	 */
 	public static String getFileCode() {
 		return UUID.randomUUID().toString().replace("-", "");
-	}
-
-	/**
-	 * 获取文件的目录名
-	 * @return
-	 */
-	public static String getFileDirName() {
-		return DateUtil.formatDate(new Date());
 	}
 }
