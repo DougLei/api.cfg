@@ -108,6 +108,24 @@ public class SysUserController extends AController{
 	}
 	
 	/**
+	 * 关闭账户
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object closeAccount(HttpServletRequest request, IJson ijson){
+		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
+		for (SysUser user : users) {
+			resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).closeAccount(user);
+			if(resultObject instanceof String){
+				break;
+			}
+			resultJsonArray.add(resultObject);
+		}
+		return getResultObject(users, OperDataTypeConstants.EDIT);
+	}
+	
+	/**
 	 * 重置用户关联账户的信息，即将用户的工号、手机号、邮箱三个字段的值，重新更新到账户的帐号、手机号、邮箱三个字段的值，同时重置账户的登陆密码为初始密码
 	 * <p>请求方式：PUT</p>
 	 * @return

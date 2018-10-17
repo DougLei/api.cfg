@@ -66,6 +66,7 @@ public class CodeResourceMapping {
 		
 		// 用户操作
 		put("/user/account/open/post", SysUserController.class, "openAccount");
+		put("/user/account/close/post", SysUserController.class, "closeAccount");
 		put("/user/account/reset/put", SysUserController.class, "resetAccount");
 		put("/user/account/pwd/update/put", SysUserController.class, "updatePassword");
 		put("/user/account/pwd/reset/put", SysUserController.class, "resetPassword");
@@ -77,22 +78,19 @@ public class CodeResourceMapping {
 		// 权限操作
 		put("/permission/get", SysPermissionController.class, "calcPermissionByCode");
 		
-		// 监听hibernate类元数据
-		put("/hibernate/classmetadata/monitor/get", SystemToolsController.class, "monitorHibernateClassMetadata");
-		// 获取指定资源信息
-		put("/resource/info/search/get", SystemToolsController.class, "getResourceInfo");
+		// 工具接口
+		put("/hibernate/classmetadata/monitor/get", SystemToolsController.class, "monitorHibernateClassMetadata");// 监听hibernate类元数据
+		put("/resource/info/search/get", SystemToolsController.class, "getResourceInfo");// 获取指定资源信息
 		
-		// 消息推送
-		put("/message/push/post", SysPushMessageInfoController.class, "pushMessage");
-		// 消息阅读
-		put("/message/read/get", SysPushMessageInfoController.class, "readMessage");
-		// 修改消息的阅读状态
-		put("/message/read_status/update/put", SysPushMessageInfoController.class, "updateMessageReadStatus");
+		// 消息接口
+		put("/message/push/post", SysPushMessageInfoController.class, "pushMessage");// 消息推送
+		put("/message/read/get", SysPushMessageInfoController.class, "readMessage");// 消息阅读
+		put("/message/read_status/update/put", SysPushMessageInfoController.class, "updateMessageReadStatus");// 修改消息的阅读状态
 		
-		// 导入excel
-		put("/excel/import/post", SysExcelController.class, "importExcel");
-		// 导出excel
-		put("/excel/export/post", SysExcelController.class, "exportExcel");
+		// excel操作接口
+		put("/excel/import/post", SysExcelController.class, "importExcel");// 导入excel
+		put("/excel/import_template/create/post", SysExcelController.class, "createImportExcelTemplate");// 生成excel导入模版
+		put("/excel/export/post", SysExcelController.class, "exportExcel");// 导出excel
 	}
 	
 	/**

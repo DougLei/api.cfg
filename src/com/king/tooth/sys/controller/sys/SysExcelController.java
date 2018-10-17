@@ -4,13 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.tools.excel.ImportExcel;
+import com.king.tooth.sys.entity.tools.excel.ImportExcelTemplate;
 import com.king.tooth.sys.service.sys.SysExcelService;
 
 /**
@@ -35,10 +35,31 @@ public class SysExcelController extends AController{
 				if(resultObject instanceof String){
 					break;
 				}
-				resultJsonArray.add((JSONObject) resultObject);
+				resultJsonArray.add(resultObject);
 			}
 		}
 		return getResultObject(importExcels, null);
+	}
+	
+	/**
+	 * 生成excel导入模版
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object createImportExcelTemplate(HttpServletRequest request, IJson ijson){
+		List<ImportExcelTemplate> importExcelTemplates = getDataInstanceList(ijson, ImportExcelTemplate.class, true);
+		analysisResourceProp(importExcelTemplates);
+		if(analysisResult == null){
+			for (ImportExcelTemplate importExcelTemplate : importExcelTemplates) {
+				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createImportExcelTemplate(importExcelTemplate);
+				if(resultObject instanceof String){
+					break;
+				}
+				resultJsonArray.add(resultObject);
+			}
+		}
+		return getResultObject(importExcelTemplates, null);
 	}
 	
 	/**

@@ -14,13 +14,10 @@ import com.king.tooth.util.StrUtils;
 public class ImportExcel implements Serializable, IEntityPropAnalysis{
 
 	/**
-	 * excel文件的存储路径
+	 * excel文件id
+	 * <p></p>
 	 */
-	private String excelFilePath;
-	/**
-	 * excel文件后缀
-	 */
-	private String excelFileSuffix;
+	private String excelFileId;
 	/**
 	 * 一次批量导入的数量
 	 * <p>例如excel中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为300条，如果值为-1，则一次全部导入</p>
@@ -32,17 +29,11 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	 */
 	private String[] sheetResourceNames;
 	
-	public String getExcelFilePath() {
-		return excelFilePath;
+	public String getExcelFileId() {
+		return excelFileId;
 	}
-	public void setExcelFilePath(String excelFilePath) {
-		this.excelFilePath = excelFilePath;
-	}
-	public String getExcelFileSuffix() {
-		return excelFileSuffix;
-	}
-	public void setExcelFileSuffix(String excelFileSuffix) {
-		this.excelFileSuffix = excelFileSuffix;
+	public void setExcelFileId(String excelFileId) {
+		this.excelFileId = excelFileId;
 	}
 	public void setBatchImportCount(int batchImportCount) {
 		this.batchImportCount = batchImportCount;
@@ -58,14 +49,8 @@ public class ImportExcel implements Serializable, IEntityPropAnalysis{
 	}
 	
 	public String validNotNullProps() {
-		if(StrUtils.isEmpty(excelFilePath)){
-			return "要导入的excel文件路径不能为空";
-		}
-		if(StrUtils.isEmpty(excelFileSuffix)){
-			return "要导入的excel文件后缀不能为空";
-		}
-		if(!"xls".equals(excelFileSuffix) && !"xlsx".equals(excelFileSuffix)){
-			return "系统目前只支持导入后缀为[xls]或[xlsx]的excel文件";
+		if(StrUtils.isEmpty(excelFileId)){
+			return "要导入的excel文件id不能为空";
 		}
 		if(sheetResourceNames == null || sheetResourceNames.length == 0){
 			return "要导入的excel文件中，配置的每个sheet对应的resourceName不能为空";

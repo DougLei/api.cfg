@@ -349,7 +349,9 @@ public class SysUserService extends AService{
 				account.setIsDelete(0);
 				account.setLastUpdateDate(new Date());
 				// ----
-				account.setLoginName(user.getWorkNo());
+				if(user.getIsSyncLoginName() == 1){
+					account.setLoginName(user.getWorkNo());
+				}
 				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
@@ -367,7 +369,33 @@ public class SysUserService extends AService{
 			HibernateUtil.saveObject(account, null);
 		}
 		
-		JSONObject jsonObject = new JSONObject(1);
+		JSONObject jsonObject = new JSONObject(2);
+		jsonObject.put(ResourcePropNameConstants.ID, user.getId());
+		return jsonObject;
+	}
+	
+	/**
+	 * 关闭账户
+	 * @param user
+	 * @return
+	 */
+	public Object closeAccount(SysUser user) {
+		user = getObjectById(user.getId(), SysUser.class);
+		
+		if(accountIsExists(user.getId())){
+			SysAccount account = getObjectById(user.getId(), SysAccount.class);
+			if(account.getIsDelete() == 0){
+				return "用户["+user.getName()+"]不存在账户，无法关闭";
+			}else if(account.getIsDelete() == 0){
+				account.setIsDelete(1);
+				account.setLastUpdateDate(new Date());
+				HibernateUtil.updateObject(account, null);
+			}
+		}else{
+			return "用户["+user.getName()+"]不存在账户，无法关闭";
+		}
+		
+		JSONObject jsonObject = new JSONObject(2);
 		jsonObject.put(ResourcePropNameConstants.ID, user.getId());
 		return jsonObject;
 	}

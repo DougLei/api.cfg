@@ -32,11 +32,13 @@ public class FileUtil {
 	 * 要配置绝对路径，如果不配置，则默认是存储在项目部署的file文件夹下
 	 * @see api.platform.file.properties
 	 */
-	public static final String savePath;
-	/** 系统导入文件时，在服务器上的保存路径，同savePath */
-	public static final String importSavePath;
-	/** 系统导出文件时，在服务器上的保存路径，同savePath */
-	public static final String exportSavePath;
+	public static final String fileSavePath;
+	/** 系统导入文件时，在服务器上的保存路径，同fileSavePath */
+	public static final String importFileSavePath;
+	/** 系统导入文件的模版，在服务器上的保存路径，同fileSavePath */
+	public static final String importFileTemplateSavePath;
+	/** 系统导出文件时，在服务器上的保存路径，同fileSavePath */
+	public static final String exportFileSavePath;
 	
 	/**
 	 * 上传文件的最大大小，单位kb，默认10240KB，即10M
@@ -48,14 +50,15 @@ public class FileUtil {
 	 * 静态块，从配置文件读取，并初始化属性值
 	 */
 	static{
-		saveType = ResourceHandlerUtil.initConfValue("file.save.type", SysFile.SERVICE);
-		savePath = ResourceHandlerUtil.initConfValue("file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "upload") + File.separator;
-		importSavePath = ResourceHandlerUtil.initConfValue("import.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "import") + File.separator;
-		exportSavePath = ResourceHandlerUtil.initConfValue("export.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "export") + File.separator;
+		saveType = ResourceHandlerUtil.initConfValue("file.save.type", SysFile.SAVE_TYPE_SERVICE);
+		fileSavePath = ResourceHandlerUtil.initConfValue("file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "upload") + File.separator;
+		importFileSavePath = ResourceHandlerUtil.initConfValue("import.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "import") + File.separator;
+		importFileTemplateSavePath = ResourceHandlerUtil.initConfValue("import.file.template.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "importTemplate") + File.separator;
+		exportFileSavePath = ResourceHandlerUtil.initConfValue("export.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "file" + File.separator + "export") + File.separator;
 		fileMaxSize = Long.valueOf(ResourceHandlerUtil.initConfValue("file.max.size", "10240"));
 		
-		saveToDB = SysFile.DB.equals(saveType);
-		saveToService = SysFile.SERVICE.equals(saveType);
+		saveToDB = SysFile.SAVE_TYPE_DB.equals(saveType);
+		saveToService = SysFile.SAVE_TYPE_SERVICE.equals(saveType);
 	}
 	//--------------------------------------------------------------------
 	

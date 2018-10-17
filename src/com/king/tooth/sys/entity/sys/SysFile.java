@@ -75,6 +75,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	 */
 	private Integer type;
 	/**
+	 * 内置文件类型
+	 * <p>由开发人员自定义，默认值为1</p>
+	 * <p>1:普通文件、2:导入文件、3:导入模版文件、4:导出文件</p>
+	 */
+	private Integer buildInType;
+	/**
 	 * 是否是导入文件
 	 * <p>默认值为0</p>
 	 */
@@ -178,6 +184,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public void setType(Integer type) {
 		this.type = type;
 	}
+	public Integer getBuildInType() {
+		return buildInType;
+	}
+	public void setBuildInType(Integer buildInType) {
+		this.buildInType = buildInType;
+	}
 	public Integer getIsImport() {
 		return isImport;
 	}
@@ -205,7 +217,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	
 	@JSONField(serialize = false)
 	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16+7);
+		List<ComColumndata> columns = new ArrayList<ComColumndata>(17+7);
 		
 		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", DataTypeConstants.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
@@ -240,7 +252,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		ComColumndata saveTypeColumn = new ComColumndata("save_type", DataTypeConstants.STRING, 10);
 		saveTypeColumn.setName("文件的存储方式");
 		saveTypeColumn.setComments("文件的存储方式：db:存储在数据库，service:存储在系统服务器上...");
-		saveTypeColumn.setDefaultValue(SERVICE);
+		saveTypeColumn.setDefaultValue(SAVE_TYPE_SERVICE);
 		columns.add(saveTypeColumn);
 		
 		ComColumndata contentColumn = new ComColumndata("content", DataTypeConstants.BLOB, 0);
@@ -268,6 +280,12 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		typeColumn.setName("文件类型");
 		typeColumn.setComments("由用户自定义");
 		columns.add(typeColumn);
+		
+		ComColumndata buildInTypeColumn = new ComColumndata("build_in_type", DataTypeConstants.INTEGER, 2);
+		buildInTypeColumn.setName("内置文件类型");
+		buildInTypeColumn.setComments("由开发人员自定义，默认值为1，1:普通文件、2:导入文件、3:导入模版文件、4:导出文件");
+		buildInTypeColumn.setDefaultValue(BUILD_IN_TYPE_NORMAL+"");
+		columns.add(buildInTypeColumn);
 		
 		ComColumndata isImportColumn = new ComColumndata("is_import", DataTypeConstants.INTEGER, 1);
 		isImportColumn.setName("是否是导入文件");
@@ -312,12 +330,11 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		return "SysFile";
 	}
 
-	/**
-	 * 保存文件到数据库中
-	 */
-	public static final String DB = "db";
-	/**
-	 * 保存文件到服务器上
-	 */
-	public static final String SERVICE = "service";
+	public static final String SAVE_TYPE_DB = "db";
+	public static final String SAVE_TYPE_SERVICE = "service";
+	
+	public static final int BUILD_IN_TYPE_NORMAL = 1;
+	public static final int BUILD_IN_TYPE_IMPORT = 2;
+	public static final int BUILD_IN_TYPE_IMPORT_TEMPLATE = 3;
+	public static final int BUILD_IN_TYPE_EXPORT = 4;
 }

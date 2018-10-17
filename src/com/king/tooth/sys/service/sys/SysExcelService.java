@@ -21,8 +21,10 @@ import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.excel.ImportExcel;
+import com.king.tooth.sys.entity.tools.excel.ImportExcelTemplate;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
@@ -45,7 +47,8 @@ public class SysExcelService extends AService{
 	 * @return
 	 */
 	public Object importExcel(ImportExcel importExcel) {
-		Object wb = PoiExcelUtil.getWorkBookInstance(importExcel.getExcelFilePath(), importExcel.getExcelFileSuffix());
+		SysFile file = getObjectById(importExcel.getExcelFileId(), SysFile.class);
+		Object wb = PoiExcelUtil.getWorkBookInstance(file.getSavePath(), file.getSuffix());
 		if(wb instanceof String){
 			return wb;
 		}
@@ -285,6 +288,17 @@ public class SysExcelService extends AService{
 				HibernateUtil.saveObject(resourceName, ijson.get(i), null);
 			}
 		}
+	}
+	
+	// ---------------------------------------------------------------------
+	/**
+	 * 生成excel导入模版
+	 * <p>将生成为excel导入模版保存到服务器上，并在sysfile中插入一条数据</p>
+	 * @param importExcelTemplate
+	 * @return
+	 */
+	public Object createImportExcelTemplate(ImportExcelTemplate importExcelTemplate) {
+		return null;
 	}
 	
 	// ---------------------------------------------------------------------

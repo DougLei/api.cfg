@@ -86,6 +86,9 @@ public class SysFileService extends AService{
 							sysFile.setRefDataId(uploadFileInfo.refDataId);
 							sysFile.setBatch(uploadFileInfo.batch);
 							sysFile.setIsImport(uploadFileInfo.isImport);
+							if(uploadFileInfo.isImport == 1){
+								sysFile.setBuildInType(SysFile.BUILD_IN_TYPE_IMPORT);
+							}
 							sysFile.setCode(FileUtil.getFileCode());
 							sysFile.setSaveType(FileUtil.saveType);
 							sysfileMap.put(index, sysFile);
@@ -166,8 +169,8 @@ public class SysFileService extends AService{
 			}
 		}
 		
-		if(uploadFileInfo.isImport == 0 && StrUtils.isEmpty(uploadFileInfo.refDataId) || uploadFileInfo.refDataId.length() != 32){
-			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id格式错误，即参数名为refDataId的值格式错误：不能为空，或长度不符合要求(32位uuid)";
+		if(uploadFileInfo.isImport == 0 && StrUtils.isEmpty(uploadFileInfo.refDataId)){
+			uploadFileInfo.errMsg = "上传文件时，关联的业务数据id，即参数名为refDataId的值不能为空";
 		}
 		if(StrUtils.isEmpty(uploadFileInfo.batch) || uploadFileInfo.batch.length() != 32){
 			uploadFileInfo.batch = ResourceHandlerUtil.getIdentity();
@@ -285,12 +288,12 @@ public class SysFileService extends AService{
 	 * @param uploadFileInfo 
 	 */
 	private String validUploadDirIsExists(UploadFileInfo uploadFileInfo) {
-		if(SysFile.SERVICE.equals(FileUtil.saveType)){
+		if(SysFile.SAVE_TYPE_SERVICE.equals(FileUtil.saveType)){
 			String uploadDir;
 			if(uploadFileInfo.isImport == 0){
-				uploadDir = FileUtil.savePath + FileUtil.getFileDirName();
+				uploadDir = FileUtil.fileSavePath + FileUtil.getFileDirName();
 			}else{
-				uploadDir = FileUtil.importSavePath + FileUtil.getFileDirName();
+				uploadDir = FileUtil.importFileSavePath + FileUtil.getFileDirName();
 			}
 			File dir = new File(uploadDir);
 			if(!dir.exists()){
@@ -342,7 +345,7 @@ public class SysFileService extends AService{
 			File tmpFile;
 			if(fileIdArr.length == 1){
 				SysFile sysFile = sysFileList.get(0);
-				if(SysFile.SERVICE.equals(sysFile.getSaveType())){
+				if(SysFile.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
 					response.setHeader("Content-Disposition", "attachment;filename=" + StrUtils.turnStrEncoding(sysFile.getActName(), EncodingConstants.UTF_8, EncodingConstants.ISO8859_1));
 					
 					tmpFile = new File(sysFile.getSavePath());
@@ -356,7 +359,7 @@ public class SysFileService extends AService{
 					while((len = fis.read(b)) > 0){
 						out.write(b, 0, len);
 					}
-				}else if(SysFile.DB.equals(sysFile.getSaveType())){
+				}else if(SysFile.SAVE_TYPE_DB.equals(sysFile.getSaveType())){
 					return "系统目前不支持从数据库中下载文件";
 				}
 			}else{
@@ -367,7 +370,7 @@ public class SysFileService extends AService{
 				byte[] b;
 				int len;
 				for (SysFile sysFile : sysFileList) {
-					if(SysFile.SERVICE.equals(sysFile.getSaveType())){
+					if(SysFile.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
 						zos.putNextEntry(new ZipEntry(sysFile.getActName()));
 						tmpFile = new File(sysFile.getSavePath());
 						input = new FileInputStream(tmpFile);
@@ -377,7 +380,7 @@ public class SysFileService extends AService{
 						}
 						zos.closeEntry();
 						input.close();
-					}else if(SysFile.DB.equals(sysFile.getSaveType())){
+					}else if(SysFile.SAVE_TYPE_DB.equals(sysFile.getSaveType())){
 						zos.putNextEntry(new ZipEntry(sysFile.getActName().substring(0, sysFile.getActName().lastIndexOf(".")) + ".txt" ));
 						zos.write(new String("【"+sysFile.getActName()+"】文件下载失败：系统目前不支持从数据库中下载文件").getBytes(EncodingConstants.UTF_8));
 						continue;
@@ -420,7 +423,7 @@ public class SysFileService extends AService{
 			for (String fileId : fileIdArr) {
 				sysFile = getObjectById(fileId, SysFile.class);
 				
-				if(SysFile.SERVICE.equals(sysFile.getSaveType())){
+				if(SysFile.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
 					tmpFile = new File(sysFile.getSavePath());
 					if(tmpFile.exists() && tmpFile.isFile()){
 						tmpFile.delete();

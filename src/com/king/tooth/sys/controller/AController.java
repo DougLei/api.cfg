@@ -135,12 +135,16 @@ public abstract class AController {
 					json.put(ResourcePropNameConstants.FOCUSED_OPER, json.get(ResourcePropNameConstants.ID) + "_" + operDataType);
 				}
 			}else if(resultJsonArray != null && resultJsonArray.size() > 0){
+				Object object;
 				JSONObject json;
 				int size = resultJsonArray.size();
 				for(int i=0;i<size;i++){
-					json = resultJsonArray.getJSONObject(i);
-					if(json.get(ResourcePropNameConstants.ID) != null){
-						json.put(ResourcePropNameConstants.FOCUSED_OPER, json.get(ResourcePropNameConstants.ID) + "_" + operDataType);
+					object = resultJsonArray.get(i);
+					if(object instanceof JSONObject){
+						json = (JSONObject) object;
+						if(json.get(ResourcePropNameConstants.ID) != null){
+							json.put(ResourcePropNameConstants.FOCUSED_OPER, json.get(ResourcePropNameConstants.ID) + "_" + operDataType);
+						}
 					}
 				}
 			}
