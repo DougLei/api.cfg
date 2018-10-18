@@ -1146,10 +1146,10 @@
   ".......":"........."                                 --......
 }
 
-#### 3. excel导出
+#### 3. 生成导出excel文件
 
-- 功能描述: 导出excel
-- api地址: /common/excel/export
+- 功能描述: 生成导出excel文件
+- api地址: /common/excel/export_file/create
 - 请求类型: POST
 - 请求头:
 ```

@@ -44,6 +44,39 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class SysExcelService extends AService{
 	
 	/**
+	 * 生成excel文件，并将该文件信息保存到文件表中
+	 * @param workbook
+	 * @param fileName
+	 * @param suffix
+	 * @param buildInType
+	 * @return
+	 */
+	private Object createExcelFile(Workbook workbook, String fileName, String suffix, int buildInType){
+		String fileCode = FileUtil.getFileCode();
+		String excelFileSavePath = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).validSaveFileDirIsExists(buildInType)+fileCode+"."+suffix;
+		FileOutputStream fo = null;
+		try {
+			fo = new FileOutputStream(excelFileSavePath);
+			workbook.write(fo);
+		} catch (IOException e) {
+			return "生成excel文件时出现IO异常：" + ExceptionUtil.getErrMsg(e);
+		} finally {
+			CloseUtil.closeIO(fo);
+		}
+		
+		SysFile importExcelFileTemplate = new SysFile();
+		importExcelFileTemplate.setActName("【"+fileName+"】excel"+DateUtil.formatDatetime(new Date()) + "." + suffix);
+		importExcelFileTemplate.setCode(fileCode);
+		importExcelFileTemplate.setSuffix(suffix);
+		importExcelFileTemplate.setSavePath(excelFileSavePath);
+		importExcelFileTemplate.setSaveType(SysFileConstants.saveType);
+		importExcelFileTemplate.setBatch(ResourceHandlerUtil.getBatchNum());
+		importExcelFileTemplate.setBuildInType(buildInType);
+		return HibernateUtil.saveObject(importExcelFileTemplate, null);
+	}
+	
+	// --------------------------------------------------------------------------------------------------
+	/**
 	 * 导入excel
 	 * @param importExcel
 	 * @return
@@ -241,47 +274,23 @@ public class SysExcelService extends AService{
 			cell = row.createCell(i+1);
 			cell.setCellValue(rmi.getDescName());
 		}
-		return createImportExcelTemplate(workbook, suffix, importFileTemplate.getResourceName());
+		
+		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
 	}
 	
-	/**
-	 * 生成excel导入模版文件，并将该文件信息保存到文件表中
-	 * @param workbook
-	 * @param suffix
-	 * @param resourceName
-	 * @return
-	 */
-	private Object createImportExcelTemplate(Workbook workbook, String suffix, String resourceName){
-		String fileCode = FileUtil.getFileCode();
-		String importExcelFileSavePath = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).validSaveFileDirIsExists(SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE)+fileCode+"."+suffix;
-		FileOutputStream fo = null;
-		try {
-			fo = new FileOutputStream(importExcelFileSavePath);
-			workbook.write(fo);
-		} catch (IOException e) {
-			return "生成excel导入模版时出现IO异常：" + ExceptionUtil.getErrMsg(e);
-		} finally {
-			CloseUtil.closeIO(fo);
-		}
-		
-		SysFile importExcelFileTemplate = new SysFile();
-		importExcelFileTemplate.setActName("【"+resourceName+"】excel导入模版"+DateUtil.formatDatetime(new Date()) + "." + suffix);
-		importExcelFileTemplate.setCode(fileCode);
-		importExcelFileTemplate.setSuffix(suffix);
-		importExcelFileTemplate.setSavePath(importExcelFileSavePath);
-		importExcelFileTemplate.setSaveType(SysFileConstants.saveType);
-		importExcelFileTemplate.setBatch(ResourceHandlerUtil.getBatchNum());
-		importExcelFileTemplate.setBuildInType(SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
-		return HibernateUtil.saveObject(importExcelFileTemplate, null);
-	}
-
 	// ---------------------------------------------------------------------
 	/**
 	 * 导出excel
+	 * <p>将生成为导出excel文件保存到服务器上，并在sysfile中插入一条数据</p>
 	 * @param request
 	 * @return
 	 */
 	public Object exportExcel(HttpServletRequest request) {
-		return null;
+		
+		
+		Workbook workbook = null;
+		String fileName = null;
+		String suffix = null;
+		return createExcelFile(workbook, fileName, suffix, SysFileConstants.BUILD_IN_TYPE_EXPORT);
 	}
 }
