@@ -137,6 +137,9 @@ public class CfgTableService extends AService {
 			}
 			
 			if(operResult == null){
+				if(table.isUpdateResourceInfo(oldTable)){
+					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(table.getId(), table.getResourceName(), table.getRequestMethod(), table.getIsEnabled());
+				}
 				return HibernateUtil.updateObject(table, null);
 			}
 		}

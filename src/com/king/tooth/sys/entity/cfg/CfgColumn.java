@@ -297,48 +297,54 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	 * <p>为重新建模做准备</p>
 	 * @param oldColumn
 	 * @param newColumn
+	 * @return 是否需要重新建模
 	 */
-	public void analysisOldColumnInfo(CfgColumn oldColumn, CfgColumn newColumn) {
+	public boolean analysisOldColumnInfo(CfgColumn oldColumn) {
 		if(oldColumn.getOperStatus() == CfgColumn.CREATED){
 			this.oldColumnInfo = new JSONObject(10);
 			// 1.记录 (旧的)列名
-			if(!oldColumn.getColumnName().equals(newColumn.getColumnName())){
+			if(!oldColumn.getColumnName().equals(this.getColumnName())){
 				this.oldColumnInfo.put("columnName", oldColumn.getColumnName());
 			}
 			// 2.记录 (旧的)字段数据类型
-			if(!oldColumn.getColumnType().equals(newColumn.getColumnType())){
+			if(!oldColumn.getColumnType().equals(this.getColumnType())){
 				this.oldColumnInfo.put("columnType", oldColumn.getColumnType());
 			}
 			// 3.记录 (旧的)字段长度
-			if(oldColumn.getLength() != newColumn.getLength()){
+			if(oldColumn.getLength() != this.getLength()){
 				this.oldColumnInfo.put("length", oldColumn.getLength());
 			}
 			// 4.记录 (旧的)数据精度
-			if(oldColumn.getPrecision() != newColumn.getPrecision()){
+			if(oldColumn.getPrecision() != this.getPrecision()){
 				this.oldColumnInfo.put("precision", oldColumn.getPrecision());
 			}
 			// 5.记录 (旧的)默认值
-			if((oldColumn.getDefaultValue() != null && !oldColumn.getDefaultValue().equals(newColumn.getDefaultValue())) 
-					|| (newColumn.getDefaultValue() != null && !newColumn.getDefaultValue().equals(oldColumn.getDefaultValue()))){
+			if((oldColumn.getDefaultValue() != null && !oldColumn.getDefaultValue().equals(this.getDefaultValue())) 
+					|| (this.getDefaultValue() != null && !this.getDefaultValue().equals(oldColumn.getDefaultValue()))){
 				this.oldColumnInfo.put("havaOldDefaultValue", true);
 				this.oldColumnInfo.put("defaultValue", oldColumn.getDefaultValue());
 			}
 			// 6.记录 (旧的)是否唯一
-			if(oldColumn.getIsUnique() != newColumn.getIsUnique()){
+			if(oldColumn.getIsUnique() != this.getIsUnique()){
 				this.oldColumnInfo.put("isUnique", oldColumn.getIsUnique());
 			}
 			// 7.记录 (旧的)是否可为空
-			if(oldColumn.getIsNullabled() != newColumn.getIsNullabled()){
+			if(oldColumn.getIsNullabled() != this.getIsNullabled()){
 				this.oldColumnInfo.put("isNullabled", oldColumn.getIsNullabled());
 			}
 			// 8.记录 (旧的)备注信息
-			if((oldColumn.getComments() != null && !oldColumn.getComments().equals(newColumn.getComments())) 
-					|| (newColumn.getComments() != null && !newColumn.getComments().equals(oldColumn.getComments()))){
+			if((oldColumn.getComments() != null && !oldColumn.getComments().equals(this.getComments())) 
+					|| (this.getComments() != null && !this.getComments().equals(oldColumn.getComments()))){
 				this.oldColumnInfo.put("havaComments", true);
 				this.oldColumnInfo.put("comments", oldColumn.getComments());
 			}
-			this.oldInfoJson = JsonUtil.toJsonString(oldColumnInfo, false);
+			if(oldColumnInfo.size() > 0){// 如果有修改记录了，才会标识列的状态被修改，需要用户重新建模；修改了列的备注等信息，是不用重新建模的
+				this.setOperStatus(CfgColumn.MODIFIED);
+				this.oldInfoJson = JsonUtil.toJsonString(oldColumnInfo, false);
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	@JSONField(serialize = false)

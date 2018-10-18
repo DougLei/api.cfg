@@ -167,11 +167,7 @@ public class CfgSqlService extends AService {
 			if(operResult == null && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
 				operResult = validSameResourceNameSqlScriptInProject(sqlScript.getSqlScriptResourceName(), projectId);
 			}
-				
-			if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName()) || !oldSqlScript.getRequestMethod().equals(sqlScript.getRequestMethod())){
-				// 如果修改了sql脚本的资源名，也要同步修改SysResource表中的资源名
-				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getSqlScriptResourceName(), sqlScript.getRequestMethod());
-			}
+			
 			if(operResult == null){
 				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
 					if(oldSqlScript.getObjectName().equals(sqlScript.getObjectName())){
@@ -179,6 +175,9 @@ public class CfgSqlService extends AService {
 					}
 					DBUtil.createObject(sqlScript);
 					sqlScript.setIsCreated(1);
+				}
+				if(sqlScript.isUpdateResourceInfo(oldSqlScript)){
+					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getSqlScriptResourceName(), sqlScript.getRequestMethod(), sqlScript.getIsEnabled());
 				}
 				return HibernateUtil.updateObject(sqlScript, null);
 			}

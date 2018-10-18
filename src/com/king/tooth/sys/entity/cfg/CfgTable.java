@@ -314,6 +314,14 @@ public class CfgTable extends BasicEntity implements ITable, IEntityPropAnalysis
 		return resource;
 	}
 	
+	public boolean isUpdateResourceInfo(ISysResource oldResource) {
+		CfgTable oldTable = (CfgTable) oldResource;
+		if(!oldTable.getResourceName().equals(this.getResourceName()) || !oldTable.getRequestMethod().equals(this.getRequestMethod()) || oldTable.getIsEnabled() != this.getIsEnabled()){
+			return true;
+		}
+		return false;
+	}
+	
 	// ---------------------------------------------------------
 	/**
 	 * 单表

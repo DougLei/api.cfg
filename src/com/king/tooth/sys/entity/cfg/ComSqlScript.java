@@ -557,4 +557,12 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 		resource.setRequestMethod(requestMethod);
 		return resource;
 	}
+	
+	public boolean isUpdateResourceInfo(ISysResource oldResource) {
+		ComSqlScript oldSql = (ComSqlScript) oldResource;
+		if(!oldSql.getSqlScriptResourceName().equals(this.getSqlScriptResourceName()) || !oldSql.getRequestMethod().equals(this.getRequestMethod()) || oldSql.getIsEnabled() != this.getIsEnabled()){
+			return true;
+		}
+		return false;
+	}
 }

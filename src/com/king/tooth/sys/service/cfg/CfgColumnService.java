@@ -92,10 +92,9 @@ public class CfgColumnService extends AService{
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
-			column.setOperStatus(CfgColumn.MODIFIED);
-			column.analysisOldColumnInfo(oldColumn, column);
-			
-			modifyTableIsBuildModel(column.getTableId(), null, 0);
+			if(column.analysisOldColumnInfo(oldColumn)){
+				modifyTableIsBuildModel(column.getTableId(), null, 0);
+			}
 			return HibernateUtil.updateObject(column, null);
 		}
 		return operResult;
