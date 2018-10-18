@@ -21,12 +21,12 @@ import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -112,8 +112,8 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysExcelService", new SysExcelService());
 		
 		instanceCache.put("CfgDatabase", new CfgDatabase());
-		instanceCache.put("CfgTable", new ComTabledata());
-		instanceCache.put("CfgColumn", new ComColumndata());
+		instanceCache.put("CfgTable", new CfgTable());
+		instanceCache.put("CfgColumn", new CfgColumn());
 		instanceCache.put("CfgHibernateHbm", new CfgHibernateHbm());
 		instanceCache.put("CfgProject", new ComProject());
 		instanceCache.put("CfgProjectModule", new ComProjectModule());
@@ -151,8 +151,6 @@ public class BuiltinResourceInstance {
 		
 		
 		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉
-		instanceCache.put("ComTabledata", new ComTabledata());
-		instanceCache.put("ComColumndata", new ComColumndata());
 		instanceCache.put("ComProject", new ComProject());
 		instanceCache.put("ComProjectModule", new ComProjectModule());
 		instanceCache.put("ComSqlScript", new ComSqlScript());

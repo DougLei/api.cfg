@@ -24,7 +24,7 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
@@ -349,7 +349,7 @@ public class SqlStatementParserUtil {
 	 * @param sqlScript 
 	 */
 	private static void processProcedureTableParam(ComSqlScriptParameter parameter, ComSqlScript sqlScript) {
-		ComTabledata table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(ComTabledata.class, queryTableDataTypeOfTable, ComTabledata.TABLE_DATATYPE, parameter.getParameterDataType());
+		CfgTable table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgTable.class, queryTableDataTypeOfTable, CfgTable.TABLE_DATATYPE, parameter.getParameterDataType());
 		if(table != null){
 			if(table.getIsEnabled() == 0){
 				throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+parameter.getParameterName()+"]，引用的表类型被禁用，请联系系统管理员");
@@ -366,7 +366,7 @@ public class SqlStatementParserUtil {
 		}
 	}
 	/** 查询表数据类型的对应的表对象hql */
-	private static final String queryTableDataTypeOfTable = "from ComTabledata where type=? and tableName = ?";
+	private static final String queryTableDataTypeOfTable = "from CfgTable where type=? and tableName = ?";
 	
 
 	/**

@@ -23,7 +23,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity, ISysResource{
+public class CfgTable extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity, ISysResource{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -87,7 +87,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	 * 列集合
 	 */
 	@JSONField(serialize = false)
-	private List<ComColumndata> columns;
+	private List<CfgColumn> columns;
 	/**
 	 * 数据库类型
 	 * 目前主要是判断，如果是oracle数据库时，要判断表名长度不能超过30个字符
@@ -95,9 +95,9 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	@JSONField(serialize = false)
 	private String dbType;
 
-	public ComTabledata() {
+	public CfgTable() {
 	}
-	public ComTabledata(String tableName) {
+	public CfgTable(String tableName) {
 		this.tableName = tableName.trim().toUpperCase();
 		this.resourceName = NamingProcessUtil.tableNameTurnClassName(tableName);
 		this.isCreated = 1;
@@ -142,10 +142,10 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	public void setOldTableName(String oldTableName) {
 		this.oldTableName = oldTableName;
 	}
-	public List<ComColumndata> getColumns() {
+	public List<CfgColumn> getColumns() {
 		return columns;
 	}
-	public void setColumns(List<ComColumndata> columns) {
+	public void setColumns(List<CfgColumn> columns) {
 		this.columns = columns;
 	}
 	public void setResourceName(String resourceName) {
@@ -199,15 +199,15 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(10+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(10+7);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 100);
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
 		columns.add(nameColumn);
 		
-		ComColumndata tableNameColumn = new ComColumndata("table_name", DataTypeConstants.STRING, 80);
+		CfgColumn tableNameColumn = new CfgColumn("table_name", DataTypeConstants.STRING, 80);
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			tableNameColumn.setLength(30);
 		}
@@ -216,7 +216,7 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		tableNameColumn.setComments("表名");
 		columns.add(tableNameColumn);
 		
-		ComColumndata oldTableNameColumn = new ComColumndata("old_table_name", DataTypeConstants.STRING, 80);
+		CfgColumn oldTableNameColumn = new CfgColumn("old_table_name", DataTypeConstants.STRING, 80);
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			oldTableNameColumn.setLength(30);
 		}
@@ -224,41 +224,41 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		oldTableNameColumn.setComments("如果修改了表名，这里记录之前的表名");
 		columns.add(oldTableNameColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
+		CfgColumn resourceNameColumn = new CfgColumn("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		columns.add(resourceNameColumn);
 		
-		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 1);
+		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("表类型");
 		typeColumn.setComments("1:单表、2、表类型/游标类型");
 		typeColumn.setDefaultValue("1");
 		columns.add(typeColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 200);
+		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 200);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		columns.add(commentsColumn);
 		
-		ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
+		CfgColumn isCreatedColumn = new CfgColumn("is_created", DataTypeConstants.INTEGER, 1);
 		isCreatedColumn.setName("是否被创建");
 		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
 		isCreatedColumn.setDefaultValue("0");
 		columns.add(isCreatedColumn);
 		
-		ComColumndata isBuildModelColumn = new ComColumndata("is_build_model", DataTypeConstants.INTEGER, 1);
+		CfgColumn isBuildModelColumn = new CfgColumn("is_build_model", DataTypeConstants.INTEGER, 1);
 		isBuildModelColumn.setName("是否建模");
 		isBuildModelColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值改为0，用来标识是否建模，是否需要alter table xxx");
 		isBuildModelColumn.setDefaultValue("0");
 		columns.add(isBuildModelColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
 		
-		ComColumndata requestMethodColumn = new ComColumndata("request_method", DataTypeConstants.STRING, 30);
+		CfgColumn requestMethodColumn = new CfgColumn("request_method", DataTypeConstants.STRING, 30);
 		requestMethodColumn.setName("请求资源的方法");
 		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 		requestMethodColumn.setDefaultValue("all");
@@ -267,8 +267,8 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("表信息表");
 		table.setComments("表信息表");
 		
@@ -277,12 +277,12 @@ public class ComTabledata extends BasicEntity implements ITable, IEntityPropAnal
 	}
 
 	public String toDropTable() {
-		return "COM_TABLEDATA";
+		return "CFG_TABLE";
 	}
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComTabledata";
+		return "CfgTable";
 	}
 	
 	public String validNotNullProps() {

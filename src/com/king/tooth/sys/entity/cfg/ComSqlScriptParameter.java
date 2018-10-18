@@ -265,72 +265,72 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	}
 
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(19);
 		
-		ComColumndata sqlScriptIdColumn = new ComColumndata("sql_script_id", DataTypeConstants.STRING, 32);
+		CfgColumn sqlScriptIdColumn = new CfgColumn("sql_script_id", DataTypeConstants.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
 		sqlScriptIdColumn.setComments("关联的sql脚本id");
 		columns.add(sqlScriptIdColumn);
 		
-		ComColumndata parameterNameColumn = new ComColumndata("parameter_name", DataTypeConstants.STRING, 50);
+		CfgColumn parameterNameColumn = new CfgColumn("parameter_name", DataTypeConstants.STRING, 50);
 		parameterNameColumn.setName("参数名称");
 		parameterNameColumn.setComments("参数名称");
 		columns.add(parameterNameColumn);
 		
-		ComColumndata lengthColumn = new ComColumndata("length", DataTypeConstants.INTEGER, 4);
+		CfgColumn lengthColumn = new CfgColumn("length", DataTypeConstants.INTEGER, 4);
 		lengthColumn.setName("参数的值长度");
 		lengthColumn.setComments("默认值为32");
 		lengthColumn.setDefaultValue("32");
 		columns.add(lengthColumn);
 		
-		ComColumndata precisionColumn = new ComColumndata("precision", DataTypeConstants.INTEGER, 2);
+		CfgColumn precisionColumn = new CfgColumn("precision", DataTypeConstants.INTEGER, 2);
 		precisionColumn.setName("数据精度");
 		precisionColumn.setComments("数据精度:默认为0");
 		precisionColumn.setDefaultValue("0");
 		columns.add(precisionColumn);
 		
-		ComColumndata parameterDataTypeColumn = new ComColumndata("parameter_data_type", DataTypeConstants.STRING, 20);
+		CfgColumn parameterDataTypeColumn = new CfgColumn("parameter_data_type", DataTypeConstants.STRING, 20);
 		parameterDataTypeColumn.setName("参数数据类型");
 		parameterDataTypeColumn.setComments("默认值为string");
 		parameterDataTypeColumn.setDefaultValue(DataTypeConstants.STRING);
 		columns.add(parameterDataTypeColumn);
 		
-		ComColumndata isTableTypeColumn = new ComColumndata("is_table_type", DataTypeConstants.INTEGER, 1);
+		CfgColumn isTableTypeColumn = new CfgColumn("is_table_type", DataTypeConstants.INTEGER, 1);
 		isTableTypeColumn.setName("是否是表类型");
 		isTableTypeColumn.setComments("存储过程专用的属性，因为存储过程的参数，可以使用表类型，默认值为0");
 		isTableTypeColumn.setDefaultValue("0");
 		columns.add(isTableTypeColumn);
 		
-		ComColumndata defaultValueColumn = new ComColumndata("default_value", DataTypeConstants.STRING, 100);
+		CfgColumn defaultValueColumn = new CfgColumn("default_value", DataTypeConstants.STRING, 100);
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
 		columns.add(defaultValueColumn);
 		
-		ComColumndata parameterFromColumn = new ComColumndata("parameter_from", DataTypeConstants.INTEGER, 1);
+		CfgColumn parameterFromColumn = new CfgColumn("parameter_from", DataTypeConstants.INTEGER, 1);
 		parameterFromColumn.setName("参数来源");
 		parameterFromColumn.setComments("参数来源:0.用户输入、1.系统内置，默认值为0");
 		parameterFromColumn.setDefaultValue("0");
 		columns.add(parameterFromColumn);
 		
-		ComColumndata isPlaceholderColumn = new ComColumndata("is_placeholder", DataTypeConstants.INTEGER, 1);
+		CfgColumn isPlaceholderColumn = new CfgColumn("is_placeholder", DataTypeConstants.INTEGER, 1);
 		isPlaceholderColumn.setName("是否是需要占位符的参数");
 		isPlaceholderColumn.setComments("是否是需要占位符的参数:即是否是需要用?代替的，目前全部都是1，默认值是1");
 		isPlaceholderColumn.setDefaultValue("1");
 		columns.add(isPlaceholderColumn);
 		
-		ComColumndata inOutColumn = new ComColumndata("in_out", DataTypeConstants.INTEGER, 1);
+		CfgColumn inOutColumn = new CfgColumn("in_out", DataTypeConstants.INTEGER, 1);
 		inOutColumn.setName("参数的in/out类型");
 		inOutColumn.setComments("参数的in/out类型:in=1、out=2、inOut=3，默认值是1");
 		inOutColumn.setDefaultValue("1");
 		columns.add(inOutColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setName("参数的顺序值");
 		orderCodeColumn.setComments("参数的顺序值");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata remarkColumn = new ComColumndata("remark", DataTypeConstants.STRING, 80);
+		CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 80);
 		remarkColumn.setName("备注");
 		remarkColumn.setComments("备注");
 		columns.add(remarkColumn);
@@ -338,8 +338,8 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("sql脚本参数信息表");
 		table.setComments("sql脚本参数信息表");
 		

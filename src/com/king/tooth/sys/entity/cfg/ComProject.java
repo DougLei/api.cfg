@@ -69,27 +69,27 @@ public class ComProject extends BasicEntity implements ITable, IEntityPropAnalys
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(4+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(4+7);
 		
-		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
+		CfgColumn refDatabaseIdColumn = new CfgColumn("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键：目前系统只支持，一个项目对一个数据库");
 		refDatabaseIdColumn.setIsNullabled(0);
 		columns.add(refDatabaseIdColumn);
 		
-		ComColumndata projNameColumn = new ComColumndata("proj_name", DataTypeConstants.STRING, 200);
+		CfgColumn projNameColumn = new CfgColumn("proj_name", DataTypeConstants.STRING, 200);
 		projNameColumn.setName("项目名称");
 		projNameColumn.setComments("项目名称");
 		columns.add(projNameColumn);
 		
-		ComColumndata projCodeColumn = new ComColumndata("proj_code", DataTypeConstants.STRING, 100);
+		CfgColumn projCodeColumn = new CfgColumn("proj_code", DataTypeConstants.STRING, 100);
 		projCodeColumn.setName("项目编码");
 		projCodeColumn.setComments("项目编码");
 		projCodeColumn.setIsNullabled(0);
 		columns.add(projCodeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 800);
+		CfgColumn descsColumn = new CfgColumn("descs", DataTypeConstants.STRING, 800);
 		descsColumn.setName("项目描述");
 		descsColumn.setComments("项目描述");
 		columns.add(descsColumn);
@@ -97,8 +97,8 @@ public class ComProject extends BasicEntity implements ITable, IEntityPropAnalys
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("项目信息表表");
 		table.setComments("项目信息表表");
 		

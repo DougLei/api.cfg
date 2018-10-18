@@ -21,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComColumndata extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的表主键
 	 */
@@ -138,12 +138,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	@JSONField(serialize = false)
 	private boolean isIgnoreCheckBuiltinColumnName;
 	
-	public ComColumndata() {
+	public CfgColumn() {
 	}
-	public ComColumndata(String columnName, String columnType, Integer length) {
+	public CfgColumn(String columnName, String columnType, Integer length) {
 		this(columnName, columnType, length, 1, 1);
 	}
-	private ComColumndata(String columnName, String columnType, Integer length, Integer isImport, Integer isExport) {
+	private CfgColumn(String columnName, String columnType, Integer length, Integer isImport, Integer isExport) {
 		this.columnName = columnName.trim().toUpperCase();
 		this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		this.columnType = columnType;
@@ -298,8 +298,8 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	 * @param oldColumn
 	 * @param newColumn
 	 */
-	public void analysisOldColumnInfo(ComColumndata oldColumn, ComColumndata newColumn) {
-		if(oldColumn.getOperStatus() == ComColumndata.CREATED){
+	public void analysisOldColumnInfo(CfgColumn oldColumn, CfgColumn newColumn) {
+		if(oldColumn.getOperStatus() == CfgColumn.CREATED){
 			this.oldColumnInfo = new JSONObject(10);
 			// 1.记录 (旧的)列名
 			if(!oldColumn.getColumnName().equals(newColumn.getColumnName())){
@@ -342,132 +342,132 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(22+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(22+7);
 		
-		ComColumndata tableIdColumn = new ComColumndata("table_id", DataTypeConstants.STRING, 32);
+		CfgColumn tableIdColumn = new CfgColumn("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
 		tableIdColumn.setComments("关联的表主键");
 		columns.add(tableIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 60);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 60);
 		nameColumn.setName("显示的汉字名称");
 		nameColumn.setComments("显示的汉字名称");
 		columns.add(nameColumn);
 		
-		ComColumndata columnNameColumn = new ComColumndata("column_name", DataTypeConstants.STRING, 40);
+		CfgColumn columnNameColumn = new CfgColumn("column_name", DataTypeConstants.STRING, 40);
 		columnNameColumn.setName("列名");
 		columnNameColumn.setComments("列名");
 		columnNameColumn.setIsNullabled(0);
 		columns.add(columnNameColumn);
 		
-		ComColumndata propNameColumn = new ComColumndata("prop_name", DataTypeConstants.STRING, 40);
+		CfgColumn propNameColumn = new CfgColumn("prop_name", DataTypeConstants.STRING, 40);
 		propNameColumn.setName("属性名");
 		propNameColumn.setComments("属性名");
 		propNameColumn.setIsNullabled(0);
 		columns.add(propNameColumn);
 		
-		ComColumndata columnTypeColumn = new ComColumndata("column_type", DataTypeConstants.STRING, 10);
+		CfgColumn columnTypeColumn = new CfgColumn("column_type", DataTypeConstants.STRING, 10);
 		columnTypeColumn.setName("字段数据类型");
 		columnTypeColumn.setComments("字段数据类型：默认为string");
 		columnTypeColumn.setDefaultValue(DataTypeConstants.STRING);
 		columnTypeColumn.setIsNullabled(0);
 		columns.add(columnTypeColumn);
 		
-		ComColumndata lengthColumn = new ComColumndata("length", DataTypeConstants.INTEGER, 4);
+		CfgColumn lengthColumn = new CfgColumn("length", DataTypeConstants.INTEGER, 4);
 		lengthColumn.setName("字段长度");
 		lengthColumn.setComments("字段长度:默认长度为32");
 		lengthColumn.setDefaultValue("32");
 		lengthColumn.setIsNullabled(0);
 		columns.add(lengthColumn);
 		
-		ComColumndata precisionColumn = new ComColumndata("precision", DataTypeConstants.INTEGER, 2);
+		CfgColumn precisionColumn = new CfgColumn("precision", DataTypeConstants.INTEGER, 2);
 		precisionColumn.setName("数据精度");
 		precisionColumn.setComments("数据精度:默认为0");
 		precisionColumn.setDefaultValue("0");
 		columns.add(precisionColumn);
 		
-		ComColumndata defaultValueColumn = new ComColumndata("default_value", DataTypeConstants.STRING, 50);
+		CfgColumn defaultValueColumn = new CfgColumn("default_value", DataTypeConstants.STRING, 50);
 		defaultValueColumn.setName("默认值");
 		defaultValueColumn.setComments("默认值");
 		columns.add(defaultValueColumn);
 		
-		ComColumndata isPrimaryKeyColumn = new ComColumndata("is_primary_key", DataTypeConstants.INTEGER, 1);
+		CfgColumn isPrimaryKeyColumn = new CfgColumn("is_primary_key", DataTypeConstants.INTEGER, 1);
 		isPrimaryKeyColumn.setName("是否主键");
 		isPrimaryKeyColumn.setComments("是否主键:默认为0");
 		isPrimaryKeyColumn.setDefaultValue("0");
 		columns.add(isPrimaryKeyColumn);
 		
-		ComColumndata isUniqueColumn = new ComColumndata("is_unique", DataTypeConstants.INTEGER, 1);
+		CfgColumn isUniqueColumn = new CfgColumn("is_unique", DataTypeConstants.INTEGER, 1);
 		isUniqueColumn.setName("是否唯一");
 		isUniqueColumn.setComments("是否唯一:默认为0");
 		isUniqueColumn.setDefaultValue("0");
 		columns.add(isUniqueColumn);
 		
-		ComColumndata isNullabledColumn = new ComColumndata("is_nullabled", DataTypeConstants.INTEGER, 1);
+		CfgColumn isNullabledColumn = new CfgColumn("is_nullabled", DataTypeConstants.INTEGER, 1);
 		isNullabledColumn.setName("是否可为空");
 		isNullabledColumn.setComments("是否可为空:默认为1");
 		isNullabledColumn.setDefaultValue("1");
 		columns.add(isNullabledColumn);
 		
-		ComColumndata isDataDictionaryColumn = new ComColumndata("is_data_dictionary", DataTypeConstants.INTEGER, 1);
+		CfgColumn isDataDictionaryColumn = new CfgColumn("is_data_dictionary", DataTypeConstants.INTEGER, 1);
 		isDataDictionaryColumn.setName("是否数据字典");
 		isDataDictionaryColumn.setComments("是否数据字典:默认为0");
 		isDataDictionaryColumn.setDefaultValue("0");
 		columns.add(isDataDictionaryColumn);
 		
-		ComColumndata dataDictionaryCodeColumn = new ComColumndata("data_dictionary_code", DataTypeConstants.STRING, 50);
+		CfgColumn dataDictionaryCodeColumn = new CfgColumn("data_dictionary_code", DataTypeConstants.STRING, 50);
 		dataDictionaryCodeColumn.setName("数据字典编码");
 		dataDictionaryCodeColumn.setComments("数据字典编码");
 		columns.add(dataDictionaryCodeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
 		orderCodeColumn.setDefaultValue("0");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效:默认为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 650);
+		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 650);
 		commentsColumn.setName("注释");
 		commentsColumn.setComments("注释");
 		columns.add(commentsColumn);
 		
-		ComColumndata operStatusColumn = new ComColumndata("oper_status", DataTypeConstants.INTEGER, 1);
+		CfgColumn operStatusColumn = new CfgColumn("oper_status", DataTypeConstants.INTEGER, 1);
 		operStatusColumn.setName("操作状态");
 		operStatusColumn.setComments("0:待创建、1:已创建、2:被删除、3:被修改，默认为0");
 		operStatusColumn.setDefaultValue("0");
 		columns.add(operStatusColumn);
 
-		ComColumndata oldInfoJsonColumn = new ComColumndata("old_info_json", DataTypeConstants.STRING, 1000);
+		CfgColumn oldInfoJsonColumn = new CfgColumn("old_info_json", DataTypeConstants.STRING, 1000);
 		oldInfoJsonColumn.setName("旧的信息json串");
 		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
 		columns.add(oldInfoJsonColumn);
 		
-		ComColumndata isImportColumn = new ComColumndata("is_import", DataTypeConstants.INTEGER, 1);
+		CfgColumn isImportColumn = new CfgColumn("is_import", DataTypeConstants.INTEGER, 1);
 		isImportColumn.setName("是否导入");
 		isImportColumn.setComments("默认为1，标识都导入");
 		isImportColumn.setDefaultValue("1");
 		columns.add(isImportColumn);
 		
-		ComColumndata importOrderCodeColumn = new ComColumndata("import_order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn importOrderCodeColumn = new CfgColumn("import_order_code", DataTypeConstants.INTEGER, 4);
 		importOrderCodeColumn.setName("导入排序");
 		importOrderCodeColumn.setComments("默认和order_code的值一致");
 		importOrderCodeColumn.setDefaultValue("0");
 		columns.add(importOrderCodeColumn);
 		
-		ComColumndata isExportColumn = new ComColumndata("is_export", DataTypeConstants.INTEGER, 1);
+		CfgColumn isExportColumn = new CfgColumn("is_export", DataTypeConstants.INTEGER, 1);
 		isExportColumn.setName("是否导出");
 		isExportColumn.setComments("默认为1，标识都导出");
 		isExportColumn.setDefaultValue("1");
 		columns.add(isExportColumn);
 		
-		ComColumndata exportOrderCodeColumn = new ComColumndata("export_order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn exportOrderCodeColumn = new CfgColumn("export_order_code", DataTypeConstants.INTEGER, 4);
 		exportOrderCodeColumn.setName("导出排序");
 		exportOrderCodeColumn.setComments("默认和order_code的值一致");
 		exportOrderCodeColumn.setDefaultValue("0");
@@ -476,8 +476,8 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("字段数据信息资源对象表");
 		table.setComments("字段数据信息资源对象表");
 		
@@ -486,12 +486,12 @@ public class ComColumndata extends BasicEntity implements ITable, IEntity, IEnti
 	}
 
 	public String toDropTable() {
-		return "COM_COLUMNDATA";
+		return "CFG_COLUMN";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComColumndata";
+		return "CfgColumn";
 	}
 	
 	public String validNotNullProps() {

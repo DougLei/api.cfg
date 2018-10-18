@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 职务资源对象
@@ -64,28 +64,28 @@ public class SysPosition extends BasicEntity implements ITable, IEntity{
 	}
 
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(11);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(11);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 60);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 60);
 		nameColumn.setName("职务名称");
 		nameColumn.setComments("职务名称");
 		nameColumn.setOrderCode(1);
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 32);
+		CfgColumn codeColumn = new CfgColumn("code", DataTypeConstants.STRING, 32);
 		codeColumn.setName("职务编码");
 		codeColumn.setComments("职务编码");
 		codeColumn.setOrderCode(2);
 		columns.add(codeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 100);
+		CfgColumn descsColumn = new CfgColumn("descs", DataTypeConstants.STRING, 100);
 		descsColumn.setName("职务描述");
 		descsColumn.setComments("职务描述");
 		descsColumn.setOrderCode(3);
 		columns.add(descsColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 3);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(4);
@@ -94,8 +94,8 @@ public class SysPosition extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("职务表");
 		table.setComments("职务表");
 		

@@ -11,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.service.cfg.CfgColumnService;
 import com.king.tooth.util.StrUtils;
 
@@ -29,10 +29,10 @@ public class CfgColumnController extends AController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
-		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class, true);
+		List<CfgColumn> columns = getDataInstanceList(ijson, CfgColumn.class, true);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
-			for (ComColumndata column : columns) {
+			for (CfgColumn column : columns) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).saveColumn(column);
 				if(resultObject instanceof String){
 					break;
@@ -50,10 +50,10 @@ public class CfgColumnController extends AController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
-		List<ComColumndata> columns = getDataInstanceList(ijson, ComColumndata.class, true);
+		List<CfgColumn> columns = getDataInstanceList(ijson, CfgColumn.class, true);
 		analysisResourceProp(columns);
 		if(analysisResult == null){
-			for (ComColumndata column : columns) {
+			for (CfgColumn column : columns) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).updateColumn(column);
 				if(resultObject instanceof String){
 					break;

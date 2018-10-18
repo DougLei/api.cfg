@@ -11,8 +11,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 文件表
@@ -216,94 +216,94 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(17+7);
 		
-		ComColumndata refDataIdColumn = new ComColumndata("ref_data_id", DataTypeConstants.STRING, 32);
+		CfgColumn refDataIdColumn = new CfgColumn("ref_data_id", DataTypeConstants.STRING, 32);
 		refDataIdColumn.setName("关联的数据主键值");
 		refDataIdColumn.setComments("关联的数据主键值");
 		columns.add(refDataIdColumn);
 		
-		ComColumndata actNameColumn = new ComColumndata("act_name", DataTypeConstants.STRING, 300);
+		CfgColumn actNameColumn = new CfgColumn("act_name", DataTypeConstants.STRING, 300);
 		actNameColumn.setName("文件的实际名");
 		actNameColumn.setComments("文件的实际名：即上传时的文件名称");
 		columns.add(actNameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 32);
+		CfgColumn codeColumn = new CfgColumn("code", DataTypeConstants.STRING, 32);
 		codeColumn.setName("文件编码");
 		codeColumn.setComments("文件编码：在上传的时候，修改后的文件名");
 		columns.add(codeColumn);
 		
-		ComColumndata sizesColumn = new ComColumndata("sizes", DataTypeConstants.STRING, 80);
+		CfgColumn sizesColumn = new CfgColumn("sizes", DataTypeConstants.STRING, 80);
 		sizesColumn.setName("文件大小");
 		sizesColumn.setComments("文件大小，单位为b");
 		columns.add(sizesColumn);
 		
-		ComColumndata suffixColumn = new ComColumndata("suffix", DataTypeConstants.STRING, 10);
+		CfgColumn suffixColumn = new CfgColumn("suffix", DataTypeConstants.STRING, 10);
 		suffixColumn.setName("文件后缀");
 		suffixColumn.setComments("文件后缀");
 		columns.add(suffixColumn);
 		
-		ComColumndata savePathColumn = new ComColumndata("save_path", DataTypeConstants.STRING, 1000);
+		CfgColumn savePathColumn = new CfgColumn("save_path", DataTypeConstants.STRING, 1000);
 		savePathColumn.setName("文件的存储路径");
 		savePathColumn.setComments("文件的存储路径：存储文件的路径");
 		columns.add(savePathColumn);
 		
-		ComColumndata saveTypeColumn = new ComColumndata("save_type", DataTypeConstants.STRING, 10);
+		CfgColumn saveTypeColumn = new CfgColumn("save_type", DataTypeConstants.STRING, 10);
 		saveTypeColumn.setName("文件的存储方式");
 		saveTypeColumn.setComments("文件的存储方式：db:存储在数据库，service:存储在系统服务器上...");
 		saveTypeColumn.setDefaultValue(SAVE_TYPE_SERVICE);
 		columns.add(saveTypeColumn);
 		
-		ComColumndata contentColumn = new ComColumndata("content", DataTypeConstants.BLOB, 0);
+		CfgColumn contentColumn = new CfgColumn("content", DataTypeConstants.BLOB, 0);
 		contentColumn.setName("文件内容");
 		contentColumn.setComments("文件内容");
 		columns.add(contentColumn);
 		
-		ComColumndata secretLevelColumn = new ComColumndata("secret_level", DataTypeConstants.INTEGER, 1);
+		CfgColumn secretLevelColumn = new CfgColumn("secret_level", DataTypeConstants.INTEGER, 1);
 		secretLevelColumn.setName("文件的密级");
 		secretLevelColumn.setComments("文件的密级");
 		columns.add(secretLevelColumn);
 		
-		ComColumndata downloadCountColumn = new ComColumndata("download_count", DataTypeConstants.INTEGER, 10);
+		CfgColumn downloadCountColumn = new CfgColumn("download_count", DataTypeConstants.INTEGER, 10);
 		downloadCountColumn.setName("文件的下载次数");
 		downloadCountColumn.setComments("文件的下载次数");
 		downloadCountColumn.setDefaultValue("0");
 		columns.add(downloadCountColumn);
 		
-		ComColumndata batchColumn = new ComColumndata("batch", DataTypeConstants.STRING, 32);
+		CfgColumn batchColumn = new CfgColumn("batch", DataTypeConstants.STRING, 32);
 		batchColumn.setName("批次");
 		batchColumn.setComments("标识同一次上传的文件");
 		columns.add(batchColumn);
 		
-		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 4);
+		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 4);
 		typeColumn.setName("文件类型");
 		typeColumn.setComments("由用户自定义");
 		columns.add(typeColumn);
 		
-		ComColumndata buildInTypeColumn = new ComColumndata("build_in_type", DataTypeConstants.INTEGER, 2);
+		CfgColumn buildInTypeColumn = new CfgColumn("build_in_type", DataTypeConstants.INTEGER, 2);
 		buildInTypeColumn.setName("内置文件类型");
 		buildInTypeColumn.setComments("由开发人员自定义，默认值为1，1:普通文件、2:导入文件、3:导入模版文件、4:导出文件");
 		buildInTypeColumn.setDefaultValue(BUILD_IN_TYPE_NORMAL+"");
 		columns.add(buildInTypeColumn);
 		
-		ComColumndata isImportColumn = new ComColumndata("is_import", DataTypeConstants.INTEGER, 1);
+		CfgColumn isImportColumn = new CfgColumn("is_import", DataTypeConstants.INTEGER, 1);
 		isImportColumn.setName("是否是导入文件");
 		isImportColumn.setComments("默认值为0");
 		isImportColumn.setDefaultValue("0");
 		columns.add(isImportColumn);
 		
-		ComColumndata remarkColumn = new ComColumndata("remark", DataTypeConstants.STRING, 2000);
+		CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 2000);
 		remarkColumn.setName("备注");
 		remarkColumn.setComments("备注");
 		columns.add(remarkColumn);
 		
-		ComColumndata backup01Column = new ComColumndata("backup01", DataTypeConstants.STRING, 1000);
+		CfgColumn backup01Column = new CfgColumn("backup01", DataTypeConstants.STRING, 1000);
 		backup01Column.setName("备用字段01");
 		backup01Column.setComments("备用字段01");
 		columns.add(backup01Column);
 		
-		ComColumndata backup02Column = new ComColumndata("backup02", DataTypeConstants.STRING, 1000);
+		CfgColumn backup02Column = new CfgColumn("backup02", DataTypeConstants.STRING, 1000);
 		backup02Column.setName("备用字段02");
 		backup02Column.setComments("备用字段02");
 		columns.add(backup02Column);
@@ -311,8 +311,8 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("文件表");
 		table.setComments("文件表");
 		

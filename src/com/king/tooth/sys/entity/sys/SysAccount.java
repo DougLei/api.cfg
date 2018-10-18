@@ -11,8 +11,8 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -156,52 +156,52 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(16);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(16);
 		
-		ComColumndata loginNameColumn = new ComColumndata("login_name", DataTypeConstants.STRING, 30);
+		CfgColumn loginNameColumn = new CfgColumn("login_name", DataTypeConstants.STRING, 30);
 		loginNameColumn.setName("登录名");
 		loginNameColumn.setComments("登录名");
 		columns.add(loginNameColumn);
 		
-		ComColumndata loginPwdColumn = new ComColumndata("login_pwd", DataTypeConstants.STRING, 32);
+		CfgColumn loginPwdColumn = new CfgColumn("login_pwd", DataTypeConstants.STRING, 32);
 		loginPwdColumn.setName("登录密码");
 		loginPwdColumn.setComments("登录密码");
 		columns.add(loginPwdColumn);
 		
-		ComColumndata loginPwdKeyColumn = new ComColumndata("login_pwd_key", DataTypeConstants.STRING, 32);
+		CfgColumn loginPwdKeyColumn = new CfgColumn("login_pwd_key", DataTypeConstants.STRING, 32);
 		loginPwdKeyColumn.setName("登录密码的密钥");
 		loginPwdKeyColumn.setComments("登录密码的密钥：和loginPwd结合，得到每个账户独有的密码");
 		columns.add(loginPwdKeyColumn);
 		
-		ComColumndata telColumn = new ComColumndata("tel", DataTypeConstants.STRING, 20);
+		CfgColumn telColumn = new CfgColumn("tel", DataTypeConstants.STRING, 20);
 		telColumn.setName("手机号");
 		telColumn.setComments("手机号");
 		columns.add(telColumn);
 		
-		ComColumndata emailColumn = new ComColumndata("email", DataTypeConstants.STRING, 80);
+		CfgColumn emailColumn = new CfgColumn("email", DataTypeConstants.STRING, 80);
 		emailColumn.setName("邮箱");
 		emailColumn.setComments("邮箱");
 		columns.add(emailColumn);
 
-		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 1);
+		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("账户类型");
 		typeColumn.setComments("账户类型:1.管理员、2.普通账户、3.平台开发账户(配置系统使用)，默认值是：2");
 		typeColumn.setDefaultValue("2");
 		columns.add(typeColumn);
 		
-		ComColumndata statusColumn = new ComColumndata("status", DataTypeConstants.INTEGER, 1);
+		CfgColumn statusColumn = new CfgColumn("status", DataTypeConstants.INTEGER, 1);
 		statusColumn.setName("账户状态");
 		statusColumn.setComments("账户状态:1.启用、2.禁用，默认值是：1");
 		statusColumn.setDefaultValue("1");
 		columns.add(statusColumn);
 		
-		ComColumndata validDateColumn = new ComColumndata("valid_date", DataTypeConstants.DATE, 0);
+		CfgColumn validDateColumn = new CfgColumn("valid_date", DataTypeConstants.DATE, 0);
 		validDateColumn.setName("账户有效期限");
 		validDateColumn.setComments("账户有效期限");
 		columns.add(validDateColumn);
 		
-		ComColumndata isDeleteColumn = new ComColumndata("is_delete", DataTypeConstants.INTEGER, 1);
+		CfgColumn isDeleteColumn = new CfgColumn("is_delete", DataTypeConstants.INTEGER, 1);
 		isDeleteColumn.setName("是否被删除");
 		isDeleteColumn.setComments("逻辑删除，默认值为0");
 		isDeleteColumn.setDefaultValue("0");
@@ -210,8 +210,8 @@ public class SysAccount extends BasicEntity implements ITable, IEntity, IEntityP
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("账户表");
 		table.setComments("账户表");
 		

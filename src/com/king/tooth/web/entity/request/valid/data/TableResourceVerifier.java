@@ -9,7 +9,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
@@ -97,9 +97,9 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName){
 		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
-		List<ComColumndata> columns = itable.getColumnList();
+		List<CfgColumn> columns = itable.getColumnList();
 		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
-		for (ComColumndata column : columns) {
+		for (CfgColumn column : columns) {
 			metadataInfos.add(new TableResourceMetadataInfo(
 					column.getColumnName(),
 					column.getColumnType(),

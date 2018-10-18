@@ -24,12 +24,12 @@ import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -105,8 +105,8 @@ public class InitSystemService extends AService{
 	 * 获取系统涉及到的所有表
 	 * @return
 	 */
-	private List<ComTabledata> getAllTables(){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(50);
+	private List<CfgTable> getAllTables(){
+		List<CfgTable> tables = new ArrayList<CfgTable>(50);
 		tables.add(new CfgDatabase().toCreateTable());
 		tables.add(new ComProject().toCreateTable());
 		tables.add(new ComProjectModule().toCreateTable());
@@ -121,8 +121,8 @@ public class InitSystemService extends AService{
 		tables.add(new SysOperSqlLog().toCreateTable());
 		tables.add(new SysAccountOnlineStatus().toCreateTable());
 		tables.add(new SysUser().toCreateTable());
-		tables.add(new ComColumndata().toCreateTable());
-		tables.add(new ComTabledata().toCreateTable());
+		tables.add(new CfgColumn().toCreateTable());
+		tables.add(new CfgTable().toCreateTable());
 		tables.add(new ComSqlScriptParameter().toCreateTable());
 		tables.add(new CfgProjectTableLinks().toCreateTable());
 		tables.add(new SysRole().toCreateTable());
@@ -173,10 +173,10 @@ public class InitSystemService extends AService{
 	 * @return 
 	 */
 	private void createTables(){
-		List<ComTabledata> tables = getAllTables();
-		List<ComTabledata> tmpTables = new ArrayList<ComTabledata>();
+		List<CfgTable> tables = getAllTables();
+		List<CfgTable> tmpTables = new ArrayList<CfgTable>();
 		DBTableHandler dbHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		for (ComTabledata table : tables) {
+		for (CfgTable table : tables) {
 			tmpTables.add(table);
 		}
 		dbHandler.batchDropTable(tmpTables);// 尝试先删除表
@@ -189,9 +189,9 @@ public class InitSystemService extends AService{
 	 * 清除表信息
 	 * @param tables
 	 */
-	private void clearTables(List<ComTabledata> tables){
+	private void clearTables(List<CfgTable> tables){
 		if(tables != null && tables.size() > 0){
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				table.clear();
 			}
 			tables.clear();
@@ -202,9 +202,9 @@ public class InitSystemService extends AService{
 	 * 根据表创建hbm文件，并将其加入到SessionFactory中
 	 */
 	private void insertHbmContentsToSessionFactory() {
-		List<ComTabledata> tables = getAllTables();
+		List<CfgTable> tables = getAllTables();
 		List<String> hbmContents = new ArrayList<String>(tables.size());
-		for (ComTabledata table : tables) {
+		for (CfgTable table : tables) {
 			hbmContents.add(HibernateHbmUtil.createHbmMappingContent(table, true));// 记录hbm内容
 		}
 		// 将hbmContents加入到hibernate sessionFactory中
@@ -282,10 +282,10 @@ public class InitSystemService extends AService{
 	 * @param adminAccountId 
 	 */
 	private void insertHbm(String adminAccountId) {
-		List<ComTabledata> tables = getAllTables();
+		List<CfgTable> tables = getAllTables();
 		CfgHibernateHbm hbm;
 		SysResource resource;
-		for (ComTabledata table : tables) {
+		for (CfgTable table : tables) {
 			// 创建对应的hbm文件，并保存
 			hbm = new CfgHibernateHbm(table);
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
@@ -436,7 +436,7 @@ public class InitSystemService extends AService{
 	 * 创建hbm对象
 	 * @param table
 	 */
-	private void createHbm(ComTabledata table){
+	private void createHbm(CfgTable table){
 		// 插入hbm
 		CfgHibernateHbm hbm = new CfgHibernateHbm(table); 
 		hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());

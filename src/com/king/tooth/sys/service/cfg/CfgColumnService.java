@@ -3,8 +3,8 @@ package com.king.tooth.sys.service.cfg;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -21,11 +21,11 @@ public class CfgColumnService extends AService{
 	 * @param project
 	 * @return operResult
 	 */
-	private String validColumnRefTableIsExists(ComColumndata column) {
+	private String validColumnRefTableIsExists(CfgColumn column) {
 		if(StrUtils.isEmpty(column.getTableId())){
 			return "关联的表id不能为空";
 		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where "+ResourcePropNameConstants.ID+" = ?", column.getTableId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgTable where "+ResourcePropNameConstants.ID+" = ?", column.getTableId());
 		if(count != 1){
 			return "关联的id=["+column.getTableId()+"]的表信息不存在";
 		}
@@ -37,8 +37,8 @@ public class CfgColumnService extends AService{
 	 * @param project
 	 * @return operResult
 	 */
-	private String validColumnNameIsExists(ComColumndata column) {
-		String hql = "select count("+ResourcePropNameConstants.ID+") from ComColumndata where columnName = ? and tableId = ? and operStatus != "+ComColumndata.DELETED;
+	private String validColumnNameIsExists(CfgColumn column) {
+		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgColumn where columnName = ? and tableId = ? and operStatus != "+CfgColumn.DELETED;
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, column.getColumnName(), column.getTableId());
 		if(count > 0){
 			return "列名为["+column.getColumnName()+"]的信息已存在";
@@ -51,7 +51,7 @@ public class CfgColumnService extends AService{
 	 * @param column
 	 * @return
 	 */
-	public Object saveColumn(ComColumndata column) {
+	public Object saveColumn(CfgColumn column) {
 		String operResult = validColumnRefTableIsExists(column);
 		if(operResult == null){
 			operResult = validColumnNameIsExists(column);
@@ -68,13 +68,13 @@ public class CfgColumnService extends AService{
 	 * @param column
 	 * @return
 	 */
-	public Object updateColumn(ComColumndata column) {
-		ComColumndata oldColumn = getObjectById(column.getId(), ComColumndata.class);
+	public Object updateColumn(CfgColumn column) {
+		CfgColumn oldColumn = getObjectById(column.getId(), CfgColumn.class);
 		if(oldColumn == null){
 			return "没有找到id为["+column.getId()+"]的列对象信息";
 		}
 		
-		ComTabledata table = getObjectById(column.getTableId(), ComTabledata.class);
+		CfgTable table = getObjectById(column.getTableId(), CfgTable.class);
 		if(table.getIsCreated() == 1){// 表已经建模，不能修改列的类型，以及缩小列的长度
 			if(!oldColumn.getColumnType().equals(column.getColumnType())){
 				return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]";
@@ -92,7 +92,7 @@ public class CfgColumnService extends AService{
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
-			column.setOperStatus(ComColumndata.MODIFIED);
+			column.setOperStatus(CfgColumn.MODIFIED);
 			column.analysisOldColumnInfo(oldColumn, column);
 			
 			modifyTableIsBuildModel(column.getTableId(), null, 0);
@@ -109,13 +109,13 @@ public class CfgColumnService extends AService{
 	public String deleteColumn(String columnIds) {
 		String[] idArr = columnIds.split(",");
 		
-		ComColumndata column = getObjectById(idArr[0], ComColumndata.class);
-		ComTabledata table = getObjectById(column.getTableId(), ComTabledata.class);
+		CfgColumn column = getObjectById(idArr[0], CfgColumn.class);
+		CfgTable table = getObjectById(column.getTableId(), CfgTable.class);
 		
 		if(table.getIsCreated() == 0){// 表还没有建模，这里就直接删除
-			deleteDataById("ComColumndata", columnIds);
+			deleteDataById("CfgColumn", columnIds);
 		}else if(table.getIsCreated() == 1){// 表已经建模，就修改operStatus的值为2
-			StringBuilder hql = new StringBuilder("update ComColumndata set operStatus="+ComColumndata.DELETED+" where id ");
+			StringBuilder hql = new StringBuilder("update CfgColumn set operStatus="+CfgColumn.DELETED+" where id ");
 			if(idArr.length ==1){
 				hql.append("= '").append(idArr[0]).append("'");
 			}else if(idArr.length > 1){
@@ -146,8 +146,8 @@ public class CfgColumnService extends AService{
 	 */
 	private void modifyTableIsBuildModel(String tableId, String columnId, Integer isBuildModel){
 		if(StrUtils.isEmpty(tableId)){
-			tableId = getObjectById(columnId, ComColumndata.class).getTableId();
+			tableId = getObjectById(columnId, CfgColumn.class).getTableId();
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update ComTabledata set isBuildModel = "+isBuildModel+" where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgTable set isBuildModel = "+isBuildModel+" where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
 	}
 }

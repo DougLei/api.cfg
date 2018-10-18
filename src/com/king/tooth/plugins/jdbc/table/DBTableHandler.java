@@ -11,8 +11,8 @@ import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.impl.ATableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ReflectUtil;
@@ -65,7 +65,7 @@ public class DBTableHandler {
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @return
 	 */
-	public void createTable(ComTabledata tabledata, boolean isNeedInitBasicColumns){
+	public void createTable(CfgTable tabledata, boolean isNeedInitBasicColumns){
 		String createTableSql = getCreateTableSql(tabledata, isNeedInitBasicColumns);
 		if(StrUtils.notEmpty(createTableSql)){
 			executeDDL(createTableSql);
@@ -77,7 +77,7 @@ public class DBTableHandler {
 	 * @param tabledatas
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 */
-	public void batchCreateTable(List<ComTabledata> tabledatas, boolean isNeedInitBasicColumns){
+	public void batchCreateTable(List<CfgTable> tabledatas, boolean isNeedInitBasicColumns){
 		String createTableSql = getBatchCreateTableSql(tabledatas, isNeedInitBasicColumns);
 		if(StrUtils.notEmpty(createTableSql)){
 			String[] ddlSqlArr = createTableSql.split(";");
@@ -91,7 +91,7 @@ public class DBTableHandler {
 	 * @param table
 	 * @return 返回被删除表的资源名
 	 */
-	public String dropTable(ComTabledata table){
+	public String dropTable(CfgTable table){
 		String dropTableSql = getDropTableSql(table);
 		if(StrUtils.notEmpty(dropTableSql)){
 			executeDDL(dropTableSql);
@@ -104,7 +104,7 @@ public class DBTableHandler {
 	 * @param tables
 	 * @return 返回被删除表的资源名，多个用,分割
 	 */
-	public String batchDropTable(List<ComTabledata> tables){
+	public String batchDropTable(List<CfgTable> tables){
 		String dropTableSql = getBatchDropTableSql(tables);
 		if(StrUtils.notEmpty(dropTableSql)){
 			String[] ddlSqlArr = dropTableSql.split(";");
@@ -112,7 +112,7 @@ public class DBTableHandler {
 		}
 		
 		StringBuilder deleteTableResourceNames = new StringBuilder();
-		for (ComTabledata table : tables) {
+		for (CfgTable table : tables) {
 			deleteTableResourceNames.append(table.getResourceName()).append(",");
 		}
 		deleteTableResourceNames.setLength(deleteTableResourceNames.length()-1);
@@ -140,7 +140,7 @@ public class DBTableHandler {
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @return
 	 */
-	private String getCreateTableSql(ComTabledata table, boolean isNeedInitBasicColumns){
+	private String getCreateTableSql(CfgTable table, boolean isNeedInitBasicColumns){
 		if(tableOper == null){
 			Log4jUtil.debug("[DBTableHandler.createSql]操作表的对象ATableOper tableOper为null");
 			return null;
@@ -158,14 +158,14 @@ public class DBTableHandler {
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @return
 	 */
-	private String getBatchCreateTableSql(List<ComTabledata> tables, boolean isNeedInitBasicColumns){
+	private String getBatchCreateTableSql(List<CfgTable> tables, boolean isNeedInitBasicColumns){
 		if(tableOper == null){
 			Log4jUtil.debug("[DBTableHandler.createSql]操作表的对象ATableOper tableOper为null");
 			return null;
 		}
 		if(tables != null && tables.size() > 0){
 			StringBuilder createTableSql = new StringBuilder();
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				createTableSql.append(getCreateTableSql(table, isNeedInitBasicColumns)).append(";");
 			}
 			createTableSql.setLength(createTableSql.length() - 1);
@@ -180,8 +180,8 @@ public class DBTableHandler {
 	 * @param table
 	 * @return
 	 */
-	public String getDropTableSql(ComTabledata table){
-		List<ComTabledata> tables = new ArrayList<ComTabledata>(1);
+	public String getDropTableSql(CfgTable table){
+		List<CfgTable> tables = new ArrayList<CfgTable>(1);
 		tables.add(table);
 		
 		List<String> tableNames = filterTableIsExists(tables);
@@ -198,7 +198,7 @@ public class DBTableHandler {
 	 * @param tables
 	 * @return
 	 */
-	public String getBatchDropTableSql(List<ComTabledata> tables){
+	public String getBatchDropTableSql(List<CfgTable> tables){
 		if(tables != null && tables.size() > 0){
 			StringBuilder dropTableSql = new StringBuilder();
 			List<String> tableNames = filterTableIsExists(tables);
@@ -215,11 +215,11 @@ public class DBTableHandler {
 	}
 	/**
 	 * 筛选出存在的表
-	 * <p>目前这个方法配合getDropTableSql(List<ComTabledata> tables)方法使用，防止删除不存在的表</p>
+	 * <p>目前这个方法配合getDropTableSql(List<CfgTable> tables)方法使用，防止删除不存在的表</p>
 	 * @param tables
 	 * @return tableNames
 	 */
-	private List<String> filterTableIsExists(List<ComTabledata> tables) {
+	private List<String> filterTableIsExists(List<CfgTable> tables) {
 		int size = tables.size();
 		String[] tableNameArr = new String[size];
 		for(int i=0;i<size;i++){
@@ -294,15 +294,15 @@ public class DBTableHandler {
 	 * @param columns
 	 * @param removeDeleteColumn 是否从集合中移除被删除的列
 	 */
-	public void modifyColumn(String tableName, List<ComColumndata> columns, boolean removeDeleteColumn){
-		ComColumndata column;
+	public void modifyColumn(String tableName, List<CfgColumn> columns, boolean removeDeleteColumn){
+		CfgColumn column;
 		for (int i = 0; i < columns.size(); i++) {
 			column = columns.get(i);
-			if(column.getOperStatus() == ComColumndata.UN_CREATED){
+			if(column.getOperStatus() == CfgColumn.UN_CREATED){
 				tableOper.installCreateColumnSql(tableName, column);
-			}else if(column.getOperStatus() == ComColumndata.MODIFIED){
+			}else if(column.getOperStatus() == CfgColumn.MODIFIED){
 				tableOper.installModifyColumnSql(tableName, column);
-			}else if(column.getOperStatus() == ComColumndata.DELETED){
+			}else if(column.getOperStatus() == CfgColumn.DELETED){
 				tableOper.installDeleteColumnSql(tableName, column);
 				if(removeDeleteColumn){
 					columns.remove(i);
@@ -323,7 +323,7 @@ public class DBTableHandler {
 	 * 创建表类型对象
 	 * @param table
 	 */
-	public void createTableDataType(ComTabledata table) {
+	public void createTableDataType(CfgTable table) {
 		String createTableDataTypeSql = getCreateTableDataTypeSql(table);
 		if(StrUtils.notEmpty(createTableDataTypeSql)){
 			String[] sqlArr = {createTableDataTypeSql};
@@ -336,7 +336,7 @@ public class DBTableHandler {
 	 * @param table
 	 * @return
 	 */
-	private String getCreateTableDataTypeSql(ComTabledata table){
+	private String getCreateTableDataTypeSql(CfgTable table){
 		if(tableOper == null){
 			Log4jUtil.debug("[DBTableHandler.getCreateTableDataTypeSql]操作表的对象ATableOper tableOper为null");
 			return null;
@@ -351,7 +351,7 @@ public class DBTableHandler {
 	 * 删除表类型对象
 	 * @param table
 	 */
-	public void dropTableDataType(ComTabledata table) {
+	public void dropTableDataType(CfgTable table) {
 		String dropTableDataTypeSql = getDropTableDataTypeSql(table);
 		if(StrUtils.notEmpty(dropTableDataTypeSql)){
 			String[] sqlArr = {dropTableDataTypeSql};
@@ -364,7 +364,7 @@ public class DBTableHandler {
 	 * @param table
 	 * @return
 	 */
-	private String getDropTableDataTypeSql(ComTabledata table){
+	private String getDropTableDataTypeSql(CfgTable table){
 		if(tableOper == null){
 			Log4jUtil.debug("[DBTableHandler.getDropTableDataTypeSql]操作表的对象ATableOper tableOper为null");
 			return null;

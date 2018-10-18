@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 操作sql日志信息表
@@ -66,28 +66,28 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(13);
 		
-		ComColumndata reqLogIdColumn = new ComColumndata("req_log_id", DataTypeConstants.STRING, 32);
+		CfgColumn reqLogIdColumn = new CfgColumn("req_log_id", DataTypeConstants.STRING, 32);
 		reqLogIdColumn.setName("关联的请求日志主键");
 		reqLogIdColumn.setComments("关联的请求日志主键");
 		reqLogIdColumn.setOrderCode(1);
 		columns.add(reqLogIdColumn);
 		
-		ComColumndata sqlScriptColumn = new ComColumndata("sql_script", DataTypeConstants.STRING, 9999);
+		CfgColumn sqlScriptColumn = new CfgColumn("sql_script", DataTypeConstants.STRING, 9999);
 		sqlScriptColumn.setName("操作的sql语句");
 		sqlScriptColumn.setComments("操作的sql语句");
 		sqlScriptColumn.setOrderCode(2);
 		columns.add(sqlScriptColumn);
 		
-		ComColumndata sqlParamsColumn = new ComColumndata("sql_params", DataTypeConstants.STRING, 9999);
+		CfgColumn sqlParamsColumn = new CfgColumn("sql_params", DataTypeConstants.STRING, 9999);
 		sqlParamsColumn.setName("对应的参数");
 		sqlParamsColumn.setComments("对应的参数");
 		sqlParamsColumn.setOrderCode(3);
 		columns.add(sqlParamsColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 2);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 2);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("发出sql的顺序");
 		orderCodeColumn.setOrderCode(4);
@@ -96,8 +96,8 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("操作sql日志信息表");
 		table.setComments("操作sql日志信息表");
 		

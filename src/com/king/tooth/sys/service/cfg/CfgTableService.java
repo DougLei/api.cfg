@@ -10,9 +10,9 @@ import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.ComProject;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -35,8 +35,8 @@ public class CfgTableService extends AService {
 	 * @param table
 	 * @return operResult
 	 */
-	private String validTableNameIsExists(ComTabledata table) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComTabledata where tableName = ? and createUserId = ? and customerId=?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
+	private String validTableNameIsExists(CfgTable table) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgTable where tableName = ? and createUserId = ? and customerId=?", table.getTableName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
 			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
@@ -69,7 +69,7 @@ public class CfgTableService extends AService {
 	private String validTableIsExistsInDatabase(String projectId, String tableName) {
 		ComProject project = getObjectById(projectId, ComProject.class);
 		String hql = "select count(tb."+ResourcePropNameConstants.ID+") from " + 
-				"CfgDatabase d, ComProject p, CfgProjectTableLinks pt, ComTabledata tb " +
+				"CfgDatabase d, ComProject p, CfgProjectTableLinks pt, CfgTable tb " +
 				"where d.id = '"+project.getRefDatabaseId()+"' and d.id = p.refDatabaseId and p.id=pt.leftId and tb.id=pt.rightId and tb.tableName='"+tableName + "'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
 		if(count > 0){
@@ -83,7 +83,7 @@ public class CfgTableService extends AService {
 	 * @param table
 	 * @return
 	 */
-	public Object saveTable(ComTabledata table) {
+	public Object saveTable(CfgTable table) {
 		String operResult = validTableNameIsExists(table);
 		if(operResult == null){
 			String projectId = CurrentThreadContext.getConfProjectId();
@@ -109,8 +109,8 @@ public class CfgTableService extends AService {
 	 * @param table
 	 * @return
 	 */
-	public Object updateTable(ComTabledata table) {
-		ComTabledata oldTable = getObjectById(table.getId(), ComTabledata.class);
+	public Object updateTable(CfgTable table) {
+		CfgTable oldTable = getObjectById(table.getId(), CfgTable.class);
 		if(oldTable == null){
 			return "没有找到id为["+table.getId()+"]的表对象信息";
 		}
@@ -149,7 +149,7 @@ public class CfgTableService extends AService {
 	 * @return
 	 */
 	public String deleteTable(String tableId) {
-		ComTabledata oldTable = getObjectById(tableId, ComTabledata.class);
+		CfgTable oldTable = getObjectById(tableId, CfgTable.class);
 		if(oldTable == null){
 			return "没有找到id为["+tableId+"]的表对象信息";
 		}
@@ -174,8 +174,8 @@ public class CfgTableService extends AService {
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComTabledata where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComColumndata where tableId = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgTable where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgColumn where tableId = '"+tableId+"'");
 		HibernateUtil.deleteDataLinks("CfgProjectTableLinks", null, tableId);
 		// 删除资源
 		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
@@ -191,14 +191,14 @@ public class CfgTableService extends AService {
 	 */
 	public Object buildModel(String tableId, List<String> deleteTableIds, DBTableHandler dbTableHandler){
 		try {
-			ComTabledata table = getObjectById(tableId, ComTabledata.class);
+			CfgTable table = getObjectById(tableId, CfgTable.class);
 			if(table.getIsBuildModel() == 1){
 				return "表["+table.getTableName()+"]已经完成建模，且在无表名被修改、或任何字段信息被修改的情况下，无法重复进行建模操作";
 			}
 			boolean isNeedInitBasicColumns = false;
-			List<ComColumndata> columns = HibernateUtil.extendExecuteListQueryByHqlArr(ComColumndata.class, null, null, "from ComColumndata where isEnabled =1 and tableId =? order by orderCode asc", tableId);
+			List<CfgColumn> columns = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumn.class, null, null, "from CfgColumn where isEnabled =1 and tableId =? order by orderCode asc", tableId);
 			
-			if(table.getType() == ComTabledata.SINGLE_TABLE){
+			if(table.getType() == CfgTable.SINGLE_TABLE){
 				if(table.getIsCreated() == 0){
 					// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 					deleteTableIds.add(tableId);
@@ -251,7 +251,7 @@ public class CfgTableService extends AService {
 				
 				// 4、将hbm配置内容，加入到sessionFactory中
 				HibernateUtil.appendNewConfig(hbm.getContent());
-			}else if(table.getType() == ComTabledata.TABLE_DATATYPE){
+			}else if(table.getType() == CfgTable.TABLE_DATATYPE){
 				if(table.getIsCreated() == 0){
 					table.setColumns(columns);
 					dbTableHandler.createTableDataType(table);
@@ -269,11 +269,11 @@ public class CfgTableService extends AService {
 			}
 			
 			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1，且置空oldTableName字段
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update ComTabledata set isCreated=1, isBuildModel =1, oldTableName=null where "+ResourcePropNameConstants.ID+" = ?", tableId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgTable set isCreated=1, isBuildModel =1, oldTableName=null where "+ResourcePropNameConstants.ID+" = ?", tableId);
 			
 			// 6、修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为已创建状态，且置空oldInfoJson字段的值
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComColumndata where tableId = ? and operStatus=?", tableId, ComColumndata.DELETED);
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update ComColumndata set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", ComColumndata.CREATED, tableId, ComColumndata.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgColumn where tableId = ? and operStatus=?", tableId, CfgColumn.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgColumn set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", CfgColumn.CREATED, tableId, CfgColumn.DELETED);
 			
 			table.clear();
 		} catch (Exception e) {
@@ -290,9 +290,9 @@ public class CfgTableService extends AService {
 	 * 移除被删除的列对象
 	 * @param columns
 	 */
-	private void removeDeleteColumns(List<ComColumndata> columns){
+	private void removeDeleteColumns(List<CfgColumn> columns){
 		for (int i=0;i<columns.size() ;i++) {
-			if(columns.get(i).getOperStatus() == ComColumndata.DELETED){
+			if(columns.get(i).getOperStatus() == CfgColumn.DELETED){
 				columns.remove(i);
 				i--;
 			}
@@ -308,9 +308,9 @@ public class CfgTableService extends AService {
 	 */
 	private void batchCancelBuildModel(DBTableHandler dbTableHandler, List<String> deleteTableIds, boolean modifyRelationDatas) {
 		if(deleteTableIds != null && deleteTableIds.size() > 0){
-			ComTabledata table;
+			CfgTable table;
 			for (String tableId : deleteTableIds) {
-				table = getObjectById(tableId, ComTabledata.class);
+				table = getObjectById(tableId, CfgTable.class);
 				cancelBuildModel(dbTableHandler, table, modifyRelationDatas);
 			}
 		}
@@ -325,9 +325,9 @@ public class CfgTableService extends AService {
 	 * 											   如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
 	 * 											   如果是重新建模，或取消建模，这个值应该传递为true，因为这个是必要操作
 	 */
-	public Object cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, String tableId, boolean deleteRelationDatas){
+	public Object cancelBuildModel(DBTableHandler dbTableHandler, CfgTable table, String tableId, boolean deleteRelationDatas){
 		if(table == null){
-			table = getObjectById(tableId, ComTabledata.class);
+			table = getObjectById(tableId, CfgTable.class);
 		}
 		if(table.getIsCreated() == 0){
 			return "表["+table.getTableName()+"]还未建模，无法进行取消建模操作";
@@ -350,13 +350,13 @@ public class CfgTableService extends AService {
 	 * 											   如果在建模的过程中出现异常，回滚的时候，这个值应该传递为false，因为数据会回滚，所以没必要删除
 	 * 											   如果是重新建模，或取消建模，这个值应该传递为true，因为这个是必要操作
 	 */
-	private String cancelBuildModel(DBTableHandler dbTableHandler, ComTabledata table, boolean deleteRelationDatas){
-		if(table.getType() == ComTabledata.SINGLE_TABLE){
+	private String cancelBuildModel(DBTableHandler dbTableHandler, CfgTable table, boolean deleteRelationDatas){
+		if(table.getType() == CfgTable.SINGLE_TABLE){
 			// drop表
 			dbTableHandler.dropTable(table);
 			// 从sessionFactory中移除映射
 			HibernateUtil.removeConfig(table.getTableName());
-		}else if(table.getType() == ComTabledata.TABLE_DATATYPE){
+		}else if(table.getType() == CfgTable.TABLE_DATATYPE){
 			dbTableHandler.dropTableDataType(table);
 		}else{
 			return "系统目前不支持值为["+table.getType()+"]的表类型，请联系后端开发人员";
@@ -365,12 +365,12 @@ public class CfgTableService extends AService {
 		if(deleteRelationDatas){
 			String tableId = table.getId();
 			// 修改表是否创建的状态，以及是否建模的字段值，均改为0，且置空oldTableName字段
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update ComTabledata set isCreated =0, isBuildModel=0, oldTableName=null  where "+ResourcePropNameConstants.ID+" = ?", tableId);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgTable set isCreated =0, isBuildModel=0, oldTableName=null  where "+ResourcePropNameConstants.ID+" = ?", tableId);
 			// 修改字段状态，如果操作状态是被删除的，则删除掉数据；其他操作状态的，均改为待创建状态，且置空oldInfoJson字段的值
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComColumndata where tableId = ? and operStatus=?", tableId, ComColumndata.DELETED);
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update ComColumndata set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", ComColumndata.UN_CREATED, tableId, ComColumndata.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgColumn where tableId = ? and operStatus=?", tableId, CfgColumn.DELETED);
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgColumn set operStatus=?, oldInfoJson=null where tableId = ? and operStatus != ?", CfgColumn.UN_CREATED, tableId, CfgColumn.DELETED);
 			
-			if(table.getType() == ComTabledata.SINGLE_TABLE){
+			if(table.getType() == CfgTable.SINGLE_TABLE){
 				// 删除hbm信息
 				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
 				// 删除资源
@@ -387,7 +387,7 @@ public class CfgTableService extends AService {
 	 * @return
 	 */
 	public String addProjTableRelation(String projectId, String tableId) {
-		ComTabledata table = getObjectById(tableId, ComTabledata.class);
+		CfgTable table = getObjectById(tableId, CfgTable.class);
 		String operResult = validTableIsExistsInDatabase(projectId, table.getTableName());
 		if(operResult == null){
 			HibernateUtil.saveDataLinks("CfgProjectTableLinks", projectId, tableId);

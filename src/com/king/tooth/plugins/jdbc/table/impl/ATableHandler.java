@@ -5,8 +5,8 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.database.DatabaseConstraintConstants;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DBUtil;
 
@@ -44,13 +44,13 @@ public abstract class ATableHandler {
 	 * <p>通过getCreateTableSql()和getCreateCommentSql()方法，获得结果sql语句</p>
 	 * @param tabledata
 	 */
-	public void installCreateTableSql(ComTabledata tabledata) {
+	public void installCreateTableSql(CfgTable tabledata) {
 		String tableName = tabledata.getTableName();
 		analysisTable(tabledata);
 		analysisTableComments(tabledata, true);// 解析表注释
 		createTableSql.append(" ( ");
-		List<ComColumndata> columns = tabledata.getColumns();
-		for (ComColumndata column : columns) {
+		List<CfgColumn> columns = tabledata.getColumns();
+		for (CfgColumn column : columns) {
 			analysisColumn(column, createTableSql);
 			analysisColumnType(column, createTableSql);
 			analysisColumnLength(column, createTableSql);
@@ -66,7 +66,7 @@ public abstract class ATableHandler {
 	 * 解析表
 	 * @param table
 	 */
-	private void analysisTable(ComTabledata table){
+	private void analysisTable(CfgTable table){
 		createTableSql.append("create table ").append(table.getTableName());
 	}
 	
@@ -75,7 +75,7 @@ public abstract class ATableHandler {
 	 * @param column
 	 * @param columnSql
 	 */
-	private void analysisColumn(ComColumndata column, StringBuilder columnSql){
+	private void analysisColumn(CfgColumn column, StringBuilder columnSql){
 		columnSql.append(column.getColumnName()).append(" ");
 	}
 	
@@ -90,7 +90,7 @@ public abstract class ATableHandler {
 	 * @param columnSql
 	 * @param operColumnSql 
 	 */
-	private void analysisColumnProps(String tableName, ComColumndata column, StringBuilder columnSql, StringBuilder operColumnSql) {
+	private void analysisColumnProps(String tableName, CfgColumn column, StringBuilder columnSql, StringBuilder operColumnSql) {
 		if(columnSql != null){
 			if(column.getIsNullabled() != null && 0 == column.getIsNullabled()){
 				columnSql.append(" not null ");
@@ -126,7 +126,7 @@ public abstract class ATableHandler {
 	 * @param tableName
 	 * @param column
 	 */
-	public void installCreateColumnSql(String tableName, ComColumndata column) {
+	public void installCreateColumnSql(String tableName, CfgColumn column) {
 		operColumnSql.append("alter table ").append(tableName).append(" add ");
 		analysisColumn(column, operColumnSql);
 		analysisColumnType(column, operColumnSql);
@@ -150,7 +150,7 @@ public abstract class ATableHandler {
 	 * @param tableName
 	 * @param column
 	 */
-	public void installModifyColumnSql(String tableName, ComColumndata column){
+	public void installModifyColumnSql(String tableName, CfgColumn column){
 		JSONObject oldColumnInfo = column.getOldColumnInfo();
 		if(oldColumnInfo != null){
 			
@@ -213,7 +213,7 @@ public abstract class ATableHandler {
 	 * @param tableName
 	 * @param column
 	 */
-	public void installDeleteColumnSql(String tableName, ComColumndata column) {
+	public void installDeleteColumnSql(String tableName, CfgColumn column) {
 		operColumnSql.append("alter table ").append(tableName).append(" drop column " + column.getColumnName()).append(";");
 	}
 	
@@ -238,7 +238,7 @@ public abstract class ATableHandler {
 	 * @param column
 	 * @param operColumnSql
 	 */
-	protected abstract void addDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql);
+	protected abstract void addDefaultValueConstraint(String tableName, CfgColumn column, StringBuilder operColumnSql);
 	
 	/**
 	 * 删除默认值约束
@@ -246,7 +246,7 @@ public abstract class ATableHandler {
 	 * @param column
 	 * @param operColumnSql
 	 */
-	protected abstract void deleteDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql);
+	protected abstract void deleteDefaultValueConstraint(String tableName, CfgColumn column, StringBuilder operColumnSql);
 	
 	// ----------------------------------------------------------------------------------------------------------------------------------
 	/**
@@ -266,7 +266,7 @@ public abstract class ATableHandler {
 	 * @param columnSql
 	 * @return 返回此次调用方法解析出的字段类型结果，不论columnSql参数是否为null
 	 */
-	protected abstract String analysisColumnType(ComColumndata column, StringBuilder columnSql);
+	protected abstract String analysisColumnType(CfgColumn column, StringBuilder columnSql);
 	
 	/**
 	 * 解析字段长度
@@ -274,7 +274,7 @@ public abstract class ATableHandler {
 	 * @param columnSql 
 	 * @return 返回此次调用方法解析出的字段长度结果，不论columnSql参数是否为null
 	 */
-	protected abstract String analysisColumnLength(ComColumndata column, StringBuilder columnSql);
+	protected abstract String analysisColumnLength(CfgColumn column, StringBuilder columnSql);
 	
 	// ----------------------------------------------------------------------------------------------------------------------------------
 	/**
@@ -282,7 +282,7 @@ public abstract class ATableHandler {
 	 * @param table
 	 * @param isAdd 是否是添加，不是添加，就是修改
 	 */
-	protected abstract void analysisTableComments(ComTabledata table, boolean isAdd);
+	protected abstract void analysisTableComments(CfgTable table, boolean isAdd);
 	
 	/**
 	 * 解析字段注释
@@ -291,7 +291,7 @@ public abstract class ATableHandler {
 	 * @param isAdd 是否是添加，不是添加，就是修改
 	 * @param columnSql
 	 */
-	protected abstract void analysisColumnComments(String tableName, ComColumndata column, boolean isAdd, StringBuilder columnSql);
+	protected abstract void analysisColumnComments(String tableName, CfgColumn column, boolean isAdd, StringBuilder columnSql);
 
 	// ----------------------------------------------------------------------------------------------------------------------------------
 	/**
@@ -355,7 +355,7 @@ public abstract class ATableHandler {
 	 * @param column
 	 * @return
 	 */
-	protected String installColumnInfo(ComColumndata column) {
+	protected String installColumnInfo(CfgColumn column) {
 		StringBuilder tmpBuffer = new StringBuilder();
 		tmpBuffer.append(" ").append(analysisColumnType(column, null)).append(analysisColumnLength(column, null));
 		if(StrUtils.notEmpty(column.getDefaultValue())){
@@ -384,11 +384,11 @@ public abstract class ATableHandler {
 	 * 组装创建表数据类型的sql语句
 	 * @param table
 	 */
-	public abstract void installCreateTableDataTypeSql(ComTabledata table);
+	public abstract void installCreateTableDataTypeSql(CfgTable table);
 	
 	/**
 	 * 组装删除表数据类型的sql语句
 	 * @param table
 	 */
-	public abstract void installDropTableDataTypeSql(ComTabledata table);
+	public abstract void installDropTableDataTypeSql(CfgTable table);
 }

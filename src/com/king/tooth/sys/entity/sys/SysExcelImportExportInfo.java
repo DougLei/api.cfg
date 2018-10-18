@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * Excel导入导出信息表
@@ -77,30 +77,30 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(5+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(5+7);
 		
-		ComColumndata operTypeColumn = new ComColumndata("oper_type", DataTypeConstants.INTEGER, 1);
+		CfgColumn operTypeColumn = new CfgColumn("oper_type", DataTypeConstants.INTEGER, 1);
 		operTypeColumn.setName("操作类型");
 		operTypeColumn.setComments("1：导入、2、导出");
 		columns.add(operTypeColumn);
 		
-		ComColumndata refFileIdColumn = new ComColumndata("ref_file_id", DataTypeConstants.STRING, 32);
+		CfgColumn refFileIdColumn = new CfgColumn("ref_file_id", DataTypeConstants.STRING, 32);
 		refFileIdColumn.setName("关联的文件id");
 		refFileIdColumn.setComments("文件表中的数据id");
 		columns.add(refFileIdColumn);
 		
-		ComColumndata isSuccessColumn = new ComColumndata("is_success", DataTypeConstants.INTEGER, 1);
+		CfgColumn isSuccessColumn = new CfgColumn("is_success", DataTypeConstants.INTEGER, 1);
 		isSuccessColumn.setName("是否成功");
 		isSuccessColumn.setComments("是否成功");
 		columns.add(isSuccessColumn);
 		
-		ComColumndata resultMessageColumn = new ComColumndata("result_message", DataTypeConstants.STRING, 4000);
+		CfgColumn resultMessageColumn = new CfgColumn("result_message", DataTypeConstants.STRING, 4000);
 		resultMessageColumn.setName("结果信息");
 		resultMessageColumn.setComments("结果信息");
 		columns.add(resultMessageColumn);
 		
-		ComColumndata submitObjJsonColumn = new ComColumndata("submit_obj_json", DataTypeConstants.STRING, 4000);
+		CfgColumn submitObjJsonColumn = new CfgColumn("submit_obj_json", DataTypeConstants.STRING, 4000);
 		submitObjJsonColumn.setName("提交的对象内容json串");
 		submitObjJsonColumn.setComments("提交的对象内容json串");
 		columns.add(submitObjJsonColumn);
@@ -108,8 +108,8 @@ public class SysExcelImportExportInfo extends BasicEntity implements ITable, IEn
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("Excel导入导出信息表");
 		table.setComments("Excel导入导出信息表");
 		

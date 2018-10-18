@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 
 /**
@@ -59,15 +59,15 @@ public class SysUserPermissionCache extends BasicEntity implements ITable, IEnti
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(9);
 		
-		ComColumndata userIdColumn = new ComColumndata("user_id", DataTypeConstants.STRING, 32);
+		CfgColumn userIdColumn = new CfgColumn("user_id", DataTypeConstants.STRING, 32);
 		userIdColumn.setName("用户主键");
 		userIdColumn.setComments("用户主键");
 		columns.add(userIdColumn);
 		
-		ComColumndata permissionColumn = new ComColumndata("permission", DataTypeConstants.CLOB, 0);
+		CfgColumn permissionColumn = new CfgColumn("permission", DataTypeConstants.CLOB, 0);
 		permissionColumn.setName("用户所拥有的权限json");
 		permissionColumn.setComments("用户所拥有的权限json");
 		columns.add(permissionColumn);
@@ -75,8 +75,8 @@ public class SysUserPermissionCache extends BasicEntity implements ITable, IEnti
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("系统用户权限缓存表");
 		table.setComments("系统用户权限缓存表");
 		

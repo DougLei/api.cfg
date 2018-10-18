@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 组织机构表
@@ -85,40 +85,40 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(13);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(13);
 		
-		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
+		CfgColumn parentIdColumn = new CfgColumn("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父组织主键");
 		parentIdColumn.setComments("父组织主键");
 		parentIdColumn.setOrderCode(1);
 		columns.add(parentIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 100);
 		nameColumn.setName("组织名称");
 		nameColumn.setComments("组织名称");
 		nameColumn.setOrderCode(2);
 		columns.add(nameColumn);
 		
-		ComColumndata shortNameColumn = new ComColumndata("short_name", DataTypeConstants.STRING, 50);
+		CfgColumn shortNameColumn = new CfgColumn("short_name", DataTypeConstants.STRING, 50);
 		shortNameColumn.setName("组织简称");
 		shortNameColumn.setComments("组织简称");
 		shortNameColumn.setOrderCode(3);
 		columns.add(shortNameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 32);
+		CfgColumn codeColumn = new CfgColumn("code", DataTypeConstants.STRING, 32);
 		codeColumn.setName("组织编码");
 		codeColumn.setComments("组织编码");
 		codeColumn.setOrderCode(4);
 		columns.add(codeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(5);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 3);
+		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 3);
 		typeColumn.setName("组织机构类型");
 		typeColumn.setComments("组织机构类型");
 		columns.add(typeColumn);
@@ -126,8 +126,8 @@ public class SysOrg extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("组织机构表");
 		table.setComments("组织机构表");
 		

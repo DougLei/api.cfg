@@ -10,8 +10,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 
 /**
@@ -303,91 +303,91 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(24);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(24);
 		
-		ComColumndata accountIdColumn = new ComColumndata("account_id", DataTypeConstants.STRING, 32);
+		CfgColumn accountIdColumn = new CfgColumn("account_id", DataTypeConstants.STRING, 32);
 		accountIdColumn.setName("当前账户id");
 		accountIdColumn.setComments("当前账户id");
 		columns.add(accountIdColumn);
 		
-		ComColumndata accountNameColumn = new ComColumndata("account_name", DataTypeConstants.STRING, 32);
+		CfgColumn accountNameColumn = new CfgColumn("account_name", DataTypeConstants.STRING, 32);
 		accountNameColumn.setName("当前账户名");
 		accountNameColumn.setComments("当前账户名");
 		columns.add(accountNameColumn);
 		
-		ComColumndata accountTypeColumn = new ComColumndata("account_type", DataTypeConstants.INTEGER, 1);
+		CfgColumn accountTypeColumn = new CfgColumn("account_type", DataTypeConstants.INTEGER, 1);
 		accountTypeColumn.setName("当前账户类型");
 		accountTypeColumn.setComments("当前账户类型：冗余SysAccount表的accountType值");
 		columns.add(accountTypeColumn);
 		
-		ComColumndata userIdColumn = new ComColumndata("user_id", DataTypeConstants.STRING, 32);
+		CfgColumn userIdColumn = new CfgColumn("user_id", DataTypeConstants.STRING, 32);
 		userIdColumn.setName("当前用户id");
 		userIdColumn.setComments("当前用户id");
 		columns.add(userIdColumn);
 		
-		ComColumndata userSecretLevelColumn = new ComColumndata("user_secret_level", DataTypeConstants.INTEGER, 1);
+		CfgColumn userSecretLevelColumn = new CfgColumn("user_secret_level", DataTypeConstants.INTEGER, 1);
 		userSecretLevelColumn.setName("当前用户密级");
 		userSecretLevelColumn.setComments("当前用户密级");
 		columns.add(userSecretLevelColumn);
 		
-		ComColumndata orgIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 200);
+		CfgColumn orgIdColumn = new CfgColumn("org_id", DataTypeConstants.STRING, 200);
 		orgIdColumn.setName("当前用户所属组织id");
 		orgIdColumn.setComments("当前用户所属组织id，可以有多个，用,隔开");
 		columns.add(orgIdColumn);
 		
-		ComColumndata deptIdColumn = new ComColumndata("dept_id", DataTypeConstants.STRING, 200);
+		CfgColumn deptIdColumn = new CfgColumn("dept_id", DataTypeConstants.STRING, 200);
 		deptIdColumn.setName("当前用户所属部门id");
 		deptIdColumn.setComments("当前用户所属部门id，可以有多个，用,隔开");
 		columns.add(deptIdColumn);
 		
-		ComColumndata positionIdColumn = new ComColumndata("position_id", DataTypeConstants.STRING, 200);
+		CfgColumn positionIdColumn = new CfgColumn("position_id", DataTypeConstants.STRING, 200);
 		positionIdColumn.setName("当前用户所属岗位id");
 		positionIdColumn.setComments("当前用户所属岗位id，可以有多个，用,隔开");
 		columns.add(positionIdColumn);
 		
-		ComColumndata roleIdColumn = new ComColumndata("role_id", DataTypeConstants.STRING, 400);
+		CfgColumn roleIdColumn = new CfgColumn("role_id", DataTypeConstants.STRING, 400);
 		roleIdColumn.setName("当前用户所属角色id");
 		roleIdColumn.setComments("当前用户所属角色id，可以有多个，用,隔开");
 		columns.add(roleIdColumn);
 		
-		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", DataTypeConstants.STRING, 400);
+		CfgColumn userGroupIdColumn = new CfgColumn("user_group_id", DataTypeConstants.STRING, 400);
 		userGroupIdColumn.setName("当前用户所属用户组id");
 		userGroupIdColumn.setComments("当前用户所属用户组id，可以有多个，用,隔开");
 		columns.add(userGroupIdColumn);
 		
-		ComColumndata tokenColumn = new ComColumndata("token", DataTypeConstants.STRING, 32);
+		CfgColumn tokenColumn = new CfgColumn("token", DataTypeConstants.STRING, 32);
 		tokenColumn.setName("token值");
 		tokenColumn.setComments("token值");
 		columns.add(tokenColumn);
 		
-		ComColumndata loginIpColumn = new ComColumndata("login_ip", DataTypeConstants.STRING, 20);
+		CfgColumn loginIpColumn = new CfgColumn("login_ip", DataTypeConstants.STRING, 20);
 		loginIpColumn.setName("登录的客户端ip");
 		loginIpColumn.setComments("登录的客户端ip");
 		columns.add(loginIpColumn);
 		
-		ComColumndata loginMacColumn = new ComColumndata("login_mac", DataTypeConstants.STRING, 50);
+		CfgColumn loginMacColumn = new CfgColumn("login_mac", DataTypeConstants.STRING, 50);
 		loginMacColumn.setName("登录的客户端mac");
 		loginMacColumn.setComments("登录的客户端mac");
 		columns.add(loginMacColumn);
 		
-		ComColumndata loginDateColumn = new ComColumndata("login_date", DataTypeConstants.DATE, 0);
+		CfgColumn loginDateColumn = new CfgColumn("login_date", DataTypeConstants.DATE, 0);
 		loginDateColumn.setName("登录的时间");
 		loginDateColumn.setComments("登录的时间");
 		columns.add(loginDateColumn);
 		
-		ComColumndata tryLoginTimesColumn = new ComColumndata("try_login_times", DataTypeConstants.INTEGER, 3);
+		CfgColumn tryLoginTimesColumn = new CfgColumn("try_login_times", DataTypeConstants.INTEGER, 3);
 		tryLoginTimesColumn.setName("本次尝试登录的次数");
 		tryLoginTimesColumn.setComments("本次尝试登录的次数");
 		tryLoginTimesColumn.setDefaultValue("0");
 		columns.add(tryLoginTimesColumn);
 		
-		ComColumndata lastOperDateColumn = new ComColumndata("last_oper_date", DataTypeConstants.DATE, 0);
+		CfgColumn lastOperDateColumn = new CfgColumn("last_oper_date", DataTypeConstants.DATE, 0);
 		lastOperDateColumn.setName("最后一次操作的时间");
 		lastOperDateColumn.setComments("最后一次操作的时间");
 		columns.add(lastOperDateColumn);
 		
-		ComColumndata confProjectIdColumn = new ComColumndata("conf_project_id", DataTypeConstants.STRING, 32);
+		CfgColumn confProjectIdColumn = new CfgColumn("conf_project_id", DataTypeConstants.STRING, 32);
 		confProjectIdColumn.setName("配置的项目id");
 		confProjectIdColumn.setComments("配置的项目id：配置系统使用");
 		columns.add(confProjectIdColumn);
@@ -395,8 +395,8 @@ public class SysAccountOnlineStatus extends BasicEntity implements ITable, IEnti
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("账户在线状态信息表");
 		table.setComments("账户在线状态信息表");
 		

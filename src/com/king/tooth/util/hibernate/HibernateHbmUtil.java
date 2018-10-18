@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.freemarker.FreemarkerUtil;
@@ -35,7 +35,7 @@ public class HibernateHbmUtil {
 	 * @param isNeedInitBasicColumns 是否需要给table中加入基础列信息，比如id字段等【当建表和创建hbm文件两个功能同时执行时，这个字段会用到】
 	 * @return hbm content
 	 */
-	public static String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns){
+	public static String createHbmMappingContent(CfgTable table, boolean isNeedInitBasicColumns){
 		return createHbmMappingContent(table, isNeedInitBasicColumns, HBM_FTL_FILE_PATH);
 	}
 	
@@ -46,7 +46,7 @@ public class HibernateHbmUtil {
 	 * @param freemarkerFtlPath freemarker ftl模版文件的路径
 	 * @return hbm content
 	 */
-	public static String createHbmMappingContent(ComTabledata table, boolean isNeedInitBasicColumns, String freemarkerFtlPath){
+	public static String createHbmMappingContent(CfgTable table, boolean isNeedInitBasicColumns, String freemarkerFtlPath){
 		if(isNeedInitBasicColumns){
 			DynamicBasicColumnUtil.initBasicColumnToTable(table);
 		}

@@ -3,57 +3,57 @@ package test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 public class HbmOperTest {
 	public static void main(String[] args) {
-		List<ComTabledata> tabledatas = new ArrayList<ComTabledata>();
-		ComTabledata table = new ComTabledata();
-		List<ComColumndata> columns = new ArrayList<ComColumndata>();
+		List<CfgTable> tabledatas = new ArrayList<CfgTable>();
+		CfgTable table = new CfgTable();
+		List<CfgColumn> columns = new ArrayList<CfgColumn>();
 		table.setId("12312");
 		table.setColumns(columns);
 		table.setComments("表注释表注释表注释");
 //		table.setTableName("Parent");
 		tabledatas.add(table);
 		
-		ComTabledata table2 = new ComTabledata();
+		CfgTable table2 = new CfgTable();
 		table2.setId("123121111");
 		table2.setColumns(columns);
 //		table2.setTableName("DatabaseTest");
 		tabledatas.add(table2);
 		
 		
-		ComColumndata c1 = new ComColumndata();
+		CfgColumn c1 = new CfgColumn();
 //		c1.setColumnName("Id");
 		c1.setColumnType("string");
 		c1.setLength(32);
 //		c1.setIsKey(1);
 		
-		ComColumndata c2 = new ComColumndata();
+		CfgColumn c2 = new CfgColumn();
 //		c2.setColumnName("age_stu");
 		c2.setColumnType("integer");
 		c2.setLength(2);
 		c2.setIsUnique(1);
 		c2.setComments("列注释注释");
 		
-		ComColumndata c3 = new ComColumndata();
+		CfgColumn c3 = new CfgColumn();
 //		c3.setColumnName("price");
 		c3.setColumnType("double");
 		c3.setLength(12);
 		c3.setPrecision(2);
 		c3.setDefaultValue("22.2");
 		
-		ComColumndata c4 = new ComColumndata();
+		CfgColumn c4 = new CfgColumn();
 //		c4.setColumnName("birthday");
 		c4.setColumnType("date");
 		c4.setIsNullabled(0);
 		
-		ComColumndata c5 = new ComColumndata();
+		CfgColumn c5 = new CfgColumn();
 //		c5.setColumnName("content");
 		c5.setColumnType("clob");
 		
-		ComColumndata c6 = new ComColumndata();
+		CfgColumn c6 = new CfgColumn();
 //		c6.setColumnName("image");
 		c6.setColumnType("blob");
 		

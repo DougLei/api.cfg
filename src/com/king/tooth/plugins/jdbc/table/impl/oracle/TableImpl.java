@@ -2,8 +2,8 @@ package com.king.tooth.plugins.jdbc.table.impl.oracle;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.jdbc.table.impl.ATableHandler;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * oracle创建表操作的实现类
@@ -11,7 +11,7 @@ import com.king.tooth.sys.entity.cfg.ComTabledata;
  */
 public class TableImpl extends ATableHandler{
 
-	protected String analysisColumnType(ComColumndata column, StringBuilder columnSql) {
+	protected String analysisColumnType(CfgColumn column, StringBuilder columnSql) {
 		StringBuilder tmpBuffer = new StringBuilder();
 		String columnType = column.getColumnType();
 		if(DataTypeConstants.STRING.equals(columnType)){
@@ -37,7 +37,7 @@ public class TableImpl extends ATableHandler{
 		return tmpBuffer.toString();
 	}
 
-	protected String analysisColumnLength(ComColumndata column, StringBuilder columnSql) {
+	protected String analysisColumnLength(CfgColumn column, StringBuilder columnSql) {
 		// 验证哪些类型，oracle不需要加长度限制
 		String columnType = column.getColumnType();
 		if(DataTypeConstants.DATE.equals(columnType)
@@ -71,7 +71,7 @@ public class TableImpl extends ATableHandler{
 		return tmpBuffer.toString();
 	}
 	
-	protected void analysisTableComments(ComTabledata table, boolean isAdd) {
+	protected void analysisTableComments(CfgTable table, boolean isAdd) {
 		if(table.getComments() != null){
 			createCommentSql.append("comment on table ")
 							.append(table.getTableName())
@@ -81,7 +81,7 @@ public class TableImpl extends ATableHandler{
 		}
 	}
 
-	protected void analysisColumnComments(String tableName, ComColumndata column, boolean isAdd, StringBuilder columnSql) {
+	protected void analysisColumnComments(String tableName, CfgColumn column, boolean isAdd, StringBuilder columnSql) {
 		if(column.getComments() != null){
 			columnSql.append("comment on column ")
 					 .append(tableName).append(".").append(column.getColumnName())
@@ -91,7 +91,7 @@ public class TableImpl extends ATableHandler{
 		}
 	}
 	
-	protected void addDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
+	protected void addDefaultValueConstraint(String tableName, CfgColumn column, StringBuilder operColumnSql) {
 		operColumnSql.append("alter table ").append(tableName).append(" modify ")
 				 	 .append(column.getColumnName());
 		if(DataTypeConstants.STRING.equals(column.getColumnType())){
@@ -102,7 +102,7 @@ public class TableImpl extends ATableHandler{
 		operColumnSql.append(";");
 	}
 
-	protected void deleteDefaultValueConstraint(String tableName, ComColumndata column, StringBuilder operColumnSql) {
+	protected void deleteDefaultValueConstraint(String tableName, CfgColumn column, StringBuilder operColumnSql) {
 	}
 	
 	protected void reColumnName(String tableName, String oldColumnName, String newColumnName) {
@@ -114,11 +114,11 @@ public class TableImpl extends ATableHandler{
 		return "alter table "+oldTableName+" rename to "+ newTableName;
 	}
 
-	public void installCreateTableDataTypeSql(ComTabledata table) {
+	public void installCreateTableDataTypeSql(CfgTable table) {
 		// TODO 组装创建游标的sql语句
 	}
 
-	public void installDropTableDataTypeSql(ComTabledata table) {
+	public void installDropTableDataTypeSql(CfgTable table) {
 		// TODO 组装删除游标的sql语句
 	}
 }

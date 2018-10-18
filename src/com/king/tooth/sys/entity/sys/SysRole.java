@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -80,35 +80,35 @@ public class SysRole extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(12);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 30);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 30);
 		nameColumn.setName("角色名称");
 		nameColumn.setComments("角色名称");
 		nameColumn.setOrderCode(1);
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 20);
+		CfgColumn codeColumn = new CfgColumn("code", DataTypeConstants.STRING, 20);
 		codeColumn.setName("角色编码");
 		codeColumn.setComments("角色编码");
 		codeColumn.setIsNullabled(0);
 		codeColumn.setOrderCode(2);
 		columns.add(codeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 100);
+		CfgColumn descsColumn = new CfgColumn("descs", DataTypeConstants.STRING, 100);
 		descsColumn.setName("角色描述");
 		descsColumn.setComments("角色描述");
 		descsColumn.setOrderCode(3);
 		columns.add(descsColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		orderCodeColumn.setOrderCode(4);
 		columns.add(orderCodeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否启用");
 		isEnabledColumn.setComments("是否启用");
 		isEnabledColumn.setDefaultValue("1");
@@ -118,8 +118,8 @@ public class SysRole extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("角色表");
 		table.setComments("角色表");
 		

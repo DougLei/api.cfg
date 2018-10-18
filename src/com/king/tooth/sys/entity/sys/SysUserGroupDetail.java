@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 用户组明细表
@@ -44,15 +44,15 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 	}
 
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(9);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(9);
 		
-		ComColumndata userGroupIdColumn = new ComColumndata("user_group_id", DataTypeConstants.STRING, 32);
+		CfgColumn userGroupIdColumn = new CfgColumn("user_group_id", DataTypeConstants.STRING, 32);
 		userGroupIdColumn.setName("用户组主键");
 		userGroupIdColumn.setComments("用户组主键");
 		columns.add(userGroupIdColumn);
 		
-		ComColumndata userIdColumn = new ComColumndata("user_id", DataTypeConstants.STRING, 32);
+		CfgColumn userIdColumn = new CfgColumn("user_id", DataTypeConstants.STRING, 32);
 		userIdColumn.setName("人员主键");
 		userIdColumn.setComments("人员主键");
 		columns.add(userIdColumn);
@@ -60,8 +60,8 @@ public class SysUserGroupDetail extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("用户组明细表");
 		table.setComments("用户组明细表");
 		

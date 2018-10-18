@@ -14,8 +14,8 @@ import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -174,77 +174,77 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 	}
 
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(19);
 		
-		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 1);
+		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("请求类型");
 		typeColumn.setComments("1：login、2：loginOut、3：sql、4：file...");
 		typeColumn.setDefaultValue("3");
 		typeColumn.setOrderCode(1);
 		columns.add(typeColumn);
 		
-		ComColumndata methodColumn = new ComColumndata("method", DataTypeConstants.STRING, 8);
+		CfgColumn methodColumn = new CfgColumn("method", DataTypeConstants.STRING, 8);
 		methodColumn.setName("请求方式");
 		methodColumn.setComments("get/post/delete/update");
 		methodColumn.setOrderCode(2);
 		columns.add(methodColumn);
 		
-		ComColumndata apiAddrColumn = new ComColumndata("api_addr", DataTypeConstants.STRING, 300);
+		CfgColumn apiAddrColumn = new CfgColumn("api_addr", DataTypeConstants.STRING, 300);
 		apiAddrColumn.setName("请求的接口地址");
 		apiAddrColumn.setComments("请求的接口地址");
 		apiAddrColumn.setOrderCode(3);
 		columns.add(apiAddrColumn);
 		
-		ComColumndata clientIpColumn = new ComColumndata("client_ip", DataTypeConstants.STRING, 20);
+		CfgColumn clientIpColumn = new CfgColumn("client_ip", DataTypeConstants.STRING, 20);
 		clientIpColumn.setName("请求的客户端ip");
 		clientIpColumn.setComments("请求的客户端ip");
 		clientIpColumn.setOrderCode(4);
 		columns.add(clientIpColumn);
 		
-		ComColumndata clientMacColumn = new ComColumndata("client_mac", DataTypeConstants.STRING, 50);
+		CfgColumn clientMacColumn = new CfgColumn("client_mac", DataTypeConstants.STRING, 50);
 		clientMacColumn.setName("请求的客户端mac");
 		clientMacColumn.setComments("请求的客户端max");
 		clientMacColumn.setOrderCode(5);
 		columns.add(clientMacColumn);
 		
-		ComColumndata reqDataColumn = new ComColumndata("req_data", DataTypeConstants.CLOB, 0);
+		CfgColumn reqDataColumn = new CfgColumn("req_data", DataTypeConstants.CLOB, 0);
 		reqDataColumn.setName("请求的数据");
 		reqDataColumn.setComments("请求的数据");
 		reqDataColumn.setOrderCode(6);
 		columns.add(reqDataColumn);
 		
-		ComColumndata respDataColumn = new ComColumndata("resp_data", DataTypeConstants.CLOB, 0);
+		CfgColumn respDataColumn = new CfgColumn("resp_data", DataTypeConstants.CLOB, 0);
 		respDataColumn.setName("响应的数据");
 		respDataColumn.setComments("响应的数据");
 		respDataColumn.setOrderCode(7);
 		columns.add(respDataColumn);
 		
-		ComColumndata reqDateColumn = new ComColumndata("req_date", DataTypeConstants.DATE, 0);
+		CfgColumn reqDateColumn = new CfgColumn("req_date", DataTypeConstants.DATE, 0);
 		reqDateColumn.setName("响应的时间");
 		reqDateColumn.setComments("响应的时间");
 		reqDateColumn.setOrderCode(8);
 		columns.add(reqDateColumn);
 		
-		ComColumndata respDateColumn = new ComColumndata("resp_date", DataTypeConstants.DATE, 0);
+		CfgColumn respDateColumn = new CfgColumn("resp_date", DataTypeConstants.DATE, 0);
 		respDateColumn.setName("响应的时间");
 		respDateColumn.setComments("响应的时间");
 		respDateColumn.setOrderCode(9);
 		columns.add(respDateColumn);
 		
-		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", DataTypeConstants.INTEGER, 1);
+		CfgColumn resourceTypeColumn = new CfgColumn("resource_type", DataTypeConstants.INTEGER, 1);
 		resourceTypeColumn.setName("请求的资源类型");
 		resourceTypeColumn.setComments("请求的资源类型");
 		resourceTypeColumn.setOrderCode(10);
 		columns.add(resourceTypeColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
+		CfgColumn resourceNameColumn = new CfgColumn("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("请求的资源名");
 		resourceNameColumn.setComments("请求的资源名");
 		resourceNameColumn.setOrderCode(11);
 		columns.add(resourceNameColumn);
 		
-		ComColumndata parentResourceNameColumn = new ComColumndata("parent_resource_name", DataTypeConstants.STRING, 60);
+		CfgColumn parentResourceNameColumn = new CfgColumn("parent_resource_name", DataTypeConstants.STRING, 60);
 		parentResourceNameColumn.setName("请求的父资源名");
 		parentResourceNameColumn.setComments("请求的父资源名");
 		parentResourceNameColumn.setOrderCode(12);
@@ -253,8 +253,8 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("请求日志信息表");
 		table.setComments("请求日志信息表");
 		

@@ -2,8 +2,8 @@ package com.king.tooth.sys.entity;
 
 import java.util.List;
 
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 表接口
@@ -16,7 +16,7 @@ public interface ITable {
 	 * <p>包括列</p>
 	 * @return
 	 */
-	ComTabledata toCreateTable();
+	CfgTable toCreateTable();
 	
 	/**
 	 * 获取删除表的信息
@@ -29,5 +29,5 @@ public interface ITable {
 	 * 获取列信息集合
 	 * @return
 	 */
-	List<ComColumndata> getColumnList();
+	List<CfgColumn> getColumnList();
 }

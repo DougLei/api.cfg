@@ -78,20 +78,20 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 	}
 
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(10);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(10);
 		
-		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", DataTypeConstants.STRING, 32);
+		CfgColumn refTableIdColumn = new CfgColumn("ref_table_id", DataTypeConstants.STRING, 32);
 		refTableIdColumn.setName("关联规则的表id");
 		refTableIdColumn.setComments("关联规则的表id");
 		columns.add(refTableIdColumn);
 		
-		ComColumndata refColumnIdColumn = new ComColumndata("ref_column_id", DataTypeConstants.STRING, 32);
+		CfgColumn refColumnIdColumn = new CfgColumn("ref_column_id", DataTypeConstants.STRING, 32);
 		refColumnIdColumn.setName("关联规则的列id");
 		refColumnIdColumn.setComments("关联规则的列id");
 		columns.add(refColumnIdColumn);
 		
-		ComColumndata remarkColumn = new ComColumndata("remark", DataTypeConstants.STRING, 500);
+		CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 500);
 		remarkColumn.setName("备注");
 		remarkColumn.setComments("备注");
 		columns.add(remarkColumn);
@@ -99,8 +99,8 @@ public class CfgColumnCodeRule extends BasicEntity implements ITable, IEntity, I
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("字段编码规则表");
 		table.setComments("字段编码规则表");
 		

@@ -15,7 +15,7 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
@@ -34,10 +34,10 @@ public class CfgTableController extends AController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
-		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
+		List<CfgTable> tables = getDataInstanceList(ijson, CfgTable.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(table);
 				if(resultObject instanceof String){
 					break;
@@ -55,10 +55,10 @@ public class CfgTableController extends AController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
-		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
+		List<CfgTable> tables = getDataInstanceList(ijson, CfgTable.class, true);
 		analysisResourceProp(tables);
 		if(analysisResult == null){
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(table);
 				if(resultObject instanceof String){
 					break;
@@ -97,8 +97,8 @@ public class CfgTableController extends AController{
 	public Object buildModel(HttpServletRequest request, IJson ijson){
 		// 获取数据库连接对象，准备进行create表操作
 		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
-		for (ComTabledata table : tables) {
+		List<CfgTable> tables = getDataInstanceList(ijson, CfgTable.class, true);
+		for (CfgTable table : tables) {
 			if(StrUtils.isEmpty(table.getId())){
 				return "要建模的表id不能为空";
 			}
@@ -106,7 +106,7 @@ public class CfgTableController extends AController{
 		
 		List<String> deleteTableIds = new ArrayList<String>(tables.size());// 记录每个建模的表id
 		if(analysisResult == null){
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).buildModel(table.getId(), deleteTableIds, dbTableHandler);
 				if(resultObject instanceof String){
 					break;
@@ -127,15 +127,15 @@ public class CfgTableController extends AController{
 	public Object cancelBuildModel(HttpServletRequest request, IJson ijson){
 		// 获取数据库连接对象，准备进行create表、drop表的操作
 		DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		List<ComTabledata> tables = getDataInstanceList(ijson, ComTabledata.class, true);
-		for (ComTabledata table : tables) {
+		List<CfgTable> tables = getDataInstanceList(ijson, CfgTable.class, true);
+		for (CfgTable table : tables) {
 			if(StrUtils.isEmpty(table.getId())){
 				return "要取消建模的表id不能为空";
 			}
 		}
 		
 		if(analysisResult == null){
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, null, table.getId(), true);
 				if(resultObject instanceof String){
 					break;

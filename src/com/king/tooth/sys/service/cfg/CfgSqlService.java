@@ -11,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
@@ -405,7 +405,7 @@ public class CfgSqlService extends AService {
 		return sqlResultsetsList;
 	}
 	/** 查询表资源元数据信息集合的hql */
-	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from ComColumndata where tableId=? and isEnabled=1 and operStatus="+ComColumndata.CREATED+" order by orderCode asc";
+	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED+" order by orderCode asc";
 	
 	/**
 	 * 根据sql脚本id，查询对应的传出表类型的结果集信息集合

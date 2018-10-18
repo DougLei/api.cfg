@@ -13,7 +13,7 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.service.cfg.CfgTableService;
@@ -48,7 +48,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			SysReqLog.yyyyMM = SysReqLog.getYearMonth(currentDate);
 			
 			// 获取两个日志表对象
-			List<ComTabledata> logTables = new ArrayList<ComTabledata>(logTableSize);
+			List<CfgTable> logTables = new ArrayList<CfgTable>(logTableSize);
 			logTables.add(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable());
 			logTables.add(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
 			
@@ -67,7 +67,7 @@ public class CreateLogTableJob implements Job, Serializable{
 				// 恢复之前日志表的年月后缀
 				SysReqLog.yyyyMM = yyyyMMBak;
 				
-				for (ComTabledata logTable : logTables) {
+				for (CfgTable logTable : logTables) {
 					BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).cancelBuildModel(dbTableHandler, logTable, null, false);
 				}
 			} finally{
@@ -86,7 +86,7 @@ public class CreateLogTableJob implements Job, Serializable{
 	 * @param logTables
 	 * @param dbTableHandler 
 	 */
-	private void createLogTables(Date currentDate, List<ComTabledata> logTables, DBTableHandler dbTableHandler){
+	private void createLogTables(Date currentDate, List<CfgTable> logTables, DBTableHandler dbTableHandler){
 		// create日志表
 		dbTableHandler.batchCreateTable(logTables, true); 
 		
@@ -94,7 +94,7 @@ public class CreateLogTableJob implements Job, Serializable{
 		List<String> hbmContents = new ArrayList<String>(logTableSize);
 		CfgHibernateHbm hbm;
 		int i = 0;
-		for (ComTabledata logTable : logTables) {
+		for (CfgTable logTable : logTables) {
 			hbmContents.add(HibernateHbmUtil.createHbmMappingContent(logTable, false));
 			
 			// 2、插入hbm
@@ -116,9 +116,9 @@ public class CreateLogTableJob implements Job, Serializable{
 	 * 清除表信息
 	 * @param tables
 	 */
-	private void clearTables(List<ComTabledata> tables){
+	private void clearTables(List<CfgTable> tables){
 		if(tables != null && tables.size() > 0){
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				table.clear();
 			}
 			tables.clear();

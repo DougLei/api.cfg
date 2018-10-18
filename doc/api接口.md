@@ -1242,7 +1242,7 @@
 #### 4. 测试数据库连接
 
 - 功能描述: 测试系统是否能连接上指定的数据库
-- api地址: /common/database/test_link
+- api地址: /common/database/test/link
 - 请求类型: DELETE
 - 请求头:
 ```

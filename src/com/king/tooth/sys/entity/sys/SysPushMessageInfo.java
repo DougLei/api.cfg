@@ -10,8 +10,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 推送消息信息表
@@ -168,68 +168,68 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(19);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(19);
 		
-		ComColumndata msgTypeColumn = new ComColumndata("msg_type", DataTypeConstants.INTEGER, 1);
+		CfgColumn msgTypeColumn = new CfgColumn("msg_type", DataTypeConstants.INTEGER, 1);
 		msgTypeColumn.setName("消息类型");
 		msgTypeColumn.setComments("不能为空；1:待办消息、2.通知消息、...");
 		msgTypeColumn.setIsNullabled(0);
 		columns.add(msgTypeColumn);
 		
-		ComColumndata sendTypeColumn = new ComColumndata("send_type", DataTypeConstants.INTEGER, 1);
+		CfgColumn sendTypeColumn = new CfgColumn("send_type", DataTypeConstants.INTEGER, 1);
 		sendTypeColumn.setName("推送类型");
 		sendTypeColumn.setComments("不能为空；0:直接推送，即直接将消息原原本本推送给客户端；");
 		sendTypeColumn.setIsNullabled(0);
 		columns.add(sendTypeColumn);
 		
-		ComColumndata pushUserIdColumn = new ComColumndata("push_user_id", DataTypeConstants.STRING, 32);
+		CfgColumn pushUserIdColumn = new CfgColumn("push_user_id", DataTypeConstants.STRING, 32);
 		pushUserIdColumn.setName("推送者id");
 		pushUserIdColumn.setComments("推送者id");
 		columns.add(pushUserIdColumn);
 		
-		ComColumndata receiveUserIdColumn = new ComColumndata("receive_user_id", DataTypeConstants.STRING, 32);
+		CfgColumn receiveUserIdColumn = new CfgColumn("receive_user_id", DataTypeConstants.STRING, 32);
 		receiveUserIdColumn.setName("接受者id");
 		receiveUserIdColumn.setComments("接受者id");
 		columns.add(receiveUserIdColumn);
 		
-		ComColumndata sourceMsgColumn = new ComColumndata("source_msg", DataTypeConstants.CLOB, 0);
+		CfgColumn sourceMsgColumn = new CfgColumn("source_msg", DataTypeConstants.CLOB, 0);
 		sourceMsgColumn.setName("源消息内容");
 		sourceMsgColumn.setComments("源消息内容");
 		columns.add(sourceMsgColumn);
 		
-		ComColumndata targetMsgColumn = new ComColumndata("target_msg", DataTypeConstants.CLOB, 0);
+		CfgColumn targetMsgColumn = new CfgColumn("target_msg", DataTypeConstants.CLOB, 0);
 		targetMsgColumn.setName("实际消息内容");
 		targetMsgColumn.setComments("实际消息内容");
 		columns.add(targetMsgColumn);
 		
-		ComColumndata batchNumCodeColumn = new ComColumndata("batch_num", DataTypeConstants.STRING, 32);
+		CfgColumn batchNumCodeColumn = new CfgColumn("batch_num", DataTypeConstants.STRING, 32);
 		batchNumCodeColumn.setName("消息推送的批次编号");
 		batchNumCodeColumn.setComments("区分每次的消息推送");
 		columns.add(batchNumCodeColumn);
 		
-		ComColumndata msgBatchOrderCodeColumn = new ComColumndata("msg_batch_order_code", DataTypeConstants.INTEGER, 3);
+		CfgColumn msgBatchOrderCodeColumn = new CfgColumn("msg_batch_order_code", DataTypeConstants.INTEGER, 3);
 		msgBatchOrderCodeColumn.setName("消息批次排序");
 		msgBatchOrderCodeColumn.setComments("标识消息发送是否属于同一次，如果一次推送的人员超过100人后，系统会分批次，每次100人推送，以减少服务器压力；且这个字段还能用来排序，区分批次的顺序");
 		columns.add(msgBatchOrderCodeColumn);
 		
-		ComColumndata msgOrderCodeColumn = new ComColumndata("msg_order_code", DataTypeConstants.INTEGER, 5);
+		CfgColumn msgOrderCodeColumn = new CfgColumn("msg_order_code", DataTypeConstants.INTEGER, 5);
 		msgOrderCodeColumn.setName("消息排序");
 		msgOrderCodeColumn.setComments("标识推送每条消息的顺序");
 		columns.add(msgOrderCodeColumn);
 		
-		ComColumndata isReadedColumn = new ComColumndata("is_readed", DataTypeConstants.INTEGER, 1);
+		CfgColumn isReadedColumn = new CfgColumn("is_readed", DataTypeConstants.INTEGER, 1);
 		isReadedColumn.setName("是否已读");
 		isReadedColumn.setComments("默认值为0");
 		isReadedColumn.setDefaultValue("0");
 		columns.add(isReadedColumn);
 		
-		ComColumndata isSuccessColumn = new ComColumndata("is_success", DataTypeConstants.INTEGER, 1);
+		CfgColumn isSuccessColumn = new CfgColumn("is_success", DataTypeConstants.INTEGER, 1);
 		isSuccessColumn.setName("推送是否成功");
 		isSuccessColumn.setComments("推送是否成功");
 		columns.add(isSuccessColumn);
 		
-		ComColumndata pushResultCodeColumn = new ComColumndata("push_result_code", DataTypeConstants.INTEGER, 5);
+		CfgColumn pushResultCodeColumn = new CfgColumn("push_result_code", DataTypeConstants.INTEGER, 5);
 		pushResultCodeColumn.setName("推送的结果编码");
 		pushResultCodeColumn.setComments("推送的结果编码");
 		columns.add(pushResultCodeColumn);
@@ -237,8 +237,8 @@ public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, 
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("推送消息信息表");
 		table.setComments("推送消息信息表");
 		

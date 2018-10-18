@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
 
@@ -19,41 +19,41 @@ public class DynamicBasicColumnUtil {
 	 * 给动态表对象，添加基础的字段
 	 * @param table
 	 */
-	public static void initBasicColumnToTable(ComTabledata table){
-		ComColumndata idColumn = new ComColumndata(ResourcePropNameConstants.ID, DataTypeConstants.STRING, table.getIsBuildIn()==1?32:50);
+	public static void initBasicColumnToTable(CfgTable table){
+		CfgColumn idColumn = new CfgColumn(ResourcePropNameConstants.ID, DataTypeConstants.STRING, table.getIsBuildIn()==1?32:50);
 		idColumn.setIsPrimaryKey(1);
 		idColumn.setIsNullabled(0);
 		idColumn.setName("主键");
 		idColumn.setComments("主键");
 		table.getColumns().add(idColumn);
 		
-		ComColumndata customerIdColumn = new ComColumndata("customer_id", DataTypeConstants.STRING, 32);
+		CfgColumn customerIdColumn = new CfgColumn("customer_id", DataTypeConstants.STRING, 32);
 		customerIdColumn.setName("所属租户主键");
 		customerIdColumn.setComments("所属租户主键");
 		table.getColumns().add(customerIdColumn);
 		
-		ComColumndata projectIdColumn = new ComColumndata("project_id", DataTypeConstants.STRING, 32);
+		CfgColumn projectIdColumn = new CfgColumn("project_id", DataTypeConstants.STRING, 32);
 		projectIdColumn.setName("所属项目主键");
 		projectIdColumn.setComments("所属项目主键");
 		table.getColumns().add(projectIdColumn);
 		
 		if(!table.getTableName().endsWith("_LINKS")){// 不是关系表，才要这些字段
-			ComColumndata createDateColumn = new ComColumndata("create_date", DataTypeConstants.DATE, 0);
+			CfgColumn createDateColumn = new CfgColumn("create_date", DataTypeConstants.DATE, 0);
 			createDateColumn.setName("创建时间");
 			createDateColumn.setComments("创建时间");
 			table.getColumns().add(createDateColumn);
 			
-			ComColumndata lastUpdateDateColumn = new ComColumndata("last_update_date", DataTypeConstants.DATE, 0);
+			CfgColumn lastUpdateDateColumn = new CfgColumn("last_update_date", DataTypeConstants.DATE, 0);
 			lastUpdateDateColumn.setComments("最后修改时间");
 			lastUpdateDateColumn.setName("最后修改时间");
 			table.getColumns().add(lastUpdateDateColumn);
 			
-			ComColumndata createUserIdColumn = new ComColumndata("create_user_id", DataTypeConstants.STRING, 32);
+			CfgColumn createUserIdColumn = new CfgColumn("create_user_id", DataTypeConstants.STRING, 32);
 			createUserIdColumn.setComments("创建人主键");
 			createUserIdColumn.setName("创建人主键");
 			table.getColumns().add(createUserIdColumn);
 			
-			ComColumndata lastUpdateUserIdColumn = new ComColumndata("last_update_user_id", DataTypeConstants.STRING, 32);
+			CfgColumn lastUpdateUserIdColumn = new CfgColumn("last_update_user_id", DataTypeConstants.STRING, 32);
 			lastUpdateUserIdColumn.setComments("最后修改人主键");
 			lastUpdateUserIdColumn.setName("最后修改人主键");
 			table.getColumns().add(lastUpdateUserIdColumn);

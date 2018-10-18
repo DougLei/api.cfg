@@ -327,69 +327,69 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(11+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(11+7);
 		
-		ComColumndata dbTypeColumn = new ComColumndata("db_type", DataTypeConstants.STRING, 16);
+		CfgColumn dbTypeColumn = new CfgColumn("db_type", DataTypeConstants.STRING, 16);
 		dbTypeColumn.setName("数据库类型");
 		dbTypeColumn.setComments("数据库类型");
 		columns.add(dbTypeColumn);
 		
-		ComColumndata sqlScriptCaptionColumn = new ComColumndata("sql_script_caption", DataTypeConstants.STRING, 50);
+		CfgColumn sqlScriptCaptionColumn = new CfgColumn("sql_script_caption", DataTypeConstants.STRING, 50);
 		sqlScriptCaptionColumn.setName("sql脚本的标题");
 		sqlScriptCaptionColumn.setComments("sql脚本的标题");
 		columns.add(sqlScriptCaptionColumn);
 		
-		ComColumndata sqlScriptResourceNameColumn = new ComColumndata("sql_script_resource_name", DataTypeConstants.STRING, 60);
+		CfgColumn sqlScriptResourceNameColumn = new CfgColumn("sql_script_resource_name", DataTypeConstants.STRING, 60);
 		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
 		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
 		sqlScriptResourceNameColumn.setIsNullabled(0);
 		columns.add(sqlScriptResourceNameColumn);
 		
-		ComColumndata sqlScriptTypeColumn = new ComColumndata("sql_script_type", DataTypeConstants.STRING, 80);
+		CfgColumn sqlScriptTypeColumn = new CfgColumn("sql_script_type", DataTypeConstants.STRING, 80);
 		sqlScriptTypeColumn.setName("sql脚本类型");
 		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
 		columns.add(sqlScriptTypeColumn);
 		
-		ComColumndata confTypeColumn = new ComColumndata("conf_type", DataTypeConstants.STRING, 80);
+		CfgColumn confTypeColumn = new CfgColumn("conf_type", DataTypeConstants.STRING, 80);
 		confTypeColumn.setName("配置的sql脚本类型");
 		confTypeColumn.setComments("默认和sql脚本类型一样，用户可以根据sql脚本的内容修改为insert/update/delete三个值之一，解决定位查询focuseid中id+_add/_edit/_delete");
 		columns.add(confTypeColumn);
 		
-		ComColumndata sqlScriptContentColumn = new ComColumndata("sql_script_content", DataTypeConstants.CLOB, 0);
+		CfgColumn sqlScriptContentColumn = new CfgColumn("sql_script_content", DataTypeConstants.CLOB, 0);
 		sqlScriptContentColumn.setName("sql脚本内容");
 		sqlScriptContentColumn.setComments("sql脚本内容");
 		sqlScriptContentColumn.setIsNullabled(0);
 		columns.add(sqlScriptContentColumn);
 		
-		ComColumndata objectNameColumn = new ComColumndata("object_name", DataTypeConstants.STRING, 80);
+		CfgColumn objectNameColumn = new CfgColumn("object_name", DataTypeConstants.STRING, 80);
 		objectNameColumn.setName("sql对象名称");
 		objectNameColumn.setComments("存储过程、视图等");
 		columns.add(objectNameColumn);
 		
-		ComColumndata parameterNameRecordsColumn = new ComColumndata("parameter_name_records", DataTypeConstants.STRING, 8000);
+		CfgColumn parameterNameRecordsColumn = new CfgColumn("parameter_name_records", DataTypeConstants.STRING, 8000);
 		parameterNameRecordsColumn.setName("sql参数名的记录");
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
 		columns.add(parameterNameRecordsColumn);
 		
-		ComColumndata commentsColumn = new ComColumndata("comments", DataTypeConstants.STRING, 200);
+		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 200);
 		commentsColumn.setName("备注");
 		commentsColumn.setComments("备注");
 		columns.add(commentsColumn);
 		
-		ComColumndata isCreatedColumn = new ComColumndata("is_created", DataTypeConstants.INTEGER, 1);
+		CfgColumn isCreatedColumn = new CfgColumn("is_created", DataTypeConstants.INTEGER, 1);
 		isCreatedColumn.setName("是否被创建");
 		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
 		isCreatedColumn.setDefaultValue("0");
 		columns.add(isCreatedColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
 		
-		ComColumndata requestMethodColumn = new ComColumndata("request_method", DataTypeConstants.STRING, 30);
+		CfgColumn requestMethodColumn = new CfgColumn("request_method", DataTypeConstants.STRING, 30);
 		requestMethodColumn.setName("请求资源的方法");
 		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 		requestMethodColumn.setDefaultValue("all");
@@ -398,8 +398,8 @@ public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnal
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("sql脚本信息表");
 		table.setComments("sql脚本信息表");
 		

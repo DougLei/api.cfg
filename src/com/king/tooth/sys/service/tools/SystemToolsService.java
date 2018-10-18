@@ -61,7 +61,7 @@ public class SystemToolsService {
 	 */
 	@SuppressWarnings("unchecked")
 	private void setTableResourceStruct(String tableResourceId, ResourceInfo resourceInfo) {
-		List<Object[]> columns = HibernateUtil.executeListQueryByHqlArr(null, null, "select propName,columnType,name,comments  from ComColumndata where tableId=?", tableResourceId);
+		List<Object[]> columns = HibernateUtil.executeListQueryByHqlArr(null, null, "select propName,columnType,name,comments  from CfgColumn where tableId=?", tableResourceId);
 		if(columns == null || columns.size() == 0){
 			resourceInfo.setMsg("名为["+resourceInfo.getResourceName()+"]的表资源不存在结构信息，请检查配置的列信息");
 			return;

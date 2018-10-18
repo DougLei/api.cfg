@@ -10,8 +10,8 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 资源信息表
@@ -78,31 +78,31 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(5+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(5+7);
 		
-		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", DataTypeConstants.STRING, 32);
+		CfgColumn refResourceIdColumn = new CfgColumn("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("引用的资源主键");
 		refResourceIdColumn.setComments("引用的资源主键");
 		columns.add(refResourceIdColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
+		CfgColumn resourceNameColumn = new CfgColumn("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		columns.add(resourceNameColumn);
 		
-		ComColumndata resourceTypeColumn = new ComColumndata("resource_type", DataTypeConstants.INTEGER, 1);
+		CfgColumn resourceTypeColumn = new CfgColumn("resource_type", DataTypeConstants.INTEGER, 1);
 		resourceTypeColumn.setName("资源类型");
 		resourceTypeColumn.setComments("资源类型");
 		columns.add(resourceTypeColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
 		
-		ComColumndata requestMethodColumn = new ComColumndata("request_method", DataTypeConstants.STRING, 30);
+		CfgColumn requestMethodColumn = new CfgColumn("request_method", DataTypeConstants.STRING, 30);
 		requestMethodColumn.setName("请求资源的方法");
 		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
 		requestMethodColumn.setDefaultValue("all");
@@ -111,8 +111,8 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("资源信息表");
 		table.setComments("资源信息表");
 		table.setColumns(getColumnList());

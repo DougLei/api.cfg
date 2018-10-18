@@ -40,7 +40,7 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	
 	public CfgHibernateHbm() {
 	}
-	public CfgHibernateHbm(ComTabledata table) {
+	public CfgHibernateHbm(CfgTable table) {
 		this.setRefTableId(table.getId());
 		this.resourceName = table.getResourceName();
 	}
@@ -71,25 +71,25 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(4+7);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(4+7);
 		
-		ComColumndata refDatabaseIdColumn = new ComColumndata("ref_database_id", DataTypeConstants.STRING, 32);
+		CfgColumn refDatabaseIdColumn = new CfgColumn("ref_database_id", DataTypeConstants.STRING, 32);
 		refDatabaseIdColumn.setName("关联的数据库主键");
 		refDatabaseIdColumn.setComments("关联的数据库主键");
 		columns.add(refDatabaseIdColumn);
 		
-		ComColumndata refTableIdColumn = new ComColumndata("ref_table_id", DataTypeConstants.STRING, 32);
+		CfgColumn refTableIdColumn = new CfgColumn("ref_table_id", DataTypeConstants.STRING, 32);
 		refTableIdColumn.setName("关联的表主键");
 		refTableIdColumn.setComments("关联的表主键");
 		columns.add(refTableIdColumn);
 		
-		ComColumndata contentColumn = new ComColumndata("content", DataTypeConstants.CLOB, 0);
+		CfgColumn contentColumn = new CfgColumn("content", DataTypeConstants.CLOB, 0);
 		contentColumn.setName("hbm内容");
 		contentColumn.setComments("hbm内容");
 		columns.add(contentColumn);
 		
-		ComColumndata resourceNameColumn = new ComColumndata("resource_name", DataTypeConstants.STRING, 60);
+		CfgColumn resourceNameColumn = new CfgColumn("resource_name", DataTypeConstants.STRING, 60);
 		resourceNameColumn.setName("hbm资源名");
 		resourceNameColumn.setComments("hbm资源名：即对应的表的资源名");
 		columns.add(resourceNameColumn);
@@ -97,8 +97,8 @@ public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("hibernate的hbm内容表");
 		table.setComments("hibernate的hbm内容表");
 		

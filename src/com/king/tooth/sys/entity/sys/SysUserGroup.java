@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 用户组表
@@ -75,30 +75,30 @@ public class SysUserGroup extends BasicEntity implements ITable, IEntity{
 	}
 
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(12);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(12);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 60);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 60);
 		nameColumn.setName("用户组名称");
 		nameColumn.setComments("用户组名称");
 		columns.add(nameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 32);
+		CfgColumn codeColumn = new CfgColumn("code", DataTypeConstants.STRING, 32);
 		codeColumn.setName("用户组编码");
 		codeColumn.setComments("用户组编码");
 		columns.add(codeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata descsColumn = new ComColumndata("descs", DataTypeConstants.STRING, 200);
+		CfgColumn descsColumn = new CfgColumn("descs", DataTypeConstants.STRING, 200);
 		descsColumn.setName("描述");
 		descsColumn.setComments("描述");
 		columns.add(descsColumn);
 		
-		ComColumndata isEnabledColumn = new ComColumndata("is_enabled", DataTypeConstants.INTEGER, 1);
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("是否有效");
 		columns.add(isEnabledColumn);
@@ -106,8 +106,8 @@ public class SysUserGroup extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("用户组表");
 		table.setComments("用户组表");
 		

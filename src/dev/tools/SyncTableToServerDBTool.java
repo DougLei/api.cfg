@@ -10,7 +10,7 @@ import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AService;
@@ -36,7 +36,7 @@ public final class SyncTableToServerDBTool extends AService{
 	 * <p>解决每次开发新加的表，后续还要手工到服务器数据库中建表、加建模数据</p>
 	 * @param tables
 	 */
-	private static void syncTablesToService(ComTabledata... tables){
+	private static void syncTablesToService(CfgTable... tables){
 		// 服务器数据库对象
 		CfgDatabase serviceDatabaseInstance = new CfgDatabase();
 		// 服务器数据库连接信息
@@ -63,7 +63,7 @@ public final class SyncTableToServerDBTool extends AService{
 			String hbmId;
 			CfgHibernateHbm hbm;
 			SysResource resource;
-			for (ComTabledata table : tables) {
+			for (CfgTable table : tables) {
 				if(dbTableHandler.filterTable(true, table.getTableName()).size() == 1){
 					System.err.println("表名为["+table.getTableName()+"]的表，在服务器数据库中已经存在，不能能再进行操作");
 					continue;

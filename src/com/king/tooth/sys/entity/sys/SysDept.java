@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 部门表
@@ -98,40 +98,40 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(14);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(14);
 		
-		ComColumndata orgIdColumn = new ComColumndata("org_id", DataTypeConstants.STRING, 32);
+		CfgColumn orgIdColumn = new CfgColumn("org_id", DataTypeConstants.STRING, 32);
 		orgIdColumn.setName("所属组织主键");
 		orgIdColumn.setComments("所属组织主键：顶级部门的这个字段有值，子部门不需要");
 		columns.add(orgIdColumn);
 		
-		ComColumndata parentIdColumn = new ComColumndata("parent_id", DataTypeConstants.STRING, 32);
+		CfgColumn parentIdColumn = new CfgColumn("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父部门主键");
 		parentIdColumn.setComments("父部门主键");
 		columns.add(parentIdColumn);
 		
-		ComColumndata nameColumn = new ComColumndata("name", DataTypeConstants.STRING, 100);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 100);
 		nameColumn.setName("部门名称");
 		nameColumn.setComments("部门名称");
 		columns.add(nameColumn);
 		
-		ComColumndata shortNameColumn = new ComColumndata("short_name", DataTypeConstants.STRING, 50);
+		CfgColumn shortNameColumn = new CfgColumn("short_name", DataTypeConstants.STRING, 50);
 		shortNameColumn.setName("部门简称");
 		shortNameColumn.setComments("部门简称");
 		columns.add(shortNameColumn);
 		
-		ComColumndata codeColumn = new ComColumndata("code", DataTypeConstants.STRING, 32);
+		CfgColumn codeColumn = new CfgColumn("code", DataTypeConstants.STRING, 32);
 		codeColumn.setName("部门编码");
 		codeColumn.setComments("部门编码");
 		columns.add(codeColumn);
 		
-		ComColumndata orderCodeColumn = new ComColumndata("order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		columns.add(orderCodeColumn);
 		
-		ComColumndata typeColumn = new ComColumndata("type", DataTypeConstants.INTEGER, 3);
+		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 3);
 		typeColumn.setName("部门类型");
 		typeColumn.setComments("部门类型，例如班组，科室等");
 		columns.add(typeColumn);
@@ -139,8 +139,8 @@ public class SysDept extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("部门表");
 		table.setComments("部门表");
 		

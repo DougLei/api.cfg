@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
-import com.king.tooth.sys.entity.cfg.ComTabledata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 权限信息表
@@ -125,62 +125,62 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 	}
 	
 	@JSONField(serialize = false)
-	public List<ComColumndata> getColumnList() {
-		List<ComColumndata> columns = new ArrayList<ComColumndata>(17);
+	public List<CfgColumn> getColumnList() {
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(17);
 		
-		ComColumndata objIdColumn = new ComColumndata("obj_id", DataTypeConstants.STRING, 32);
+		CfgColumn objIdColumn = new CfgColumn("obj_id", DataTypeConstants.STRING, 32);
 		objIdColumn.setName("主体id");
 		objIdColumn.setComments("比如用户id，账户id，角色id，部门id，岗位id，用户组id等");
 		columns.add(objIdColumn);
 		
-		ComColumndata objTypeColumn = new ComColumndata("obj_type", DataTypeConstants.STRING, 12);
+		CfgColumn objTypeColumn = new CfgColumn("obj_type", DataTypeConstants.STRING, 12);
 		objTypeColumn.setName("主体类型");
 		objTypeColumn.setComments("比如用户user，账户account，角色role，部门dept，岗位position，用户组userGroup等");
 		columns.add(objTypeColumn);
 		
-		ComColumndata refResourceIdColumn = new ComColumndata("ref_resource_id", DataTypeConstants.STRING, 32);
+		CfgColumn refResourceIdColumn = new CfgColumn("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("关联的资源id");
 		refResourceIdColumn.setComments("关联的资源id，比如某个模块的id，某个功能的id等");
 		refResourceIdColumn.setOrderCode(3);
 		columns.add(refResourceIdColumn);
 		
-		ComColumndata refResourceCodeColumn = new ComColumndata("ref_resource_code", DataTypeConstants.STRING, 100);
+		CfgColumn refResourceCodeColumn = new CfgColumn("ref_resource_code", DataTypeConstants.STRING, 100);
 		refResourceCodeColumn.setName("关联的资源编码");
 		refResourceCodeColumn.setComments("关联的资源code，全项目唯一");
 		refResourceCodeColumn.setOrderCode(4);
 		columns.add(refResourceCodeColumn);
 		
-		ComColumndata refParentResourceIdColumn = new ComColumndata("ref_parent_resource_id", DataTypeConstants.STRING, 32);
+		CfgColumn refParentResourceIdColumn = new CfgColumn("ref_parent_resource_id", DataTypeConstants.STRING, 32);
 		refParentResourceIdColumn.setName("关联的父资源id");
 		refParentResourceIdColumn.setComments("关联的父资源id");
 		refParentResourceIdColumn.setOrderCode(5);
 		columns.add(refParentResourceIdColumn);
 		
-		ComColumndata refParentResourceCodeColumn = new ComColumndata("ref_parent_resource_code", DataTypeConstants.STRING, 100);
+		CfgColumn refParentResourceCodeColumn = new CfgColumn("ref_parent_resource_code", DataTypeConstants.STRING, 100);
 		refParentResourceCodeColumn.setName("关联的父资源编码");
 		refParentResourceCodeColumn.setComments("关联的父资源code");
 		refParentResourceCodeColumn.setOrderCode(6);
 		columns.add(refParentResourceCodeColumn);
 		
-		ComColumndata refResourceTypeColumn = new ComColumndata("ref_resource_type", DataTypeConstants.STRING, 20);
+		CfgColumn refResourceTypeColumn = new CfgColumn("ref_resource_type", DataTypeConstants.STRING, 20);
 		refResourceTypeColumn.setName("关联的资源类型");
 		refResourceTypeColumn.setComments("关联的资源类型：模块module、页签tab、功能oper、字段field  等");
 		refResourceTypeColumn.setOrderCode(7);
 		columns.add(refResourceTypeColumn);
 		
-		ComColumndata isVisibilityColumn = new ComColumndata("is_visibility", DataTypeConstants.INTEGER, 1);
+		CfgColumn isVisibilityColumn = new CfgColumn("is_visibility", DataTypeConstants.INTEGER, 1);
 		isVisibilityColumn.setName("是否可见(是否可读)");
 		isVisibilityColumn.setComments("是否可见(是否可读)");
 		isVisibilityColumn.setOrderCode(8);
 		columns.add(isVisibilityColumn);
 		
-		ComColumndata isOperColumn = new ComColumndata("is_oper", DataTypeConstants.INTEGER, 1);
+		CfgColumn isOperColumn = new CfgColumn("is_oper", DataTypeConstants.INTEGER, 1);
 		isOperColumn.setName("是否可操作(是否可写)");
 		isOperColumn.setComments("是否可操作(是否可写)");
 		isOperColumn.setOrderCode(9);
 		columns.add(isOperColumn);
 		
-		ComColumndata secretLevelsColumn = new ComColumndata("secret_levels", DataTypeConstants.STRING, 32);
+		CfgColumn secretLevelsColumn = new CfgColumn("secret_levels", DataTypeConstants.STRING, 32);
 		secretLevelsColumn.setName("密级");
 		secretLevelsColumn.setComments("密级：多个用,隔开");
 		secretLevelsColumn.setOrderCode(10);
@@ -189,8 +189,8 @@ public class SysPermission extends BasicEntity implements ITable, IEntity{
 		return columns;
 	}
 	
-	public ComTabledata toCreateTable() {
-		ComTabledata table = new ComTabledata(toDropTable());
+	public CfgTable toCreateTable() {
+		CfgTable table = new CfgTable(toDropTable());
 		table.setName("权限信息表");
 		table.setComments("权限信息表");
 		

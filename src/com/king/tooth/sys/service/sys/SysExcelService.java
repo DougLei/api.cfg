@@ -21,7 +21,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.ComColumndata;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.file.ImportFile;
@@ -105,9 +105,9 @@ public class SysExcelService extends AService{
 	 */
 	private static List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName, int isImport){
 		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
-		List<ComColumndata> columns = itable.getColumnList();
+		List<CfgColumn> columns = itable.getColumnList();
 		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
-		for (ComColumndata column : columns) {
+		for (CfgColumn column : columns) {
 			if((isImport == 1 && (column.getIsImport() != null && column.getIsImport() == 1))
 					|| (isImport == 0 && (column.getIsExport() != null && column.getIsExport() == 1))){
 				metadataInfos.add(new TableResourceMetadataInfo(
