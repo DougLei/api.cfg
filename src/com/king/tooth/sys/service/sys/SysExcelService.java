@@ -1,6 +1,7 @@
 package com.king.tooth.sys.service.sys;
 
-import java.util.ArrayList;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,22 +16,20 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
-import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.sys.SysFile;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.file.ImportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFileTemplate;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
-import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.FileUtil;
 import com.king.tooth.util.PoiExcelUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -45,128 +44,41 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class SysExcelService extends AService{
 	
 	/**
-	 * 获得要[导入/导出]的资源，元数据信息集合
-	 * @param resourceName
-	 * @param isImport 是否导入，不是导入，就是导出
-	 * @return
-	 */
-	private List<ResourceMetadataInfo> getResourceMetadataInfos(String resourceName, int isImport){
-		SysResource resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
-		if(resource.isTableResource()){
-			return getTableResourceMetadataInfos(resource, isImport);
-		}else if(resource.isSqlResource()){
-			if(isImport == 1){
-				throw new IllegalArgumentException("系统目前只支持查询表资源的导入元数据信息");
-			}
-//			return BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class)
-			return null;
-		}else{
-			throw new IllegalArgumentException("系统目前只支持表资源的导入、导出操作，以及sql资源的导出操作");
-		}
-	}
-	
-	/**
-	 * 查询导入导出时，表资源的元数据信息集合
-	 * @param resource
-	 * @param isImport 
-	 * @return
-	 */
-	private List<ResourceMetadataInfo> getTableResourceMetadataInfos(SysResource resource, int isImport){
-		List<ResourceMetadataInfo> resourceMetadataInfos = null;
-		String resourceId = resource.getRefResourceId();
-		String resourceName = resource.getResourceName();
-		
-		if(resource.isBuiltinResource()){
-			resourceMetadataInfos = getBuiltinTableResourceMetadataInfos(resourceName, isImport);
-		}else{
-			String hql = null;
-			if(isImport == 1){
-				hql = queryTableImportMetadataInfosHql;
-			}else{
-				hql = queryTableExportMetadataInfosHql;
-			}
-			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, hql, resourceId);
-			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
-				throw new NullPointerException("没有查询到表资源["+resourceName+"]的元数据信息，请检查配置，或联系后台系统开发人员");
-			}
-		}
-		return resourceMetadataInfos;
-	}
-	/** 查询表资源配置的导入excel的元数据信息集合的hql */
-	private static final String queryTableImportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
-	/** 查询表资源配置的导出excel的元数据信息集合的hql */
-	private static final String queryTableExportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isExport=1 order by exportOrderCode asc";
-	
-	/**
-	 * 获取内置表资源的元数据信息集合
-	 * @param tableResourceName
-	 * @param isImport
-	 * @return
-	 */
-	private static List<ResourceMetadataInfo> getBuiltinTableResourceMetadataInfos(String tableResourceName, int isImport){
-		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
-		List<CfgColumn> columns = itable.getColumnList();
-		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
-		for (CfgColumn column : columns) {
-			if((isImport == 1 && (column.getIsImport() != null && column.getIsImport() == 1))
-					|| (isImport == 0 && (column.getIsExport() != null && column.getIsExport() == 1))){
-				metadataInfos.add(new TableResourceMetadataInfo(
-						column.getColumnName(),
-						column.getColumnType(),
-						column.getLength(),
-						column.getPrecision(),
-						column.getIsUnique(), 
-						column.getIsNullabled(),
-						column.getPropName(),
-						column.getName()));
-			}
-		}
-		columns.clear();
-		return metadataInfos;
-	}
-	
-	// --------------------------------------------------------------------------------------
-	/**
 	 * 导入excel
 	 * @param importExcel
 	 * @return
 	 */
 	public Object importExcel(ImportFile importFile) {
-		SysFile file = getObjectById(importFile.getFileId(), SysFile.class);
+		SysFile file = importFile.getImportFile();
 		Object wb = PoiExcelUtil.getReadWorkBookInstance(file.getSavePath(), file.getSuffix());
 		if(wb instanceof String){
 			return wb;
 		}
 		Workbook workbook = (Workbook) wb;
 		
-		String resourceName = importFile.getResourceName();
-		int i, j, columnIndex=0;
-		List<ResourceMetadataInfo> resourceMetadataInfos = null;
-		IJson ijson = null;
-		JSONObject json = null;
-		String validResult = null;
-		
-		Row row = null;// excel行对象
-		Cell cell;// excel列对象
 		int rowCount = 0;// 行数
-		short columnCount = 0; // 列数
-		
 		Sheet sheet = workbook.getSheetAt(0);
 		rowCount = sheet.getLastRowNum()+1;
 		if(sheet.getRow(1) != null){
-			resourceMetadataInfos = getResourceMetadataInfos(resourceName, 1);
-			if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
-				return "导入excel操作中，没有查询到["+resourceName+"]资源的元数据信息集合，请联系后端系统开发人员";
-			}
+			String resourceName = importFile.getResourceName();
 			
-			ijson = new JSONArrayExtend(rowCount-1);
+			String desc = "导入excel文件["+file.getActName()+"]，";
+			int i, j, columnIndex=0;
+			List<ResourceMetadataInfo> resourceMetadataInfos = importFile.getResourceMetadataInfos();
+			IJson ijson = new JSONArrayExtend(rowCount-1);;
+			JSONObject json = null;
+			String validResult = null;
+			
+			Row row = null;// excel行对象
+			Cell cell;// excel列对象
+			short columnCount = 0; // 列数
 			
 			for(i=1;i<rowCount;i++){
 				row = sheet.getRow(i);
 				if(row != null){
 					columnCount = sheet.getRow(i).getLastCellNum();
 					if(columnCount > resourceMetadataInfos.size()){
-						return "导入excel文件，第"+(i+1)+"行数据的列数量("+columnCount+"个)大于资源["+resourceName+"]配置的导入字段数量("+resourceMetadataInfos.size()+"个)，系统无法匹配，请调整配置，或sheet中的列";
+						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)大于资源["+resourceName+"]配置的导入字段数量("+resourceMetadataInfos.size()+"个)，系统无法匹配，请调整配置，或sheet中的列";
 					}
 					json = new JSONObject(columnCount);
 					ijson.add(json);
@@ -181,7 +93,7 @@ public class SysExcelService extends AService{
 					columnIndex=0;
 				}
 			}
-			validResult = validImportDatas(resourceName, ijson, resourceMetadataInfos);
+			validResult = validImportDatas(desc , resourceName, ijson, resourceMetadataInfos);
 			if(validResult != null){
 				return validResult;
 			}
@@ -206,12 +118,13 @@ public class SysExcelService extends AService{
 
 	/**
 	 * 验证导入的数据
+	 * @param desc
 	 * @param resourceName
 	 * @param ijson
 	 * @param resourceMetadataInfos 
 	 * @return
 	 */
-	private String validImportDatas(String resourceName, IJson ijson, List<ResourceMetadataInfo> resourceMetadataInfos) {
+	private String validImportDatas(String desc, String resourceName, IJson ijson, List<ResourceMetadataInfo> resourceMetadataInfos) {
 		int size = ijson.size();
 		
 		int columnIndex =1;
@@ -231,20 +144,20 @@ public class SysExcelService extends AService{
 				
 				// 验证不能为空
 				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
-					return "导入excel文件，第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值不能为空";
+					return desc + "第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值不能为空";
 				}
 				
 				if(!dataValueIsNull){
 					validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(dataValue, rmi);
 					if(validDataIsLegalResult != null){
-						return "导入excel文件，第"+(i+2)+"行，第"+columnIndex+"列" + validDataIsLegalResult;
+						return desc+"第"+(i+2)+"行，第"+columnIndex+"列" + validDataIsLegalResult;
 					}
 					
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintProps.add(rmi);
 						if(validDataIsExists(resourceName, rmi.getPropName(), dataValue, dataIdValue)){
-							return "导入excel文件，第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值已经存在，不能重复添加";
+							return desc+"第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值已经存在，不能重复添加";
 						}
 					}
 				}
@@ -261,7 +174,7 @@ public class SysExcelService extends AService{
 					if(StrUtils.notEmpty(dataValue)){
 						for(int j=i+1;j<size;j++){
 							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
-								return "导入excel文件，第"+(i+2)+"行和第"+(j+2)+"行的，第"+columnIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
+								return desc+"第"+(i+2)+"行和第"+(j+2)+"行的，第"+columnIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
 							}
 						}
 					}
@@ -310,30 +223,58 @@ public class SysExcelService extends AService{
 	 * @return
 	 */
 	public Object createImportExcelTemplate(ImportFileTemplate importFileTemplate) {
-		String resourceName = importFileTemplate.getResourceName();
-		List<ResourceMetadataInfo> resourceMetadataInfos = getResourceMetadataInfos(resourceName, 1);
-		if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
-			return "导入excel操作中，没有查询到["+resourceName+"]资源的元数据信息集合，请联系后端系统开发人员";
+		String suffix = importFileTemplate.getFileSuffix();
+		Object wb = PoiExcelUtil.getWriteWorkBookInstance(suffix);
+		if(wb instanceof String){
+			return wb;
 		}
+		Workbook workbook = (Workbook) wb;
+		Sheet sheet = workbook.createSheet();
+		Row row = sheet.createRow(0);
+		Cell cell;
 		
-		
-		
-		
-		
-		
-		
-		SysFile importExcelFileTemplate = new SysFile();
-		importExcelFileTemplate.setActName("【"+resourceName+"】excel导入模版"+DateUtil.formatDate(new Date()));
-		importExcelFileTemplate.setCode(FileUtil.getFileCode());
-		importExcelFileTemplate.setSuffix(importFileTemplate.getFileSuffix());
-		importExcelFileTemplate.setSavePath("xxxxxxxxxxxxxxxxxxxxxx");
-		importExcelFileTemplate.setSaveType(FileUtil.saveType);
-		importExcelFileTemplate.setBatch(ResourceHandlerUtil.getBatchNum());
-		importExcelFileTemplate.setBuildInType(SysFile.BUILD_IN_TYPE_IMPORT_TEMPLATE);
-		
-		return HibernateUtil.saveObject(importExcelFileTemplate, null);
+		List<ResourceMetadataInfo> resourceMetadataInfos = importFileTemplate.getResourceMetadataInfos();
+		int size = resourceMetadataInfos.size();
+		ResourceMetadataInfo rmi = null;
+		for (int i=0;i<size ;i++) {
+			rmi = resourceMetadataInfos.get(i);
+			cell = row.createCell(i+1);
+			cell.setCellValue(rmi.getDescName());
+		}
+		return createImportExcelTemplate(workbook, suffix, importFileTemplate.getResourceName());
 	}
 	
+	/**
+	 * 生成excel导入模版文件，并将该文件信息保存到文件表中
+	 * @param workbook
+	 * @param suffix
+	 * @param resourceName
+	 * @return
+	 */
+	private Object createImportExcelTemplate(Workbook workbook, String suffix, String resourceName){
+		String fileCode = FileUtil.getFileCode();
+		String importExcelFileSavePath = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).validSaveFileDirIsExists(SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE)+fileCode+"."+suffix;
+		FileOutputStream fo = null;
+		try {
+			fo = new FileOutputStream(importExcelFileSavePath);
+			workbook.write(fo);
+		} catch (IOException e) {
+			return "生成excel导入模版时出现IO异常：" + ExceptionUtil.getErrMsg(e);
+		} finally {
+			CloseUtil.closeIO(fo);
+		}
+		
+		SysFile importExcelFileTemplate = new SysFile();
+		importExcelFileTemplate.setActName("【"+resourceName+"】excel导入模版"+DateUtil.formatDatetime(new Date()) + "." + suffix);
+		importExcelFileTemplate.setCode(fileCode);
+		importExcelFileTemplate.setSuffix(suffix);
+		importExcelFileTemplate.setSavePath(importExcelFileSavePath);
+		importExcelFileTemplate.setSaveType(SysFileConstants.saveType);
+		importExcelFileTemplate.setBatch(ResourceHandlerUtil.getBatchNum());
+		importExcelFileTemplate.setBuildInType(SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
+		return HibernateUtil.saveObject(importExcelFileTemplate, null);
+	}
+
 	// ---------------------------------------------------------------------
 	/**
 	 * 导出excel

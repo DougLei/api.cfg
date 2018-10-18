@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.king.tooth.constants.EncodingConstants;
+import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.service.sys.SysFileService;
 import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.FileUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -27,7 +27,7 @@ public class FileServlet extends HttpServlet{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.EXCEL);// 标识日志的类型为excel
 		
 		ResponseBody responseBody = null;
-		if(FileUtil.saveToService){
+		if(SysFileConstants.saveToService){
 			String[] uri = request.getRequestURI().split("/");
 			if(uri.length == 4){
 				String method = request.getMethod().toLowerCase();
@@ -66,7 +66,7 @@ public class FileServlet extends HttpServlet{
 				responseBody = new ResponseBody("请求操作文件的api路径格式错误，请检查：[/file/upload][/file/download][/file/delete]");
 			}
 		}else{
-			responseBody = new ResponseBody("目前系统还不支持["+FileUtil.saveType+"]方式的保存文件，请联系后端系统开发人员");
+			responseBody = new ResponseBody("目前系统还不支持["+SysFileConstants.saveType+"]方式的保存文件，请联系后端系统开发人员");
 		}
 		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
 	}

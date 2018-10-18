@@ -7,6 +7,6 @@ import java.io.Serializable;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ExportFile implements Serializable{
+public class ExportFile extends AIEFile implements Serializable{
 
 }

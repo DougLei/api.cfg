@@ -8,6 +8,7 @@ import org.apache.commons.fileupload.FileItem;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.ITable;
@@ -49,7 +50,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	private String savePath;
 	/**
 	 * 文件的存储方式
-	 * <p>db:存储在数据库，service:存储在系统服务器上...</p>
+	 * <p>service:存储在系统服务器上</p>
 	 */
 	private String saveType;
 	/**
@@ -251,8 +252,8 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		
 		CfgColumn saveTypeColumn = new CfgColumn("save_type", DataTypeConstants.STRING, 10);
 		saveTypeColumn.setName("文件的存储方式");
-		saveTypeColumn.setComments("文件的存储方式：db:存储在数据库，service:存储在系统服务器上...");
-		saveTypeColumn.setDefaultValue(SAVE_TYPE_SERVICE);
+		saveTypeColumn.setComments("文件的存储方式：service:存储在系统服务器上");
+		saveTypeColumn.setDefaultValue(SysFileConstants.SAVE_TYPE_SERVICE);
 		columns.add(saveTypeColumn);
 		
 		CfgColumn contentColumn = new CfgColumn("content", DataTypeConstants.BLOB, 0);
@@ -284,7 +285,7 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 		CfgColumn buildInTypeColumn = new CfgColumn("build_in_type", DataTypeConstants.INTEGER, 2);
 		buildInTypeColumn.setName("内置文件类型");
 		buildInTypeColumn.setComments("由开发人员自定义，默认值为1，1:普通文件、2:导入文件、3:导入模版文件、4:导出文件");
-		buildInTypeColumn.setDefaultValue(BUILD_IN_TYPE_NORMAL+"");
+		buildInTypeColumn.setDefaultValue(SysFileConstants.BUILD_IN_TYPE_NORMAL+"");
 		columns.add(buildInTypeColumn);
 		
 		CfgColumn isImportColumn = new CfgColumn("is_import", DataTypeConstants.INTEGER, 1);
@@ -329,11 +330,4 @@ public class SysFile extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "SysFile";
 	}
-
-	public static final String SAVE_TYPE_SERVICE = "service";
-	
-	public static final int BUILD_IN_TYPE_NORMAL = 1;
-	public static final int BUILD_IN_TYPE_IMPORT = 2;
-	public static final int BUILD_IN_TYPE_IMPORT_TEMPLATE = 3;
-	public static final int BUILD_IN_TYPE_EXPORT = 4;
 }

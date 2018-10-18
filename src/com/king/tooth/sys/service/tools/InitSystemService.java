@@ -37,7 +37,7 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDataPrivS;
 import com.king.tooth.sys.entity.sys.SysDept;
-import com.king.tooth.sys.entity.sys.SysExcelImportExportInfo;
+import com.king.tooth.sys.entity.sys.SysExcelImportExportLog;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysOrg;
@@ -143,7 +143,7 @@ public class InitSystemService extends AService{
 		tables.add(new CfgSqlResultset().toCreateTable());
 		tables.add(new SysPushMessageInfo().toCreateTable());
 		tables.add(new SysDataPrivS().toCreateTable());
-		tables.add(new SysExcelImportExportInfo().toCreateTable());
+		tables.add(new SysExcelImportExportLog().toCreateTable());
 		return tables;
 	}
 	

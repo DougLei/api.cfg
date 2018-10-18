@@ -2,8 +2,11 @@ package com.king.tooth.sys.entity.sys.file;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -11,7 +14,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class ImportFileTemplate implements Serializable, IEntityPropAnalysis{
+public class ImportFileTemplate extends AIEFile implements Serializable, IEntityPropAnalysis{
 
 	/**
 	 * 导入模版文件的后缀
@@ -47,27 +50,25 @@ public class ImportFileTemplate implements Serializable, IEntityPropAnalysis{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
-			boolean isSupportFileSuffix = false;
 			fileSuffix = fileSuffix.toLowerCase();
-			for (String supportFileSuffix : supportFileSuffixArray) {
-				if(supportFileSuffix.equals(fileSuffix)){
-					isSupportFileSuffix = true;
-					break;
-				}
-			}
-			if(!isSupportFileSuffix){
+			if(!isSupportFileSuffix(fileSuffix)){
 				return "系统不支持后缀为["+fileSuffix+"]的导入模版文件，系统支持的导入模版文件后缀包括：" +Arrays.toString(supportFileSuffixArray);
 			}
+			
+			Object obj = getIEResourceMetadataInfos(resourceName, 1);
+			if(obj instanceof String){
+				return obj.toString();
+			}
+			resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
 		}
 		return result;
 	}
 	
-	/** 系统目前支持的文件后缀 */
-	private static final String[] supportFileSuffixArray = {"xls", "xlsx"};
-
+	@JSONField(serialize = false)
 	public String getEntityName() {
 		return "ImportFileTemplate";
 	}

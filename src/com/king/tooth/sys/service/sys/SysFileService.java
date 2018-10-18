@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
+import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.service.AService;
@@ -74,7 +75,7 @@ public class SysFileService extends AService{
 				}else if(uploadFileInfo.errMsg != null){
 					return uploadFileInfo.errMsg;
 				}else{
-					String uploadDir = validUploadDirIsExists(uploadFileInfo);
+					String uploadDir = validSaveFileDirIsExists((uploadFileInfo.isImport == 0)?SysFileConstants.BUILD_IN_TYPE_NORMAL:SysFileConstants.BUILD_IN_TYPE_IMPORT);
 					filePathList = new ArrayList<String>(uploadFileInfo.count);
 					Map<Integer, SysFile> sysfileMap = new HashMap<Integer, SysFile>(uploadFileInfo.count);
 					SysFile sysFile;
@@ -89,10 +90,10 @@ public class SysFileService extends AService{
 							sysFile.setBatch(uploadFileInfo.batch);
 							sysFile.setIsImport(uploadFileInfo.isImport);
 							if(uploadFileInfo.isImport == 1){
-								sysFile.setBuildInType(SysFile.BUILD_IN_TYPE_IMPORT);
+								sysFile.setBuildInType(SysFileConstants.BUILD_IN_TYPE_IMPORT);
 							}
 							sysFile.setCode(FileUtil.getFileCode());
-							sysFile.setSaveType(FileUtil.saveType);
+							sysFile.setSaveType(SysFileConstants.saveType);
 							sysfileMap.put(index, sysFile);
 						}
 						
@@ -108,8 +109,8 @@ public class SysFileService extends AService{
 								sysFile.setSizes(file.getSize()+"");
 								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase());
 								sysFile.setFileItem(file);
-								if(FileUtil.saveToService){
-									sysFile.setSavePath(uploadDir + File.separator + sysFile.getCode() + "." + sysFile.getSuffix());
+								if(SysFileConstants.saveToService){
+									sysFile.setSavePath(uploadDir + sysFile.getCode() + "." + sysFile.getSuffix());
 									filePathList.add(sysFile.getSavePath());
 								}
 							}
@@ -121,7 +122,7 @@ public class SysFileService extends AService{
 				return "没有获得要操作的任何数据[fileList is null]";
 			}
 		} catch (Exception e) {
-			if(FileUtil.saveToService && filePathList != null && filePathList.size() > 0){
+			if(SysFileConstants.saveToService && filePathList != null && filePathList.size() > 0){
 				File tf;
 				for (String fp : filePathList) {
 					tf = new File(fp);
@@ -135,7 +136,7 @@ public class SysFileService extends AService{
 			if(fileList != null){
 				fileList.clear();
 			}
-			if(FileUtil.saveToService && filePathList != null){
+			if(SysFileConstants.saveToService && filePathList != null){
 				filePathList.clear();
 			}
 		}
@@ -186,10 +187,10 @@ public class SysFileService extends AService{
 				uploadFileInfo.count++;
 				logJsonObject.put(fi.getFieldName(), new FileInfo(fi.getName(), (fi.getSize() + " B")));
 				
-				if(uploadFileInfo.isImport == 0 && FileUtil.fileMaxSize != -1){
+				if(uploadFileInfo.isImport == 0 && SysFileConstants.fileMaxSize != -1){
 					fileSizeKB = fi.getSize()/1024;// 由B转换为KB
-					if(fileSizeKB > FileUtil.fileMaxSize){
-						uploadFileInfo.errMsg = "文件的大小为"+(fileSizeKB/1024)+"M，系统限制单个文件的大小不能超过"+(FileUtil.fileMaxSize/1024)+"M，请修改后再上传";
+					if(fileSizeKB > SysFileConstants.fileMaxSize){
+						uploadFileInfo.errMsg = "文件的大小为"+(fileSizeKB/1024)+"M，系统限制单个文件的大小不能超过"+(SysFileConstants.fileMaxSize/1024)+"M，请修改后再上传";
 					}
 				}
 			}
@@ -228,7 +229,7 @@ public class SysFileService extends AService{
 	 * @throws IOException 
 	 */
 	private Object uploadFile(Map<Integer, SysFile> sysfileMap) throws IOException {
-		if(FileUtil.saveToService){
+		if(SysFileConstants.saveToService){
 			return uploadFileToService(sysfileMap);
 		}
 		return "目前file.save.type的值，只支持配置为：[service]";
@@ -273,27 +274,6 @@ public class SysFileService extends AService{
 		}
 	}
 
-	/**
-	 * 验证上传文件的目录是否存在
-	 * <p>如果不存在，则创建</p>
-	 * @param uploadFileInfo 
-	 */
-	private String validUploadDirIsExists(UploadFileInfo uploadFileInfo) {
-		if(SysFile.SAVE_TYPE_SERVICE.equals(FileUtil.saveType)){
-			String uploadDir;
-			if(uploadFileInfo.isImport == 0){
-				uploadDir = FileUtil.fileSavePath + DateUtil.formatDate(new Date());
-			}else{
-				uploadDir = FileUtil.importFileSavePath + DateUtil.formatDate(new Date());
-			}
-			File dir = new File(uploadDir);
-			if(!dir.exists()){
-				dir.mkdirs();
-			}
-			return uploadDir;
-		}
-		return null;
-	}
 	//----------------------------------------------------------------------------------------------------------------
 	
 	/**
@@ -336,7 +316,7 @@ public class SysFileService extends AService{
 			File tmpFile;
 			if(fileIdArr.length == 1){
 				SysFile sysFile = sysFileList.get(0);
-				if(SysFile.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
+				if(SysFileConstants.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
 					response.setHeader("Content-Disposition", "attachment;filename=" + StrUtils.turnStrEncoding(sysFile.getActName(), EncodingConstants.UTF_8, EncodingConstants.ISO8859_1));
 					
 					tmpFile = new File(sysFile.getSavePath());
@@ -359,7 +339,7 @@ public class SysFileService extends AService{
 				byte[] b;
 				int len;
 				for (SysFile sysFile : sysFileList) {
-					if(SysFile.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
+					if(SysFileConstants.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
 						zos.putNextEntry(new ZipEntry(sysFile.getActName()));
 						tmpFile = new File(sysFile.getSavePath());
 						input = new FileInputStream(tmpFile);
@@ -408,7 +388,7 @@ public class SysFileService extends AService{
 			for (String fileId : fileIdArr) {
 				sysFile = getObjectById(fileId, SysFile.class);
 				
-				if(SysFile.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
+				if(SysFileConstants.SAVE_TYPE_SERVICE.equals(sysFile.getSaveType())){
 					tmpFile = new File(sysFile.getSavePath());
 					if(tmpFile.exists() && tmpFile.isFile()){
 						tmpFile.delete();
@@ -424,5 +404,31 @@ public class SysFileService extends AService{
 		
 		// 组装结果
 		return jsonObject;
+	}
+	
+	//----------------------------------------------------------------------------------------------------------------
+	/**
+	 * 验证保存文件的目录是否存在
+	 * <p>如果不存在，则创建</p>
+	 * @param buildInType  
+	 * @return 
+	 */
+	public String validSaveFileDirIsExists(int buildInType) {
+		if(SysFileConstants.SAVE_TYPE_SERVICE.equals(SysFileConstants.saveType)){
+			String saveFileDir;
+			if(buildInType == SysFileConstants.BUILD_IN_TYPE_NORMAL){
+				saveFileDir = SysFileConstants.fileSavePath + DateUtil.formatDate(new Date()) + File.separator;
+			}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_IMPORT){
+				saveFileDir = SysFileConstants.importFileSavePath + DateUtil.formatDate(new Date()) + File.separator;
+			}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE){
+				saveFileDir = SysFileConstants.importFileTemplateSavePath + DateUtil.formatDate(new Date()) + File.separator;
+			}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_EXPORT){
+				saveFileDir = SysFileConstants.exportFileSavePath + DateUtil.formatDate(new Date()) + File.separator;
+			}else{
+				throw new IllegalArgumentException("系统目前上传文件的内置类型buildInType，值只包括[1,2,3,4]");
+			}
+			return FileUtil.validSaveFileDirIsExists(saveFileDir);
+		}
+		throw new IllegalArgumentException("系统目前只支持在服务器上保存文件的方式");
 	}
 }
