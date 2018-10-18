@@ -155,6 +155,6 @@ public abstract class AIEFile {
 		return resourceMetadataInfos;
 	}
 	/** 查询sql资源配置的导出excel的元数据信息集合的hql */
-	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
+	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
 	
 }

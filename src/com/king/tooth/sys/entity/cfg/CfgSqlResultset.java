@@ -56,6 +56,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	 */
 	private String propName;
 	/**
+	 * 字段描述名
+	 * <p>例如姓名、年龄，如果没有值，默认为propName</p>
+	 */
+	private String descName;
+	/**
 	 * 排序值
 	 */
 	private Integer orderCode;
@@ -100,6 +105,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		}else{
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		}
+		this.descName = this.propName;
 	}
 	public CfgSqlResultset() {
 	}
@@ -158,6 +164,12 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
+	public String getDescName() {
+		return descName;
+	}
+	public void setDescName(String descName) {
+		this.descName = descName;
+	}
 	public Integer getInOut() {
 		return inOut;
 	}
@@ -185,7 +197,7 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(11+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(12+7);
 		
 		CfgColumn sqlScriptIdColumn = new CfgColumn("sql_script_id", DataTypeConstants.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -221,6 +233,11 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 		propNameColumn.setName("属性名");
 		propNameColumn.setComments("属性名");
 		columns.add(propNameColumn);
+		
+		CfgColumn descNameColumn = new CfgColumn("desc_name", DataTypeConstants.STRING, 60);
+		descNameColumn.setName("字段描述名");
+		descNameColumn.setComments("例如姓名、年龄，如果没有值，默认为propName");
+		columns.add(descNameColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setName("排序值");
