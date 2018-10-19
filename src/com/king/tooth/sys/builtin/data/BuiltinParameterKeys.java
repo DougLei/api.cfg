@@ -47,7 +47,8 @@ public class BuiltinParameterKeys {
 		"_subResourceName", "_subSort", 
 		"_recursive", "_deep", 
 		"_simpleModel",
-		"_refPropName"};
+		"_refPropName",
+		"_isCreateExport", "_exportFileSuffix"};
 	
 	//------------------------------------------------------------------------------------
 	/**

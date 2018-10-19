@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
@@ -129,13 +130,13 @@ public class SqlStatementParserUtil {
 		 Map<String, String> typeMap = new HashMap<String, String>(4);
 		 typeMap.put("isOtherSqlType", "false");// 不在BuiltinDatabaseData常量中的，其他sql脚本类型
 		 typeMap.put("isUnique", "false");
-		 typeMap.put("reqMethod", "post");
+		 typeMap.put("reqMethod", ResourceInfoConstants.POST);
 		 
 		 switch(sqlStatementType){
 	         case sstselect:
 	        	 typeMap.put("type", SqlStatementTypeConstants.SELECT);
 	        	 typeMap.put("isUnique", "true");
-	        	 typeMap.put("reqMethod", "get");
+	        	 typeMap.put("reqMethod", ResourceInfoConstants.GET);
 	        	 break;
 	         case sstupdate:
 	        	 typeMap.put("type", SqlStatementTypeConstants.UPDATE);
@@ -157,7 +158,7 @@ public class SqlStatementParserUtil {
 	         case sstcreateview:
 	        	 typeMap.put("type", SqlStatementTypeConstants.VIEW);
 	        	 typeMap.put("isUnique", "true");
-	        	 typeMap.put("reqMethod", "none");
+	        	 typeMap.put("reqMethod", ResourceInfoConstants.NONE);
 	        	 break;
 	         default:
 	        	 Log4jUtil.warn("目前平台很可能不支持[{}]类型的sql脚本", sqlStatementType);

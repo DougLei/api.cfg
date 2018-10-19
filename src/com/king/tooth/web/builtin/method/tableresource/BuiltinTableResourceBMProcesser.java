@@ -57,6 +57,8 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		setFocusedIdProcesser(requestBuiltinParams);
 		// 内置分页函数处理器实例
 		setPagerProcesser(requestBuiltinParams);
+		// 内置创建导出文件的函数处理器
+		setCreateExportFileProcesser(requestBuiltinParams);
 		// 内置查询函数处理器实例
 		setQueryProcesser(requestBuiltinParams);
 		// 内置排序函数处理器实例

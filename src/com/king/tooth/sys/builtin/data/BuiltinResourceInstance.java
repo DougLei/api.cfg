@@ -34,7 +34,7 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysDataDictionary;
 import com.king.tooth.sys.entity.sys.SysDataPrivS;
 import com.king.tooth.sys.entity.sys.SysDept;
-import com.king.tooth.sys.entity.sys.SysExcelImportExportLog;
+import com.king.tooth.sys.entity.sys.SysFileImportExportLog;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysOrg;
@@ -145,7 +145,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserRoleLinks", new SysUserRoleLinks());
 		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
-		instanceCache.put("SysExcelImportExportLog", new SysExcelImportExportLog());
+		instanceCache.put("SysFileImportExportLog", new SysFileImportExportLog());
 		
 		
 		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉

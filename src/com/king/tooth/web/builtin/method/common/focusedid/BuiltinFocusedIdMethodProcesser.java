@@ -9,25 +9,25 @@ import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.AbstractBuiltinCommonMethod;
 
 /**
- * 内置聚焦函数处理器
+ * 内置定位函数处理器
  * @author DougLei
  */
 public class BuiltinFocusedIdMethodProcesser extends AbstractBuiltinCommonMethod{
 	
 	/**
-	 * 添加数据-聚焦的数据id
+	 * 添加数据-定位的数据id
 	 */
 	private List<Object> addFocusedIds;
 	/**
-	 * 修改数据-聚焦的数据id
+	 * 修改数据-定位的数据id
 	 */
 	private List<Object> editFocusedIds;
 	/**
-	 * 删除数据-聚焦的数据id
+	 * 删除数据-定位的数据id
 	 */
 	private List<Object> deleteFocusedIds;
 	/**
-	 * 所有聚焦的数据id
+	 * 所有定位的数据id
 	 */
 	private String[] focusedId;
 	

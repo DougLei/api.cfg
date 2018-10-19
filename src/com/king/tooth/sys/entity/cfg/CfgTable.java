@@ -300,6 +300,9 @@ public class CfgTable extends BasicEntity implements ITable, IEntityPropAnalysis
 		if(result == null){
 			this.tableName = tableName.trim().toUpperCase();
 			this.resourceName = NamingProcessUtil.tableNameTurnClassName(tableName);
+			if(StrUtils.isEmpty(requestMethod)){
+				requestMethod = ResourceInfoConstants.ALL;
+			}
 		}
 		return result;
 	}

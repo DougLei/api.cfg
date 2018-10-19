@@ -3,6 +3,7 @@ package com.king.tooth.web.builtin.method;
 import java.util.Map;
 
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.web.builtin.method.common.export.file.create.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 
@@ -34,6 +35,10 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 	 * 内置分页函数处理器实例
 	 */
 	protected BuiltinPagerMethodProcesser pagerProcesser;
+	/**
+	 * 内置创建导出文件的函数处理器
+	 */
+	protected BuiltinCreateExportFileMethodProcesser createExportFileProcesser;
 	
 	/**
 	 * 内置聚焦函数处理器实例
@@ -59,7 +64,17 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 			pagerProcesser = new BuiltinPagerMethodProcesser(limit, start, rows, page);
 		}
 	}
-	
+	/**
+	 * 内置创建导出文件的函数处理器实例
+	 * 
+	 */
+	public void setCreateExportFileProcesser(Map<String, String> requestBuiltinParams) {
+		String isCreateExport = requestBuiltinParams.remove("_isCreateExport");
+		String exportFileSuffix = requestBuiltinParams.remove("_exportFileSuffix");
+		if(StrUtils.notEmpty(isCreateExport) && StrUtils.notEmpty(exportFileSuffix)){
+			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, isCreateExport, exportFileSuffix);
+		}
+	}
 	
 	public BuiltinFocusedIdMethodProcesser getFocusedIdProcesser() {
 		if(focusedIdProcesser == null){
@@ -72,5 +87,11 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 			pagerProcesser = new BuiltinPagerMethodProcesser();
 		}
 		return pagerProcesser;
+	}
+	public BuiltinCreateExportFileMethodProcesser getCreateExportFileProcesser() {
+		if(createExportFileProcesser == null){
+			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser();
+		}
+		return createExportFileProcesser;
 	}
 }

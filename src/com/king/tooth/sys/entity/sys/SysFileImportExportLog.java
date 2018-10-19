@@ -13,12 +13,12 @@ import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
- * Excel导入导出日志表
+ * 文件导入导出日志表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class SysExcelImportExportLog extends BasicEntity implements ITable, IEntity{
+public class SysFileImportExportLog extends BasicEntity implements ITable, IEntity{
 
 	/**
 	 * 操作类型
@@ -45,9 +45,9 @@ public class SysExcelImportExportLog extends BasicEntity implements ITable, IEnt
 	
 	//-------------------------------------------------------------------------
 	
-	public SysExcelImportExportLog() {
+	public SysFileImportExportLog() {
 	}
-	public SysExcelImportExportLog(Integer operType, String refFileId, String submitObjJson) {
+	public SysFileImportExportLog(Integer operType, String refFileId, String submitObjJson) {
 		this.operType = operType;
 		this.refFileId = refFileId;
 		this.submitObjJson = submitObjJson;
@@ -123,20 +123,20 @@ public class SysExcelImportExportLog extends BasicEntity implements ITable, IEnt
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("Excel导入导出日志表");
-		table.setComments("Excel导入导出日志表");
+		table.setName("文件导入导出日志表");
+		table.setComments("文件导入导出日志表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "SYS_EXCEL_IMPORT_EXPORT_LOG";
+		return "SYS_FILE_IMPORT_EXPORT_LOG";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysExcelImportExportLog";
+		return "SysFileImportExportLog";
 	}
 	
 	// ---------------------------------------------------------------------------
