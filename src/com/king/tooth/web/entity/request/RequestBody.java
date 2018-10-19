@@ -1,6 +1,7 @@
 package com.king.tooth.web.entity.request;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -172,6 +173,18 @@ public class RequestBody implements Serializable{
 	}
 	public boolean isDeleteRequest(){
 		return "delete".equals(getRequestMethod());
+	}
+	
+	/**
+	 * 整合所有url参数的键值对集合
+	 * @return
+	 */
+	public Map<String, String> installAllUrlParams() {
+		Map<String, String> urlParams = new HashMap<String, String>(requestBuiltinParams.size() + requestResourceParams.size() + requestParentResourceParams.size());
+		urlParams.putAll(requestBuiltinParams);
+		urlParams.putAll(requestResourceParams);
+		urlParams.putAll(requestParentResourceParams);
+		return urlParams;
 	}
 	
 	/**

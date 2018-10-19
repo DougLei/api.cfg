@@ -20,18 +20,10 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class ImportFile extends AIEFile implements Serializable, IEntityPropAnalysis{
 
 	/**
-	 * 要导入的文件id
-	 */
-	private String fileId;
-	/**
 	 * 一次批量导入的数量
 	 * <p>例如文件中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为300条，如果值为-1，则一次全部导入</p>
 	 */
 	private int batchImportCount;
-	/**
-	 * 要导入的资源名
-	 */
-	private String resourceName;
 	
 	// --------------------------------------------------
 	/**
@@ -44,23 +36,11 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 	public SysFile getImportFile() {
 		return importFile;
 	}
-	public String getFileId() {
-		return fileId;
-	}
-	public void setFileId(String fileId) {
-		this.fileId = fileId;
-	}
 	public void setBatchImportCount(int batchImportCount) {
 		this.batchImportCount = batchImportCount;
 	}
 	public int getBatchImportCount() {
 		return batchImportCount;
-	}
-	public String getResourceName() {
-		return resourceName;
-	}
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
 	}
 	
 	public String validNotNullProps() {

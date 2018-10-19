@@ -81,13 +81,13 @@
 			<url-pattern>/*</url-pattern>
 		</filter-mapping>
 		
-		<!-- 配置记录请求日志的过滤器 -->
+		<!-- 配置创建请求日志实例的过滤器 -->
 		<filter>
-			<filter-name>recordReqLogFilter</filter-name>
-			<filter-class>com.king.tooth.filter.RecordReqLogFilter</filter-class>
+			<filter-name>createReqLogInstanceFilter</filter-name>
+			<filter-class>com.king.tooth.filter.CreateReqLogInstanceFilter</filter-class>
 		</filter>
 		<filter-mapping>
-			<filter-name>recordReqLogFilter</filter-name>
+			<filter-name>createReqLogInstanceFilter</filter-name>
 			<url-pattern>/*</url-pattern>
 		</filter-mapping>
 		

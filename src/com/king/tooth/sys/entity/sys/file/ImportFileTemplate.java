@@ -7,6 +7,7 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -20,11 +21,6 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 	 * 导入模版文件的后缀
 	 */
 	private String fileSuffix;
-	/**
-	 * 生成导入模版文件，对应的资源名
-	 * <p>即生成哪个资源的导入模版文件</p>
-	 */
-	private String resourceName;
 	
 	// --------------------------------------------------
 	public String getFileSuffix() {
@@ -32,12 +28,6 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 	}
 	public void setFileSuffix(String fileSuffix) {
 		this.fileSuffix = fileSuffix;
-	}
-	public String getResourceName() {
-		return resourceName;
-	}
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
 	}
 	
 	public String validNotNullProps() {
@@ -64,6 +54,7 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 				return obj.toString();
 			}
 			resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
+			this.fileId = ResourceHandlerUtil.getIdentity();
 		}
 		return result;
 	}

@@ -2,6 +2,7 @@ package com.king.tooth.sys.controller.sys;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,12 +14,14 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.sys.SysFileImportExportLog;
+import com.king.tooth.sys.entity.sys.file.ExportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFileTemplate;
 import com.king.tooth.sys.service.sys.SysExcelService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.file.ie.log.RecordFileIELogThread;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
@@ -62,10 +65,10 @@ public class SysExcelController extends AController{
 				
 				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importFile);
 				if(resultObject instanceof String){
-					excelIELog.recordResult(resultObject.toString(), 0);
+					excelIELog.recordResult(resultObject.toString());
 					break;
 				}
-				excelIELog.recordResult(null, 1);
+				excelIELog.recordResult(null);
 				resultJsonArray.add(resultObject);
 			}
 		}
@@ -96,9 +99,30 @@ public class SysExcelController extends AController{
 	
 	/**
 	 * 生成导出excel文件
+	 * @param resourceName
+	 * @param exportExcelFileSuffix
+	 * @param pageResultEntity
+	 * @param query
+	 * @param requestUrlParams
 	 * @return
 	 */
-	public Object createExportExcelFile(String resourceName, String exportExcelFileSuffix, PageResultEntity pageResultEntity, Query query){
+	public Object createExportExcelFile(String resourceName, String exportExcelFileSuffix, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
+		ExportFile exportFile = new ExportFile(ResourceHandlerUtil.getIdentity(), resourceName, exportExcelFileSuffix, pageResultEntity, query);
+		analysisResult = exportFile.analysisResourceProp();
+		List<SysFileImportExportLog> excelIELogs = null;
+		if(analysisResult == null){
+			excelIELogs = new ArrayList<SysFileImportExportLog>(1);
+			SysFileImportExportLog excelIELog = new SysFileImportExportLog(SysFileImportExportLog.IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
+			excelIELogs.add(excelIELog);
+			
+			resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createExportExcelFile(exportFile);
+			if(resultObject instanceof String){
+				excelIELog.recordResult(resultObject.toString());
+			}else{
+				excelIELog.recordResult(null);
+			}
+		}
+		recordExcelIELogs(excelIELogs);
 		return getResultObject(null, null);
 	}
 }

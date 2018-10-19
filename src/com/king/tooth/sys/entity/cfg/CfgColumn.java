@@ -535,8 +535,12 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 			}
 		}
 		if(result == null){
-			if((DataTypeConstants.CLOB.equals(columnType) || DataTypeConstants.BLOB.equals(columnType)) && (isUnique != null && isUnique == 1)){
-				return "列["+columnName+"]，属于大字段类型，禁止添加唯一约束";
+			if(DataTypeConstants.CLOB.equals(columnType) || DataTypeConstants.BLOB.equals(columnType)){
+				if(isUnique != null && isUnique == 1){
+					return "列["+columnName+"]，属于大字段类型，禁止添加唯一约束";
+				}
+				this.isImport = 0;
+				this.isExport = 0;
 			}
 			if(isPrimaryKey != null && isPrimaryKey == 1){
 				return "列["+columnName+"]，无法设置为主键，系统已内置名为id的主键，如确实需要创建主键，请联系后端系统开发人员";

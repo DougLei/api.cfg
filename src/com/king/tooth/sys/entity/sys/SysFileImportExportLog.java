@@ -53,9 +53,13 @@ public class SysFileImportExportLog extends BasicEntity implements ITable, IEnti
 		this.submitObjJson = submitObjJson;
 	}
 	
-	public void recordResult(String resultMessage, Integer isSuccess){
+	public void recordResult(String resultMessage){
 		this.resultMessage = resultMessage;
-		this.isSuccess = isSuccess;
+		if(resultMessage == null){
+			this.isSuccess = 1;
+		}else{
+			this.isSuccess = 0;
+		}
 	}
 	
 	public Integer getOperType() {

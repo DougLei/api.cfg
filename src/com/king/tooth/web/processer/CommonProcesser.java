@@ -46,7 +46,12 @@ public abstract class CommonProcesser {
 			}else if(pageResultEntity == null){
 				installResponseBodySimple("要生成导出文件，需要提供分页查询参数值：[_rows和_page] 或 [_limit和_start]，其中[_page或_start]的值传递为0即可", null);
 			}else{
-				Object obj = BuiltinResourceInstance.getInstance("SysExcelController", SysExcelController.class).createExportExcelFile(resourceName, createExportFileProcesser.getExportFileSuffix(), pageResultEntity, query);
+				Map<String, String> urlParams = requestBody.installAllUrlParams();
+				Object obj = BuiltinResourceInstance.getInstance("SysExcelController", SysExcelController.class).createExportExcelFile(resourceName, createExportFileProcesser.getExportFileSuffix(), pageResultEntity, query, urlParams);
+				if(urlParams != null && urlParams.size() > 0){
+					urlParams.clear();
+				}
+				
 				if(obj == null){
 					installResponseBodySimple("[SysExcelController.createExportExcelFile]生成导出excel文件方法返回null，请联系后端系统开发人员", null);
 				}else if(obj instanceof String){

@@ -31,6 +31,28 @@ public abstract class AIEFile {
 	}
 	
 	/**
+	 * 操作的资源名
+	 */
+	protected String resourceName;
+	public String getResourceName() {
+		return resourceName;
+	}
+	public void setResourceName(String resourceName) {
+		this.resourceName = resourceName;
+	}
+	
+	/**
+	 * 关联的文件id
+	 */
+	protected String fileId;
+	public String getFileId() {
+		return fileId;
+	}
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
+	
+	/**
 	 * 是否是支持的文件后缀
 	 * @param fileSuffix
 	 * @return
@@ -67,7 +89,7 @@ public abstract class AIEFile {
 			return "系统目前只支持表资源的导入、导出操作，以及sql资源的导出操作";
 		}
 		if(obj == null){
-			throw new NullPointerException("[AIEFile.getIEResourceMetadataInfos()]中的obj参数值为null，请联系后端系统开发人员");
+			return "[AIEFile.getIEResourceMetadataInfos()]中的obj参数值为null，请联系后端系统开发人员";
 		}
 		if(obj instanceof String){
 			return obj;
@@ -103,9 +125,9 @@ public abstract class AIEFile {
 		}
 		return resourceMetadataInfos;
 	}
-	/** 查询表资源配置的导入excel的元数据信息集合的hql */
+	/** 查询表资源配置的导入元数据信息集合的hql */
 	private static final String queryTableImportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
-	/** 查询表资源配置的导出excel的元数据信息集合的hql */
+	/** 查询表资源配置的导出元数据信息集合的hql */
 	private static final String queryTableExportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isExport=1 order by exportOrderCode asc";
 	
 	/**
@@ -154,7 +176,7 @@ public abstract class AIEFile {
 		List<ResourceMetadataInfo> resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, querySqlExportMetadataInfosHql, resourceId);
 		return resourceMetadataInfos;
 	}
-	/** 查询sql资源配置的导出excel的元数据信息集合的hql */
+	/** 查询sql资源配置的导出元数据信息集合的hql */
 	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
 	
 }

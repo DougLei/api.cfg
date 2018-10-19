@@ -13,9 +13,9 @@ import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.thread.current.CurrentThreadContext;
 
 /**
- * 记录请求日志的过滤器
+ * 创建请求日志实例的过滤器
  */
-public class RecordReqLogFilter extends AbstractFilter{
+public class CreateReqLogInstanceFilter extends AbstractFilter{
 
 	public void destroy() {
 	}

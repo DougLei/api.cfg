@@ -141,11 +141,6 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 		if(StrUtils.notEmpty(routeBody.getParentId())){
 			urlParams.put(BuiltinParameterKeys.PARENT_RESOURCE_ID, routeBody.getParentId());
 		}
-		
-//		// 如果调用的是表资源，加入一个基础数据条件
-//		if(requestBody.getResourceInfo().isTableResource()){
-//			urlParams.put("customerId", CurrentThreadContext.getCustomerId());// 客户主键
-//		}
 	}
 	
 	/**

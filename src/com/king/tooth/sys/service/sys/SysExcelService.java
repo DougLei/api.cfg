@@ -5,23 +5,25 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.hibernate.Query;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysFile;
+import com.king.tooth.sys.entity.sys.file.ExportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFileTemplate;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
@@ -35,6 +37,7 @@ import com.king.tooth.util.PoiExcelUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**
  * excel操作service
@@ -44,14 +47,31 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 public class SysExcelService extends AService{
 	
 	/**
+	 * 创建头行
+	 * @param headRow
+	 * @param resourceMetadataInfos
+	 * @param resourceMetadataInfoCount
+	 */
+	private void createHeadRow(Row headRow, List<ResourceMetadataInfo> resourceMetadataInfos, int resourceMetadataInfoCount){
+		Cell cell;
+		ResourceMetadataInfo rmi = null;
+		for (int i=0;i<resourceMetadataInfoCount ;i++) {
+			rmi = resourceMetadataInfos.get(i);
+			cell = headRow.createCell(i+1);
+			cell.setCellValue(rmi.getDescName());
+		}
+	}
+	
+	/**
 	 * 生成excel文件，并将该文件信息保存到文件表中
 	 * @param workbook
 	 * @param fileName
 	 * @param suffix
+	 * @param fileId
 	 * @param buildInType
 	 * @return
 	 */
-	private Object createExcelFile(Workbook workbook, String fileName, String suffix, int buildInType){
+	private Object createExcelFile(Workbook workbook, String fileName, String suffix, String fileId, int buildInType){
 		String fileCode = FileUtil.getFileCode();
 		String excelFileSavePath = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).validSaveFileDirIsExists(buildInType)+fileCode+"."+suffix;
 		FileOutputStream fo = null;
@@ -64,15 +84,16 @@ public class SysExcelService extends AService{
 			CloseUtil.closeIO(fo);
 		}
 		
-		SysFile importExcelFileTemplate = new SysFile();
-		importExcelFileTemplate.setActName("【"+fileName+"】excel"+DateUtil.formatDatetime(new Date()) + "." + suffix);
-		importExcelFileTemplate.setCode(fileCode);
-		importExcelFileTemplate.setSuffix(suffix);
-		importExcelFileTemplate.setSavePath(excelFileSavePath);
-		importExcelFileTemplate.setSaveType(SysFileConstants.saveType);
-		importExcelFileTemplate.setBatch(ResourceHandlerUtil.getBatchNum());
-		importExcelFileTemplate.setBuildInType(buildInType);
-		return HibernateUtil.saveObject(importExcelFileTemplate, null);
+		SysFile excelFile = new SysFile();
+		excelFile.setId(fileId);
+		excelFile.setActName(DateUtil.formatDatetime(new Date()) + "_" + fileName + "." + suffix);
+		excelFile.setCode(fileCode);
+		excelFile.setSuffix(suffix);
+		excelFile.setSavePath(excelFileSavePath);
+		excelFile.setSaveType(SysFileConstants.saveType);
+		excelFile.setBatch(ResourceHandlerUtil.getBatchNum());
+		excelFile.setBuildInType(buildInType);
+		return HibernateUtil.saveObject(excelFile, null);
 	}
 	
 	// --------------------------------------------------------------------------------------------------
@@ -251,7 +272,7 @@ public class SysExcelService extends AService{
 	// ---------------------------------------------------------------------
 	/**
 	 * 生成excel导入模版
-	 * <p>将生成为excel导入模版保存到服务器上，并在sysfile中插入一条数据</p>
+	 * <p>将生成excel导入模版保存到服务器上，并在sysfile中插入一条数据</p>
 	 * @param importFileTemplate
 	 * @return
 	 */
@@ -263,34 +284,160 @@ public class SysExcelService extends AService{
 		}
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
-		Row row = sheet.createRow(0);
-		Cell cell;
+		Row headRow = sheet.createRow(0);
+		createHeadRow(headRow, importFileTemplate.getResourceMetadataInfos(), importFileTemplate.getResourceMetadataInfos().size());
 		
-		List<ResourceMetadataInfo> resourceMetadataInfos = importFileTemplate.getResourceMetadataInfos();
-		int size = resourceMetadataInfos.size();
-		ResourceMetadataInfo rmi = null;
-		for (int i=0;i<size ;i++) {
-			rmi = resourceMetadataInfos.get(i);
-			cell = row.createCell(i+1);
-			cell.setCellValue(rmi.getDescName());
-		}
-		
-		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
+		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, importFileTemplate.getFileId(), SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
 	}
 	
 	// ---------------------------------------------------------------------
 	/**
-	 * 导出excel
-	 * <p>将生成为导出excel文件保存到服务器上，并在sysfile中插入一条数据</p>
-	 * @param request
+	 * 生成导出excel文件
+	 * <p>将生成导出excel文件保存到服务器上，并在sysfile中插入一条数据</p>
+	 * @param exportFile
 	 * @return
 	 */
-	public Object exportExcel(HttpServletRequest request) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Object createExportExcelFile(ExportFile exportFile) {
+		String suffix = exportFile.getExportFileSuffix();
+		Object wb = PoiExcelUtil.getWriteWorkBookInstance(suffix);
+		if(wb instanceof String){
+			return wb;
+		}
+		String title = "tmp title 这是一个临时标题";
 		
+		Workbook workbook = (Workbook) wb;
+		Sheet sheet = workbook.createSheet();
 		
-		Workbook workbook = null;
-		String fileName = null;
-		String suffix = null;
-		return createExcelFile(workbook, fileName, suffix, SysFileConstants.BUILD_IN_TYPE_EXPORT);
+		List<ResourceMetadataInfo> resourceMetadataInfos = exportFile.getResourceMetadataInfos();
+		int resourceMetadataInfoCount = resourceMetadataInfos.size();
+		
+		Row titleRow = sheet.createRow(0);
+		createTitleRow(title, titleRow, resourceMetadataInfos.size());
+		
+		Row headRow = sheet.createRow(1);
+		createHeadRow(headRow, resourceMetadataInfos, resourceMetadataInfoCount);
+		
+		PageResultEntity pageResultEntity = exportFile.getPageResultEntity();
+		Query query = exportFile.getQuery();
+		
+		String validDataListResult = null;
+		Object data = null;
+		List dataList = null;
+		Object[] dataArr = null;// sql语句查询多个字段，会返回数组
+		Map<String, Object> dataMap = null;// hql语句查询，会返回map集合
+		int size;
+		
+		int rowNum = 2;// 第一行是标题，第二行是头，所以这里从第三行开始
+		Row row = null;
+		Cell cell = null;
+		int loopCount = pageResultEntity.getPageTotalCount();
+		for(int i=0;i<loopCount;i++){
+			dataList = executeQuery(query, pageResultEntity, i);
+			validDataListResult = validDataList(dataList, resourceMetadataInfoCount, data, dataArr, dataMap);
+			if(validDataListResult != null){
+				return validDataListResult;
+			}
+			
+			for (Object object : dataList) {
+				row = sheet.createRow(rowNum++);
+				if(object instanceof Object[]){
+					dataArr = (Object[]) object;
+					size = dataArr.length;
+					for(int j=0;j<size;j++){
+						createCell(j+1, row, cell, dataArr[i], resourceMetadataInfos.get(i));
+					}
+				}else if(object instanceof Map){
+					dataMap = (Map<String, Object>) object;
+					size = dataMap.size();
+					for(int j=0;j<size;j++){
+						createCell(j+1, row, cell, dataMap.get(resourceMetadataInfos.get(i).getPropName()), resourceMetadataInfos.get(i));
+					}
+				}else if(object instanceof Object){
+					createCell(1, row, cell, object, resourceMetadataInfos.get(0));
+				}
+			}
+		}
+		
+		return createExcelFile(workbook, title, suffix, exportFile.getFileId(), SysFileConstants.BUILD_IN_TYPE_EXPORT);
+	}
+
+	/**
+	 * 创建标题行
+	 * @param title
+	 * @param titleRow
+	 * @param colspanLength 和并列的数量
+	 */
+	private void createTitleRow(String title, Row titleRow, int colspanLength){
+		
+	}
+	
+	/**
+	 * 执行查询
+	 * @param query
+	 * @param pageResultEntity
+	 * @param loopTime 第几次循环 
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private List executeQuery(Query query, PageResultEntity pageResultEntity, int loopTime) {
+		query.setFirstResult(pageResultEntity.getPageSize()*loopTime);
+		query.setMaxResults(pageResultEntity.getPageSize());
+		return query.list();
+	}
+	
+	/**
+	 * 验证查询的数据结果集
+	 * @param dataList
+	 * @param resourceMetadataInfoCount
+	 * @param data 
+	 * @param dataMap 
+	 * @param dataArr 
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private String validDataList(List dataList, int resourceMetadataInfoCount, Object data, Object[] dataArr, Map<String, Object> dataMap) {
+		if(dataList == null || dataList.size() == 0){
+			return "生成excel导出文件时，没有查询到任何数据，请联系后端系统开发人员";
+		}
+		data = dataList.get(0);
+		if(data instanceof Object[]){
+			dataArr = (Object[]) data;
+			if(dataArr.length != resourceMetadataInfoCount){
+				return "生成excel导出文件时，查询数据列的数量，与配置的导出列的数量不一致，请修改";
+			}
+		}else if(data instanceof Map){
+			dataMap = (Map<String, Object>) data;
+			if(dataMap.size() != resourceMetadataInfoCount){
+				return "生成excel导出文件时，查询数据列的数量，与配置的导出列的数量不一致，请修改";
+			}
+		}else if(data instanceof Object){
+			if(resourceMetadataInfoCount > 1){
+				return "生成excel导出文件时，查询数据列的数量，与配置的导出列的数量不一致，请修改";
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 创建列
+	 * @param columnIndex
+	 * @param row
+	 * @param cell
+	 * @param object
+	 * @param resourceMetadataInfo
+	 */
+	private void createCell(int columnIndex, Row row, Cell cell, Object object, ResourceMetadataInfo resourceMetadataInfo) {
+		cell = row.createCell(columnIndex);
+		if(StrUtils.isEmpty(object)){
+			cell.setCellType(Cell.CELL_TYPE_BLANK);
+		}else if(DataTypeConstants.INTEGER.equals(resourceMetadataInfo.getDataType()) || DataTypeConstants.DOUBLE.equals(resourceMetadataInfo.getDataType())){
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		}else if(DataTypeConstants.INTEGER.equals(resourceMetadataInfo.getDataType())){
+			cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+		}else{
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+		}
+		cell.setCellValue(object.toString());
 	}
 }
