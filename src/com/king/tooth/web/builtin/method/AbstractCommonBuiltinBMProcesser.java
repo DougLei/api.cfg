@@ -74,7 +74,7 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		String isCreateExport = requestBuiltinParams.remove("_isCreateExport");
 		String exportFileSuffix = requestBuiltinParams.remove("_exportFileSuffix");
 		if(StrUtils.notEmpty(isCreateExport) && StrUtils.notEmpty(exportFileSuffix)){
-			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, isCreateExport, exportFileSuffix);
+			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, parentResourceName, isCreateExport, exportFileSuffix);
 		}
 	}
 	

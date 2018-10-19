@@ -15,6 +15,7 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	 * 请求的资源名
 	 */
 	private String resourceName;
+	private String parentResourceName;
 	/**
 	 * 是否创建导出文件
 	 */
@@ -27,12 +28,13 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	public BuiltinCreateExportFileMethodProcesser() {
 		Log4jUtil.debug("此次请求，没有使用到BuiltinCreateExportFileMethodProcesser内置方法处理器");
 	}
-	public BuiltinCreateExportFileMethodProcesser(String resourceName, String isCreateExport, String exportFileSuffix) {
+	public BuiltinCreateExportFileMethodProcesser(String resourceName, String parentResourceName, String isCreateExport, String exportFileSuffix) {
 		if(!"true".equals(isCreateExport)){
 			Log4jUtil.debug("此次请求，没有使用到BuiltinCreateExportFileMethodProcesser内置方法处理器");
 			return;
 		}
 		this.resourceName = resourceName;
+		this.parentResourceName = parentResourceName;
 		this.isCreateExport = true;
 		this.exportFileSuffix = exportFileSuffix;
 	}
@@ -45,5 +47,8 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	}
 	public String getResourceName() {
 		return resourceName;
+	}
+	public String getParentResourceName() {
+		return parentResourceName;
 	}
 }

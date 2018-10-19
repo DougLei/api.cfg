@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.Query;
+
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
@@ -18,6 +20,7 @@ import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.file.ie.log.RecordFileIELogThread;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**
  * excel操作Controller
@@ -95,7 +98,7 @@ public class SysExcelController extends AController{
 	 * 生成导出excel文件
 	 * @return
 	 */
-	public Object createExportExcelFile(HttpServletRequest request, IJson ijson){
+	public Object createExportExcelFile(String resourceName, String exportExcelFileSuffix, PageResultEntity pageResultEntity, Query query){
 		return getResultObject(null, null);
 	}
 }

@@ -23,7 +23,7 @@ public final class SingleResourceProcesser extends GetProcesser {
 															  .toString();
 		Query query = createQuery(queryHql);
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
-		if(isCreateExportFile(builtinCreateExportFileMethodProcesser, pageResultEntity)){
+		if(isCreateExportFile(builtinCreateExportFileMethodProcesser, pageResultEntity, query)){
 			return true;
 		}
 		

@@ -3,6 +3,10 @@ package com.king.tooth.web.processer;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Query;
+
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.controller.sys.SysExcelController;
 import com.king.tooth.web.builtin.method.common.export.file.create.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
@@ -31,10 +35,26 @@ public abstract class CommonProcesser {
 	 * 是否生成导出文件
 	 * @param createExportFileProcesser
 	 * @param pageResultEntity
+	 * @param query
 	 * @return
 	 */
-	protected final boolean isCreateExportFile(BuiltinCreateExportFileMethodProcesser createExportFileProcesser, PageResultEntity pageResultEntity){
+	protected final boolean isCreateExportFile(BuiltinCreateExportFileMethodProcesser createExportFileProcesser, PageResultEntity pageResultEntity, Query query){
 		if(createExportFileProcesser.getIsUsed()){
+			String resourceName = createExportFileProcesser.getResourceName();
+			if(createExportFileProcesser.getParentResourceName() != null || resourceName.equals(createExportFileProcesser.getParentResourceName())){
+				installResponseBodySimple("系统目前不支持生成主子资源导出的数据文件、以及递归资源导出数据文件", null);
+			}else if(pageResultEntity == null){
+				installResponseBodySimple("要生成导出文件，需要提供分页查询参数值：[_rows和_page] 或 [_limit和_start]，其中[_page或_start]的值传递为0即可", null);
+			}else{
+				Object obj = BuiltinResourceInstance.getInstance("SysExcelController", SysExcelController.class).createExportExcelFile(resourceName, createExportFileProcesser.getExportFileSuffix(), pageResultEntity, query);
+				if(obj == null){
+					installResponseBodySimple("[SysExcelController.createExportExcelFile]生成导出excel文件方法返回null，请联系后端系统开发人员", null);
+				}else if(obj instanceof String){
+					installResponseBodySimple(obj.toString(), null);
+				}else{
+					installResponseBodySimple(null, obj);
+				}
+			}
 			return true;
 		}
 		return false;
