@@ -3,6 +3,7 @@ package com.king.tooth.web.processer;
 import java.util.List;
 import java.util.Map;
 
+import com.king.tooth.web.builtin.method.common.export.file.create.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -27,23 +28,16 @@ public abstract class CommonProcesser {
 	protected ResponseBody responseBody;
 	
 	/**
-	 * 设置响应体
-	 * <p>在处理器中使用到</p>
-	 * <p>也可以在前、后处理器中使用到</p>
-	 * @param data
+	 * 是否生成导出文件
+	 * @param createExportFileProcesser
+	 * @param pageResultEntity
+	 * @return
 	 */
-	protected final void setResponseBody(ResponseBody responseBody){
-		this.responseBody = responseBody;
-	}
-	
-	/**
-	 * 简单组装ResponseBody对象
-	 * @param message 
-	 * @param data 
-	 */
-	protected final void installResponseBodySimple(String message, Object data){
-		ResponseBody responseBody = new ResponseBody(message, data);;
-		setResponseBody(responseBody);
+	protected final boolean isCreateExportFile(BuiltinCreateExportFileMethodProcesser createExportFileProcesser, PageResultEntity pageResultEntity){
+		if(createExportFileProcesser.getIsUsed()){
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -60,6 +54,26 @@ public abstract class CommonProcesser {
 			data = pageResultEntity;
 		}
 		installResponseBodySimple(message, data);
+	}
+	
+	/**
+	 * 简单组装ResponseBody对象
+	 * @param message 
+	 * @param data 
+	 */
+	protected final void installResponseBodySimple(String message, Object data){
+		ResponseBody responseBody = new ResponseBody(message, data);;
+		setResponseBody(responseBody);
+	}
+	
+	/**
+	 * 设置响应体
+	 * <p>在处理器中使用到</p>
+	 * <p>也可以在前、后处理器中使用到</p>
+	 * @param data
+	 */
+	protected final void setResponseBody(ResponseBody responseBody){
+		this.responseBody = responseBody;
 	}
 	
 	/**
