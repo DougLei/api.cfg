@@ -60,8 +60,17 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		String exportFileSuffix = requestBuiltinParams.remove("_exportFileSuffix");
 		if(StrUtils.notEmpty(isCreateExport) && StrUtils.notEmpty(exportFileSuffix)){
 			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, parentResourceName, isCreateExport, exportFileSuffix);
+			this.isCreateExport = createExportFileProcesser.getIsUsed();
 		}
 	}
+	/** 
+	 * 是否生成导出文件，如果要的话，则必须要有BuiltinPagerMethodProcesser处理器
+	 * 		如果用户传入了，则用用户传入的值
+	 * 		如果用户没有传入，则用默认值
+	 * 		主要控制传入的_start或_page值必须为1，如果_limit或_rows有传入值，则用传入的值，否则用默认值300
+	 */
+	private boolean isCreateExport;
+	
 	/**
 	 * 内置分页函数处理器实例
 	 * @param requestBuiltinParams
@@ -72,8 +81,20 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		
 		String rows = requestBuiltinParams.remove("_rows");
 		String page = requestBuiltinParams.remove("_page");// 这四个参数的内容，需要理清楚
-		if((StrUtils.notEmpty(limit) && DataValidUtil.isInteger(limit) && StrUtils.notEmpty(start)) && DataValidUtil.isInteger(start)
-				|| (StrUtils.notEmpty(rows) && DataValidUtil.isInteger(rows) && StrUtils.notEmpty(page) && DataValidUtil.isInteger(page))){
+		
+		boolean useLimitStart = (StrUtils.notEmpty(limit) && DataValidUtil.isInteger(limit) && StrUtils.notEmpty(start)) && DataValidUtil.isInteger(start);
+		boolean useRowsPage = (StrUtils.notEmpty(rows) && DataValidUtil.isInteger(rows) && StrUtils.notEmpty(page) && DataValidUtil.isInteger(page));
+		if(isCreateExport || useLimitStart || useRowsPage){
+			if(isCreateExport){
+				if(useLimitStart){
+					start = "0";
+				}else if(useRowsPage){
+					page = "0";
+				}else{
+					rows = "300";
+					page = "0";
+				}
+			}
 			pagerProcesser = new BuiltinPagerMethodProcesser(limit, start, rows, page);
 		}
 	}
