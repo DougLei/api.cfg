@@ -20,7 +20,7 @@ public final class SingleResourceProcesser extends DeleteProcesser {
 		String deleteHql = getDeleteHql().toString();
 		List<Object> tmpParameters = new ArrayList<Object>(hqlParameterValues);
 		HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.DELETE, deleteHql, tmpParameters);
-		installResponseBodyForDeleteData(hqlParameterValues, true);
+		installResponseBodyForDeleteData(null, hqlParameterValues);
 		return true;
 	}
 	

@@ -63,8 +63,8 @@ public abstract class PostProcesser extends RequestProcesser {
 	 * @param data
 	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForSaveData(String message, Object data, boolean isSuccess){
-		ResponseBody responseBody = new ResponseBody(message, data, isSuccess);
+	protected final void installResponseBodyForSaveData(String message, Object data){
+		ResponseBody responseBody = new ResponseBody(message, data);
 		setResponseBody(responseBody);
 	}
 }

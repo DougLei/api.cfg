@@ -8,6 +8,7 @@ import org.hibernate.Query;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.builtin.method.common.export.file.create.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.query.BuiltinQueryMethodProcesser;
@@ -15,8 +16,6 @@ import com.king.tooth.web.builtin.method.tableresource.recursive.BuiltinRecursiv
 import com.king.tooth.web.builtin.method.tableresource.sort.BuiltinSortMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.sublist.BuiltinSublistMethodProcesser;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
-import com.king.tooth.web.entity.resulttype.ResponseBody;
-import com.king.tooth.web.entity.resulttype.TextResultEntity;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
 
 /**
@@ -29,31 +28,30 @@ public abstract class GetProcesser extends RequestProcesser {
 	 * select
 	 */
 	protected BuiltinQueryMethodProcesser builtinQueryMethodProcesser;
-	
 	/**
 	 * order by
 	 */
 	protected BuiltinSortMethodProcesser builtinSortMethodProcesser;
-	
 	/**
 	 * 分页查询
 	 */
 	protected BuiltinPagerMethodProcesser builtinPagerMethodProcesser;
-	
 	/**
 	 * 聚焦数据
 	 */
 	protected BuiltinFocusedIdMethodProcesser builtinFocusedIdMethodProcesser;
-	
 	/**
 	 * 递归
 	 */
 	protected BuiltinRecursiveMethodProcesser builtinRecursiveMethodProcesser;
-	
 	/**
 	 * 子资源集合
 	 */
 	protected BuiltinSublistMethodProcesser builtinSublistMethodProcesser;
+	/**
+	 * 生成导出文件
+	 */
+	protected BuiltinCreateExportFileMethodProcesser builtinCreateExportFileMethodProcesser;
 	
 	/**
 	 * 处理请求
@@ -77,6 +75,7 @@ public abstract class GetProcesser extends RequestProcesser {
 		builtinRecursiveMethodProcesser = builtinTableResourceBMProcesser.getRecursiveProcesser();
 		builtinParentsubQueryMethodProcesser = builtinTableResourceBMProcesser.getParentsubQueryMethodProcesser();
 		builtinSublistMethodProcesser = builtinTableResourceBMProcesser.getSublistMethodProcesser();
+		builtinCreateExportFileMethodProcesser = builtinTableResourceBMProcesser.getCreateExportFileProcesser();
 	}
 	
 	/**
@@ -122,7 +121,7 @@ public abstract class GetProcesser extends RequestProcesser {
 			pageResultEntity.setPageSize(builtinPagerMethodProcesser.getPageQueryEntity().getPageSize());
 			pageResultEntity.setFirstDataIndex(builtinPagerMethodProcesser.getPageQueryEntity().getFirstDataIndex());
 			
-			if(totalCount>0){// 如果没有数据，则不进行分页查询
+			if(totalCount>0 && !builtinCreateExportFileMethodProcesser.getIsUsed()){// 如果有数据，同时没有开启生成导出文件功能，再进行分页查询
 				query.setFirstResult(pageResultEntity.getFirstDataIndex());
 				query.setMaxResults(pageResultEntity.getPageSize());
 			}
@@ -232,48 +231,5 @@ public abstract class GetProcesser extends RequestProcesser {
 				}
 			}
 		}
-	}
-	
-	/**
-	 * 查询数据集合时，组装ResponseBody对象
-	 * @param dataList
-	 * @param pageResultEntity
-	 * @param isSuccess
-	 */
-	protected final void installResponseBodyForQueryDataList(List<Map<String, Object>> dataList, PageResultEntity pageResultEntity, boolean isSuccess) {
-		ResponseBody responseBody = null;
-		if(pageResultEntity == null){
-			// 不是分页查询
-			responseBody = new ResponseBody(dataList, isSuccess);
-		}else{
-			// 分页查询，要先将结果集存储到pageResultEntity中，再把pageResultEntity存储到responseBody中
-			pageResultEntity.setResultDatas(dataList);
-			responseBody = new ResponseBody(pageResultEntity, isSuccess);
-		}
-		setResponseBody(responseBody);
-	}
-	
-	/**
-	 * 根据ID，查询单个数据对象时，组装ResponseBody对象
-	 * @param dataList
-	 * @param isSuccess
-	 */
-	protected final void installResponseBodyForQueryDataObject(List<Map<String, Object>> dataList, boolean isSuccess) {
-		Map<String, Object> data = null;
-		if(dataList != null && dataList.size() == 1){
-			data = dataList.get(0);
-		}
-		ResponseBody responseBody = new ResponseBody(data, isSuccess);
-		setResponseBody(responseBody);
-	}
-	
-	/**
-	 * 查询总数量时，组装ResponseBody对象
-	 * @param textResult 
-	 * @param isSuccess 
-	 */
-	protected final void installResponseBodyForQueryCounter(TextResultEntity textResult, boolean isSuccess){
-		ResponseBody responseBody = new ResponseBody(textResult, isSuccess);;
-		setResponseBody(responseBody);
 	}
 }

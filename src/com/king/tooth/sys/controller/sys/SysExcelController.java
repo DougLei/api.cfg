@@ -93,10 +93,8 @@ public class SysExcelController extends AController{
 	
 	/**
 	 * 生成导出excel文件
-	 * <p>请求方式：POST</p>
 	 * @return
 	 */
-	@RequestMapping
 	public Object createExportExcelFile(HttpServletRequest request, IJson ijson){
 		return getResultObject(null, null);
 	}

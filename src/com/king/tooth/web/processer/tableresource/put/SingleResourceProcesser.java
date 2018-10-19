@@ -46,7 +46,7 @@ public final class SingleResourceProcesser extends PutProcesser {
 			params.clear();
 			updatedJsonObj.put(ResourcePropNameConstants.FOCUSED_OPER, updatedJsonObj.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.EDIT);
 		}
-		installResponseBodyForUpdateData(null, json.getJson(), true);
+		installResponseBodyForUpdateData(null, json.getJson());
 		return true;
 	}
 

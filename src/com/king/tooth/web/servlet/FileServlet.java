@@ -56,17 +56,17 @@ public class FileServlet extends HttpServlet{
 				}
 				
 				if(result == null){
-					responseBody = new ResponseBody("操作文件结果信息为null，请联系系统开发人员");
+					responseBody = new ResponseBody("操作文件结果信息为null，请联系系统开发人员", null);
 				}else if(result instanceof String){
-					responseBody = new ResponseBody(result.toString());
+					responseBody = new ResponseBody(result.toString(), null);
 				}else{
-					responseBody = new ResponseBody(null, result, true);
+					responseBody = new ResponseBody(null, result);
 				}
 			}else{
-				responseBody = new ResponseBody("请求操作文件的api路径格式错误，请检查：[/file/upload][/file/download][/file/delete]");
+				responseBody = new ResponseBody("请求操作文件的api路径格式错误，请检查：[/file/upload][/file/download][/file/delete]", null);
 			}
 		}else{
-			responseBody = new ResponseBody("目前系统还不支持["+SysFileConstants.saveType+"]方式的保存文件，请联系后端系统开发人员");
+			responseBody = new ResponseBody("目前系统还不支持["+SysFileConstants.saveType+"]方式的保存文件，请联系后端系统开发人员", null);
 		}
 		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
 	}

@@ -2,6 +2,7 @@ package com.king.tooth.web.builtin.method;
 
 import java.util.Map;
 
+import com.king.tooth.util.DataValidUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.export.file.create.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
@@ -60,7 +61,8 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		
 		String rows = requestBuiltinParams.remove("_rows");
 		String page = requestBuiltinParams.remove("_page");// 这四个参数的内容，需要理清楚
-		if((StrUtils.notEmpty(limit) && StrUtils.notEmpty(start)) || (StrUtils.notEmpty(rows) && StrUtils.notEmpty(page))){
+		if((StrUtils.notEmpty(limit) && DataValidUtil.isInteger(limit) && StrUtils.notEmpty(start)) && DataValidUtil.isInteger(start)
+				|| (StrUtils.notEmpty(rows) && DataValidUtil.isInteger(rows) && StrUtils.notEmpty(page) && DataValidUtil.isInteger(page))){
 			pagerProcesser = new BuiltinPagerMethodProcesser(limit, start, rows, page);
 		}
 	}

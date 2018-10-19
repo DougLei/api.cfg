@@ -36,6 +36,10 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 	private Map<String, String> parentResourceQueryCond;
 	
 	public BuiltinRecursiveMethodProcesser(String recursive, String deepLevel, Map<String, String> parentResourceQueryCond) {
+		if(!"true".equals(recursive)){
+			Log4jUtil.debug("此次请求，没有使用到BuiltinRecursiveMethodProcesser内置方法处理器");
+			return;
+		}
 		super.isUsed = true;
 		this.recursive = Boolean.valueOf(recursive.trim());
 		this.deepLevel = Integer.valueOf(deepLevel.trim());

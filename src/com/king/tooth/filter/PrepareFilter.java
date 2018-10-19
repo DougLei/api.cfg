@@ -46,7 +46,7 @@ public class PrepareFilter extends AbstractFilter{
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
 			if(StrUtils.isEmpty(projectId)){
-				responseBody = new ResponseBody("token无效，请先登录");
+				responseBody = new ResponseBody("token无效，请先登录", null);
 				printResult(resp, responseBody);
 				return;
 			}
@@ -66,7 +66,7 @@ public class PrepareFilter extends AbstractFilter{
 			
 			responseBody = (ResponseBody) request.getAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY);
 			if(responseBody == null){
-				responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员");
+				responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员", null);
 			}
 			
 			if(responseBody.getIsSuccess()){
@@ -83,8 +83,8 @@ public class PrepareFilter extends AbstractFilter{
 			String errMsg = ExceptionUtil.getErrMsg(err);
 			Log4jUtil.error("请求处理出现异常，异常信息为:{}", errMsg);
 			HibernateUtil.rollbackTransaction();
-			responseBody = new ResponseBody(errMsg);
-//			responseBody = new ResponseBody("后端系统出现异常，请查看系统日志排查问题");
+			responseBody = new ResponseBody(errMsg, null);
+//			responseBody = new ResponseBody("后端系统出现异常，请查看系统日志排查问题", null);
 			printResult(resp, responseBody);
 		}finally{
 			// 关闭连接

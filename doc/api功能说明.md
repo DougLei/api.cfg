@@ -84,24 +84,31 @@
 > 两种分页查询方式，任意选择一种调用
 > _limit + _start 的优先级高于 _rows + _page
 
-##### (3). id聚焦
-	_focusedId: 数据通过该参数传递到后台后，后台会原封不动再传出来
+##### (3). id定位
+	_focusedId: 数据通过该参数传递到后台后，后台会查询对应_add的id数据，展示到返回列表的最前
 
 > 该参数一般和分页查询搭配使用。目前系统也只支持该参数和分页查询搭配使用
 
-##### (4). 递归查询
-	_recursive: 标识是否递归查询，值为true、false。如果不传值，默认为false
+##### (4). 生成导出文件
+	_isCreateExport: 标识是否生成导出文件，值为true、false。如果不传值，或值不是true，，则该功能不启用
+	_exportFileSuffix: 生成导出文件的后缀，用来判断导出的文件类型，excel、xml等
+
+> 配合BuiltinPagerMethodProcesser中的，_rows或_limit参数使用，这两个中的任意一个参数指定一次导出的数据数量，提高系统性能
+> _rows或_limit参数的搭配参数(_page或_start)可以随便传值，但是必须传值，建议传值都为0即可
+
+##### (5). 递归查询
+	_recursive: 标识是否递归查询，值为true、false。如果不传值，或值不是true，，则该功能不启用
 	_deep: 递归查询的深度，默认为2。值为-1，标识递归查询到底
 
 > 递归查询出来的数据集合，会自动挂接到其父级的对象中，属性名为"children"
 
-##### (5). 查询排序
+##### (6). 查询排序
 	_sort: 指定查询结果根据哪些属性排序，以及排列的顺序。多个属性排序，用,分隔开
 
 > 示例: ?_sort=age ASC, createDate DESC
 > 相应的SQL: ORDER BY age ASC, create_date DESC
 
-##### (6). 父子关联查询
+##### (7). 父子关联查询
 	_simpleModel: 是否以简单模式进行父子查询，值为true、false。如果不传值，默认为false
 	_refPropName: 指定子资源的属性中，关联父资源id的属性名，默认值为parentId。只有_simpleModel=true时才有效
 	
@@ -117,14 +124,14 @@ SELECT sub_columns FROM sub_resource s, relation_resource r
 ```
 > 目前系统中更多的都是使用第二种方式
 
-##### (7). 子列表查询
+##### (8). 子列表查询
 	_subResourceName: 指定子资源的名称
 	_refPropName: 指定子资源的属性中，关联父资源id的属性名，默认值为parentId
 	_subSort: 指定子资源的排序规则，使用方式和_sort相同
 
 > 查询出来的子资源集合，会自动挂接到查询结果的对象中，属性名为"children"
 
-##### (8). 查询条件
+##### (9). 查询条件
 > 任何查询结果中涉及到的属性，都可以作为查询条件
 > 示例: ?name=哈哈&age=23
 > 相应的SQL: where name = '哈哈' and age = 23

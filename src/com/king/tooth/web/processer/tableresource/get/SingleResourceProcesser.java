@@ -23,10 +23,14 @@ public final class SingleResourceProcesser extends GetProcesser {
 															  .toString();
 		Query query = createQuery(queryHql);
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
+		if(builtinCreateExportFileMethodProcesser.getIsUsed()){
+//			builtinCreateExportFileMethodProcesser.
+			return true;
+		}
 		List<Map<String, Object>> dataList = executeQuery(query);// 查询
 		dataList = doProcessDataCollection(dataList);
 		doProcessSubListQuery(dataList);
-		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);
+		installResponseBodyForQueryDataList(null, dataList, pageResultEntity);
 		return true;
 	}
 

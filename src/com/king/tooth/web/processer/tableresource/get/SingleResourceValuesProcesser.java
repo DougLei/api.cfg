@@ -57,7 +57,7 @@ public final class SingleResourceValuesProcesser extends GetProcesser {
 				dataObjectArr.clear();
 			}
 		}
-		installResponseBodyForQueryDataList(dataList, null, true);
+		installResponseBodyForQueryDataList(null, dataList, null);
 		return false;
 	}
 	

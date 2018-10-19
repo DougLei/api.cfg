@@ -22,7 +22,7 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 		
 		long totalCount = (long) query.uniqueResult();
 		TextResultEntity textResult = new TextResultEntity(totalCount);
-		installResponseBodyForQueryCounter(textResult, true);
+		installResponseBodySimple(null, textResult);
 		return true;
 	}
 	

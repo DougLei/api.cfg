@@ -48,12 +48,12 @@ public abstract class DeleteProcesser extends RequestProcesser {
 	
 	/**
 	 * 删除数据后，组装ResponseBody对象
+	 * @param message
 	 * @param deleteIds
-	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForDeleteData(List<Object> deleteIds, boolean isSuccess){
+	protected final void installResponseBodyForDeleteData(String message, List<Object> deleteIds){
 		JSONObject json = new JSONObject(1);
 		json.put(BuiltinParameterKeys._IDS, deleteIds.toString().replace("[", "").replace("]", ""));
-		setResponseBody(new ResponseBody(json, isSuccess));
+		setResponseBody(new ResponseBody(message, json));
 	}
 }

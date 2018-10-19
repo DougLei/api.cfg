@@ -30,7 +30,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends GetProcesser
 		List<Map<String, Object>> dataList = executeQuery(query);// 查询
 		dataList = doProcessDataCollection(dataList);
 		doProcessSubListQuery(dataList);
-		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);
+		installResponseBodyForQueryDataList(null, dataList, pageResultEntity);
 		return true;
 	}
 	

@@ -30,9 +30,9 @@ public class CommonServlet extends HttpServlet implements Serializable{
 		if(requestBody.getResourceInfo().isCodeResource()){
 			Object object = CodeResourceProcesser.invokeCodeResource(requestBody.getResourceInfo().getCodeResourceKey(), request, requestBody.getFormData());
 			if(object instanceof String){
-				responseBody = new ResponseBody(object.toString());
+				responseBody = new ResponseBody(object.toString(), null);
 			}else{
-				responseBody = new ResponseBody(object, true);
+				responseBody = new ResponseBody(null, object);
 			}
 		}else{
 			IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器

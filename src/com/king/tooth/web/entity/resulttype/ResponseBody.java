@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 响应体，返回给客户端对象
@@ -36,16 +37,12 @@ public class ResponseBody implements Serializable{
 	
 	public ResponseBody() {
 	}
-	public ResponseBody(String message) {
+	public ResponseBody(String message, Object data) {
 		this.message = message;
-	}
-	public ResponseBody(String message, Object data, boolean isSuccess) {
-		this(data, isSuccess);
-		this.message = message;
-	}
-	public ResponseBody(Object data, boolean isSuccess) {
 		this.data = data;
-		this.isSuccess = isSuccess;
+		if(StrUtils.isEmpty(message)){
+			this.isSuccess = true;
+		}
 	}
 	
 	public int getStatus() {

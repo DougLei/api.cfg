@@ -101,9 +101,9 @@ public class RequestProcesserCommon extends CommonProcesser{
 			
 			if(jsonArray != null && jsonArray.size() > 0){
 				if(jsonArray.size() == 1){
-					setResponseBody(new ResponseBody(jsonArray.getJSONObject(0), true));
+					setResponseBody(new ResponseBody(null, jsonArray.getJSONObject(0)));
 				}else{
-					setResponseBody(new ResponseBody(jsonArray, true));
+					setResponseBody(new ResponseBody(null, jsonArray));
 				}
 			}else{
 				setResponseBody(new ResponseBody("成功执行名为["+sqlScript.getObjectName()+"]的存储过程", true));
@@ -129,7 +129,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 			urlParams.putAll(requestBody.getRequestBuiltinParams());
 			urlParams.putAll(requestBody.getRequestResourceParams());
 			urlParams.putAll(requestBody.getRequestParentResourceParams());
-			setResponseBody(new ResponseBody(urlParams, true));
+			setResponseBody(new ResponseBody(null, urlParams));
 		}else{
 			String operType = null;
 			if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getConfType())){
@@ -151,7 +151,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 					}
 				}
 			}
-			setResponseBody(new ResponseBody(ijson.getJson(), true));
+			setResponseBody(new ResponseBody(null, ijson.getJson()));
 		}
 	}
 	

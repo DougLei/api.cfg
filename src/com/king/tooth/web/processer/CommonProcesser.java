@@ -1,6 +1,10 @@
 package com.king.tooth.web.processer;
 
+import java.util.List;
+import java.util.Map;
+
 import com.king.tooth.web.entity.request.RequestBody;
+import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -30,6 +34,32 @@ public abstract class CommonProcesser {
 	 */
 	protected final void setResponseBody(ResponseBody responseBody){
 		this.responseBody = responseBody;
+	}
+	
+	/**
+	 * 简单组装ResponseBody对象
+	 * @param message 
+	 * @param data 
+	 */
+	protected final void installResponseBodySimple(String message, Object data){
+		ResponseBody responseBody = new ResponseBody(message, data);;
+		setResponseBody(responseBody);
+	}
+	
+	/**
+	 * 查询数据集合时，组装ResponseBody对象
+	 * @param message
+	 * @param dataList
+	 * @param pageResultEntity
+	 */
+	protected final void installResponseBodyForQueryDataList(String message, List<Map<String, Object>> dataList, PageResultEntity pageResultEntity){
+		Object data = dataList;
+		if(pageResultEntity != null){
+			// 分页查询，要先将结果集存储到pageResultEntity中，再把pageResultEntity存储到responseBody中
+			pageResultEntity.setResultDatas(dataList);
+			data = pageResultEntity;
+		}
+		installResponseBodySimple(message, data);
 	}
 	
 	/**

@@ -17,7 +17,7 @@ public final class SingleResourceProcesser extends PostProcesser {
 			saveData(requestBody.getRouteBody().getResourceName(), data);
 		}
 		
-		installResponseBodyForSaveData(null, json.getJson(), true);
+		installResponseBodyForSaveData(null, json.getJson());
 		return true;
 	}
 

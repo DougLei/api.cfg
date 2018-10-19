@@ -58,7 +58,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 		firstRecursiveQueryParams.clear();
 		
 		dataList = doProcessDataCollection(dataList);
-		installResponseBodyForQueryDataList(dataList, pageResultEntity, true);
+		installResponseBodyForQueryDataList(null, dataList, pageResultEntity);
 		return true;
 	}
 

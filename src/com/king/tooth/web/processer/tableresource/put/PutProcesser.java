@@ -65,8 +65,8 @@ public abstract class PutProcesser extends RequestProcesser {
 	 * @param data
 	 * @param isSuccess
 	 */
-	protected final void installResponseBodyForUpdateData(String message, Object data, boolean isSuccess){
-		ResponseBody responseBody = new ResponseBody(message, data, isSuccess);
+	protected final void installResponseBodyForUpdateData(String message, Object data){
+		ResponseBody responseBody = new ResponseBody(message, data);
 		setResponseBody(responseBody);
 	}
 }
