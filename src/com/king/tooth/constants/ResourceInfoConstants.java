@@ -75,12 +75,6 @@ public class ResourceInfoConstants {
 	 */
 	public static final String[] BUILTIN_PROP_NAMES = {ResourcePropNameConstants.ID, "customerId", "projectId", "createDate", "lastUpdateDate", "createUserId", "lastUpdateUserId"};
 	
-	/**
-	 * hql查询语句，返回的类型对象 $type$
-	 * <p>hql查询语句，返回的$type$指明了查询的资源名，例如from SysAccount，则返回的$type$=SysAccount</p>
-	 */
-	public static final String HQL_QUERY_RETURN_TYPE_PROP = "$type$";
-	
 	// ----------------------------------------------------------------------------
 	/**
 	 * 查询表资源元数据信息集合的hql语句头

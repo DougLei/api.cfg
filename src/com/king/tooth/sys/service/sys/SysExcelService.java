@@ -358,7 +358,6 @@ public class SysExcelService extends AService{
 				}
 			}
 		}
-		
 		return createExcelFile(workbook, title, suffix, exportFile.getFileId(), SysFileConstants.BUILD_IN_TYPE_EXPORT);
 	}
 
@@ -412,6 +411,7 @@ public class SysExcelService extends AService{
 			}
 		}else if(data instanceof Map){
 			dataMap = (Map<String, Object>) data;
+			dataMap.remove(ResourcePropNameConstants.HQL_QUERY_RETURN_TYPE_PROP);
 			if(dataMap.size() != resourceMetadataInfoCount){
 				return "生成excel导出文件时，查询数据列的数量，与配置的导出列的数量不一致，请修改";
 			}

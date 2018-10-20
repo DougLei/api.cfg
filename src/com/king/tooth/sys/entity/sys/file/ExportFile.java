@@ -31,12 +31,18 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	 * 导出数据时，执行查询的对象
 	 */
 	private Query query;
+	/**
+	 * 是否是表资源
+	 * <p>如果不是表资源，就是sql资源</p>
+	 */
+	private boolean isTableResource;
 	
 	public ExportFile() {
 	}
-	public ExportFile(String fileId, String resourceName, String exportFileSuffix, PageResultEntity pageResultEntity, Query query) {
+	public ExportFile(String fileId, String resourceName, boolean isTableResource, String exportFileSuffix, PageResultEntity pageResultEntity, Query query) {
 		this.fileId = fileId;
 		this.resourceName = resourceName;
+		this.isTableResource = isTableResource;
 		this.exportFileSuffix = exportFileSuffix;
 		this.pageResultEntity = pageResultEntity;
 		this.query = query;
@@ -53,6 +59,12 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	}
 	public void setPageResultEntity(PageResultEntity pageResultEntity) {
 		this.pageResultEntity = pageResultEntity;
+	}
+	public boolean getIsTableResource() {
+		return isTableResource;
+	}
+	public void setIsTableResource(boolean isTableResource) {
+		this.isTableResource = isTableResource;
 	}
 	public Query getQuery() {
 		return query;
