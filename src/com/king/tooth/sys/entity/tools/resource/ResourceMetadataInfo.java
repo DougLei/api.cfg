@@ -42,19 +42,29 @@ public class ResourceMetadataInfo implements Serializable{
 	 * 汉字描述名
 	 */
 	protected String descName;
+	/**
+	 * 是否导入
+	 */
+	protected Integer isImport;
+	/**
+	 * 是否导出
+	 */
+	protected Integer isExport;
 	
 	public ResourceMetadataInfo() {
 	}
 	public ResourceMetadataInfo(String propName) {
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 	}
-	public ResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
+	public ResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isImport, Integer isExport) {
 		this.columnName = columnName;
 		this.dataType = dataType;
 		this.length = length;
 		this.precision = precision==null?0:precision;
 		this.isUnique = isUnique==null?0:isUnique;
 		this.isNullabled = isNullabled==null?1:isNullabled;
+		this.isImport = isImport==null?1:isImport;
+		this.isExport = isExport==null?1:isExport;
 	}
 	
 	public String getPropName() {
@@ -105,15 +115,10 @@ public class ResourceMetadataInfo implements Serializable{
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
-	
-	/**
-	 * 验证并解析数据
-	 * <p>如果返回的字符串以analyzeError:开头，表示验证失败</p>
-	 * @param val
-	 * @return
-	 */
-	public Object analyzeData(Object val){
-		return analyzeErrorMessageHead;
+	public Integer getIsExport() {
+		return isExport;
 	}
-	private static final String analyzeErrorMessageHead = "analyzeError:";
+	public void setIsExport(Integer isExport) {
+		this.isExport = isExport;
+	}
 }

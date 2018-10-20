@@ -79,5 +79,5 @@ public class ResourceInfoConstants {
 	/**
 	 * 查询表资源元数据信息集合的hql语句头
 	 */
-	public static final String queryTableMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	public static final String queryTableMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isImport as isImport, isExport as isExport) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
 }

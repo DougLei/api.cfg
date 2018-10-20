@@ -107,6 +107,8 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 					column.getPrecision(),
 					column.getIsUnique(), 
 					column.getIsNullabled(),
+					column.getIsImport(),
+					column.getIsExport(),
 					column.getPropName(),
 					column.getName()));
 		}

@@ -133,6 +133,8 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 						sqlParam.getPrecision(),
 						0, // sql脚本参数不需要唯一约束
 						0, // sql脚本参数不能为空
+						0,
+						0,
 						sqlParam.getParameterName(),
 						sqlParam.getRemark()));
 			}

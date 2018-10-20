@@ -13,8 +13,8 @@ public class SqlResourceMetadataInfo extends ResourceMetadataInfo{
 		super(propName);
 	}
 
-	public SqlResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, String propName, String descName) {
-		super(columnName, dataType, length, precision, isUnique, isNullabled);
+	public SqlResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isImport, Integer isExport, String propName, String descName) {
+		super(columnName, dataType, length, precision, isUnique, isNullabled, isImport, isExport);
 		this.propName = propName;
 		this.descName = StrUtils.isEmpty(descName)?propName:descName;
 	}
