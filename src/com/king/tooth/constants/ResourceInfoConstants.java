@@ -67,6 +67,22 @@ public class ResourceInfoConstants {
 	
 	// ----------------------------------------------------------------------------
 	/**
+	 * 系统内置的列名
+	 */
+	public static final String[] BUILTIN_COLUMN_NAMES = {"id", "customer_id", "project_id", "create_date", "last_update_date", "create_user_id", "last_update_user_id"};
+	/**
+	 * 系统内置的属性名
+	 */
+	public static final String[] BUILTIN_PROP_NAMES = {ResourcePropNameConstants.ID, "customerId", "projectId", "createDate", "lastUpdateDate", "createUserId", "lastUpdateUserId"};
+	
+	/**
+	 * hql查询语句，返回的类型对象 $type$
+	 * <p>hql查询语句，返回的$type$指明了查询的资源名，例如from SysAccount，则返回的$type$=SysAccount</p>
+	 */
+	public static final String HQL_QUERY_RETURN_TYPE_PROP = "$type$";
+	
+	// ----------------------------------------------------------------------------
+	/**
 	 * 查询表资源元数据信息集合的hql语句头
 	 */
 	public static final String queryTableMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;

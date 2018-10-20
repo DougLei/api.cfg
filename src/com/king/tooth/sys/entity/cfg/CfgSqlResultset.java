@@ -14,6 +14,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.util.NamingProcessUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -104,6 +105,10 @@ public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEn
 			this.propName = ResourcePropNameConstants.ID;
 		}else{
 			this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
+		}
+		// 如果是内置的属性名，默认不导出
+		if(this.isExport != null && this.isExport == 1 && ResourceHandlerUtil.isBuildInProps(propName)){
+			this.isExport=0;
 		}
 		this.descName = this.propName;
 	}

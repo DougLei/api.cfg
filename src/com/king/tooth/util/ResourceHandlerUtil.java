@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
@@ -129,6 +130,35 @@ public class ResourceHandlerUtil {
 				data.put("lastUpdateUserId",  shortDesc);
 			}
 		}
+	}
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 是否是系统内置的列名
+	 * @param columnName
+	 * @return
+	 */
+	public static boolean isBuildInColumns(String columnName){
+		for(String builtinColumnName: ResourceInfoConstants.BUILTIN_COLUMN_NAMES){
+			if(columnName.equalsIgnoreCase(builtinColumnName)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 是否是系统内置的资源名
+	 * @param propName
+	 * @return
+	 */
+	public static boolean isBuildInProps(String propName){
+		for(String builtinPropName: ResourceInfoConstants.BUILTIN_PROP_NAMES){
+			if(propName.equals(builtinPropName)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// ------------------------------------------------------------------------------------------

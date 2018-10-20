@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.hibernate.Query;
 
 import com.alibaba.fastjson.JSONObject;
@@ -57,7 +58,7 @@ public class SysExcelService extends AService{
 		ResourceMetadataInfo rmi = null;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = resourceMetadataInfos.get(i);
-			cell = headRow.createCell(i+1);
+			cell = headRow.createCell(i);
 			cell.setCellValue(rmi.getDescName());
 		}
 	}
@@ -312,8 +313,7 @@ public class SysExcelService extends AService{
 		List<ResourceMetadataInfo> resourceMetadataInfos = exportFile.getResourceMetadataInfos();
 		int resourceMetadataInfoCount = resourceMetadataInfos.size();
 		
-		Row titleRow = sheet.createRow(0);
-		createTitleRow(title, titleRow, resourceMetadataInfos.size());
+		createTitleRow(sheet, title, resourceMetadataInfos.size());
 		
 		Row headRow = sheet.createRow(1);
 		createHeadRow(headRow, resourceMetadataInfos, resourceMetadataInfoCount);
@@ -345,13 +345,13 @@ public class SysExcelService extends AService{
 					dataArr = (Object[]) object;
 					size = dataArr.length;
 					for(int j=0;j<size;j++){
-						createCell(j+1, row, cell, dataArr[i], resourceMetadataInfos.get(i));
+						createCell(j, row, cell, dataArr[j], resourceMetadataInfos.get(j));
 					}
 				}else if(object instanceof Map){
 					dataMap = (Map<String, Object>) object;
 					size = dataMap.size();
 					for(int j=0;j<size;j++){
-						createCell(j+1, row, cell, dataMap.get(resourceMetadataInfos.get(i).getPropName()), resourceMetadataInfos.get(i));
+						createCell(j, row, cell, dataMap.get(resourceMetadataInfos.get(j).getPropName()), resourceMetadataInfos.get(j));
 					}
 				}else if(object instanceof Object){
 					createCell(1, row, cell, object, resourceMetadataInfos.get(0));
@@ -364,12 +364,16 @@ public class SysExcelService extends AService{
 
 	/**
 	 * 创建标题行
+	 * @param sheet
 	 * @param title
-	 * @param titleRow
 	 * @param colspanLength 和并列的数量
 	 */
-	private void createTitleRow(String title, Row titleRow, int colspanLength){
-		// TODO
+	private void createTitleRow(Sheet sheet, String title, int colspanLength){
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, colspanLength-1));
+		Row titleRow = sheet.createRow(0);
+		Cell cell = titleRow.createCell(0);
+		cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellValue(title);
 	}
 	
 	/**
@@ -431,6 +435,9 @@ public class SysExcelService extends AService{
 		cell = row.createCell(columnIndex);
 		if(StrUtils.isEmpty(object)){
 			cell.setCellType(Cell.CELL_TYPE_BLANK);
+			return;
+		}else if(resourceMetadataInfo == null){
+			cell.setCellType(Cell.CELL_TYPE_STRING);
 		}else if(DataTypeConstants.INTEGER.equals(resourceMetadataInfo.getDataType()) || DataTypeConstants.DOUBLE.equals(resourceMetadataInfo.getDataType())){
 			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		}else if(DataTypeConstants.INTEGER.equals(resourceMetadataInfo.getDataType())){

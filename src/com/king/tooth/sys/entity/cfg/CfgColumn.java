@@ -13,6 +13,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingProcessUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -526,12 +527,8 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(!isIgnoreCheckBuiltinColumnName){
-			if(result == null){
-				for(String builtinColumnName: BUILTIN_COLUMNNAMES){
-					if(columnName.equalsIgnoreCase(builtinColumnName)){
-						return "不能添加系统内置的列名:"+columnName;
-					}
-				}
+			if(result == null && ResourceHandlerUtil.isBuildInColumns(columnName)){
+				return "不能添加系统内置的列名:"+columnName;
 			}
 		}
 		if(result == null){
@@ -571,11 +568,6 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 		}
 		return result;
 	}
-	
-	/**
-	 * 系统内置的列名
-	 */
-	private static final String[] BUILTIN_COLUMNNAMES = {"id", "customer_id", "project_id", "create_date", "last_update_date", "create_user_id", "last_update_user_id"};
 	
 	// --------------------------------------------------------------------------------------
 	/**
