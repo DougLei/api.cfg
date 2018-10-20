@@ -67,14 +67,14 @@ public class DynamicBasicColumnUtil {
 	 * @param resourceMetadataInfos
 	 */
 	public static void initBasicMetadataInfos(int isBuildIn, String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos) {
-		resourceMetadataInfos.add(new TableResourceMetadataInfo("ID", DataTypeConstants.STRING, isBuildIn==1?32:50, 0, 0, 1,0,0, ResourcePropNameConstants.ID, "主键"));
-		resourceMetadataInfos.add(new TableResourceMetadataInfo("CUSTOMER_ID", DataTypeConstants.STRING, 32, 0, 0, 1,0,0, "customerId", "所属租户主键"));
-		resourceMetadataInfos.add(new TableResourceMetadataInfo("PROJECT_ID", DataTypeConstants.STRING, 32, 0, 0, 1,0,0, "projectId", "所属项目主键"));
+		resourceMetadataInfos.add(new TableResourceMetadataInfo("ID", DataTypeConstants.STRING, isBuildIn==1?32:50, 0, 0, 1, ResourcePropNameConstants.ID, "主键"));
+		resourceMetadataInfos.add(new TableResourceMetadataInfo("CUSTOMER_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "customerId", "所属租户主键"));
+		resourceMetadataInfos.add(new TableResourceMetadataInfo("PROJECT_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "projectId", "所属项目主键"));
 		if(!resourceName.endsWith("Links")){// 不是关系表，才要这些字段
-			resourceMetadataInfos.add(new TableResourceMetadataInfo("CREATE_DATE", DataTypeConstants.DATE, 0, 0, 0, 1,0,0, "createDate", "创建时间"));
-			resourceMetadataInfos.add(new TableResourceMetadataInfo("LAST_UPDATE_DATE", DataTypeConstants.DATE, 0, 0, 0, 1,0,0, "lastUpdateDate", "最后修改时间"));
-			resourceMetadataInfos.add(new TableResourceMetadataInfo("CREATE_USER_ID", DataTypeConstants.STRING, 32, 0, 0, 1,0,0, "createUserId", "创建人主键"));
-			resourceMetadataInfos.add(new TableResourceMetadataInfo("LAST_UPDATE_USER_ID", DataTypeConstants.STRING, 32, 0, 0, 1,0,0, "lastUpdateUserId", "最后修改人主键"));
+			resourceMetadataInfos.add(new TableResourceMetadataInfo("CREATE_DATE", DataTypeConstants.DATE, 0, 0, 0, 1, "createDate", "创建时间"));
+			resourceMetadataInfos.add(new TableResourceMetadataInfo("LAST_UPDATE_DATE", DataTypeConstants.DATE, 0, 0, 0, 1, "lastUpdateDate", "最后修改时间"));
+			resourceMetadataInfos.add(new TableResourceMetadataInfo("CREATE_USER_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "createUserId", "创建人主键"));
+			resourceMetadataInfos.add(new TableResourceMetadataInfo("LAST_UPDATE_USER_ID", DataTypeConstants.STRING, 32, 0, 0, 1, "lastUpdateUserId", "最后修改人主键"));
 		}
 	}
 }
