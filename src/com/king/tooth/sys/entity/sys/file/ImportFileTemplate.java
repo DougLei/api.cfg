@@ -49,7 +49,7 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 				return "系统不支持后缀为["+fileSuffix+"]的导入模版文件，系统支持的导入模版文件后缀包括：" +Arrays.toString(supportFileSuffixArray);
 			}
 			
-			Object obj = getIEResourceMetadataInfos(resourceName, 1);
+			Object obj = getIEResourceMetadataInfos(null, resourceName, 1);
 			if(obj instanceof String){
 				return obj.toString();
 			}

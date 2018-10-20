@@ -82,6 +82,9 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 		String resultType = requestBuiltinParams.remove("_resultType");
 		String select = requestBuiltinParams.remove("_select");
 		String split = requestBuiltinParams.remove("_split");
+		if(isCreateExport){
+			select = exportSelectPropNames;
+		}
 		queryProcesser = new BuiltinQueryMethodProcesser(resultType, select, split);
 		queryProcesser.setResourceName(resourceName);
 	}

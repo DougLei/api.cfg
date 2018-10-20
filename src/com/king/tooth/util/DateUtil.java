@@ -120,18 +120,19 @@ public class DateUtil {
 	}
 	
 	// -----------------------------------------------------------------
-	private transient static final SimpleDateFormat daySdf = new SimpleDateFormat("dd");
 	/**
 	 * 当前日期是否是当月第一天
 	 * @param currentDate
 	 * @return
 	 */
 	public static boolean isFirstDayOfMonth(Date currentDate) {
-		if("01".equals(daySdf.format(currentDate))){
+		if("01".equals(ddSdf.format(currentDate))){
 			return true;
 		}
 		return false;
 	}
+	/**	dd */
+	private static final SimpleDateFormat ddSdf = new SimpleDateFormat("dd");
 	
 	// -----------------------------------------------------------------
 	/**
@@ -160,6 +161,40 @@ public class DateUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		return sdf.format(date);
 	}
+	
+	/**
+	 * 获取当前是第几季度
+	 * @param date
+	 * @param isNumber 是否是数字，不是数字就是汉字
+	 * 				   1.2.3.4         一.二.三.四
+	 * @return
+	 */
+	public static String getSeason(Date date, int isNumber) {
+		int month = Integer.valueOf(mmSdf.format(date));
+		if(isNumber == 1){
+			if(month >0 && month <4){
+				return "1";
+			}else if(month >3 && month <7){
+				return "2";
+			}else if(month >6 && month <10){
+				return "3";
+			}else{
+				return "4";
+			}
+		}else{
+			if(month >0 && month <4){
+				return "一";
+			}else if(month >3 && month <7){
+				return "二";
+			}else if(month >6 && month <10){
+				return "三";
+			}else{
+				return "四";
+			}
+		}
+	}
+	/**	MM */
+	private static final SimpleDateFormat mmSdf = new SimpleDateFormat("MM");
 	
 	// -----------------------------------------------------------------
 	/**

@@ -12,7 +12,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.hibernate.Query;
 
 import com.alibaba.fastjson.JSONObject;
@@ -305,7 +304,7 @@ public class SysExcelService extends AService{
 		if(wb instanceof String){
 			return wb;
 		}
-		String title = "tmp title 这是一个临时标题";
+		String title = exportFile.analyzeExportTitle();
 		
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
@@ -353,10 +352,14 @@ public class SysExcelService extends AService{
 					for(int j=0;j<size;j++){
 						createCell(j, row, cell, dataMap.get(resourceMetadataInfos.get(j).getPropName()), resourceMetadataInfos.get(j));
 					}
+					if(size>0){
+						dataMap.clear();
+					}
 				}else if(object instanceof Object){
 					createCell(1, row, cell, object, resourceMetadataInfos.get(0));
 				}
 			}
+			dataList.clear();
 		}
 		return createExcelFile(workbook, title, suffix, exportFile.getFileId(), SysFileConstants.BUILD_IN_TYPE_EXPORT);
 	}
@@ -368,11 +371,7 @@ public class SysExcelService extends AService{
 	 * @param colspanLength 和并列的数量
 	 */
 	private void createTitleRow(Sheet sheet, String title, int colspanLength){
-		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, colspanLength-1));
-		Row titleRow = sheet.createRow(0);
-		Cell cell = titleRow.createCell(0);
-		cell.setCellType(Cell.CELL_TYPE_STRING);
-		cell.setCellValue(title);
+		PoiExcelUtil.mergedCells(sheet, 0, 0, title, 0, 0, 0, colspanLength-1);
 	}
 	
 	/**
@@ -433,8 +432,7 @@ public class SysExcelService extends AService{
 	 */
 	private void createCell(int columnIndex, Row row, Cell cell, Object object, ResourceMetadataInfo resourceMetadataInfo) {
 		cell = row.createCell(columnIndex);
-		if(StrUtils.isEmpty(object)){
-			cell.setCellType(Cell.CELL_TYPE_BLANK);
+		if(object == null){
 			return;
 		}else if(resourceMetadataInfo == null){
 			cell.setCellType(Cell.CELL_TYPE_STRING);

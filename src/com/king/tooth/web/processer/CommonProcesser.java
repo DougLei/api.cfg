@@ -47,7 +47,7 @@ public abstract class CommonProcesser {
 				installResponseBodySimple("要生成导出文件，需要提供分页查询参数值：[_rows和_page] 或 [_limit和_start]，其中[_page或_start]的值传递为0即可", null);
 			}else{
 				Map<String, String> urlParams = requestBody.installAllUrlParams();
-				Object obj = BuiltinResourceInstance.getInstance("SysExcelController", SysExcelController.class).createExportExcelFile(resourceName, requestBody.getResourceInfo().getReqResource().isTableResource(), createExportFileProcesser.getExportFileSuffix(), pageResultEntity, query, urlParams);
+				Object obj = BuiltinResourceInstance.getInstance("SysExcelController", SysExcelController.class).createExportExcelFile(createExportFileProcesser.getResource(), createExportFileProcesser.getExportFileSuffix(), createExportFileProcesser.getExportTitle(), pageResultEntity, query, urlParams);
 				if(urlParams != null && urlParams.size() > 0){
 					urlParams.clear();
 				}

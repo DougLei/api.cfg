@@ -8,8 +8,12 @@ import java.io.InputStream;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -24,7 +28,7 @@ public class PoiExcelUtil {
 	 * @param excelFileSuffix excel文件的后缀
 	 * @return
 	 */
-	public static final Object getReadWorkBookInstance(String excelFilePath, String excelFileSuffix){
+	public static Object getReadWorkBookInstance(String excelFilePath, String excelFileSuffix){
 		File file = new File(excelFilePath);
 		if(file.exists()){
 			if(excelFileSuffix == null || !(excelFileSuffix.equalsIgnoreCase("xls") || excelFileSuffix.equalsIgnoreCase("xlsx"))){
@@ -69,7 +73,7 @@ public class PoiExcelUtil {
 	 * @param excelFileSuffix excel文件的后缀
 	 * @return
 	 */
-	public static final Object getWriteWorkBookInstance(String excelFileSuffix){
+	public static Object getWriteWorkBookInstance(String excelFileSuffix){
 		Workbook workbook = null;
 		if("xls".equals(excelFileSuffix)){
 			workbook = new HSSFWorkbook();
@@ -79,5 +83,27 @@ public class PoiExcelUtil {
 			return "系统不支持后缀为["+excelFileSuffix+"]的excel文件，系统支持的后缀包括：[xls , xlsx]";
 		}
 		return workbook;
+	}
+	
+	// -----------------------------------------------------------------
+	/**
+	 * 合并单元格并输入值
+	 * @param sheet
+	 * @param rowIndex
+	 * @param columnIndex
+	 * @param cellValue
+	 * @param firstRow
+	 * @param lastRow
+	 * @param firstCol
+	 * @param lastCol
+	 */
+	public static void mergedCells(Sheet sheet, int rowIndex, int columnIndex, Object cellValue, int firstRow, int lastRow, int firstCol, int lastCol){
+		sheet.addMergedRegion(new CellRangeAddress(firstRow, lastRow, firstCol, lastCol));
+		Row row = sheet.createRow(rowIndex);
+		Cell cell = row.createCell(columnIndex);
+		if(cellValue != null){
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			cell.setCellValue(cellValue.toString());
+		}
 	}
 }

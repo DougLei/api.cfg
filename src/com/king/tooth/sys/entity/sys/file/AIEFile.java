@@ -75,9 +75,12 @@ public abstract class AIEFile {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected Object getIEResourceMetadataInfos(String resourceName, int isImport){
+	protected Object getIEResourceMetadataInfos(SysResource resource, String resourceName, int isImport){
+		if(resource == null){
+			resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
+		}
+		
 		Object obj = null;
-		SysResource resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
 		if(resource.isTableResource()){
 			obj = getIETableResourceMetadataInfos(resource, isImport);
 		}else if(resource.isSqlResource()){
@@ -96,7 +99,7 @@ public abstract class AIEFile {
 		}
 		List<ResourceMetadataInfo> resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
 		if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
-			return "没有查询到名为["+resourceName+"]资源的"+(isImport==1?"导入":"导出")+"元数据信息集合，请联系后端系统开发人员";
+			return "没有查询到名为["+resourceName+"]资源的"+(isImport==1?"导入":"导出")+"元数据信息集合，请检查配置，或联系后端系统开发人员";
 		}
 		return resourceMetadataInfos;
 	}
@@ -178,5 +181,4 @@ public abstract class AIEFile {
 	}
 	/** 查询sql资源配置的导出元数据信息集合的hql */
 	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
-	
 }

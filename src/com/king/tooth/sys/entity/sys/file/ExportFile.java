@@ -1,14 +1,18 @@
 package com.king.tooth.sys.entity.sys.file;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
@@ -24,6 +28,10 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	 */
 	private String exportFileSuffix;
 	/**
+	 * 导出文件中的标题
+	 */
+	private String exportTitle;
+	/**
 	 * 导出数据时分页查询的对象
 	 */
 	private PageResultEntity pageResultEntity;
@@ -32,18 +40,17 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	 */
 	private Query query;
 	/**
-	 * 是否是表资源
-	 * <p>如果不是表资源，就是sql资源</p>
+	 * 要生成导出文件的资源对象
 	 */
-	private boolean isTableResource;
+	private SysResource resource;
 	
 	public ExportFile() {
 	}
-	public ExportFile(String fileId, String resourceName, boolean isTableResource, String exportFileSuffix, PageResultEntity pageResultEntity, Query query) {
+	public ExportFile(String fileId, SysResource resource, String exportFileSuffix, String exportTitle, PageResultEntity pageResultEntity, Query query) {
 		this.fileId = fileId;
-		this.resourceName = resourceName;
-		this.isTableResource = isTableResource;
+		this.resource = resource;
 		this.exportFileSuffix = exportFileSuffix;
+		this.exportTitle = exportTitle;
 		this.pageResultEntity = pageResultEntity;
 		this.query = query;
 	}
@@ -60,11 +67,17 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	public void setPageResultEntity(PageResultEntity pageResultEntity) {
 		this.pageResultEntity = pageResultEntity;
 	}
-	public boolean getIsTableResource() {
-		return isTableResource;
+	public SysResource getResource() {
+		return resource;
 	}
-	public void setIsTableResource(boolean isTableResource) {
-		this.isTableResource = isTableResource;
+	public void setResource(SysResource resource) {
+		this.resource = resource;
+	}
+	public String getExportTitle() {
+		return exportTitle;
+	}
+	public void setExportTitle(String exportTitle) {
+		this.exportTitle = exportTitle;
 	}
 	public Query getQuery() {
 		return query;
@@ -74,6 +87,9 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	}
 
 	public String validNotNullProps() {
+		if(resource == null){
+			return "生成导出文件时，资源对象[resource]不能为空"; 
+		}
 		if(pageResultEntity == null){
 			return "生成导出文件时，分页查询的对象[pageResultEntity]不能为空"; 
 		}
@@ -86,8 +102,8 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 		if(StrUtils.isEmpty(exportFileSuffix)){
 			return "生成导出文件的后缀不能为空";
 		}
-		if(StrUtils.isEmpty(resourceName)){
-			return "生成导出文件，操作的资源名不能为空";
+		if(StrUtils.isEmpty(exportTitle)){
+			return "生成导出文件中的标题不能为空";
 		}
 		return null;
 	}
@@ -101,7 +117,7 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 				return "系统不支持导出后缀为["+exportFileSuffix+"]的文件，系统支持导出的文件后缀包括：" +Arrays.toString(supportFileSuffixArray);
 			}
 			
-			Object obj = getIEResourceMetadataInfos(resourceName, 0);
+			Object obj = getIEResourceMetadataInfos(resource, null, 0);
 			if(obj instanceof String){
 				return obj.toString();
 			}
@@ -114,4 +130,33 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	public String getEntityName() {
 		return "ExportFile";
 	}
+	
+	/**
+	 * 解析导出文件中的标题值
+	 * @return
+	 */
+	public String analyzeExportTitle() {
+		Date date = null;
+		if(exportTitle.indexOf("${yyyy}")!=-1){
+			if(date == null){date = new Date();}
+			exportTitle = exportTitle.replace("${yyyy}", DateUtil.formatDate(date, yyyySdf));
+		}
+		if(exportTitle.indexOf("${numberSeason}")!=-1){
+			if(date == null){date = new Date();}
+			exportTitle = exportTitle.replace("${numberSeason}", DateUtil.getSeason(date, 1));
+		}
+		if(exportTitle.indexOf("${CNCharSeason}")!=-1){
+			if(date == null){date = new Date();}
+			exportTitle = exportTitle.replace("${CNCharSeason}", DateUtil.getSeason(date, 0));
+		}
+		if(exportTitle.indexOf("${yyyyMM}")!=-1){
+			if(date == null){date = new Date();}
+			exportTitle = exportTitle.replace("${yyyyMM}", DateUtil.formatDate(date, yyyyMMSdf));
+		}
+		return exportTitle;
+	}
+	/**	xxxx年 */
+	private static final SimpleDateFormat yyyySdf = new SimpleDateFormat("yyyy年");
+	/**	xxxx年xx月 */
+	private static final SimpleDateFormat yyyyMMSdf = new SimpleDateFormat("yyyy年MM月");
 }

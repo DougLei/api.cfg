@@ -53,14 +53,15 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 	}
 	/**
 	 * 内置创建导出文件的函数处理器实例
-	 * 
 	 */
 	public void setCreateExportFileProcesser(Map<String, String> requestBuiltinParams) {
 		String isCreateExport = requestBuiltinParams.remove("_isCreateExport");
 		String exportFileSuffix = requestBuiltinParams.remove("_exportFileSuffix");
 		if(StrUtils.notEmpty(isCreateExport) && StrUtils.notEmpty(exportFileSuffix)){
-			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, parentResourceName, isCreateExport, exportFileSuffix);
+			String exportTitle = requestBuiltinParams.remove("_exportTitle");
+			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, parentResourceName, isCreateExport, exportFileSuffix, exportTitle);
 			this.isCreateExport = createExportFileProcesser.getIsUsed();
+			this.exportSelectPropNames = createExportFileProcesser.getExportSelectPropNames();
 		}
 	}
 	/** 
@@ -69,7 +70,13 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 	 * 		如果用户没有传入，则用默认值
 	 * 		主要控制传入的_start或_page值必须为1，如果_limit或_rows有传入值，则用传入的值，否则用默认值300
 	 */
-	private boolean isCreateExport;
+	protected boolean isCreateExport;
+	/**
+	 * 在生成导出文件时，查询数据的源信息，必须是配置了isExport=1的
+	 * BuiltinCreateExportFileMethodProcesser处理器会先处理获得所有要导出的字段信息名，并赋给BuiltinQueryMethodProcesser函数的select参数，保证查询出来的数据列，和配置的isExport=1的元数据集合长度一致
+	 * 多个用,隔开
+	 */
+	protected String exportSelectPropNames;
 	
 	/**
 	 * 内置分页函数处理器实例

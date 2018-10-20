@@ -1,6 +1,14 @@
 package com.king.tooth.web.builtin.method.common.export.file.create;
 
+import java.util.List;
+
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.common.AbstractBuiltinCommonMethod;
 
 /**
@@ -24,11 +32,21 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	 * 导出文件的后缀
 	 */
 	private String exportFileSuffix;
+	/**
+	 * 导出文件中的标题
+	 * <p>如果为空，则和资源名一样</p>
+	 */
+	private String exportTitle;
+	/**
+	 * 要生成导出文件的资源对象
+	 */
+	private SysResource resource;
+	
 	
 	public BuiltinCreateExportFileMethodProcesser() {
 		Log4jUtil.debug("此次请求，没有使用到BuiltinCreateExportFileMethodProcesser内置方法处理器");
 	}
-	public BuiltinCreateExportFileMethodProcesser(String resourceName, String parentResourceName, String isCreateExport, String exportFileSuffix) {
+	public BuiltinCreateExportFileMethodProcesser(String resourceName, String parentResourceName, String isCreateExport, String exportFileSuffix, String exportTitle) {
 		if(!"true".equals(isCreateExport)){
 			Log4jUtil.debug("此次请求，没有使用到BuiltinCreateExportFileMethodProcesser内置方法处理器");
 			return;
@@ -38,8 +56,50 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 		this.parentResourceName = parentResourceName;
 		this.isCreateExport = true;
 		this.exportFileSuffix = exportFileSuffix;
+		
+		if(StrUtils.isEmpty(exportTitle)){
+			exportTitle = resourceName;
+		}
+		this.exportTitle = exportTitle;
 	}
 
+	/**
+	 * 获取生成导出文件时，查询数据的属性名，多个用,隔开
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public String getExportSelectPropNames() {
+		if(isUsed){
+			resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
+			String hql;
+			if(resource.isTableResource()){
+				hql = queryTableExportPropNamesHql;
+			}else if(resource.isTableResource()){
+				hql = querySqlExportPropNamesHql;
+			}else{
+				throw new IllegalArgumentException("系统目前只支持[表资源/sql资源]的数据导出");
+			}
+			List propNameList = HibernateUtil.executeListQueryByHqlArr(null, null, hql, resource.getRefResourceId());
+			if(propNameList == null || propNameList.size() == 0){
+				throw new NullPointerException("没有查询到名为["+resourceName+"]资源的导出属性名信息集合，请检查配置，或联系后端系统开发人员");
+			}
+			
+			StringBuilder propNameBuilder = new StringBuilder();
+			for (Object propName : propNameList) {
+				propNameBuilder.append(propName).append(",");
+			}
+			propNameBuilder.setLength(propNameBuilder.length()-1);
+			propNameList.clear();
+			return propNameBuilder.toString();
+		}
+		return null;
+	}
+	/** 查询表资源，要导出的属性名集合hql */
+	private static final String queryTableExportPropNamesHql = "select propName from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED + " and isExport=1 order by exportOrderCode asc";
+	/** 查询sql资源，要导出的属性名集合hql */
+	private static final String querySqlExportPropNamesHql = "select propName from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
+	
+	
 	public boolean getIsCreateExport() {
 		return isCreateExport;
 	}
@@ -51,5 +111,11 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	}
 	public String getParentResourceName() {
 		return parentResourceName;
+	}
+	public SysResource getResource() {
+		return resource;
+	}
+	public String getExportTitle() {
+		return exportTitle;
 	}
 }

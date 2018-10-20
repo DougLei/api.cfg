@@ -14,6 +14,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.sys.SysFileImportExportLog;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.file.ExportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFileTemplate;
@@ -99,16 +100,15 @@ public class SysExcelController extends AController{
 	
 	/**
 	 * 生成导出excel文件
-	 * @param resourceName
-	 * @param isTableResource
+	 * @param resource
 	 * @param exportExcelFileSuffix
 	 * @param pageResultEntity
 	 * @param query
 	 * @param requestUrlParams
 	 * @return
 	 */
-	public Object createExportExcelFile(String resourceName, boolean isTableResource, String exportExcelFileSuffix, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
-		ExportFile exportFile = new ExportFile(ResourceHandlerUtil.getIdentity(), resourceName, isTableResource, exportExcelFileSuffix, pageResultEntity, query);
+	public Object createExportExcelFile(SysResource resource, String exportExcelFileSuffix, String exportTitle, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
+		ExportFile exportFile = new ExportFile(ResourceHandlerUtil.getIdentity(), resource, exportExcelFileSuffix, exportTitle, pageResultEntity, query);
 		analysisResult = exportFile.analysisResourceProp();
 		List<SysFileImportExportLog> excelIELogs = null;
 		if(analysisResult == null){

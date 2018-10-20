@@ -65,7 +65,7 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 				return "系统不支持后缀为["+importFile.getSuffix()+"]的导入文件，系统支持的导入文件后缀包括：" +Arrays.toString(supportFileSuffixArray);
 			}
 			
-			Object obj = getIEResourceMetadataInfos(resourceName, 1);
+			Object obj = getIEResourceMetadataInfos(null, resourceName, 1);
 			if(obj instanceof String){
 				return obj.toString();
 			}

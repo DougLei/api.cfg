@@ -92,6 +92,7 @@
 ##### (4). 生成导出文件
 	_isCreateExport: 标识是否生成导出文件，值为true、false。如果不传值，或值不是true，，则该功能不启用
 	_exportFileSuffix: 生成导出文件的后缀，用来判断导出的文件类型，excel、xml等
+	_exportTitle: 导出文件中的标题，如果为空，则和资源名一样
 
 > 可以配合BuiltinPagerMethodProcesser中的，_rows或_limit参数使用，这两个中的任意一个参数指定一次导出的数据数量，提高系统性能
 > _rows或_limit参数的搭配参数(_page或_start)可以随便传值，但是必须传值，建议传值都为0即可
