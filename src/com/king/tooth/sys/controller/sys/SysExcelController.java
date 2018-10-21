@@ -102,13 +102,15 @@ public class SysExcelController extends AController{
 	 * 生成导出excel文件
 	 * @param resource
 	 * @param exportExcelFileSuffix
+	 * @param exportTitle
+	 * @param exportBasicPropNames
 	 * @param pageResultEntity
 	 * @param query
 	 * @param requestUrlParams
 	 * @return
 	 */
-	public Object createExportExcelFile(SysResource resource, String exportExcelFileSuffix, String exportTitle, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
-		ExportFile exportFile = new ExportFile(ResourceHandlerUtil.getIdentity(), resource, exportExcelFileSuffix, exportTitle, pageResultEntity, query);
+	public Object createExportExcelFile(SysResource resource, String exportExcelFileSuffix, String exportTitle, String exportBasicPropNames, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
+		ExportFile exportFile = new ExportFile(ResourceHandlerUtil.getIdentity(), resource, exportExcelFileSuffix, exportTitle, exportBasicPropNames, pageResultEntity, query);
 		analysisResult = exportFile.analysisResourceProp();
 		List<SysFileImportExportLog> excelIELogs = null;
 		if(analysisResult == null){

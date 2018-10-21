@@ -10,6 +10,7 @@ import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -130,6 +131,37 @@ public class ResourceHandlerUtil {
 				data.put("lastUpdateUserId",  shortDesc);
 			}
 		}
+	}
+	
+	/**
+	 * 获取基础属性的元数据信息
+	 * <p>Id,customerId,projectId,createDate,lastUpdateDate,createUserId,lastUpdateUserId</p>
+	 * @param basicPropName
+	 * @param builtinResource
+	 * @return
+	 */
+	public static ResourceMetadataInfo getBasicPropMetadataInfo(String basicPropName, boolean builtinResource){
+		if(StrUtils.notEmpty(basicPropName) && isBuildInProps(basicPropName)){
+			if(ResourcePropNameConstants.ID.equals(basicPropName)){
+				if(builtinResource){
+					return BuiltinObjectInstance.idColumn32.toTableResourceMetadataInfo();
+				}
+				return BuiltinObjectInstance.idColumn50.toTableResourceMetadataInfo();
+			}else if("customerId".equals(basicPropName)){
+				return BuiltinObjectInstance.customerIdColumn.toTableResourceMetadataInfo();
+			}else if("projectId".equals(basicPropName)){
+				return BuiltinObjectInstance.projectIdColumn.toTableResourceMetadataInfo();
+			}else if("createDate".equals(basicPropName)){
+				return BuiltinObjectInstance.createDateColumn.toTableResourceMetadataInfo();
+			}else if("lastUpdateDate".equals(basicPropName)){
+				return BuiltinObjectInstance.lastUpdateDateColumn.toTableResourceMetadataInfo();
+			}else if("createUserId".equals(basicPropName)){
+				return BuiltinObjectInstance.createUserIdColumn.toTableResourceMetadataInfo();
+			}else if("lastUpdateUserId".equals(basicPropName)){
+				return BuiltinObjectInstance.lastUpdateUserIdColumn.toTableResourceMetadataInfo();
+			}
+		}
+		return null;
 	}
 	
 	// ------------------------------------------------------------------------------------------

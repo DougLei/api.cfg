@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.PermissionConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
@@ -68,5 +71,45 @@ public class BuiltinObjectInstance {
 		allPermission.setRefResourceCode("ALL");
 		allPermission.setRefResourceId("ALL");
 		allPermission.setRefResourceType("ALL");
+	}
+	
+	// -------------------------------------------------------
+	/** 基础字段对象 */
+	public static final CfgColumn idColumn32 = new CfgColumn(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 32);
+	public static final CfgColumn idColumn50 = new CfgColumn(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 32);
+	public static final CfgColumn customerIdColumn = new CfgColumn("customer_id", DataTypeConstants.STRING, 32);
+	public static final CfgColumn projectIdColumn = new CfgColumn("project_id", DataTypeConstants.STRING, 32);
+	public static final CfgColumn createDateColumn = new CfgColumn("create_date", DataTypeConstants.DATE, 0);
+	public static final CfgColumn lastUpdateDateColumn = new CfgColumn("last_update_date", DataTypeConstants.DATE, 0);
+	public static final CfgColumn createUserIdColumn = new CfgColumn("create_user_id", DataTypeConstants.STRING, 32);
+	public static final CfgColumn lastUpdateUserIdColumn = new CfgColumn("last_update_user_id", DataTypeConstants.STRING, 32);
+	static{
+		idColumn32.setIsPrimaryKey(1);
+		idColumn32.setIsNullabled(0);
+		idColumn32.setName("主键");
+		idColumn32.setComments("主键");
+		
+		idColumn50.setIsPrimaryKey(1);
+		idColumn50.setIsNullabled(0);
+		idColumn50.setName("主键");
+		idColumn50.setComments("主键");
+		
+		customerIdColumn.setName("所属租户主键");
+		customerIdColumn.setComments("所属租户主键");
+		
+		projectIdColumn.setName("所属项目主键");
+		projectIdColumn.setComments("所属项目主键");
+		
+		createDateColumn.setName("创建时间");
+		createDateColumn.setComments("创建时间");
+		
+		lastUpdateDateColumn.setComments("最后修改时间");
+		lastUpdateDateColumn.setName("最后修改时间");
+		
+		createUserIdColumn.setComments("创建人主键");
+		createUserIdColumn.setName("创建人主键");
+		
+		lastUpdateUserIdColumn.setComments("最后修改人主键");
+		lastUpdateUserIdColumn.setName("最后修改人主键");
 	}
 }

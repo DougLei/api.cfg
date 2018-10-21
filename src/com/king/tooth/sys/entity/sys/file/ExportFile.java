@@ -13,6 +13,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
@@ -31,6 +32,12 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	 * 导出文件中的标题
 	 */
 	private String exportTitle;
+	private String exportBasicPropNames;
+	/**
+	 * 要导出的基础字段元数据信息集合
+	 */
+	@JSONField(serialize = false)
+	private List<ResourceMetadataInfo> exportBasicPropMetadataInfos;
 	/**
 	 * 导出数据时分页查询的对象
 	 */
@@ -46,11 +53,12 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	
 	public ExportFile() {
 	}
-	public ExportFile(String fileId, SysResource resource, String exportFileSuffix, String exportTitle, PageResultEntity pageResultEntity, Query query) {
+	public ExportFile(String fileId, SysResource resource, String exportFileSuffix, String exportTitle, String exportBasicPropNames, PageResultEntity pageResultEntity, Query query) {
 		this.fileId = fileId;
 		this.resource = resource;
 		this.exportFileSuffix = exportFileSuffix;
 		this.exportTitle = exportTitle;
+		this.exportBasicPropNames = exportBasicPropNames;
 		this.pageResultEntity = pageResultEntity;
 		this.query = query;
 	}
@@ -66,6 +74,9 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	}
 	public void setPageResultEntity(PageResultEntity pageResultEntity) {
 		this.pageResultEntity = pageResultEntity;
+	}
+	public List<ResourceMetadataInfo> getExportBasicPropMetadataInfos() {
+		return exportBasicPropMetadataInfos;
 	}
 	public SysResource getResource() {
 		return resource;
@@ -122,6 +133,13 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 				return obj.toString();
 			}
 			resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
+			
+			if(StrUtils.notEmpty(exportBasicPropNames)){
+				String[] exportBasicPropNameArray = exportBasicPropNames.split(",");
+				for (String exportBasicPropName : exportBasicPropNameArray) {
+					resourceMetadataInfos.add(ResourceHandlerUtil.getBasicPropMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
+				}
+			}
 		}
 		return result;
 	}

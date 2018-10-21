@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.king.tooth.util.DataValidUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.web.builtin.method.common.export.file.create.BuiltinCreateExportFileMethodProcesser;
+import com.king.tooth.web.builtin.method.common.create.exportfile.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
 
@@ -58,8 +58,7 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		String isCreateExport = requestBuiltinParams.remove("_isCreateExport");
 		String exportFileSuffix = requestBuiltinParams.remove("_exportFileSuffix");
 		if(StrUtils.notEmpty(isCreateExport) && StrUtils.notEmpty(exportFileSuffix)){
-			String exportTitle = requestBuiltinParams.remove("_exportTitle");
-			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, parentResourceName, isCreateExport, exportFileSuffix, exportTitle);
+			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser(resourceName, parentResourceName, isCreateExport, exportFileSuffix, requestBuiltinParams.remove("_exportTitle"), requestBuiltinParams.remove("_exportBasicPropNames"));
 			this.isCreateExport = createExportFileProcesser.getIsUsed();
 			this.exportSelectPropNames = createExportFileProcesser.getExportSelectPropNames();
 		}

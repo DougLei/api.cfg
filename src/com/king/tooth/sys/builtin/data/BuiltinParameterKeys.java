@@ -48,7 +48,7 @@ public class BuiltinParameterKeys {
 		"_recursive", "_deep", 
 		"_simpleModel",
 		"_refPropName",
-		"_isCreateExport", "_exportFileSuffix", "_exportTitle", "_exportFileName"};
+		"_isCreateExport", "_exportFileSuffix", "_exportTitle", "_exportFileName", "_exportBasicPropNames"};
 	
 	//------------------------------------------------------------------------------------
 	/**

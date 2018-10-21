@@ -1,4 +1,4 @@
-package com.king.tooth.web.builtin.method.common.export.file.create;
+package com.king.tooth.web.builtin.method.common.create.exportfile;
 
 import java.util.List;
 
@@ -38,15 +38,20 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	 */
 	private String exportTitle;
 	/**
+	 * 要导出的基础字段属性名，多个用,隔开
+	 * <p>值包括：Id,customerId,projectId,createDate,lastUpdateDate,createUserId,lastUpdateUserId</p>
+	 */
+	private String exportBasicPropNames;
+	
+	/**
 	 * 要生成导出文件的资源对象
 	 */
 	private SysResource resource;
 	
-	
 	public BuiltinCreateExportFileMethodProcesser() {
 		Log4jUtil.debug("此次请求，没有使用到BuiltinCreateExportFileMethodProcesser内置方法处理器");
 	}
-	public BuiltinCreateExportFileMethodProcesser(String resourceName, String parentResourceName, String isCreateExport, String exportFileSuffix, String exportTitle) {
+	public BuiltinCreateExportFileMethodProcesser(String resourceName, String parentResourceName, String isCreateExport, String exportFileSuffix, String exportTitle, String exportBasicPropNames) {
 		if(!"true".equals(isCreateExport)){
 			Log4jUtil.debug("此次请求，没有使用到BuiltinCreateExportFileMethodProcesser内置方法处理器");
 			return;
@@ -56,6 +61,7 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 		this.parentResourceName = parentResourceName;
 		this.isCreateExport = true;
 		this.exportFileSuffix = exportFileSuffix;
+		this.exportBasicPropNames = exportBasicPropNames;
 		
 		if(StrUtils.isEmpty(exportTitle)){
 			exportTitle = resourceName;
@@ -88,8 +94,14 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 			for (Object propName : propNameList) {
 				propNameBuilder.append(propName).append(",");
 			}
-			propNameBuilder.setLength(propNameBuilder.length()-1);
 			propNameList.clear();
+			
+			// 如果是导出表资源数据，则判断是否传入了要导出的基础字段
+			if(resource.isTableResource() && StrUtils.notEmpty(exportBasicPropNames)){
+				propNameBuilder.append(exportBasicPropNames);
+			}else{
+				propNameBuilder.setLength(propNameBuilder.length()-1);
+			}
 			return propNameBuilder.toString();
 		}
 		return null;
@@ -117,5 +129,8 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	}
 	public String getExportTitle() {
 		return exportTitle;
+	}
+	public String getExportBasicPropNames() {
+		return exportBasicPropNames;
 	}
 }

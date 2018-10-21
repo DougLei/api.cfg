@@ -7,7 +7,7 @@ import org.hibernate.Query;
 
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.sys.SysExcelController;
-import com.king.tooth.web.builtin.method.common.export.file.create.BuiltinCreateExportFileMethodProcesser;
+import com.king.tooth.web.builtin.method.common.create.exportfile.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -47,7 +47,7 @@ public abstract class CommonProcesser {
 				installResponseBodySimple("要生成导出文件，需要提供分页查询参数值：[_rows和_page] 或 [_limit和_start]，其中[_page或_start]的值传递为0即可", null);
 			}else{
 				Map<String, String> urlParams = requestBody.installAllUrlParams();
-				Object obj = BuiltinResourceInstance.getInstance("SysExcelController", SysExcelController.class).createExportExcelFile(createExportFileProcesser.getResource(), createExportFileProcesser.getExportFileSuffix(), createExportFileProcesser.getExportTitle(), pageResultEntity, query, urlParams);
+				Object obj = BuiltinResourceInstance.getInstance("SysExcelController", SysExcelController.class).createExportExcelFile(createExportFileProcesser.getResource(), createExportFileProcesser.getExportFileSuffix(), createExportFileProcesser.getExportTitle(), createExportFileProcesser.getExportBasicPropNames(), pageResultEntity, query, urlParams);
 				if(urlParams != null && urlParams.size() > 0){
 					urlParams.clear();
 				}
