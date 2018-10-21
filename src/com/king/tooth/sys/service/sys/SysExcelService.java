@@ -2,6 +2,7 @@ package com.king.tooth.sys.service.sys;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -86,7 +87,7 @@ public class SysExcelService extends AService{
 		
 		SysFile excelFile = new SysFile();
 		excelFile.setId(fileId);
-		excelFile.setActName(DateUtil.formatDatetime(new Date()) + "_" + fileName + "." + suffix);
+		excelFile.setActName(DateUtil.formatDate(new Date(), sdfSimple) + "_" + fileName + "." + suffix);
 		excelFile.setCode(fileCode);
 		excelFile.setSuffix(suffix);
 		excelFile.setSavePath(excelFileSavePath);
@@ -95,6 +96,7 @@ public class SysExcelService extends AService{
 		excelFile.setBuildInType(buildInType);
 		return HibernateUtil.saveObject(excelFile, null);
 	}
+	private static final SimpleDateFormat sdfSimple = new SimpleDateFormat("yyyyMMdd");
 	
 	// --------------------------------------------------------------------------------------------------
 	/**
