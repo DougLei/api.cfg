@@ -1,8 +1,10 @@
 package com.king.tooth.web.builtin.method.common.create.exportfile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.sys.SysResourceService;
@@ -73,19 +75,33 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	 * 获取生成导出文件时，查询数据的属性名，多个用,隔开
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public String getExportSelectPropNames() {
 		if(isUsed){
 			resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
-			String hql;
-			if(resource.isTableResource()){
-				hql = queryTableExportPropNamesHql;
-			}else if(resource.isTableResource()){
-				hql = querySqlExportPropNamesHql;
+			List<String> propNameList = null;
+			
+			if(resource.isBuiltinResource()){
+				ITable itable = BuiltinResourceInstance.getInstance(resource.getResourceName(), ITable.class);
+				List<CfgColumn> columns = itable.getColumnList();
+				propNameList = new ArrayList<String>(columns.size());
+				for (CfgColumn column : columns) {
+					if(column.getIsExport() == 1){
+						propNameList.add(column.getPropName());
+					}
+				}
+				columns.clear();
 			}else{
-				throw new IllegalArgumentException("系统目前只支持[表资源/sql资源]的数据导出");
+				String hql;
+				if(resource.isTableResource()){
+					hql = queryTableExportPropNamesHql;
+				}else if(resource.isSqlResource()){
+					hql = querySqlExportPropNamesHql;
+				}else{
+					throw new IllegalArgumentException("系统目前只支持[表资源/sql资源]的数据导出");
+				}
+				propNameList = HibernateUtil.executeListQueryByHqlArr(null, null, hql, resource.getRefResourceId());
 			}
-			List propNameList = HibernateUtil.executeListQueryByHqlArr(null, null, hql, resource.getRefResourceId());
 			if(propNameList == null || propNameList.size() == 0){
 				throw new NullPointerException("没有查询到名为["+resourceName+"]资源的导出属性名信息集合，请检查配置，或联系后端系统开发人员");
 			}

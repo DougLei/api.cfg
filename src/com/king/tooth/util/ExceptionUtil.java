@@ -27,6 +27,9 @@ public class ExceptionUtil {
 //			errMsg.append("。").append(e.getCause().getMessage());
 //		}
 //		return errMsg.toString();
-		return e.getCause().getMessage();
+		if(e.getCause() != null){
+			return e.getCause().getMessage();
+		}
+		return e.getMessage();
 	}
 }

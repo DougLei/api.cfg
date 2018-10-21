@@ -9,6 +9,7 @@ import java.util.List;
 import org.hibernate.Query;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
@@ -137,7 +138,11 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 			if(StrUtils.notEmpty(exportBasicPropNames)){
 				String[] exportBasicPropNameArray = exportBasicPropNames.split(",");
 				for (String exportBasicPropName : exportBasicPropNameArray) {
-					resourceMetadataInfos.add(ResourceHandlerUtil.getBasicPropMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
+					if(ResourcePropNameConstants.ID.equals(exportBasicPropName)){
+						resourceMetadataInfos.add(0, ResourceHandlerUtil.getBasicPropMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
+					}else{
+						resourceMetadataInfos.add(ResourceHandlerUtil.getBasicPropMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
+					}
 				}
 			}
 		}
