@@ -54,10 +54,8 @@ public class SysUserDeptLinks implements Serializable, ITable {
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setResourceName("SysUserDeptLinks");
 		table.setName("人员和部门的关联关系表表");
 		table.setComments("人员和部门的关联关系表表");
-		
 		
 		table.setColumns(getColumnList());
 		return table;

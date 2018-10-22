@@ -18,7 +18,7 @@ import com.king.tooth.sys.entity.cfg.CfgTable;
  */
 @SuppressWarnings("serial")
 @Table
-public class SysFileImportExportLog extends BasicEntity implements ITable, IEntity{
+public class SysFileIELog extends BasicEntity implements ITable, IEntity{
 
 	/**
 	 * 操作类型
@@ -45,9 +45,9 @@ public class SysFileImportExportLog extends BasicEntity implements ITable, IEnti
 	
 	//-------------------------------------------------------------------------
 	
-	public SysFileImportExportLog() {
+	public SysFileIELog() {
 	}
-	public SysFileImportExportLog(Integer operType, String refFileId, String submitObjJson) {
+	public SysFileIELog(Integer operType, String refFileId, String submitObjJson) {
 		this.operType = operType;
 		this.refFileId = refFileId;
 		this.submitObjJson = submitObjJson;
@@ -127,6 +127,7 @@ public class SysFileImportExportLog extends BasicEntity implements ITable, IEnti
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
+		table.setResourceName(getEntityName());
 		table.setName("文件导入导出日志表");
 		table.setComments("文件导入导出日志表");
 		
@@ -135,12 +136,12 @@ public class SysFileImportExportLog extends BasicEntity implements ITable, IEnti
 	}
 
 	public String toDropTable() {
-		return "SYS_FILE_IMPORT_EXPORT_LOG";
+		return "SYS_FILE_IE_LOG";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysFileImportExportLog";
+		return "SysFileIELog";
 	}
 	
 	// ---------------------------------------------------------------------------

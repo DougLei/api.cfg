@@ -13,11 +13,11 @@ import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.sys.SysFileImportExportLog;
+import com.king.tooth.sys.entity.sys.SysFileIELog;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.entity.sys.file.ExportFile;
-import com.king.tooth.sys.entity.sys.file.ImportFile;
-import com.king.tooth.sys.entity.sys.file.ImportFileTemplate;
+import com.king.tooth.sys.entity.sys.file.ie.ExportFile;
+import com.king.tooth.sys.entity.sys.file.ie.ImportFile;
+import com.king.tooth.sys.entity.sys.file.ie.ImportFileTemplate;
 import com.king.tooth.sys.service.sys.SysExcelService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.file.ie.log.RecordFileIELogThread;
@@ -37,7 +37,7 @@ public class SysExcelController extends AController{
 	 * 记录excel导入导出日志数据
 	 * @param excelIELogs
 	 */
-	private void recordExcelIELogs(List<SysFileImportExportLog> excelIELogs){
+	private void recordExcelIELogs(List<SysFileIELog> excelIELogs){
 		new RecordFileIELogThread(HibernateUtil.openNewSession(),
 				excelIELogs,
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
@@ -55,13 +55,13 @@ public class SysExcelController extends AController{
 	public Object importExcel(HttpServletRequest request, IJson ijson){
 		List<ImportFile> importFiles = getDataInstanceList(ijson, ImportFile.class, true);
 		analysisResourceProp(importFiles);
-		List<SysFileImportExportLog> excelIELogs = null;
+		List<SysFileIELog> excelIELogs = null;
 		if(analysisResult == null){
-			excelIELogs = new ArrayList<SysFileImportExportLog>(importFiles.size());
+			excelIELogs = new ArrayList<SysFileIELog>(importFiles.size());
 			
-			SysFileImportExportLog excelIELog = null;
+			SysFileIELog excelIELog = null;
 			for (ImportFile importFile : importFiles) {
-				excelIELog = new SysFileImportExportLog(SysFileImportExportLog.IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
+				excelIELog = new SysFileIELog(SysFileIELog.IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
 				excelIELogs.add(excelIELog);
 				
 				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importFile);
@@ -112,10 +112,10 @@ public class SysExcelController extends AController{
 	public Object createExportExcelFile(SysResource resource, String exportExcelFileSuffix, String exportTitle, String exportBasicPropNames, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
 		ExportFile exportFile = new ExportFile(ResourceHandlerUtil.getIdentity(), resource, exportExcelFileSuffix, exportTitle, exportBasicPropNames, pageResultEntity, query);
 		analysisResult = exportFile.analysisResourceProp();
-		List<SysFileImportExportLog> excelIELogs = null;
+		List<SysFileIELog> excelIELogs = null;
 		if(analysisResult == null){
-			excelIELogs = new ArrayList<SysFileImportExportLog>(1);
-			SysFileImportExportLog excelIELog = new SysFileImportExportLog(SysFileImportExportLog.IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
+			excelIELogs = new ArrayList<SysFileIELog>(1);
+			SysFileIELog excelIELog = new SysFileIELog(SysFileIELog.IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
 			excelIELogs.add(excelIELog);
 			
 			resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createExportExcelFile(exportFile);

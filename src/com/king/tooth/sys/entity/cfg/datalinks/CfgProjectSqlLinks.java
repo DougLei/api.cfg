@@ -47,10 +47,8 @@ public class CfgProjectSqlLinks implements Serializable, ITable {
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setResourceName("CfgProjectSqlLinks");
 		table.setName("项目和sql脚本的关系表");
 		table.setComments("项目和sql脚本的关系表");
-		
 		
 		table.setColumns(getColumnList());
 		return table;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
-import com.king.tooth.sys.entity.sys.SysFileImportExportLog;
+import com.king.tooth.sys.entity.sys.SysFileIELog;
 import com.king.tooth.thread.operdb.HibernateOperDBThread;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
@@ -24,9 +24,9 @@ public final class RecordFileIELogThread extends HibernateOperDBThread{
 	/**
 	 * 要保存的fileIELog数据
 	 */
-	private List<SysFileImportExportLog> fileIELogs;
+	private List<SysFileIELog> fileIELogs;
 
-	public RecordFileIELogThread(Session session, List<SysFileImportExportLog> fileIELogs, String currentAccountId, String currentUserId, String projectId, String customerId) {
+	public RecordFileIELogThread(Session session, List<SysFileIELog> fileIELogs, String currentAccountId, String currentUserId, String projectId, String customerId) {
 		super(session);
 		this.currentAccountId = currentAccountId;
 		this.currentUserId = currentUserId;
@@ -43,7 +43,7 @@ public final class RecordFileIELogThread extends HibernateOperDBThread{
 	protected void doRun() {
 		if(fileIELogs != null && fileIELogs.size() > 0){
 			Date currentDate = new Date();
-			for (SysFileImportExportLog fileIELog : fileIELogs) {
+			for (SysFileIELog fileIELog : fileIELogs) {
 				ResourceHandlerUtil.setBasicPropVals(fileIELog, currentAccountId, projectId, customerId, currentDate);
 				session.save(fileIELog.getEntityName(), fileIELog.toEntityJson());
 			}

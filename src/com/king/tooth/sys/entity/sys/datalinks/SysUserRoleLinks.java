@@ -47,10 +47,8 @@ public class SysUserRoleLinks implements Serializable, ITable {
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setResourceName("SysUserRoleLinks");
 		table.setName("系统用戶和角色的关联关系表");
 		table.setComments("系统用戶和角色的关联关系表");
-		
 		
 		table.setColumns(getColumnList());
 		return table;

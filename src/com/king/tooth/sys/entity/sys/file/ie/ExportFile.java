@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.sys.file;
+package com.king.tooth.sys.entity.sys.file.ie;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

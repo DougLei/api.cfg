@@ -59,10 +59,8 @@ public class SysDataLinks implements Serializable, ITable {
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setResourceName("SysDataLinks");
 		table.setName("数据关联关系信息表");
 		table.setComments("数据关联关系信息表");
-		
 		
 		table.setColumns(getColumnList());
 		return table;
