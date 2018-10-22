@@ -10,6 +10,7 @@ import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
+import com.king.tooth.sys.entity.cfg.CfgPropIEConfExtend;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.sys.SysFileIELog;
 import com.king.tooth.sys.entity.sys.SysResource;
@@ -28,7 +29,7 @@ public final class SyncTableToServerDBTool extends AService{
 	public static void main(String[] args) {
 		syncTablesToService(
 				new SysFileIELog().toCreateTable(),
-				new SysFileIELog().toCreateTable()
+				new CfgPropIEConfExtend().toCreateTable()
 				);
 	}
 	

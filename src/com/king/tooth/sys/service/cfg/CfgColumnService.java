@@ -70,10 +70,6 @@ public class CfgColumnService extends AService{
 	 */
 	public Object updateColumn(CfgColumn column) {
 		CfgColumn oldColumn = getObjectById(column.getId(), CfgColumn.class);
-		if(oldColumn == null){
-			return "没有找到id为["+column.getId()+"]的列对象信息";
-		}
-		
 		CfgTable table = getObjectById(column.getTableId(), CfgTable.class);
 		if(table.getIsCreated() == 1){// 表已经建模，不能修改列的类型，以及缩小列的长度
 			if(!oldColumn.getColumnType().equals(column.getColumnType())){

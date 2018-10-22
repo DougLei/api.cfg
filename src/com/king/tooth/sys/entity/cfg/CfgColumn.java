@@ -19,7 +19,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 字段数据信息资源对象
+ * 字段信息表
  * @author DougLei
  */
 @SuppressWarnings("serial")

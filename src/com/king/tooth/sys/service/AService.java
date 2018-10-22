@@ -39,7 +39,8 @@ public abstract class AService {
 	 */
 	protected String deleteDataById(String entityName, String ids){
 		String[] idArr = ids.split(",");
-		StringBuilder hql = new StringBuilder("delete "+entityName+" where id ");
+		StringBuilder hql = new StringBuilder("delete "+entityName+" where ");
+		hql.append(ResourcePropNameConstants.ID);
 		if(idArr.length ==1){
 			hql.append("= '").append(idArr[0]).append("'");
 		}else if(idArr.length > 1){
