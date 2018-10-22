@@ -33,7 +33,7 @@ public class CfgSqlController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
 		List<ComSqlScript> sqlScripts = getDataInstanceList(ijson, ComSqlScript.class, true);
-		analysisResourceProp(sqlScripts);
+		analysisResourceProp(sqlScripts, false);
 		if(analysisResult == null){
 			for (ComSqlScript sqlScript : sqlScripts) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScript(sqlScript);
@@ -55,7 +55,7 @@ public class CfgSqlController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
 		List<ComSqlScript> sqlScripts = getDataInstanceList(ijson, ComSqlScript.class, true);
-		analysisResourceProp(sqlScripts);
+		analysisResourceProp(sqlScripts, true);
 		if(analysisResult == null){
 			for (ComSqlScript sqlScript : sqlScripts) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScript(sqlScript);

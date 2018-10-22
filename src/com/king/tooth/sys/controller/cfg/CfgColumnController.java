@@ -30,7 +30,7 @@ public class CfgColumnController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
 		List<CfgColumn> columns = getDataInstanceList(ijson, CfgColumn.class, true);
-		analysisResourceProp(columns);
+		analysisResourceProp(columns, false);
 		if(analysisResult == null){
 			for (CfgColumn column : columns) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).saveColumn(column);
@@ -51,7 +51,7 @@ public class CfgColumnController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
 		List<CfgColumn> columns = getDataInstanceList(ijson, CfgColumn.class, true);
-		analysisResourceProp(columns);
+		analysisResourceProp(columns, true);
 		if(analysisResult == null){
 			for (CfgColumn column : columns) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).updateColumn(column);

@@ -30,7 +30,7 @@ public class CfgProjectModuleController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson) {
 		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
-		analysisResourceProp(projectModules);
+		analysisResourceProp(projectModules, false);
 		if(analysisResult == null){
 			for (ComProjectModule projectModule : projectModules) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).saveProjectModule(projectModule);
@@ -51,7 +51,7 @@ public class CfgProjectModuleController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson) {
 		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
-		analysisResourceProp(projectModules);
+		analysisResourceProp(projectModules, true);
 		if(analysisResult == null){
 			for (ComProjectModule projectModule : projectModules) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).updateProjectModule(projectModule);

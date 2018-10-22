@@ -85,7 +85,7 @@ public class SysAccountController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
 		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
-		analysisResourceProp(accounts);
+		analysisResourceProp(accounts, false);
 		if(analysisResult == null){
 			for (SysAccount account : accounts) {
 				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(account);
@@ -106,7 +106,7 @@ public class SysAccountController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
 		List<SysAccount> accounts = getDataInstanceList(ijson, SysAccount.class, true);
-		analysisResourceProp(accounts);
+		analysisResourceProp(accounts, true);
 		if(analysisResult == null){
 			for (SysAccount account : accounts) {
 				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(account);

@@ -32,7 +32,7 @@ public class SysUserController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
-		analysisResourceProp(users);
+		analysisResourceProp(users, false);
 		if(analysisResult == null){
 			for (SysUser user : users) {
 				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).saveUser(user);
@@ -53,7 +53,7 @@ public class SysUserController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
 		List<SysUser> users = getDataInstanceList(ijson, SysUser.class, true);
-		analysisResourceProp(users);
+		analysisResourceProp(users, true);
 		if(analysisResult == null){
 			for (SysUser user : users) {
 				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updateUser(user);

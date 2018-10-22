@@ -30,7 +30,7 @@ public class CfgPropIEConfExtendController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
 		List<CfgPropIEConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropIEConfExtend.class, true);
-		analysisResourceProp(propIEConfExtends);
+		analysisResourceProp(propIEConfExtends, false);
 		if(analysisResult == null){
 			for (CfgPropIEConfExtend propIEConfExtend : propIEConfExtends) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgPropIEConfExtendService", CfgPropIEConfExtendService.class).savePropIEConfExtend(propIEConfExtend);
@@ -51,7 +51,7 @@ public class CfgPropIEConfExtendController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
 		List<CfgPropIEConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropIEConfExtend.class, true);
-		analysisResourceProp(propIEConfExtends);
+		analysisResourceProp(propIEConfExtends, true);
 		if(analysisResult == null){
 			for (CfgPropIEConfExtend propIEConfExtend : propIEConfExtends) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgPropIEConfExtendService", CfgPropIEConfExtendService.class).updatePropIEConfExtend(propIEConfExtend);

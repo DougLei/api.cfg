@@ -25,6 +25,11 @@ public class CfgPropIEConfExtend extends BasicEntity implements ITable, IEntity,
 	 * <p>1导入，2导出</p>
 	 */
 	private Integer confType;
+	/**
+	 * 关联的属性类型
+	 * <p>1、column，2、sqlResultset</p>
+	 */
+	private Integer refPropType;
 	/** 
 	 * 关联的属性id
 	 * <p>CfgColumn的id，或CfgSqlResultset的id，即对某一个字段的导入导出的扩展配置</p>
@@ -53,6 +58,12 @@ public class CfgPropIEConfExtend extends BasicEntity implements ITable, IEntity,
 	}
 	public void setConfType(Integer confType) {
 		this.confType = confType;
+	}
+	public Integer getRefPropType() {
+		return refPropType;
+	}
+	public void setRefPropType(Integer refPropType) {
+		this.refPropType = refPropType;
 	}
 	public String getRefPropId() {
 		return refPropId;
@@ -99,12 +110,17 @@ public class CfgPropIEConfExtend extends BasicEntity implements ITable, IEntity,
 
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(8+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(9+7);
 		
 		CfgColumn confTypeColumn = new CfgColumn("conf_type", DataTypeConstants.INTEGER, 1);
 		confTypeColumn.setName("配置类型");
 		confTypeColumn.setComments("1导入，2导出");
 		columns.add(confTypeColumn);
+		
+		CfgColumn refPropTypeColumn = new CfgColumn("ref_prop_type", DataTypeConstants.INTEGER, 1);
+		refPropTypeColumn.setName("关联的属性类型");
+		refPropTypeColumn.setComments("1、column，2、sqlResultset");
+		columns.add(refPropTypeColumn);
 		
 		CfgColumn refPropIdColumn = new CfgColumn("ref_prop_id", DataTypeConstants.STRING, 32);
 		refPropIdColumn.setName("关联的属性id");
@@ -164,10 +180,16 @@ public class CfgPropIEConfExtend extends BasicEntity implements ITable, IEntity,
 	}
 	
 	public String validNotNullProps() {
+		if(refPropType == null){
+			return "关联的属性类型不能为空";
+		}
+		if(refPropType != REF_PROP_TYPE_COLUMN && refPropType != REF_PROP_TYPE_SQL_RESULTSET){
+			return "关联的属性类型值，只能为1(column)或2(sqlResultset)";
+		}
 		if(confType == null){
 			return "配置类型不能为空！";
 		}
-		if(confType != IMPORT && confType != EXPORT){
+		if(confType != CONF_TYPE_IMPORT && confType != CONF_TYPE_EXPORT){
 			return "配置类型的值必须为1(导入)或2(导出)";
 		}
 		if(StrUtils.isEmpty(refPropId)){
@@ -181,8 +203,13 @@ public class CfgPropIEConfExtend extends BasicEntity implements ITable, IEntity,
 	}
 	
 	// ---------------------------------------------------------------------------
+	/** 关联的属性类型:1、column */
+	public static final Integer REF_PROP_TYPE_COLUMN = 1;
+	/** 关联的属性类型:2、sqlResultset */
+	public static final Integer REF_PROP_TYPE_SQL_RESULTSET = 2;
+	
 	/** 配置类型:1、导入 */
-	public static final Integer IMPORT = 1;
+	public static final Integer CONF_TYPE_IMPORT = 1;
 	/** 配置类型:2、导出 */
-	public static final Integer EXPORT = 2;
+	public static final Integer CONF_TYPE_EXPORT = 2;
 }

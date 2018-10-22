@@ -21,5 +21,6 @@ public interface IEntityPropAnalysis {
 	 */
 	public String analysisResourceProp();
 	
+	public String getId();
 	public String getEntityName();
 }

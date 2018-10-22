@@ -35,7 +35,7 @@ public class CfgTableController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
 		List<CfgTable> tables = getDataInstanceList(ijson, CfgTable.class, true);
-		analysisResourceProp(tables);
+		analysisResourceProp(tables, false);
 		if(analysisResult == null){
 			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(table);
@@ -56,7 +56,7 @@ public class CfgTableController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
 		List<CfgTable> tables = getDataInstanceList(ijson, CfgTable.class, true);
-		analysisResourceProp(tables);
+		analysisResourceProp(tables, true);
 		if(analysisResult == null){
 			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(table);

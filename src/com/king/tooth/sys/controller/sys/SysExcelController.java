@@ -54,14 +54,14 @@ public class SysExcelController extends AController{
 	@RequestMapping
 	public Object importExcel(HttpServletRequest request, IJson ijson){
 		List<ImportFile> importFiles = getDataInstanceList(ijson, ImportFile.class, true);
-		analysisResourceProp(importFiles);
+		analysisResourceProp(importFiles, false);
 		List<SysFileIELog> excelIELogs = null;
 		if(analysisResult == null){
 			excelIELogs = new ArrayList<SysFileIELog>(importFiles.size());
 			
 			SysFileIELog excelIELog = null;
 			for (ImportFile importFile : importFiles) {
-				excelIELog = new SysFileIELog(SysFileIELog.IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
+				excelIELog = new SysFileIELog(SysFileIELog.OPER_TYPE_IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
 				excelIELogs.add(excelIELog);
 				
 				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importFile);
@@ -85,7 +85,7 @@ public class SysExcelController extends AController{
 	@RequestMapping
 	public Object createImportExcelTemplate(HttpServletRequest request, IJson ijson){
 		List<ImportFileTemplate> importFileTemplates = getDataInstanceList(ijson, ImportFileTemplate.class, true);
-		analysisResourceProp(importFileTemplates);
+		analysisResourceProp(importFileTemplates, false);
 		if(analysisResult == null){
 			for (ImportFileTemplate importFileTemplate : importFileTemplates) {
 				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createImportExcelTemplate(importFileTemplate);
@@ -115,7 +115,7 @@ public class SysExcelController extends AController{
 		List<SysFileIELog> excelIELogs = null;
 		if(analysisResult == null){
 			excelIELogs = new ArrayList<SysFileIELog>(1);
-			SysFileIELog excelIELog = new SysFileIELog(SysFileIELog.IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
+			SysFileIELog excelIELog = new SysFileIELog(SysFileIELog.OPER_TYPE_IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
 			excelIELogs.add(excelIELog);
 			
 			resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createExportExcelFile(exportFile);

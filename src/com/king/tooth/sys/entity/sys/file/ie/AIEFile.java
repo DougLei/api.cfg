@@ -3,6 +3,7 @@ package com.king.tooth.sys.entity.sys.file.ie;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -40,6 +41,10 @@ public abstract class AIEFile {
 		this.resourceName = resourceName;
 	}
 	
+	@JSONField(serialize = false)
+	public String getId(){
+		return null;
+	}
 	public void clear(){
 		if(ieResourceMetadataInfos != null){
 			ieResourceMetadataInfos.clear();

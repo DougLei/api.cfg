@@ -206,6 +206,10 @@ public class PushMessage implements IEntityPropAnalysis{
 		return actualToUserIdArr;
 	}
 	
+	@JSONField(serialize = false)
+	public String getId(){
+		return null;
+	}
 	/**
 	 * 清除多于的数据
 	 */

@@ -32,7 +32,7 @@ public class CfgDatabaseController extends AController{
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
 		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
-		analysisResourceProp(databases);
+		analysisResourceProp(databases, false);
 		if(analysisResult == null){
 			for (CfgDatabase database : databases) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).saveDatabase(database);
@@ -53,7 +53,7 @@ public class CfgDatabaseController extends AController{
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
 		List<CfgDatabase> databases = getDataInstanceList(ijson, CfgDatabase.class, true);
-		analysisResourceProp(databases);
+		analysisResourceProp(databases, true);
 		if(analysisResult == null){
 			for (CfgDatabase database : databases) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).updateDatabase(database);

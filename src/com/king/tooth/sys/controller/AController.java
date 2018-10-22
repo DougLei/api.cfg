@@ -9,6 +9,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.JsonUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 控制器的父类
@@ -70,13 +71,18 @@ public abstract class AController {
 	/**
 	 * 统一解析数据资源属性
 	 * @param list
+	 * @param isUpdate 是否是更新，如果是更新，要验证id字段不能为空
 	 */
-	protected void analysisResourceProp(List<? extends IEntityPropAnalysis> list){
+	protected void analysisResourceProp(List<? extends IEntityPropAnalysis> list, boolean isUpdate){
 		int index = 1;
 		for (IEntityPropAnalysis iEntityPropAnalysis : list) {
 			analysisResult = iEntityPropAnalysis.analysisResourceProp();
 			if(analysisResult != null){
 				analysisResult = "传入的第"+index+"个["+iEntityPropAnalysis.getEntityName()+"]对象，" + analysisResult;
+				break;
+			}
+			if(isUpdate && StrUtils.isEmpty(iEntityPropAnalysis.getId())){
+				analysisResult = "传入的第"+index+"个["+iEntityPropAnalysis.getEntityName()+"]对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 				break;
 			}
 			index++;

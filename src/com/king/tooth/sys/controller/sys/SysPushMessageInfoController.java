@@ -37,7 +37,7 @@ public class SysPushMessageInfoController extends AController{
 	@RequestMapping
 	public Object pushMessage(HttpServletRequest request, IJson ijson){
 		List<PushMessage> pushMessages = getDataInstanceList(ijson, PushMessage.class, false);
-		analysisResourceProp(pushMessages);
+		analysisResourceProp(pushMessages, false);
 		if(analysisResult == null){
 			String batchNum = ResourceHandlerUtil.getBatchNum();
 			new PushMessageThread(HibernateUtil.openNewSession(),
