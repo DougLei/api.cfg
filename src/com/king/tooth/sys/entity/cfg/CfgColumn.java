@@ -134,12 +134,6 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	
 	//-------------------------------------------------------------------------
 	
-	/**
-	 * 是否忽略检查内置的列
-	 */
-	@JSONField(serialize = false)
-	private boolean isIgnoreCheckBuiltinColumnName;
-	
 	public CfgColumn() {
 	}
 	public CfgColumn(String columnName, String columnType, Integer length) {
@@ -527,12 +521,11 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
-		if(!isIgnoreCheckBuiltinColumnName){
-			if(result == null && ResourceHandlerUtil.isBuildInColumns(columnName)){
+		if(result == null){
+			if(ResourceHandlerUtil.isBuildInColumns(columnName)){
 				return "不能添加系统内置的列名:"+columnName;
 			}
-		}
-		if(result == null){
+			
 			if(DataTypeConstants.CLOB.equals(columnType) || DataTypeConstants.BLOB.equals(columnType)){
 				if(isUnique != null && isUnique == 1){
 					return "列["+columnName+"]，属于大字段类型，禁止添加唯一约束";
