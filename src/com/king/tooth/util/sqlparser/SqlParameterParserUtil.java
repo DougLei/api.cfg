@@ -72,6 +72,7 @@ public class SqlParameterParserUtil {
 		String parameterName;
 		SqlScriptParameterNameRecord parameterNameRecord;
 		ComSqlScriptParameter sqlScriptParameter;
+		int orderCode =1;
 		for(int i=0; i<sqlScriptArrLength; i++){
 			parameterNameRecord = new SqlScriptParameterNameRecord(i);
 			parameterNameRecordList.add(parameterNameRecord);
@@ -106,7 +107,7 @@ public class SqlParameterParserUtil {
 				}
 				parameterNames.add(parameterName);
 				
-				sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, (i+1), true, true);
+				sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, orderCode++, true, true);
 				sqlScriptParameterList.add(sqlScriptParameter);
 			}
 			parameterPlaceholderIndex.clear();
