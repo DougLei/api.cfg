@@ -12,7 +12,8 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -133,15 +134,15 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 			if(obj instanceof String){
 				return obj.toString();
 			}
-			resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
+			ieResourceMetadataInfos = (List<IEResourceMetadataInfo>) obj;
 			
 			if(StrUtils.notEmpty(exportBasicPropNames)){
 				String[] exportBasicPropNameArray = exportBasicPropNames.split(",");
 				for (String exportBasicPropName : exportBasicPropNameArray) {
 					if(ResourcePropNameConstants.ID.equals(exportBasicPropName)){
-						resourceMetadataInfos.add(0, ResourceHandlerUtil.getBasicPropMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
+						ieResourceMetadataInfos.add(0, ResourceHandlerUtil.getBasicPropIEMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
 					}else{
-						resourceMetadataInfos.add(ResourceHandlerUtil.getBasicPropMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
+						ieResourceMetadataInfos.add(ResourceHandlerUtil.getBasicPropIEMetadataInfo(exportBasicPropName, resource.isBuiltinResource()));
 					}
 				}
 			}

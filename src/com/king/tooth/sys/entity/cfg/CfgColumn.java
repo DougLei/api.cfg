@@ -11,7 +11,8 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
-import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.TableResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -565,6 +566,9 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	
 	public TableResourceMetadataInfo toTableResourceMetadataInfo(){
 		return new TableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, propName, comments);
+	}
+	public IETableResourceMetadataInfo toIETableResourceMetadataInfo(){
+		return new IETableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, propName, comments);
 	}
 	
 	// --------------------------------------------------------------------------------------

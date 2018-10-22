@@ -12,7 +12,8 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 
 /**
@@ -159,6 +160,37 @@ public class ResourceHandlerUtil {
 				return BuiltinObjectInstance.createUserIdColumn.toTableResourceMetadataInfo();
 			}else if("lastUpdateUserId".equals(basicPropName)){
 				return BuiltinObjectInstance.lastUpdateUserIdColumn.toTableResourceMetadataInfo();
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取基础属性的导入导出元数据信息
+	 * <p>Id,customerId,projectId,createDate,lastUpdateDate,createUserId,lastUpdateUserId</p>
+	 * @param basicPropName
+	 * @param builtinResource
+	 * @return
+	 */
+	public static IEResourceMetadataInfo getBasicPropIEMetadataInfo(String basicPropName, boolean builtinResource){
+		if(StrUtils.notEmpty(basicPropName) && isBuildInProps(basicPropName)){
+			if(ResourcePropNameConstants.ID.equals(basicPropName)){
+				if(builtinResource){
+					return BuiltinObjectInstance.idColumn32.toIETableResourceMetadataInfo();
+				}
+				return BuiltinObjectInstance.idColumn50.toIETableResourceMetadataInfo();
+			}else if("customerId".equals(basicPropName)){
+				return BuiltinObjectInstance.customerIdColumn.toIETableResourceMetadataInfo();
+			}else if("projectId".equals(basicPropName)){
+				return BuiltinObjectInstance.projectIdColumn.toIETableResourceMetadataInfo();
+			}else if("createDate".equals(basicPropName)){
+				return BuiltinObjectInstance.createDateColumn.toIETableResourceMetadataInfo();
+			}else if("lastUpdateDate".equals(basicPropName)){
+				return BuiltinObjectInstance.lastUpdateDateColumn.toIETableResourceMetadataInfo();
+			}else if("createUserId".equals(basicPropName)){
+				return BuiltinObjectInstance.createUserIdColumn.toIETableResourceMetadataInfo();
+			}else if("lastUpdateUserId".equals(basicPropName)){
+				return BuiltinObjectInstance.lastUpdateUserIdColumn.toIETableResourceMetadataInfo();
 			}
 		}
 		return null;

@@ -3,15 +3,14 @@ package com.king.tooth.sys.entity.sys.file;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
-import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
 import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -25,9 +24,9 @@ public abstract class AIEFile {
 	/**
 	 * 资源元数据信息
 	 */
-	protected List<ResourceMetadataInfo> resourceMetadataInfos;
-	public List<ResourceMetadataInfo> getResourceMetadataInfos() {
-		return resourceMetadataInfos;
+	protected List<IEResourceMetadataInfo> ieResourceMetadataInfos;
+	public List<IEResourceMetadataInfo> getIeResourceMetadataInfos() {
+		return ieResourceMetadataInfos;
 	}
 	
 	/**
@@ -39,6 +38,12 @@ public abstract class AIEFile {
 	}
 	public void setResourceName(String resourceName) {
 		this.resourceName = resourceName;
+	}
+	
+	public void clear(){
+		if(ieResourceMetadataInfos != null){
+			ieResourceMetadataInfos.clear();
+		}
 	}
 	
 	/**
@@ -97,11 +102,11 @@ public abstract class AIEFile {
 		if(obj instanceof String){
 			return obj;
 		}
-		List<ResourceMetadataInfo> resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
-		if(resourceMetadataInfos == null || resourceMetadataInfos.size() == 0){
+		List<IEResourceMetadataInfo> ieResourceMetadataInfos = (List<IEResourceMetadataInfo>) obj;
+		if(ieResourceMetadataInfos == null || ieResourceMetadataInfos.size() == 0){
 			return "没有查询到名为["+resourceName+"]资源的"+(isImport==1?"导入":"导出")+"元数据信息集合，请检查配置，或联系后端系统开发人员";
 		}
-		return resourceMetadataInfos;
+		return ieResourceMetadataInfos;
 	}
 	
 	/**
@@ -110,13 +115,13 @@ public abstract class AIEFile {
 	 * @param isImport 
 	 * @return
 	 */
-	private List<ResourceMetadataInfo> getIETableResourceMetadataInfos(SysResource resource, int isImport){
-		List<ResourceMetadataInfo> resourceMetadataInfos = null;
+	private List<IEResourceMetadataInfo> getIETableResourceMetadataInfos(SysResource resource, int isImport){
+		List<IEResourceMetadataInfo> ieResourceMetadataInfos = null;
 		String resourceId = resource.getRefResourceId();
 		String resourceName = resource.getResourceName();
 		
 		if(resource.isBuiltinResource()){
-			resourceMetadataInfos = getIEBuiltinTableResourceMetadataInfos(resourceName, isImport);
+			ieResourceMetadataInfos = getIEBuiltinTableResourceMetadataInfos(resourceName, isImport);
 		}else{
 			String hql = null;
 			if(isImport == 1){
@@ -124,14 +129,16 @@ public abstract class AIEFile {
 			}else{
 				hql = queryTableExportMetadataInfosHql;
 			}
-			resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, hql, resourceId);
+			ieResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(IEResourceMetadataInfo.class, null, null, hql, resourceId);
 		}
-		return resourceMetadataInfos;
+		return ieResourceMetadataInfos;
 	}
+	/** 查询表资源配置的导入导出元数据信息集合hql头 */
+	private static final String queryTableIEMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
 	/** 查询表资源配置的导入元数据信息集合的hql */
-	private static final String queryTableImportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
+	private static final String queryTableImportMetadataInfosHql = queryTableIEMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
 	/** 查询表资源配置的导出元数据信息集合的hql */
-	private static final String queryTableExportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isExport=1 order by exportOrderCode asc";
+	private static final String queryTableExportMetadataInfosHql = queryTableIEMetadataInfosHqlHead + " and isExport=1 order by exportOrderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
@@ -139,26 +146,26 @@ public abstract class AIEFile {
 	 * @param isImport
 	 * @return
 	 */
-	private static List<ResourceMetadataInfo> getIEBuiltinTableResourceMetadataInfos(String tableResourceName, int isImport){
+	private static List<IEResourceMetadataInfo> getIEBuiltinTableResourceMetadataInfos(String tableResourceName, int isImport){
 		ITable itable = BuiltinResourceInstance.getInstance(tableResourceName, ITable.class);
 		List<CfgColumn> columns = itable.getColumnList();
-		List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(columns.size());
+		List<IEResourceMetadataInfo> ieResourceMetadataInfos = new ArrayList<IEResourceMetadataInfo>(columns.size());
 		for (CfgColumn column : columns) {
 			if((isImport == 1 && (column.getIsImport() != null && column.getIsImport() == 1))
 					|| (isImport == 0 && (column.getIsExport() != null && column.getIsExport() == 1))){
-				metadataInfos.add(new TableResourceMetadataInfo(
-						column.getColumnName(),
-						column.getColumnType(),
-						column.getLength(),
-						column.getPrecision(),
-						column.getIsUnique(), 
-						column.getIsNullabled(),
-						column.getPropName(),
-						column.getName()));
+				ieResourceMetadataInfos.add(new IETableResourceMetadataInfo(
+									column.getColumnName(),
+									column.getColumnType(),
+									column.getLength(),
+									column.getPrecision(),
+									column.getIsUnique(), 
+									column.getIsNullabled(),
+									column.getPropName(),
+									column.getName()));
 			}
 		}
 		columns.clear();
-		return metadataInfos;
+		return ieResourceMetadataInfos;
 	}
 	
 	/**
@@ -176,8 +183,8 @@ public abstract class AIEFile {
 			return"系统只支持查询select类型的sql语句，配置的导出元数据信息";
 		}
 		
-		List<ResourceMetadataInfo> resourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, querySqlExportMetadataInfosHql, resourceId);
-		return resourceMetadataInfos;
+		List<IEResourceMetadataInfo> ieResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(IEResourceMetadataInfo.class, null, null, querySqlExportMetadataInfosHql, resourceId);
+		return ieResourceMetadataInfos;
 	}
 	/** 查询sql资源配置的导出元数据信息集合的hql */
 	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";

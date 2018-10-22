@@ -8,7 +8,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.sys.SysFile;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -69,7 +69,7 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 			if(obj instanceof String){
 				return obj.toString();
 			}
-			resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
+			ieResourceMetadataInfos = (List<IEResourceMetadataInfo>) obj;
 		}
 		return result;
 	}

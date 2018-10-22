@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
-import com.king.tooth.sys.entity.tools.resource.TableResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.TableResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -88,7 +87,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		return resourceMetadataInfos;
 	}
 	/** 查询表资源元数据信息集合的hql */
-	private static final String queryTableMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " order by orderCode asc";
+	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED + " order by orderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合

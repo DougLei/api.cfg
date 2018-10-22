@@ -2,7 +2,7 @@ package test;
 
 import java.util.List;
 
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 
 
 

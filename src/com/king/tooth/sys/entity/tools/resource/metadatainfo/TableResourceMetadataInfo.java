@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.tools.resource;
+package com.king.tooth.sys.entity.tools.resource.metadatainfo;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.util.StrUtils;
@@ -10,10 +10,11 @@ import com.king.tooth.util.StrUtils;
 @SuppressWarnings("serial")
 public class TableResourceMetadataInfo extends ResourceMetadataInfo{
 
+	public TableResourceMetadataInfo() {
+	}
 	public TableResourceMetadataInfo(String propName) {
 		super(propName);
 	}
-
 	public TableResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, String propName, String descName) {
 		super(columnName, dataType, length, precision, isUnique, isNullabled);
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;

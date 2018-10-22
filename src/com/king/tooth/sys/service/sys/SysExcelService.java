@@ -27,7 +27,8 @@ import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.file.ExportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFile;
 import com.king.tooth.sys.entity.sys.file.ImportFileTemplate;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -50,14 +51,14 @@ public class SysExcelService extends AService{
 	/**
 	 * 创建头行
 	 * @param headRow
-	 * @param resourceMetadataInfos
+	 * @param ieResourceMetadataInfos
 	 * @param resourceMetadataInfoCount
 	 */
-	private void createHeadRow(Row headRow, List<ResourceMetadataInfo> resourceMetadataInfos, int resourceMetadataInfoCount){
+	private void createHeadRow(Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
 		Cell cell;
 		ResourceMetadataInfo rmi = null;
-		for (int i=0;i<resourceMetadataInfoCount ;i++) {
-			rmi = resourceMetadataInfos.get(i);
+		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
+			rmi = ieResourceMetadataInfos.get(i);
 			cell = headRow.createCell(i);
 			cell.setCellValue(rmi.getDescName());
 		}
@@ -120,7 +121,7 @@ public class SysExcelService extends AService{
 			
 			String desc = "导入excel文件["+file.getActName()+"]，";
 			int i, j, columnIndex=0;
-			List<ResourceMetadataInfo> resourceMetadataInfos = importFile.getResourceMetadataInfos();
+			List<IEResourceMetadataInfo> ieResourceMetadataInfos = importFile.getIeResourceMetadataInfos();
 			IJson ijson = new JSONArrayExtend(rowCount-1);;
 			JSONObject json = null;
 			String validResult = null;
@@ -133,8 +134,8 @@ public class SysExcelService extends AService{
 				row = sheet.getRow(i);
 				if(row != null){
 					columnCount = sheet.getRow(i).getLastCellNum();
-					if(columnCount > resourceMetadataInfos.size()){
-						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)大于资源["+resourceName+"]配置的导入字段数量("+resourceMetadataInfos.size()+"个)，系统无法匹配，请调整配置，或sheet中的列";
+					if(columnCount > ieResourceMetadataInfos.size()){
+						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)大于资源["+resourceName+"]配置的导入字段数量("+ieResourceMetadataInfos.size()+"个)，系统无法匹配，请调整配置，或sheet中的列";
 					}
 					json = new JSONObject(columnCount);
 					ijson.add(json);
@@ -142,20 +143,19 @@ public class SysExcelService extends AService{
 					for (j=0; j<columnCount; j++) {
 						cell = row.getCell(j);
 						if(cell != null){
-							json.put(resourceMetadataInfos.get(columnIndex).getPropName(), getCellValue(cell));
+							json.put(ieResourceMetadataInfos.get(columnIndex).getPropName(), getCellValue(cell));
 						}
 						columnIndex++;
 					}
 					columnIndex=0;
 				}
 			}
-			validResult = validImportDatas(desc , resourceName, ijson, resourceMetadataInfos);
+			validResult = validImportDatas(desc , resourceName, ijson, ieResourceMetadataInfos);
 			if(validResult != null){
 				return validResult;
 			}
 			saveImportDatas(resourceName, ijson);
 		}
-		
 		return importFile;
 	}
 	
@@ -177,14 +177,14 @@ public class SysExcelService extends AService{
 	 * @param desc
 	 * @param resourceName
 	 * @param ijson
-	 * @param resourceMetadataInfos 
+	 * @param ieResourceMetadataInfos 
 	 * @return
 	 */
-	private String validImportDatas(String desc, String resourceName, IJson ijson, List<ResourceMetadataInfo> resourceMetadataInfos) {
+	private String validImportDatas(String desc, String resourceName, IJson ijson, List<IEResourceMetadataInfo> ieResourceMetadataInfos) {
 		int size = ijson.size();
 		
 		int columnIndex =1;
-		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
+		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(ieResourceMetadataInfos.size());
 		JSONObject data = null;
 		Object dataIdValue = null;
 		boolean dataValueIsNull;
@@ -194,7 +194,7 @@ public class SysExcelService extends AService{
 			data = ijson.get(i);
 			dataIdValue = data.get(ResourcePropNameConstants.ID);
 			
-			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
+			for (IEResourceMetadataInfo rmi : ieResourceMetadataInfos) {
 				dataValue = data.get(rmi.getPropName());
 				dataValueIsNull = StrUtils.isEmpty(dataValue);
 				
@@ -287,7 +287,7 @@ public class SysExcelService extends AService{
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
 		Row headRow = sheet.createRow(0);
-		createHeadRow(headRow, importFileTemplate.getResourceMetadataInfos(), importFileTemplate.getResourceMetadataInfos().size());
+		createHeadRow(headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getIeResourceMetadataInfos().size());
 		
 		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, importFileTemplate.getFileId(), SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
 	}
@@ -311,13 +311,13 @@ public class SysExcelService extends AService{
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
 		
-		List<ResourceMetadataInfo> resourceMetadataInfos = exportFile.getResourceMetadataInfos();
-		int resourceMetadataInfoCount = resourceMetadataInfos.size();
+		List<IEResourceMetadataInfo> ieResourceMetadataInfos = exportFile.getIeResourceMetadataInfos();
+		int resourceMetadataInfoCount = ieResourceMetadataInfos.size();
 		
-		createTitleRow(sheet, title, resourceMetadataInfos.size());
+		createTitleRow(sheet, title, ieResourceMetadataInfos.size());
 		
 		Row headRow = sheet.createRow(1);
-		createHeadRow(headRow, resourceMetadataInfos, resourceMetadataInfoCount);
+		createHeadRow(headRow, ieResourceMetadataInfos, resourceMetadataInfoCount);
 		
 		PageResultEntity pageResultEntity = exportFile.getPageResultEntity();
 		Query query = exportFile.getQuery();
@@ -346,19 +346,19 @@ public class SysExcelService extends AService{
 					dataArr = (Object[]) object;
 					size = dataArr.length;
 					for(int j=0;j<size;j++){
-						createCell(j, row, cell, dataArr[j], resourceMetadataInfos.get(j));
+						createCell(j, row, cell, dataArr[j], ieResourceMetadataInfos.get(j));
 					}
 				}else if(object instanceof Map){
 					dataMap = (Map<String, Object>) object;
 					size = dataMap.size();
 					for(int j=0;j<size;j++){
-						createCell(j, row, cell, dataMap.get(resourceMetadataInfos.get(j).getPropName()), resourceMetadataInfos.get(j));
+						createCell(j, row, cell, dataMap.get(ieResourceMetadataInfos.get(j).getPropName()), ieResourceMetadataInfos.get(j));
 					}
 					if(size>0){
 						dataMap.clear();
 					}
 				}else if(object instanceof Object){
-					createCell(1, row, cell, object, resourceMetadataInfos.get(0));
+					createCell(1, row, cell, object, ieResourceMetadataInfos.get(0));
 				}
 			}
 			dataList.clear();
@@ -430,17 +430,17 @@ public class SysExcelService extends AService{
 	 * @param row
 	 * @param cell
 	 * @param object
-	 * @param resourceMetadataInfo
+	 * @param ieResourceMetadataInfo
 	 */
-	private void createCell(int columnIndex, Row row, Cell cell, Object object, ResourceMetadataInfo resourceMetadataInfo) {
+	private void createCell(int columnIndex, Row row, Cell cell, Object object, IEResourceMetadataInfo ieResourceMetadataInfo) {
 		cell = row.createCell(columnIndex);
 		if(object == null){
 			return;
-		}else if(resourceMetadataInfo == null){
+		}else if(ieResourceMetadataInfo == null){
 			cell.setCellType(Cell.CELL_TYPE_STRING);
-		}else if(DataTypeConstants.INTEGER.equals(resourceMetadataInfo.getDataType()) || DataTypeConstants.DOUBLE.equals(resourceMetadataInfo.getDataType())){
+		}else if(DataTypeConstants.INTEGER.equals(ieResourceMetadataInfo.getDataType()) || DataTypeConstants.DOUBLE.equals(ieResourceMetadataInfo.getDataType())){
 			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		}else if(DataTypeConstants.INTEGER.equals(resourceMetadataInfo.getDataType())){
+		}else if(DataTypeConstants.INTEGER.equals(ieResourceMetadataInfo.getDataType())){
 			cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
 		}else{
 			cell.setCellType(Cell.CELL_TYPE_STRING);

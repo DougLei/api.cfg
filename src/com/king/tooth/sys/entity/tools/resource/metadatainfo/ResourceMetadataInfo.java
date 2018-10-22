@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.tools.resource;
+package com.king.tooth.sys.entity.tools.resource.metadatainfo;
 
 import java.io.Serializable;
 

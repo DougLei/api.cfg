@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 
 /**
  * 动态的基础字段的工具类

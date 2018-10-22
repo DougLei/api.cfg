@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.tools.resource.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -53,7 +53,7 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 			if(obj instanceof String){
 				return obj.toString();
 			}
-			resourceMetadataInfos = (List<ResourceMetadataInfo>) obj;
+			ieResourceMetadataInfos = (List<IEResourceMetadataInfo>) obj;
 			this.fileId = ResourceHandlerUtil.getIdentity();
 		}
 		return result;
