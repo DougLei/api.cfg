@@ -85,12 +85,12 @@ public class BuiltinObjectInstance {
 	public static final CfgColumn lastUpdateUserIdColumn = new CfgColumn("last_update_user_id", DataTypeConstants.STRING, 32);
 	static{
 		idColumn32.setIsPrimaryKey(1);
-		idColumn32.setIsNullabled(0);
+		idColumn32.setIsNullabled(1);
 		idColumn32.setName("主键");
 		idColumn32.setComments("主键");
 		
 		idColumn50.setIsPrimaryKey(1);
-		idColumn50.setIsNullabled(0);
+		idColumn50.setIsNullabled(1);
 		idColumn50.setName("主键");
 		idColumn50.setComments("主键");
 		
