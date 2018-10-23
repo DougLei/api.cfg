@@ -260,6 +260,7 @@ public class SysExcelService extends AService{
 		int size = ijson.size();
 		if(size > 0){
 			for(int i =0;i<size;i++){
+				// TODO 如果导入的是一些特殊资源，还会有额外的处理，必须导入用户，是否要同时开通账户
 				HibernateUtil.saveObject(resourceName, ijson.get(i), null);
 			}
 		}
@@ -368,7 +369,7 @@ public class SysExcelService extends AService{
 						dataMap.clear();
 					}
 				}else if(object instanceof Object){
-					createCell(1, row, cell, object, ieResourceMetadataInfos.get(0));
+					createCell(0, row, cell, object, ieResourceMetadataInfos.get(0));
 				}
 			}
 			dataList.clear();
