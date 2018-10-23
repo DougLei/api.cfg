@@ -318,6 +318,8 @@ public class SysExcelService extends AService{
 					}
 					dataList.clear();
 					
+					// TODO 建立函数的关联关系
+					
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
 					rowIndex=1;
