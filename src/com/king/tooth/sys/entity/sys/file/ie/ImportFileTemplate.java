@@ -54,6 +54,7 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 				return obj.toString();
 			}
 			ieResourceMetadataInfos = (List<IEResourceMetadataInfo>) obj;
+			setResourceMetadataExtendInfo(ieResourceMetadataInfos);
 			this.fileId = ResourceHandlerUtil.getIdentity();
 		}
 		return result;

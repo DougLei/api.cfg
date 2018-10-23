@@ -16,8 +16,8 @@ public class IETableResourceMetadataInfo extends IEResourceMetadataInfo{
 	public IETableResourceMetadataInfo(String propName) {
 		super(propName);
 	}
-	public IETableResourceMetadataInfo(String id, String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, CfgPropIEConfExtend ieConfExtend, String propName, String descName) {
-		super(id, columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid, ieConfExtend);
+	public IETableResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, String id, CfgPropIEConfExtend ieConfExtend, String propName, String descName) {
+		super(columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid, id, ieConfExtend);
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 		this.descName = StrUtils.isEmpty(descName)?propName:descName;
 	}

@@ -11,20 +11,31 @@ import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInf
 public class IEResourceMetadataInfo extends ResourceMetadataInfo{
 
 	/**
+	 * id值
+	 */
+	protected String id;
+	/**
 	 * 导入导出的元数据扩展配置
 	 */
 	protected CfgPropIEConfExtend ieConfExtend;
 	
 	public IEResourceMetadataInfo() {
 	}
-	public IEResourceMetadataInfo(String id, String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, CfgPropIEConfExtend ieConfExtend) {
-		super(id, columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid);
+	public IEResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, String id, CfgPropIEConfExtend ieConfExtend) {
+		super(columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid);
+		this.id = id;
 		this.ieConfExtend = ieConfExtend;
 	}
 	public IEResourceMetadataInfo(String propName) {
 		super(propName);
 	}
 	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	public CfgPropIEConfExtend getIeConfExtend() {
 		return ieConfExtend;
 	}

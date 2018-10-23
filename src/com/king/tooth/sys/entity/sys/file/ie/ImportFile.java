@@ -70,6 +70,7 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 				return obj.toString();
 			}
 			ieResourceMetadataInfos = (List<IEResourceMetadataInfo>) obj;
+			setResourceMetadataExtendInfo(ieResourceMetadataInfos);
 		}
 		return result;
 	}

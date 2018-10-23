@@ -11,10 +11,6 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 @SuppressWarnings("serial")
 public class ResourceMetadataInfo implements Serializable{
 	/**
-	 * id值
-	 */
-	protected String id;
-	/**
 	 * 列名
 	 */
 	protected String columnName;
@@ -56,8 +52,7 @@ public class ResourceMetadataInfo implements Serializable{
 	public ResourceMetadataInfo(String propName) {
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 	}
-	public ResourceMetadataInfo(String id, String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid) {
-		this.id = id;
+	public ResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid) {
 		this.columnName = columnName;
 		this.dataType = dataType;
 		this.length = length;
@@ -67,12 +62,6 @@ public class ResourceMetadataInfo implements Serializable{
 		this.isIgnoreValid = isIgnoreValid;
 	}
 	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
 	public String getPropName() {
 		return propName;
 	}

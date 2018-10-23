@@ -594,10 +594,10 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	}
 	
 	public TableResourceMetadataInfo toTableResourceMetadataInfo(){
-		return new TableResourceMetadataInfo(ResourceInfoConstants.BUILTIN_RESOURCE, columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);
+		return new TableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);
 	}
 	public IETableResourceMetadataInfo toIETableResourceMetadataInfo(){
-		return new IETableResourceMetadataInfo(ResourceInfoConstants.BUILTIN_RESOURCE, columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, ieConfExtend, propName, comments);
+		return new IETableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, ResourceInfoConstants.BUILTIN_RESOURCE, ieConfExtend, propName, comments);
 	}
 	
 	// --------------------------------------------------------------------------------------

@@ -1,7 +1,6 @@
 package test.poi.imports.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -15,10 +14,9 @@ public class ImportExcel1 {
           //工作表对象
           Sheet sheet = workbook.getSheetAt(0);
           
-          Cell cell = sheet.getRow(0).getCell(0);
+          System.out.println(sheet.getRow(0).getLastCellNum());
           
-          System.out.println(cell.getCellType() == Cell.CELL_TYPE_NUMERIC);
-          System.out.println(DateUtil.isCellDateFormatted(cell));
-          System.out.println(cell.getDateCellValue());
+          Cell cell = sheet.getRow(0).getCell(2);
+          System.out.println(cell.getStringCellValue());
 	}
 }

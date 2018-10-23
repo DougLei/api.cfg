@@ -10,6 +10,7 @@ import org.hibernate.Query;
 
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
@@ -61,7 +62,7 @@ public class SysExcelController extends AController{
 			
 			SysFileIELog excelIELog = null;
 			for (ImportFile importFile : importFiles) {
-				excelIELog = new SysFileIELog(SysFileIELog.OPER_TYPE_IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
+				excelIELog = new SysFileIELog(ResourceInfoConstants.IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
 				excelIELogs.add(excelIELog);
 				
 				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importFile);
@@ -115,7 +116,7 @@ public class SysExcelController extends AController{
 		List<SysFileIELog> excelIELogs = null;
 		if(analysisResult == null){
 			excelIELogs = new ArrayList<SysFileIELog>(1);
-			SysFileIELog excelIELog = new SysFileIELog(SysFileIELog.OPER_TYPE_IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
+			SysFileIELog excelIELog = new SysFileIELog(ResourceInfoConstants.IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
 			excelIELogs.add(excelIELog);
 			
 			resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createExportExcelFile(exportFile);

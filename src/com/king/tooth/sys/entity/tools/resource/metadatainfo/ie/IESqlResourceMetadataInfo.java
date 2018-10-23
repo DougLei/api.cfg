@@ -15,8 +15,8 @@ public class IESqlResourceMetadataInfo extends IEResourceMetadataInfo{
 	public IESqlResourceMetadataInfo(String propName) {
 		super(propName);
 	}
-	public IESqlResourceMetadataInfo(String id, String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, CfgPropIEConfExtend ieConfExtend, String propName, String descName) {
-		super(id, columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid, ieConfExtend);
+	public IESqlResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, String id, CfgPropIEConfExtend ieConfExtend, String propName, String descName) {
+		super(columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid, id, ieConfExtend);
 		this.propName = propName;
 		this.descName = StrUtils.isEmpty(descName)?propName:descName;
 	}

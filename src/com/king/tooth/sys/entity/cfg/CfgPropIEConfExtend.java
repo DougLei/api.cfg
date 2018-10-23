@@ -6,6 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -183,13 +184,13 @@ public class CfgPropIEConfExtend extends BasicEntity implements ITable, IEntity,
 		if(refPropType == null){
 			return "关联的属性类型不能为空";
 		}
-		if(refPropType != REF_PROP_TYPE_COLUMN && refPropType != REF_PROP_TYPE_SQL_RESULTSET){
+		if(refPropType != 1 && refPropType != 2){
 			return "关联的属性类型值，只能为1(column)或2(sqlResultset)";
 		}
 		if(confType == null){
 			return "配置类型不能为空！";
 		}
-		if(confType != CONF_TYPE_IMPORT && confType != CONF_TYPE_EXPORT){
+		if(confType != ResourceInfoConstants.IMPORT && confType != ResourceInfoConstants.EXPORT){
 			return "配置类型的值必须为1(导入)或2(导出)";
 		}
 		if(StrUtils.isEmpty(refPropId)){
@@ -201,15 +202,4 @@ public class CfgPropIEConfExtend extends BasicEntity implements ITable, IEntity,
 	public String analysisResourceProp() {
 		return validNotNullProps();
 	}
-	
-	// ---------------------------------------------------------------------------
-	/** 关联的属性类型:1、column */
-	public static final Integer REF_PROP_TYPE_COLUMN = 1;
-	/** 关联的属性类型:2、sqlResultset */
-	public static final Integer REF_PROP_TYPE_SQL_RESULTSET = 2;
-	
-	/** 配置类型:1、导入 */
-	public static final Integer CONF_TYPE_IMPORT = 1;
-	/** 配置类型:2、导出 */
-	public static final Integer CONF_TYPE_EXPORT = 2;
 }

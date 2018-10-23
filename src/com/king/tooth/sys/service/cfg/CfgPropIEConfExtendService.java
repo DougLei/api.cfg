@@ -21,10 +21,10 @@ public class CfgPropIEConfExtendService extends AService{
 	private String validCfgPropIEConfExtendRefPropIsExists(CfgPropIEConfExtend propIEConfExtend) {
 		String hql = null;
 		String desc = null;
-		if(propIEConfExtend.getRefPropType() == CfgPropIEConfExtend.REF_PROP_TYPE_COLUMN){
+		if(propIEConfExtend.getRefPropType() == 1){
 			desc = "CfgColumn";
 			hql = "select count("+ResourcePropNameConstants.ID+") from CfgColumn where "+ResourcePropNameConstants.ID+"=? ";
-		}else if(propIEConfExtend.getRefPropType() == CfgPropIEConfExtend.REF_PROP_TYPE_SQL_RESULTSET){
+		}else if(propIEConfExtend.getRefPropType() == 2){
 			desc = "CfgSqlResult";
 			hql = "select count("+ResourcePropNameConstants.ID+") from CfgSqlResultset where "+ResourcePropNameConstants.ID+"=? ";
 		}
@@ -44,7 +44,7 @@ public class CfgPropIEConfExtendService extends AService{
 		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgPropIEConfExtend where refPropId=? and confType=?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, propIEConfExtend.getRefPropId(), propIEConfExtend.getConfType());
 		if(count > 0){
-			return "id为["+propIEConfExtend.getRefPropId()+"]的属性，已经配置了"+(propIEConfExtend.getConfType()==CfgPropIEConfExtend.CONF_TYPE_IMPORT?"导入":"导出")+"的扩展信息";
+			return "id为["+propIEConfExtend.getRefPropId()+"]的属性，已经配置了"+(propIEConfExtend.getConfType()==1?"导入":"导出")+"的扩展信息";
 		}
 		return null;
 	}

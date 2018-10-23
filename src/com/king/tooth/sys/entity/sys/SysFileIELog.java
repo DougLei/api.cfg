@@ -143,10 +143,4 @@ public class SysFileIELog extends BasicEntity implements ITable, IEntity{
 	public String getEntityName() {
 		return "SysFileIELog";
 	}
-	
-	// ---------------------------------------------------------------------------
-	/** 操作类型:1、导入 */
-	public static final Integer OPER_TYPE_IMPORT = 1;
-	/** 操作类型:2、导出 */
-	public static final Integer OPER_TYPE_EXPORT = 2;
 }

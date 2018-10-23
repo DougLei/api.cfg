@@ -106,10 +106,12 @@ public class SysExcelService extends AService{
 			String desc = "导入excel文件["+file.getActName()+"]，";
 			int i, j, columnIndex=0;
 			List<IEResourceMetadataInfo> ieResourceMetadataInfos = importFile.getIeResourceMetadataInfos();
+			int ieResourceMetadataInfoCount = ieResourceMetadataInfos.size();
 			IJson ijson = new JSONArrayExtend(rowCount-1);;
 			JSONObject json = null;
 			String validResult = null;
 			
+			IEResourceMetadataInfo rmi = null;
 			Row row = null;// excel行对象
 			Cell cell;// excel列对象
 			short columnCount = 0; // 列数
@@ -118,16 +120,20 @@ public class SysExcelService extends AService{
 				row = sheet.getRow(i);
 				if(row != null){
 					columnCount = sheet.getRow(i).getLastCellNum();
-					if(columnCount > ieResourceMetadataInfos.size()){
+					if(columnCount > (ieResourceMetadataInfoCount + importFile.getResourceMetadataInfoOfConfExtendCount())){
 						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)大于资源["+resourceName+"]配置的导入字段数量("+ieResourceMetadataInfos.size()+"个)，系统无法匹配，请调整配置，或sheet中的列";
 					}
-					json = new JSONObject(columnCount);
+					json = new JSONObject(ieResourceMetadataInfoCount);
 					ijson.add(json);
 					
 					for (j=0; j<columnCount; j++) {
+						rmi = ieResourceMetadataInfos.get(columnIndex);
+						if(rmi.getIeConfExtend() != null){
+							j++;
+						}
 						cell = row.getCell(j);
 						if(cell != null){
-							json.put(ieResourceMetadataInfos.get(columnIndex).getPropName(), getCellValue(cell));
+							json.put(rmi.getPropName(), getCellValue(cell));
 						}
 						columnIndex++;
 					}
@@ -179,6 +185,9 @@ public class SysExcelService extends AService{
 			dataIdValue = data.get(ResourcePropNameConstants.ID);
 			
 			for (IEResourceMetadataInfo rmi : ieResourceMetadataInfos) {
+				if(rmi.getIsIgnoreValid() == 1){
+					continue;
+				}
 				dataValue = data.get(rmi.getPropName());
 				dataValueIsNull = StrUtils.isEmpty(dataValue);
 				

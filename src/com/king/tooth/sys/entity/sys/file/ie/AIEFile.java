@@ -10,10 +10,12 @@ import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgPropIEConfExtend;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
 import com.king.tooth.sys.service.sys.SysResourceService;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -139,10 +141,12 @@ public abstract class AIEFile {
 		}
 		return ieResourceMetadataInfos;
 	}
+	/** 查询表资源元数据信息集合的hql头 */
+	private static final String queryTableMetadataInfosHqlHead = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
 	/** 查询表资源配置的导入元数据信息集合的hql */
-	private static final String queryTableImportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
+	private static final String queryTableImportMetadataInfosHql = queryTableMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
 	/** 查询表资源配置的导出元数据信息集合的hql */
-	private static final String queryTableExportMetadataInfosHql = ResourceInfoConstants.queryTableMetadataInfosHqlHead + " and isExport=1 order by exportOrderCode asc";
+	private static final String queryTableExportMetadataInfosHql = queryTableMetadataInfosHqlHead + " and isExport=1 order by exportOrderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
@@ -158,7 +162,6 @@ public abstract class AIEFile {
 			if((isImport == 1 && (column.getIsImport() != null && column.getIsImport() == 1))
 					|| (isImport == 0 && (column.getIsExport() != null && column.getIsExport() == 1))){
 				ieResourceMetadataInfos.add(new IETableResourceMetadataInfo(
-									ResourceInfoConstants.BUILTIN_RESOURCE,
 									column.getColumnName(),
 									column.getColumnType(),
 									column.getLength(),
@@ -166,6 +169,7 @@ public abstract class AIEFile {
 									column.getIsUnique(), 
 									column.getIsNullabled(),
 									column.getIsIgnoreValid(),
+									ResourceInfoConstants.BUILTIN_RESOURCE,
 									column.getIeConfExtend(),
 									column.getPropName(),
 									column.getName()));
@@ -193,4 +197,32 @@ public abstract class AIEFile {
 	}
 	/** 查询sql资源配置的导出元数据信息集合的hql */
 	private static final String querySqlExportMetadataInfosHql = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
+	
+	// -------------------------------------------------------------------------------
+	/**
+	 * 有扩展配置的资源元数据数量
+	 */
+	@JSONField(serialize = false)
+	protected int resourceMetadataInfoOfConfExtendCount;
+	public int getResourceMetadataInfoOfConfExtendCount() {
+		return resourceMetadataInfoOfConfExtendCount;
+	}
+	
+	/**
+	 * 设置资源元数据的扩展信息
+	 * @param ieResourceMetadataInfos
+	 */
+	protected void setResourceMetadataExtendInfo(List<IEResourceMetadataInfo> ieResourceMetadataInfos) {
+		for (IEResourceMetadataInfo ieResourceMetadataInfo : ieResourceMetadataInfos) {
+			if(!ResourceInfoConstants.BUILTIN_RESOURCE.equals(ieResourceMetadataInfo.getId())){
+				ieResourceMetadataInfo.setIeConfExtend(HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgPropIEConfExtend.class, queryPropIEConfExtendInfoHql, ieResourceMetadataInfo.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+			}
+			if(ieResourceMetadataInfo.getIeConfExtend() != null){
+				resourceMetadataInfoOfConfExtendCount++;
+			}
+		}
+	}
+	/** 查询属性配置的扩展的导入/导出信息对象hql */
+	private static final String queryPropIEConfExtendInfoHql = "from CfgPropIEConfExtend where refPropId=? and confType=1 and projectId=? and customerId=?";
+	
 }

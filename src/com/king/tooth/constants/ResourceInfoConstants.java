@@ -1,6 +1,5 @@
 package com.king.tooth.constants;
 
-import com.king.tooth.sys.entity.cfg.CfgColumn;
 
 
 /**
@@ -83,7 +82,11 @@ public class ResourceInfoConstants {
 	
 	// ----------------------------------------------------------------------------
 	/**
-	 * 查询表资源元数据信息集合的hql头
+	 * 1:导入
 	 */
-	public static final String queryTableMetadataInfosHqlHead = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	public static final Integer IMPORT = 1;
+	/**
+	 * 1:导出
+	 */
+	public static final Integer EXPORT = 2;
 }
