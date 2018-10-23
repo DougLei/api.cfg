@@ -11,8 +11,8 @@ public class IEResourceMetadataInfo extends ResourceMetadataInfo{
 
 	public IEResourceMetadataInfo() {
 	}
-	public IEResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
-		super(columnName, dataType, length, precision, isUnique, isNullabled);
+	public IEResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid) {
+		super(columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid);
 	}
 	public IEResourceMetadataInfo(String propName) {
 		super(propName);

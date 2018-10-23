@@ -139,7 +139,7 @@ public abstract class AIEFile {
 		return ieResourceMetadataInfos;
 	}
 	/** 查询表资源配置的导入导出元数据信息集合hql头 */
-	private static final String queryTableIEMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	private static final String queryTableIEMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
 	/** 查询表资源配置的导入元数据信息集合的hql */
 	private static final String queryTableImportMetadataInfosHql = queryTableIEMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
 	/** 查询表资源配置的导出元数据信息集合的hql */
@@ -165,6 +165,7 @@ public abstract class AIEFile {
 									column.getPrecision(),
 									column.getIsUnique(), 
 									column.getIsNullabled(),
+									column.getIsIgnoreValid(),
 									column.getPropName(),
 									column.getName()));
 			}
@@ -192,5 +193,5 @@ public abstract class AIEFile {
 		return ieResourceMetadataInfos;
 	}
 	/** 查询sql资源配置的导出元数据信息集合的hql */
-	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
+	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset sr left join CfgPropIEConfExtend pe on (sr.Id=)  where sr.sqlScriptId=? and sr.isExport=1 order by sr.exportOrderCode asc";
 }

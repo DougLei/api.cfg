@@ -85,29 +85,39 @@ public class BuiltinObjectInstance {
 	public static final CfgColumn lastUpdateUserIdColumn = new CfgColumn("last_update_user_id", DataTypeConstants.STRING, 32);
 	static{
 		idColumn32.setIsPrimaryKey(1);
+		idColumn32.setIsNullabled(0);
 		idColumn32.setName("主键");
 		idColumn32.setComments("主键");
+		idColumn32.setIsIgnoreValid(1);
 		
 		idColumn50.setIsPrimaryKey(1);
+		idColumn50.setIsNullabled(0);
 		idColumn50.setName("主键");
 		idColumn50.setComments("主键");
+		idColumn50.setIsIgnoreValid(1);
 		
 		customerIdColumn.setName("所属租户主键");
 		customerIdColumn.setComments("所属租户主键");
+		customerIdColumn.setIsIgnoreValid(1);
 		
 		projectIdColumn.setName("所属项目主键");
 		projectIdColumn.setComments("所属项目主键");
+		projectIdColumn.setIsIgnoreValid(1);
 		
 		createDateColumn.setName("创建时间");
 		createDateColumn.setComments("创建时间");
+		createDateColumn.setIsIgnoreValid(1);
 		
 		lastUpdateDateColumn.setComments("最后修改时间");
 		lastUpdateDateColumn.setName("最后修改时间");
+		lastUpdateDateColumn.setIsIgnoreValid(1);
 		
 		createUserIdColumn.setComments("创建人主键");
 		createUserIdColumn.setName("创建人主键");
+		createUserIdColumn.setIsIgnoreValid(1);
 		
 		lastUpdateUserIdColumn.setComments("最后修改人主键");
 		lastUpdateUserIdColumn.setName("最后修改人主键");
+		lastUpdateUserIdColumn.setIsIgnoreValid(1);
 	}
 }

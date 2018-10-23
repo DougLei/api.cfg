@@ -42,19 +42,24 @@ public class ResourceMetadataInfo implements Serializable{
 	 * 汉字描述名
 	 */
 	protected String descName;
+	/**
+	 * 是否忽略验证
+	 */
+	protected Integer isIgnoreValid;
 	
 	public ResourceMetadataInfo() {
 	}
 	public ResourceMetadataInfo(String propName) {
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;
 	}
-	public ResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled) {
+	public ResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid) {
 		this.columnName = columnName;
 		this.dataType = dataType;
 		this.length = length;
 		this.precision = precision==null?0:precision;
 		this.isUnique = isUnique==null?0:isUnique;
 		this.isNullabled = isNullabled==null?1:isNullabled;
+		this.isIgnoreValid = isIgnoreValid;
 	}
 	
 	public String getPropName() {
@@ -104,5 +109,11 @@ public class ResourceMetadataInfo implements Serializable{
 	}
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
+	}
+	public Integer getIsIgnoreValid() {
+		return isIgnoreValid;
+	}
+	public void setIsIgnoreValid(Integer isIgnoreValid) {
+		this.isIgnoreValid = isIgnoreValid;
 	}
 }

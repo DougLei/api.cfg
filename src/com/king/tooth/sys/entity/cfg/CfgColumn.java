@@ -132,6 +132,11 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	 * <p>默认和order_code的值一致</p>
 	 */
 	private Integer exportOrderCode;
+	/**
+	 * 是否忽略验证
+	 * <p>1是0否，默认值为0</p>
+	 */
+	private Integer isIgnoreValid;
 	
 	//-------------------------------------------------------------------------
 	
@@ -248,6 +253,12 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	public void setIsEnabled(String isEnabled) {
 		this.isEnabled = isEnabled;
 	}
+	public Integer getIsIgnoreValid() {
+		return isIgnoreValid;
+	}
+	public void setIsIgnoreValid(Integer isIgnoreValid) {
+		this.isIgnoreValid = isIgnoreValid;
+	}
 	public Integer getOperStatus() {
 		return operStatus;
 	}
@@ -346,7 +357,7 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(22+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(23+7);
 		
 		CfgColumn tableIdColumn = new CfgColumn("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -475,6 +486,12 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 		exportOrderCodeColumn.setComments("默认和order_code的值一致");
 		exportOrderCodeColumn.setDefaultValue("0");
 		columns.add(exportOrderCodeColumn);
+
+		CfgColumn isIgnoreValidColumn = new CfgColumn("is_ignore_valid", DataTypeConstants.INTEGER, 1);
+		isIgnoreValidColumn.setName("是否忽略验证");
+		isIgnoreValidColumn.setComments("1是0否，默认值为0");
+		isIgnoreValidColumn.setDefaultValue("0");
+		columns.add(isIgnoreValidColumn);
 		
 		return columns;
 	}
@@ -565,10 +582,10 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	}
 	
 	public TableResourceMetadataInfo toTableResourceMetadataInfo(){
-		return new TableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, propName, comments);
+		return new TableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);
 	}
 	public IETableResourceMetadataInfo toIETableResourceMetadataInfo(){
-		return new IETableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, propName, comments);
+		return new IETableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);
 	}
 	
 	// --------------------------------------------------------------------------------------

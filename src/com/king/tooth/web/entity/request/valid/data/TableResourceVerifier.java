@@ -87,7 +87,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		return resourceMetadataInfos;
 	}
 	/** 查询表资源元数据信息集合的hql */
-	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED + " order by orderCode asc";
+	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED + " order by orderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
@@ -106,6 +106,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 					column.getPrecision(),
 					column.getIsUnique(), 
 					column.getIsNullabled(),
+					column.getIsIgnoreValid(),
 					column.getPropName(),
 					column.getName()));
 		}

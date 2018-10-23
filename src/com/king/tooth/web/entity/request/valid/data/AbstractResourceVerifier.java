@@ -98,6 +98,9 @@ public abstract class AbstractResourceVerifier {
 			}
 			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
+				if(rmi.getIsIgnoreValid() == 1){
+					continue;
+				}
 				dataValue = data.get(rmi.getPropName());
 				dataValueIsNull = StrUtils.isEmpty(dataValue);
 				
