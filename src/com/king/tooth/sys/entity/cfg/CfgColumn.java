@@ -77,15 +77,6 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	 */
 	private Integer isNullabled;
 	/**
-	 * 是否数据字典
-	 * <p>默认为0</p>
-	 */
-	private Integer isDataDictionary;
-	/**
-	 * 数据字典编码
-	 */
-	private String dataDictionaryCode;
-	/**
 	 * 排序
 	 */
 	private Integer orderCode;
@@ -144,7 +135,7 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	 * 导入导出的扩展配置对象
 	 */
 	@JSONField(serialize = false)
-	private CfgPropIEConfExtend ieConfExtend;
+	private CfgPropConfExtend ieConfExtend;
 	
 	public CfgColumn() {
 	}
@@ -177,12 +168,6 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	}
 	public String getColumnType() {
 		return columnType;
-	}
-	public String getDataDictionaryCode() {
-		return dataDictionaryCode;
-	}
-	public void setDataDictionaryCode(String dataDictionaryCode) {
-		this.dataDictionaryCode = dataDictionaryCode;
 	}
 	public void setColumnType(String columnType) {
 		this.columnType = columnType;
@@ -223,10 +208,10 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	public void setPrecision(Integer precision) {
 		this.precision = precision;
 	}
-	public CfgPropIEConfExtend getIeConfExtend() {
+	public CfgPropConfExtend getIeConfExtend() {
 		return ieConfExtend;
 	}
-	public void setIeConfExtend(CfgPropIEConfExtend ieConfExtend) {
+	public void setIeConfExtend(CfgPropConfExtend ieConfExtend) {
 		this.ieConfExtend = ieConfExtend;
 	}
 	public Integer getIsPrimaryKey() {
@@ -246,12 +231,6 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	}
 	public void setIsNullabled(Integer isNullabled) {
 		this.isNullabled = isNullabled;
-	}
-	public Integer getIsDataDictionary() {
-		return isDataDictionary;
-	}
-	public void setIsDataDictionary(Integer isDataDictionary) {
-		this.isDataDictionary = isDataDictionary;
 	}
 	public Integer getOrderCode() {
 		return orderCode;
@@ -369,7 +348,7 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(23+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(21+7);
 		
 		CfgColumn tableIdColumn = new CfgColumn("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -435,17 +414,6 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 		isNullabledColumn.setComments("是否可为空:默认为1");
 		isNullabledColumn.setDefaultValue("1");
 		columns.add(isNullabledColumn);
-		
-		CfgColumn isDataDictionaryColumn = new CfgColumn("is_data_dictionary", DataTypeConstants.INTEGER, 1);
-		isDataDictionaryColumn.setName("是否数据字典");
-		isDataDictionaryColumn.setComments("是否数据字典:默认为0");
-		isDataDictionaryColumn.setDefaultValue("0");
-		columns.add(isDataDictionaryColumn);
-		
-		CfgColumn dataDictionaryCodeColumn = new CfgColumn("data_dictionary_code", DataTypeConstants.STRING, 50);
-		dataDictionaryCodeColumn.setName("数据字典编码");
-		dataDictionaryCodeColumn.setComments("数据字典编码");
-		columns.add(dataDictionaryCodeColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
 		orderCodeColumn.setName("排序");

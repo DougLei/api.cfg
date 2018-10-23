@@ -11,16 +11,16 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.cfg.CfgPropIEConfExtend;
-import com.king.tooth.sys.service.cfg.CfgPropIEConfExtendService;
+import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
+import com.king.tooth.sys.service.cfg.CfgPropConfExtendService;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 属性导入导出配置扩展表Controller
+ * 属性配置扩展表Controller
  * @author DougLei
  */
 @Controller
-public class CfgPropIEConfExtendController extends AController{
+public class CfgPropConfExtendController extends AController{
 	
 	/**
 	 * 添加属性导入导出的扩展配置
@@ -29,11 +29,11 @@ public class CfgPropIEConfExtendController extends AController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
-		List<CfgPropIEConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropIEConfExtend.class, true);
+		List<CfgPropConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropConfExtend.class, true);
 		analysisResourceProp(propIEConfExtends, false);
 		if(analysisResult == null){
-			for (CfgPropIEConfExtend propIEConfExtend : propIEConfExtends) {
-				resultObject = BuiltinResourceInstance.getInstance("CfgPropIEConfExtendService", CfgPropIEConfExtendService.class).savePropIEConfExtend(propIEConfExtend);
+			for (CfgPropConfExtend propIEConfExtend : propIEConfExtends) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgPropConfExtendService", CfgPropConfExtendService.class).savePropIEConfExtend(propIEConfExtend);
 				if(resultObject instanceof String){
 					break;
 				}
@@ -50,11 +50,11 @@ public class CfgPropIEConfExtendController extends AController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
-		List<CfgPropIEConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropIEConfExtend.class, true);
+		List<CfgPropConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropConfExtend.class, true);
 		analysisResourceProp(propIEConfExtends, true);
 		if(analysisResult == null){
-			for (CfgPropIEConfExtend propIEConfExtend : propIEConfExtends) {
-				resultObject = BuiltinResourceInstance.getInstance("CfgPropIEConfExtendService", CfgPropIEConfExtendService.class).updatePropIEConfExtend(propIEConfExtend);
+			for (CfgPropConfExtend propIEConfExtend : propIEConfExtends) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgPropConfExtendService", CfgPropConfExtendService.class).updatePropIEConfExtend(propIEConfExtend);
 				if(resultObject instanceof String){
 					break;
 				}
@@ -75,7 +75,7 @@ public class CfgPropIEConfExtendController extends AController{
 		if(StrUtils.isEmpty(propIEConfExtendIds)){
 			return "要删除的属性导入导出扩展配置id不能为空";
 		}
-		resultObject = BuiltinResourceInstance.getInstance("CfgPropIEConfExtendService", CfgPropIEConfExtendService.class).deletePropIEConfExtend(propIEConfExtendIds);
+		resultObject = BuiltinResourceInstance.getInstance("CfgPropConfExtendService", CfgPropConfExtendService.class).deletePropIEConfExtend(propIEConfExtendIds);
 		processResultObject(BuiltinParameterKeys._IDS, propIEConfExtendIds);
 		return getResultObject(null, null);
 	}
