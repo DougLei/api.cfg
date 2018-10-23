@@ -9,6 +9,7 @@ import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgPropIEConfExtend;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
@@ -21,6 +22,8 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 public abstract class AIEFile {
+	/** 查询属性导出导出扩展信息的hql头 */
+	private static final String queryPropIEConfExtendInfoHqlHead = "pe.refTableId as refTableId, pe.refKeyColumnId as refKeyColumnId, pe.refValueColumnId as refValueColumnId, pe.refTableResourceName as refTableResourceName, pe.refKeyColumnPropName as refKeyColumnPropName, pe.refValueColumnPropName as refValueColumnPropName";
 	
 	/**
 	 * 资源元数据信息
@@ -139,11 +142,16 @@ public abstract class AIEFile {
 		return ieResourceMetadataInfos;
 	}
 	/** 查询表资源配置的导入导出元数据信息集合hql头 */
-	private static final String queryTableIEMetadataInfosHqlHead = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	private static final String queryTableIEMetadataInfosHqlHead = "select new map(c.columnName as columnName,c.propName as propName,c.columnType as dataType,c.length as length,c.precision as precision,c.isUnique as isUnique,c.isNullabled as isNullabled,c.name as descName,c.isIgnoreValid as isIgnoreValid,"+queryPropIEConfExtendInfoHqlHead+")" +
+			" from CfgColumn c, CfgPropIEConfExtend pe" +
+			" where c."+ResourcePropNameConstants.ID+"=pe.refPropId" +
+					" and c.tableId=?" +
+					" and pe.refPropType="+CfgPropIEConfExtend.REF_PROP_TYPE_COLUMN +
+					" and c.isEnabled=1 and c.operStatus="+CfgColumn.CREATED;
 	/** 查询表资源配置的导入元数据信息集合的hql */
-	private static final String queryTableImportMetadataInfosHql = queryTableIEMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
+	private static final String queryTableImportMetadataInfosHql = queryTableIEMetadataInfosHqlHead + " and pe.confType="+CfgPropIEConfExtend.CONF_TYPE_IMPORT+" and c.isImport=1 order by c.importOrderCode asc";
 	/** 查询表资源配置的导出元数据信息集合的hql */
-	private static final String queryTableExportMetadataInfosHql = queryTableIEMetadataInfosHqlHead + " and isExport=1 order by exportOrderCode asc";
+	private static final String queryTableExportMetadataInfosHql = queryTableIEMetadataInfosHqlHead + " and pe.confType="+CfgPropIEConfExtend.CONF_TYPE_EXPORT+" and c.isExport=1 order by c.exportOrderCode asc";
 	
 	/**
 	 * 获取内置表资源的元数据信息集合
@@ -188,10 +196,15 @@ public abstract class AIEFile {
 		if(!sqlType.equals(SqlStatementTypeConstants.SELECT)){
 			return"系统只支持查询select类型的sql语句，配置的导出元数据信息";
 		}
-		
-		List<IEResourceMetadataInfo> ieResourceMetadataInfos = HibernateUtil.extendExecuteListQueryByHqlArr(IEResourceMetadataInfo.class, null, null, querySqlExportMetadataInfosHql, resourceId);
-		return ieResourceMetadataInfos;
+		return HibernateUtil.extendExecuteListQueryByHqlArr(IEResourceMetadataInfo.class, null, null, querySqlExportMetadataInfosHql, resourceId);
 	}
 	/** 查询sql资源配置的导出元数据信息集合的hql */
-	private static final String querySqlExportMetadataInfosHql = "select new map(columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset sr left join CfgPropIEConfExtend pe on (sr.Id=)  where sr.sqlScriptId=? and sr.isExport=1 order by sr.exportOrderCode asc";
+	private static final String querySqlExportMetadataInfosHql = "select" +
+			" new map(sr.columnName as columnName,sr.propName as propName, sr.descName as descName, "+queryPropIEConfExtendInfoHqlHead+")" +
+			" from CfgSqlResultset sr, CfgPropIEConfExtend pe" +
+			" where sr."+ResourcePropNameConstants.ID+"=pe.refPropId" +
+					" and sr.sqlScriptId=? " +
+					" and pe.refPropType="+CfgPropIEConfExtend.REF_PROP_TYPE_SQL_RESULTSET +
+					" and pe.confType="+CfgPropIEConfExtend.CONF_TYPE_EXPORT +
+					" and sr.isExport=1 order by sr.exportOrderCode asc";
 }

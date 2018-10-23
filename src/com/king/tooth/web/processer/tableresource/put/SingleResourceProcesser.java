@@ -71,12 +71,13 @@ public final class SingleResourceProcesser extends PutProcesser {
 				continue;
 			}
 			if(updatedJsonObj.get(pn) == null){
-				continue;
+				updateHql.append(pn);
+				updateHql.append(" = null").append(",");
+			}else{
+				updateHql.append(pn);
+				updateHql.append(" = ?").append(",");
+				params.add(updatedJsonObj.get(pn));
 			}
-			
-			updateHql.append(pn);
-			updateHql.append(" = ?").append(",");
-			params.add(updatedJsonObj.get(pn));
 		}
 		updateHql.setLength(updateHql.length()-1);
 		

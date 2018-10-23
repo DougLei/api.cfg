@@ -10,8 +10,8 @@ import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
@@ -169,8 +169,12 @@ public class CfgSqlService extends AService {
 			}
 			
 			if(operResult == null){
+				if((SqlStatementTypeConstants.PROCEDURE.equals(oldSqlScript.getSqlScriptType()) && !SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()))
+						|| (SqlStatementTypeConstants.VIEW.equals(oldSqlScript.getSqlScriptType()) && !SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+					DBUtil.dropObject(oldSqlScript);
+				}
 				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
-					if(oldSqlScript.getObjectName().equals(sqlScript.getObjectName())){
+					if(oldSqlScript.getObjectName() != null && oldSqlScript.getObjectName().equals(sqlScript.getObjectName())){
 						sqlScript.setIsCoverSqlObject(true);
 					}
 					DBUtil.createObject(sqlScript);

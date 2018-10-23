@@ -238,7 +238,7 @@ public class HibernateUtil {
 	/**
 	 * 修改对象
 	 * 通过拼接update hql语句修改对象
-	 * <p>目前这个方法，和通用表资源的update不是统一的</p>
+	 * <p>目前这个方法，和通用表资源的update不是统一的，这个是开发代码资源专用的update方法</p>
 	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 * @return JSONObject

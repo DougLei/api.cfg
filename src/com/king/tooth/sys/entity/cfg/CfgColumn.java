@@ -136,7 +136,7 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	 * 是否忽略验证
 	 * <p>1是0否，默认值为0</p>
 	 */
-	private Integer isIgnoreValid;
+	private Integer isIgnoreValid=0;
 	
 	//-------------------------------------------------------------------------
 	
