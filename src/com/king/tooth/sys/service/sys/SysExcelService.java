@@ -282,29 +282,36 @@ public class SysExcelService extends AService{
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
 		Row headRow = sheet.createRow(0);
-		createImportExcelTemplateHeadRow(headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getIeResourceMetadataInfos().size());
+		createImportExcelTemplateHeadRow(sheet, headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getResourceMetadataInfoOfConfExtendCount());
 		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, importFileTemplate.getFileId(), SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
 	}
 	
 	/**
-	 * 创建xcel导入模版的头行
+	 * 创建excel导入模版的头行
+	 * @param sheet
 	 * @param headRow
 	 * @param ieResourceMetadataInfos
-	 * @param resourceMetadataInfoCount
+	 * @param resourceMetadataInfoOfConfExtendCount
 	 */
-	private void createImportExcelTemplateHeadRow(Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
+	private void createImportExcelTemplateHeadRow(Sheet sheet, Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int resourceMetadataInfoOfConfExtendCount){
+		int resourceMetadataInfoCount = ieResourceMetadataInfos.size();
+		int propConfExtendInfoCellIndex = resourceMetadataInfoCount+resourceMetadataInfoOfConfExtendCount+1;// 属性配置的扩展信息，要在excel中插入单元格的下标
+		
+		IEResourceMetadataInfo rmi = null;
 		int cellIndex = 0;
 		Cell cell;
-		IEResourceMetadataInfo rmi = null;
-		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
+		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
 			cell = headRow.createCell(cellIndex++);
 			cell.setCellValue(rmi.getDescName());
 			
 			if(rmi.getIeConfExtend() != null){
+				sheet.setColumnHidden(cellIndex, true);
 				cell = headRow.createCell(cellIndex++);
-				cell.setCellValue(rmi.getDescName());
+				cell.setCellValue(rmi.getPropName());
 				// TODO
+				
+				
 			}
 		}
 	}
