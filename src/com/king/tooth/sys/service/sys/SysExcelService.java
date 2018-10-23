@@ -104,7 +104,6 @@ public class SysExcelService extends AService{
 			String resourceName = importFile.getResourceName();
 			
 			String desc = "导入excel文件["+file.getActName()+"]，";
-			int i, j, columnIndex=0;
 			List<IEResourceMetadataInfo> ieResourceMetadataInfos = importFile.getIeResourceMetadataInfos();
 			int ieResourceMetadataInfoCount = ieResourceMetadataInfos.size();
 			IJson ijson = new JSONArrayExtend(rowCount-1);;
@@ -116,6 +115,7 @@ public class SysExcelService extends AService{
 			Cell cell;// excel列对象
 			short columnCount = 0; // 列数
 			
+			short i, j, index=0;
 			for(i=1;i<rowCount;i++){
 				row = sheet.getRow(i);
 				if(row != null){
@@ -127,7 +127,7 @@ public class SysExcelService extends AService{
 					ijson.add(json);
 					
 					for (j=0; j<columnCount; j++) {
-						rmi = ieResourceMetadataInfos.get(columnIndex);
+						rmi = ieResourceMetadataInfos.get(index);
 						if(rmi.getIeConfExtend() != null){
 							j++;
 						}
@@ -135,9 +135,9 @@ public class SysExcelService extends AService{
 						if(cell != null){
 							json.put(rmi.getPropName(), getCellValue(cell));
 						}
-						columnIndex++;
+						index++;
 					}
-					columnIndex=0;
+					index=0;
 				}
 			}
 			validResult = validImportDatas(desc , resourceName, ijson, ieResourceMetadataInfos);

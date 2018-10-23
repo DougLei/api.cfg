@@ -18,5 +18,7 @@ public class TestMain {
 		tm.a++;
 		tm.a++;
 		System.out.println(tm.a);
+		
+		System.out.println(Short.MAX_VALUE);
 	}
 }
