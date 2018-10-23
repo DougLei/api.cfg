@@ -295,11 +295,17 @@ public class SysExcelService extends AService{
 	private void createImportExcelTemplateHeadRow(Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
 		int cellIndex = 0;
 		Cell cell;
-		ResourceMetadataInfo rmi = null;
+		IEResourceMetadataInfo rmi = null;
 		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
 			cell = headRow.createCell(cellIndex++);
 			cell.setCellValue(rmi.getDescName());
+			
+			if(rmi.getIeConfExtend() != null){
+				cell = headRow.createCell(cellIndex++);
+				cell.setCellValue(rmi.getDescName());
+				// TODO
+			}
 		}
 	}
 	
