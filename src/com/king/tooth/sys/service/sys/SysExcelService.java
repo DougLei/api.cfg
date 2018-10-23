@@ -112,30 +112,25 @@ public class SysExcelService extends AService{
 			
 			IEResourceMetadataInfo rmi = null;
 			Row row = null;// excel行对象
-			Cell cell;// excel列对象
 			short columnCount = 0; // 列数
 			
-			short i, j, index=0;
+			int i, j, index=0;
 			for(i=1;i<rowCount;i++){
 				row = sheet.getRow(i);
 				if(row != null){
 					columnCount = sheet.getRow(i).getLastCellNum();
-					if(columnCount > (ieResourceMetadataInfoCount + importFile.getResourceMetadataInfoOfConfExtendCount())){
-						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)大于资源["+resourceName+"]配置的导入字段数量("+ieResourceMetadataInfos.size()+"个)，系统无法匹配，请调整配置，或sheet中的列";
+					if((columnCount-1) != (ieResourceMetadataInfoCount + importFile.getResourceMetadataInfoOfConfExtendCount())){
+						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)不等于资源["+resourceName+"]配置的导入字段数量("+ieResourceMetadataInfos.size()+"个)，系统无法匹配，请调整系统字段配置，或excel中的列";
 					}
+					
 					json = new JSONObject(ieResourceMetadataInfoCount);
 					ijson.add(json);
-					
-					for (j=0; j<columnCount; j++) {
-						rmi = ieResourceMetadataInfos.get(index);
+					for (j=1; j<columnCount; j++) {
+						rmi = ieResourceMetadataInfos.get(index++);
 						if(rmi.getIeConfExtend() != null){
 							j++;
 						}
-						cell = row.getCell(j);
-						if(cell != null){
-							json.put(rmi.getPropName(), getCellValue(cell));
-						}
-						index++;
+						json.put(rmi.getPropName(), getCellValue(row.getCell(j)));
 					}
 					index=0;
 				}
@@ -155,6 +150,9 @@ public class SysExcelService extends AService{
 	 * @return
 	 */
 	private Object getCellValue(Cell cell) {
+		if(cell == null){
+			return null;
+		}
 		if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC && org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell)){
 			return cell.getDateCellValue();
 		}
