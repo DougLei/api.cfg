@@ -216,16 +216,26 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	}
 	
 	public List<String[]> getDataList() {
-		// TODO
-		
+		/**
+		 * 注意：
+		 * (1).dataDictionaryCode
+		 * (2).refTableId、refKeyColumnId、refValueColumnId
+		 * (3).refTableResourceName、refKeyColumnPropName、refValueColumnPropName
+		 * 以上是三组扩展配置，系统按照以上配置解析，如果第一个有值了，dataList就用dataDictionaryCode的结果集合；依次类推
+		 */
+		if(StrUtils.notEmpty(dataDictionaryCode)){
+			// TODO
+			
+			
+		}else if(StrUtils.notEmpty(refTableId) && StrUtils.notEmpty(refKeyColumnId) && StrUtils.notEmpty(refValueColumnId)){
+			// TODO
+			
+			
+		}else if(StrUtils.notEmpty(refTableResourceName) && StrUtils.notEmpty(refKeyColumnPropName) && StrUtils.notEmpty(refValueColumnPropName)){
+			// TODO
+			
+			
+		}
 		return dataList;
 	}
-	
-	/**
-	 * 注意：
-	 * (1).dataDictionaryCode
-	 * (2).refTableId、refKeyColumnId、refValueColumnId
-	 * (3).refTableResourceName、refKeyColumnPropName、refValueColumnPropName
-	 * 以上是三组扩展配置，系统按照以上配置解析，如果第一个有值了，dataList就用dataDictionaryCode的结果集合；依次类推
-	 */
 }
