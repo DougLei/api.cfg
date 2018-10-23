@@ -119,13 +119,16 @@ public class SysExcelService extends AService{
 				row = sheet.getRow(i);
 				if(row != null){
 					columnCount = sheet.getRow(i).getLastCellNum();
-					if((columnCount-1) != (ieResourceMetadataInfoCount + importFile.getResourceMetadataInfoOfConfExtendCount())){
-						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)不等于资源["+resourceName+"]配置的导入字段数量("+ieResourceMetadataInfos.size()+"个)，系统无法匹配，请调整系统字段配置，或excel中的列";
-					}
+//					if(columnCount != (ieResourceMetadataInfoCount + importFile.getResourceMetadataInfoOfConfExtendCount())){
+//						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)不等于资源["+resourceName+"]配置的导入字段数量("+ieResourceMetadataInfos.size()+"个)，系统无法匹配，请调整系统字段配置，或excel中的列";
+//					}
 					
 					json = new JSONObject(ieResourceMetadataInfoCount);
 					ijson.add(json);
-					for (j=1; j<columnCount; j++) {
+					for (j=0; j<columnCount; j++) {
+						if(index > ieResourceMetadataInfoCount){
+							break;
+						}
 						rmi = ieResourceMetadataInfos.get(index++);
 						if(rmi.getIeConfExtend() != null){
 							j++;
