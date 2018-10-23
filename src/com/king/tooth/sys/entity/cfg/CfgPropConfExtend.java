@@ -30,6 +30,7 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	 * <p>1、column，2、sqlResultset</p>
 	 */
 	private Integer refPropType;
+	
 	/**
 	 * 数据字典编码
 	 */
@@ -52,6 +53,13 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	private String refValueColumnPropName;
 	
 	//-------------------------------------------------------------------------
+	/**
+	 * 数据列表
+	 * <p>数组的长度就为2，下标为0的是展示名称，下标为1的是实际存储的值</p>
+	 */
+	@JSONField(serialize = false)
+	private List<String[]> dataList;
+	
 	public Integer getRefPropType() {
 		return refPropType;
 	}
@@ -106,7 +114,7 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	public void setRefValueColumnPropName(String refValueColumnPropName) {
 		this.refValueColumnPropName = refValueColumnPropName;
 	}
-
+	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(9+7);
@@ -188,10 +196,36 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 		if(StrUtils.isEmpty(refPropId)){
 			return "关联的属性id不能为空";
 		}
+		if(StrUtils.notEmpty(dataDictionaryCode) 
+				&& (StrUtils.notEmpty(refTableId) || StrUtils.notEmpty(refKeyColumnId) || StrUtils.notEmpty(refValueColumnId) || StrUtils.notEmpty(refTableResourceName) || StrUtils.notEmpty(refKeyColumnPropName) || StrUtils.notEmpty(refValueColumnPropName))){
+			return "扩展信息已经配置了关联的数据字典，无法再配置关联其他表的字段";
+		}
+		if((StrUtils.notEmpty(refTableId) && StrUtils.notEmpty(refKeyColumnId) && StrUtils.notEmpty(refValueColumnId)) 
+				&& (StrUtils.notEmpty(refTableResourceName) || StrUtils.notEmpty(refKeyColumnPropName) || StrUtils.notEmpty(refValueColumnPropName))){
+			return "扩展信息已经配置了关联业务表的字段，无法再配置关联内置表的字段";
+		}
+		if((StrUtils.notEmpty(refTableResourceName) && StrUtils.notEmpty(refKeyColumnPropName) && StrUtils.notEmpty(refValueColumnPropName)) 
+				&& (StrUtils.notEmpty(refTableId) || StrUtils.notEmpty(refKeyColumnId) || StrUtils.notEmpty(refValueColumnId))){
+			return "扩展信息已经配置了关联内置表的字段，无法再配置关联业务表的字段";
+		}
 		return null;
 	}
 	
 	public String analysisResourceProp() {
 		return validNotNullProps();
 	}
+	
+	public List<String[]> getDataList() {
+		// TODO
+		
+		return dataList;
+	}
+	
+	/**
+	 * 注意：
+	 * (1).dataDictionaryCode
+	 * (2).refTableId、refKeyColumnId、refValueColumnId
+	 * (3).refTableResourceName、refKeyColumnPropName、refValueColumnPropName
+	 * 以上是三组扩展配置，系统按照以上配置解析，如果第一个有值了，dataList就用dataDictionaryCode的结果集合；依次类推
+	 */
 }

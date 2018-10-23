@@ -299,22 +299,41 @@ public class SysExcelService extends AService{
 		
 		IEResourceMetadataInfo rmi = null;
 		int cellIndex = 0;
-		Cell cell;
+		int rowIndex = 1;
+		Row row = null;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
-			cell = headRow.createCell(cellIndex++);
-			cell.setCellValue(rmi.getDescName());
+			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
 			
 			if(rmi.getIeConfExtend() != null){
 				sheet.setColumnHidden(cellIndex, true);
-				cell = headRow.createCell(cellIndex++);
-				cell.setCellValue(rmi.getPropName());
-				// TODO
+				setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());
 				
-				
+				List<String[]> dataList = rmi.getIeConfExtend().getDataList();
+				if(dataList != null && dataList.size() > 0){
+					for (String[] data : dataList) {
+						row = sheet.createRow(rowIndex++);
+						setCellValue(row.createCell(propConfExtendInfoCellIndex), data[0]);
+						setCellValue(row.createCell(propConfExtendInfoCellIndex+1), data[1]);
+					}
+					dataList.clear();
+					
+					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
+					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
+					rowIndex=1;
+				}
 			}
 		}
 	}
+	/** 设置单元格的值 */
+	private Cell setCellValue(Cell cell, String value){
+		if(value != null){
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			cell.setCellValue(value);
+		}
+		return cell;
+	}
+	
 	
 	// ---------------------------------------------------------------------
 	/**
