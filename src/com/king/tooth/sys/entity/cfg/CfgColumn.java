@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -139,6 +140,11 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	private Integer isIgnoreValid=0;
 	
 	//-------------------------------------------------------------------------
+	/**
+	 * 导入导出的扩展配置对象
+	 */
+	@JSONField(serialize = false)
+	private CfgPropIEConfExtend ieConfExtend;
 	
 	public CfgColumn() {
 	}
@@ -216,6 +222,12 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	}
 	public void setPrecision(Integer precision) {
 		this.precision = precision;
+	}
+	public CfgPropIEConfExtend getIeConfExtend() {
+		return ieConfExtend;
+	}
+	public void setIeConfExtend(CfgPropIEConfExtend ieConfExtend) {
+		this.ieConfExtend = ieConfExtend;
 	}
 	public Integer getIsPrimaryKey() {
 		return isPrimaryKey;
@@ -582,10 +594,10 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	}
 	
 	public TableResourceMetadataInfo toTableResourceMetadataInfo(){
-		return new TableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);
+		return new TableResourceMetadataInfo(ResourceInfoConstants.BUILTIN_RESOURCE, columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);
 	}
 	public IETableResourceMetadataInfo toIETableResourceMetadataInfo(){
-		return new IETableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);
+		return new IETableResourceMetadataInfo(ResourceInfoConstants.BUILTIN_RESOURCE, columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, ieConfExtend, propName, comments);
 	}
 	
 	// --------------------------------------------------------------------------------------

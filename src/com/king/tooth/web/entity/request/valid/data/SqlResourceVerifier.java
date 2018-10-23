@@ -128,6 +128,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			for (ComSqlScriptParameter sqlParam : sqlParams) {
 				metadataInfos.add(new SqlResourceMetadataInfo(
 						null,
+						null,
 						sqlParam.getParameterDataType(),
 						sqlParam.getLength(),
 						sqlParam.getPrecision(),

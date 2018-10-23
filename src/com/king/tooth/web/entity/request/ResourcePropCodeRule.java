@@ -2,6 +2,7 @@ package com.king.tooth.web.entity.request;
 
 import java.util.List;
 
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -35,7 +36,7 @@ public class ResourcePropCodeRule {
 				&& requestBody.isPostRequest()){
 			
 			// 内置的资源，不需要处理
-			if("builtinResource".equals(requestBody.getResourceInfo().getReqResource().getRefResourceId())){
+			if(ResourceInfoConstants.BUILTIN_RESOURCE.equals(requestBody.getResourceInfo().getReqResource().getRefResourceId())){
 				return;
 			}
 			

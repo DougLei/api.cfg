@@ -138,13 +138,13 @@ public class ResourceHandlerUtil {
 	 * 获取基础属性的元数据信息
 	 * <p>Id,customerId,projectId,createDate,lastUpdateDate,createUserId,lastUpdateUserId</p>
 	 * @param basicPropName
-	 * @param builtinResource
+	 * @param isBuiltinResource
 	 * @return
 	 */
-	public static ResourceMetadataInfo getBasicPropMetadataInfo(String basicPropName, boolean builtinResource){
+	public static ResourceMetadataInfo getBasicPropMetadataInfo(String basicPropName, boolean isBuiltinResource){
 		if(StrUtils.notEmpty(basicPropName) && isBuildInProps(basicPropName)){
 			if(ResourcePropNameConstants.ID.equals(basicPropName)){
-				if(builtinResource){
+				if(isBuiltinResource){
 					return BuiltinObjectInstance.idColumn32.toTableResourceMetadataInfo();
 				}
 				return BuiltinObjectInstance.idColumn50.toTableResourceMetadataInfo();
@@ -169,13 +169,13 @@ public class ResourceHandlerUtil {
 	 * 获取基础属性的导入导出元数据信息
 	 * <p>Id,customerId,projectId,createDate,lastUpdateDate,createUserId,lastUpdateUserId</p>
 	 * @param basicPropName
-	 * @param builtinResource
+	 * @param isBuiltinResource
 	 * @return
 	 */
-	public static IEResourceMetadataInfo getBasicPropIEMetadataInfo(String basicPropName, boolean builtinResource){
+	public static IEResourceMetadataInfo getBasicPropIEMetadataInfo(String basicPropName, boolean isBuiltinResource){
 		if(StrUtils.notEmpty(basicPropName) && isBuildInProps(basicPropName)){
 			if(ResourcePropNameConstants.ID.equals(basicPropName)){
-				if(builtinResource){
+				if(isBuiltinResource){
 					return BuiltinObjectInstance.idColumn32.toIETableResourceMetadataInfo();
 				}
 				return BuiltinObjectInstance.idColumn50.toIETableResourceMetadataInfo();

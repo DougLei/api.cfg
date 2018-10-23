@@ -1,5 +1,7 @@
 package com.king.tooth.constants;
 
+import com.king.tooth.sys.entity.cfg.CfgColumn;
+
 
 /**
  * 资源信息常量
@@ -7,6 +9,11 @@ package com.king.tooth.constants;
  */
 public class ResourceInfoConstants {
 
+	/**
+	 * 内置资源标识
+	 * <p>系统内置资源的refResourceId的值为内置资源标识</p>
+	 */
+	public static final String BUILTIN_RESOURCE = "builtinResource";
 	/**
 	 * 1：表资源类型
 	 */
@@ -73,4 +80,10 @@ public class ResourceInfoConstants {
 	 * 系统内置的属性名
 	 */
 	public static final String[] BUILTIN_PROP_NAMES = {ResourcePropNameConstants.ID, "customerId", "projectId", "createDate", "lastUpdateDate", "createUserId", "lastUpdateUserId"};
+	
+	// ----------------------------------------------------------------------------
+	/**
+	 * 查询表资源元数据信息集合的hql头
+	 */
+	public static final String queryTableMetadataInfosHqlHead = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
 }

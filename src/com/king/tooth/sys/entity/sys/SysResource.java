@@ -133,13 +133,8 @@ public class SysResource extends BasicEntity implements ITable, IEntity{
 	 * @return
 	 */
 	public boolean isBuiltinResource(){
-		return BUILTIN_RESOURCE.equals(refResourceId);
+		return ResourceInfoConstants.BUILTIN_RESOURCE.equals(refResourceId);
 	}
-	/**
-	 * 内置资源标识
-	 * <p>系统内置资源的refResourceId的值为内置资源标识</p>
-	 */
-	private static final String BUILTIN_RESOURCE = "builtinResource";
 
 	/**
 	 * 是否是表资源

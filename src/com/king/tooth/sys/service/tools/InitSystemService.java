@@ -13,6 +13,7 @@ import java.util.List;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
@@ -291,13 +292,13 @@ public class InitSystemService extends AService{
 			// 创建对应的hbm文件，并保存
 			hbm = new CfgHibernateHbm(table);
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
-			hbm.setRefTableId("builtinResource");
+			hbm.setRefTableId(ResourceInfoConstants.BUILTIN_RESOURCE);
 			hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 			HibernateUtil.saveObject(hbm, adminAccountId);
 			
 			// 保存到资源表中
 			resource = table.turnToResource();
-			resource.setRefResourceId("builtinResource");
+			resource.setRefResourceId(ResourceInfoConstants.BUILTIN_RESOURCE);
 			HibernateUtil.saveObject(resource, adminAccountId);
 		}
 		clearTables(tables);

@@ -49,22 +49,6 @@ import com.king.tooth.web.entity.resulttype.PageResultEntity;
 public class SysExcelService extends AService{
 	
 	/**
-	 * 创建头行
-	 * @param headRow
-	 * @param ieResourceMetadataInfos
-	 * @param resourceMetadataInfoCount
-	 */
-	private void createHeadRow(Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
-		Cell cell;
-		ResourceMetadataInfo rmi = null;
-		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
-			rmi = ieResourceMetadataInfos.get(i);
-			cell = headRow.createCell(i);
-			cell.setCellValue(rmi.getDescName());
-		}
-	}
-	
-	/**
 	 * 生成excel文件，并将该文件信息保存到文件表中
 	 * @param workbook
 	 * @param fileName
@@ -287,9 +271,25 @@ public class SysExcelService extends AService{
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
 		Row headRow = sheet.createRow(0);
-		createHeadRow(headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getIeResourceMetadataInfos().size());
-		
+		createImportExcelTemplateHeadRow(headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getIeResourceMetadataInfos().size());
 		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, importFileTemplate.getFileId(), SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
+	}
+	
+	/**
+	 * 创建xcel导入模版的头行
+	 * @param headRow
+	 * @param ieResourceMetadataInfos
+	 * @param resourceMetadataInfoCount
+	 */
+	private void createImportExcelTemplateHeadRow(Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
+		int cellIndex = 0;
+		Cell cell;
+		ResourceMetadataInfo rmi = null;
+		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
+			rmi = ieResourceMetadataInfos.get(i);
+			cell = headRow.createCell(cellIndex++);
+			cell.setCellValue(rmi.getDescName());
+		}
 	}
 	
 	// ---------------------------------------------------------------------
@@ -317,7 +317,7 @@ public class SysExcelService extends AService{
 		createTitleRow(sheet, title, ieResourceMetadataInfos.size());
 		
 		Row headRow = sheet.createRow(1);
-		createHeadRow(headRow, ieResourceMetadataInfos, resourceMetadataInfoCount);
+		createExportExcelHeadRow(headRow, ieResourceMetadataInfos, resourceMetadataInfoCount);
 		
 		PageResultEntity pageResultEntity = exportFile.getPageResultEntity();
 		Query query = exportFile.getQuery();
@@ -374,6 +374,22 @@ public class SysExcelService extends AService{
 	 */
 	private void createTitleRow(Sheet sheet, String title, int colspanLength){
 		PoiExcelUtil.mergedCells(sheet, 0, 0, title, 0, 0, 0, colspanLength-1);
+	}
+	
+	/**
+	 * 创建导出excel的头行
+	 * @param headRow
+	 * @param ieResourceMetadataInfos
+	 * @param resourceMetadataInfoCount
+	 */
+	private void createExportExcelHeadRow(Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
+		Cell cell;
+		ResourceMetadataInfo rmi = null;
+		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
+			rmi = ieResourceMetadataInfos.get(i);
+			cell = headRow.createCell(i);
+			cell.setCellValue(rmi.getDescName());
+		}
 	}
 	
 	/**
