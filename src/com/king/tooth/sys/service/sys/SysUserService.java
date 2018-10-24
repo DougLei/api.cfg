@@ -7,6 +7,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysUser;
@@ -227,6 +228,7 @@ public class SysUserService extends AService{
 				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
+				account.setValidDate(BuiltinObjectInstance.validDate);
 				String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
 				user.setId(accountId);
 			}
