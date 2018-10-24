@@ -389,8 +389,8 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		}
 		
 		if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){
-			if(StrUtils.isEmpty(ssp.getActualInValue())){
-				if(StrUtils.isEmpty(ssp.getDefaultValue())){
+			if(ssp.getActualInValue() == null){
+				if(ssp.getDefaultValue() == null){
 					return desc+"第"+index+"个对象，必须传入名为"+ssp.getParameterName()+"的参数值";
 				}
 				ssp.setActualInValue(ssp.getDefaultValue());
