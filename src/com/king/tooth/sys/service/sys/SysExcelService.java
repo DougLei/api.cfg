@@ -295,45 +295,70 @@ public class SysExcelService extends AService{
 	 */
 	private void createImportExcelTemplateHeadRow(Sheet sheet, Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int resourceMetadataInfoOfConfExtendCount){
 		int resourceMetadataInfoCount = ieResourceMetadataInfos.size();
-		int propConfExtendInfoCellIndex = resourceMetadataInfoCount+resourceMetadataInfoOfConfExtendCount+1;// 属性配置的扩展信息，要在excel中插入单元格的下标
+		int propConfExtendInfoCellIndex = resourceMetadataInfoCount+resourceMetadataInfoOfConfExtendCount;// 属性配置的扩展信息，要在excel中插入单元格的下标
 		
 		IEResourceMetadataInfo rmi = null;
+		List<Object[]> dataList = null;
+		Row hiddenRow = null;
+		int hiddenRowIndex = 1;
 		int cellIndex = 0;
-		int rowIndex = 1;
-		Row row = null;
+		
+		Cell cell = null;// 如果有扩展信息，要设置为下拉菜单
+		Cell valueCell = null;// 设置成隐藏列，并且加函数的
+		
+		String valueArrayWord = null;
+		String valueWord = null;
+		String compareWord = null;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
-			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
+			cell = setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
 			
 			if(rmi.getIeConfExtend() != null){
 				sheet.setColumnHidden(cellIndex, true);
-				setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());
-				
-				List<String[]> dataList = rmi.getIeConfExtend().getDataList();
+				valueCell = setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());
+				dataList = rmi.getIeConfExtend().getDataList();
 				if(dataList != null && dataList.size() > 0){
-					for (String[] data : dataList) {
-						row = sheet.createRow(rowIndex++);
-						setCellValue(row.createCell(propConfExtendInfoCellIndex), data[0]);
-						setCellValue(row.createCell(propConfExtendInfoCellIndex+1), data[1]);
+					
+					// 设置存储实际值的隐藏列的计算公式：=INDEX(H:H,MATCH(D:D,I:I,0))
+					valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
+					valueArrayWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex);
+					valueWord = PoiExcelUtil.getColumnCharWordByIndex(cellIndex-1);
+					compareWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex+1);
+					valueCell.setCellFormula("=INDEX("+valueArrayWord+":"+valueArrayWord+",MATCH("+valueWord+":"+valueWord+","+compareWord+":"+compareWord+",0))");
+					
+					for (Object[] data : dataList) {
+						hiddenRow = sheet.createRow(hiddenRowIndex++);
+						setCellValue(hiddenRow.createCell(propConfExtendInfoCellIndex), data[0]);
+						setCellValue(hiddenRow.createCell(propConfExtendInfoCellIndex+1), data[1]);
 					}
-					dataList.clear();
-					
-					// TODO 建立函数的关联关系
+					clearDataList(dataList);
 					
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
-					rowIndex=1;
+					hiddenRowIndex=1;
 				}
 			}
 		}
 	}
 	/** 设置单元格的值 */
-	private Cell setCellValue(Cell cell, String value){
+	private Cell setCellValue(Cell cell, Object value){
 		if(value != null){
 			cell.setCellType(Cell.CELL_TYPE_STRING);
-			cell.setCellValue(value);
+			cell.setCellValue(value.toString());
 		}
 		return cell;
+	}
+	/** 清空dataList */
+	@SuppressWarnings("unchecked")
+	private void clearDataList(List<Object[]> dataList){
+		if(dataList!=null && dataList.size()>0){
+			for (Object[] data : dataList) {
+				if(data.length == 3 && data[2] != null){
+					clearDataList((List<Object[]>) data[2]);
+				}
+			}
+			dataList.clear();
+		}
 	}
 	
 	

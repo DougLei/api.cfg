@@ -104,7 +104,7 @@ public class BuiltinQueryParameters {
 			return new java.util.Date();
 		}
 		if(currentSqlDate.equals(parameterName)){
-			return new java.sql.Date(new java.util.Date().getTime());
+			return new java.sql.Timestamp(new java.util.Date().getTime());
 		}
 		if(currentCustomerId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();

@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+
 /**
  * poi操作excel的工具类
  * @author DougLei
@@ -106,4 +107,22 @@ public class PoiExcelUtil {
 			cell.setCellValue(cellValue.toString());
 		}
 	}
+
+	/**
+	 * 获取单元格对应的列字母
+	 * <p>例如，第一列为A，第二列为B...</p>
+	 * @param cellIndex
+	 * @return
+	 */
+	public static String getColumnCharWordByIndex(int cellIndex) {
+		if(cellIndex < 1){
+			throw new IllegalArgumentException("excel的列下标值不能小于1");
+		}
+		if(cellIndex > maxColumnIndex){
+			throw new IllegalArgumentException("excel的列下标值不能大于" + maxColumnIndex);
+		}
+		return null;
+	}
+	private static final int maxColumnIndex = 26*9+22;// excel最大的列数，到IV
+	private static final String[] words = {null,"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};// 26个应为字母
 }

@@ -4,39 +4,43 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hssf.usermodel.DVConstraint;
+import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddressList;
 
 import com.king.tooth.util.PoiExcelUtil;
 
 public class ExportExcel1 {
 	public static void main(String[] args) throws IOException {
+		String suffix = "xls";
 		
-		Workbook wb = (Workbook) PoiExcelUtil.getWriteWorkBookInstance("xlsx");
+		Workbook wb = (Workbook) PoiExcelUtil.getWriteWorkBookInstance(suffix);
 		Sheet sheet = wb.createSheet();
 		
-		sheet.setColumnHidden(2, true);
-//		CellStyle cs = wb.createCellStyle();
-//		cs.setHidden(true);
-		
 		Row row = sheet.createRow(0);
-		Cell cell1 = row.createCell(0);
-		cell1.setCellValue("第一个单元格");
+		Cell cell = row.createCell(10);
+		cell.setCellValue("哈哈");
+		
+		row = sheet.createRow(1);
+		cell = row.createCell(10);
+		cell.setCellValue("呵呵");
+		
+		row = sheet.createRow(2);
+		cell = row.createCell(10);
+		cell.setCellValue("嘿嘿");
+		
+		DVConstraint constraint = DVConstraint.createFormulaListConstraint("K1:K3");
+		CellRangeAddressList regions=new CellRangeAddressList(1, 10, 0, 0);
+		HSSFDataValidation ret = new HSSFDataValidation(regions, constraint);
+		
+		sheet.addValidationData(ret);
 		
 		
-		Cell cell2 = row.createCell(1);
-		cell2.setCellValue("第二个单元格");
-		
-		
-		Cell cell3 = row.createCell(2);
-		cell3.setCellValue("第三个单元格");
-		
-		
-		
-		
-		File f = new File("C:\\Users\\StoneKing\\Desktop\\test.xlsx");
+		File f = new File("C:\\Users\\StoneKing\\Desktop\\test."+suffix);
 		if(f.exists()){
 			f.delete();
 		}

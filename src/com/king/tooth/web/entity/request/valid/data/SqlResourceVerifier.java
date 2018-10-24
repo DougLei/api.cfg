@@ -212,7 +212,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			int len = formData.size();
 			actualParamsList = new ArrayList<List<ComSqlScriptParameter>>(len);
 			
-			JSONObject json;
+			JSONObject json = null;
 			for(int i=0;i<len;i++){
 				json = formData.get(i);
 				if(json != null && json.size()>0){
@@ -222,7 +222,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					Set<String> parameterNames = json.keySet();
 					for (String parameterName : parameterNames) {
 						ssp = new ComSqlScriptParameter(parameterName, null, false, 0, -1, false, true);
-						ssp.setActualInValue(json.getString(parameterName).trim());
+						ssp.setActualInValue(json.get(parameterName));
 						sqlScriptActualParameters.add(ssp);
 					}
 				}else{

@@ -205,9 +205,7 @@ public class CfgProjectModuleService extends AService {
 			return projectModules;
 		}
 		for (ProjectModuleExtend projectModule : projectModules) {
-			if(projectModule != null){
-				sortProjectModules(projectModule.getChildren(), isAsc);
-			}
+			sortProjectModules(projectModule.getChildren(), isAsc);
 		}
 		if(isAsc){
 			Collections.sort(projectModules);
