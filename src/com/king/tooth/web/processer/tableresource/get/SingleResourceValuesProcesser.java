@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
+import com.king.tooth.thread.current.CurrentThreadContext;
+
 /**
  * 处理这种请求路径格式的处理器：/Values/{resourceType}/{propName}
  * @author DougLei
@@ -43,9 +45,11 @@ public final class SingleResourceValuesProcesser extends GetProcesser {
 		hqlParameterValues.clear();// 清空所有的查询条件值
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append("select caption, val from SysDataDictionary where code = ? and isEnabled = 1 and isDelete=0 order by orderCode asc");
+		hql.append("select caption, val from SysDataDictionary where code = ? and isEnabled = 1 and isDelete=0 and projectId=? and customerId=? order by orderCode asc");
 		String queryValue = requestBody.getRouteBody().getResourceName()+"."+requestBody.getRouteBody().getPropName();
 		hqlParameterValues.add(queryValue.toLowerCase());
+		hqlParameterValues.add(CurrentThreadContext.getProjectId());
+		hqlParameterValues.add(CurrentThreadContext.getCustomerId());
 		return hql;
 	}
 }

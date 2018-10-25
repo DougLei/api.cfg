@@ -11,6 +11,7 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ITable;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -96,10 +97,18 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	private String orderByColumnPropName;
 	
 	/**
+	 * 查询类型
+	 * <p>1.查询数据字典</p>
+	 * <p>2.查询其他表数据</p>
+	 */
+	@JSONField(serialize = false)
+	private int queryType;
+	
+	/**
 	 * 查询数据的hql
 	 */
 	@JSONField(serialize = false)
-	private final StringBuilder queryDataHql = new StringBuilder();
+	private String queryDataHql;
 
 	/** 查询数据时，已经循环的次数 */
 	@JSONField(serialize = false)
@@ -289,8 +298,10 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	
 	public long getDataListTotalCount() {
 		if(StrUtils.notEmpty(dataDictionaryId)){
+			queryType = 1;
 			dataListTotalCount = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryDataDictionaryCountHql, dataDictionaryId);
 		}else if(StrUtils.notEmpty(refTable) && StrUtils.notEmpty(refKeyColumn) && StrUtils.notEmpty(refValueColumn)){
+			queryType = 2;
 			if(isRefBuiltinTable == 1){
 				tableResourceName = refTable;
 				keyColumnPropName = refKeyColumn;
@@ -336,6 +347,7 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	/** 查询数据字典值count的hql */
 	private static final String queryDataDictionaryCountHql = "select count("+ResourcePropNameConstants.ID+") from SysDataDictionary where parentId=? and isEnabled=1 and isDelete=0";
 
+	@JSONField(serialize = false)
 	public List<Object[]> getDataList() {
 		if(currentLoopCount < loopCount){
 			// 数据列表。数组的长度就为2或3，下标为0的是实际存储的值，下标为1的是展示名称，如果下标为2有值，则标识是子数据集合，依次类推
@@ -347,18 +359,17 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 				endIndex = startIndex+querySize;
 			}
 			
-			if(StrUtils.notEmpty(dataDictionaryId)){
-				dataList = HibernateUtil.executeListQueryByHqlArr(startIndex+"", endIndex+"", queryDataDictionaryHql, dataDictionaryId);
-			}else if(StrUtils.notEmpty(tableResourceName) && StrUtils.notEmpty(keyColumnPropName) && StrUtils.notEmpty(valueColumnPropName)){
+			if(queryType==1){
+				dataList = HibernateUtil.executeListQueryByHqlArr(startIndex+"", endIndex+"", queryDataDictionaryHql, dataDictionaryId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+				
+				// TODO 这里要考虑多级数据字典的信息
+				
+			}else if(queryType==2){
 				if(isRefBuiltinTable == 1){
-					
+					// TODO 这里要实现基础资源的信息，以及怎么加条件
 				}else{
-					queryDataHql.append("select ").append(valueColumnPropName).append(",").append(keyColumnPropName).append(" from ").append(tableResourceName);
-					if(StrUtils.notEmpty(orderByColumnPropName)){
-						queryDataHql.append(" order by ").append(orderByColumnPropName).append(" ").append(orderBy);
-					}
-					dataList = HibernateUtil.executeListQueryByHqlArr(startIndex+"", endIndex+"", queryDataHql.toString());
-					queryDataHql.setLength(0);
+					installQueryDataHql();
+					dataList = HibernateUtil.executeListQueryByHqlArr(startIndex+"", endIndex+"", queryDataHql);// 查询这些数据的时候，怎么带条件？
 				}
 			}
 			currentLoopCount++;
@@ -367,9 +378,21 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 		return null;
 	}
 	/** 查询数据字典的hql */
-	private static final String queryDataDictionaryHql = "select val, caption from SysDataDictionary where parentId=? and isEnabled=1 and isDelete=0 order by orderCode asc";
+	private static final String queryDataDictionaryHql = "select val, caption, "+ResourcePropNameConstants.ID+" from SysDataDictionary where parentId=? and isEnabled=1 and isDelete=0 and projectId=? and customerId=? order by orderCode asc";
 	/** 根据id查询表资源名的hql */
 	private static final String queryTableResourceNameByIdHql = "select resourceName from CfgTable where "+ResourcePropNameConstants.ID+"=? and isEnabled=1 and isCreated=1 and isBuildModel=1";
 	/** 根据id查询列属性名的hql */
 	private static final String queryColumnPropResourceNameByIdHql = "select propName CfgColumn where "+ResourcePropNameConstants.ID+"=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	
+	/**
+	 * 组装查询数据的hql语句
+	 */
+	private void installQueryDataHql() {
+		if(queryDataHql == null){
+			queryDataHql = "select " + valueColumnPropName + "," + keyColumnPropName + " from " + tableResourceName;
+			if(StrUtils.notEmpty(orderByColumnPropName)){
+				queryDataHql += " order by " + orderByColumnPropName + " " + orderBy;
+			}
+		}
+	}
 }

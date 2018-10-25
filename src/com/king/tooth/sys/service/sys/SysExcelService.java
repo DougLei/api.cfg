@@ -295,7 +295,6 @@ public class SysExcelService extends AService{
 	 * @param ieResourceMetadataInfos
 	 * @param resourceMetadataInfoOfConfExtendCount
 	 */
-	@SuppressWarnings("unchecked")
 	private void createImportExcelTemplateHeadRow(String fileSuffix, Sheet sheet, Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int resourceMetadataInfoOfConfExtendCount){
 		int resourceMetadataInfoCount = ieResourceMetadataInfos.size();
 		int propConfExtendInfoCellIndex = resourceMetadataInfoCount+resourceMetadataInfoOfConfExtendCount;// 属性配置的扩展信息，要在excel中插入单元格的下标
@@ -311,7 +310,6 @@ public class SysExcelService extends AService{
 		String valueWord = null;
 		String compareWord = null;
 		CfgPropConfExtend propConfExtend = null;
-		int recursiveLevel = 1;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
 			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
@@ -329,16 +327,7 @@ public class SysExcelService extends AService{
 				valueCell.setCellFormula("=INDEX("+valueArrayWord+":"+valueArrayWord+",MATCH("+valueWord+":"+valueWord+","+compareWord+":"+compareWord+",0))");
 				
 				while((dataList = propConfExtend.getDataList()) != null){
-					for (Object[] data : dataList) {
-						hiddenRow = sheet.createRow(hiddenRowIndex++);
-						setCellValue(hiddenRow.createCell(propConfExtendInfoCellIndex), data[0]);
-						setCellValue(hiddenRow.createCell(propConfExtendInfoCellIndex+1), data[1]);
-						if(data.length == 3 && data[3] != null){
-							hiddenRowIndex = setCellValueRecursive((List<Object[]>)data[3], sheet, hiddenRow, hiddenRowIndex, propConfExtendInfoCellIndex, propConfExtendInfoCellIndex+1, recursiveLevel);
-						}
-						recursiveLevel=1;
-					}
-					dataList.clear();
+					hiddenRowIndex = setCellValueRecursive(dataList, sheet, hiddenRow, hiddenRowIndex, propConfExtendInfoCellIndex, propConfExtendInfoCellIndex+1, 0);
 				}
 				
 				// 设置数据有效性，默认1列就够了，剩下的用户去修改和拖拉excel单元格即可
@@ -366,8 +355,8 @@ public class SysExcelService extends AService{
 				hiddenRow = sheet.createRow(hiddenRowIndex++);
 				setCellValue(hiddenRow.createCell(index1), data[0]);
 				setCellValue(hiddenRow.createCell(index2), getIndent(recursiveLevel)+data[1]);
-				if(data.length == 3 && data[3] != null){
-					hiddenRowIndex = setCellValueRecursive((List<Object[]>)data[3], sheet, hiddenRow, hiddenRowIndex, index1, index2, recursiveLevel++);
+				if(data.length == 3 && data[3] != null && data[3] instanceof List){
+					hiddenRowIndex = setCellValueRecursive((List<Object[]>)data[3], sheet, hiddenRow, hiddenRowIndex, index1, index2, recursiveLevel+1);
 				}
 			}
 			dataList.clear();
