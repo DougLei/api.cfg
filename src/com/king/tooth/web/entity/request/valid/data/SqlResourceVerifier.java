@@ -521,7 +521,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			Log4jUtil.warn(ComSqlScriptParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
 			return "''";
 		}
-		return "'"+sqlParameterValue.toString()+"'";
+		return ssp.getValuePackStart()+sqlParameterValue.toString()+ssp.getValuePackEnd();
 	}
 	
 	/**

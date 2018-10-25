@@ -71,6 +71,18 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 */
 	private Integer isPlaceholder = 1;
 	/**
+	 * 值包裹起始字符
+	 * <p>当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值前要追加的字符</p>
+	 * <p>默认值为'</p>
+	 */
+	private String valuePackStart;
+	/**
+	 * 值包裹结束字符
+	 * <p>当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值后要追加的字符</p>
+	 * <p>默认值为'</p>
+	 */
+	private String valuePackEnd;
+	/**
 	 * 是否可为空
 	 * <p>默认为0</p>
 	 */
@@ -203,6 +215,18 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public void setLength(Integer length) {
 		this.length = length;
 	}
+	public String getValuePackStart() {
+		return valuePackStart;
+	}
+	public void setValuePackStart(String valuePackStart) {
+		this.valuePackStart = valuePackStart;
+	}
+	public String getValuePackEnd() {
+		return valuePackEnd;
+	}
+	public void setValuePackEnd(String valuePackEnd) {
+		this.valuePackEnd = valuePackEnd;
+	}
 	public Integer getIsNullabled() {
 		return isNullabled;
 	}
@@ -277,7 +301,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(13+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(15+7);
 		
 		CfgColumn sqlScriptIdColumn = new CfgColumn("sql_script_id", DataTypeConstants.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -329,6 +353,18 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		isPlaceholderColumn.setComments("是否是需要占位符的参数:即是否是需要用?代替的，目前全部都是1，默认值是1");
 		isPlaceholderColumn.setDefaultValue("1");
 		columns.add(isPlaceholderColumn);
+		
+		CfgColumn valuePackStartColumn = new CfgColumn("value_pack_start", DataTypeConstants.STRING, 100);
+		valuePackStartColumn.setName("值包裹起始字符");
+		valuePackStartColumn.setComments("当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值前要追加的字符，默认值为'");
+		valuePackStartColumn.setDefaultValue("'");
+		columns.add(valuePackStartColumn);
+		
+		CfgColumn valuePackEndColumn = new CfgColumn("value_pack_end", DataTypeConstants.INTEGER, 100);
+		valuePackEndColumn.setName("值包裹结束字符");
+		valuePackEndColumn.setComments("当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值后要追加的字符，默认值为'");
+		valuePackEndColumn.setDefaultValue("'");
+		columns.add(valuePackEndColumn);
 		
 		CfgColumn isNullabledColumn = new CfgColumn("is_nullabled", DataTypeConstants.INTEGER, 1);
 		isNullabledColumn.setName("是否可为空");
