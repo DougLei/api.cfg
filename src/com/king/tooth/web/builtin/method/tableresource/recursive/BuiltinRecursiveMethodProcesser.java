@@ -23,19 +23,23 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 	 * true/false
 	 */
 	private boolean recursive;
-	
 	/**
 	 * 递归查询的深度
 	 * <p>默认为1级</p>
 	 */
 	private int deepLevel;
+	/**
+	 * 子资源中，关联主子源对应的属性名
+	 * 如果请求的url中没有指定，则默认为parentId
+	 */
+	private String recursiveRefPropName;
 	
 	/**
 	 * 父资源的查询条件参数集合
 	 */
 	private Map<String, String> parentResourceQueryCond;
 	
-	public BuiltinRecursiveMethodProcesser(String recursive, String deepLevel, Map<String, String> parentResourceQueryCond) {
+	public BuiltinRecursiveMethodProcesser(String recursive, String deepLevel, String recursiveRefPropName, Map<String, String> parentResourceQueryCond) {
 		if(!"true".equals(recursive)){
 			Log4jUtil.debug("此次请求，没有使用到BuiltinRecursiveMethodProcesser内置方法处理器");
 			return;
@@ -44,6 +48,11 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 		this.recursive = Boolean.valueOf(recursive.trim());
 		this.deepLevel = Integer.valueOf(deepLevel.trim());
 		this.parentResourceQueryCond = parentResourceQueryCond;
+		
+		if(StrUtils.isEmpty(recursiveRefPropName)){
+			recursiveRefPropName = "parentId";
+		}
+		this.recursiveRefPropName = recursiveRefPropName;
 	}
 	public BuiltinRecursiveMethodProcesser() {
 		Log4jUtil.debug("此次请求，没有使用到BuiltinRecursiveMethodProcesser内置方法处理器");
@@ -54,12 +63,16 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 		return hql;
 	}
 	
+	public String getRecursiveRefPropName() {
+		return recursiveRefPropName;
+	}
+	
 	protected void execAnalysisParam() {
 		if(StrUtils.isNullStr(parentResourceId)){
-			hql.append(" where (parentId  = ? or parentId is null)");
+			hql.append(" where ("+recursiveRefPropName+"  = ? or "+recursiveRefPropName+" is null)");
 			hqlParameterValues.add("");
 		}else{
-			hql.append(" where parentId = ? ");
+			hql.append(" where "+recursiveRefPropName+" = ? ");
 			hqlParameterValues.add(parentResourceId);
 		}
 		

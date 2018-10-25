@@ -44,10 +44,9 @@ public class BuiltinParameterKeys {
 		"_limit", "_start", "_rows", "_page", 
 		"_resultType", "_select", "_split", 
 		"_sort", 
-		"_subResourceName", "_subSort", 
-		"_recursive", "_deep", 
-		"_simpleModel",
-		"_refPropName",
+		"_subResourceName", "_subListRefPropName", "_subSort", 
+		"_recursive", "_deep", "_recursiveRefPropName", 
+		"_simpleModel", "_psRefPropName",
 		"_isCreateExport", "_exportFileSuffix", "_exportTitle", "_exportFileName", "_exportBasicPropNames"};
 	
 	//------------------------------------------------------------------------------------

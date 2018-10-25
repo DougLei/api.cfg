@@ -24,7 +24,7 @@ public class BuiltinSublistMethodProcesser extends AbstractTableResourceBuiltinM
 	 * 子资源中，关联主子源对应的属性名
 	 * 如果请求的url中没有指定，则默认为parentId
 	 */
-	private String refPropName;
+	private String subListRefPropName;
 	
 	/**
 	 * 引用的主资源id
@@ -36,15 +36,15 @@ public class BuiltinSublistMethodProcesser extends AbstractTableResourceBuiltinM
 	 */
 	private String subSort;
 	
-	public BuiltinSublistMethodProcesser(String subResourceName, String refPropName, String subSort) {
+	public BuiltinSublistMethodProcesser(String subResourceName, String subListRefPropName, String subSort) {
 		super.isUsed = true;
 		this.subResourceName = subResourceName;
 		this.subSort = subSort;
 		
-		if(StrUtils.isEmpty(refPropName)){
-			refPropName = "parentId";
+		if(StrUtils.isEmpty(subListRefPropName)){
+			subListRefPropName = "parentId";
 		}
-		this.refPropName = refPropName;
+		this.subListRefPropName = subListRefPropName;
 	}
 	
 	public BuiltinSublistMethodProcesser() {
@@ -57,20 +57,20 @@ public class BuiltinSublistMethodProcesser extends AbstractTableResourceBuiltinM
 	}
 
 	protected void execAnalysisParam() {
-		hql.append("from ").append(subResourceName).append(" where ").append(refPropName).append(" =?");
+		hql.append("from ").append(subResourceName).append(" where ").append(subListRefPropName).append(" =?");
 		if(StrUtils.notEmpty(subSort)){
 			hql.append(" order by ").append(subSort);
 		}
 		Log4jUtil.debug("[BuiltinSublistMethodProcesser.execAnalysisParam]解析出来，要执行的子资源集合查询的hql语句为：{}", hql.toString());
-		Log4jUtil.debug("[BuiltinSublistMethodProcesser.execAnalysisParam]解析出来，要执行的子资源集合查询的hql参数值为："+refPropName+"={}", parentId);
+		Log4jUtil.debug("[BuiltinSublistMethodProcesser.execAnalysisParam]解析出来，要执行的子资源集合查询的hql参数值为："+subListRefPropName+"={}", parentId);
 	}
 	
 	public int getProcesserType() {
 		return BuiltinMethodProcesserType.SUB_LIST;
 	}
 	
-	public String getRefPropName() {
-		return refPropName;
+	public String getSubListRefPropName() {
+		return subListRefPropName;
 	}
 
 	/**

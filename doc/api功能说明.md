@@ -101,6 +101,7 @@
 ##### (5). 递归查询
 	_recursive: 标识是否递归查询，值为true、false。如果不传值，或值不是true，，则该功能不启用
 	_deep: 递归查询的深度，默认为2。值为-1，标识递归查询到底
+	_recursiveRefPropName: 指定子资源的属性中，关联父资源id的属性名，默认值为parentId
 
 > 递归查询出来的数据集合，会自动挂接到其父级的对象中，属性名为"children"
 
@@ -112,7 +113,7 @@
 
 ##### (7). 父子关联查询
 	_simpleModel: 是否以简单模式进行父子查询，值为true、false。如果不传值，默认为false
-	_refPropName: 指定子资源的属性中，关联父资源id的属性名，默认值为parentId。只有_simpleModel=true时才有效
+	_psRefPropName: 指定子资源的属性中，关联父资源id的属性名，默认值为parentId。只有_simpleModel=true时才有效
 	
 > ① 父子关联第一种方式是: 子资源的某个属性，关联父资源id。属于_simpleModel=true，这时需要指定_refPropName的值，系统会自动组装对应的SQL语句。如下:
 ```
@@ -128,7 +129,7 @@ SELECT sub_columns FROM sub_resource s, relation_resource r
 
 ##### (8). 子列表查询
 	_subResourceName: 指定子资源的名称
-	_refPropName: 指定子资源的属性中，关联父资源id的属性名，默认值为parentId
+	_subListRefPropName: 指定子资源的属性中，关联父资源id的属性名，默认值为parentId
 	_subSort: 指定子资源的排序规则，使用方式和_sort相同
 
 > 查询出来的子资源集合，会自动挂接到查询结果的对象中，属性名为"children"

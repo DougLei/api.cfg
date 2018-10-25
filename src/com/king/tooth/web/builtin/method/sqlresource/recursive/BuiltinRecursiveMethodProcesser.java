@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
@@ -23,23 +24,26 @@ public class BuiltinRecursiveMethodProcesser extends AbstractSqlResourceBuiltinM
 	 * true/false
 	 */
 	private boolean recursive;
-	
 	/**
 	 * 递归查询的深度
 	 * <p>默认为1级</p>
 	 */
 	private int deepLevel;
-	
 	/**
 	 * 父资源的查询条件参数集合
 	 */
 	private Map<String, String> parentResourceQueryCond;
 	/**
+	 * 子资源中，关联主子源对应的属性名
+	 * 如果请求的url中没有指定，则默认为parentId
+	 */
+	private String recursiveRefPropName;
+	/**
 	 * 第一次递归查询根数据的id
 	 */
 	private String firstRecursiveQueryParentResourceId;
 	
-	public BuiltinRecursiveMethodProcesser(String recursive, String deepLevel, Map<String, String> parentResourceQueryCond) {
+	public BuiltinRecursiveMethodProcesser(String recursive, String deepLevel, String recursiveRefPropName, Map<String, String> parentResourceQueryCond) {
 		if(!"true".equals(recursive)){
 			Log4jUtil.debug("此次请求，没有使用到BuiltinRecursiveMethodProcesser内置方法处理器");
 			return;
@@ -48,9 +52,18 @@ public class BuiltinRecursiveMethodProcesser extends AbstractSqlResourceBuiltinM
 		this.recursive = Boolean.valueOf(recursive.trim());
 		this.deepLevel = Integer.valueOf(deepLevel.trim());
 		this.parentResourceQueryCond = parentResourceQueryCond;
+		
+		if(StrUtils.isEmpty(recursiveRefPropName)){
+			recursiveRefPropName = "parent_id";
+		}
+		this.recursiveRefPropName = NamingProcessUtil.propNameTurnColumnName(recursiveRefPropName);
 	}
 	public BuiltinRecursiveMethodProcesser() {
 		Log4jUtil.debug("此次请求，没有使用到BuiltinRecursiveMethodProcesser内置方法处理器");
+	}
+	
+	public String getRecursiveRefPropName() {
+		return recursiveRefPropName;
 	}
 	
 	public StringBuilder getSql() {
@@ -61,10 +74,10 @@ public class BuiltinRecursiveMethodProcesser extends AbstractSqlResourceBuiltinM
 	protected void execAnalysisParam() {
 		sql.append(" where ");
 		if(StrUtils.isNullStr(parentResourceId)){
-			sql.append(" (parent_id  = ? or parent_id is null)");
+			sql.append(" ("+recursiveRefPropName+"  = ? or "+recursiveRefPropName+" is null)");
 			firstRecursiveQueryParentResourceId = "";
 		}else{
-			sql.append(" parent_id = ? ");
+			sql.append(recursiveRefPropName).append(" = ? ");
 			firstRecursiveQueryParentResourceId = parentResourceId;
 		}
 		

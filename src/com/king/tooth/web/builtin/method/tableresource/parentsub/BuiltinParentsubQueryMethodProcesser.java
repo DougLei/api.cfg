@@ -35,22 +35,21 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 	 * 子资源中，关联主子源对应的属性名
 	 * 如果请求的url中没有指定，则默认为parentId
 	 */
-	private String refPropName;
+	private String psRefPropName;
 	
-	public BuiltinParentsubQueryMethodProcesser(Map<String, String> parentResourceQueryCond, String isSimpleParentSubQueryModel, String refPropName, String resourceName) {
+	public BuiltinParentsubQueryMethodProcesser(Map<String, String> parentResourceQueryCond, String isSimpleParentSubQueryModel, String psRefPropName) {
 		super.isUsed = true;
 		this.parentResourceQueryCond = parentResourceQueryCond;
-		this.resourceName = resourceName;
 		
 		if(StrUtils.isEmpty(isSimpleParentSubQueryModel)){
 			isSimpleParentSubQueryModel = "false";
 		}
 		this.isSimpleParentSubQueryModel = Boolean.valueOf(isSimpleParentSubQueryModel);
 		
-		if(StrUtils.isEmpty(refPropName)){
-			refPropName = "parentId";
+		if(StrUtils.isEmpty(psRefPropName)){
+			psRefPropName = "parentId";
 		}
-		this.refPropName = refPropName;
+		this.psRefPropName = psRefPropName;
 	}
 	
 	public BuiltinParentsubQueryMethodProcesser() {
@@ -64,7 +63,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 
 	protected void execAnalysisParam() {
 		if(isSimpleParentSubQueryModel){
-			hql.append(" where s_.").append(refPropName);
+			hql.append(" where s_.").append(psRefPropName);
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
 				hql.append(" in( select p_.").append(ResourcePropNameConstants.ID)
 				   .append(" from ").append(parentResourceName).append(" p_ where ");
@@ -126,10 +125,10 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		return isSimpleParentSubQueryModel;
 	}
 
-	public String getRefPropName() {
-		return refPropName;
+	public String getPsRefPropName() {
+		return psRefPropName;
 	}
-	
+
 	public void clearInvalidMemory() {
 		if(parentResourceQueryCond != null && parentResourceQueryCond.size() > 0){
 			parentResourceQueryCond.clear();

@@ -40,9 +40,9 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 
 		if(builtinRecursiveMethodProcesser.getIsRecursive() && (builtinRecursiveMethodProcesser.getDeepLevel() > 1 || builtinRecursiveMethodProcesser.getDeepLevel() == -1)){
 			if(builtinQueryCondMethodProcesser.getSql().length() > 0){
-				coreQuerySql += " and parent_id = ?";
+				coreQuerySql += " and "+builtinRecursiveMethodProcesser.getRecursiveRefPropName()+" = ?";
 			}else{
-				coreQuerySql += " where parent_id = ?";
+				coreQuerySql += " where "+builtinRecursiveMethodProcesser.getRecursiveRefPropName()+" = ?";
 			}
 			String recursiveQuerySql = coreQuerySql + builtinSortMethodProcesser.getSql();
 			if(sqlParameterValues.size() > 0){

@@ -117,6 +117,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	private void setRecursiveProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestParentResourceParams, List<List<Object>> sqlParameterValues) {
 		String recursive = requestBuiltinParams.remove("_recursive");
 		String deepLevel = requestBuiltinParams.remove("_deep");
+		String recursiveRefPropName = requestBuiltinParams.remove("_recursiveRefPropName");
 		
 		if(StrUtils.notEmpty(parentResourceId)){
 			if(StrUtils.isEmpty(recursive)){
@@ -126,7 +127,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 				deepLevel = "2";// 默认递归查询钻取的深度为2
 			}
 			
-			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, requestParentResourceParams);
+			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, recursiveRefPropName, requestParentResourceParams);
 			recursiveProcesser.setResourceName(resourceName);
 			recursiveProcesser.setParentResourceId(parentResourceId);
 			recursiveProcesser.setSqlParameterValues(sqlParameterValues);

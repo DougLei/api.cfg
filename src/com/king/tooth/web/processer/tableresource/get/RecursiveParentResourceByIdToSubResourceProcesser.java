@@ -45,7 +45,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 														   .append(builtinQueryCondMethodProcesser.getHqlStartbyAnd(null))
 														   .append(builtinSortMethodProcesser.getHql())
 														   .toString();
-			queryHql = queryHql.replace(" or parentId is null", "");// 递归查询的时候，不需要这个条件
+			queryHql = queryHql.replace(" or "+builtinRecursiveMethodProcesser.getRecursiveRefPropName()+" is null", "");// 递归查询的时候，不需要这个条件
 			recursiveQuery(dataList, queryHql, builtinRecursiveMethodProcesser.getDeepLevel());
 		}
 		

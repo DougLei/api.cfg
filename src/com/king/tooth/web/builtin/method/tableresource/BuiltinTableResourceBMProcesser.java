@@ -106,10 +106,10 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 */
 	public void setSublistMethodProcesser(Map<String, String> requestBuiltinParams) {
 		String subResourceName = requestBuiltinParams.remove("_subResourceName");
-		String refPropName = requestBuiltinParams.get("_refPropName");
+		String subListRefPropName = requestBuiltinParams.remove("_subListRefPropName");
 		String subSort = requestBuiltinParams.remove("_subSort");
 		if(StrUtils.notEmpty(subResourceName)){
-			sublistMethodProcesser = new BuiltinSublistMethodProcesser(subResourceName, refPropName, subSort);
+			sublistMethodProcesser = new BuiltinSublistMethodProcesser(subResourceName, subListRefPropName, subSort);
 		}
 	}
 	/**
@@ -121,6 +121,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	private void setRecursiveProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues) {
 		String recursive = requestBuiltinParams.remove("_recursive");
 		String deepLevel = requestBuiltinParams.remove("_deep");
+		String recursiveRefPropName = requestBuiltinParams.remove("_recursiveRefPropName");
 		
 		if(StrUtils.notEmpty(parentResourceId)){
 			if(StrUtils.isEmpty(recursive)){
@@ -130,7 +131,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 				deepLevel = "2";// 默认递归查询钻取的深度为2
 			}
 			
-			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, requestParentResourceParams);
+			recursiveProcesser = new BuiltinRecursiveMethodProcesser(recursive, deepLevel, recursiveRefPropName, requestParentResourceParams);
 			recursiveProcesser.setResourceName(resourceName);
 			recursiveProcesser.setParentResourceId(parentResourceId);
 			recursiveProcesser.setHqlParameterValues(hqlParameterValues);
@@ -144,9 +145,10 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	 */
 	private void setParentsubQueryMethodProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues) {
 		String isSimpleParentSubQueryModel = requestBuiltinParams.remove("_simpleModel");
-		String refPropName = requestBuiltinParams.remove("_refPropName");
+		String psRefPropName = requestBuiltinParams.remove("_psRefPropName");
 		if(StrUtils.notEmpty(parentResourceId) && StrUtils.notEmpty(parentResourceName)){
-			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(requestParentResourceParams, isSimpleParentSubQueryModel, refPropName, resourceName);
+			parentsubQueryMethodProcesser = new BuiltinParentsubQueryMethodProcesser(requestParentResourceParams, isSimpleParentSubQueryModel, psRefPropName);
+			parentsubQueryMethodProcesser.setResourceName(resourceName);
 			parentsubQueryMethodProcesser.setParentResourceId(parentResourceId);
 			parentsubQueryMethodProcesser.setParentResourceName(parentResourceName);
 			parentsubQueryMethodProcesser.setHqlParameterValues(hqlParameterValues);
