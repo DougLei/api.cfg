@@ -147,7 +147,7 @@ public class PoiExcelUtil {
 	 * @param fileSuffix
 	 * @param sheet
 	 * @param firstRow
-	 * @param lastRow 如果小于1，则默认为10
+	 * @param lastRow 如果小于1，则默认为1
 	 * @param firstCol
 	 * @param lastCol
 	 * @param valueCellStart
@@ -155,7 +155,7 @@ public class PoiExcelUtil {
 	 */
 	public static void setDataValidation(String fileSuffix, Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol, String valueCellStart, String valueCellEnd){
 		if(lastRow < 1){
-			lastRow = 10;
+			lastRow = 1;
 		}
 		
 		if("xls".equals(fileSuffix)){

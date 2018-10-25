@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
 import com.king.tooth.web.builtin.method.tableresource.AbstractTableResourceBuiltinMethodProcesser;
@@ -55,13 +54,13 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 	}
 	
 	protected void execAnalysisParam() {
-		if(StrUtils.isNullStr(parentResourceId)){
-			hql.append(" where (parentId  = ? or parentId is null)");
-			hqlParameterValues.add("");
-		}else{
-			hql.append(" where parentId = ? ");
-			hqlParameterValues.add(parentResourceId);
-		}
+//		if(StrUtils.isNullStr(parentResourceId)){
+//			hql.append(" where (parentId  = ? or parentId is null)");
+//			hqlParameterValues.add("");
+//		}else{
+//			hql.append(" where parentId = ? ");
+//			hqlParameterValues.add(parentResourceId);
+//		}
 		
 		Log4jUtil.debug("[BuiltinRecursiveMethodProcesser.execAnalysisParam]解析出来，要执行的递归hql语句为：{}", hql.toString());
 		Log4jUtil.debug("[BuiltinRecursiveMethodProcesser.execAnalysisParam]解析出来，要执行的条件hql参数值为：ParentId={}", parentResourceId);

@@ -33,11 +33,13 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	 */
 	private Integer refPropType;
 	
+	// -------------
 	/**
 	 * 数据字典编码id
 	 */
 	private String dataDictionaryId;
 	
+	// -------------
 	/**
 	 * 是否引用的内置表
 	 * <p>默认值为0</p>
@@ -68,14 +70,36 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	 * <p>默认为desc</p>
 	 */
 	private String orderBy;
+	// -------------
+	/**
+	 * 注意：
+	 * (1).dataDictionaryCode
+	 * (2).refTable、refKeyColumn、refValueColumn、refOrderByColumn
+	 * (3)......
+	 * 以上是多组扩展配置，系统按照以上配置顺序解析，如果第一个有值了，dataList就用dataDictionaryCode的结果集合；依次类推
+	 */
 	
 	//-------------------------------------------------------------------------
+	@JSONField(serialize = false)
+	private String tableResourceName;
+	@JSONField(serialize = false)
+	private String keyColumnPropName;
+	@JSONField(serialize = false)
+	private String valueColumnPropName;
+	@JSONField(serialize = false)
+	private String orderByColumnPropName;
+	
 	/**
 	 * 数据列表
 	 * <p>数组的长度就为2或3，下标为0的是实际存储的值，下标为1的是展示名称，如果下标为2有值，则标识是子数据集合，依次类推</p>
 	 */
 	@JSONField(serialize = false)
 	private List<Object[]> dataList;
+	/**
+	 * 数据列表的总数量
+	 */
+	@JSONField(serialize = false)
+	private long dataListTotalCount;
 	
 	public Integer getRefPropType() {
 		return refPropType;
@@ -226,23 +250,57 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 		return validNotNullProps();
 	}
 	
+	public long getDataListTotalCount() {
+		if(StrUtils.notEmpty(dataDictionaryId)){
+			dataListTotalCount = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryDataDictionaryCountHql, dataDictionaryId);
+		}else if(StrUtils.notEmpty(refTable) && StrUtils.notEmpty(refKeyColumn) && StrUtils.notEmpty(refValueColumn)){
+			if(isRefBuiltinTable == 1){
+				tableResourceName = refTable;
+				keyColumnPropName = refKeyColumn;
+				valueColumnPropName = refValueColumn;
+				orderByColumnPropName = refOrderByColumn;
+			}else{
+				if(StrUtils.notEmpty(refTable) && StrUtils.notEmpty(refKeyColumn) && StrUtils.notEmpty(refValueColumn)){
+					Object obj = HibernateUtil.executeUniqueQueryByHqlArr(queryTableResourceNameByIdHql, refTable);
+					if(obj == null){
+						throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refTable值，无法查询到相应的表信息，请检查配置");
+					}
+					tableResourceName = obj.toString();
+					
+					obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, refKeyColumn);
+					if(obj == null){
+						throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refKeyColumn值，无法查询到相应的列信息，请检查配置");
+					}
+					keyColumnPropName = obj.toString();
+					
+					obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, refValueColumn);
+					if(obj == null){
+						throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refValueColumn值，无法查询到相应的列信息，请检查配置");
+					}
+					valueColumnPropName = obj.toString();
+					
+					if(StrUtils.notEmpty(refOrderByColumn)){
+						obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, refOrderByColumn);
+						if(obj == null){
+							throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refOrderByColumn值，无法查询到相应的列信息，请检查配置");
+						}
+						orderByColumnPropName = obj.toString();
+					}
+				}
+			}
+			dataListTotalCount = (long) HibernateUtil.executeUniqueQueryByHqlArr(null, null, "select count("+ResourcePropNameConstants.ID+") from "+tableResourceName);
+		}
+		return dataListTotalCount;
+	}
+	/** 查询数据字典值count的hql */
+	private static final String queryDataDictionaryCountHql = "select count("+ResourcePropNameConstants.ID+") from SysDataDictionary where parentId=? and isEnabled=1 and isDelete=0";
+
+	
 	@SuppressWarnings("unchecked")
 	public List<Object[]> getDataList() {
-		/**
-		 * 注意：
-		 * (1).dataDictionaryCode
-		 * (2).refTable、refKeyColumn、refValueColumn、refOrderByColumn
-		 * (3)......
-		 * 以上是多组扩展配置，系统按照以上配置顺序解析，如果第一个有值了，dataList就用dataDictionaryCode的结果集合；依次类推
-		 */
 		if(StrUtils.notEmpty(dataDictionaryId)){
 			dataList = HibernateUtil.executeListQueryByHqlArr(null, null, queryDataDictionaryHql, dataDictionaryId);
 		}else if(StrUtils.notEmpty(refTable) && StrUtils.notEmpty(refKeyColumn) && StrUtils.notEmpty(refValueColumn)){
-			String tableResourceName = null;
-			String keyColumnPropName = null;
-			String valueColumnPropName = null;
-			String orderByColumnPropName = null;
-			
 			if(isRefBuiltinTable == 1){
 				tableResourceName = refTable;
 				keyColumnPropName = refKeyColumn;

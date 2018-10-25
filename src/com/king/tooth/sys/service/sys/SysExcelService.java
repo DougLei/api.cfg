@@ -313,7 +313,7 @@ public class SysExcelService extends AService{
 			rmi = ieResourceMetadataInfos.get(i);
 			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
 			
-			if(rmi.getIeConfExtend() != null){
+			if(rmi.getIeConfExtend() != null && rmi.getIeConfExtend().getDataListTotalCount() > 0){
 				sheet.setColumnHidden(cellIndex, true);
 				valueCell = setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());
 				dataList = rmi.getIeConfExtend().getDataList();
@@ -338,8 +338,8 @@ public class SysExcelService extends AService{
 					}
 					dataList.clear();
 					
-					// 设置数据有效性，默认10列就够了，剩下的用户去修改excel即可
-					PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 10, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
+					// 设置数据有效性，默认1列就够了，剩下的用户去修改和拖拉excel单元格即可
+					PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 1, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
 					
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
