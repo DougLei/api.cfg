@@ -71,6 +71,11 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	 */
 	private Integer isPlaceholder = 1;
 	/**
+	 * 是否可为空
+	 * <p>默认为0</p>
+	 */
+	private Integer isNullabled;
+	/**
 	 * 参数的in/out类型
 	 * <p>in=1、out=2、inOut=3</p>
 	 * <p>增删改查sql语句都是in类型</p>
@@ -198,6 +203,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 	public void setLength(Integer length) {
 		this.length = length;
 	}
+	public Integer getIsNullabled() {
+		return isNullabled;
+	}
+	public void setIsNullabled(Integer isNullabled) {
+		this.isNullabled = isNullabled;
+	}
 	public Integer getPrecision() {
 		return precision;
 	}
@@ -266,7 +277,7 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(19);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(13+7);
 		
 		CfgColumn sqlScriptIdColumn = new CfgColumn("sql_script_id", DataTypeConstants.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -318,6 +329,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		isPlaceholderColumn.setComments("是否是需要占位符的参数:即是否是需要用?代替的，目前全部都是1，默认值是1");
 		isPlaceholderColumn.setDefaultValue("1");
 		columns.add(isPlaceholderColumn);
+		
+		CfgColumn isNullabledColumn = new CfgColumn("is_nullabled", DataTypeConstants.INTEGER, 1);
+		isNullabledColumn.setName("是否可为空");
+		isNullabledColumn.setComments("是否可为空:默认为0");
+		isNullabledColumn.setDefaultValue("0");
+		columns.add(isNullabledColumn);
 		
 		CfgColumn inOutColumn = new CfgColumn("in_out", DataTypeConstants.INTEGER, 1);
 		inOutColumn.setName("参数的in/out类型");

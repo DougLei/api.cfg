@@ -388,6 +388,9 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 参数，配置的数据类型("+ssp.getParameterDataType()+")和实际加载的数据类型("+rmi.getDataType()+")不一致，请联系后端系统开发人员";
 		}
 		
+		if(ssp.getIsNullabled() == 1){
+			return null;
+		}
 		if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){
 			if(ssp.getActualInValue() == null){
 				if(ssp.getDefaultValue() == null){

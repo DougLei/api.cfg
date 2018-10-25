@@ -11,9 +11,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import com.king.tooth.util.PoiExcelUtil;
 
-public class ExportExcel1 {
+public class ExportExcel2 {
 	public static void main(String[] args) throws IOException {
-		String suffix = "xls";
+		String suffix = "xlsx";
 		
 		Workbook wb = (Workbook) PoiExcelUtil.getWriteWorkBookInstance(suffix);
 		Sheet sheet = wb.createSheet();
@@ -31,9 +31,7 @@ public class ExportExcel1 {
 		cell.setCellValue("嘿嘿");
 		
 		// 设置数据有效性，默认10列就够了，剩下的用户去修改excel即可
-		PoiExcelUtil.setDataValidation(suffix, sheet, 1, 10, 0, 0, "K1", "K3");
-				
-		
+		PoiExcelUtil.setDataValidation(suffix, sheet, 1, -1, 0, 0, "K1", "K3");
 		
 		File f = new File("C:\\Users\\StoneKing\\Desktop\\test."+suffix);
 		if(f.exists()){

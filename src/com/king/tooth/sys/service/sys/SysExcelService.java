@@ -282,18 +282,20 @@ public class SysExcelService extends AService{
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
 		Row headRow = sheet.createRow(0);
-		createImportExcelTemplateHeadRow(sheet, headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getResourceMetadataInfoOfConfExtendCount());
+		createImportExcelTemplateHeadRow(importFileTemplate.getFileSuffix(), sheet, headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getResourceMetadataInfoOfConfExtendCount());
 		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, importFileTemplate.getFileId(), SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
 	}
 	
 	/**
 	 * 创建excel导入模版的头行
+	 * @param fileSuffix
 	 * @param sheet
 	 * @param headRow
 	 * @param ieResourceMetadataInfos
 	 * @param resourceMetadataInfoOfConfExtendCount
 	 */
-	private void createImportExcelTemplateHeadRow(Sheet sheet, Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int resourceMetadataInfoOfConfExtendCount){
+	@SuppressWarnings("unchecked")
+	private void createImportExcelTemplateHeadRow(String fileSuffix, Sheet sheet, Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int resourceMetadataInfoOfConfExtendCount){
 		int resourceMetadataInfoCount = ieResourceMetadataInfos.size();
 		int propConfExtendInfoCellIndex = resourceMetadataInfoCount+resourceMetadataInfoOfConfExtendCount;// 属性配置的扩展信息，要在excel中插入单元格的下标
 		
@@ -302,8 +304,6 @@ public class SysExcelService extends AService{
 		Row hiddenRow = null;
 		int hiddenRowIndex = 1;
 		int cellIndex = 0;
-		
-		Cell cell = null;// 如果有扩展信息，要设置为下拉菜单
 		Cell valueCell = null;// 设置成隐藏列，并且加函数的
 		
 		String valueArrayWord = null;
@@ -311,7 +311,7 @@ public class SysExcelService extends AService{
 		String compareWord = null;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
-			cell = setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
+			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
 			
 			if(rmi.getIeConfExtend() != null){
 				sheet.setColumnHidden(cellIndex, true);
@@ -326,12 +326,20 @@ public class SysExcelService extends AService{
 					compareWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex+1);
 					valueCell.setCellFormula("=INDEX("+valueArrayWord+":"+valueArrayWord+",MATCH("+valueWord+":"+valueWord+","+compareWord+":"+compareWord+",0))");
 					
+					int recursiveLevel = 1;
 					for (Object[] data : dataList) {
 						hiddenRow = sheet.createRow(hiddenRowIndex++);
 						setCellValue(hiddenRow.createCell(propConfExtendInfoCellIndex), data[0]);
 						setCellValue(hiddenRow.createCell(propConfExtendInfoCellIndex+1), data[1]);
+						if(data.length == 3 && data[3] != null){
+							hiddenRowIndex = setCellValueRecursive((List<Object[]>)data[3], sheet, hiddenRow, hiddenRowIndex, propConfExtendInfoCellIndex, propConfExtendInfoCellIndex+1, recursiveLevel);
+						}
+						recursiveLevel=1;
 					}
-					clearDataList(dataList);
+					dataList.clear();
+					
+					// 设置数据有效性，默认10列就够了，剩下的用户去修改excel即可
+					PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 10, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
 					
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
@@ -348,19 +356,30 @@ public class SysExcelService extends AService{
 		}
 		return cell;
 	}
-	/** 清空dataList */
+	/** 递归设置子单元格的值，设置完成后，会清空dataList */
 	@SuppressWarnings("unchecked")
-	private void clearDataList(List<Object[]> dataList){
-		if(dataList!=null && dataList.size()>0){
+	private int setCellValueRecursive(List<Object[]> dataList, Sheet sheet, Row hiddenRow, int hiddenRowIndex, int index1, int index2, int recursiveLevel) {
+		if(dataList != null && dataList.size() > 0){
 			for (Object[] data : dataList) {
-				if(data.length == 3 && data[2] != null){
-					clearDataList((List<Object[]>) data[2]);
+				hiddenRow = sheet.createRow(hiddenRowIndex++);
+				setCellValue(hiddenRow.createCell(index1), data[0]);
+				setCellValue(hiddenRow.createCell(index2), getIndent(recursiveLevel)+data[1]);
+				if(data.length == 3 && data[3] != null){
+					hiddenRowIndex = setCellValueRecursive((List<Object[]>)data[3], sheet, hiddenRow, hiddenRowIndex, index1, index2, recursiveLevel++);
 				}
 			}
 			dataList.clear();
 		}
+		return hiddenRowIndex;
 	}
-	
+	/** 获得缩进的标识，一个层级，多加一个> */
+	private String getIndent(int recursiveLevel) {
+		if(recursiveLevel < 1){
+			return "";
+		}
+		return indentBuffer.substring(0,recursiveLevel);
+	}
+	private static final String indentBuffer = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 	
 	// ---------------------------------------------------------------------
 	/**
