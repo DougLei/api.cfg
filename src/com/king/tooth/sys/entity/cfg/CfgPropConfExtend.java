@@ -18,7 +18,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * 属性配置扩展表
  * @author DougLei
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "unchecked"})
 @Table
 public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
 	
@@ -32,6 +32,11 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	 * <p>1、column，2、sqlResultset</p>
 	 */
 	private Integer refPropType;
+	/**
+	 * 一次查询数据的数量
+	 * <p>用来分页查询数据，减少内存占用，默认值为200</p>
+	 */
+	private Integer querySize;
 	
 	// -------------
 	/**
@@ -80,6 +85,7 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	 */
 	
 	//-------------------------------------------------------------------------
+	// 对应上面的四个属性实际值
 	@JSONField(serialize = false)
 	private String tableResourceName;
 	@JSONField(serialize = false)
@@ -90,16 +96,29 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	private String orderByColumnPropName;
 	
 	/**
-	 * 数据列表
-	 * <p>数组的长度就为2或3，下标为0的是实际存储的值，下标为1的是展示名称，如果下标为2有值，则标识是子数据集合，依次类推</p>
+	 * 查询数据的hql
 	 */
 	@JSONField(serialize = false)
-	private List<Object[]> dataList;
-	/**
-	 * 数据列表的总数量
-	 */
+	private final StringBuilder queryDataHql = new StringBuilder();
+
+	/** 查询数据时，已经循环的次数 */
+	@JSONField(serialize = false)
+	private int currentLoopCount;
+	/** 查询数据时，循环的次数 */
+	@JSONField(serialize = false)
+	private int loopCount;
+	/** 查询数据时，最后一页查询的数量 */
+	@JSONField(serialize = false)
+	private int modCount;
+	/** 数据列表的总数量 */
 	@JSONField(serialize = false)
 	private long dataListTotalCount;
+	/** 查询数据时，起始位置 */
+	@JSONField(serialize = false)
+	private int startIndex;
+	/** 查询数据时，结束位置 */
+	@JSONField(serialize = false)
+	private int endIndex;
 	
 	public Integer getRefPropType() {
 		return refPropType;
@@ -112,6 +131,12 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	}
 	public void setRefPropId(String refPropId) {
 		this.refPropId = refPropId;
+	}
+	public Integer getQuerySize() {
+		return querySize;
+	}
+	public void setQuerySize(Integer querySize) {
+		this.querySize = querySize;
 	}
 	public String getDataDictionaryId() {
 		return dataDictionaryId;
@@ -158,7 +183,7 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(9+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(10+7);
 		
 		CfgColumn refPropIdColumn = new CfgColumn("ref_prop_id", DataTypeConstants.STRING, 32);
 		refPropIdColumn.setName("关联的属性id");
@@ -169,6 +194,12 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 		refPropTypeColumn.setName("关联的属性类型");
 		refPropTypeColumn.setComments("1、column，2、sqlResultset");
 		columns.add(refPropTypeColumn);
+		
+		CfgColumn querySizeColumn = new CfgColumn("query_size", DataTypeConstants.INTEGER, 8);
+		querySizeColumn.setName("一次查询数据的数量");
+		querySizeColumn.setComments("用来分页查询数据，减少内存占用，默认值为200");
+		querySizeColumn.setDefaultValue("200");
+		columns.add(querySizeColumn);
 		
 		CfgColumn dataDictionaryIdColumn = new CfgColumn("data_dictionary_id", DataTypeConstants.STRING, 50);
 		dataDictionaryIdColumn.setName("数据字典编码id");
@@ -239,6 +270,12 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 		if(StrUtils.isEmpty(refPropId)){
 			return "关联的属性id不能为空";
 		}
+		if(querySize == null){
+			return "一次查询数据的数量值不能为空";
+		}
+		if(querySize < 50){
+			return "一次查询数据的数量值不能小于50";
+		}
 		if(StrUtils.notEmpty(dataDictionaryId) 
 				&& (StrUtils.notEmpty(refTable) || StrUtils.notEmpty(refKeyColumn) || StrUtils.notEmpty(refValueColumn) || StrUtils.notEmpty(refOrderByColumn))){
 			return "扩展信息已经配置了关联的数据字典，无法再配置关联其他表的字段";
@@ -290,61 +327,44 @@ public class CfgPropConfExtend extends BasicEntity implements ITable, IEntity, I
 			}
 			dataListTotalCount = (long) HibernateUtil.executeUniqueQueryByHqlArr(null, null, "select count("+ResourcePropNameConstants.ID+") from "+tableResourceName);
 		}
+		if(dataListTotalCount > 0){
+			loopCount = (int)(dataListTotalCount/querySize +1);
+			modCount = (int)(loopCount==1?dataListTotalCount:dataListTotalCount%querySize);
+		}
 		return dataListTotalCount;
 	}
 	/** 查询数据字典值count的hql */
 	private static final String queryDataDictionaryCountHql = "select count("+ResourcePropNameConstants.ID+") from SysDataDictionary where parentId=? and isEnabled=1 and isDelete=0";
 
-	
-	@SuppressWarnings("unchecked")
 	public List<Object[]> getDataList() {
-		if(StrUtils.notEmpty(dataDictionaryId)){
-			dataList = HibernateUtil.executeListQueryByHqlArr(null, null, queryDataDictionaryHql, dataDictionaryId);
-		}else if(StrUtils.notEmpty(refTable) && StrUtils.notEmpty(refKeyColumn) && StrUtils.notEmpty(refValueColumn)){
-			if(isRefBuiltinTable == 1){
-				tableResourceName = refTable;
-				keyColumnPropName = refKeyColumn;
-				valueColumnPropName = refValueColumn;
-				orderByColumnPropName = refOrderByColumn;
+		if(currentLoopCount < loopCount){
+			// 数据列表。数组的长度就为2或3，下标为0的是实际存储的值，下标为1的是展示名称，如果下标为2有值，则标识是子数据集合，依次类推
+			List<Object[]> dataList = null;
+			startIndex = currentLoopCount*querySize;
+			if(currentLoopCount == (loopCount-1)){
+				endIndex = modCount;
 			}else{
-				if(StrUtils.notEmpty(refTable) && StrUtils.notEmpty(refKeyColumn) && StrUtils.notEmpty(refValueColumn)){
-					Object obj = HibernateUtil.executeUniqueQueryByHqlArr(queryTableResourceNameByIdHql, refTable);
-					if(obj == null){
-						throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refTable值，无法查询到相应的表信息，请检查配置");
-					}
-					tableResourceName = obj.toString();
-					
-					obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, refKeyColumn);
-					if(obj == null){
-						throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refKeyColumn值，无法查询到相应的列信息，请检查配置");
-					}
-					keyColumnPropName = obj.toString();
-					
-					obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, refValueColumn);
-					if(obj == null){
-						throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refValueColumn值，无法查询到相应的列信息，请检查配置");
-					}
-					valueColumnPropName = obj.toString();
-					
-					if(StrUtils.notEmpty(refOrderByColumn)){
-						obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, refOrderByColumn);
-						if(obj == null){
-							throw new NullPointerException("id为["+id+"]的属性扩展配置信息，配置的refOrderByColumn值，无法查询到相应的列信息，请检查配置");
-						}
-						orderByColumnPropName = obj.toString();
-					}
-				}
+				endIndex = startIndex+querySize;
 			}
 			
-			StringBuilder hql = new StringBuilder("select ");
-			hql.append(valueColumnPropName).append(",").append(keyColumnPropName).append(" from ").append(tableResourceName);
-			if(StrUtils.notEmpty(orderByColumnPropName)){
-				hql.append(" order by ").append(orderByColumnPropName).append(" ").append(orderBy);
+			if(StrUtils.notEmpty(dataDictionaryId)){
+				dataList = HibernateUtil.executeListQueryByHqlArr(startIndex+"", endIndex+"", queryDataDictionaryHql, dataDictionaryId);
+			}else if(StrUtils.notEmpty(tableResourceName) && StrUtils.notEmpty(keyColumnPropName) && StrUtils.notEmpty(valueColumnPropName)){
+				if(isRefBuiltinTable == 1){
+					
+				}else{
+					queryDataHql.append("select ").append(valueColumnPropName).append(",").append(keyColumnPropName).append(" from ").append(tableResourceName);
+					if(StrUtils.notEmpty(orderByColumnPropName)){
+						queryDataHql.append(" order by ").append(orderByColumnPropName).append(" ").append(orderBy);
+					}
+					dataList = HibernateUtil.executeListQueryByHqlArr(startIndex+"", endIndex+"", queryDataHql.toString());
+					queryDataHql.setLength(0);
+				}
 			}
-			dataList = HibernateUtil.executeListQueryByHqlArr(null, null, hql.toString());
-			hql.setLength(0);
+			currentLoopCount++;
+			return dataList;
 		}
-		return dataList;
+		return null;
 	}
 	/** 查询数据字典的hql */
 	private static final String queryDataDictionaryHql = "select val, caption from SysDataDictionary where parentId=? and isEnabled=1 and isDelete=0 order by orderCode asc";

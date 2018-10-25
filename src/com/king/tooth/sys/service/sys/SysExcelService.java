@@ -23,6 +23,7 @@ import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.file.ie.ExportFile;
 import com.king.tooth.sys.entity.sys.file.ie.ImportFile;
@@ -309,24 +310,25 @@ public class SysExcelService extends AService{
 		String valueArrayWord = null;
 		String valueWord = null;
 		String compareWord = null;
+		CfgPropConfExtend propConfExtend = null;
+		int recursiveLevel = 1;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
 			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
 			
-			if(rmi.getIeConfExtend() != null && rmi.getIeConfExtend().getDataListTotalCount() > 0){
+			propConfExtend = rmi.getIeConfExtend();
+			if(propConfExtend != null && propConfExtend.getDataListTotalCount() > 0){
 				sheet.setColumnHidden(cellIndex, true);
 				valueCell = setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());
-				dataList = rmi.getIeConfExtend().getDataList();
-				if(dataList != null && dataList.size() > 0){
-					
-					// 设置存储实际值的隐藏列的计算公式：=INDEX(H:H,MATCH(D:D,I:I,0))
-					valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
-					valueArrayWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex);
-					valueWord = PoiExcelUtil.getColumnCharWordByIndex(cellIndex-1);
-					compareWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex+1);
-					valueCell.setCellFormula("=INDEX("+valueArrayWord+":"+valueArrayWord+",MATCH("+valueWord+":"+valueWord+","+compareWord+":"+compareWord+",0))");
-					
-					int recursiveLevel = 1;
+				
+				// 设置存储实际值的隐藏列的计算公式：=INDEX(H:H,MATCH(D:D,I:I,0))
+				valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
+				valueArrayWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex);
+				valueWord = PoiExcelUtil.getColumnCharWordByIndex(cellIndex-1);
+				compareWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex+1);
+				valueCell.setCellFormula("=INDEX("+valueArrayWord+":"+valueArrayWord+",MATCH("+valueWord+":"+valueWord+","+compareWord+":"+compareWord+",0))");
+				
+				while((dataList = propConfExtend.getDataList()) != null){
 					for (Object[] data : dataList) {
 						hiddenRow = sheet.createRow(hiddenRowIndex++);
 						setCellValue(hiddenRow.createCell(propConfExtendInfoCellIndex), data[0]);
@@ -337,14 +339,14 @@ public class SysExcelService extends AService{
 						recursiveLevel=1;
 					}
 					dataList.clear();
-					
-					// 设置数据有效性，默认1列就够了，剩下的用户去修改和拖拉excel单元格即可
-					PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 1, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
-					
-					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
-					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
-					hiddenRowIndex=1;
 				}
+				
+				// 设置数据有效性，默认1列就够了，剩下的用户去修改和拖拉excel单元格即可
+				PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 1, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
+				// 隐藏列
+				sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
+				sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
+				hiddenRowIndex=1;
 			}
 		}
 	}
