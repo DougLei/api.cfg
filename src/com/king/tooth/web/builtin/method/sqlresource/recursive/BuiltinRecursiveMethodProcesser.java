@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
 import com.king.tooth.web.builtin.method.sqlresource.AbstractSqlResourceBuiltinMethodProcesser;
@@ -33,6 +34,10 @@ public class BuiltinRecursiveMethodProcesser extends AbstractSqlResourceBuiltinM
 	 * 父资源的查询条件参数集合
 	 */
 	private Map<String, String> parentResourceQueryCond;
+	/**
+	 * 第一次递归查询根数据的id
+	 */
+	private String firstRecursiveQueryParentResourceId;
 	
 	public BuiltinRecursiveMethodProcesser(String recursive, String deepLevel, Map<String, String> parentResourceQueryCond) {
 		if(!"true".equals(recursive)){
@@ -55,6 +60,14 @@ public class BuiltinRecursiveMethodProcesser extends AbstractSqlResourceBuiltinM
 	
 	protected void execAnalysisParam() {
 		sql.append(" where ");
+		if(StrUtils.isNullStr(parentResourceId)){
+			sql.append(" (parent_id  = ? or parent_id is null)");
+			firstRecursiveQueryParentResourceId = "";
+		}else{
+			sql.append(" parent_id = ? ");
+			firstRecursiveQueryParentResourceId = parentResourceId;
+		}
+		
 		Log4jUtil.debug("[BuiltinRecursiveMethodProcesser.execAnalysisParam]解析出来，要执行的递归sql语句为：{}", sql.toString());
 		Log4jUtil.debug("[BuiltinRecursiveMethodProcesser.execAnalysisParam]解析出来，要执行的条件sql参数值为：ParentId={}", parentResourceId);
 	}
@@ -67,16 +80,19 @@ public class BuiltinRecursiveMethodProcesser extends AbstractSqlResourceBuiltinM
 	 * @param firstRecursiveQueryParams
 	 * @return 第一次递归查询是否有条件
 	 */
-	public void getFirstRecursiveQuerySql(StringBuilder firstRecursiveQuerySql, List<Object> firstRecursiveQueryParams){
+	public boolean getFirstRecursiveQuerySql(StringBuilder firstRecursiveQuerySql, List<Object> firstRecursiveQueryParams){
 		if(sqlParameterValues.size() > 0){
 			firstRecursiveQueryParams.addAll(sqlParameterValues.get(0));
 		}
-		
 		if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合，即对递归查询的第一层数据进行筛选的查询条件
 			firstRecursiveQuerySql.append(" where ");
 			Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
 			BuiltinQueryCondFuncUtil.installQueryCondHql(ResourceInfoConstants.SQL, resourceName, queryCondParamsSet , firstRecursiveQueryParams, firstRecursiveQuerySql);
+			return true;
 		}
+		firstRecursiveQuerySql.append(getSql());
+		firstRecursiveQueryParams.add(firstRecursiveQueryParentResourceId);
+		return false;
 	}
 	
 	public int getProcesserType() {
