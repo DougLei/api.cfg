@@ -216,12 +216,18 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		this.length = length;
 	}
 	public String getValuePackStart() {
+		if(valuePackStart == null){
+			valuePackStart = "'";
+		}
 		return valuePackStart;
 	}
 	public void setValuePackStart(String valuePackStart) {
 		this.valuePackStart = valuePackStart;
 	}
 	public String getValuePackEnd() {
+		if(valuePackEnd == null){
+			valuePackEnd = "'";
+		}
 		return valuePackEnd;
 	}
 	public void setValuePackEnd(String valuePackEnd) {
@@ -356,14 +362,12 @@ public class ComSqlScriptParameter extends BasicEntity implements ITable, IEntit
 		
 		CfgColumn valuePackStartColumn = new CfgColumn("value_pack_start", DataTypeConstants.STRING, 100);
 		valuePackStartColumn.setName("值包裹起始字符");
-		valuePackStartColumn.setComments("当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值前要追加的字符，默认值为'");
-		valuePackStartColumn.setDefaultValue("'");
+		valuePackStartColumn.setComments("当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值前要追加的字符，默认值为英文字符的单引号");
 		columns.add(valuePackStartColumn);
 		
-		CfgColumn valuePackEndColumn = new CfgColumn("value_pack_end", DataTypeConstants.INTEGER, 100);
+		CfgColumn valuePackEndColumn = new CfgColumn("value_pack_end", DataTypeConstants.STRING, 100);
 		valuePackEndColumn.setName("值包裹结束字符");
-		valuePackEndColumn.setComments("当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值后要追加的字符，默认值为'");
-		valuePackEndColumn.setDefaultValue("'");
+		valuePackEndColumn.setComments("当isPlaceholder=0时，需要用指定的符号包裹值，这个存储的是值后要追加的字符，默认值为英文字符的单引号");
 		columns.add(valuePackEndColumn);
 		
 		CfgColumn isNullabledColumn = new CfgColumn("is_nullabled", DataTypeConstants.INTEGER, 1);
