@@ -54,7 +54,7 @@ public class BuiltinQueryCondMethodProcesser extends AbstractTableResourceBuilti
 	protected void execAnalysisParam() {
 		Set<Entry<String, String>> se = this.queryCondParams.entrySet();
 		// 解析请求的查询条件参数集合,整理成hql
-		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, resourceName, se, hqlParameterValues, hql, alias);
+		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, se, hqlParameterValues, hql, alias);
 		Log4jUtil.debug("[BuiltinQueryCondMethodProcesser.execAnalysisParam]解析出来，要执行的条件数据库脚本语句为： {}", hql);
 		Log4jUtil.debug("[BuiltinQueryCondMethodProcesser.execAnalysisParam]解析出来，要执行的条件数据库脚本参数集合为：{}", hqlParameterValues);
 	}

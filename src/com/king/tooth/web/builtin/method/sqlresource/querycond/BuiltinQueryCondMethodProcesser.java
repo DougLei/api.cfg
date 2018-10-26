@@ -38,7 +38,7 @@ public class BuiltinQueryCondMethodProcesser extends AbstractSqlResourceBuiltinM
 		Set<Entry<String, String>> se = this.queryCondParams.entrySet();
 		// 解析请求的查询条件参数集合,整理成sql
 		List<Object> queryCondParameters = new ArrayList<Object>();
-		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.SQL, resourceName, se, queryCondParameters, sql, alias);
+		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.SQL, se, queryCondParameters, sql, alias);
 		
 		if(sqlParameterValues.size() > 0){
 			sqlParameterValues.get(0).addAll(queryCondParameters);

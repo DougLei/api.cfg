@@ -2,9 +2,13 @@ package com.king.tooth.sys.entity.cfg.propextend.query.data.param;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
 
 /**
  * 查询属性扩展配置的对应数据列表用参数
@@ -90,7 +94,7 @@ public class QueryPropExtendConfDataParam implements Serializable{
 	/**
 	 * 处理查询条件hql语句，以及查询条件值集合
 	 * @param initSize
-	 * @return
+	 * @return this
 	 */
 	public QueryPropExtendConfDataParam processConditionHqlAndConditionValues(int initSize) {
 		if(initSize < 1){
@@ -98,22 +102,21 @@ public class QueryPropExtendConfDataParam implements Serializable{
 		}
 		if(conditions != null && conditions.size() > 0){
 			StringBuilder hql = new StringBuilder();
-			conditionValues = new ArrayList<Object>(conditions.size() + initSize);
+			int conditionsSize = conditions.size();
+			
+			conditionValues = new ArrayList<Object>(conditionsSize + initSize);
+			
+			Map<String, String> queryCondParams = new HashMap<String, String>(conditionsSize);
 			for (QueryPropExtendConfDataCondition condition : conditions) {
-				
-				
-				System.out.println(condition.getPropName());
-				System.out.println(condition.getValue());
-				
-				
-				conditionValues.add("");
-				
-				
+				queryCondParams.put(condition.getPropName(), condition.getValue());
 			}
+			conditions.clear();
+			
+			BuiltinQueryCondFuncUtil.installQueryCondHql(ResourceInfoConstants.TABLE, queryCondParams.entrySet(), conditionValues, hql);
 			conditionHql = hql.toString();
 			
 			hql.setLength(0);
-			conditions.clear();
+			queryCondParams.clear();
 		}else{
 			conditionHql = "";
 			conditionValues = new ArrayList<Object>(initSize);
