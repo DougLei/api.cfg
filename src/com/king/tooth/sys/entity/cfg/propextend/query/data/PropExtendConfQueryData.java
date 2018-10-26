@@ -189,6 +189,12 @@ public class PropExtendConfQueryData implements Serializable{
 			}else if(queryType==2){
 				if(isBuiltinTableResource){
 					// TODO 这里要实现基础资源的信息，以及怎么加条件
+					
+					
+					
+					
+					
+					
 				}else{
 					dataList = HibernateUtil.executeListQueryByHql(startIndex+"", endIndex+"", queryDataListHql, getConditionValues());
 				}
@@ -198,7 +204,7 @@ public class PropExtendConfQueryData implements Serializable{
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 组装查询数据列表的hql语句
 	 */

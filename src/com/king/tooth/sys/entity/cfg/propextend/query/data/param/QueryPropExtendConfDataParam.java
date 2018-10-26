@@ -40,12 +40,12 @@ public class QueryPropExtendConfDataParam implements Serializable{
 	private int querySize;
 	
 	/**
-	 * 查询条件
+	 * 查询条件集合
 	 */
 	private List<QueryPropExtendConfDataCondition> conditions;
-	/** 条件查询hql */
+	/** 根据查询条件集合，解析出的条件查询hql */
 	private String conditionHql;
-	/** 条件查询值集合 */
+	/** 根据查询条件集合，解析出的条件查询值集合 */
 	private List<Object> conditionValues;
 	
 	public String getRefKeyPropName() {
