@@ -7,7 +7,7 @@ import com.king.tooth.sys.controller.cfg.CfgColumnController;
 import com.king.tooth.sys.controller.cfg.CfgDatabaseController;
 import com.king.tooth.sys.controller.cfg.CfgProjectController;
 import com.king.tooth.sys.controller.cfg.CfgProjectModuleController;
-import com.king.tooth.sys.controller.cfg.CfgPropConfExtendController;
+import com.king.tooth.sys.controller.cfg.CfgPropExtendConfController;
 import com.king.tooth.sys.controller.cfg.CfgSqlController;
 import com.king.tooth.sys.controller.cfg.CfgSqlParameterController;
 import com.king.tooth.sys.controller.cfg.CfgTableController;
@@ -22,7 +22,7 @@ import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
+import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -58,7 +58,7 @@ import com.king.tooth.sys.service.cfg.CfgColumnService;
 import com.king.tooth.sys.service.cfg.CfgDatabaseService;
 import com.king.tooth.sys.service.cfg.CfgProjectModuleService;
 import com.king.tooth.sys.service.cfg.CfgProjectService;
-import com.king.tooth.sys.service.cfg.CfgPropConfExtendService;
+import com.king.tooth.sys.service.cfg.CfgPropExtendConfService;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
@@ -95,7 +95,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SystemToolsController", new SystemToolsController());
 		instanceCache.put("SysPushMessageInfoController", new SysPushMessageInfoController());
 		instanceCache.put("SysExcelController", new SysExcelController());
-		instanceCache.put("CfgPropConfExtendController", new CfgPropConfExtendController());
+		instanceCache.put("CfgPropExtendConfController", new CfgPropExtendConfController());
 		
 		instanceCache.put("CfgTableService", new CfgTableService());
 		instanceCache.put("CfgColumnService", new CfgColumnService());
@@ -112,7 +112,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SystemToolsService", new SystemToolsService());
 		instanceCache.put("SysPushMessageInfoService", new SysPushMessageInfoService());
 		instanceCache.put("SysExcelService", new SysExcelService());
-		instanceCache.put("CfgPropConfExtendService", new CfgPropConfExtendService());
+		instanceCache.put("CfgPropExtendConfService", new CfgPropExtendConfService());
 		
 		instanceCache.put("CfgDatabase", new CfgDatabase());
 		instanceCache.put("CfgTable", new CfgTable());
@@ -151,7 +151,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
 		instanceCache.put("SysFileIELog", new SysFileIELog());
-		instanceCache.put("CfgPropConfExtend", new CfgPropConfExtend());
+		instanceCache.put("CfgPropExtendConf", new CfgPropExtendConf());
 		
 		
 		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉

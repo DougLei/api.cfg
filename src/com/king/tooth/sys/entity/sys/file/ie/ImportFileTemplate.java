@@ -3,9 +3,11 @@ package com.king.tooth.sys.entity.sys.file.ie;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.cfg.propextend.query.data.param.QueryPropExtendConfDataParam;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -21,6 +23,12 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 	 * 导入模版文件的后缀
 	 */
 	private String fileSuffix;
+	/**
+	 * 查询属性扩展配置的对应数据列表用参数集合
+	 * <p>key为每个属性的属性名</p>
+	 * <p>value为每个属性的查询用参数实例</p>
+	 */
+	private Map<String, QueryPropExtendConfDataParam> queryPropExtendConfDataParams;
 	
 	// --------------------------------------------------
 	public String getFileSuffix() {
@@ -28,6 +36,12 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 	}
 	public void setFileSuffix(String fileSuffix) {
 		this.fileSuffix = fileSuffix;
+	}
+	public Map<String, QueryPropExtendConfDataParam> getQueryPropExtendConfDataParams() {
+		return queryPropExtendConfDataParams;
+	}
+	public void setQueryPropExtendConfDataParams(Map<String, QueryPropExtendConfDataParam> queryPropExtendConfDataParams) {
+		this.queryPropExtendConfDataParams = queryPropExtendConfDataParams;
 	}
 	
 	public String validNotNullProps() {

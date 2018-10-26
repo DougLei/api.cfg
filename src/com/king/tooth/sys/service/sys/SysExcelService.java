@@ -23,7 +23,8 @@ import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
+import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
+import com.king.tooth.sys.entity.cfg.propextend.query.data.PropExtendConfQueryData;
 import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.entity.sys.file.ie.ExportFile;
 import com.king.tooth.sys.entity.sys.file.ie.ImportFile;
@@ -261,7 +262,7 @@ public class SysExcelService extends AService{
 		int size = ijson.size();
 		if(size > 0){
 			for(int i =0;i<size;i++){
-				// TODO 如果导入的是一些特殊资源，还会有额外的处理，必须导入用户，是否要同时开通账户
+				// TODO 如果导入的是一些特殊资源，还会有额外的处理，比如导入用户，是否要同时开通账户
 				HibernateUtil.saveObject(resourceName, ijson.get(i), null);
 			}
 		}
@@ -283,7 +284,7 @@ public class SysExcelService extends AService{
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
 		Row headRow = sheet.createRow(0);
-		createImportExcelTemplateHeadRow(importFileTemplate.getFileSuffix(), sheet, headRow, importFileTemplate.getIeResourceMetadataInfos(), importFileTemplate.getResourceMetadataInfoOfConfExtendCount());
+		createImportExcelTemplateHeadRow(importFileTemplate, sheet, headRow);
 		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, importFileTemplate.getFileId(), SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
 	}
 	
@@ -295,7 +296,11 @@ public class SysExcelService extends AService{
 	 * @param ieResourceMetadataInfos
 	 * @param resourceMetadataInfoOfConfExtendCount
 	 */
-	private void createImportExcelTemplateHeadRow(String fileSuffix, Sheet sheet, Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int resourceMetadataInfoOfConfExtendCount){
+	private void createImportExcelTemplateHeadRow(ImportFileTemplate importFileTemplate, Sheet sheet, Row headRow) {
+		String fileSuffix = importFileTemplate.getFileSuffix();
+		List<IEResourceMetadataInfo> ieResourceMetadataInfos = importFileTemplate.getIeResourceMetadataInfos();
+		int resourceMetadataInfoOfConfExtendCount = importFileTemplate.getResourceMetadataInfoOfConfExtendCount();
+		
 		int resourceMetadataInfoCount = ieResourceMetadataInfos.size();
 		int propConfExtendInfoCellIndex = resourceMetadataInfoCount+resourceMetadataInfoOfConfExtendCount;// 属性配置的扩展信息，要在excel中插入单元格的下标
 		
@@ -309,33 +314,38 @@ public class SysExcelService extends AService{
 		String valueArrayWord = null;
 		String valueWord = null;
 		String compareWord = null;
-		CfgPropConfExtend propConfExtend = null;
+		CfgPropExtendConf propExtendConf = null;
+		PropExtendConfQueryData propExtendConfQueryData = null;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
 			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
 			
-			propConfExtend = rmi.getIeConfExtend();
-			if(propConfExtend != null && propConfExtend.getDataListTotalCount() > 0){
-				sheet.setColumnHidden(cellIndex, true);
-				valueCell = setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());
-				
-				// 设置存储实际值的隐藏列的计算公式：=INDEX(H:H,MATCH(D:D,I:I,0))
-				valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
-				valueArrayWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex);
-				valueWord = PoiExcelUtil.getColumnCharWordByIndex(cellIndex-1);
-				compareWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex+1);
-				valueCell.setCellFormula("=INDEX("+valueArrayWord+":"+valueArrayWord+",MATCH("+valueWord+":"+valueWord+","+compareWord+":"+compareWord+",0))");
-				
-				while((dataList = propConfExtend.getDataList()) != null){
-					hiddenRowIndex = setCellValueRecursive(dataList, sheet, hiddenRow, hiddenRowIndex, propConfExtendInfoCellIndex, propConfExtendInfoCellIndex+1, 0);
+			propExtendConf = rmi.getIeConfExtend();
+			if(propExtendConf != null){
+				propExtendConfQueryData = new PropExtendConfQueryData(propExtendConf, importFileTemplate.getQueryPropExtendConfDataParams().get(rmi.getPropName()), 3);
+				if(propExtendConfQueryData.getDataListTotalCount() > 0){
+					sheet.setColumnHidden(cellIndex, true);
+					valueCell = setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());
+					
+					// 设置存储实际值的隐藏列的计算公式：=INDEX(H:H,MATCH(D:D,I:I,0))
+					valueCell.setCellType(Cell.CELL_TYPE_FORMULA);
+					valueArrayWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex);
+					valueWord = PoiExcelUtil.getColumnCharWordByIndex(cellIndex-1);
+					compareWord = PoiExcelUtil.getColumnCharWordByIndex(propConfExtendInfoCellIndex+1);
+					valueCell.setCellFormula("=INDEX("+valueArrayWord+":"+valueArrayWord+",MATCH("+valueWord+":"+valueWord+","+compareWord+":"+compareWord+",0))");
+					
+					while((dataList = propExtendConfQueryData.getDataList()) != null){
+						hiddenRowIndex = setCellValueRecursive(dataList, sheet, hiddenRow, hiddenRowIndex, propConfExtendInfoCellIndex, propConfExtendInfoCellIndex+1, 0);
+					}
+					
+					// 设置数据有效性，默认1列就够了，剩下的用户去修改和拖拉excel单元格即可
+					PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 1, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
+					// 隐藏列
+					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
+					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
+					hiddenRowIndex=1;
 				}
-				
-				// 设置数据有效性，默认1列就够了，剩下的用户去修改和拖拉excel单元格即可
-				PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 1, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
-				// 隐藏列
-				sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
-				sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
-				hiddenRowIndex=1;
+				propExtendConfQueryData.clear();
 			}
 		}
 	}

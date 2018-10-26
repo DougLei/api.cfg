@@ -25,7 +25,7 @@ import com.king.tooth.sys.entity.cfg.CfgColumnCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
+import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -146,7 +146,7 @@ public class InitSystemService extends AService{
 		tables.add(new SysPushMessageInfo().toCreateTable());
 		tables.add(new SysDataPrivS().toCreateTable());
 		tables.add(new SysFileIELog().toCreateTable());
-		tables.add(new CfgPropConfExtend().toCreateTable());
+		tables.add(new CfgPropExtendConf().toCreateTable());
 		return tables;
 	}
 	

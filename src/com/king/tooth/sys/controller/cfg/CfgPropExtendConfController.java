@@ -11,16 +11,16 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
-import com.king.tooth.sys.service.cfg.CfgPropConfExtendService;
+import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
+import com.king.tooth.sys.service.cfg.CfgPropExtendConfService;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 属性配置扩展表Controller
+ * 属性扩展配置信息表Controller
  * @author DougLei
  */
 @Controller
-public class CfgPropConfExtendController extends AController{
+public class CfgPropExtendConfController extends AController{
 	
 	/**
 	 * 添加属性导入导出的扩展配置
@@ -29,18 +29,18 @@ public class CfgPropConfExtendController extends AController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
-		List<CfgPropConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropConfExtend.class, true);
-		analysisResourceProp(propIEConfExtends, false);
+		List<CfgPropExtendConf> propExtendConfs = getDataInstanceList(ijson, CfgPropExtendConf.class, true);
+		analysisResourceProp(propExtendConfs, false);
 		if(analysisResult == null){
-			for (CfgPropConfExtend propIEConfExtend : propIEConfExtends) {
-				resultObject = BuiltinResourceInstance.getInstance("CfgPropConfExtendService", CfgPropConfExtendService.class).savePropIEConfExtend(propIEConfExtend);
+			for (CfgPropExtendConf propExtendConf : propExtendConfs) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgPropExtendConfService", CfgPropExtendConfService.class).savePropExtendConf(propExtendConf);
 				if(resultObject instanceof String){
 					break;
 				}
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(propIEConfExtends, OperDataTypeConstants.ADD);
+		return getResultObject(propExtendConfs, OperDataTypeConstants.ADD);
 	}
 	
 	/**
@@ -50,18 +50,18 @@ public class CfgPropConfExtendController extends AController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
-		List<CfgPropConfExtend> propIEConfExtends = getDataInstanceList(ijson, CfgPropConfExtend.class, true);
-		analysisResourceProp(propIEConfExtends, true);
+		List<CfgPropExtendConf> propExtendConfs = getDataInstanceList(ijson, CfgPropExtendConf.class, true);
+		analysisResourceProp(propExtendConfs, true);
 		if(analysisResult == null){
-			for (CfgPropConfExtend propIEConfExtend : propIEConfExtends) {
-				resultObject = BuiltinResourceInstance.getInstance("CfgPropConfExtendService", CfgPropConfExtendService.class).updatePropIEConfExtend(propIEConfExtend);
+			for (CfgPropExtendConf propExtendConf : propExtendConfs) {
+				resultObject = BuiltinResourceInstance.getInstance("CfgPropExtendConfService", CfgPropExtendConfService.class).updatePropExtendConf(propExtendConf);
 				if(resultObject instanceof String){
 					break;
 				}
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(propIEConfExtends, OperDataTypeConstants.EDIT);
+		return getResultObject(propExtendConfs, OperDataTypeConstants.EDIT);
 	}
 	
 	/**
@@ -71,12 +71,12 @@ public class CfgPropConfExtendController extends AController{
 	 */
 	@RequestMapping
 	public Object delete(HttpServletRequest request, IJson ijson){
-		String propIEConfExtendIds = request.getParameter(BuiltinParameterKeys._IDS);
-		if(StrUtils.isEmpty(propIEConfExtendIds)){
+		String propExtendConfIds = request.getParameter(BuiltinParameterKeys._IDS);
+		if(StrUtils.isEmpty(propExtendConfIds)){
 			return "要删除的属性导入导出扩展配置id不能为空";
 		}
-		resultObject = BuiltinResourceInstance.getInstance("CfgPropConfExtendService", CfgPropConfExtendService.class).deletePropIEConfExtend(propIEConfExtendIds);
-		processResultObject(BuiltinParameterKeys._IDS, propIEConfExtendIds);
+		resultObject = BuiltinResourceInstance.getInstance("CfgPropExtendConfService", CfgPropExtendConfService.class).deletePropExtendConfExtend(propExtendConfIds);
+		processResultObject(BuiltinParameterKeys._IDS, propExtendConfIds);
 		return getResultObject(null, null);
 	}
 }

@@ -1,6 +1,6 @@
 package com.king.tooth.sys.entity.tools.resource.metadatainfo.ie;
 
-import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
+import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 
 /**
@@ -17,11 +17,11 @@ public class IEResourceMetadataInfo extends ResourceMetadataInfo{
 	/**
 	 * 导入导出的元数据扩展配置
 	 */
-	protected CfgPropConfExtend ieConfExtend;
+	protected CfgPropExtendConf ieConfExtend;
 	
 	public IEResourceMetadataInfo() {
 	}
-	public IEResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, String id, CfgPropConfExtend ieConfExtend) {
+	public IEResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, String id, CfgPropExtendConf ieConfExtend) {
 		super(columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid);
 		this.id = id;
 		this.ieConfExtend = ieConfExtend;
@@ -36,10 +36,10 @@ public class IEResourceMetadataInfo extends ResourceMetadataInfo{
 	public void setId(String id) {
 		this.id = id;
 	}
-	public CfgPropConfExtend getIeConfExtend() {
+	public CfgPropExtendConf getIeConfExtend() {
 		return ieConfExtend;
 	}
-	public void setIeConfExtend(CfgPropConfExtend ieConfExtend) {
+	public void setIeConfExtend(CfgPropExtendConf ieConfExtend) {
 		this.ieConfExtend = ieConfExtend;
 	}
 }

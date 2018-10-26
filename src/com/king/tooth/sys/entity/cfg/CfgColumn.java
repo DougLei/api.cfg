@@ -135,7 +135,7 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	 * 导入导出的扩展配置对象
 	 */
 	@JSONField(serialize = false)
-	private CfgPropConfExtend ieConfExtend;
+	private CfgPropExtendConf ieConfExtend;
 	
 	public CfgColumn() {
 	}
@@ -208,10 +208,10 @@ public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPr
 	public void setPrecision(Integer precision) {
 		this.precision = precision;
 	}
-	public CfgPropConfExtend getIeConfExtend() {
+	public CfgPropExtendConf getIeConfExtend() {
 		return ieConfExtend;
 	}
-	public void setIeConfExtend(CfgPropConfExtend ieConfExtend) {
+	public void setIeConfExtend(CfgPropExtendConf ieConfExtend) {
 		this.ieConfExtend = ieConfExtend;
 	}
 	public Integer getIsPrimaryKey() {

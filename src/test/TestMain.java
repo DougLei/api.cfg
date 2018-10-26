@@ -24,6 +24,7 @@ public class TestMain {
 //		System.out.println(new Date().getTime()-start);
 
 		
-		System.out.println(203%200);
+//		System.out.println(203%200);
+		System.out.println(null+"");
 	}
 }

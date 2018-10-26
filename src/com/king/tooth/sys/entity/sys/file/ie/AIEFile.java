@@ -10,7 +10,7 @@ import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.cfg.CfgPropConfExtend;
+import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
@@ -215,7 +215,7 @@ public abstract class AIEFile {
 	protected void setResourceMetadataExtendInfo(List<IEResourceMetadataInfo> ieResourceMetadataInfos) {
 		for (IEResourceMetadataInfo ieResourceMetadataInfo : ieResourceMetadataInfos) {
 			if(!ResourceInfoConstants.BUILTIN_RESOURCE.equals(ieResourceMetadataInfo.getId())){
-				ieResourceMetadataInfo.setIeConfExtend(HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgPropConfExtend.class, queryPropIEConfExtendInfoHql, ieResourceMetadataInfo.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+				ieResourceMetadataInfo.setIeConfExtend(HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgPropExtendConf.class, queryPropIEConfExtendInfoHql, ieResourceMetadataInfo.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 			}
 			if(ieResourceMetadataInfo.getIeConfExtend() != null){
 				resourceMetadataInfoOfConfExtendCount++;
@@ -223,6 +223,6 @@ public abstract class AIEFile {
 		}
 	}
 	/** 查询属性配置的扩展的导入/导出信息对象hql */
-	private static final String queryPropIEConfExtendInfoHql = "from CfgPropConfExtend where refPropId=? and projectId=? and customerId=?";
+	private static final String queryPropIEConfExtendInfoHql = "from CfgPropExtendConf where refPropId=? and projectId=? and customerId=?";
 	
 }
