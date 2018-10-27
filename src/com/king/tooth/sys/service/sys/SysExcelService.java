@@ -262,7 +262,7 @@ public class SysExcelService extends AService{
 	}
 	
 	/**
-	 * 保存导入的数据数据
+	 * 保存导入的数据
 	 * @param resourceName
 	 * @param ijson
 	 * @param extendParamMap 

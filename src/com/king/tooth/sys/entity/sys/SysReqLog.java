@@ -190,7 +190,7 @@ public class SysReqLog extends BasicEntity implements ITable, IEntity{
 		methodColumn.setOrderCode(2);
 		columns.add(methodColumn);
 		
-		CfgColumn apiAddrColumn = new CfgColumn("api_addr", DataTypeConstants.STRING, 300);
+		CfgColumn apiAddrColumn = new CfgColumn("api_addr", DataTypeConstants.STRING, 500);
 		apiAddrColumn.setName("请求的接口地址");
 		apiAddrColumn.setComments("请求的接口地址");
 		apiAddrColumn.setOrderCode(3);

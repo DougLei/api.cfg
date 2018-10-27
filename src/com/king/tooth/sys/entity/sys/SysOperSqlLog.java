@@ -75,19 +75,19 @@ public class SysOperSqlLog extends BasicEntity implements ITable, IEntity{
 		reqLogIdColumn.setOrderCode(1);
 		columns.add(reqLogIdColumn);
 		
-		CfgColumn sqlScriptColumn = new CfgColumn("sql_script", DataTypeConstants.STRING, 9999);
+		CfgColumn sqlScriptColumn = new CfgColumn("sql_script", DataTypeConstants.CLOB, 0);
 		sqlScriptColumn.setName("操作的sql语句");
 		sqlScriptColumn.setComments("操作的sql语句");
 		sqlScriptColumn.setOrderCode(2);
 		columns.add(sqlScriptColumn);
 		
-		CfgColumn sqlParamsColumn = new CfgColumn("sql_params", DataTypeConstants.STRING, 9999);
+		CfgColumn sqlParamsColumn = new CfgColumn("sql_params", DataTypeConstants.CLOB, 0);
 		sqlParamsColumn.setName("对应的参数");
 		sqlParamsColumn.setComments("对应的参数");
 		sqlParamsColumn.setOrderCode(3);
 		columns.add(sqlParamsColumn);
 		
-		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 2);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("发出sql的顺序");
 		orderCodeColumn.setOrderCode(4);

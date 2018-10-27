@@ -13,13 +13,15 @@ public class CodeResourceProcesser {
 
 	/**
 	 * 获取导入数据的代码资源的key值
+	 * <p></p>
 	 * @param resourceName
 	 * @return
 	 */
 	public static String getImportDataCodeResourceKey(String resourceName){
-		return resourceName + CodeResourceMapping.DATA_IMPORT;
+		return resourceName + CodeResourceMapping.DATA_IMPORT_KEY_SUFFIX;
 	}
 	
+	// ---------------------------------------------------------------------------------------------------------------------
 	/**
 	 * 获取代码资源的key值
 	 * @param resourceName

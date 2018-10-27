@@ -38,77 +38,12 @@ public class CodeResourceMapping {
 	 * 初始化代码资源
 	 */
 	private static void intCodeResource() {
-		// import data code
-		initImportDataCodeResource();
-		// action code
-		initActionCodeResource();
 		// normal code
 		initNormalCodeResource();
-	}
-	
-	/**
-	 * 初始化import data代码资源
-	 * <p>变相的，代码开发的save资源的方法</p>
-	 */
-	private static void initImportDataCodeResource() {
-		put("CfgDatabase"+DATA_IMPORT, CfgDatabaseController.class, "add");// 数据库操作
-		put("ComProject"+DATA_IMPORT, CfgProjectController.class, "add");// 项目操作
-		put("ComProjectModule"+DATA_IMPORT, CfgProjectModuleController.class, "add");// 项目模块操作
-		put("ComTabledata"+DATA_IMPORT, CfgTableController.class, "add");// 表操作
-		put("ComColumndata"+DATA_IMPORT, CfgColumnController.class, "add");// 列操作
-		put("ComSqlScript"+DATA_IMPORT, CfgSqlController.class, "add");// sql脚本操作
-		put("ComSqlScriptParameter"+DATA_IMPORT, CfgSqlParameterController.class, "add");// sql脚本参数操作
-		put("SysUser"+DATA_IMPORT, SysUserController.class, "add");// 用户操作
-		put("SysAccount"+DATA_IMPORT, SysAccountController.class, "add");// 账户操作
-	}
-	static final String DATA_IMPORT = "/data/import";
-	
-	/**
-	 * 初始化action代码资源
-	 * <p>类似建模，开通账户等功能</p>
-	 */
-	private static void initActionCodeResource() {
-		// 数据库操作
-		put("/database/test/link/post", CfgDatabaseController.class, "testLink");
-		
-		// 表操作
-		put("/table/model/create/post", CfgTableController.class, "buildModel");
-		put("/table/model/drop/post", CfgTableController.class, "cancelBuildModel");
-		put("/project/table/relation/add/post", CfgTableController.class, "addProjTableRelation");
-		put("/project/table/relation/cancel/post", CfgTableController.class, "cancelProjTableRelation");
-		
-		// sql脚本操作
-		put("/sql/object/create/post", CfgSqlController.class, "createSqlObject");
-		put("/sql/object/drop/post", CfgSqlController.class, "dropSqlObject");
-		put("/project/sql/relation/add/post", CfgSqlController.class, "addProjSqlScriptRelation");
-		put("/project/sql/relation/cancel/post", CfgSqlController.class, "cancelProjSqlScriptRelation");
-		
-		// 用户操作
-		put("/user/account/open/post", SysUserController.class, "openAccount");
-		put("/user/account/close/post", SysUserController.class, "closeAccount");
-		put("/user/account/reset/put", SysUserController.class, "resetAccount");
-		put("/user/account/pwd/update/put", SysUserController.class, "updatePassword");
-		put("/user/account/pwd/reset/put", SysUserController.class, "resetPassword");
-		
-		// 账户操作
-		put("/login/post", SysAccountController.class, "login");
-		put("/login_out/post", SysAccountController.class, "loginOut");
-		
-		// 权限操作
-		put("/permission/get", SysPermissionController.class, "calcPermissionByCode");
-		
-		// 工具接口
-		put("/hibernate/classmetadata/monitor/get", SystemToolsController.class, "monitorHibernateClassMetadata");// 监听hibernate类元数据
-		put("/resource/info/search/get", SystemToolsController.class, "getResourceInfo");// 获取指定资源信息
-		
-		// 消息接口
-		put("/message/push/post", SysPushMessageInfoController.class, "pushMessage");// 消息推送
-		put("/message/read/get", SysPushMessageInfoController.class, "readMessage");// 消息阅读
-		put("/message/read_status/update/put", SysPushMessageInfoController.class, "updateMessageReadStatus");// 修改消息的阅读状态
-		
-		// excel操作接口
-		put("/excel/import/post", SysExcelController.class, "importExcel");// 导入excel
-		put("/excel/import_template/create/post", SysExcelController.class, "createImportExcelTemplate");// 生成excel导入模版
+		// action code
+		initActionCodeResource();
+		// import data code
+		initImportDataCodeResource();
 	}
 	
 	/**
@@ -189,9 +124,74 @@ public class CodeResourceMapping {
 		put("/account/delete/delete", SysAccountController.class, "delete");
 	}
 	
+	/**
+	 * 初始化action代码资源
+	 * <p>类似建模，开通账户等功能</p>
+	 */
+	private static void initActionCodeResource() {
+		// 数据库操作
+		put("/database/test/link/post", CfgDatabaseController.class, "testLink");
+		
+		// 表操作
+		put("/table/model/create/post", CfgTableController.class, "buildModel");
+		put("/table/model/drop/post", CfgTableController.class, "cancelBuildModel");
+		put("/project/table/relation/add/post", CfgTableController.class, "addProjTableRelation");
+		put("/project/table/relation/cancel/post", CfgTableController.class, "cancelProjTableRelation");
+		
+		// sql脚本操作
+		put("/sql/object/create/post", CfgSqlController.class, "createSqlObject");
+		put("/sql/object/drop/post", CfgSqlController.class, "dropSqlObject");
+		put("/project/sql/relation/add/post", CfgSqlController.class, "addProjSqlScriptRelation");
+		put("/project/sql/relation/cancel/post", CfgSqlController.class, "cancelProjSqlScriptRelation");
+		
+		// 用户操作
+		put("/user/account/open/post", SysUserController.class, "openAccount");
+		put("/user/account/close/post", SysUserController.class, "closeAccount");
+		put("/user/account/reset/put", SysUserController.class, "resetAccount");
+		put("/user/account/pwd/update/put", SysUserController.class, "updatePassword");
+		put("/user/account/pwd/reset/put", SysUserController.class, "resetPassword");
+		
+		// 账户操作
+		put("/login/post", SysAccountController.class, "login");
+		put("/login_out/post", SysAccountController.class, "loginOut");
+		
+		// 权限操作
+		put("/permission/get", SysPermissionController.class, "calcPermissionByCode");
+		
+		// 工具接口
+		put("/hibernate/classmetadata/monitor/get", SystemToolsController.class, "monitorHibernateClassMetadata");// 监听hibernate类元数据
+		put("/resource/info/search/get", SystemToolsController.class, "getResourceInfo");// 获取指定资源信息
+		
+		// 消息接口
+		put("/message/push/post", SysPushMessageInfoController.class, "pushMessage");// 消息推送
+		put("/message/read/get", SysPushMessageInfoController.class, "readMessage");// 消息阅读
+		put("/message/read_status/update/put", SysPushMessageInfoController.class, "updateMessageReadStatus");// 修改消息的阅读状态
+		
+		// excel操作接口
+		put("/excel/import/post", SysExcelController.class, "importExcel");// 导入excel
+		put("/excel/import_template/create/post", SysExcelController.class, "createImportExcelTemplate");// 生成excel导入模版
+	}
+	
+	/**
+	 * 初始化import data代码资源
+	 * <p>变相的，代码开发的save资源的方法</p>
+	 */
+	private static void initImportDataCodeResource() {
+		put("CfgDatabase"+DATA_IMPORT_KEY_SUFFIX, CfgDatabaseController.class, "add");// 数据库操作
+		put("ComProject"+DATA_IMPORT_KEY_SUFFIX, CfgProjectController.class, "add");// 项目操作
+		put("ComProjectModule"+DATA_IMPORT_KEY_SUFFIX, CfgProjectModuleController.class, "add");// 项目模块操作
+		put("ComTabledata"+DATA_IMPORT_KEY_SUFFIX, CfgTableController.class, "add");// 表操作
+		put("ComColumndata"+DATA_IMPORT_KEY_SUFFIX, CfgColumnController.class, "add");// 列操作
+		put("ComSqlScript"+DATA_IMPORT_KEY_SUFFIX, CfgSqlController.class, "add");// sql脚本操作
+		put("ComSqlScriptParameter"+DATA_IMPORT_KEY_SUFFIX, CfgSqlParameterController.class, "add");// sql脚本参数操作
+		put("SysUser"+DATA_IMPORT_KEY_SUFFIX, SysUserController.class, "add");// 用户操作
+		put("SysAccount"+DATA_IMPORT_KEY_SUFFIX, SysAccountController.class, "add");// 账户操作
+	}
+	/** 保存导入数据的代码，映射的key值后缀 */
+	static final String DATA_IMPORT_KEY_SUFFIX = "/data/import";
 
 	/**
-	 * 初始化系统代码资源
+	 * 系统启动时，初始化系统代码资源
 	 */
 	public static void initCodeResourceMapping(){
 		if(unInitCodeResourceMapping){

@@ -178,7 +178,7 @@ public class PropExtendConfQueryData implements Serializable{
 			if(queryType==1){
 				dataList = HibernateUtil.executeListQueryByHql(startIndex+"", endIndex+"", queryDataListHql, getConditionValues());
 			}else if(queryType==2){
-				if(propExtendConf.isBuiltinTableResource()){
+				if(tableResourceName == null){
 					// TODO 这里要实现基础资源的信息，以及怎么加条件
 					
 					
