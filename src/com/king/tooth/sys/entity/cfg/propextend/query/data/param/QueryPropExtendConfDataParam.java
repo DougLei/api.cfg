@@ -93,32 +93,25 @@ public class QueryPropExtendConfDataParam implements Serializable{
 	
 	/**
 	 * 处理查询条件hql语句，以及查询条件值集合
-	 * @param initSize
 	 * @return this
 	 */
-	public QueryPropExtendConfDataParam processConditionHqlAndConditionValues(int initSize) {
-		if(initSize < 1){
-			throw new IllegalArgumentException("集合的初始长度值，不能小于1");
-		}
+	public QueryPropExtendConfDataParam processConditionHqlAndConditionValues() {
 		if(conditions != null && conditions.size() > 0){
 			StringBuilder hql = new StringBuilder();
 			int conditionsSize = conditions.size();
 			
-			conditionValues = new ArrayList<Object>(conditionsSize + initSize);
+			conditionValues = new ArrayList<Object>(conditionsSize);
 			
 			Map<String, String> queryCondParams = new HashMap<String, String>(conditionsSize);
 			for (QueryPropExtendConfDataCondition condition : conditions) {
 				queryCondParams.put(condition.getPropName(), condition.getValue());
 			}
 			
-			BuiltinQueryCondFuncUtil.installQueryCondHql(ResourceInfoConstants.TABLE, queryCondParams.entrySet(), conditionValues, hql);
+			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParams.entrySet(), conditionValues, hql, "p");
 			conditionHql = hql.toString();
 			
 			hql.setLength(0);
 			queryCondParams.clear();
-		}else{
-			conditionHql = "";
-			conditionValues = new ArrayList<Object>(initSize);
 		}
 		return this;
 	}

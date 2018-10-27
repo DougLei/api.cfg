@@ -9,8 +9,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.cfg.propextend.query.data.param.QueryPropExtendConfDataParam;
-import com.king.tooth.sys.service.sys.imports.template.data.query.IImportTemplateDataQueryService;
-import com.king.tooth.sys.service.sys.imports.template.data.query.SysDeptImportTemplateDataQuery;
+import com.king.tooth.sys.service.sys.imports.template.data.query.AImportTemplateDataQueryService;
 import com.king.tooth.sys.service.sys.imports.template.data.query.SysUserImportTemplateDataQuery;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
@@ -23,14 +22,13 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 @SuppressWarnings({"serial", "unchecked"})
 public class PropExtendConfQueryData implements Serializable{
 
-	public PropExtendConfQueryData(CfgPropExtendConf propExtendConf, QueryPropExtendConfDataParam queryPropExtendConfDataParam, int conditionListInitSize) {
+	public PropExtendConfQueryData(CfgPropExtendConf propExtendConf, QueryPropExtendConfDataParam queryPropExtendConfDataParam) {
 		this.propExtendConf = propExtendConf;
 		this.queryPropExtendConfDataParam = queryPropExtendConfDataParam;
 		
-		queryPropExtendConfDataParam.processConditionHqlAndConditionValues(conditionListInitSize);
+		queryPropExtendConfDataParam.processConditionHqlAndConditionValues();
 		this.querySize = queryPropExtendConfDataParam.getQuerySize();
 		this.queryDataHql = queryPropExtendConfDataParam.getConditionHql();
-		this.conditionValues = queryPropExtendConfDataParam.getConditionValues();
 		
 		calcQueryDataTotalCount();
 		setImportTemplateDataQueryServiceInstance();
@@ -38,7 +36,7 @@ public class PropExtendConfQueryData implements Serializable{
 	
 	private CfgPropExtendConf propExtendConf;
 	private QueryPropExtendConfDataParam queryPropExtendConfDataParam;
-	private IImportTemplateDataQueryService importTemplateDataQueryService;
+	private AImportTemplateDataQueryService importTemplateDataQueryService;
 	
 	/**
 	 * 一次查询的数量
@@ -57,15 +55,62 @@ public class PropExtendConfQueryData implements Serializable{
 	private List<Object> conditionValues;
 	
 	/**
+	 * 设置条件hql语句
+	 * <p>包括基础字段projectId、customerId</p>
+	 * @param startLinkStr 起始连接符，where或and
+	 * @return
+	 */
+	private String setConditionHql(String startLinkStr){
+		if(queryPropExtendConfDataParam.getConditionValues() != null){
+			conditionValues = new ArrayList<Object>(3 + queryPropExtendConfDataParam.getConditionValues().size());
+		}else{
+			conditionValues = new ArrayList<Object>(3);
+		}
+		StringBuilder conditionHql = new StringBuilder();
+		
+		conditionHql.append(" ").append(startLinkStr).append(" p.customerId=?");
+		conditionValues.add(CurrentThreadContext.getCustomerId());
+		
+		if(isProjectResource(tableResourceName)){
+			conditionHql.append(" and p.projectId=?");
+			conditionValues.add(CurrentThreadContext.getProjectId());
+		}
+		
+		if(queryDataHql != null){
+			conditionHql.append(" and ").append(queryDataHql);
+			conditionValues.addAll(queryPropExtendConfDataParam.getConditionValues());
+		}
+		return conditionHql.toString();
+	}
+	
+	/**
+	 * 是否是项目资源
+	 * <p>例如SysDataDictionary，就是属于项目资源，一个项目一套数据字典</p>
+	 * <p>例如SysUser属于客户资源，一个客户有多个项目，但是每个项目都应引用同一套SysUser信息，这个资源再查询的时候，不应带上projectId的条件</p>
+	 * @param resourceName
+	 * @return
+	 */
+	private boolean isProjectResource(String resourceName) {
+		for (String customerResource : customerResources) {
+			if(customerResource.equals(resourceName)){
+				return false;
+			}
+		}
+		return true;
+	}
+	private static final String[] customerResources = {"SysUser", "SysDept"};
+
+	/**
 	 * 计算要查询的数据的总数
 	 */
 	private void calcQueryDataTotalCount(){
 		String queryDataCountHql = null;
 		if(StrUtils.notEmpty(propExtendConf.getDataDictionaryId())){
 			queryType = 1;
-			queryDataHql = "from SysDataDictionary where projectId=? and customerId=? and parentId=? and isEnabled=1 and isDelete=0 and " + queryDataHql;
-			queryDataCountHql = "select count("+ResourcePropNameConstants.ID+") " + queryDataHql;
-			conditionValues.add(0, propExtendConf.getDataDictionaryId());
+			tableResourceName = "SysDataDictionary";
+			queryDataHql = "from SysDataDictionary p where p.isEnabled=1 and p.isDelete=0" + setConditionHql("and") + " and parentId=?";
+			queryDataCountHql = "select count(p."+ResourcePropNameConstants.ID+") " + queryDataHql;
+			conditionValues.add(propExtendConf.getDataDictionaryId());
 		}else if(StrUtils.notEmpty(propExtendConf.getRefTable()) && StrUtils.notEmpty(propExtendConf.getRefValueColumn())){
 			queryType = 2;
 			if(propExtendConf.isBuiltinTableResource()){
@@ -79,18 +124,20 @@ public class PropExtendConfQueryData implements Serializable{
 					}
 					tableResourceName = obj.toString();
 					
-					obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, propExtendConf.getRefValueColumn());
-					if(obj == null){
-						throw new NullPointerException("id为["+propExtendConf.getId()+"]的属性扩展配置信息，配置的refValueColumn值，无法查询到相应的列信息，请检查配置");
+					if(ResourcePropNameConstants.ID.equals(propExtendConf.getRefValueColumn())){
+						valueColumnPropName = ResourcePropNameConstants.ID;
+					}else{
+						obj = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropResourceNameByIdHql, propExtendConf.getRefValueColumn());
+						if(obj == null){
+							throw new NullPointerException("id为["+propExtendConf.getId()+"]的属性扩展配置信息，配置的refValueColumn值，无法查询到相应的列信息，请检查配置");
+						}
+						valueColumnPropName = obj.toString();
 					}
-					valueColumnPropName = obj.toString();
 				}
 			}
-			queryDataHql = "from " + tableResourceName + " where projectId=? and customerId=? and " + queryDataHql;
-			queryDataCountHql = "select count("+ResourcePropNameConstants.ID+") " + queryDataHql;
+			queryDataHql = "from " + tableResourceName + " p" + setConditionHql("where");
+			queryDataCountHql = "select count(p."+ResourcePropNameConstants.ID+") " + queryDataHql;
 		}
-		conditionValues.add(0, CurrentThreadContext.getCustomerId());
-		conditionValues.add(0, CurrentThreadContext.getProjectId());
 		
 		dataListTotalCount = (long) HibernateUtil.executeUniqueQueryByHql(queryDataCountHql, getConditionValues());
 		if(dataListTotalCount > 0 && querySize != -1){
@@ -110,8 +157,6 @@ public class PropExtendConfQueryData implements Serializable{
 	private void setImportTemplateDataQueryServiceInstance() {
 		if("SysUser".equals(tableResourceName)){
 			importTemplateDataQueryService = new SysUserImportTemplateDataQuery();
-		}else if("SysDept".equals(tableResourceName)){
-			importTemplateDataQueryService = new SysDeptImportTemplateDataQuery();
 		}
 	}
 	
@@ -179,7 +224,7 @@ public class PropExtendConfQueryData implements Serializable{
 	public List<Object[]> getDataList() {
 		installQueryDataListHql();
 		if(dataListTotalCount > 0 && (currentLoopCount < loopCount || querySize == -1)){
-			// 数据列表。数组的长度就为2或3，下标为0的是实际存储的值，下标为1的是展示名称，如果下标为2有值，则标识是子数据集合，依次类推
+			// 数据列表。数组的长度就为2或3，下标为0的是实际存储的值，下标为1的是展示名称，如果下标为2有值，则标识是子数据集合，依次类推，不过目前还未写出过data下标为3的查询语句
 			List<Object[]> dataList = null;
 			if(querySize == -1){
 				startIndex = 0;
@@ -197,7 +242,7 @@ public class PropExtendConfQueryData implements Serializable{
 				dataList = HibernateUtil.executeListQueryByHql(startIndex+"", endIndex+"", queryDataListHql, getConditionValues());
 			}else if(queryType==2){
 				if(importTemplateDataQueryService != null){
-					dataList = importTemplateDataQueryService.queryDataList(startIndex+"", endIndex+"", queryPropExtendConfDataParam.getConditions());
+					dataList = importTemplateDataQueryService.queryDataList(startIndex+"", endIndex+"", valueColumnPropName, queryPropExtendConfDataParam.getConditionHql(), getConditionValues(), queryPropExtendConfDataParam.getRefOrderByPropName(), queryPropExtendConfDataParam.getOrderBy());
 				}else{
 					dataList = HibernateUtil.executeListQueryByHql(startIndex+"", endIndex+"", queryDataListHql, getConditionValues());
 				}
@@ -215,16 +260,16 @@ public class PropExtendConfQueryData implements Serializable{
 		if(queryDataListHql == null && dataListTotalCount > 0){
 			StringBuilder hql = new StringBuilder();
 			if(queryType==1){
-				hql.append("select val, caption ");
+				hql.append("select p.val, p.caption ");
 			}else if(queryType==2){
-				hql.append("select ").append(valueColumnPropName);
+				hql.append("select p.").append(valueColumnPropName);
 				if(queryPropExtendConfDataParam.getRefKeyPropName() != null){
-					hql.append(",").append(queryPropExtendConfDataParam.getRefKeyPropName());
+					hql.append(",p.").append(queryPropExtendConfDataParam.getRefKeyPropName());
 				}
 			}
 			hql.append(" ").append(queryDataHql);
 			if(queryPropExtendConfDataParam.getRefOrderByPropName() != null){
-				hql.append(" order by ").append(queryPropExtendConfDataParam.getRefOrderByPropName()).append(" ").append(queryPropExtendConfDataParam.getOrderBy());
+				hql.append(" order by p.").append(queryPropExtendConfDataParam.getRefOrderByPropName()).append(" ").append(queryPropExtendConfDataParam.getOrderBy());
 			}
 			
 			queryDataListHql = hql.toString();

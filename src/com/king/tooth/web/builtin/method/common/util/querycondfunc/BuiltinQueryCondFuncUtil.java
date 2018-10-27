@@ -73,20 +73,20 @@ public class BuiltinQueryCondFuncUtil {
 	}
 	
 	/**
-	 * 拼接查询条件的hql语句
-	 * <p>同时，将条件值按顺序存储到hqlParameterValues中</p>
+	 * 拼接查询条件的数据库脚本语句
+	 * <p>同时，将条件值按顺序存储到queryCondParameterValues中</p>
 	 * @param requestResourceType 资源类型
 	 * @param queryCondParamsSet 查询参数map集合
 	 * @param queryCondParameterValues 要通过引用传递出去的值集合
 	 * @param dbScriptStatement 要通过引用传递出去的数据库脚本语句
 	 */
-	public static void installQueryCondHql(int requestResourceType, Set<Entry<String, String>> queryCondParamsSet, List<Object> queryCondParameterValues, StringBuilder dbScriptStatement){
+	public static void installQueryCondOfDBScriptStatement(int requestResourceType, Set<Entry<String, String>> queryCondParamsSet, List<Object> queryCondParameterValues, StringBuilder dbScriptStatement){
 		installQueryCondOfDBScriptStatement(requestResourceType, queryCondParamsSet, queryCondParameterValues, dbScriptStatement, null);
 	}
 	
 	/**
 	 * 拼接查询条件的数据库脚本语句【可以带别名】
-	 * <p>同时，将条件值按顺序存储到hqlParameterValues中</p>
+	 * <p>同时，将条件值按顺序存储到queryCondParameterValues中</p>
 	 * @param requestResourceType 资源类型
 	 * @param queryCondParamsSet 查询参数map集合
 	 * @param queryCondParameterValues 要通过引用传递出去的值集合
