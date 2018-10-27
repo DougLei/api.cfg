@@ -13,7 +13,7 @@ import com.king.tooth.util.StrUtils;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class BasicEntity implements Serializable{
+public abstract class BasicEntity implements Serializable, ITable{
 	/**
 	 * 主键
 	 */

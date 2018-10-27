@@ -13,7 +13,6 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.database.DBFile;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -26,7 +25,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgDatabase extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity{
+public class CfgDatabase extends BasicEntity implements IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 数字库名

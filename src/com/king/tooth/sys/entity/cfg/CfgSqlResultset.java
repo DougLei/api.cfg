@@ -11,7 +11,6 @@ import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -23,7 +22,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgSqlResultset extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的sql脚本id
 	 */

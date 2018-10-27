@@ -13,7 +13,6 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -24,7 +23,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgColumnCodeRuleDetail extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEntityPropAnalysis{
 	
 	/**
 	 * 关联的字段编码规则id

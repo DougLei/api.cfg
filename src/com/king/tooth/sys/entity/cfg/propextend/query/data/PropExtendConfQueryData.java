@@ -291,6 +291,8 @@ public class PropExtendConfQueryData implements Serializable{
 		if(conditionValues != null && conditionValues.size() > 0){
 			conditionValues.clear();
 		}
-		queryPropExtendConfDataParam.clear();
+		if(queryPropExtendConfDataParam != null){
+			queryPropExtendConfDataParam.clear();
+		}
 	}
 }

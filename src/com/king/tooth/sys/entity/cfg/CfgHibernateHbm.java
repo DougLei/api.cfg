@@ -8,7 +8,6 @@ import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ITable;
 
 /**
  * hibernate的hbm内容表
@@ -16,7 +15,7 @@ import com.king.tooth.sys.entity.ITable;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgHibernateHbm extends BasicEntity implements ITable, IEntity{
+public class CfgHibernateHbm extends BasicEntity implements IEntity{
 	
 	/**
 	 * 关联的数据库主键

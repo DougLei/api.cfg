@@ -9,7 +9,6 @@ import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 
@@ -19,7 +18,7 @@ import com.king.tooth.sys.entity.cfg.CfgTable;
  */
 @SuppressWarnings("serial")
 @Table
-public class SysPushMessageInfo extends BasicEntity implements ITable, IEntity, Cloneable{
+public class SysPushMessageInfo extends BasicEntity implements IEntity, Cloneable{
 	
 	/**
 	 * 消息类型

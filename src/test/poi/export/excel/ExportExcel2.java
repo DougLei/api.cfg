@@ -33,7 +33,7 @@ public class ExportExcel2 {
 		// 设置数据有效性，默认10列就够了，剩下的用户去修改excel即可
 		PoiExcelUtil.setDataValidation(suffix, sheet, 1, -1, 0, 0, "K1", "K3");
 		
-		File f = new File("C:\\Users\\StoneKing\\Desktop\\test."+suffix);
+		File f = new File("D:\\test."+suffix);
 		if(f.exists()){
 			f.delete();
 		}

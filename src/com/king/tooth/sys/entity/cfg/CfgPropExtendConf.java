@@ -10,7 +10,6 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -19,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgPropExtendConf extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class CfgPropExtendConf extends BasicEntity implements IEntity, IEntityPropAnalysis{
 	
 	/** 
 	 * 关联的资源id

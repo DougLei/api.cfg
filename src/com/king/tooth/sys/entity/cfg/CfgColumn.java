@@ -11,7 +11,6 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.TableResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
 import com.king.tooth.util.JsonUtil;
@@ -25,7 +24,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgColumn extends BasicEntity implements ITable, IEntity, IEntityPropAnalysis{
+public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalysis{
 	/**
 	 * 关联的表主键
 	 */

@@ -12,7 +12,6 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
@@ -23,7 +22,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgTable extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity, ISysResource{
+public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntity, ISysResource{
 	/**
 	 * 显示的汉字名称
 	 */

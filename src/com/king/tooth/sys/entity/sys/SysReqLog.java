@@ -13,7 +13,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.DateUtil;
@@ -26,7 +25,7 @@ import com.king.tooth.util.ResourceHandlerUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class SysReqLog extends BasicEntity implements ITable, IEntity{
+public class SysReqLog extends BasicEntity implements IEntity{
 	
 	/**
 	 * 请求类型

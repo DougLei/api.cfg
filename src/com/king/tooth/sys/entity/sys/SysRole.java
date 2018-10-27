@@ -8,7 +8,6 @@ import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.StrUtils;
@@ -19,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class SysRole extends BasicEntity implements ITable, IEntity{
+public class SysRole extends BasicEntity implements IEntity{
 	
 	/**
 	 * 角色名称

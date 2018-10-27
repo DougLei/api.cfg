@@ -9,7 +9,6 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -18,7 +17,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComProject extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity{
+public class ComProject extends BasicEntity implements IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 关联的数据库主键

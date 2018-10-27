@@ -19,7 +19,6 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.ISysResource;
-import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.sys.entity.sys.SysResource;
@@ -36,7 +35,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComSqlScript extends BasicEntity implements ITable, IEntityPropAnalysis, IEntity, ISysResource{
+public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IEntity, ISysResource{
 	/**
 	 * 数据库类型
 	 */
