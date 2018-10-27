@@ -322,7 +322,7 @@ public class SysExcelService extends AService{
 			
 			propExtendConf = rmi.getIeConfExtend();
 			if(propExtendConf != null){
-				propExtendConfQueryData = new PropExtendConfQueryData(propExtendConf, importFileTemplate.getQueryPropExtendConfDataParams().get(rmi.getPropName()), 3);
+				propExtendConfQueryData = new PropExtendConfQueryData(propExtendConf, importFileTemplate.getQueryPropExtendConfDataParam(rmi.getPropName()), 3);
 				if(propExtendConfQueryData.getDataListTotalCount() > 0){
 					sheet.setColumnHidden(cellIndex, true);
 					valueCell = setCellValue(headRow.createCell(cellIndex++), rmi.getPropName());

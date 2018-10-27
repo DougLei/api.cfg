@@ -177,9 +177,9 @@ public class DBLink {
 		try {
 			execute.execute(getConnection());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			throw new IllegalArgumentException(e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new IllegalArgumentException(e);
 		}
 	}
 }

@@ -78,4 +78,20 @@ public class ImportFileTemplate extends AIEFile implements Serializable, IEntity
 	public String getEntityName() {
 		return "ImportFileTemplate";
 	}
+	
+	/**
+	 * 获取指定属性名的查询属性扩展配置的对应数据列表用参数对象 实例
+	 * @param propName
+	 * @return
+	 */
+	public QueryPropExtendConfDataParam getQueryPropExtendConfDataParam(String propName) {
+		QueryPropExtendConfDataParam queryPropExtendConfDataParam = null;
+		if(queryPropExtendConfDataParams != null && queryPropExtendConfDataParams.size() >0){
+			queryPropExtendConfDataParam = queryPropExtendConfDataParams.get(propName);
+		}
+		if(queryPropExtendConfDataParam == null){
+			queryPropExtendConfDataParam = new  QueryPropExtendConfDataParam();
+		}
+		return queryPropExtendConfDataParam;
+	}
 }

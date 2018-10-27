@@ -22,31 +22,18 @@ public class PropExtendConfQueryData implements Serializable{
 
 	public PropExtendConfQueryData(CfgPropExtendConf propExtendConf, QueryPropExtendConfDataParam queryPropExtendConfDataParam, int conditionListInitSize) {
 		this.propExtendConf = propExtendConf;
-		isBuiltinTableResource = propExtendConf.isBuiltinTableResource();
-		
 		this.queryPropExtendConfDataParam = queryPropExtendConfDataParam;
-		if(queryPropExtendConfDataParam != null){
-			queryPropExtendConfDataParam.processConditionHqlAndConditionValues(conditionListInitSize);
-			this.querySize = queryPropExtendConfDataParam.getQuerySize();
-			this.queryDataHql = queryPropExtendConfDataParam.getConditionHql();
-			this.conditionValues = queryPropExtendConfDataParam.getConditionValues();
-		}else{
-			this.querySize = 100;
-			this.queryDataHql = "";
-			this.conditionValues = new ArrayList<Object>(conditionListInitSize);
-		}
+		
+		queryPropExtendConfDataParam.processConditionHqlAndConditionValues(conditionListInitSize);
+		this.querySize = queryPropExtendConfDataParam.getQuerySize();
+		this.queryDataHql = queryPropExtendConfDataParam.getConditionHql();
+		this.conditionValues = queryPropExtendConfDataParam.getConditionValues();
+		
 		calcQueryDataTotalCount();
 	}
 	
-	/**
-	 * 属性扩展配置对象 实例
-	 */
 	private CfgPropExtendConf propExtendConf;
 	private QueryPropExtendConfDataParam queryPropExtendConfDataParam;
-	/**
-	 * 是否是内置表资源
-	 */
-	private boolean isBuiltinTableResource;
 	/**
 	 * 一次查询的数量
 	 * <p>进行分页查询，减少内存消耗，默认为100</p>
@@ -75,7 +62,7 @@ public class PropExtendConfQueryData implements Serializable{
 			conditionValues.add(0, propExtendConf.getDataDictionaryId());
 		}else if(StrUtils.notEmpty(propExtendConf.getRefTable()) && StrUtils.notEmpty(propExtendConf.getRefValueColumn())){
 			queryType = 2;
-			if(isBuiltinTableResource){
+			if(propExtendConf.isBuiltinTableResource()){
 				tableResourceName = propExtendConf.getRefTable();
 				valueColumnPropName = propExtendConf.getRefValueColumn();
 			}else{
@@ -117,15 +104,19 @@ public class PropExtendConfQueryData implements Serializable{
 	private int queryType;
 	/**
 	 * 查询的表的资源名
+	 * <p>根据propExtendConf.getRefTable()获取</p>
 	 */
 	private String tableResourceName;
 	/**
 	 * 查询的value列的属性名(实际存储的值的属性)
+	 * <p>根据propExtendConf.getRefValueColumn()获取</p>
 	 */
 	private String valueColumnPropName;
 	
+	// ---------------------------------------------------------------
 	/**
 	 * 查询数据列表的hql语句
+	 * <p>最终在getDataList中用到的，select .. + queryDataHql，完整的查询用语句</p>
 	 */
 	private String queryDataListHql;
 	
@@ -187,7 +178,7 @@ public class PropExtendConfQueryData implements Serializable{
 			if(queryType==1){
 				dataList = HibernateUtil.executeListQueryByHql(startIndex+"", endIndex+"", queryDataListHql, getConditionValues());
 			}else if(queryType==2){
-				if(isBuiltinTableResource){
+				if(propExtendConf.isBuiltinTableResource()){
 					// TODO 这里要实现基础资源的信息，以及怎么加条件
 					
 					
@@ -213,14 +204,14 @@ public class PropExtendConfQueryData implements Serializable{
 			StringBuilder hql = new StringBuilder();
 			if(queryType==1){
 				hql.append("select val, caption ");
-			}else if(queryType==2 && !isBuiltinTableResource){
+			}else if(queryType==2 && !propExtendConf.isBuiltinTableResource()){
 				hql.append("select ").append(valueColumnPropName);
-				if(queryPropExtendConfDataParam != null && queryPropExtendConfDataParam.getRefKeyPropName() != null){
+				if(queryPropExtendConfDataParam.getRefKeyPropName() != null){
 					hql.append(",").append(queryPropExtendConfDataParam.getRefKeyPropName());
 				}
 			}
 			hql.append(" ").append(queryDataHql);
-			if(queryPropExtendConfDataParam != null && queryPropExtendConfDataParam.getRefOrderByPropName() != null){
+			if(queryPropExtendConfDataParam.getRefOrderByPropName() != null){
 				hql.append(" order by ").append(queryPropExtendConfDataParam.getRefOrderByPropName()).append(" ").append(queryPropExtendConfDataParam.getOrderBy());
 			}
 			
