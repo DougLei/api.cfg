@@ -65,7 +65,7 @@ public class SysExcelController extends AController{
 				excelIELog = new SysFileIELog(ResourceInfoConstants.IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
 				excelIELogs.add(excelIELog);
 				
-				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(importFile);
+				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(request, importFile);
 				if(resultObject instanceof String){
 					excelIELog.recordResult(resultObject.toString());
 					break;

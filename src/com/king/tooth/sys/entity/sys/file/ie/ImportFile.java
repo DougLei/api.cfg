@@ -3,6 +3,7 @@ package com.king.tooth.sys.entity.sys.file.ie;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourcePropNameConstants;
@@ -24,6 +25,11 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 	 * <p>例如文件中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为300条，如果值为-1，则一次全部导入</p>
 	 */
 	private int batchImportCount;
+	/**
+	 * 扩展参数map集合
+	 * <p>保存特殊数据的时候用到，比如保存用户的时候，可能要传入立即创建账户的参数isCreateAccount=1</p>
+	 */
+	private Map<String, Object> extendParamMap;
 	
 	// --------------------------------------------------
 	/**
@@ -41,6 +47,12 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 	}
 	public int getBatchImportCount() {
 		return batchImportCount;
+	}
+	public Map<String, Object> getExtendParamMap() {
+		return extendParamMap;
+	}
+	public void setExtendParamMap(Map<String, Object> extendParamMap) {
+		this.extendParamMap = extendParamMap;
 	}
 	
 	public String validNotNullProps() {

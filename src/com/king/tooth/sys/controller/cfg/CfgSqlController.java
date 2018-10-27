@@ -39,6 +39,8 @@ public class CfgSqlController extends AController{
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScript(sqlScript);
 				sqlScript.clear();
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgSql对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -61,6 +63,8 @@ public class CfgSqlController extends AController{
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScript(sqlScript);
 				sqlScript.clear();
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgSql对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);

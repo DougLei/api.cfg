@@ -90,6 +90,8 @@ public class SysAccountController extends AController{
 			for (SysAccount account : accounts) {
 				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(account);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个SysAccount对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -111,6 +113,8 @@ public class SysAccountController extends AController{
 			for (SysAccount account : accounts) {
 				resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(account);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个SysAccount对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);

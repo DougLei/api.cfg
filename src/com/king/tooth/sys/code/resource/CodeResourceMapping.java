@@ -38,15 +38,34 @@ public class CodeResourceMapping {
 	 * 初始化代码资源
 	 */
 	private static void intCodeResource() {
-		// code
+		// import data code
+		initImportDataCodeResource();
+		// action code
 		initActionCodeResource();
-		// normal
+		// normal code
 		initNormalCodeResource();
 	}
 	
 	/**
+	 * 初始化import data代码资源
+	 * <p>变相的，代码开发的save资源的方法</p>
+	 */
+	private static void initImportDataCodeResource() {
+		put("CfgDatabase"+DATA_IMPORT, CfgDatabaseController.class, "add");// 数据库操作
+		put("ComProject"+DATA_IMPORT, CfgProjectController.class, "add");// 项目操作
+		put("ComProjectModule"+DATA_IMPORT, CfgProjectModuleController.class, "add");// 项目模块操作
+		put("ComTabledata"+DATA_IMPORT, CfgTableController.class, "add");// 表操作
+		put("ComColumndata"+DATA_IMPORT, CfgColumnController.class, "add");// 列操作
+		put("ComSqlScript"+DATA_IMPORT, CfgSqlController.class, "add");// sql脚本操作
+		put("ComSqlScriptParameter"+DATA_IMPORT, CfgSqlParameterController.class, "add");// sql脚本参数操作
+		put("SysUser"+DATA_IMPORT, SysUserController.class, "add");// 用户操作
+		put("SysAccount"+DATA_IMPORT, SysAccountController.class, "add");// 账户操作
+	}
+	static final String DATA_IMPORT = "/data/import";
+	
+	/**
 	 * 初始化action代码资源
-	 * <p>例如：CfgTable post buildModel就是建模的操作，类似的还有发布操作等</p>
+	 * <p>类似建模，开通账户等功能</p>
 	 */
 	private static void initActionCodeResource() {
 		// 数据库操作
@@ -94,7 +113,7 @@ public class CodeResourceMapping {
 	
 	/**
 	 * 初始化一般代码资源
-	 * <p>例如：CfgTable post就是添加表的操作</p>
+	 * <p>简单的增删改查</p>
 	 */
 	private static void initNormalCodeResource() {
 		// 数据库操作

@@ -37,6 +37,8 @@ public class SysUserController extends AController{
 			for (SysUser user : users) {
 				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).saveUser(user);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个SysUser对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -58,6 +60,8 @@ public class SysUserController extends AController{
 			for (SysUser user : users) {
 				resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updateUser(user);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个SysUser对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -100,6 +104,8 @@ public class SysUserController extends AController{
 		for (SysUser user : users) {
 			resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).openAccount(user);
 			if(resultObject instanceof String){
+				index++;
+				resultObject = "第"+index+"个SysUser对象，" + resultObject;
 				break;
 			}
 			resultJsonArray.add(resultObject);
@@ -118,6 +124,8 @@ public class SysUserController extends AController{
 		for (SysUser user : users) {
 			resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).closeAccount(user);
 			if(resultObject instanceof String){
+				index++;
+				resultObject = "第"+index+"个SysUser对象，" + resultObject;
 				break;
 			}
 			resultJsonArray.add(resultObject);

@@ -23,6 +23,10 @@ public abstract class AController {
 	 */
 	protected String analysisResult;
 	/**
+	 * 处理到的第几个对象
+	 */
+	protected int index;
+	/**
 	 * 处理结果对象
 	 */
 	protected Object resultObject;

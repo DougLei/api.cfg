@@ -12,6 +12,15 @@ import com.king.tooth.util.Log4jUtil;
 public class CodeResourceProcesser {
 
 	/**
+	 * 获取导入数据的代码资源的key值
+	 * @param resourceName
+	 * @return
+	 */
+	public static String getImportDataCodeResourceKey(String resourceName){
+		return resourceName + CodeResourceMapping.DATA_IMPORT;
+	}
+	
+	/**
 	 * 获取代码资源的key值
 	 * @param resourceName
 	 * @param reqMethod

@@ -7,7 +7,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,6 +26,7 @@ import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.JSONArrayExtend;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.cfg.propextend.query.data.PropExtendConfQueryData;
 import com.king.tooth.sys.entity.sys.SysFile;
@@ -88,10 +92,11 @@ public class SysExcelService extends AService{
 	// --------------------------------------------------------------------------------------------------
 	/**
 	 * 导入excel
+	 * @param request
 	 * @param importExcel
 	 * @return
 	 */
-	public Object importExcel(ImportFile importFile) {
+	public Object importExcel(HttpServletRequest request, ImportFile importFile) {
 		SysFile file = importFile.getImportFile();
 		Object wb = PoiExcelUtil.getReadWorkBookInstance(file.getSavePath(), file.getSuffix());
 		if(wb instanceof String){
@@ -144,7 +149,10 @@ public class SysExcelService extends AService{
 			if(validResult != null){
 				return validResult;
 			}
-			saveImportDatas(resourceName, ijson);
+			Object saveResult = saveImportDatas(resourceName, ijson, importFile.getExtendParamMap(), request);
+			if(saveResult != null){
+				return saveResult;
+			}
 		}
 		return importFile;
 	}
@@ -257,15 +265,36 @@ public class SysExcelService extends AService{
 	 * 保存导入的数据数据
 	 * @param resourceName
 	 * @param ijson
+	 * @param extendParamMap 
+	 * @param request 
 	 */
-	private void saveImportDatas(String resourceName, IJson ijson) {
+	private Object saveImportDatas(String resourceName, IJson ijson, Map<String, Object> extendParamMap, HttpServletRequest request) {
 		int size = ijson.size();
 		if(size > 0){
-			for(int i =0;i<size;i++){
-				// TODO 如果导入的是一些特殊资源，还会有额外的处理，比如导入用户，是否要同时开通账户
-				HibernateUtil.saveObject(resourceName, ijson.get(i), null);
+			String codeResourceKey = CodeResourceProcesser.getImportDataCodeResourceKey(resourceName);
+			if(CodeResourceProcesser.isCodeResource(codeResourceKey)){
+				if(extendParamMap != null && extendParamMap.size() > 0){
+					JSONObject json = null;
+					Set<Entry<String, Object>> sets = extendParamMap.entrySet();
+					for(int i =0;i<size;i++){
+						json = ijson.get(i);
+						for (Entry<String, Object> set : sets) {
+							json.put(set.getKey(), set.getValue());
+						}
+					}
+					extendParamMap.clear();
+				}
+				Object result = CodeResourceProcesser.invokeCodeResource(codeResourceKey, request, ijson);
+				if(result instanceof String){
+					return result;
+				}
+			}else{
+				for(int i =0;i<size;i++){
+					HibernateUtil.saveObject(resourceName, ijson.get(i), null);
+				}
 			}
 		}
+		return null;
 	}
 
 	// ---------------------------------------------------------------------

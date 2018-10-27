@@ -40,6 +40,8 @@ public class CfgTableController extends AController{
 			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).saveTable(table);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgTable对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -61,6 +63,8 @@ public class CfgTableController extends AController{
 			for (CfgTable table : tables) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).updateTable(table);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgTable对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);

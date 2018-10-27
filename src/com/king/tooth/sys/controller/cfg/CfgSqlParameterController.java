@@ -35,6 +35,8 @@ public class CfgSqlParameterController extends AController{
 			for (ComSqlScriptParameter sqlParam : sqlScriptParameters) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScriptParameter(sqlParam);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgSqlParameter对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -56,6 +58,8 @@ public class CfgSqlParameterController extends AController{
 			for (ComSqlScriptParameter sqlParam : sqlScriptParameters) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScriptParameter(sqlParam);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgSqlParameter对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);

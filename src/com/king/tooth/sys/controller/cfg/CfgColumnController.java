@@ -35,6 +35,8 @@ public class CfgColumnController extends AController{
 			for (CfgColumn column : columns) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).saveColumn(column);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgColumn对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -56,6 +58,8 @@ public class CfgColumnController extends AController{
 			for (CfgColumn column : columns) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).updateColumn(column);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgColumn对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);

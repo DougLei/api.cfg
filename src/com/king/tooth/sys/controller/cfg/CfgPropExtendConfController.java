@@ -35,6 +35,8 @@ public class CfgPropExtendConfController extends AController{
 			for (CfgPropExtendConf propExtendConf : propExtendConfs) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgPropExtendConfService", CfgPropExtendConfService.class).savePropExtendConf(propExtendConf);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgPropExtendConf对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -56,6 +58,8 @@ public class CfgPropExtendConfController extends AController{
 			for (CfgPropExtendConf propExtendConf : propExtendConfs) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgPropExtendConfService", CfgPropExtendConfService.class).updatePropExtendConf(propExtendConf);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgPropExtendConf对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);

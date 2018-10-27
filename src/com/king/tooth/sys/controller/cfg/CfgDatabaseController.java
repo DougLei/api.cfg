@@ -37,6 +37,8 @@ public class CfgDatabaseController extends AController{
 			for (CfgDatabase database : databases) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).saveDatabase(database);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgDatabase对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -58,6 +60,8 @@ public class CfgDatabaseController extends AController{
 			for (CfgDatabase database : databases) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgDatabaseService", CfgDatabaseService.class).updateDatabase(database);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgDatabase对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);

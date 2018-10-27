@@ -35,6 +35,8 @@ public class CfgProjectController extends AController{
 			for (ComProject project : projects) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).saveProject(project);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgProject对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
@@ -56,6 +58,8 @@ public class CfgProjectController extends AController{
 			for (ComProject project : projects) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgProjectService", CfgProjectService.class).updateProject(project);
 				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个CfgProject对象，" + resultObject;
 					break;
 				}
 				resultJsonArray.add(resultObject);
