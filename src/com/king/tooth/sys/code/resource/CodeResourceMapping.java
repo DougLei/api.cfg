@@ -22,7 +22,7 @@ import com.king.tooth.sys.controller.tools.SystemToolsController;
  * @author DougLei
  */
 public class CodeResourceMapping {
-	static final Map<String, CodeResourceEntity> codeResourceMapping = new HashMap<String, CodeResourceEntity>(); 
+	static final Map<String, CodeResourceEntity> codeResourceMapping = new HashMap<String, CodeResourceEntity>(60); 
 	/**
 	 * 是否没有初始化代码资源映射
 	 * 防止被多次初始化
@@ -37,7 +37,7 @@ public class CodeResourceMapping {
 	/**
 	 * 初始化代码资源
 	 */
-	private static void intCodeResource() {
+	private static void initCodeResource() {
 		// normal code
 		initNormalCodeResource();
 		// action code
@@ -174,28 +174,28 @@ public class CodeResourceMapping {
 	
 	/**
 	 * 初始化import data代码资源
-	 * <p>变相的，代码开发的save资源的方法</p>
+	 * <p>即资源的保存的代码方法</p>
 	 */
 	private static void initImportDataCodeResource() {
-		put("CfgDatabase"+DATA_IMPORT_KEY_SUFFIX, CfgDatabaseController.class, "add");// 数据库操作
-		put("ComProject"+DATA_IMPORT_KEY_SUFFIX, CfgProjectController.class, "add");// 项目操作
-		put("ComProjectModule"+DATA_IMPORT_KEY_SUFFIX, CfgProjectModuleController.class, "add");// 项目模块操作
-		put("ComTabledata"+DATA_IMPORT_KEY_SUFFIX, CfgTableController.class, "add");// 表操作
-		put("ComColumndata"+DATA_IMPORT_KEY_SUFFIX, CfgColumnController.class, "add");// 列操作
-		put("ComSqlScript"+DATA_IMPORT_KEY_SUFFIX, CfgSqlController.class, "add");// sql脚本操作
-		put("ComSqlScriptParameter"+DATA_IMPORT_KEY_SUFFIX, CfgSqlParameterController.class, "add");// sql脚本参数操作
-		put("SysUser"+DATA_IMPORT_KEY_SUFFIX, SysUserController.class, "add");// 用户操作
-		put("SysAccount"+DATA_IMPORT_KEY_SUFFIX, SysAccountController.class, "add");// 账户操作
+		put("CfgDatabase"+IMPORT_DATA_KEY_SUFFIX, CfgDatabaseController.class, "add");// 数据库信息导入操作
+		put("ComProject"+IMPORT_DATA_KEY_SUFFIX, CfgProjectController.class, "add");// 项目信息导入操作
+		put("ComProjectModule"+IMPORT_DATA_KEY_SUFFIX, CfgProjectModuleController.class, "add");// 项目模块信息导入操作
+		put("ComTabledata"+IMPORT_DATA_KEY_SUFFIX, CfgTableController.class, "add");// 表信息导入操作
+		put("ComColumndata"+IMPORT_DATA_KEY_SUFFIX, CfgColumnController.class, "add");// 列信息导入操作
+		put("ComSqlScript"+IMPORT_DATA_KEY_SUFFIX, CfgSqlController.class, "add");// sql脚本信息导入操作
+		put("ComSqlScriptParameter"+IMPORT_DATA_KEY_SUFFIX, CfgSqlParameterController.class, "add");// sql脚本参数信息导入操作
+		put("SysUser"+IMPORT_DATA_KEY_SUFFIX, SysUserController.class, "add");// 用户信息导入操作
+		put("SysAccount"+IMPORT_DATA_KEY_SUFFIX, SysAccountController.class, "add");// 账户信息导入操作
 	}
 	/** 保存导入数据的代码，映射的key值后缀 */
-	static final String DATA_IMPORT_KEY_SUFFIX = "/data/import";
+	static final String IMPORT_DATA_KEY_SUFFIX = "/data/import";
 
 	/**
 	 * 系统启动时，初始化系统代码资源
 	 */
 	public static void initCodeResourceMapping(){
 		if(unInitCodeResourceMapping){
-			intCodeResource();
+			initCodeResource();
 			unInitCodeResourceMapping = false;
 		}
 	}

@@ -9,6 +9,9 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.cfg.propextend.query.data.param.QueryPropExtendConfDataParam;
+import com.king.tooth.sys.service.sys.imports.template.data.query.IImportTemplateDataQueryService;
+import com.king.tooth.sys.service.sys.imports.template.data.query.SysDeptImportTemplateDataQuery;
+import com.king.tooth.sys.service.sys.imports.template.data.query.SysUserImportTemplateDataQuery;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -30,10 +33,13 @@ public class PropExtendConfQueryData implements Serializable{
 		this.conditionValues = queryPropExtendConfDataParam.getConditionValues();
 		
 		calcQueryDataTotalCount();
+		setImportTemplateDataQueryServiceInstance();
 	}
 	
 	private CfgPropExtendConf propExtendConf;
 	private QueryPropExtendConfDataParam queryPropExtendConfDataParam;
+	private IImportTemplateDataQueryService importTemplateDataQueryService;
+	
 	/**
 	 * 一次查询的数量
 	 * <p>进行分页查询，减少内存消耗，默认为100</p>
@@ -96,6 +102,18 @@ public class PropExtendConfQueryData implements Serializable{
 	private static final String queryTableResourceNameByIdHql = "select resourceName from CfgTable where "+ResourcePropNameConstants.ID+"=? and isEnabled=1 and isCreated=1 and isBuildModel=1";
 	/** 根据id查询列属性名的hql */
 	private static final String queryColumnPropResourceNameByIdHql = "select propName CfgColumn where "+ResourcePropNameConstants.ID+"=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	
+	/**
+	 * 获取导入模版文件中的数据查询service实例
+	 * <p>******这里会加</p>
+	 */
+	private void setImportTemplateDataQueryServiceInstance() {
+		if("SysUser".equals(tableResourceName)){
+			importTemplateDataQueryService = new SysUserImportTemplateDataQuery();
+		}else if("SysDept".equals(tableResourceName)){
+			importTemplateDataQueryService = new SysDeptImportTemplateDataQuery();
+		}
+	}
 	
 	/**
 	 * 查询类型
@@ -178,14 +196,8 @@ public class PropExtendConfQueryData implements Serializable{
 			if(queryType==1){
 				dataList = HibernateUtil.executeListQueryByHql(startIndex+"", endIndex+"", queryDataListHql, getConditionValues());
 			}else if(queryType==2){
-				if(tableResourceName == null){
-					// TODO 这里要实现基础资源的信息，以及怎么加条件
-					
-					
-					
-					
-					
-					
+				if(importTemplateDataQueryService != null){
+					dataList = importTemplateDataQueryService.queryDataList(startIndex+"", endIndex+"", queryPropExtendConfDataParam.getConditions());
 				}else{
 					dataList = HibernateUtil.executeListQueryByHql(startIndex+"", endIndex+"", queryDataListHql, getConditionValues());
 				}
@@ -234,5 +246,6 @@ public class PropExtendConfQueryData implements Serializable{
 		if(conditionValues != null && conditionValues.size() > 0){
 			conditionValues.clear();
 		}
+		queryPropExtendConfDataParam.clear();
 	}
 }

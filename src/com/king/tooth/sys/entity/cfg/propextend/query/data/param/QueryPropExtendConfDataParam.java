@@ -110,7 +110,6 @@ public class QueryPropExtendConfDataParam implements Serializable{
 			for (QueryPropExtendConfDataCondition condition : conditions) {
 				queryCondParams.put(condition.getPropName(), condition.getValue());
 			}
-			conditions.clear();
 			
 			BuiltinQueryCondFuncUtil.installQueryCondHql(ResourceInfoConstants.TABLE, queryCondParams.entrySet(), conditionValues, hql);
 			conditionHql = hql.toString();
@@ -122,5 +121,11 @@ public class QueryPropExtendConfDataParam implements Serializable{
 			conditionValues = new ArrayList<Object>(initSize);
 		}
 		return this;
+	}
+	
+	public void clear(){
+		if(conditions != null && conditions.size() > 0){
+			conditions.clear();
+		}
 	}
 }
