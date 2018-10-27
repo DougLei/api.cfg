@@ -317,7 +317,7 @@ public class HibernateUtil {
 	 * @param rightId
 	 */
 	public static void saveDataLinks(String entityName, String leftId, String rightId){
-		JSONObject datalink = ResourceHandlerUtil.getDataLinksObject(leftId, rightId, "1", null, null);
+		JSONObject datalink = ResourceHandlerUtil.getDataLinksObject(leftId, rightId, 1, null, null);
 		HibernateUtil.saveObject(entityName, datalink, null);
 	}
 	

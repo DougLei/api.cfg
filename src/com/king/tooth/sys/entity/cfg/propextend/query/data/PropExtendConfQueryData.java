@@ -204,7 +204,7 @@ public class PropExtendConfQueryData implements Serializable{
 			StringBuilder hql = new StringBuilder();
 			if(queryType==1){
 				hql.append("select val, caption ");
-			}else if(queryType==2 && !propExtendConf.isBuiltinTableResource()){
+			}else if(queryType==2){
 				hql.append("select ").append(valueColumnPropName);
 				if(queryPropExtendConfDataParam.getRefKeyPropName() != null){
 					hql.append(",").append(queryPropExtendConfDataParam.getRefKeyPropName());

@@ -235,7 +235,7 @@ public class ResourceHandlerUtil {
 	 * @param rightResourceName
 	 * @return
 	 */
-	public static JSONObject getDataLinksObject(String leftId, String rightId, String orderCode, String leftResourceName, String rightResourceName){
+	public static JSONObject getDataLinksObject(String leftId, String rightId, int orderCode, String leftResourceName, String rightResourceName){
 		JSONObject dataLinks = new JSONObject(6);
 		dataLinks.put("leftId", leftId);
 		dataLinks.put("rightId", rightId);

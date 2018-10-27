@@ -27,6 +27,7 @@ public class SysUserService extends AService{
 	
 	private static final String sysUserDeptLinks = "SysUserDeptLinks";
 	private static final String sysUserPositionLinks = "SysUserPositionLinks";
+	private static final String sysUserRoleLinks = "SysUserRoleLinks";
 	
 	/**
 	 * 账户是否存在
@@ -237,15 +238,21 @@ public class SysUserService extends AService{
 			
 			// 保存部门
 			if(StrUtils.notEmpty(user.getDeptId())){
-				JSONObject udLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getDeptId(), "1", null, null);
+				JSONObject udLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getDeptId(), 1, null, null);
 				udLink.put("isMain", "1");
 				HibernateUtil.saveObject(sysUserDeptLinks, udLink, null);
 			}
 			// 保存岗位
 			if(StrUtils.notEmpty(user.getPositionId())){
-				JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
+				JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), 1, null, null);
 				upLink.put("isMain", "1");
 				HibernateUtil.saveObject(sysUserPositionLinks, upLink, null);
+			}
+			// 保存角色
+			if(StrUtils.notEmpty(user.getRoleId())){
+				JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getRoleId(), 1, null, null);
+				upLink.put("isMain", "1");
+				HibernateUtil.saveObject(sysUserRoleLinks, upLink, null);
 			}
 			
 			return userJsonObject;
@@ -312,7 +319,7 @@ public class SysUserService extends AService{
 				}
 				
 				if(StrUtils.notEmpty(user.getDeptId())){
-					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
+					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), 1, null, null);
 					upLink.put("isMain", "1");
 					HibernateUtil.saveObject(sysUserDeptLinks, upLink, null);
 				}
@@ -325,9 +332,22 @@ public class SysUserService extends AService{
 				}
 				
 				if(StrUtils.notEmpty(user.getPositionId())){
-					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), "1", null, null);
+					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getPositionId(), 1, null, null);
 					upLink.put("isMain", "1");
 					HibernateUtil.saveObject(sysUserPositionLinks, upLink, null);
+				}
+			}
+			
+			// 可能修改角色
+			if((StrUtils.notEmpty(oldUser.getRoleId()) && !oldUser.getRoleId().equals(user.getRoleId())) || (StrUtils.isEmpty(oldUser.getRoleId()) && StrUtils.notEmpty(user.getRoleId()))){
+				if(StrUtils.notEmpty(oldUser.getRoleId())){
+					HibernateUtil.deleteDataLinks(sysUserRoleLinks, userId, oldUser.getRoleId());
+				}
+				
+				if(StrUtils.notEmpty(user.getRoleId())){
+					JSONObject upLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getRoleId(), 1, null, null);
+					upLink.put("isMain", "1");
+					HibernateUtil.saveObject(sysUserRoleLinks, upLink, null);
 				}
 			}
 			return userJsonObject;

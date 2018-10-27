@@ -103,6 +103,11 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	 */
 	private String orgId;
 	/**
+	 * 主要所属的角色id
+	 * <p>关系表中，isMain=1的角色id</p>
+	 */
+	private String roleId;
+	/**
 	 * 是否被删除
 	 * <p>逻辑删除，默认值为0</p>
 	 */
@@ -239,6 +244,12 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	public void setOrgId(String orgId) {
 		this.orgId = orgId;
 	}
+	public String getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
+	}
 	public void setIsCreateAccount(int isCreateAccount) {
 		this.isCreateAccount = isCreateAccount;
 	}
@@ -257,7 +268,7 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(27);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(21+7);
 		
 		CfgColumn nikeNameColumn = new CfgColumn("nike_name", DataTypeConstants.STRING, 50);
 		nikeNameColumn.setName("昵称");
@@ -357,6 +368,11 @@ public class SysUser extends BasicEntity implements ITable, IEntity, IEntityProp
 		orgIdColumn.setName("主要所属的组织id");
 		orgIdColumn.setComments("即所属主要部门关联的组织id");
 		columns.add(orgIdColumn);
+		
+		CfgColumn roleIdColumn = new CfgColumn("role_id", DataTypeConstants.STRING, 32);
+		roleIdColumn.setName("主要所属的角色id");
+		roleIdColumn.setComments("关系表中，isMain=1的角色id");
+		columns.add(roleIdColumn);
 		
 		CfgColumn isDeleteColumn = new CfgColumn("is_delete", DataTypeConstants.INTEGER, 1);
 		isDeleteColumn.setName("是否被删除");
