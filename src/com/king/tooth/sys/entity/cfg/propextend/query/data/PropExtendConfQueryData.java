@@ -268,8 +268,13 @@ public class PropExtendConfQueryData implements Serializable{
 				}
 			}
 			hql.append(" ").append(queryDataHql);
-			if(queryPropExtendConfDataParam.getRefOrderByPropName() != null){
-				hql.append(" order by p.").append(queryPropExtendConfDataParam.getRefOrderByPropName()).append(" ").append(queryPropExtendConfDataParam.getOrderBy());
+			
+			if(queryType==1){
+				hql.append(" order by p.orderCode asc");
+			}else if(queryType==2){
+				if(queryPropExtendConfDataParam.getRefOrderByPropName() != null){
+					hql.append(" order by p.").append(queryPropExtendConfDataParam.getRefOrderByPropName()).append(" ").append(queryPropExtendConfDataParam.getOrderBy());
+				}
 			}
 			
 			queryDataListHql = hql.toString();

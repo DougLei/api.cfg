@@ -1,6 +1,7 @@
 package test;
 
 
+
 public class TestMain {
 //	private int a;
 	
@@ -25,6 +26,8 @@ public class TestMain {
 
 		
 //		System.out.println(203%200);
-		System.out.println(null+"");
+		System.out.println("abc".substring(0,4));
+		
+		
 	}
 }

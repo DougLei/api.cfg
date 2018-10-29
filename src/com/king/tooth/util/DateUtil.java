@@ -26,10 +26,6 @@ public class DateUtil {
 	 * <p>UTC通用标准时，以Z来标识</p>
 	 */
 	private transient static final SimpleDateFormat sdfTimeZone = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
-	/**
-	 * 流水号日期格式化对象实例
-	 */
-	private static final SimpleDateFormat serialNumberDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 	
 	/**
 	 * 格式化日期对象为字符串
@@ -195,13 +191,4 @@ public class DateUtil {
 	}
 	/**	MM */
 	private static final SimpleDateFormat mmSdf = new SimpleDateFormat("MM");
-	
-	// -----------------------------------------------------------------
-	/**
-	 * 获取流水号日期字符串
-	 * @return
-	 */
-	public static String getSerialNumberDateStr(){
-		return serialNumberDateFormat.format(new Date());
-	}
 }

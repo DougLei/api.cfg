@@ -75,8 +75,8 @@ public class BuiltinObjectInstance {
 	
 	// -------------------------------------------------------
 	/** 基础字段对象 */
-	public static final CfgColumn idColumn32 = new CfgColumn(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 32);// 内置主键不做非空验证
-	public static final CfgColumn idColumn50 = new CfgColumn(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 32);// 内置主键不做非空验证
+	public static final CfgColumn idColumn32 = new CfgColumn(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 32);
+	public static final CfgColumn idColumn50 = new CfgColumn(ResourcePropNameConstants.ID, DataTypeConstants.STRING, 50);
 	public static final CfgColumn customerIdColumn = new CfgColumn("customer_id", DataTypeConstants.STRING, 32);
 	public static final CfgColumn projectIdColumn = new CfgColumn("project_id", DataTypeConstants.STRING, 32);
 	public static final CfgColumn createDateColumn = new CfgColumn("create_date", DataTypeConstants.DATE, 0);
@@ -84,17 +84,19 @@ public class BuiltinObjectInstance {
 	public static final CfgColumn createUserIdColumn = new CfgColumn("create_user_id", DataTypeConstants.STRING, 32);
 	public static final CfgColumn lastUpdateUserIdColumn = new CfgColumn("last_update_user_id", DataTypeConstants.STRING, 32);
 	static{
+		idColumn32.setPropName(ResourcePropNameConstants.ID);
 		idColumn32.setIsPrimaryKey(1);
 		idColumn32.setIsNullabled(0);
 		idColumn32.setName("主键");
 		idColumn32.setComments("主键");
-		idColumn32.setIsIgnoreValid(1);
+		idColumn32.setIsIgnoreValid(1);// 内置主键不做验证
 		
+		idColumn50.setPropName(ResourcePropNameConstants.ID);
 		idColumn50.setIsPrimaryKey(1);
 		idColumn50.setIsNullabled(0);
 		idColumn50.setName("主键");
 		idColumn50.setComments("主键");
-		idColumn50.setIsIgnoreValid(1);
+		idColumn50.setIsIgnoreValid(1);// 内置主键不做验证
 		
 		customerIdColumn.setName("所属租户主键");
 		customerIdColumn.setComments("所属租户主键");

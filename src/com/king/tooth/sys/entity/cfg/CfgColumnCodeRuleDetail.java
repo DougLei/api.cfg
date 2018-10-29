@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -13,8 +15,8 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -42,7 +44,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	private Integer orderCode;
 	/**
 	 * 规则类型
-	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:type(类型值)</p>
+	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)</p>
 	 * <p>0</p>
 	 */
 	private Integer ruleType;
@@ -83,13 +85,8 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	private Integer seqSkipVal;
 	
 	/**
-	 * 随机数长度
-	 * <p>默认值为6</p>
-	 */
-	private Integer randomLength;
-	/**
 	 * 随机数种子的值
-	 * <p>随机数长度定义随机数种子的值，默认为100000</p>
+	 * <p>默认为100000</p>
 	 */
 	private Integer randomSeedVal;
 	
@@ -108,41 +105,33 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 */
 	private String refColumnId;
 	/**
-	 * 查询列的id
+	 * 查询条件列的id
 	 */
-	private String queryColumnId;
+	private String queryCondColumnId;
 	/**
-	 * 查询列的条件值
+	 * 查询条件值的列id
+	 * <p>即当前对象中的某一个属性值作为条件</p>
 	 */
-	private String queryColumnCondVal;
-	
+	private String queryCondValColumnId;
 	/**
-	 * 类型值的列值来源
-	 * <p>0:当前数据、1:当前数据资源对象、2:其他数据资源对象</p>
-	 * <p>默认值为0</p>
+	 * 列值截取的起始位置
+	 * <p>默认值为0，该配置优先级高于正则表达式</p>
 	 */
-	private Integer typeColumnValFrom;
+	private Integer columnValSubStartIndex;
 	/**
-	 * 类型引用表的id
+	 * 列值截取的结束位置
+	 * <p>默认值为0，该配置优先级高于正则表达式</p>
 	 */
-	private String typeRefTableId;
+	private Integer columnValSubEndIndex;
 	/**
-	 * 类型引用列的id
+	 * 列值截取的正则表达式
 	 */
-	private String typeRefColumnId;
+	private String columnValSubRegex;
 	/**
-	 * 类型查询列的id
+	 * 列值截取的正则表达式第n次匹配
+	 * <p>默认值为1，取第一次匹配的值</p>
 	 */
-	private String typeQueryColumnId;
-	/**
-	 * 类型查询列的条件值
-	 */
-	private String typeQueryColumnCondVal;
-	/**
-	 * 类型映射json
-	 * <p>这种结构：{"类型值1":"展示值1","类型值2":"展示值2" ...}</p>
-	 */
-	private String typeMapJson;
+	private Integer columnValSubMatchNum;
 	
 	//-------------------------------------------------------------------------
 
@@ -171,6 +160,9 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		this.ruleType = ruleType;
 	}
 	public String getDefValue() {
+		if(defValue == null){
+			return "";
+		}
 		return defValue;
 	}
 	public void setDefValue(String defValue) {
@@ -206,12 +198,6 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	public void setSeqSkipVal(Integer seqSkipVal) {
 		this.seqSkipVal = seqSkipVal;
 	}
-	public Integer getRandomLength() {
-		return randomLength;
-	}
-	public void setRandomLength(Integer randomLength) {
-		this.randomLength = randomLength;
-	}
 	public Integer getRandomSeedVal() {
 		return randomSeedVal;
 	}
@@ -236,58 +222,47 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	public void setRefColumnId(String refColumnId) {
 		this.refColumnId = refColumnId;
 	}
-	public String getQueryColumnId() {
-		return queryColumnId;
+	public String getQueryCondColumnId() {
+		return queryCondColumnId;
 	}
-	public void setQueryColumnId(String queryColumnId) {
-		this.queryColumnId = queryColumnId;
+	public void setQueryCondColumnId(String queryCondColumnId) {
+		this.queryCondColumnId = queryCondColumnId;
 	}
-	public String getQueryColumnCondVal() {
-		return queryColumnCondVal;
+	public String getQueryCondValColumnId() {
+		return queryCondValColumnId;
 	}
-	public void setQueryColumnCondVal(String queryColumnCondVal) {
-		this.queryColumnCondVal = queryColumnCondVal;
+	public void setQueryCondValColumnId(String queryCondValColumnId) {
+		this.queryCondValColumnId = queryCondValColumnId;
 	}
-	public Integer getTypeColumnValFrom() {
-		return typeColumnValFrom;
+	public Integer getColumnValSubStartIndex() {
+		return columnValSubStartIndex;
 	}
-	public void setTypeColumnValFrom(Integer typeColumnValFrom) {
-		this.typeColumnValFrom = typeColumnValFrom;
+	public void setColumnValSubStartIndex(Integer columnValSubStartIndex) {
+		this.columnValSubStartIndex = columnValSubStartIndex;
 	}
-	public String getTypeRefTableId() {
-		return typeRefTableId;
+	public Integer getColumnValSubEndIndex() {
+		return columnValSubEndIndex;
 	}
-	public void setTypeRefTableId(String typeRefTableId) {
-		this.typeRefTableId = typeRefTableId;
+	public void setColumnValSubEndIndex(Integer columnValSubEndIndex) {
+		this.columnValSubEndIndex = columnValSubEndIndex;
 	}
-	public String getTypeRefColumnId() {
-		return typeRefColumnId;
+	public String getColumnValSubRegex() {
+		return columnValSubRegex;
 	}
-	public void setTypeRefColumnId(String typeRefColumnId) {
-		this.typeRefColumnId = typeRefColumnId;
+	public void setColumnValSubRegex(String columnValSubRegex) {
+		this.columnValSubRegex = columnValSubRegex;
 	}
-	public String getTypeQueryColumnId() {
-		return typeQueryColumnId;
+	public Integer getColumnValSubMatchNum() {
+		return columnValSubMatchNum;
 	}
-	public void setTypeQueryColumnId(String typeQueryColumnId) {
-		this.typeQueryColumnId = typeQueryColumnId;
+	public void setColumnValSubMatchNum(Integer columnValSubMatchNum) {
+		this.columnValSubMatchNum = columnValSubMatchNum;
 	}
-	public String getTypeQueryColumnCondVal() {
-		return typeQueryColumnCondVal;
-	}
-	public void setTypeQueryColumnCondVal(String typeQueryColumnCondVal) {
-		this.typeQueryColumnCondVal = typeQueryColumnCondVal;
-	}
-	public String getTypeMapJson() {
-		return typeMapJson;
-	}
-	public void setTypeMapJson(String typeMapJson) {
-		this.typeMapJson = typeMapJson;
-	}
+	
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(28);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(20+7);
 		
 		CfgColumn columnCodeRuleIdColumn = new CfgColumn("column_code_rule_id", DataTypeConstants.STRING, 32);
 		columnCodeRuleIdColumn.setName("关联的字段编码规则id");
@@ -307,7 +282,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		
 		CfgColumn ruleTypeColumn = new CfgColumn("rule_type", DataTypeConstants.INTEGER, 1);
 		ruleTypeColumn.setName("规则类型");
-		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:type(类型值)，默认值为0");
+		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)，默认值为0");
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
@@ -346,15 +321,9 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		seqSkipValColumn.setDefaultValue("1");
 		columns.add(seqSkipValColumn);
 		
-		CfgColumn randomLengthColumn = new CfgColumn("random_length", DataTypeConstants.INTEGER, 15);
-		randomLengthColumn.setName("随机数长度");
-		randomLengthColumn.setComments("默认值为6");
-		randomLengthColumn.setDefaultValue("6");
-		columns.add(randomLengthColumn);
-		
 		CfgColumn randomSeedValColumn = new CfgColumn("random_seed_val", DataTypeConstants.INTEGER, 15);
 		randomSeedValColumn.setName("随机数种子的值");
-		randomSeedValColumn.setComments("随机数长度定义随机数种子的值，默认为");
+		randomSeedValColumn.setComments("默认为100000");
 		randomSeedValColumn.setDefaultValue("100000");
 		columns.add(randomSeedValColumn);
 		
@@ -374,46 +343,38 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		refColumnIdColumn.setComments("引用列的id");
 		columns.add(refColumnIdColumn);
 		
-		CfgColumn queryColumnIdColumn = new CfgColumn("query_column_id", DataTypeConstants.STRING, 32);
-		queryColumnIdColumn.setName("查询列的id");
-		queryColumnIdColumn.setComments("查询列的id");
-		columns.add(queryColumnIdColumn);
+		CfgColumn queryCondColumnIdColumn = new CfgColumn("query_cond_column_id", DataTypeConstants.STRING, 32);
+		queryCondColumnIdColumn.setName("查询条件列的id");
+		queryCondColumnIdColumn.setComments("查询条件列的id");
+		columns.add(queryCondColumnIdColumn);
 		
-		CfgColumn queryColumnCondValColumn = new CfgColumn("query_column_cond_val", DataTypeConstants.STRING, 60);
-		queryColumnCondValColumn.setName("查询列的条件值");
-		queryColumnCondValColumn.setComments("查询列的条件值");
-		columns.add(queryColumnCondValColumn);
+		CfgColumn queryCondValColumnIdColumn = new CfgColumn("query_cond_val_column_id", DataTypeConstants.STRING, 32);
+		queryCondValColumnIdColumn.setName("查询条件值的列id");
+		queryCondValColumnIdColumn.setComments("即当前对象中的某一个属性值作为条件");
+		columns.add(queryCondValColumnIdColumn);
 		
-		CfgColumn typeColumnValFromColumn = new CfgColumn("type_column_val_from", DataTypeConstants.INTEGER, 1);
-		typeColumnValFromColumn.setName("类型值的列值来源");
-		typeColumnValFromColumn.setComments("0:当前数据、1:当前数据资源对象、2:其他数据资源对象，默认值为0");
-		typeColumnValFromColumn.setDefaultValue("0");
-		columns.add(typeColumnValFromColumn);
+		CfgColumn columnValSubStartIndexColumn = new CfgColumn("column_val_sub_start_index", DataTypeConstants.INTEGER, 3);
+		columnValSubStartIndexColumn.setName("列值截取的起始位置");
+		columnValSubStartIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
+		columnValSubStartIndexColumn.setDefaultValue("0");
+		columns.add(columnValSubStartIndexColumn);
 		
-		CfgColumn typeRefTableIdColumn = new CfgColumn("type_ref_table_id", DataTypeConstants.STRING, 32);
-		typeRefTableIdColumn.setName("类型引用表的id");
-		typeRefTableIdColumn.setComments("类型引用表的id");
-		columns.add(typeRefTableIdColumn);
+		CfgColumn columnValSubEndIndexColumn = new CfgColumn("column_val_sub_end_index", DataTypeConstants.INTEGER, 3);
+		columnValSubEndIndexColumn.setName("列值截取的结束位置");
+		columnValSubEndIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
+		columnValSubEndIndexColumn.setDefaultValue("0");
+		columns.add(columnValSubEndIndexColumn);
 		
-		CfgColumn typeRefColumnIdColumn = new CfgColumn("type_ref_column_id", DataTypeConstants.STRING, 32);
-		typeRefColumnIdColumn.setName("类型引用列的id");
-		typeRefColumnIdColumn.setComments("类型引用列的id");
-		columns.add(typeRefColumnIdColumn);
+		CfgColumn columnValSubRegexColumn = new CfgColumn("column_val_sub_regex", DataTypeConstants.STRING, 300);
+		columnValSubRegexColumn.setName("列值截取的正则表达式");
+		columnValSubRegexColumn.setComments("列值截取的正则表达式");
+		columns.add(columnValSubRegexColumn);
 		
-		CfgColumn typeQueryColumnIdColumn = new CfgColumn("type_query_column_id", DataTypeConstants.STRING, 32);
-		typeQueryColumnIdColumn.setName("类型查询列的id");
-		typeQueryColumnIdColumn.setComments("类型查询列的id");
-		columns.add(typeQueryColumnIdColumn);
-		
-		CfgColumn typeQueryColumnCondValColumn = new CfgColumn("type_query_column_cond_val", DataTypeConstants.STRING, 60);
-		typeQueryColumnCondValColumn.setName("类型查询列的条件值");
-		typeQueryColumnCondValColumn.setComments("类型查询列的条件值");
-		columns.add(typeQueryColumnCondValColumn);
-		
-		CfgColumn typeMapJsonColumn = new CfgColumn("type_map_json", DataTypeConstants.STRING, 300);
-		typeMapJsonColumn.setName("类型映射json");
-		typeMapJsonColumn.setComments("这种结构：{\"类型值1\":\"展示值1\",\"类型值2\":\"展示值2\" ...}");
-		columns.add(typeMapJsonColumn);
+		CfgColumn columnValSubMatchNumColumn = new CfgColumn("column_val_sub_match_num", DataTypeConstants.INTEGER, 2);
+		columnValSubMatchNumColumn.setName("列值截取的正则表达式第n次匹配");
+		columnValSubMatchNumColumn.setComments("默认值为1，取第一次匹配的值");
+		columnValSubMatchNumColumn.setDefaultValue("1");
+		columns.add(columnValSubMatchNumColumn);
 		
 		return columns;
 	}
@@ -457,8 +418,6 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 */
 	public String getCurrentStageCodeVal(String resourceName, JSONObject currentJsonObject) {
 		switch(ruleType){
-			case 0: // 0:default(默认固定值)
-				return getDefaultVal(resourceName, currentJsonObject);
 			case 1: // 1:date(日期)
 				return getDate(resourceName, currentJsonObject);
 			case 2: // 2:seq(序列)
@@ -469,37 +428,40 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 				return getRandom(resourceName, currentJsonObject);
 			case 5: // 5:column(其他列值)
 				return getColumn(resourceName, currentJsonObject);
-			case 6: // 6:type(类型值)
-				return getType(resourceName, currentJsonObject);
+			case 6: // 6:data_dictionary(数据字典值)
+				return getDataDictionary(resourceName, currentJsonObject);
 			default: // 默认值为0，0:default(默认固定值)
 				return getDefaultVal(resourceName, currentJsonObject);
 		}
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取【0:default(默认固定值)】
-	 * @param currentJsonObject
 	 * @param resourceName
+	 * @param currentJsonObject
 	 * @return
 	 */
 	private String getDefaultVal(String resourceName, JSONObject currentJsonObject) {
 		return defValue;
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取【1:date(日期)】
-	 * @param currentJsonObject
 	 * @param resourceName
+	 * @param currentJsonObject
 	 * @return
 	 */
 	private String getDate(String resourceName, JSONObject currentJsonObject) {
 		return new SimpleDateFormat(dateFormate).format(new Date());
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取【2:seq(序列)】
-	 * @param currentJsonObject
 	 * @param resourceName
+	 * @param currentJsonObject
 	 * @return
 	 */
 	private String getSeq(String resourceName, JSONObject currentJsonObject) {
@@ -507,64 +469,132 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		return null;
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取【3:serialNumber(流水号)】
-	 * @param currentJsonObject
 	 * @param resourceName
+	 * @param currentJsonObject
 	 * @return
 	 */
 	private synchronized String getSerialNumber(String resourceName, JSONObject currentJsonObject) {
-		return DateUtil.getSerialNumberDateStr();
+		// TODO 
+		return null;
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取【4:random(随机数)】
-	 * @param currentJsonObject
 	 * @param resourceName
+	 * @param currentJsonObject
 	 * @return
 	 */
 	private String getRandom(String resourceName, JSONObject currentJsonObject) {
 		return ResourceHandlerUtil.getRandom(randomSeedVal)+"";
 	}
 	
+	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取【5:column(其他列值)】
-	 * @param currentJsonObject
-	 * @param resourceName
+	 * 根据table id，获取对应的table资源名
+	 * @param tableId
 	 * @return
 	 */
-	private String getColumn(String resourceName, JSONObject currentJsonObject) {
-		CfgColumn column = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgColumn.class, queryColumnPropNamesByIdHql, refColumnId);
-		switch (columnValFrom) {
-			case 0: // 0:当前数据
-				return currentJsonObject.getString(column.getPropName());
-			case 1: // 1:当前数据资源对象
-				return "select " + column.getPropName() + " from " + resourceName + " where ";
-			case 2: // 2:其他数据资源对象
-				return null;
-			default: // 默认值为0，0:当前数据
-				return null;
+	private String getTableResourceNameById(String tableId){
+		Object tableResourceName = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgColumn.class, queryTableResourceNameByIdHql, tableId);
+		if(tableResourceName == null){
+			throw new NullPointerException("在查询字段编码时，没有查询到id为["+tableId+"]的CfgTable资源名信息");
 		}
+		return tableResourceName.toString();
 	}
-	/** 根据ids查询column属性名集合的hql */
-	private static final String queryColumnPropNamesByIdHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID + "=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	/** 根据id查询table资源名的hql */
+	private static final String queryTableResourceNameByIdHql = "select resourceName from CfgTable where " + ResourcePropNameConstants.ID + "=? and isEnabled=1 and isCreated=1 and isBuildModel=1";
+	
 	
 	/**
-	 * 获取【6:type(类型值)】
-	 * @param currentJsonObject
-	 * @param resourceName
+	 * 根据column id，获取对应的column属性名
+	 * @param columnId
 	 * @return
 	 */
-	private String getType(String resourceName, JSONObject currentJsonObject) {
-		switch (typeColumnValFrom) {
-			case 0: // 0:当前数据
-				return null;
-			case 1: // 1:当前数据资源对象
-				return null;
-			case 2: // 2:其他数据资源对象
-				return null;
-			default: // 默认值为0，0:当前数据
-				return null;
+	private String getColumnPropNameById(String columnId){
+		Object columnPropName = null;
+		if(ResourcePropNameConstants.ID.equals(columnId)){
+			columnPropName = columnId;
+		}else{
+			columnPropName = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropNameByIdHql, columnId);
+		}
+		if(columnPropName == null){
+			throw new NullPointerException("在查询字段编码时，没有查询到id为["+columnId+"]的CfgColumn属性名信息");
+		}
+		return columnPropName.toString();
+	}
+	/** 根据id查询column属性名的hql */
+	private static final String queryColumnPropNameByIdHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID + "=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	
+	/**
+	 * 获取【5:column(其他列值)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private String getColumn(String resourceName, JSONObject currentJsonObject) {
+		Object value = null;
+		
+		String refColumnPropName = getColumnPropNameById(refColumnId);
+		if(columnValFrom == 0){ // 0:当前数据
+			value = currentJsonObject.getString(refColumnPropName);
+		}else{
+			Object queryCondValue = currentJsonObject.get(getColumnPropNameById(queryCondValColumnId));
+			if(columnValFrom == 2){// 2:其他数据资源对象
+				resourceName = getTableResourceNameById(refTableId);
+			}
+			List<Object> list = HibernateUtil.executeListQueryByHqlArr(null, null, "select "+refColumnPropName+" from "+resourceName+" where "+getColumnPropNameById(queryCondColumnId)+"=?", queryCondValue==null?"":queryCondValue);
+			if(list != null && list.size() > 0){
+				value = list.get(0);
+				list.clear();
+			}
+		}
+		
+		if(value == null){
+			return "";
+		}else{
+			String valueStr = value.toString();
+			if(columnValSubEndIndex > 0 && columnValSubEndIndex <= valueStr.length()){
+				if(columnValSubStartIndex < 1){
+					columnValSubStartIndex = 1;
+				}
+				valueStr = valueStr.substring(columnValSubStartIndex-1, columnValSubEndIndex);
+			}else if(StrUtils.notEmpty(columnValSubRegex)){
+				int matchNum = 1;
+				if(columnValSubMatchNum < 1){
+					columnValSubMatchNum = matchNum;
+				}
+				Matcher matcher = Pattern.compile(columnValSubRegex, Pattern.MULTILINE).matcher(valueStr);
+				
+				while(matcher.find()){
+					if(matchNum == columnValSubMatchNum){
+						valueStr = matcher.group();
+						break;
+					}
+					matchNum++;
+				}
+			}
+			return valueStr;
 		}
 	}
+	
+	
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取【6:data_dictionary(数据字典值)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	private String getDataDictionary(String resourceName, JSONObject currentJsonObject) {
+		// TODO
+		return queryDataDictionaryHql;
+	}
+	/** 查询数据字典值的hql语句 */
+	private static final String queryDataDictionaryHql = "select new map(val, caption) from SysDataDictionary where isEnabled=1 and isDelete=0 and projectId=? and customerId=? and parentId=? order by orderCode asc";
 }

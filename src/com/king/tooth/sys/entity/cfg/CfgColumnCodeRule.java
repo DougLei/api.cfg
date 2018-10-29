@@ -32,6 +32,11 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 	 */
 	private String refColumnId;
 	/**
+	 * 是否有效
+	 * <p>默认值为1</p>
+	 */
+	private Integer isEnabled;
+	/**
 	 * 备注
 	 */
 	private String remark;
@@ -63,6 +68,12 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 	public void setRefColumnId(String refColumnId) {
 		this.refColumnId = refColumnId;
 	}
+	public Integer getIsEnabled() {
+		return isEnabled;
+	}
+	public void setIsEnabled(Integer isEnabled) {
+		this.isEnabled = isEnabled;
+	}
 	public String getRemark() {
 		return remark;
 	}
@@ -78,7 +89,7 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(10);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(4+7);
 		
 		CfgColumn refTableIdColumn = new CfgColumn("ref_table_id", DataTypeConstants.STRING, 32);
 		refTableIdColumn.setName("关联规则的表id");
@@ -89,6 +100,12 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 		refColumnIdColumn.setName("关联规则的列id");
 		refColumnIdColumn.setComments("关联规则的列id");
 		columns.add(refColumnIdColumn);
+		
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		columns.add(isEnabledColumn);
 		
 		CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 500);
 		remarkColumn.setName("备注");

@@ -53,7 +53,7 @@ public class ResourcePropCodeRule {
 		}
 	}
 	// 查询字段编码规则集合的hql
-	private static final String queryColumnCodeRuleHql = "from CfgColumnCodeRule where refTableId=? and projectId=? and customerId=?";
+	private static final String queryColumnCodeRuleHql = "from CfgColumnCodeRule where refTableId=? and isEnabled=1 and projectId=? and customerId=?";
 
 	/**
 	 * 清空
