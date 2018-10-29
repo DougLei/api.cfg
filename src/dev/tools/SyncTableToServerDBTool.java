@@ -30,7 +30,7 @@ public final class SyncTableToServerDBTool extends AService{
 	public static void main(String[] args) {
 		syncTablesToService(
 				new SysFileIELog().toCreateTable(),
-				new CfgPropExtendConf().toCreateTable()
+				new CfgPropExtendConf().toCreateTable() 
 				);
 	}
 	
