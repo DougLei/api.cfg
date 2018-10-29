@@ -170,23 +170,18 @@ public class PoiExcelUtil {
 			lastCol = 0;
 		}
 		
+		CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, firstCol, lastCol);// 指定哪些单元格有数据有效性
+		DataValidation dataValidation = null;
 		if("xls".equals(fileSuffix)){
 			DVConstraint constraint = DVConstraint.createFormulaListConstraint(valueCellStart+valueCellStartIndex+":"+valueCellEnd+valueCellEndIndex);
-			CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, firstCol, lastCol);// 指定哪些单元格有数据有效性
-			DataValidation dataValidation = new HSSFDataValidation(cellRangeAddressList, constraint);
-			sheet.addValidationData(dataValidation);
+			dataValidation = new HSSFDataValidation(cellRangeAddressList, constraint);
 		}else if("xlsx".equals(fileSuffix)){
 			XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper((XSSFSheet) sheet);
 			XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint("$"+valueCellStart+"$"+valueCellStartIndex+":"+"$"+valueCellEnd+"$"+valueCellEndIndex);
-			CellRangeAddressList cellRangeAddressList = null;
-			DataValidation dataValidation = null;
-			for(int i=firstRow;i<=lastRow;i++){
-				cellRangeAddressList = new CellRangeAddressList(i, i, firstCol, lastCol);// 指定哪些单元格有数据有效性
-				dataValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, cellRangeAddressList);
-				sheet.addValidationData(dataValidation);
-			}
+			dataValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, cellRangeAddressList);
 		}else{
 			throw new IllegalArgumentException("系统不支持后缀为["+fileSuffix+"]的excel文件，系统支持的后缀包括：[xls , xlsx]");
 		}
+		sheet.addValidationData(dataValidation);
 	}
 }
