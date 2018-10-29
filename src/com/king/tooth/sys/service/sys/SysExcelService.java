@@ -368,7 +368,7 @@ public class SysExcelService extends AService{
 					}
 					
 					// 设置数据有效性，默认1列就够了，剩下的用户去修改和拖拉excel单元格即可
-					PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 1, cellIndex-2, cellIndex-2, compareWord+1, compareWord+hiddenRowIndex);
+					PoiExcelUtil.setDataValidation(fileSuffix, sheet, 1, 1, cellIndex-2, cellIndex-2, compareWord, 1, compareWord, hiddenRowIndex);
 					// 隐藏列
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);
 					sheet.setColumnHidden(propConfExtendInfoCellIndex++, true);

@@ -31,7 +31,7 @@ public class ExportExcel1 {
 		cell.setCellValue("嘿嘿");
 		
 		// 设置数据有效性，默认10列就够了，剩下的用户去修改excel即可
-		PoiExcelUtil.setDataValidation(suffix, sheet, 1, 10, 0, 0, "K1", "K3");
+		PoiExcelUtil.setDataValidation(suffix, sheet, 1, 10, 0, 0, "K",1, "K",3);
 				
 		
 		
@@ -41,5 +41,6 @@ public class ExportExcel1 {
 		}
 		FileOutputStream stream = new FileOutputStream(f);
 		wb.write(stream);
+		System.out.println("ok");
 	}
 }

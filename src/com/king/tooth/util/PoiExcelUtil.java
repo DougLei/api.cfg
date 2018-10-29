@@ -144,33 +144,42 @@ public class PoiExcelUtil {
 	
 	/**
 	 * 设置单元格的数据有效性
+	 * <p>xlsx的单元格有效性为 $K$1 形式，xls的单元格有效性为 K1 形式，所以有valueCellStart、valueCellStartIndex、valueCellEnd、valueCellEndIndex这四个参数</p>
 	 * @param fileSuffix
 	 * @param sheet
-	 * @param firstRow
-	 * @param lastRow 如果小于1，则默认为1
-	 * @param firstCol
-	 * @param lastCol
+	 * @param firstRow 如果小于0，则默认为0，即第一行
+	 * @param lastRow 如果小于0，则默认为0，即第一行
+	 * @param firstCol 如果小于0，则默认为0，即第一列
+	 * @param lastCol 如果小于0，则默认为0，即第一列
 	 * @param valueCellStart
+	 * @param valueCellStartIndex
 	 * @param valueCellEnd
+	 * @param valueCellEndIndex
 	 */
-	public static void setDataValidation(String fileSuffix, Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol, String valueCellStart, String valueCellEnd){
-		if(lastRow < 1){
-			lastRow = 1;
+	public static void setDataValidation(String fileSuffix, Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol, String valueCellStart, int valueCellStartIndex, String valueCellEnd, int valueCellEndIndex){
+		if(firstRow < 0){
+			firstRow = 0;
+		}
+		if(lastRow < 0){
+			lastRow = 0;
+		}
+		if(firstCol < 0){
+			firstCol = 0;
+		}
+		if(lastCol < 0){
+			lastCol = 0;
 		}
 		
 		if("xls".equals(fileSuffix)){
-			DVConstraint constraint = DVConstraint.createFormulaListConstraint(valueCellStart+":"+valueCellEnd);
+			DVConstraint constraint = DVConstraint.createFormulaListConstraint(valueCellStart+valueCellStartIndex+":"+valueCellEnd+valueCellEndIndex);
 			CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, firstCol, lastCol);// 指定哪些单元格有数据有效性
 			DataValidation dataValidation = new HSSFDataValidation(cellRangeAddressList, constraint);
 			sheet.addValidationData(dataValidation);
 		}else if("xlsx".equals(fileSuffix)){
 			XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper((XSSFSheet) sheet);
-			XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(valueCellStart+":"+valueCellEnd);
-			
-			 // TODO 研究怎么和xls一样!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			
-			DataValidation dataValidation = null;
+			XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint("$"+valueCellStart+"$"+valueCellStartIndex+":"+"$"+valueCellEnd+"$"+valueCellEndIndex);
 			CellRangeAddressList cellRangeAddressList = null;
+			DataValidation dataValidation = null;
 			for(int i=firstRow;i<=lastRow;i++){
 				cellRangeAddressList = new CellRangeAddressList(i, i, firstCol, lastCol);// 指定哪些单元格有数据有效性
 				dataValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, cellRangeAddressList);

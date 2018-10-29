@@ -31,13 +31,14 @@ public class ExportExcel2 {
 		cell.setCellValue("嘿嘿");
 		
 		// 设置数据有效性，默认10列就够了，剩下的用户去修改excel即可
-		PoiExcelUtil.setDataValidation(suffix, sheet, 1, -1, 0, 0, "K1", "K3");
+		PoiExcelUtil.setDataValidation(suffix, sheet, -1, -1, 0, 0, "K", 1, "K", 3);
 		
-		File f = new File("D:\\test."+suffix);
+		File f = new File("C:\\Users\\StoneKing\\Desktop\\test."+suffix);
 		if(f.exists()){
 			f.delete();
 		}
 		FileOutputStream stream = new FileOutputStream(f);
 		wb.write(stream);
+		System.out.println("ok");
 	}
 }
