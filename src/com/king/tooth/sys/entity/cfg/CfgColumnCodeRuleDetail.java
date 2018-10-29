@@ -15,6 +15,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -98,22 +99,36 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	private Integer columnValFrom;
 	/**
 	 * 引用表的id
+	 * <p>这个字段，rultType为5和6，都使用</p>
 	 */
 	private String refTableId;
 	/**
 	 * 引用列的id
+	 * <p>这个字段，rultType为5和6，都使用</p>
 	 */
 	private String refColumnId;
 	/**
 	 * 查询条件列的id
+	 * <p>这个字段，rultType为5和6，都使用</p>
 	 */
 	private String queryCondColumnId;
 	/**
 	 * 查询条件值的列id
-	 * <p>即当前对象中的某一个属性值作为条件</p>
+	 * <p>即当前对象中的某一个属性值作为条件，这个字段，rultType为5和6，都使用</p>
 	 */
 	private String queryCondValColumnId;
 	
+	
+	/**
+	 * 数据字典值的来源
+	 * <p>0:当前数据、1:当前数据资源对象、2:其他数据资源对象</p>
+	 * <p>默认值为0</p>
+	 */
+	private Integer dataDictionaryValFrom;
+	/**
+	 * 数据字典id
+	 */
+	private String dataDictionaryId;
 	
 	
 	/**
@@ -237,6 +252,18 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	public void setQueryCondValColumnId(String queryCondValColumnId) {
 		this.queryCondValColumnId = queryCondValColumnId;
 	}
+	public Integer getDataDictionaryValFrom() {
+		return dataDictionaryValFrom;
+	}
+	public void setDataDictionaryValFrom(Integer dataDictionaryValFrom) {
+		this.dataDictionaryValFrom = dataDictionaryValFrom;
+	}
+	public String getDataDictionaryId() {
+		return dataDictionaryId;
+	}
+	public void setDataDictionaryId(String dataDictionaryId) {
+		this.dataDictionaryId = dataDictionaryId;
+	}
 	public Integer getValSubStartIndex() {
 		return valSubStartIndex;
 	}
@@ -265,7 +292,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(20+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(22+7);
 		
 		CfgColumn columnCodeRuleIdColumn = new CfgColumn("column_code_rule_id", DataTypeConstants.STRING, 32);
 		columnCodeRuleIdColumn.setName("关联的字段编码规则id");
@@ -338,26 +365,35 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		
 		CfgColumn refTableIdColumn = new CfgColumn("ref_table_id", DataTypeConstants.STRING, 32);
 		refTableIdColumn.setName("引用表的id");
-		refTableIdColumn.setComments("引用表的id");
+		refTableIdColumn.setComments("这个字段，rultType为5和6，都使用");
 		columns.add(refTableIdColumn);
 		
 		CfgColumn refColumnIdColumn = new CfgColumn("ref_column_id", DataTypeConstants.STRING, 32);
 		refColumnIdColumn.setName("引用列的id");
-		refColumnIdColumn.setComments("引用列的id");
+		refColumnIdColumn.setComments("这个字段，rultType为5和6，都使用");
 		columns.add(refColumnIdColumn);
 		
 		CfgColumn queryCondColumnIdColumn = new CfgColumn("query_cond_column_id", DataTypeConstants.STRING, 32);
 		queryCondColumnIdColumn.setName("查询条件列的id");
-		queryCondColumnIdColumn.setComments("查询条件列的id");
+		queryCondColumnIdColumn.setComments("这个字段，rultType为5和6，都使用");
 		columns.add(queryCondColumnIdColumn);
 		
 		CfgColumn queryCondValColumnIdColumn = new CfgColumn("query_cond_val_column_id", DataTypeConstants.STRING, 32);
 		queryCondValColumnIdColumn.setName("查询条件值的列id");
-		queryCondValColumnIdColumn.setComments("即当前对象中的某一个属性值作为条件");
+		queryCondValColumnIdColumn.setComments("即当前对象中的某一个属性值作为条件，这个字段，rultType为5和6，都使用");
 		columns.add(queryCondValColumnIdColumn);
 		
 		
+		CfgColumn dataDictionaryValFromColumn = new CfgColumn("data_dictionary_val_from", DataTypeConstants.INTEGER, 1);
+		dataDictionaryValFromColumn.setName("数据字典值的来源");
+		dataDictionaryValFromColumn.setComments("0:当前数据、1:当前数据资源对象、2:其他数据资源对象，默认值为0");
+		dataDictionaryValFromColumn.setDefaultValue("0");
+		columns.add(dataDictionaryValFromColumn);
 		
+		CfgColumn dataDictionaryIdColumn = new CfgColumn("data_dictionary_id", DataTypeConstants.STRING, 50);
+		dataDictionaryIdColumn.setName("数据字典id");
+		dataDictionaryIdColumn.setComments("数据字典id");
+		columns.add(dataDictionaryIdColumn);
 		
 		
 		CfgColumn valSubStartIndexColumn = new CfgColumn("val_sub_start_index", DataTypeConstants.INTEGER, 3);
@@ -439,7 +475,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 				value = getRandom(resourceName, currentJsonObject);
 				break;
 			case 5: // 5:column(其他列值)
-				value = getColumn(resourceName, currentJsonObject);
+				value = getColumnValue(resourceName, currentJsonObject, columnValFrom);
 				break;
 			case 6: // 6:data_dictionary(数据字典值)
 				value = getDataDictionary(resourceName, currentJsonObject);
@@ -494,7 +530,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private Object getDate(String resourceName, JSONObject currentJsonObject) {
+	private synchronized Object getDate(String resourceName, JSONObject currentJsonObject) {
 		return new SimpleDateFormat(dateFormate).format(new Date());
 	}
 	
@@ -574,18 +610,19 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * 获取【5:column(其他列值)】
 	 * @param resourceName
 	 * @param currentJsonObject
+	 * @param valueFrom 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Object getColumn(String resourceName, JSONObject currentJsonObject) {
+	private Object getColumnValue(String resourceName, JSONObject currentJsonObject, int valueFrom) {
 		Object value = null;
 		
 		String refColumnPropName = getColumnPropNameById(refColumnId);
-		if(columnValFrom == 0){ // 0:当前数据
+		if(valueFrom == 0){ // 0:当前数据
 			value = currentJsonObject.getString(refColumnPropName);
 		}else{
 			Object queryCondValue = currentJsonObject.get(getColumnPropNameById(queryCondValColumnId));
-			if(columnValFrom == 2){// 2:其他数据资源对象
+			if(valueFrom == 2){// 2:其他数据资源对象
 				resourceName = getTableResourceNameById(refTableId);
 			}
 			List<Object> list = HibernateUtil.executeListQueryByHqlArr(null, null, "select "+refColumnPropName+" from "+resourceName+" where "+getColumnPropNameById(queryCondColumnId)+"=?", queryCondValue==null?"":queryCondValue);
@@ -606,10 +643,24 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private Object getDataDictionary(String resourceName, JSONObject currentJsonObject) {
-		// TODO
-		return queryDataDictionaryHql;
+		Object value = null;
+		List<Object[]> dataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), null);
+		if(dataDictionarys != null && dataDictionarys.size() > 0){
+			value = getColumnValue(resourceName, currentJsonObject, dataDictionaryValFrom);
+			if(value != null){
+				for (Object[] objects : dataDictionarys) {
+					if(objects[0] != null && objects[0].equals(value)){
+						value = objects[1];
+						break;
+					}
+				}
+			}
+			dataDictionarys.clear();
+		}
+		return value;
 	}
 	/** 查询数据字典值的hql语句 */
-	private static final String queryDataDictionaryHql = "select new map(val, caption) from SysDataDictionary where isEnabled=1 and isDelete=0 and projectId=? and customerId=? and parentId=? order by orderCode asc";
+	private static final String queryDataDictionaryHql = "select val, caption from SysDataDictionary where isEnabled=1 and isDelete=0 and projectId=? and customerId=? and parentId=?";
 }
