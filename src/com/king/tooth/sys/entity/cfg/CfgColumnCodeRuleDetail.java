@@ -113,25 +113,28 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * <p>即当前对象中的某一个属性值作为条件</p>
 	 */
 	private String queryCondValColumnId;
+	
+	
+	
 	/**
-	 * 列值截取的起始位置
+	 * 值截取的起始位置
 	 * <p>默认值为0，该配置优先级高于正则表达式</p>
 	 */
-	private Integer columnValSubStartIndex;
+	private Integer valSubStartIndex;
 	/**
-	 * 列值截取的结束位置
+	 * 值截取的结束位置
 	 * <p>默认值为0，该配置优先级高于正则表达式</p>
 	 */
-	private Integer columnValSubEndIndex;
+	private Integer valSubEndIndex;
 	/**
-	 * 列值截取的正则表达式
+	 * 值截取的正则表达式
 	 */
-	private String columnValSubRegex;
+	private String valSubRegex;
 	/**
-	 * 列值截取的正则表达式第n次匹配
+	 * 值截取的正则表达式第n次匹配
 	 * <p>默认值为1，取第一次匹配的值</p>
 	 */
-	private Integer columnValSubMatchNum;
+	private Integer valSubMatchNum;
 	
 	//-------------------------------------------------------------------------
 
@@ -234,29 +237,29 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	public void setQueryCondValColumnId(String queryCondValColumnId) {
 		this.queryCondValColumnId = queryCondValColumnId;
 	}
-	public Integer getColumnValSubStartIndex() {
-		return columnValSubStartIndex;
+	public Integer getValSubStartIndex() {
+		return valSubStartIndex;
 	}
-	public void setColumnValSubStartIndex(Integer columnValSubStartIndex) {
-		this.columnValSubStartIndex = columnValSubStartIndex;
+	public void setValSubStartIndex(Integer valSubStartIndex) {
+		this.valSubStartIndex = valSubStartIndex;
 	}
-	public Integer getColumnValSubEndIndex() {
-		return columnValSubEndIndex;
+	public Integer getValSubEndIndex() {
+		return valSubEndIndex;
 	}
-	public void setColumnValSubEndIndex(Integer columnValSubEndIndex) {
-		this.columnValSubEndIndex = columnValSubEndIndex;
+	public void setValSubEndIndex(Integer valSubEndIndex) {
+		this.valSubEndIndex = valSubEndIndex;
 	}
-	public String getColumnValSubRegex() {
-		return columnValSubRegex;
+	public String getValSubRegex() {
+		return valSubRegex;
 	}
-	public void setColumnValSubRegex(String columnValSubRegex) {
-		this.columnValSubRegex = columnValSubRegex;
+	public void setValSubRegex(String valSubRegex) {
+		this.valSubRegex = valSubRegex;
 	}
-	public Integer getColumnValSubMatchNum() {
-		return columnValSubMatchNum;
+	public Integer getValSubMatchNum() {
+		return valSubMatchNum;
 	}
-	public void setColumnValSubMatchNum(Integer columnValSubMatchNum) {
-		this.columnValSubMatchNum = columnValSubMatchNum;
+	public void setValSubMatchNum(Integer valSubMatchNum) {
+		this.valSubMatchNum = valSubMatchNum;
 	}
 	
 	
@@ -353,28 +356,32 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		queryCondValColumnIdColumn.setComments("即当前对象中的某一个属性值作为条件");
 		columns.add(queryCondValColumnIdColumn);
 		
-		CfgColumn columnValSubStartIndexColumn = new CfgColumn("column_val_sub_start_index", DataTypeConstants.INTEGER, 3);
-		columnValSubStartIndexColumn.setName("列值截取的起始位置");
-		columnValSubStartIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
-		columnValSubStartIndexColumn.setDefaultValue("0");
-		columns.add(columnValSubStartIndexColumn);
 		
-		CfgColumn columnValSubEndIndexColumn = new CfgColumn("column_val_sub_end_index", DataTypeConstants.INTEGER, 3);
-		columnValSubEndIndexColumn.setName("列值截取的结束位置");
-		columnValSubEndIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
-		columnValSubEndIndexColumn.setDefaultValue("0");
-		columns.add(columnValSubEndIndexColumn);
 		
-		CfgColumn columnValSubRegexColumn = new CfgColumn("column_val_sub_regex", DataTypeConstants.STRING, 300);
-		columnValSubRegexColumn.setName("列值截取的正则表达式");
-		columnValSubRegexColumn.setComments("列值截取的正则表达式");
-		columns.add(columnValSubRegexColumn);
 		
-		CfgColumn columnValSubMatchNumColumn = new CfgColumn("column_val_sub_match_num", DataTypeConstants.INTEGER, 2);
-		columnValSubMatchNumColumn.setName("列值截取的正则表达式第n次匹配");
-		columnValSubMatchNumColumn.setComments("默认值为1，取第一次匹配的值");
-		columnValSubMatchNumColumn.setDefaultValue("1");
-		columns.add(columnValSubMatchNumColumn);
+		
+		CfgColumn valSubStartIndexColumn = new CfgColumn("val_sub_start_index", DataTypeConstants.INTEGER, 3);
+		valSubStartIndexColumn.setName("值截取的起始位置");
+		valSubStartIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
+		valSubStartIndexColumn.setDefaultValue("0");
+		columns.add(valSubStartIndexColumn);
+		
+		CfgColumn valSubEndIndexColumn = new CfgColumn("val_sub_end_index", DataTypeConstants.INTEGER, 3);
+		valSubEndIndexColumn.setName("值截取的结束位置");
+		valSubEndIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
+		valSubEndIndexColumn.setDefaultValue("0");
+		columns.add(valSubEndIndexColumn);
+		
+		CfgColumn valSubRegexColumn = new CfgColumn("val_sub_regex", DataTypeConstants.STRING, 300);
+		valSubRegexColumn.setName("值截取的正则表达式");
+		valSubRegexColumn.setComments("值截取的正则表达式");
+		columns.add(valSubRegexColumn);
+		
+		CfgColumn valSubMatchNumColumn = new CfgColumn("val_sub_match_num", DataTypeConstants.INTEGER, 2);
+		valSubMatchNumColumn.setName("值截取的正则表达式第n次匹配");
+		valSubMatchNumColumn.setComments("默认值为1，取第一次匹配的值");
+		valSubMatchNumColumn.setDefaultValue("1");
+		columns.add(valSubMatchNumColumn);
 		
 		return columns;
 	}
@@ -417,22 +424,56 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @return
 	 */
 	public String getCurrentStageCodeVal(String resourceName, JSONObject currentJsonObject) {
+		Object value = null;
 		switch(ruleType){
 			case 1: // 1:date(日期)
-				return getDate(resourceName, currentJsonObject);
+				value = getDate(resourceName, currentJsonObject);
+				break;
 			case 2: // 2:seq(序列)
-				return getSeq(resourceName, currentJsonObject);
+				value = getSeq(resourceName, currentJsonObject);
+				break;
 			case 3: // 3:serialNumber(流水号)
-				return getSerialNumber(resourceName, currentJsonObject);
+				value = getSerialNumber(resourceName, currentJsonObject);
+				break;
 			case 4: // 4:random(随机数)
-				return getRandom(resourceName, currentJsonObject);
+				value = getRandom(resourceName, currentJsonObject);
+				break;
 			case 5: // 5:column(其他列值)
-				return getColumn(resourceName, currentJsonObject);
+				value = getColumn(resourceName, currentJsonObject);
+				break;
 			case 6: // 6:data_dictionary(数据字典值)
-				return getDataDictionary(resourceName, currentJsonObject);
+				value = getDataDictionary(resourceName, currentJsonObject);
+				break;
 			default: // 默认值为0，0:default(默认固定值)
-				return getDefaultVal(resourceName, currentJsonObject);
+				value = getDefaultVal(resourceName, currentJsonObject);
+				break;
 		}
+		
+		if(value == null){
+			return "";
+		}
+		String valueStr = value.toString();
+		if(valSubEndIndex > 0 && valSubEndIndex <= valueStr.length()){
+			if(valSubStartIndex < 1){
+				valSubStartIndex = 1;
+			}
+			valueStr = valueStr.substring(valSubStartIndex-1, valSubEndIndex);
+		}else if(StrUtils.notEmpty(valSubRegex)){
+			int matchNum = 1;
+			if(valSubMatchNum < 1){
+				valSubMatchNum = matchNum;
+			}
+			Matcher matcher = Pattern.compile(valSubRegex, Pattern.MULTILINE).matcher(valueStr);
+			
+			while(matcher.find()){
+				if(matchNum == valSubMatchNum){
+					valueStr = matcher.group();
+					break;
+				}
+				matchNum++;
+			}
+		}
+		return valueStr;
 	}
 	
 	// ------------------------------------------------------------------------------------------
@@ -442,7 +483,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private String getDefaultVal(String resourceName, JSONObject currentJsonObject) {
+	private Object getDefaultVal(String resourceName, JSONObject currentJsonObject) {
 		return defValue;
 	}
 	
@@ -453,7 +494,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private String getDate(String resourceName, JSONObject currentJsonObject) {
+	private Object getDate(String resourceName, JSONObject currentJsonObject) {
 		return new SimpleDateFormat(dateFormate).format(new Date());
 	}
 	
@@ -464,7 +505,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private String getSeq(String resourceName, JSONObject currentJsonObject) {
+	private Object getSeq(String resourceName, JSONObject currentJsonObject) {
 		// TODO 
 		return null;
 	}
@@ -476,7 +517,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private synchronized String getSerialNumber(String resourceName, JSONObject currentJsonObject) {
+	private Object getSerialNumber(String resourceName, JSONObject currentJsonObject) {
 		// TODO 
 		return null;
 	}
@@ -488,7 +529,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private String getRandom(String resourceName, JSONObject currentJsonObject) {
+	private Object getRandom(String resourceName, JSONObject currentJsonObject) {
 		return ResourceHandlerUtil.getRandom(randomSeedVal)+"";
 	}
 	
@@ -536,7 +577,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private String getColumn(String resourceName, JSONObject currentJsonObject) {
+	private Object getColumn(String resourceName, JSONObject currentJsonObject) {
 		Object value = null;
 		
 		String refColumnPropName = getColumnPropNameById(refColumnId);
@@ -553,33 +594,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 				list.clear();
 			}
 		}
-		
-		if(value == null){
-			return "";
-		}else{
-			String valueStr = value.toString();
-			if(columnValSubEndIndex > 0 && columnValSubEndIndex <= valueStr.length()){
-				if(columnValSubStartIndex < 1){
-					columnValSubStartIndex = 1;
-				}
-				valueStr = valueStr.substring(columnValSubStartIndex-1, columnValSubEndIndex);
-			}else if(StrUtils.notEmpty(columnValSubRegex)){
-				int matchNum = 1;
-				if(columnValSubMatchNum < 1){
-					columnValSubMatchNum = matchNum;
-				}
-				Matcher matcher = Pattern.compile(columnValSubRegex, Pattern.MULTILINE).matcher(valueStr);
-				
-				while(matcher.find()){
-					if(matchNum == columnValSubMatchNum){
-						valueStr = matcher.group();
-						break;
-					}
-					matchNum++;
-				}
-			}
-			return valueStr;
-		}
+		return value;
 	}
 	
 	
@@ -591,7 +606,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private String getDataDictionary(String resourceName, JSONObject currentJsonObject) {
+	private Object getDataDictionary(String resourceName, JSONObject currentJsonObject) {
 		// TODO
 		return queryDataDictionaryHql;
 	}
