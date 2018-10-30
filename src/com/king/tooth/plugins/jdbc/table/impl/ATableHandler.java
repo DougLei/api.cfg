@@ -104,10 +104,7 @@ public abstract class ATableHandler {
 							 .append(" primary key (").append(column.getColumnName()).append(")")
 					         .append(";");
 			}
-			if(column.getDefaultValue() != null){
-				if(DataTypeConstants.DATE.equals(column.getColumnType())){
-					throw new IllegalArgumentException("系统目前不支持给日期类型添加默认值");
-				}
+			if(StrUtils.notEmpty(column.getDefaultValue())){
 				addDefaultValueConstraint(tableName, column, operColumnSql);
 			}
 			if(column.getIsUnique() != null && 1 == column.getIsUnique()){

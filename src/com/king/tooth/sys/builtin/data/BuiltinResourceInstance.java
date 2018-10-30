@@ -23,6 +23,7 @@ import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
+import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -125,6 +126,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("CfgSqlResultset", new CfgSqlResultset());
 		instanceCache.put("CfgColumnCodeRule", new CfgColumnCodeRule());
 		instanceCache.put("CfgColumnCodeRuleDetail", new CfgColumnCodeRuleDetail());
+		instanceCache.put("CfgSeqInfo", new CfgSeqInfo());
 		instanceCache.put("CfgProjectSqlLinks", new CfgProjectSqlLinks());
 		instanceCache.put("CfgProjectTableLinks", new CfgProjectTableLinks());
 		instanceCache.put("SysUser", new SysUser());

@@ -523,6 +523,16 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 				return "不能添加系统内置的列名:"+columnName;
 			}
 			
+			if(StrUtils.isEmpty(defaultValue)){
+				defaultValue = null;
+			}else{
+				if(isSqlKeyWords(defaultValue)){
+					return "列["+columnName+"]，不能添加sql关键字[ "+defaultValue+" ]，作为默认值";
+				}
+				if(DataTypeConstants.DATE.equals(columnType)){
+					return "列["+columnName+"]，属于日期类型，禁止添加默认值";
+				}
+			}
 			if(DataTypeConstants.CLOB.equals(columnType) || DataTypeConstants.BLOB.equals(columnType)){
 				if(isUnique != null && isUnique == 1){
 					return "列["+columnName+"]，属于大字段类型，禁止添加唯一约束";
@@ -559,6 +569,21 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		}
 		return result;
 	}
+	
+	/**
+	 * 是否是sql关键字
+	 * @param defaultValue
+	 * @return
+	 */
+	private boolean isSqlKeyWords(String defaultValue) {
+		for (String sqlKeyWord : SQL_KEY_WORDS) {
+			if(sqlKeyWord.equals(defaultValue)){
+				return true;
+			}
+		}
+		return false;
+	}
+	private static final String[] SQL_KEY_WORDS = {"'", "\""};
 	
 	public TableResourceMetadataInfo toTableResourceMetadataInfo(){
 		return new TableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, propName, comments);

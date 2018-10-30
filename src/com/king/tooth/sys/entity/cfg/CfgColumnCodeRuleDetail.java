@@ -50,12 +50,14 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 */
 	private Integer ruleType;
 	
+	// ------------------------
 	/**
 	 * 默认固定值
 	 * <p>默认值为空字符串</p>
 	 */
 	private String defValue;
 	
+	// ------------------------
 	/**
 	 * 日期格式化格式
 	 * <p>yyyy表示年，MM表示月，dd表示日，hh表示小时，mm表示分钟，ss表示秒，SSS表示毫秒，可任意组装</p>
@@ -63,34 +65,44 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 */
 	private String dateFormate;
 	
+	// ------------------------
 	/**
 	 * 序列再次初始化的时机
-	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)</p>
+	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，这个字段，ruleType为2和3，都使用</p>
 	 * <p>默认值为0</p>
 	 */
 	private Integer seqReinitTime;
 	/**
 	 * 序列的起始值
-	 * <p>默认值是1</p>
+	 * <p>默认值是1，这个字段，ruleType为2和3，都使用</p>
 	 */
 	private Integer seqStartVal;
 	/**
-	 * 序列的当前值
-	 */
-	private Integer seqCurrentVal;
-	/**
 	 * 序列的间隔值
-	 * <p>序列值每次自增的大小</p>
+	 * <p>序列值每次自增的大小，这个字段，ruleType为2和3，都使用</p>
 	 * <p>默认值为1</p>
 	 */
 	private Integer seqSkipVal;
 	
+	/**
+	 * 流水号长度
+	 * <p>默认值为3</p>
+	 */
+	private Integer serialNumLength;
+	/**
+	 * 流水号是否自动补缺空位
+	 * <p>默认值为1，即如果实际值不满足长度的，是否用0补全前面的空位</p>
+	 */
+	private Integer serialNumIsAutoFillnull;
+	
+	// ------------------------
 	/**
 	 * 随机数种子的值
 	 * <p>默认为100000</p>
 	 */
 	private Integer randomSeedVal;
 	
+	// ------------------------
 	/**
 	 * 列值的来源
 	 * <p>0:当前数据、1:当前数据资源对象、2:其他数据资源对象</p>
@@ -130,6 +142,7 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 */
 	private String queryCondValColumnId;
 	
+	// ------------------------
 	/**
 	 * 值截取的起始位置
 	 * <p>默认值为0，该配置优先级高于正则表达式</p>
@@ -203,17 +216,23 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	public void setSeqStartVal(Integer seqStartVal) {
 		this.seqStartVal = seqStartVal;
 	}
-	public Integer getSeqCurrentVal() {
-		return seqCurrentVal;
-	}
-	public void setSeqCurrentVal(Integer seqCurrentVal) {
-		this.seqCurrentVal = seqCurrentVal;
-	}
 	public Integer getSeqSkipVal() {
 		return seqSkipVal;
 	}
 	public void setSeqSkipVal(Integer seqSkipVal) {
 		this.seqSkipVal = seqSkipVal;
+	}
+	public Integer getSerialNumLength() {
+		return serialNumLength;
+	}
+	public void setSerialNumLength(Integer serialNumLength) {
+		this.serialNumLength = serialNumLength;
+	}
+	public Integer getSerialNumIsAutoFillnull() {
+		return serialNumIsAutoFillnull;
+	}
+	public void setSerialNumIsAutoFillnull(Integer serialNumIsAutoFillnull) {
+		this.serialNumIsAutoFillnull = serialNumIsAutoFillnull;
 	}
 	public Integer getRandomSeedVal() {
 		return randomSeedVal;
@@ -329,28 +348,35 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 		
 		CfgColumn seqReinitTimeColumn = new CfgColumn("seq_reinit_time", DataTypeConstants.INTEGER, 1);
 		seqReinitTimeColumn.setName("序列再次初始化的时机");
-		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0");
+		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2和3，都使用");
 		seqReinitTimeColumn.setDefaultValue("0");
 		columns.add(seqReinitTimeColumn);
 		
 		CfgColumn seqStartValColumn = new CfgColumn("seq_start_val", DataTypeConstants.INTEGER, 8);
 		seqStartValColumn.setName("序列的起始值");
-		seqStartValColumn.setComments("序列的起始值，默认值是1");
+		seqStartValColumn.setComments("序列的起始值，默认值是1，这个字段，ruleType为2和3，都使用");
 		seqStartValColumn.setDefaultValue("1");
 		columns.add(seqStartValColumn);
 		
-		CfgColumn seqCurrentValColumn = new CfgColumn("seq_current_val", DataTypeConstants.INTEGER, 8);
-		seqCurrentValColumn.setName("序列的当前值");
-		seqCurrentValColumn.setComments("序列的当前值");
-		columns.add(seqCurrentValColumn);
-		
 		CfgColumn seqSkipValColumn = new CfgColumn("seq_skip_val", DataTypeConstants.INTEGER, 4);
 		seqSkipValColumn.setName("序列的间隔值");
-		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1");
+		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1，这个字段，ruleType为2和3，都使用");
 		seqSkipValColumn.setDefaultValue("1");
 		columns.add(seqSkipValColumn);
 		
-		CfgColumn randomSeedValColumn = new CfgColumn("random_seed_val", DataTypeConstants.INTEGER, 15);
+		CfgColumn serialNumLengthColumn = new CfgColumn("serial_num_length", DataTypeConstants.INTEGER, 2);
+		serialNumLengthColumn.setName("流水号长度");
+		serialNumLengthColumn.setComments("默认值为3");
+		serialNumLengthColumn.setDefaultValue("3");
+		columns.add(serialNumLengthColumn);
+		
+		CfgColumn serialNumIsAutoFillnullColumn = new CfgColumn("serial_num_is_auto_fillnull", DataTypeConstants.INTEGER, 1);
+		serialNumIsAutoFillnullColumn.setName("流水号是否自动补缺空位");
+		serialNumIsAutoFillnullColumn.setComments("默认值为1，即如果实际值不满足长度的，是否用0补全前面的空位");
+		serialNumIsAutoFillnullColumn.setDefaultValue("1");
+		columns.add(serialNumIsAutoFillnullColumn);
+		
+		CfgColumn randomSeedValColumn = new CfgColumn("random_seed_val", DataTypeConstants.INTEGER, 10);
 		randomSeedValColumn.setName("随机数种子的值");
 		randomSeedValColumn.setComments("默认为100000");
 		randomSeedValColumn.setDefaultValue("100000");
@@ -539,7 +565,16 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @return
 	 */
 	private Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
-		// TODO 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		return null;
 	}
 	
@@ -551,9 +586,19 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @return
 	 */
 	private Object getSerialNumberVal(String resourceName, JSONObject currentJsonObject) {
-		// TODO 
-		return null;
+		Object value = getSeqVal(resourceName, currentJsonObject);
+		if(value == null){
+			throw new NullPointerException("获取序列值结果为空，请联系后端系统开发人员");
+		}
+		
+		String valueStr = value.toString();
+		int valueLength = valueStr.length();
+		if(serialNumIsAutoFillnull == 1 && valueLength < serialNumLength){
+			valueStr = zero.substring(0, serialNumLength-valueLength) + valueStr;
+		}
+		return valueStr;
 	}
+	private static final String zero = "00000000000000000000";
 	
 	// ------------------------------------------------------------------------------------------
 	/**

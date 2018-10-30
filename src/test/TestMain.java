@@ -26,8 +26,8 @@ public class TestMain {
 
 		
 //		System.out.println(203%200);
-		System.out.println("abc".substring(0,4));
-		
+		System.out.println("10000000000000000000".substring(0,1));
+		System.out.println(Integer.MAX_VALUE);
 		
 	}
 }
