@@ -104,7 +104,9 @@ public class SqlStatementParserUtil {
 		}
 		sql.setSqlScriptType(typeMap.get("type"));
 		sql.setConfType(sql.getSqlScriptType());
-		sql.setRequestMethod(typeMap.get("reqMethod"));
+		if(StrUtils.isEmpty(sql.getRequestMethod())){
+			sql.setRequestMethod(typeMap.get("reqMethod"));
+		}
 		
 		String[] sqlScriptArr;
 		if("true".equals(typeMap.get("isOtherSqlType"))){

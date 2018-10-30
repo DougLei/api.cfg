@@ -57,7 +57,7 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	private String defaultValue;
 	/**
 	 * 参数来源
-	 * <p>0.用户输入、1.系统内置</p>
+	 * <p>0.用户输入、1.系统内置、2.自动编码</p>
 	 * <p>默认值是0</p>
 	 */
 	private Integer parameterFrom = 0;
@@ -349,7 +349,7 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn parameterFromColumn = new CfgColumn("parameter_from", DataTypeConstants.INTEGER, 1);
 		parameterFromColumn.setName("参数来源");
-		parameterFromColumn.setComments("参数来源:0.用户输入、1.系统内置，默认值为0");
+		parameterFromColumn.setComments("参数来源:0.用户输入、1.系统内置、2.自动编码，默认值为0");
 		parameterFromColumn.setDefaultValue("0");
 		columns.add(parameterFromColumn);
 		
@@ -471,4 +471,9 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	 * <p>1.系统内置</p>
 	 */
 	public static final Integer SYSTEM_BUILTIN = 1;
+	/**
+	 * 参数来源
+	 * <p>2.自动编码</p>
+	 */
+	public static final Integer AUTO_CODE = 1;
 }

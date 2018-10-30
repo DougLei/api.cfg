@@ -16,21 +16,21 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 字段编码规则表
+ * 属性编码规则表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPropAnalysis{
+public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityPropAnalysis{
 
 	/**
-	 * 关联规则的表id
+	 * 关联规则的资源id
 	 */
-	private String refTableId;
+	private String refResourceId;
 	/**
-	 * 关联规则的列id
+	 * 关联规则的属性id
 	 */
-	private String refColumnId;
+	private String refPropId;
 	/**
 	 * 是否有效
 	 * <p>默认值为1</p>
@@ -44,29 +44,29 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 	//-------------------------------------------------------------------------
 	
 	/**
-	 * 关联规则的列的属性名
+	 * 关联规则的属性名
 	 */
 	@JSONField(serialize = false)
 	private String refPropName;
 	
 	/**
-	 * 最终的字段编码值
+	 * 最终的属性编码值
 	 * <p>因为可以批量添加数据，这个时候就会有多个结果值，所以用集合</p>
 	 */
 	@JSONField(serialize = false)
 	private List<String> finalCodeVals;
 	
-	public String getRefTableId() {
-		return refTableId;
+	public String getRefResourceId() {
+		return refResourceId;
 	}
-	public void setRefTableId(String refTableId) {
-		this.refTableId = refTableId;
+	public void setRefResourceId(String refResourceId) {
+		this.refResourceId = refResourceId;
 	}
-	public String getRefColumnId() {
-		return refColumnId;
+	public String getRefPropId() {
+		return refPropId;
 	}
-	public void setRefColumnId(String refColumnId) {
-		this.refColumnId = refColumnId;
+	public void setRefPropId(String refPropId) {
+		this.refPropId = refPropId;
 	}
 	public Integer getIsEnabled() {
 		return isEnabled;
@@ -91,15 +91,15 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(4+7);
 		
-		CfgColumn refTableIdColumn = new CfgColumn("ref_table_id", DataTypeConstants.STRING, 32);
-		refTableIdColumn.setName("关联规则的表id");
-		refTableIdColumn.setComments("关联规则的表id");
-		columns.add(refTableIdColumn);
+		CfgColumn refResourceIdColumn = new CfgColumn("ref_resource_id", DataTypeConstants.STRING, 32);
+		refResourceIdColumn.setName("关联规则的资源id");
+		refResourceIdColumn.setComments("关联规则的资源id");
+		columns.add(refResourceIdColumn);
 		
-		CfgColumn refColumnIdColumn = new CfgColumn("ref_column_id", DataTypeConstants.STRING, 32);
-		refColumnIdColumn.setName("关联规则的列id");
-		refColumnIdColumn.setComments("关联规则的列id");
-		columns.add(refColumnIdColumn);
+		CfgColumn refPropIdColumn = new CfgColumn("ref_prop_id", DataTypeConstants.STRING, 32);
+		refPropIdColumn.setName("关联规则的属性id");
+		refPropIdColumn.setComments("关联规则的属性id");
+		columns.add(refPropIdColumn);
 		
 		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
@@ -117,28 +117,28 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("字段编码规则表");
-		table.setComments("字段编码规则表");
+		table.setName("属性编码规则表");
+		table.setComments("属性编码规则表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "CFG_COLUMN_CODE_RULE";
+		return "CFG_PROP_CODE_RULE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "CfgColumnCodeRule";
+		return "CfgPropCodeRule";
 	}
 	
 	public String validNotNullProps() {
-		if(StrUtils.isEmpty(refTableId)){
-			return "关联规则的表id不能为空";
+		if(StrUtils.isEmpty(refResourceId)){
+			return "关联规则的资源id不能为空";
 		}
-		if(StrUtils.isEmpty(refColumnId)){
-			return "关联规则的列id不能为空";
+		if(StrUtils.isEmpty(refPropId)){
+			return "关联规则的属性id不能为空";
 		}
 		return null;
 	}
@@ -160,25 +160,28 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 	}
 	
 	/**
-	 * 获取指定下标的最终的字段编码值
+	 * 获取指定下标的最终的属性编码值
 	 * @param index
 	 * @return
 	 */
 	public String getFinalCodeVal(int index) {
-		if(finalCodeVals == null || finalCodeVals.size() < (index+1)){
+		if(finalCodeVals == null || finalCodeVals.size() == 0){
 			return null;
+		}
+		if(finalCodeVals.size() <= index){
+			throw new IllegalArgumentException("调用资源自动生成编码值时，finalCodeVals的长度，小于实际传入的index值，请联系后端系统开发人员");
 		}
 		return finalCodeVals.get(index);
 	}
 	
 	/**
-	 * 处理并获取最终的字段编码值
+	 * 处理并获取最终的属性编码值
 	 * <p>将值set到finalCodeVal属性中</p>
 	 * @param ijson 
 	 * @param resourceName 
 	 */
 	public void doProcessFinalCodeVal(IJson ijson, String resourceName) {
-		ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumnCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgPropCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(ruleDetails != null && ruleDetails.size() > 0){
 			int size = ijson.size();// 要生成编码值的数量 
 			
@@ -204,8 +207,8 @@ public class CfgColumnCodeRule extends BasicEntity implements IEntity, IEntityPr
 	}
 	// 最终编码值得缓存
 	private StringBuilder finalCodeValBuffer;
-	// 字段编码规则明细集合
-	private List<CfgColumnCodeRuleDetail> ruleDetails;
-	// 查询字段编码规则明细集合的hql
-	private static final String queryRuleDetailsHql = "from CfgColumnCodeRuleDetail where columnCodeRuleId=? and projectId=? and customerId=? order by orderCode asc";
+	// 属性编码规则明细集合
+	private List<CfgPropCodeRuleDetail> ruleDetails;
+	// 查询属性编码规则明细集合的hql
+	private static final String queryRuleDetailsHql = "from CfgPropCodeRuleDetail where refPropCodeRuleId=? and projectId=? and customerId=? order by orderCode asc";
 }

@@ -20,9 +20,9 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnalysis{
 	
 	/**
-	 * 关联的字段编码规则明细id
+	 * 关联的属性编码规则明细id
 	 */
-	private String columnCodeRuleDetailId;
+	private String refPropCodeRuleDetailId;
 	/**
 	 * 序列初始化的时间
 	 */
@@ -34,11 +34,11 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	
 	//-------------------------------------------------------------------------
 
-	public String getColumnCodeRuleDetailId() {
-		return columnCodeRuleDetailId;
+	public String getRefPropCodeRuleDetailId() {
+		return refPropCodeRuleDetailId;
 	}
-	public void setColumnCodeRuleDetailId(String columnCodeRuleDetailId) {
-		this.columnCodeRuleDetailId = columnCodeRuleDetailId;
+	public void setRefPropCodeRuleDetailId(String refPropCodeRuleDetailId) {
+		this.refPropCodeRuleDetailId = refPropCodeRuleDetailId;
 	}
 	public Date getInitDate() {
 		return initDate;
@@ -57,9 +57,9 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(22+7);
 		
-		CfgColumn columnCodeRuleDetailIdColumn = new CfgColumn("column_code_rule_detail_id", DataTypeConstants.STRING, 32);
-		columnCodeRuleDetailIdColumn.setName("关联的字段编码规则明细id");
-		columnCodeRuleDetailIdColumn.setComments("关联的字段编码规则明细id");
+		CfgColumn columnCodeRuleDetailIdColumn = new CfgColumn("ref_prop_code_rule_detail_id", DataTypeConstants.STRING, 32);
+		columnCodeRuleDetailIdColumn.setName("关联的属性编码规则明细id");
+		columnCodeRuleDetailIdColumn.setComments("关联的属性编码规则明细id");
 		columns.add(columnCodeRuleDetailIdColumn);
 		
 		CfgColumn initDateColumn = new CfgColumn("init_date", DataTypeConstants.DATE, 0);

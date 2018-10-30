@@ -9,7 +9,8 @@ import java.sql.Statement;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgColumnCodeRuleDetail;
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
@@ -34,7 +35,8 @@ public final class SyncTableToServerDBTool extends AService{
 				new SysFileIELog().toCreateTable(),
 				new CfgPropExtendConf().toCreateTable() ,
 				new CfgSeqInfo().toCreateTable(),
-				new CfgColumnCodeRuleDetail().toCreateTable()
+				new CfgPropCodeRuleDetail().toCreateTable(),
+				new CfgPropCodeRule().toCreateTable()
 				);
 	}
 	

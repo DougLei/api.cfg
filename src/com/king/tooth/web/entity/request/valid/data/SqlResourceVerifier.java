@@ -26,6 +26,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.RequestBody;
 
 /**
@@ -100,7 +101,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		}else if(requestBody.isPostRequest() || requestBody.isPutRequest() || requestBody.isDeleteRequest()){
 			return validPostSqlResourceMetadata();
 		}
-		return "系统只支持[get、post、put、delete]四种请求方式";
+		return "sql资源，系统只支持[get、post]两种请求方式";
 	}
 	
 	/**
@@ -294,7 +295,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		String analysisActualInValueResult = null;
 		
 		int index = 1;
-		// 如果没有传入任何参数，还能进入到这里，说明配置的参数要么是系统内置，要么是有默认值的
+		// 如果没有传入任何参数，还能进入到这里，说明配置的参数要么是系统内置，要么是自动生成，要么是有默认值的
 		if((actualParamsList == null || actualParamsList.size() == 0)){
 			// 如果配置了sql参数，但是实际调用的时候没有传入任何参数
 			for (ComSqlScriptParameter sqlParam : this.sqlParams) {
@@ -328,7 +329,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 							if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
 								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), null, index);
 							}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
-								if(actualParams != null){
+								if(actualParams != null && actualParams.size() > 0){
 									for (ComSqlScriptParameter ssap : actualParams) {
 										if(ssp.getParameterName().equals(ssap.getParameterName())){
 											ssp.setActualInValue(ssap.getActualInValue());
@@ -346,6 +347,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					}	
 				}
 				index++;
+				paramIndex = 0;
 				inSqlResultSetMetadataInfoIndex = 0;
 			}
 			this.sqlParams.clear();
@@ -353,6 +355,8 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		sql.setSqlParamsList(sqlParamsList);
 		return null;
 	}
+	/** 用来自动生成编码的下标 */
+	private int paramIndex;
 	
 	/**
 	 * 克隆sql参数集合
@@ -473,13 +477,21 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){
 			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(ssp.getParameterName());
 			if(actualInValue == null){
-				return desc+"内置参数["+ssp.getParameterName()+"]的值为空，请联系后台系统开发人员";
+				return desc+"内置参数["+ssp.getParameterName()+"]的值为空，请联系后端系统开发人员";
+			}
+			if(ssp.getIsPlaceholder() == 0){
+				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
+			}
+		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.AUTO_CODE){
+			actualInValue = PropCodeRuleUtil.getFinalCodeVal(index-1, paramIndex++, requestBody.getResourcePropCodeRule());
+			if(actualInValue == null){
+				return desc+"自动编码参数["+ssp.getParameterName()+"]的值为空，请联系后端系统开发人员";
 			}
 			if(ssp.getIsPlaceholder() == 0){
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else{
-			return "parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)]，请联系后端系统开发人员";
+			return "parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)、2(自动编码)]，请联系后端系统开发人员";
 		}
 		ssp.setActualInValue(actualInValue);
 		return null;

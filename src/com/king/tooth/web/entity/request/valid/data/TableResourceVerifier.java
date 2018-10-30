@@ -46,7 +46,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		}else if(requestBody.isDeleteRequest()){
 			return validDeleteTableResourceMetadata();
 		}
-		return "系统只支持[get、post、put、delete]四种请求方式";
+		return "table资源，系统只支持[get、post、put、delete]四种请求方式";
 	}
 	
 	/**

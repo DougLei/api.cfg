@@ -21,17 +21,17 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 字段编码规则明细表
+ * 属性编码规则明细表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEntityPropAnalysis{
+public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEntityPropAnalysis{
 	
 	/**
-	 * 关联的字段编码规则id
+	 * 关联的属性编码规则id
 	 */
-	private String columnCodeRuleId;
+	private String refPropCodeRuleId;
 	/**
 	 * 连接符
 	 * <p>当前段连接下一段的连接符；如果没有下一段，则连接符无效</p>
@@ -165,11 +165,11 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	
 	//-------------------------------------------------------------------------
 
-	public String getColumnCodeRuleId() {
-		return columnCodeRuleId;
+	public String getRefPropCodeRuleId() {
+		return refPropCodeRuleId;
 	}
-	public void setColumnCodeRuleId(String columnCodeRuleId) {
-		this.columnCodeRuleId = columnCodeRuleId;
+	public void setRefPropCodeRuleId(String refPropCodeRuleId) {
+		this.refPropCodeRuleId = refPropCodeRuleId;
 	}
 	public String getLinkNextSymbol() {
 		return linkNextSymbol;
@@ -312,10 +312,10 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(22+7);
 		
-		CfgColumn columnCodeRuleIdColumn = new CfgColumn("column_code_rule_id", DataTypeConstants.STRING, 32);
-		columnCodeRuleIdColumn.setName("关联的字段编码规则id");
-		columnCodeRuleIdColumn.setComments("关联的字段编码规则id");
-		columns.add(columnCodeRuleIdColumn);
+		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
+		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
+		refPropCodeRuleIdColumn.setComments("关联的属性编码规则id");
+		columns.add(refPropCodeRuleIdColumn);
 		
 		CfgColumn linkNextSymbolColumn = new CfgColumn("link_next_symbol", DataTypeConstants.STRING, 5);
 		linkNextSymbolColumn.setName("连接符");
@@ -447,20 +447,20 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("字段编码规则表");
-		table.setComments("字段编码规则表");
+		table.setName("属性编码规则明细表");
+		table.setComments("属性编码规则明细表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "CFG_COLUMN_CODE_RULE_DETAIL";
+		return "CFG_PROP_CODE_RULE_DETAIL";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "CfgColumnCodeRuleDetail";
+		return "CfgPropCodeRuleDetail";
 	}
 	
 	public String validNotNullProps() {
@@ -565,10 +565,12 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @return
 	 */
 	private synchronized Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
+		// TODO 这整个方法，都要放到线程锁中执行
+		
 		CfgSeqInfo seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
 		if(seq == null){
 			seq = new CfgSeqInfo();
-			seq.setColumnCodeRuleDetailId(id);
+			seq.setRefPropCodeRuleDetailId(id);
 			seq.setInitDate(new Date());
 			seq.setCurrentVal(seqStartVal);
 			HibernateUtil.saveObject(seq, null);
@@ -587,7 +589,10 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param seq
 	 */
 	private void setSeqIsReinit(CfgSeqInfo seq){
-		// 序列再次初始化
+		boolean isReInit = false; // 标识是否需要重置
+		
+		// TODO 
+		Date currentDate = new Date();
 		switch(seqReinitTime){
 			case 1: // 1:hour(每小时)
 				break;
@@ -603,6 +608,11 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 				break;
 			default: // 默认，0:none(不重新初始化)
 				break;
+		}
+		
+		if(isReInit){
+			seq.setInitDate(currentDate);
+			seq.setCurrentVal(seqStartVal);
 		}
 	}
 	
