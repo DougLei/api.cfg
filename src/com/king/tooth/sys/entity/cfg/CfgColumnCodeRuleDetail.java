@@ -564,18 +564,46 @@ public class CfgColumnCodeRuleDetail extends BasicEntity implements IEntity, IEn
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		return null;
+	private synchronized Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
+		CfgSeqInfo seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
+		if(seq == null){
+			seq = new CfgSeqInfo();
+			seq.setColumnCodeRuleDetailId(id);
+			seq.setInitDate(new Date());
+			seq.setCurrentVal(seqStartVal);
+			HibernateUtil.saveObject(seq, null);
+		}else{
+			seq.setCurrentVal(seq.getCurrentVal() + seqSkipVal);
+			setSeqIsReinit(seq);
+			HibernateUtil.updateObject(seq, null);
+		}
+		return seq.getCurrentVal();
+	}
+	/** 查询序列信息hql语句 */
+	private static final String querySeqInfoHql = "from CfgSeqInfo where columnCodeRuleDetailId=?";
+	
+	/**
+	 * 设置序列重新初始化
+	 * @param seq
+	 */
+	private void setSeqIsReinit(CfgSeqInfo seq){
+		// 序列再次初始化
+		switch(seqReinitTime){
+			case 1: // 1:hour(每小时)
+				break;
+			case 2: // 2:day(每天)
+				break;
+			case 3: // 3:month(每月)
+				break;
+			case 4: // 4:year(每年)
+				break;
+			case 5: // 5:week(每周)
+				break;
+			case 6: // 6:quarter(每季度)
+				break;
+			default: // 默认，0:none(不重新初始化)
+				break;
+		}
 	}
 	
 	// ------------------------------------------------------------------------------------------
