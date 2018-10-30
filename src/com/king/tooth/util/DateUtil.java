@@ -131,41 +131,6 @@ public class DateUtil {
 	/**	dd */
 	private static final SimpleDateFormat ddSdf = new SimpleDateFormat("d");
 	
-	
-	/**
-	 * 获取当前日期是当月的第几周
-	 * <p>周日历</p>
-	 * @param date
-	 * @return
-	 */
-	public static int weekCanlendarOfMonth(Date date){
-		return weekCanlendar(date, Calendar.WEEK_OF_MONTH);
-	}
-	
-	/**
-	 * 获取当前日期是今年的第几周
-	 * <p>周日历</p>
-	 * @param date
-	 * @return
-	 */
-	public static int weekCanlendarOfYear(Date date){
-		return weekCanlendar(date, Calendar.WEEK_OF_YEAR);
-	}
-	
-	/**
-	 * 获取周日历
-	 * <p>第几周</p>
-	 * @param date
-	 * @param calendarWeekType
-	 * @return
-	 */
-	private static int weekCanlendar(Date date, int calendarWeekType){
-		Calendar calendar = Calendar.getInstance();
-		calendar.setFirstDayOfWeek(Calendar.MONDAY);
-		calendar.setTime(date);
-		return calendar.get(calendarWeekType);
-	}
-	
 	// -----------------------------------------------------------------
 	/**
 	 * 自定义格式化日期对象为字符串
@@ -196,7 +161,20 @@ public class DateUtil {
 	
 	// -----------------------------------------------------------------
 	/**
-	 * 获取当前是第几季度
+	 * 获取当前日期是今年的第几周
+	 * <p>周日历</p>
+	 * @param date
+	 * @return
+	 */
+	public static int weekCanlendarOfYear(Date date){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setFirstDayOfWeek(Calendar.MONDAY);
+		calendar.setTime(date);
+		return calendar.get(Calendar.WEEK_OF_YEAR);
+	}
+	
+	/**
+	 * 获取当前日期是第几季度
 	 * @param date
 	 * @param isNumber 是否是数字，不是数字就是汉字
 	 * 				   1.2.3.4         一.二.三.四

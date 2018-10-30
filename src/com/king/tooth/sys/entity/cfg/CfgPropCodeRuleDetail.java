@@ -46,8 +46,8 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Integer orderCode;
 	/**
 	 * 规则类型
-	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)</p>
-	 * <p>0</p>
+	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)</p>
+	 * <p>默认值为0</p>
 	 */
 	private Integer ruleType;
 	
@@ -331,7 +331,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn ruleTypeColumn = new CfgColumn("rule_type", DataTypeConstants.INTEGER, 1);
 		ruleTypeColumn.setName("规则类型");
-		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)，默认值为0");
+		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0");
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
@@ -503,6 +503,12 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 				break;
 			case 6: // 6:data_dictionary(数据字典值)
 				value = getDataDictionaryVal(resourceName, currentJsonObject);
+				break;
+			case 7: // 7:weekCalendar(周日历，即当前日期是今年第几周)
+				value = getWeekCalendarVal(resourceName, currentJsonObject);
+				break;
+			case 8: // 8:seasonCalendar(季度日历，即当前日期是今年第几季度)
+				value = getSeasonCalendarVal(resourceName, currentJsonObject);
 				break;
 			default: // 默认值为0，0:default(默认固定值)
 				value = getDefaultVal(resourceName, currentJsonObject);
@@ -743,8 +749,6 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		return value;
 	}
 	
-	
-	
 	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取【6:data_dictionary(数据字典值)】
@@ -772,4 +776,26 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	}
 	/** 查询数据字典值的hql语句 */
 	private static final String queryDataDictionaryHql = "select val, caption from SysDataDictionary where isEnabled=1 and isDelete=0 and projectId=? and customerId=? and parentId=?";
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取【7:weekCalendar(周日历，即当前日期是今年第几周)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	private Object getWeekCalendarVal(String resourceName, JSONObject currentJsonObject) {
+		return DateUtil.weekCanlendarOfYear(new Date());
+	}
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取【8:seasonCalendar(季度日历，即当前日期是今年第几季度)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	private Object getSeasonCalendarVal(String resourceName, JSONObject currentJsonObject) {
+		return DateUtil.getSeason(new Date(), 1);
+	}
 }
