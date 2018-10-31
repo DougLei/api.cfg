@@ -33,7 +33,7 @@ public class ResourcePropCodeRule {
 	 * @param requestBody
 	 */
 	private void analysisResourcePropCodeRule(RequestBody requestBody) {
-		if(requestBody.getRouteBody().getParentResourceName() == null && requestBody.isPostRequest()){
+		if(requestBody.getRouteBody().getParentResourceName() == null && requestBody.isPostRequest() && !requestBody.getResourceInfo().isCodeResource()){
 			// 内置的资源，不需要处理
 			if(ResourceInfoConstants.BUILTIN_RESOURCE.equals(requestBody.getResourceInfo().getReqResource().getRefResourceId())){
 				return;
