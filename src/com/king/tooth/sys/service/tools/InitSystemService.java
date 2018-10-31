@@ -21,11 +21,12 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
-import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
+import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.ComProject;
@@ -147,6 +148,7 @@ public class InitSystemService extends AService{
 		tables.add(new SysDataPrivS().toCreateTable());
 		tables.add(new SysFileIELog().toCreateTable());
 		tables.add(new CfgPropExtendConf().toCreateTable());
+		tables.add(new CfgSeqInfo().toCreateTable());
 		return tables;
 	}
 	

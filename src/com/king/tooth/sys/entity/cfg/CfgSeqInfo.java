@@ -57,10 +57,10 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(22+7);
 		
-		CfgColumn columnCodeRuleDetailIdColumn = new CfgColumn("ref_prop_code_rule_detail_id", DataTypeConstants.STRING, 32);
-		columnCodeRuleDetailIdColumn.setName("关联的属性编码规则明细id");
-		columnCodeRuleDetailIdColumn.setComments("关联的属性编码规则明细id");
-		columns.add(columnCodeRuleDetailIdColumn);
+		CfgColumn refPropCodeRuleDetailIdColumn = new CfgColumn("ref_prop_code_rule_detail_id", DataTypeConstants.STRING, 32);
+		refPropCodeRuleDetailIdColumn.setName("关联的属性编码规则明细id");
+		refPropCodeRuleDetailIdColumn.setComments("关联的属性编码规则明细id");
+		columns.add(refPropCodeRuleDetailIdColumn);
 		
 		CfgColumn initDateColumn = new CfgColumn("init_date", DataTypeConstants.DATE, 0);
 		initDateColumn.setName("序列初始化的时间");

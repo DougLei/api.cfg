@@ -173,6 +173,9 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		this.refPropCodeRuleId = refPropCodeRuleId;
 	}
 	public String getLinkNextSymbol() {
+		if(linkNextSymbol == null){
+			return "";
+		}
 		return linkNextSymbol;
 	}
 	public void setLinkNextSymbol(String linkNextSymbol) {
@@ -321,7 +324,6 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		CfgColumn linkNextSymbolColumn = new CfgColumn("link_next_symbol", DataTypeConstants.STRING, 5);
 		linkNextSymbolColumn.setName("连接符");
 		linkNextSymbolColumn.setComments("当前段连接下一段的连接符；如果没有下一段，则连接符无效；默认值为空字符串");
-		linkNextSymbolColumn.setDefaultValue("");
 		columns.add(linkNextSymbolColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
@@ -335,10 +337,9 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
-		CfgColumn defValueColumn = new CfgColumn("defValue", DataTypeConstants.STRING, 10);
+		CfgColumn defValueColumn = new CfgColumn("def_value", DataTypeConstants.STRING, 10);
 		defValueColumn.setName("默认固定值");
 		defValueColumn.setComments("默认值为空字符串");
-		defValueColumn.setDefaultValue("");
 		columns.add(defValueColumn);
 		
 		CfgColumn dateFormateColumn = new CfgColumn("date_formate", DataTypeConstants.STRING, 20);
@@ -475,6 +476,15 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		return result;
 	}
 	
+	/**
+	 * 是否需要锁住
+	 * <p>需要锁住的ruleType包括：2:seq(序列)、3:serialNumber(流水号)</p>
+	 * @return
+	 */
+	public boolean isNeedLock(){
+		return ruleType == 2 || ruleType == 3;
+	}
+	
 	// ------------------------------------------------------------------------------------------------------
 	
 	/**
@@ -565,6 +575,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	}
 	
 	// ------------------------------------------------------------------------------------------
+	private CfgSeqInfo seq;// 当前序列信息
 	/**
 	 * 获取【2:seq(序列)】
 	 * @param resourceName
@@ -572,7 +583,9 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * @return
 	 */
 	private Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
-		CfgSeqInfo seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
+		if(seq == null){
+			seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
+		}
 		if(seq == null){
 			seq = new CfgSeqInfo();
 			seq.setRefPropCodeRuleDetailId(id);
@@ -587,7 +600,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		return seq.getCurrentVal();
 	}
 	/** 查询序列信息hql语句 */
-	private static final String querySeqInfoHql = "from CfgSeqInfo where columnCodeRuleDetailId=?";
+	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=?";
 	
 	/**
 	 * 设置序列重新初始化

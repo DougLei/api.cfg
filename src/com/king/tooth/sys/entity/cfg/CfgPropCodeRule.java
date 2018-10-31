@@ -234,28 +234,21 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	 */
 	public void doProcessFinalCodeVal(IJson ijson, String resourceName) {
 		setRefPropName();
-		
-		Lock lock = null;
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryRuleDetailCountOfRultTypeIs2or3Hql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		if(count > 0){
-			lock = PropCodeRuleUtil.getPropCodeRuleLock(id);
-			lock.lock();
-		}
-		try {
-			ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgPropCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-			if(ruleDetails != null && ruleDetails.size() > 0){
-				int size = ijson.size();// 要生成编码值的数量 
-				
-				this.finalCodeVals = new ArrayList<String>(size);
-				finalCodeValBuffer = new StringBuilder();
-				int len = ruleDetails.size();
-				int lastIndex = len-1;
-				
-				JSONObject currentJsonObject;
+		ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgPropCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(ruleDetails != null && ruleDetails.size() > 0){
+			int size = ijson.size();// 要生成编码值的数量 
+			
+			this.finalCodeVals = new ArrayList<String>(size);
+			finalCodeValBuffer = new StringBuilder();
+			int len = ruleDetails.size();
+			
+			Lock lock = lockPropCodeRule();
+			try {
+				JSONObject currentJsonObject = null;
 				for(int j=0;j<size;j++){
 					currentJsonObject = ijson.get(j);
 					for(int i=0;i<len;i++){
-						if(i>0 && i<lastIndex){
+						if(i>0){
 							finalCodeValBuffer.append(ruleDetails.get(i-1).getLinkNextSymbol());
 						}
 						finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal(resourceName, currentJsonObject));
@@ -263,22 +256,36 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 					this.finalCodeVals.add(finalCodeValBuffer.toString());
 					finalCodeValBuffer.setLength(0);
 				}
-				ruleDetails.clear();
+			} finally{
+				if(lock != null){
+					lock.unlock();
+				}
 			}
-		} finally{
-			if(lock != null){
-				lock.unlock();
-			}
+			ruleDetails.clear();
 		}
 	}
-	// 查询属性编码规则明细集合中，ruleType是否有2:seq(序列)或3:serialNumber(流水号)的类型，如果是这几个类型，在查询的时候，就要加锁
-	private static final String queryRuleDetailCountOfRultTypeIs2or3Hql = "select count(ruleType) from CfgPropCodeRuleDetail where ruleType in (2,3) refPropCodeRuleId=? and projectId=? and customerId=? order by orderCode asc";
 	// 最终编码值得缓存
 	private StringBuilder finalCodeValBuffer;
 	// 属性编码规则明细集合
 	private List<CfgPropCodeRuleDetail> ruleDetails;
 	// 查询属性编码规则明细集合的hql
 	private static final String queryRuleDetailsHql = "from CfgPropCodeRuleDetail where refPropCodeRuleId=? and projectId=? and customerId=? order by orderCode asc";
+	
+	/**
+	 * 多线程锁定属性编码规则对象
+	 * 防止生成序列、流水号时出现重复
+	 * @return 
+	 */
+	private Lock lockPropCodeRule() {
+		for(CfgPropCodeRuleDetail ruleDetail: ruleDetails){
+			if(ruleDetail.isNeedLock()){
+				Lock lock = PropCodeRuleUtil.getPropCodeRuleLock(id);
+				lock.lock();
+				return lock;
+			}
+		}
+		return null;
+	}
 	
 	// -----------------------------------------------------
 	/**
