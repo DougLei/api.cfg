@@ -39,11 +39,11 @@ public class PropCodeRuleUtil {
 	 * 获取对象属性的最终编码值
 	 * <p>insert sql资源使用</p>
 	 * @see com.king.tooth.web.entity.request.valid.data.SqlResourceVerifier.analysisActualInValue()
-	 * @param objIndex 第几个对象下标，即传入的是sql参数数组，给第几个对象赋值
+	 * @param sqlParamName sql参数名
 	 * @param paramIndex 第几个参数下标，即每个sql脚本参数的下标
 	 * @param resourcePropCodeRule
 	 */
-	public static Object getFinalCodeVal(int objIndex, int paramIndex, ResourcePropCodeRule resourcePropCodeRule) {
+	public static Object getFinalCodeVal(String sqlParamName, int paramIndex, ResourcePropCodeRule resourcePropCodeRule) {
 		if(resourcePropCodeRule == null){
 			return null;
 		}
@@ -52,10 +52,12 @@ public class PropCodeRuleUtil {
 		if(rules == null || rules.size() == 0){
 			return null;
 		}
-		if(rules.size() <= objIndex){
-			throw new IllegalArgumentException("调用sql脚本，自动生成编码值时，rules的长度，小于实际传入的objIndex值，请联系后端系统开发人员");
+		for (CfgPropCodeRule rule : rules) {
+			if(rule.getRefPropName().equals(sqlParamName)){
+				return rule.getFinalCodeVal(paramIndex);
+			}
 		}
-		return rules.get(objIndex).getFinalCodeVal(paramIndex);
+		throw new IllegalArgumentException("调用sql脚本，自动生成编码值时，rules中没有refPropName=["+sqlParamName+"]的编码值，请检查属性编码规则的配置，或联系后端系统开发人员");
 	}
 	
 	// ----------------------------------------------------------------

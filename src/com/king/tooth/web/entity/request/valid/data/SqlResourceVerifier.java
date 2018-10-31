@@ -483,7 +483,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.AUTO_CODE){
-			actualInValue = PropCodeRuleUtil.getFinalCodeVal(index-1, paramIndex++, requestBody.getResourcePropCodeRule());
+			actualInValue = PropCodeRuleUtil.getFinalCodeVal(ssp.getParameterName(), paramIndex++, requestBody.getResourcePropCodeRule());
 			if(actualInValue == null){
 				return desc+"自动编码参数["+ssp.getParameterName()+"]的值为空，请联系后端系统开发人员";
 			}
