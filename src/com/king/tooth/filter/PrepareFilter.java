@@ -80,8 +80,8 @@ public class PrepareFilter extends AbstractFilter{
 				printResult(resp, responseBody);
 			}
 		} catch (Exception err) {
-			String errMsg = ExceptionUtil.getErrMsg(err);
-			Log4jUtil.error("请求处理出现异常，异常信息为:{}", errMsg);
+			String errMsg = request.getAttribute(BuiltinParameterKeys._CLIENT_IP) + "-" + ExceptionUtil.getErrMsg(err);
+			Log4jUtil.error("请求处理出现异常，异常信息为: {}", errMsg);
 			HibernateUtil.rollbackTransaction();
 			responseBody = new ResponseBody(errMsg, null);
 //			responseBody = new ResponseBody("后端系统出现异常，请查看系统日志排查问题", null);
