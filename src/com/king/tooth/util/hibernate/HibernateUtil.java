@@ -376,7 +376,7 @@ public class HibernateUtil {
 	/**
 	 * 修改数据
 	 * <p>删除语句、修改语句、新增语句</p>
-	 * @param hqlDes @see BuiltinDatabaseData
+	 * @param hqlDes @see SqlStatementTypeConstants
 	 * @param modifyHql
 	 * @param parameterArr
 	 */
@@ -599,5 +599,41 @@ public class HibernateUtil {
 		
 		setParamters(query, parameters);
 		return query.list();
+	}
+	
+	/**
+	 * 修改数据
+	 * <p>删除语句、修改语句、新增语句</p>
+	 * @param sqlDes @see SqlStatementTypeConstants
+	 * @param modifySql
+	 * @param parameters
+	 * @return 
+	 * @throws IllegalArgumentException 
+	 */
+	public static int executeUpdateBySql(String sqlDes, String modifySql, List<Object> parameters) throws IllegalArgumentException {
+		Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]要{}数据的sql为：{}", sqlDes, modifySql);
+		Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]要{}数据的sql所带的参数值集合为：{}", sqlDes, parameters);
+		
+		try {
+			Query query = getCurrentThreadSession().createSQLQuery(modifySql);
+			setParamters(query, parameters);
+			int modifyCount = query.executeUpdate();
+			Log4jUtil.debug("[HibernateUtil.executeUpdateBySql]{}了{}条数据", sqlDes, modifyCount);
+			return modifyCount;
+		} catch (HibernateException e) {
+			throw new IllegalArgumentException("[HibernateUtil.executeUpdateBySql]["+sqlDes+"]数据的时候出现了异常信息：" + ExceptionUtil.getErrMsg(e));
+		}
+	}
+	
+	/**
+	 * 修改数据
+	 * <p>删除语句、修改语句、新增语句</p>
+	 * @param sqlDes @see SqlStatementTypeConstants
+	 * @param modifySql
+	 * @param parameterArr
+	 */
+	public static void executeUpdateBySqlArr(String sqlDes, String modifySql, Object... parameterArr){
+		List<Object> parameters = processParameterArr(parameterArr);
+		executeUpdateByHql(sqlDes, modifySql, parameters);
 	}
 }
