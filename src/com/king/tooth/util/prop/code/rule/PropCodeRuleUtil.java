@@ -1,6 +1,8 @@
 package com.king.tooth.util.prop.code.rule;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
@@ -54,5 +56,29 @@ public class PropCodeRuleUtil {
 			throw new IllegalArgumentException("调用sql脚本，自动生成编码值时，rules的长度，小于实际传入的objIndex值，请联系后端系统开发人员");
 		}
 		return rules.get(objIndex).getFinalCodeVal(paramIndex);
+	}
+	
+	// ----------------------------------------------------------------
+	/**
+	 * 根据编码规则id，获取对应的锁对象
+	 * @param codeRuleId
+	 * @return
+	 */
+	public static Lock getPropCodeRuleLock(String codeRuleId){
+		Lock lock = PropCodeRuleLockMapping.propCodeRuleLockMapping.get(codeRuleId);
+		if(lock == null){
+			lock = new ReentrantLock();
+			PropCodeRuleLockMapping.propCodeRuleLockMapping.put(codeRuleId, lock);
+		}
+		return lock;
+	}
+	
+	/**
+	 * 根据编码规则id，删除对应的锁对象
+	 * @param codeRuleId
+	 * @return
+	 */
+	public static void removePropCodeRuleLock(String codeRuleId){
+		PropCodeRuleLockMapping.propCodeRuleLockMapping.remove(codeRuleId);
 	}
 }

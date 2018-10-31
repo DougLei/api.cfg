@@ -258,7 +258,7 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 		isExportColumn.setComments("如果是传出的结果集，即in_out的值为2，且是select语句时，该字段值为1，标识都导出");
 		columns.add(isExportColumn);
 		
-		CfgColumn exportOrderCodeColumn = new CfgColumn("export_order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn exportOrderCodeColumn = new CfgColumn("export_order_code", DataTypeConstants.INTEGER, 3);
 		exportOrderCodeColumn.setName("导出排序");
 		exportOrderCodeColumn.setComments("默认和order_code的值一致");
 		columns.add(exportOrderCodeColumn);

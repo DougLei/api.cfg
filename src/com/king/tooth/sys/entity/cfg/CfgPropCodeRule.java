@@ -2,11 +2,13 @@ package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -14,6 +16,7 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 
 /**
  * 属性编码规则表
@@ -32,10 +35,19 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	 */
 	private String refPropId;
 	/**
+	 * 关联的属性类型
+	 * <p>1:column(列)、2:sqlparam(sql参数)</p>
+	 */
+	private Integer refPropType;
+	/**
 	 * 是否有效
 	 * <p>默认值为1</p>
 	 */
 	private Integer isEnabled;
+	/**
+	 * 排序
+	 */
+	private Integer orderCode;
 	/**
 	 * 备注
 	 */
@@ -68,11 +80,23 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	public void setRefPropId(String refPropId) {
 		this.refPropId = refPropId;
 	}
+	public Integer getRefPropType() {
+		return refPropType;
+	}
+	public void setRefPropType(Integer refPropType) {
+		this.refPropType = refPropType;
+	}
 	public Integer getIsEnabled() {
 		return isEnabled;
 	}
 	public void setIsEnabled(Integer isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+	public Integer getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(Integer orderCode) {
+		this.orderCode = orderCode;
 	}
 	public String getRemark() {
 		return remark;
@@ -83,13 +107,10 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	public String getRefPropName() {
 		return refPropName;
 	}
-	public void setRefPropName(String refPropName) {
-		this.refPropName = refPropName;
-	}
 
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(4+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(6+7);
 		
 		CfgColumn refResourceIdColumn = new CfgColumn("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("关联规则的资源id");
@@ -101,11 +122,22 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 		refPropIdColumn.setComments("关联规则的属性id");
 		columns.add(refPropIdColumn);
 		
+		CfgColumn refPropTypeColumn = new CfgColumn("ref_prop_type", DataTypeConstants.INTEGER, 1);
+		refPropTypeColumn.setName("关联的属性类型");
+		refPropTypeColumn.setComments("1:column(列)、2:sqlparam(sql参数)");
+		columns.add(refPropTypeColumn);
+		
 		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
 		isEnabledColumn.setComments("默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
+		
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
+		orderCodeColumn.setName("排序");
+		orderCodeColumn.setComments("排序");
+		orderCodeColumn.setDefaultValue("0");
+		columns.add(orderCodeColumn);
 		
 		CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 500);
 		remarkColumn.setName("备注");
@@ -174,6 +206,26 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 		return finalCodeVals.get(index);
 	}
 	
+	private void setRefPropName() {
+		Object refPropName=null;
+		if(refPropType == REF_PROP_TYPE_COLUMN){
+			refPropName = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropNameHql, refPropId);
+			if(StrUtils.isEmpty(refPropName)){
+				throw new NullPointerException("在创建属性编码值时，没有查询到id=["+refPropId+"]的列信息");
+			}
+		}else if(refPropType == REF_PROP_TYPE_SQLPARAM){
+			refPropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlParameterPropNameHql, refPropId);
+			if(StrUtils.isEmpty(refPropName)){
+				throw new NullPointerException("在创建属性编码值时，没有查询到id=["+refPropId+"]的sql参数信息");
+			}
+		}else{
+			throw new IllegalArgumentException("不存在refPropType="+refPropType+"的属性规则，请联系后端系统开发人员");
+		}
+		this.refPropName = refPropName.toString();
+	}
+	private static final String queryColumnPropNameHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID+"=?";
+	private static final String querySqlParameterPropNameHql = "select parameterName from ComSqlScriptParameter where " + ResourcePropNameConstants.ID+"=?";
+	
 	/**
 	 * 处理并获取最终的属性编码值
 	 * <p>将值set到finalCodeVal属性中</p>
@@ -181,34 +233,60 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	 * @param resourceName 
 	 */
 	public void doProcessFinalCodeVal(IJson ijson, String resourceName) {
-		ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgPropCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		if(ruleDetails != null && ruleDetails.size() > 0){
-			int size = ijson.size();// 要生成编码值的数量 
-			
-			this.finalCodeVals = new ArrayList<String>(size);
-			finalCodeValBuffer = new StringBuilder();
-			int len = ruleDetails.size();
-			int lastIndex = len-1;
-			
-			JSONObject currentJsonObject;
-			for(int j=0;j<size;j++){
-				currentJsonObject = ijson.get(j);
-				for(int i=0;i<len;i++){
-					if(i>0 && i<lastIndex){
-						finalCodeValBuffer.append(ruleDetails.get(i-1).getLinkNextSymbol());
+		setRefPropName();
+		
+		Lock lock = null;
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryRuleDetailCountOfRultTypeIs2or3Hql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(count > 0){
+			lock = PropCodeRuleUtil.getPropCodeRuleLock(id);
+			lock.lock();
+		}
+		try {
+			ruleDetails = HibernateUtil.extendExecuteListQueryByHqlArr(CfgPropCodeRuleDetail.class, null, null, queryRuleDetailsHql, id, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+			if(ruleDetails != null && ruleDetails.size() > 0){
+				int size = ijson.size();// 要生成编码值的数量 
+				
+				this.finalCodeVals = new ArrayList<String>(size);
+				finalCodeValBuffer = new StringBuilder();
+				int len = ruleDetails.size();
+				int lastIndex = len-1;
+				
+				JSONObject currentJsonObject;
+				for(int j=0;j<size;j++){
+					currentJsonObject = ijson.get(j);
+					for(int i=0;i<len;i++){
+						if(i>0 && i<lastIndex){
+							finalCodeValBuffer.append(ruleDetails.get(i-1).getLinkNextSymbol());
+						}
+						finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal(resourceName, currentJsonObject));
 					}
-					finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal(resourceName, currentJsonObject));
+					this.finalCodeVals.add(finalCodeValBuffer.toString());
+					finalCodeValBuffer.setLength(0);
 				}
-				this.finalCodeVals.add(finalCodeValBuffer.toString());
-				finalCodeValBuffer.setLength(0);
+				ruleDetails.clear();
 			}
-			ruleDetails.clear();
+		} finally{
+			if(lock != null){
+				lock.unlock();
+			}
 		}
 	}
+	// 查询属性编码规则明细集合中，ruleType是否有2:seq(序列)或3:serialNumber(流水号)的类型，如果是这几个类型，在查询的时候，就要加锁
+	private static final String queryRuleDetailCountOfRultTypeIs2or3Hql = "select count(ruleType) from CfgPropCodeRuleDetail where ruleType in (2,3) refPropCodeRuleId=? and projectId=? and customerId=? order by orderCode asc";
 	// 最终编码值得缓存
 	private StringBuilder finalCodeValBuffer;
 	// 属性编码规则明细集合
 	private List<CfgPropCodeRuleDetail> ruleDetails;
 	// 查询属性编码规则明细集合的hql
 	private static final String queryRuleDetailsHql = "from CfgPropCodeRuleDetail where refPropCodeRuleId=? and projectId=? and customerId=? order by orderCode asc";
+	
+	// -----------------------------------------------------
+	/**
+	 * 关联的属性类型      1:column(列)
+	 */
+	public static final Integer REF_PROP_TYPE_COLUMN = 1;
+	/**
+	 * 关联的属性类型      2:sqlparam(sql参数)
+	 */
+	public static final Integer REF_PROP_TYPE_SQLPARAM = 2;
 }

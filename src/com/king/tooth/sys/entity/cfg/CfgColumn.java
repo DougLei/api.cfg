@@ -414,7 +414,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		isNullabledColumn.setDefaultValue("1");
 		columns.add(isNullabledColumn);
 		
-		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setName("排序");
 		orderCodeColumn.setComments("排序");
 		orderCodeColumn.setDefaultValue("0");
@@ -448,7 +448,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		isImportColumn.setDefaultValue("1");
 		columns.add(isImportColumn);
 		
-		CfgColumn importOrderCodeColumn = new CfgColumn("import_order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn importOrderCodeColumn = new CfgColumn("import_order_code", DataTypeConstants.INTEGER, 3);
 		importOrderCodeColumn.setName("导入排序");
 		importOrderCodeColumn.setComments("默认和order_code的值一致");
 		importOrderCodeColumn.setDefaultValue("0");
@@ -460,7 +460,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		isExportColumn.setDefaultValue("1");
 		columns.add(isExportColumn);
 		
-		CfgColumn exportOrderCodeColumn = new CfgColumn("export_order_code", DataTypeConstants.INTEGER, 4);
+		CfgColumn exportOrderCodeColumn = new CfgColumn("export_order_code", DataTypeConstants.INTEGER, 3);
 		exportOrderCodeColumn.setName("导出排序");
 		exportOrderCodeColumn.setComments("默认和order_code的值一致");
 		exportOrderCodeColumn.setDefaultValue("0");

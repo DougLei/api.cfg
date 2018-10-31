@@ -571,9 +571,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * @param currentJsonObject
 	 * @return
 	 */
-	private synchronized Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
-		// TODO 这整个方法，都要放到线程锁中执行
-		
+	private Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
 		CfgSeqInfo seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
 		if(seq == null){
 			seq = new CfgSeqInfo();

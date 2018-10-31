@@ -56,7 +56,7 @@ public class ResourcePropCodeRule {
 		}
 	}
 	// 查询属性编码规则集合的hql
-	private static final String queryPropCodeRuleHql = "from CfgPropCodeRule where refResourceId=? and isEnabled=1 and projectId=? and customerId=?";
+	private static final String queryPropCodeRuleHql = "from CfgPropCodeRule where refResourceId=? and isEnabled=1 and projectId=? and customerId=? order by orderCode asc";
 
 	/**
 	 * 清空

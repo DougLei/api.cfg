@@ -94,7 +94,7 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	 */
 	private Integer inOut;
 	/**
-	 * 参数的顺序值
+	 * 排序值
 	 */
 	private Integer orderCode;
 	/**
@@ -382,8 +382,8 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 		columns.add(inOutColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
-		orderCodeColumn.setName("参数的顺序值");
-		orderCodeColumn.setComments("参数的顺序值");
+		orderCodeColumn.setName("排序值");
+		orderCodeColumn.setComments("排序值");
 		columns.add(orderCodeColumn);
 		
 		CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 80);
