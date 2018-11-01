@@ -3,6 +3,7 @@ package com.king.tooth.util;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -122,13 +123,48 @@ public class DateUtil {
 	 * @return
 	 */
 	public static boolean isFirstDayOfMonth(Date currentDate) {
-		if("01".equals(ddSdf.format(currentDate))){
+		if("1".equals(ddSdf.format(currentDate))){
 			return true;
 		}
 		return false;
 	}
 	/**	dd */
-	private static final SimpleDateFormat ddSdf = new SimpleDateFormat("dd");
+	private static final SimpleDateFormat ddSdf = new SimpleDateFormat("d");
+	
+	
+	/**
+	 * 获取当前日期是当月的第几周
+	 * <p>周日历</p>
+	 * @param date
+	 * @return
+	 */
+	public static int weekCanlendarOfMonth(Date date){
+		return weekCanlendar(date, Calendar.WEEK_OF_MONTH);
+	}
+	
+	/**
+	 * 获取当前日期是今年的第几周
+	 * <p>周日历</p>
+	 * @param date
+	 * @return
+	 */
+	public static int weekCanlendarOfYear(Date date){
+		return weekCanlendar(date, Calendar.WEEK_OF_YEAR);
+	}
+	
+	/**
+	 * 获取周日历
+	 * <p>第几周</p>
+	 * @param date
+	 * @param calendarWeekType
+	 * @return
+	 */
+	private static int weekCanlendar(Date date, int calendarWeekType){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setFirstDayOfWeek(Calendar.MONDAY);
+		calendar.setTime(date);
+		return calendar.get(calendarWeekType);
+	}
 	
 	// -----------------------------------------------------------------
 	/**
@@ -158,6 +194,7 @@ public class DateUtil {
 		return sdf.format(date);
 	}
 	
+	// -----------------------------------------------------------------
 	/**
 	 * 获取当前是第几季度
 	 * @param date

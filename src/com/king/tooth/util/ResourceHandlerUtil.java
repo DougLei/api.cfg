@@ -275,18 +275,18 @@ public class ResourceHandlerUtil {
 		String dataValueStr;
 		// 验证数据类型、数据长度、数据精度
 		if(DataTypeConstants.BOOLEAN.equals(rmi.getDataType())){
-			if(!DataValidUtil.isBoolean(dataValue)){
+			if(!DataTypeValidUtil.isBoolean(dataValue)){
 				return "["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
 			}
 		}else if(DataTypeConstants.INTEGER.equals(rmi.getDataType())){
-			if(!DataValidUtil.isInteger(dataValue)){
+			if(!DataTypeValidUtil.isInteger(dataValue)){
 				return "["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 			}
 			if(rmi.getLength() != -1 && dataValue.toString().length() > rmi.getLength()){
 				return "["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}
 		}else if(DataTypeConstants.DOUBLE.equals(rmi.getDataType())){
-			if(!DataValidUtil.isNumber(dataValue)){
+			if(!DataTypeValidUtil.isNumber(dataValue)){
 				return "["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";
 			}
 			dataValueStr = dataValue.toString();
@@ -297,7 +297,7 @@ public class ResourceHandlerUtil {
 				return "["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
 			}
 		}else if(DataTypeConstants.DATE.equals(rmi.getDataType())){
-			if(!DataValidUtil.isDate(dataValue)){
+			if(!DataTypeValidUtil.isDate(dataValue)){
 				return "["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 			}
 		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){

@@ -5,10 +5,10 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
- * 数据验证工具类
+ * 数据类型验证工具类
  * @author DougLei
  */
-public class DataValidUtil {
+public class DataTypeValidUtil {
 	
 	/**
 	 * 是否是整型

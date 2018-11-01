@@ -35,7 +35,7 @@ import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
-import com.king.tooth.util.DataValidUtil;
+import com.king.tooth.util.DataTypeValidUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.FileUtil;
@@ -164,7 +164,7 @@ public class SysFileService extends AService{
 					fileList.remove(i--);
 				}
 				if("isImport".equals(fi.getFieldName())){
-					if(DataValidUtil.isInteger(fileValue)){
+					if(DataTypeValidUtil.isInteger(fileValue)){
 						uploadFileInfo.isImport = "1".equals(fileValue)?1:0;
 					}
 					fileList.remove(i--);

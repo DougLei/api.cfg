@@ -2,7 +2,7 @@ package com.king.tooth.web.builtin.method;
 
 import java.util.Map;
 
-import com.king.tooth.util.DataValidUtil;
+import com.king.tooth.util.DataTypeValidUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.create.exportfile.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
@@ -88,8 +88,8 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		String rows = requestBuiltinParams.remove("_rows");
 		String page = requestBuiltinParams.remove("_page");// 这四个参数的内容，需要理清楚
 		
-		boolean useLimitStart = (StrUtils.notEmpty(limit) && DataValidUtil.isInteger(limit) && StrUtils.notEmpty(start)) && DataValidUtil.isInteger(start);
-		boolean useRowsPage = (StrUtils.notEmpty(rows) && DataValidUtil.isInteger(rows) && StrUtils.notEmpty(page) && DataValidUtil.isInteger(page));
+		boolean useLimitStart = (StrUtils.notEmpty(limit) && DataTypeValidUtil.isInteger(limit) && StrUtils.notEmpty(start)) && DataTypeValidUtil.isInteger(start);
+		boolean useRowsPage = (StrUtils.notEmpty(rows) && DataTypeValidUtil.isInteger(rows) && StrUtils.notEmpty(page) && DataTypeValidUtil.isInteger(page));
 		if(isCreateExport || useLimitStart || useRowsPage){
 			if(isCreateExport){
 				if(useLimitStart){

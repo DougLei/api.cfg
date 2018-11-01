@@ -16,6 +16,7 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -590,21 +591,45 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 */
 	private void setSeqIsReinit(CfgSeqInfo seq){
 		boolean isReInit = false; // 标识是否需要重置
-		
-		// TODO 
 		Date currentDate = new Date();
 		switch(seqReinitTime){
 			case 1: // 1:hour(每小时)
+				if(!DateUtil.formatDate(currentDate, yyyyMMddHHSdf).equals(DateUtil.formatDate(seq.getInitDate(), yyyyMMddHHSdf))){
+					isReInit = true;
+				}
 				break;
 			case 2: // 2:day(每天)
+				if(!DateUtil.formatDate(currentDate, yyyyMMddSdf).equals(DateUtil.formatDate(seq.getInitDate(), yyyyMMddSdf))){
+					isReInit = true;
+				}
 				break;
 			case 3: // 3:month(每月)
+				if(!DateUtil.formatDate(currentDate, yyyyMMSdf).equals(DateUtil.formatDate(seq.getInitDate(), yyyyMMSdf))){
+					isReInit = true;
+				}
 				break;
 			case 4: // 4:year(每年)
+				if(!DateUtil.formatDate(currentDate, yyyySdf).equals(DateUtil.formatDate(seq.getInitDate(), yyyySdf))){
+					isReInit = true;
+				}
 				break;
 			case 5: // 5:week(每周)
+				if(DateUtil.weekCanlendarOfYear(currentDate) == DateUtil.weekCanlendarOfYear(seq.getInitDate())){
+					if(!DateUtil.formatDate(currentDate, yyyySdf).equals(DateUtil.formatDate(seq.getInitDate(), yyyySdf))){
+						isReInit = true;
+					}
+				}else{
+					isReInit = true;
+				}
 				break;
 			case 6: // 6:quarter(每季度)
+				if(DateUtil.getSeason(currentDate, 1).equals(DateUtil.getSeason(seq.getInitDate(), 1))){
+					if(!DateUtil.formatDate(currentDate, yyyySdf).equals(DateUtil.formatDate(seq.getInitDate(), yyyySdf))){
+						isReInit = true;
+					}
+				}else{
+					isReInit = true;
+				}
 				break;
 			default: // 默认，0:none(不重新初始化)
 				break;
@@ -615,6 +640,10 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 			seq.setCurrentVal(seqStartVal);
 		}
 	}
+	private static final SimpleDateFormat yyyyMMddHHSdf = new SimpleDateFormat("yyyyMMddHH");
+	private static final SimpleDateFormat yyyyMMddSdf = new SimpleDateFormat("yyyyMMdd");
+	private static final SimpleDateFormat yyyyMMSdf = new SimpleDateFormat("yyyyMM");
+	private static final SimpleDateFormat yyyySdf = new SimpleDateFormat("yyyy");
 	
 	// ------------------------------------------------------------------------------------------
 	/**
