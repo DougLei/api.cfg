@@ -43,9 +43,17 @@ public class RequestBody implements Serializable{
 	 */
 	private Map<String, String> requestResourceParams;
 	/**
+	 * 请求的resource元数据信息集合
+	 */
+	
+	
+	/**
 	 * 请求的parentResource参数键值对
 	 */
 	private Map<String, String> requestParentResourceParams;
+	/**
+	 * 请求的parentResource元数据信息集合
+	 */
 	
 	// -------------------------------------------------------------------------------------------------------------------------
 	/**

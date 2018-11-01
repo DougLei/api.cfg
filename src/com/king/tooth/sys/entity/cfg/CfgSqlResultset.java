@@ -81,6 +81,11 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 	 * <p>该字段值和order_code的值一致</p>
 	 */
 	private Integer exportOrderCode;
+	/**
+	 * 字段数据类型
+	 * <p>默认值为string，查询列的数据类型</p>
+	 */
+	private String dataType;
 	
 	//------------------------------------------------------------------------------
 	
@@ -192,6 +197,12 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 	public void setIsExport(Integer isExport) {
 		this.isExport = isExport;
 	}
+	public String getDataType() {
+		return dataType;
+	}
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
 	public Integer getExportOrderCode() {
 		return exportOrderCode;
 	}
@@ -201,7 +212,7 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(12+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(13+7);
 		
 		CfgColumn sqlScriptIdColumn = new CfgColumn("sql_script_id", DataTypeConstants.STRING, 32);
 		sqlScriptIdColumn.setName("关联的sql脚本id");
@@ -262,6 +273,12 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 		exportOrderCodeColumn.setName("导出排序");
 		exportOrderCodeColumn.setComments("默认和order_code的值一致");
 		columns.add(exportOrderCodeColumn);
+		
+		CfgColumn dataTypeColumn = new CfgColumn("data_type", DataTypeConstants.STRING, 20);
+		dataTypeColumn.setName("字段数据类型");
+		dataTypeColumn.setComments("默认值为string，查询列的数据类型");
+		dataTypeColumn.setDefaultValue(DataTypeConstants.STRING);
+		columns.add(dataTypeColumn);
 		
 		return columns;
 	}
