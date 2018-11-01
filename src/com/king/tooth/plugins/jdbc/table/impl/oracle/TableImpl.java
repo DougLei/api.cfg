@@ -16,6 +16,8 @@ public class TableImpl extends ATableHandler{
 		String columnType = column.getColumnType();
 		if(DataTypeConstants.STRING.equals(columnType)){
 			tmpBuffer.append("varchar2");
+		}else if(DataTypeConstants.CHAR.equals(columnType)){
+			tmpBuffer.append("char");
 		}else if(DataTypeConstants.BOOLEAN.equals(columnType)){
 			tmpBuffer.append("char(1)");
 		}else if(DataTypeConstants.INTEGER.equals(columnType)){
@@ -50,8 +52,14 @@ public class TableImpl extends ATableHandler{
 		StringBuilder tmpBuffer = new StringBuilder();
 		Integer length = column.getLength();
 		if(DataTypeConstants.STRING.equals(columnType)){
-			if(length < 0 || length > 4000){
+			if(length < 1 || length > 4000){
 				tmpBuffer.append("(4000)");
+			}else{
+				tmpBuffer.append("(").append(length).append(")");
+			}
+		}else if(DataTypeConstants.CHAR.equals(columnType)){
+			if(length < 1 || length > 2000){
+				tmpBuffer.append("(2000)");
 			}else{
 				tmpBuffer.append("(").append(length).append(")");
 			}
