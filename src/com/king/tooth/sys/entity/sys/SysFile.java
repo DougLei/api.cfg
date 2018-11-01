@@ -219,7 +219,7 @@ public class SysFile extends BasicEntity implements IEntity{
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(17+7);
 		
-		CfgColumn refDataIdColumn = new CfgColumn("ref_data_id", DataTypeConstants.STRING, 32);
+		CfgColumn refDataIdColumn = new CfgColumn("ref_data_id", DataTypeConstants.STRING, 50);
 		refDataIdColumn.setName("关联的数据主键值");
 		refDataIdColumn.setComments("关联的数据主键值");
 		columns.add(refDataIdColumn);
@@ -271,7 +271,7 @@ public class SysFile extends BasicEntity implements IEntity{
 		downloadCountColumn.setDefaultValue("0");
 		columns.add(downloadCountColumn);
 		
-		CfgColumn batchColumn = new CfgColumn("batch", DataTypeConstants.STRING, 32);
+		CfgColumn batchColumn = new CfgColumn("batch", DataTypeConstants.STRING, 50);
 		batchColumn.setName("批次");
 		batchColumn.setComments("标识同一次上传的文件");
 		columns.add(batchColumn);

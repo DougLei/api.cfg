@@ -11,8 +11,9 @@ import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -96,26 +97,15 @@ public class PoiExcelUtil {
 	
 	// -----------------------------------------------------------------
 	/**
-	 * 合并单元格并输入值
-	 * @param sheet
-	 * @param rowIndex
-	 * @param columnIndex
-	 * @param cellValue
-	 * @param firstRow
-	 * @param lastRow
-	 * @param firstCol
-	 * @param lastCol
+	 * 计算下标值
+	 * <p>如果下标小于0，则修改值为0</p>
+	 * @param index
+	 * @return
 	 */
-	public static void mergedCells(Sheet sheet, int rowIndex, int columnIndex, Object cellValue, int firstRow, int lastRow, int firstCol, int lastCol){
-		sheet.addMergedRegion(new CellRangeAddress(firstRow, lastRow, firstCol, lastCol));
-		Row row = sheet.createRow(rowIndex);
-		Cell cell = row.createCell(columnIndex);
-		if(cellValue != null){
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-			cell.setCellValue(cellValue.toString());
-		}
+	public static int calcIndex(int index){
+		return index<0?0:index;
 	}
-
+	
 	/**
 	 * 获取单元格对应的列字母
 	 * <p>例如，第一列为A，第二列为B...</p>
@@ -184,4 +174,136 @@ public class PoiExcelUtil {
 		}
 		sheet.addValidationData(dataValidation);
 	}
+	
+	// -----------------------------------------------------------------
+	/**
+	 * 设置标题单元格的样式
+	 * @param workbook
+	 * @param sheet
+	 * @param titleCell
+	 * @param mergeFirstRow 合并单元格，开始的行位置，从0开始
+	 * @param mergeLastRow 合并单元格，结束的行位置，从0开始
+	 * @param mergeFirstCol 合并单元格，开始的列位置，从0开始
+	 * @param mergeLastCol 合并单元格，结束的行位置，从0开始
+	 * @return
+	 */
+	public static Cell setTitleCellStyle(Workbook workbook, Sheet sheet, Cell titleCell, int mergeFirstRow, int mergeLastRow, int mergeFirstCol, int mergeLastCol){
+		initTitleCellStyle(workbook);
+		if(titleCell == null){
+			throw new NullPointerException("要添加样式的标题单元格对象[titleCell]不能为空");
+		}
+		titleCell.setCellStyle(titleCellStyle);
+		
+		// 合并单元格
+		sheet.addMergedRegion(new CellRangeAddress(calcIndex(mergeFirstRow), calcIndex(mergeLastRow), calcIndex(mergeFirstCol), calcIndex(mergeLastCol)));
+		return titleCell;
+	}
+	/**
+	 * 初始化标题单元格样式
+	 * @param workbook
+	 */
+	private static void initTitleCellStyle(Workbook workbook) {
+		if(titleCellStyle == null){
+			titleCellStyle = workbook.createCellStyle();
+			titleCellStyle.setAlignment(CellStyle.ALIGN_CENTER);// 左右居中
+			titleCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);// 上下居中
+		}
+		if(titleCellFont == null){
+			titleCellFont = workbook.createFont();
+			titleCellFont.setFontName("宋体");// 设置字体书法
+			titleCellFont.setBoldweight(Font.BOLDWEIGHT_BOLD);// 设置字体是否加粗
+			titleCellFont.setFontHeightInPoints((short)20);// 设置字体大小
+			
+			titleCellStyle.setFont(titleCellFont);// 将字体添加到样式中
+		}
+	}
+	/** 标题单元格的样式 */
+	private static CellStyle titleCellStyle;
+	/** 标题单元格的字体 */
+	private static Font titleCellFont;
+	
+	// ----------
+	/**
+	 * 设置头单元格的样式
+	 * @param workbook
+	 * @param headCell
+	 * @return
+	 */
+	public static Cell setHeadCellStyle(Workbook workbook, Cell headCell){
+		initHeadCellStyle(workbook);
+		if(headCell == null){
+			throw new NullPointerException("要添加样式的头单元格对象[headCell]不能为空");
+		}
+		headCell.setCellStyle(headCellStyle);
+		return headCell;
+	}
+	/**
+	 * 初始化头单元格样式
+	 * @param workbook
+	 */
+	private static void initHeadCellStyle(Workbook workbook) {
+		if(headCellStyle == null){
+			headCellStyle = workbook.createCellStyle();
+			headCellStyle.setAlignment(CellStyle.ALIGN_CENTER);// 左右居中
+			headCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);// 上下居中
+			
+			headCellStyle.setBorderTop(CellStyle.BORDER_THIN);// 上边框
+			headCellStyle.setBorderBottom(CellStyle.BORDER_THIN);// 下边框
+			headCellStyle.setBorderLeft(CellStyle.BORDER_THIN);// 左边框
+			headCellStyle.setBorderRight(CellStyle.BORDER_THIN);// 右边框
+		}
+		if(headCellFont == null){
+			headCellFont = workbook.createFont();
+			headCellFont.setFontName("宋体");// 设置字体书法
+			headCellFont.setBoldweight(Font.BOLDWEIGHT_BOLD);// 设置字体是否加粗
+			headCellFont.setFontHeightInPoints((short)10);// 设置字体大小
+			
+			headCellStyle.setFont(headCellFont);// 将字体添加到样式中
+		}
+	}
+	/** 头单元格的样式 */
+	private static CellStyle headCellStyle;
+	/** 头单元格的字体 */
+	private static Font headCellFont;
+	
+	// ----------
+	/**
+	 * 设置值单元格的样式
+	 * @param workbook
+	 * @param valueCell
+	 * @return
+	 */
+	public static Cell setValueCellStyle(Workbook workbook, Cell valueCell){
+		initValueCellStyle(workbook);
+		if(valueCell == null){
+			throw new NullPointerException("要添加样式的值单元格对象[valueCell]不能为空");
+		}
+		valueCell.setCellStyle(valueCellStyle);
+		return valueCell;
+	}
+	/**
+	 * 初始化值单元格样式
+	 * @param workbook
+	 */
+	private static void initValueCellStyle(Workbook workbook) {
+		if(valueCellStyle == null){
+			valueCellStyle = workbook.createCellStyle();
+			
+			valueCellStyle.setBorderTop(CellStyle.BORDER_THIN);// 上边框
+			valueCellStyle.setBorderBottom(CellStyle.BORDER_THIN);// 下边框
+			valueCellStyle.setBorderLeft(CellStyle.BORDER_THIN);// 左边框
+			valueCellStyle.setBorderRight(CellStyle.BORDER_THIN);// 右边框
+		}
+		if(valueCellFont == null){
+			valueCellFont = workbook.createFont();
+			valueCellFont.setFontName("宋体");// 设置字体书法
+			valueCellFont.setFontHeightInPoints((short)10);// 设置字体大小
+			
+			valueCellStyle.setFont(valueCellFont);// 将字体添加到样式中
+		}
+	}
+	/** 值单元格的样式 */
+	private static CellStyle valueCellStyle;
+	/** 值单元格的字体 */
+	private static Font valueCellFont;
 }

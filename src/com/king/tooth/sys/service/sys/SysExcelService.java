@@ -313,19 +313,18 @@ public class SysExcelService extends AService{
 		Workbook workbook = (Workbook) wb;
 		Sheet sheet = workbook.createSheet();
 		Row headRow = sheet.createRow(0);
-		createImportExcelTemplateHeadRow(importFileTemplate, sheet, headRow);
+		createImportExcelTemplateHeadRow(workbook, importFileTemplate, sheet, headRow);
 		return createExcelFile(workbook, importFileTemplate.getResourceName(), suffix, importFileTemplate.getFileId(), SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE);
 	}
 	
 	/**
 	 * 创建excel导入模版的头行
-	 * @param fileSuffix
+	 * @param workbook
+	 * @param importFileTemplate
 	 * @param sheet
 	 * @param headRow
-	 * @param ieResourceMetadataInfos
-	 * @param resourceMetadataInfoOfConfExtendCount
 	 */
-	private void createImportExcelTemplateHeadRow(ImportFileTemplate importFileTemplate, Sheet sheet, Row headRow) {
+	private void createImportExcelTemplateHeadRow(Workbook workbook, ImportFileTemplate importFileTemplate, Sheet sheet, Row headRow) {
 		String fileSuffix = importFileTemplate.getFileSuffix();
 		List<IEResourceMetadataInfo> ieResourceMetadataInfos = importFileTemplate.getIeResourceMetadataInfos();
 		int resourceMetadataInfoOfConfExtendCount = importFileTemplate.getResourceMetadataInfoOfConfExtendCount();
@@ -347,7 +346,7 @@ public class SysExcelService extends AService{
 		PropExtendConfQueryData propExtendConfQueryData = null;
 		for (int i=0;i<resourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
-			setCellValue(headRow.createCell(cellIndex++), rmi.getDescName());
+			PoiExcelUtil.setHeadCellStyle(workbook, setCellValue(headRow.createCell(cellIndex++), rmi.getDescName()));
 			
 			propExtendConf = rmi.getIeConfExtend();
 			if(propExtendConf != null){
@@ -376,15 +375,9 @@ public class SysExcelService extends AService{
 				}
 				propExtendConfQueryData.clear();
 			}
+			// 设置列的自适应宽度
+			sheet.autoSizeColumn(i, true);
 		}
-	}
-	/** 设置单元格的值 */
-	private Cell setCellValue(Cell cell, Object value){
-		if(value != null){
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-			cell.setCellValue(value.toString());
-		}
-		return cell;
 	}
 	/** 递归设置子单元格的值，设置完成后，会清空dataList */
 	@SuppressWarnings("unchecked")
@@ -401,6 +394,14 @@ public class SysExcelService extends AService{
 			dataList.clear();
 		}
 		return hiddenRowIndex;
+	}
+	/** 设置单元格的值 */
+	private Cell setCellValue(Cell cell, Object value){
+		if(value != null){
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			cell.setCellValue(value.toString());
+		}
+		return cell;
 	}
 	/** 获得缩进的标识，一个层级，多加一个> */
 	private String getIndent(int recursiveLevel) {
@@ -431,12 +432,12 @@ public class SysExcelService extends AService{
 		Sheet sheet = workbook.createSheet();
 		
 		List<IEResourceMetadataInfo> ieResourceMetadataInfos = exportFile.getIeResourceMetadataInfos();
-		int resourceMetadataInfoCount = ieResourceMetadataInfos.size();
+		int ieResourceMetadataInfoCount = ieResourceMetadataInfos.size();
 		
-		createTitleRow(sheet, title, ieResourceMetadataInfos.size());
+		createTitleRow(workbook, sheet, title, 0, 0, 0, 0, 0, ieResourceMetadataInfos.size()-1);
 		
 		Row headRow = sheet.createRow(1);
-		createExportExcelHeadRow(headRow, ieResourceMetadataInfos, resourceMetadataInfoCount);
+		createExportExcelHeadRow(workbook, sheet, headRow, ieResourceMetadataInfos, ieResourceMetadataInfoCount);
 		
 		PageResultEntity pageResultEntity = exportFile.getPageResultEntity();
 		Query query = exportFile.getQuery();
@@ -454,7 +455,7 @@ public class SysExcelService extends AService{
 		int loopCount = pageResultEntity.getPageTotalCount();
 		for(int i=0;i<loopCount;i++){
 			dataList = executeQuery(query, pageResultEntity, i);
-			validDataListResult = validDataList(dataList, resourceMetadataInfoCount, data, dataArr, dataMap);
+			validDataListResult = validDataList(dataList, ieResourceMetadataInfoCount, data, dataArr, dataMap);
 			if(validDataListResult != null){
 				return validDataListResult;
 			}
@@ -465,49 +466,67 @@ public class SysExcelService extends AService{
 					dataArr = (Object[]) object;
 					size = dataArr.length;
 					for(int j=0;j<size;j++){
-						createCell(j, row, cell, dataArr[j], ieResourceMetadataInfos.get(j));
+						createCell(workbook, j, row, cell, dataArr[j], ieResourceMetadataInfos.get(j));
 					}
 				}else if(object instanceof Map){
 					dataMap = (Map<String, Object>) object;
 					size = dataMap.size();
 					for(int j=0;j<size;j++){
-						createCell(j, row, cell, dataMap.get(ieResourceMetadataInfos.get(j).getPropName()), ieResourceMetadataInfos.get(j));
+						createCell(workbook, j, row, cell, dataMap.get(ieResourceMetadataInfos.get(j).getPropName()), ieResourceMetadataInfos.get(j));
 					}
 					if(size>0){
 						dataMap.clear();
 					}
 				}else if(object instanceof Object){
-					createCell(0, row, cell, object, ieResourceMetadataInfos.get(0));
+					createCell(workbook, 0, row, cell, object, ieResourceMetadataInfos.get(0));
 				}
 			}
 			dataList.clear();
+		}
+		
+		// 设置列的自适应宽度
+		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
+			sheet.autoSizeColumn(i, true);
 		}
 		return createExcelFile(workbook, title, suffix, exportFile.getFileId(), SysFileConstants.BUILD_IN_TYPE_EXPORT);
 	}
 
 	/**
 	 * 创建标题行
+	 * @param workbook
 	 * @param sheet
 	 * @param title
-	 * @param colspanLength 和并列的数量
+	 * @param titleRowIndex
+	 * @param titleCellIndex
+	 * @param mergeFirstRow
+	 * @param mergeLastRow
+	 * @param mergeFirstCol
+	 * @param mergeLastCol
 	 */
-	private void createTitleRow(Sheet sheet, String title, int colspanLength){
-		PoiExcelUtil.mergedCells(sheet, 0, 0, title, 0, 0, 0, colspanLength-1);
+	private void createTitleRow(Workbook workbook, Sheet sheet, String title, int titleRowIndex, int titleCellIndex, int mergeFirstRow, int mergeLastRow, int mergeFirstCol, int mergeLastCol){
+		Row titleRow = sheet.createRow(PoiExcelUtil.calcIndex(titleRowIndex));
+		Cell titleCell = titleRow.createCell(PoiExcelUtil.calcIndex(titleCellIndex));
+		titleCell.setCellType(Cell.CELL_TYPE_STRING);
+		titleCell.setCellValue(title);
+		PoiExcelUtil.setTitleCellStyle(workbook, sheet, titleCell, mergeFirstRow, mergeLastRow, mergeFirstCol, mergeLastCol);
 	}
 	
 	/**
 	 * 创建导出excel的头行
+	 * @param workbook
+	 * @param sheet
 	 * @param headRow
 	 * @param ieResourceMetadataInfos
-	 * @param resourceMetadataInfoCount
+	 * @param ieResourceMetadataInfoCount
 	 */
-	private void createExportExcelHeadRow(Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
-		Cell cell;
+	private void createExportExcelHeadRow(Workbook workbook, Sheet sheet, Row headRow, List<IEResourceMetadataInfo> ieResourceMetadataInfos, int ieResourceMetadataInfoCount){
+		Cell headCell;
 		ResourceMetadataInfo rmi = null;
 		for (int i=0;i<ieResourceMetadataInfoCount ;i++) {
 			rmi = ieResourceMetadataInfos.get(i);
-			cell = headRow.createCell(i);
-			cell.setCellValue(rmi.getDescName());
+			headCell = headRow.createCell(i);
+			headCell.setCellValue(rmi.getDescName());
+			PoiExcelUtil.setHeadCellStyle(workbook, headCell);
 		}
 	}
 	
@@ -560,26 +579,28 @@ public class SysExcelService extends AService{
 	}
 	
 	/**
-	 * 创建列
+	 * 创建单元格，并写入值
+	 * @param workbook
 	 * @param columnIndex
 	 * @param row
-	 * @param cell
+	 * @param valueCell
 	 * @param object
 	 * @param ieResourceMetadataInfo
 	 */
-	private void createCell(int columnIndex, Row row, Cell cell, Object object, IEResourceMetadataInfo ieResourceMetadataInfo) {
-		cell = row.createCell(columnIndex);
+	private void createCell(Workbook workbook, int columnIndex, Row row, Cell valueCell, Object object, IEResourceMetadataInfo ieResourceMetadataInfo) {
+		valueCell = row.createCell(columnIndex);
 		if(object == null){
 			return;
 		}else if(ieResourceMetadataInfo == null){
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			valueCell.setCellType(Cell.CELL_TYPE_STRING);
 		}else if(DataTypeConstants.INTEGER.equals(ieResourceMetadataInfo.getDataType()) || DataTypeConstants.DOUBLE.equals(ieResourceMetadataInfo.getDataType())){
-			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+			valueCell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		}else if(DataTypeConstants.INTEGER.equals(ieResourceMetadataInfo.getDataType())){
-			cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+			valueCell.setCellType(Cell.CELL_TYPE_BOOLEAN);
 		}else{
-			cell.setCellType(Cell.CELL_TYPE_STRING);
+			valueCell.setCellType(Cell.CELL_TYPE_STRING);
 		}
-		cell.setCellValue(object.toString());
+		valueCell.setCellValue(object.toString());
+		PoiExcelUtil.setValueCellStyle(workbook, valueCell);
 	}
 }
