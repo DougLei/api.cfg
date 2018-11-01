@@ -78,6 +78,7 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 			}
 		}
 		this.values = result.toArray();
+		result.clear();
 	}
 	
 	/**

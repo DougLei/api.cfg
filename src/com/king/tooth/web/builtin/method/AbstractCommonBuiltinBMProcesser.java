@@ -2,8 +2,8 @@ package com.king.tooth.web.builtin.method;
 
 import java.util.Map;
 
-import com.king.tooth.util.DataTypeValidUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.datatype.DataTypeValidUtil;
 import com.king.tooth.web.builtin.method.common.create.exportfile.BuiltinCreateExportFileMethodProcesser;
 import com.king.tooth.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.king.tooth.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;

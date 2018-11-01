@@ -15,6 +15,7 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.datatype.DataTypeValidUtil;
 
 /**
  * 资源工具类

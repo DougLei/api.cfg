@@ -9,6 +9,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -16,8 +17,8 @@ import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
+import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.cfg.CfgTableService;
-import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -93,6 +94,7 @@ public class CreateLogTableJob implements Job, Serializable{
 		// 获取日志表的hbmContent以及CfgHibernateHbm对象
 		List<String> hbmContents = new ArrayList<String>(logTableSize);
 		CfgHibernateHbm hbm;
+		SysResource resource;
 		int i = 0;
 		for (CfgTable logTable : logTables) {
 			hbmContents.add(HibernateHbmUtil.createHbmMappingContent(logTable, false));
@@ -100,11 +102,14 @@ public class CreateLogTableJob implements Job, Serializable{
 			// 2、插入hbm
 			hbm = new CfgHibernateHbm(logTable);
 			hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
+			hbm.setRefTableId(ResourceInfoConstants.BUILTIN_RESOURCE);
 			hbm.setContent(hbmContents.get(i++));
 			HibernateUtil.saveObject(hbm, null);
 			
 			// 3、插入资源数据
-			BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(logTable);
+			resource = logTable.turnToResource();
+			resource.setRefResourceId(ResourceInfoConstants.BUILTIN_RESOURCE);
+			HibernateUtil.saveObject(resource, null);
 		}
 		
 		// 4、将hbm配置内容，加入到sessionFactory中

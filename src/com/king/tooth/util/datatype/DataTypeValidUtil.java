@@ -1,4 +1,4 @@
-package com.king.tooth.util;
+package com.king.tooth.util.datatype;
 
 import java.math.BigDecimal;
 import java.util.Date;

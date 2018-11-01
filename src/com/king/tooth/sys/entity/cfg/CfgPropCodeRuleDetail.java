@@ -19,6 +19,7 @@ import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.datatype.DataTypeTurnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -702,7 +703,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * @return
 	 */
 	private String getTableResourceNameById(String tableId){
-		Object tableResourceName = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgColumn.class, queryTableResourceNameByIdHql, tableId);
+		Object tableResourceName = HibernateUtil.executeUniqueQueryByHqlArr(queryTableResourceNameByIdHql, tableId);
 		if(tableResourceName == null){
 			throw new NullPointerException("在查询字段编码时，没有查询到id为["+tableId+"]的CfgTable资源名信息");
 		}
@@ -713,24 +714,28 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	
 	/**
-	 * 根据column id，获取对应的column属性名
+	 * 根据column id，获取对应的column属性名和数据类型
 	 * @param columnId
 	 * @return
 	 */
-	private String getColumnPropNameById(String columnId){
-		Object columnPropName = null;
+	private String[] getColumnInfoById(String columnId){
+		String[] columnInfo = new String[2];
+		Object[] tmpColumnInfo = null;
 		if(ResourcePropNameConstants.ID.equals(columnId)){
-			columnPropName = columnId;
+			columnInfo[0] = columnId;
+			columnInfo[1] = DataTypeConstants.STRING;
 		}else{
-			columnPropName = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropNameByIdHql, columnId);
+			tmpColumnInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(queryColumnInfoIdHql, columnId);
+			if(tmpColumnInfo == null || tmpColumnInfo[0] == null || tmpColumnInfo[1] == null){
+				throw new NullPointerException("在查询字段编码时，没有查询到id为["+columnId+"]的CfgColumn信息");
+			}
+			columnInfo[0] = tmpColumnInfo[0].toString();
+			columnInfo[1] = tmpColumnInfo[1].toString();
 		}
-		if(columnPropName == null){
-			throw new NullPointerException("在查询字段编码时，没有查询到id为["+columnId+"]的CfgColumn属性名信息");
-		}
-		return columnPropName.toString();
+		return columnInfo;
 	}
 	/** 根据id查询column属性名的hql */
-	private static final String queryColumnPropNameByIdHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID + "=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	private static final String queryColumnInfoIdHql = "select propName,columnType from CfgColumn where " + ResourcePropNameConstants.ID + "=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
 	
 	/**
 	 * 获取【5:column(其他列值)】
@@ -743,15 +748,17 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Object getColumnVal(String resourceName, JSONObject currentJsonObject, int valueFrom) {
 		Object value = null;
 		
-		String refColumnPropName = getColumnPropNameById(refColumnId);
+		String refColumnPropName = getColumnInfoById(refColumnId)[0];
 		if(valueFrom == 0){ // 0:当前数据
 			value = currentJsonObject.getString(refColumnPropName);
 		}else{
-			Object queryCondValue = currentJsonObject.get(getColumnPropNameById(queryCondValColumnId));
+			Object queryCondValue = currentJsonObject.get(getColumnInfoById(queryCondValColumnId)[0]);
 			if(valueFrom == 2){// 2:其他数据资源对象
 				resourceName = getTableResourceNameById(refTableId);
 			}
-			List<Object> list = HibernateUtil.executeListQueryByHqlArr(null, null, "select "+refColumnPropName+" from "+resourceName+" where "+getColumnPropNameById(queryCondColumnId)+"=?", queryCondValue==null?"":queryCondValue);
+
+			String[] queryCondColumnInfo = getColumnInfoById(queryCondColumnId);
+			List<Object> list = HibernateUtil.executeListQueryByHqlArr(null, null, "select "+refColumnPropName+" from "+resourceName+" where "+queryCondColumnInfo[0]+"=?", DataTypeTurnUtil.turnValueDataType(queryCondValue, queryCondColumnInfo[1], true, true, true));
 			if(list != null && list.size() > 0){
 				value = list.get(0);
 				list.clear();
@@ -770,12 +777,13 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	@SuppressWarnings("unchecked")
 	private Object getDataDictionaryVal(String resourceName, JSONObject currentJsonObject) {
 		Object value = null;
-		List<Object[]> dataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), null);
+		List<Object[]> dataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), dataDictionaryId);
 		if(dataDictionarys != null && dataDictionarys.size() > 0){
 			value = getColumnVal(resourceName, currentJsonObject, dataDictionaryValFrom);
 			if(value != null){
+				String valueStr = value.toString();
 				for (Object[] objects : dataDictionarys) {
-					if(objects[0] != null && objects[0].equals(value)){
+					if(objects[0] != null && objects[0].toString().equals(valueStr)){
 						value = objects[1];
 						break;
 					}

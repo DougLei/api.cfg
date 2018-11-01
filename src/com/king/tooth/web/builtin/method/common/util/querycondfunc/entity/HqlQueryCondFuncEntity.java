@@ -76,6 +76,7 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 			}
 		}
 		this.values = result.toArray();
+		result.clear();
 	}
 	
 	/**

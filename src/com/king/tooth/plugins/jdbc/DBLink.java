@@ -61,25 +61,23 @@ public class DBLink {
 		
 		Connection connection = null;
 		Statement st = null;
+		String errorDDLSql = null;
 		try {
 			Class.forName(database.getDriverClass());
 			connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
 			st = connection.createStatement();
 			for (String ds : ddlSqlArr) {
 				if(StrUtils.notEmpty(ds)){
-					try {
-						// 日志记录发出的ddl语句
-						CurrentThreadContext.toReqLogDataAddOperSqlLog(ds, null);
-						st.executeUpdate(ds);
-					} catch (Exception e) {
-						String errMessage = "[DBLink.executeDDL]发生错误的ddl-sql语句为:["+ds+"]，错误信息为："+ExceptionUtil.getErrMsg(e);
-						Log4jUtil.info(errMessage);
-						throw new IllegalArgumentException(errMessage);
-					}
+					// 日志记录发出的ddl语句
+					CurrentThreadContext.toReqLogDataAddOperSqlLog(ds, null);
+					errorDDLSql = ds;
+					st.executeUpdate(ds);
 				}
 			}
-		} catch (Exception e) {                                                                           
-			Log4jUtil.debug("[DBLink.executeDDL]" + ExceptionUtil.getErrMsg(e));
+		} catch (Exception e) {     
+			String errMessage = "[DBLink.executeDDL]发生错误的ddl-sql语句为:["+errorDDLSql+"]，错误信息为："+ExceptionUtil.getErrMsg(e);
+			Log4jUtil.info(errMessage);
+			throw new IllegalArgumentException(errMessage);
 		}finally{
 			CloseUtil.closeDBConn(st, connection);
 		}

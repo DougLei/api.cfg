@@ -18,7 +18,6 @@ import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.SqlResourceMetadataInfo;
-import com.king.tooth.util.DataTypeValidUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
@@ -26,6 +25,7 @@ import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.datatype.DataTypeValidUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.RequestBody;
 

@@ -35,12 +35,12 @@ import com.king.tooth.sys.entity.sys.SysFile;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
-import com.king.tooth.util.DataTypeValidUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.FileUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.datatype.DataTypeValidUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
