@@ -194,18 +194,6 @@ SELECT sub_columns FROM sub_resource s, relation_resource r
 	示例: ?age=lt(20)
 	相应的SQL: WHERE age < 20
 
-	函数名: gl
-	函数功能: 大于 xxx and 小于 xxx
-	支持取反: 否
-	示例: ?age=gl(20,30)
-	相应的SQL: WHERE (age > 20 and age < 30)
-
-	函数名: gle
-	函数功能: 大于等于 xxx and 小于等于 xxx
-	支持取反: 否
-	示例: ?age=gle(20,30)
-	相应的SQL: WHERE (age >= 20 and age <= 30)
-
 > ① 取反的关键字为"!"，例如: ?id=!in(1,2,3)，相应的SQL为: WHERE id NOT IN ('1','2','3')
 > ② 查询条件的值，如果包含特殊字符，可以通过''或""包裹起来，系统内部会过滤掉每个值最外层的一对''或""
 
