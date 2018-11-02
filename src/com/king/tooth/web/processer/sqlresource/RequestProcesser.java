@@ -31,7 +31,7 @@ public abstract class RequestProcesser extends RequestProcesserCommon implements
 		Log4jUtil.debug("请求的请求体值为：{}", requestBody.getFormDataStr());
 		
 		// 初始化内置函数处理器的类实例，以及sql脚本处理器的类实例
-		builtinSqlResourceBMProcesser = new BuiltinSqlResourceBMProcesser(requestBody.getResourceInfo().getSqlScriptResource(), requestBody.getRequestBuiltinParams(), requestBody.getRequestResourceParams(), requestBody.getRequestParentResourceParams(), sqlParameterValues);
+		builtinSqlResourceBMProcesser = new BuiltinSqlResourceBMProcesser(requestBody, sqlParameterValues);
 		builtinSqlScriptMethodProcesser = builtinSqlResourceBMProcesser.getSqlScriptMethodProcesser();
 		
 		doProcess();// 进行实际的业务处理，由子类实现

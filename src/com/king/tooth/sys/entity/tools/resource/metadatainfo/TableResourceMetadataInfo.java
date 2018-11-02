@@ -15,6 +15,10 @@ public class TableResourceMetadataInfo extends ResourceMetadataInfo{
 	public TableResourceMetadataInfo(String propName) {
 		super(propName);
 	}
+	public TableResourceMetadataInfo(String propName, String dataType) {
+		super(propName);
+		this.dataType = dataType;
+	}
 	public TableResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, String propName, String descName) {
 		super(columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid);
 		this.propName = propName.equalsIgnoreCase("id")?ResourcePropNameConstants.ID:propName;

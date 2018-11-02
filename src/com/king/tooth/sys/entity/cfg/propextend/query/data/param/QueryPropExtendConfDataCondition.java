@@ -1,5 +1,8 @@
 package com.king.tooth.sys.entity.cfg.propextend.query.data.param;
 
+import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.util.StrUtils;
+
 /**
  * 查询属性扩展配置的对应数据列表用条件
  * @author DougLei
@@ -13,6 +16,10 @@ public class QueryPropExtendConfDataCondition {
 	 * 值
 	 */
 	private String value;
+	/**
+	 * 数据类型
+	 */
+	private String dataType;
 	
 	public String getPropName() {
 		return propName;
@@ -25,5 +32,14 @@ public class QueryPropExtendConfDataCondition {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public String getDataType() {
+		if(StrUtils.isEmpty(dataType)){
+			dataType = DataTypeConstants.STRING;
+		}
+		return dataType;
+	}
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
 	}
 }

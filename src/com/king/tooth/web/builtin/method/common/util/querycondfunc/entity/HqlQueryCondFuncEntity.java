@@ -15,8 +15,9 @@ import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 @SuppressWarnings("serial")
 public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implements Serializable{
 	
-	public HqlQueryCondFuncEntity(String propName, String value) {
+	public HqlQueryCondFuncEntity(String propName, String value, String dataType) {
 		this.propName = propName;
+		this.dataType = dataType;
 		analysisQueryParams(value);
 	}
 	
@@ -75,10 +76,10 @@ public class HqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 				result.add(tmpVal);
 			}
 		}
-		this.values = result.toArray();
+		this.values = processValuesByDataType(result, true);
 		result.clear();
 	}
-	
+
 	/**
 	 * 处理一些特殊的内容
 	 * 有什么其他，可以自行向里面添加

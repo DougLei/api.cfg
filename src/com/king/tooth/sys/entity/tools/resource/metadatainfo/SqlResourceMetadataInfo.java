@@ -11,8 +11,9 @@ public class SqlResourceMetadataInfo extends ResourceMetadataInfo{
 
 	public SqlResourceMetadataInfo() {
 	}
-	public SqlResourceMetadataInfo(String propName) {
+	public SqlResourceMetadataInfo(String propName, String dataType) {
 		super(propName);
+		this.dataType = dataType;
 	}
 	public SqlResourceMetadataInfo(String columnName, String dataType, Integer length, Integer precision, Integer isUnique, Integer isNullabled, Integer isIgnoreValid, String propName, String descName) {
 		super(columnName, dataType, length, precision, isUnique, isNullabled, isIgnoreValid);

@@ -1,5 +1,9 @@
 package com.king.tooth.web.builtin.method;
 
+import java.util.List;
+
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
+
 /**
  * 内置函数处理器类的抽象类，抽取具体实现类的共同属性和方法
  * @author DougLei
@@ -52,6 +56,17 @@ public abstract class AbstractBuiltinMethodProcesser implements IBuiltinMethodPr
 	protected String parentResourceId;
 	
 	/**
+	 * 请求的查询资源的元数据信息集合
+	 * <p>在查询的时候，进行数据验证和值类型转换，从requestBody中传递过来</p>
+	 */
+	protected List<ResourceMetadataInfo> queryResourceMetadataInfos;
+	/**
+	 * 请求的查询父资源的元数据信息集合
+	 * <p>在查询的时候，进行数据验证和值类型转换，从requestBody中传递过来</p>
+	 */
+	protected List<ResourceMetadataInfo> queryParentResourceMetadataInfos;
+	
+	/**
 	 * 对外，设置请求的资源名
 	 * @param resourceName
 	 */
@@ -80,6 +95,20 @@ public abstract class AbstractBuiltinMethodProcesser implements IBuiltinMethodPr
 		this.parentResourceId = parentResourceId;
 	}
 	
+	/**
+	 * 对外，设置请求的查询资源的元数据信息集合，从requestBody中传递过来
+	 * @param resourceName
+	 */
+	public void setQueryResourceMetadataInfos(List<ResourceMetadataInfo> queryResourceMetadataInfos) {
+		this.queryResourceMetadataInfos = queryResourceMetadataInfos;
+	}
+	/**
+	 * 对外，设置请求的查询父资源的元数据信息集合，从requestBody中传递过来
+	 * @param resourceName
+	 */
+	public void setQueryParentResourceMetadataInfos(List<ResourceMetadataInfo> queryParentResourceMetadataInfos) {
+		this.queryParentResourceMetadataInfos = queryParentResourceMetadataInfos;
+	}
 	
 	/**
 	 * 执行解析操作

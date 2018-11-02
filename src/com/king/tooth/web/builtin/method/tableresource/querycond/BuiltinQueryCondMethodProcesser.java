@@ -1,8 +1,6 @@
 package com.king.tooth.web.builtin.method.tableresource.querycond;
 
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.util.Log4jUtil;
@@ -52,9 +50,8 @@ public class BuiltinQueryCondMethodProcesser extends AbstractTableResourceBuilti
 	}
 	
 	protected void execAnalysisParam() {
-		Set<Entry<String, String>> se = this.queryCondParams.entrySet();
-		// 解析请求的查询条件参数集合,整理成hql
-		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, se, hqlParameterValues, hql, alias);
+		// 解析请求的查询条件参数集合,组合成hql
+		BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParams.entrySet(), queryResourceMetadataInfos, hqlParameterValues, hql, alias);
 		Log4jUtil.debug("[BuiltinQueryCondMethodProcesser.execAnalysisParam]解析出来，要执行的条件数据库脚本语句为： {}", hql);
 		Log4jUtil.debug("[BuiltinQueryCondMethodProcesser.execAnalysisParam]解析出来，要执行的条件数据库脚本参数集合为：{}", hqlParameterValues);
 	}

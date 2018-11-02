@@ -12,6 +12,7 @@ import com.king.tooth.web.builtin.method.tableresource.querycond.BuiltinQueryCon
 import com.king.tooth.web.builtin.method.tableresource.recursive.BuiltinRecursiveMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.sort.BuiltinSortMethodProcesser;
 import com.king.tooth.web.builtin.method.tableresource.sublist.BuiltinSublistMethodProcesser;
+import com.king.tooth.web.entity.request.RequestBody;
 
 /**
  * 表资源的内置函数的处理器对外接口
@@ -47,12 +48,9 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	/**
 	 * 解析请求的url参数集合
 	 * 调用不同的子类去处理参数
-	 * @param requestBuiltinParams
-	 * @param requestResourceParams
-	 * @param requestParentResourceParams
 	 * @param hqlParameterValues
 	 */
-	private void analysisRequestUrlParams(Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues) {
+	private void analysisRequestUrlParams(List<Object> hqlParameterValues) {
 		// 内置聚焦函数处理器实例
 		setFocusedIdProcesser(requestBuiltinParams);
 		// 内置创建导出文件的函数处理器
@@ -135,6 +133,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 			recursiveProcesser.setResourceName(resourceName);
 			recursiveProcesser.setParentResourceId(parentResourceId);
 			recursiveProcesser.setHqlParameterValues(hqlParameterValues);
+			recursiveProcesser.setQueryResourceMetadataInfos(queryResourceMetadataInfos);
 		}
 	}
 	/**
@@ -152,6 +151,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 			parentsubQueryMethodProcesser.setParentResourceId(parentResourceId);
 			parentsubQueryMethodProcesser.setParentResourceName(parentResourceName);
 			parentsubQueryMethodProcesser.setHqlParameterValues(hqlParameterValues);
+			parentsubQueryMethodProcesser.setQueryParentResourceMetadataInfos(queryParentResourceMetadataInfos);
 		}
 	}
 	/**
@@ -165,15 +165,21 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 			querycondProcesser = new BuiltinQueryCondMethodProcesser(requestResourceParams);
 			querycondProcesser.setResourceName(resourceName);
 			querycondProcesser.setHqlParameterValues(hqlParameterValues);
+			querycondProcesser.setQueryResourceMetadataInfos(queryResourceMetadataInfos);
 		}
 	}
 	
-	public BuiltinTableResourceBMProcesser(Map<String, String> requestBuiltinParams, Map<String, String> requestResourceParams, Map<String, String> requestParentResourceParams, List<Object> hqlParameterValues){
+	public BuiltinTableResourceBMProcesser(RequestBody requestBody, List<Object> hqlParameterValues){
+		requestBuiltinParams = requestBody.getRequestBuiltinParams();
+		requestResourceParams = requestBody.getRequestResourceParams();
+		requestParentResourceParams = requestBody.getRequestParentResourceParams();
+		queryResourceMetadataInfos = requestBody.getQueryResourceMetadataInfos();
+		queryParentResourceMetadataInfos = requestBody.getQueryParentResourceMetadataInfos();
+		
 		this.resourceName = requestResourceParams.remove(BuiltinParameterKeys.RESOURCE_NAME);
 		this.parentResourceName = requestResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_NAME);
 		this.parentResourceId = requestParentResourceParams.remove(BuiltinParameterKeys.PARENT_RESOURCE_ID);
-		
-		analysisRequestUrlParams(requestBuiltinParams, requestResourceParams, requestParentResourceParams, hqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
+		analysisRequestUrlParams(hqlParameterValues);// 解析请求的url参数集合，获取不同的子类去解析对应的参数
 	}
 	
 	public BuiltinQueryMethodProcesser getQueryProcesser() {

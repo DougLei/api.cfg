@@ -9,7 +9,9 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.ReflectUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.entity.HqlQueryCondFuncEntity;
@@ -77,11 +79,12 @@ public class BuiltinQueryCondFuncUtil {
 	 * <p>同时，将条件值按顺序存储到queryCondParameterValues中</p>
 	 * @param requestResourceType 资源类型
 	 * @param queryCondParamsSet 查询参数map集合
+	 * @param queryResourceMetadataInfos 查询参数(资源)的元数据集合
 	 * @param queryCondParameterValues 要通过引用传递出去的值集合
 	 * @param dbScriptStatement 要通过引用传递出去的数据库脚本语句
 	 */
-	public static void installQueryCondOfDBScriptStatement(int requestResourceType, Set<Entry<String, String>> queryCondParamsSet, List<Object> queryCondParameterValues, StringBuilder dbScriptStatement){
-		installQueryCondOfDBScriptStatement(requestResourceType, queryCondParamsSet, queryCondParameterValues, dbScriptStatement, null);
+	public static void installQueryCondOfDBScriptStatement(int requestResourceType, Set<Entry<String, String>> queryCondParamsSet, List<ResourceMetadataInfo> queryResourceMetadataInfos, List<Object> queryCondParameterValues, StringBuilder dbScriptStatement){
+		installQueryCondOfDBScriptStatement(requestResourceType, queryCondParamsSet, queryResourceMetadataInfos, queryCondParameterValues, dbScriptStatement, null);
 	}
 	
 	/**
@@ -89,11 +92,12 @@ public class BuiltinQueryCondFuncUtil {
 	 * <p>同时，将条件值按顺序存储到queryCondParameterValues中</p>
 	 * @param requestResourceType 资源类型
 	 * @param queryCondParamsSet 查询参数map集合
+	 * @param queryResourceMetadataInfos 查询参数(资源)的元数据集合
 	 * @param queryCondParameterValues 要通过引用传递出去的值集合
 	 * @param dbScriptStatement 要通过引用传递出去的数据库脚本语句
 	 * @param alias 别名【默认为空字符串】 
 	 */
-	public static void installQueryCondOfDBScriptStatement(int requestResourceType, Set<Entry<String, String>> queryCondParamsSet, List<Object> queryCondParameterValues, StringBuilder dbScriptStatement, String alias){
+	public static void installQueryCondOfDBScriptStatement(int requestResourceType, Set<Entry<String, String>> queryCondParamsSet, List<ResourceMetadataInfo> queryResourceMetadataInfos, List<Object> queryCondParameterValues, StringBuilder dbScriptStatement, String alias){
 		if(StrUtils.isEmpty(alias)){
 			alias = "";
 		}else{
@@ -104,9 +108,9 @@ public class BuiltinQueryCondFuncUtil {
 		IQueryCondFuncEntity queryCondFuncEntity = null;
 		for (Entry<String, String> entry : queryCondParamsSet) {
 			if(requestResourceType == ResourceInfoConstants.TABLE){
-				queryCondFuncEntity = new HqlQueryCondFuncEntity(entry.getKey(), entry.getValue());
+				queryCondFuncEntity = new HqlQueryCondFuncEntity(entry.getKey(), entry.getValue(), getPropDataType(entry.getKey(), queryResourceMetadataInfos));
 			}else if(requestResourceType == ResourceInfoConstants.SQL){
-				queryCondFuncEntity = new SqlQueryCondFuncEntity(entry.getKey(), entry.getValue());
+				queryCondFuncEntity = new SqlQueryCondFuncEntity(entry.getKey(), entry.getValue(), getPropDataType(entry.getKey(), queryResourceMetadataInfos));
 			}
 			
 			dbScriptStatements = BuiltinQueryCondFuncUtil.getBuiltinQueryConditionMethodInstance(queryCondFuncEntity.getMethodName())
@@ -115,5 +119,26 @@ public class BuiltinQueryCondFuncUtil {
 			dbScriptStatement.append(dbScriptStatements).append(" and ");
 		}
 		dbScriptStatement.setLength(dbScriptStatement.length() - 4);// 删除最后一个 and 
+	}
+
+	/**
+	 * 根据属性名，从资源元数据集合中，获取对应的数据类型，后续(处理/转换)实际值的数据类型
+	 * <p>默认为string类型</p>
+	 * @param propName
+	 * @param queryResourceMetadataInfos
+	 * @return
+	 */
+	private static String getPropDataType(String propName, List<ResourceMetadataInfo> queryResourceMetadataInfos) {
+		if(StrUtils.notEmpty(propName) && queryResourceMetadataInfos != null && queryResourceMetadataInfos.size() > 0){
+			for (ResourceMetadataInfo resourceMetadataInfo : queryResourceMetadataInfos) {
+				if(propName.equals(resourceMetadataInfo.getPropName())){
+					if(StrUtils.isEmpty(resourceMetadataInfo.getDataType())){
+						break;
+					}
+					return resourceMetadataInfo.getDataType();
+				}
+			}
+		}
+		return DataTypeConstants.STRING;
 	}
 }

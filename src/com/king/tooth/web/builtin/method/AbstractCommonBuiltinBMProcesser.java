@@ -1,7 +1,9 @@
 package com.king.tooth.web.builtin.method;
 
+import java.util.List;
 import java.util.Map;
 
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.datatype.DataTypeValidUtil;
 import com.king.tooth.web.builtin.method.common.create.exportfile.BuiltinCreateExportFileMethodProcesser;
@@ -27,6 +29,12 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 	 * 请求的父亲资源Id
 	 */
 	protected String parentResourceId;
+	
+	protected Map<String, String> requestBuiltinParams;
+	protected Map<String, String> requestResourceParams;
+	protected Map<String, String> requestParentResourceParams;
+	protected List<ResourceMetadataInfo> queryResourceMetadataInfos;
+	protected List<ResourceMetadataInfo> queryParentResourceMetadataInfos;
 	
 	/**
 	 * 内置聚焦函数处理器实例

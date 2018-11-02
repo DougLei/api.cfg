@@ -57,7 +57,7 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 	private String propName;
 	/**
 	 * 字段描述名
-	 * <p>例如姓名、年龄，如果没有值，默认为propName</p>
+	 * <p>目前是导出时用到该字段，例如姓名、年龄，如果没有值，默认为propName</p>
 	 */
 	private String descName;
 	/**
@@ -251,7 +251,7 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 		
 		CfgColumn descNameColumn = new CfgColumn("desc_name", DataTypeConstants.STRING, 60);
 		descNameColumn.setName("字段描述名");
-		descNameColumn.setComments("例如姓名、年龄，如果没有值，默认为propName");
+		descNameColumn.setComments("目前是导出时用到该字段，例如姓名、年龄，如果没有值，默认为propName");
 		columns.add(descNameColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);

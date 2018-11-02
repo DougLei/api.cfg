@@ -16,8 +16,9 @@ import com.king.tooth.util.NamingProcessUtil;
 @SuppressWarnings("serial")
 public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implements Serializable{
 	
-	public SqlQueryCondFuncEntity(String propName, String value) {
+	public SqlQueryCondFuncEntity(String propName, String value, String dataType) {
 		this.propName = propName;
+		this.dataType = dataType;
 		analysisQueryParams(value);
 		modifyPropName(NamingProcessUtil.propNameTurnColumnName(propName));
 	}
@@ -77,7 +78,7 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 				result.add(tmpVal);
 			}
 		}
-		this.values = result.toArray();
+		this.values = processValuesByDataType(result, false);
 		result.clear();
 	}
 	

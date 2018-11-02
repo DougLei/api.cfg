@@ -173,7 +173,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
 			List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
 			for (CfgSqlResultset csr : outSqlResultSet) {
-				metadataInfos.add(new SqlResourceMetadataInfo(csr.getPropName()));
+				metadataInfos.add(new SqlResourceMetadataInfo(csr.getPropName(), csr.getDataType()));
 			}
 			return metadataInfos;
 		}

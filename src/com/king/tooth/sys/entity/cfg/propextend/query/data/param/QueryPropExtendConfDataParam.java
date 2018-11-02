@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.constants.ResourceInfoConstants;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.TableResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
 
@@ -99,18 +101,20 @@ public class QueryPropExtendConfDataParam implements Serializable{
 		if(conditions != null && conditions.size() > 0){
 			StringBuilder hql = new StringBuilder();
 			int conditionsSize = conditions.size();
-			
 			conditionValues = new ArrayList<Object>(conditionsSize);
 			
+			List<ResourceMetadataInfo> conditionValueResourceMetadataInfos = new ArrayList<ResourceMetadataInfo>(conditionsSize);
 			Map<String, String> queryCondParams = new HashMap<String, String>(conditionsSize);
 			for (QueryPropExtendConfDataCondition condition : conditions) {
 				queryCondParams.put(condition.getPropName(), condition.getValue());
+				conditionValueResourceMetadataInfos.add(new TableResourceMetadataInfo(condition.getPropName(), condition.getDataType()));
 			}
 			
-			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParams.entrySet(), conditionValues, hql, "p");
+			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParams.entrySet(), conditionValueResourceMetadataInfos, conditionValues, hql, "p");
 			conditionHql = hql.toString();
 			
 			hql.setLength(0);
+			conditionValueResourceMetadataInfos.clear();
 			queryCondParams.clear();
 		}
 		return this;

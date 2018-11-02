@@ -1,8 +1,11 @@
 package com.king.tooth.web.builtin.method.common.util.querycondfunc.entity;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.king.tooth.util.datatype.DataTypeTurnUtil;
 
 
 /**
@@ -42,6 +45,11 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 	protected String propName;
 	
 	/**
+	 * 属性对应的数据类型
+	 */
+	protected String dataType;
+	
+	/**
 	 * 要查询的属性值数组
 	 */
 	protected Object[] values;
@@ -74,6 +82,22 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 			return commonMatcher.replaceAll("");
 		}
 		return value;
+	}
+	
+	/**
+	 * 根据数据类型，对实际值进行类型转换等操作，最终获取的值数组
+	 * @param valueList
+	 * @param isTableResource 
+	 * @return
+	 */
+	protected Object[] processValuesByDataType(List<Object> valueList, boolean isTableResource) {
+		int index = 0;
+		Object[] values = new Object[valueList.size()];
+		for (Object vl : valueList) {
+			values[index++] = DataTypeTurnUtil.turnValueDataType(vl, dataType, true, isTableResource, false);
+		}
+		valueList.clear();
+		return values;
 	}
 	
 	/**

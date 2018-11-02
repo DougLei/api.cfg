@@ -68,7 +68,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 				hql.append(" in( select p_.").append(ResourcePropNameConstants.ID)
 				   .append(" from ").append(parentResourceName).append(" p_ where ");
 				Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParamsSet , hqlParameterValues, hql, "p_");
+				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParamsSet, queryParentResourceMetadataInfos, hqlParameterValues, hql, "p_");
 				hql.append(" ) ");
 			}else{
 				hql.append(" =? ");
@@ -83,7 +83,7 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 			
 			if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
 				Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParamsSet , hqlParameterValues, hql, "p_");
+				BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParamsSet, queryParentResourceMetadataInfos, hqlParameterValues, hql, "p_");
 			}else{ // 否则就直接查询
 				hql.append("p_.")
 				   .append(ResourcePropNameConstants.ID)
@@ -95,26 +95,6 @@ public class BuiltinParentsubQueryMethodProcesser extends AbstractTableResourceB
 		
 		Log4jUtil.debug("[BuiltinParentsubQueryMethodProcesser.execAnalysisParam]解析出来，要执行的父子资源查询的hql语句为：{}", hql.toString());
 		Log4jUtil.debug("[BuiltinParentsubQueryMethodProcesser.execAnalysisParam]解析出来，要执行的执子表查询的hql参数值为：parentId={}", parentResourceId);
-	}
-	
-	/**
-	 * 获取查询主资源的条件hql语句
-	 * 用在【目前只主子表删除时】 
-	 * @see ParentResourceByIdToSubResourceProcesser.getDeleteHql()
-	 * @param parentResourceId 由路由传入的父资源id
-	 * @param alias 别名
-	 * @return
-	 */
-	public StringBuilder getQueryParentResourceCondHql(String parentResourceId, String alias){
-		StringBuilder hql = new StringBuilder();
-		if(parentResourceQueryCond.size() > 0){ // 如果有查询主表的条件集合
-			Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParamsSet , hqlParameterValues, hql, alias);
-		}else{// 否则就直接查询
-			hql.append(alias).append(".").append(ResourcePropNameConstants.ID).append(" = ?");
-			hqlParameterValues.add(parentResourceId);
-		}
-		return hql;
 	}
 	
 	public int getProcesserType() {

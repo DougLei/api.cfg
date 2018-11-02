@@ -114,7 +114,7 @@ public class BuiltinRecursiveMethodProcesser extends AbstractTableResourceBuilti
 			hql.append(" from ").append(resourceName).append(" where ");
 			
 			Set<Entry<String, String>> queryCondParamsSet = parentResourceQueryCond.entrySet();
-			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParamsSet , hqlParameterValues, hql);
+			BuiltinQueryCondFuncUtil.installQueryCondOfDBScriptStatement(ResourceInfoConstants.TABLE, queryCondParamsSet, queryResourceMetadataInfos, hqlParameterValues, hql);
 			return true;
 		}
 		return false;
