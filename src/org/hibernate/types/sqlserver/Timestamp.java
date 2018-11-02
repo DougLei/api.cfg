@@ -50,11 +50,11 @@ public class Timestamp implements UserType{
 	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
 		if(StrUtils.notEmpty(value)){
 			if(value instanceof String){
-				st.setTimestamp(index, DateUtil.parseTimestamp(value.toString()));
+				st.setTimestamp(index, DateUtil.parseSqlTimestamp(value.toString()));
 			}else if(value instanceof Long){
 				st.setTimestamp(index, new java.sql.Timestamp(Long.valueOf(value.toString())));
 			}else{
-				st.setTimestamp(index, DateUtil.parseTimestamp((java.util.Date)value));
+				st.setTimestamp(index, DateUtil.parseSqlTimestamp((java.util.Date)value));
 			}
 		}else{
 			st.setNull(index, Types.TIMESTAMP);

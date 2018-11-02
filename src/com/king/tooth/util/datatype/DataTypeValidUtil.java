@@ -68,7 +68,9 @@ public class DataTypeValidUtil {
 			if(val instanceof Boolean){
 				return true;
 			}
-			if("true".equals(val) || "false".equals(val)){
+			
+			String valStr = val.toString();
+			if("true".equals(valStr) || "false".equals(valStr)){
 				return true;
 			}
 		}

@@ -94,12 +94,19 @@ public class SysFileService extends AService{
 							}
 							sysFile.setCode(FileUtil.getFileCode());
 							sysFile.setSaveType(SysFileConstants.saveType);
+							sysFile.setOrderCode(index);
 							sysfileMap.put(index, sysFile);
 						}
 						
 						if(file.isFormField()){
 							if(file.getFieldName().startsWith("secretLevel_") && StrUtils.notEmpty(file.getString())){
 								sysFile.setSecretLevel(Integer.valueOf(file.getString()));
+							}else if(file.getFieldName().startsWith("remark_") && StrUtils.notEmpty(file.getString())){
+								sysFile.setRemark(file.getString());
+							}else if(file.getFieldName().startsWith("backup01_") && StrUtils.notEmpty(file.getString())){
+								sysFile.setBackup01(file.getString());
+							}else if(file.getFieldName().startsWith("backup02_") && StrUtils.notEmpty(file.getString())){
+								sysFile.setBackup02(file.getString());
 							}
 						}else{
 							if(file.getFieldName().startsWith("file_")){

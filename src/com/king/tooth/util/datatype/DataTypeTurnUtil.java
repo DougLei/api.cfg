@@ -27,40 +27,47 @@ public class DataTypeTurnUtil {
 			}
 		}
 		
-		String valueStr = value.toString();
 		if(DataTypeConstants.STRING.equals(targetDataCodeType) || DataTypeConstants.CHAR.equals(targetDataCodeType)){
-			value = valueStr;
+			value = value.toString();
 		}else if(DataTypeConstants.BOOLEAN.equals(targetDataCodeType)){
 			if(DataTypeValidUtil.isBoolean(value)){
-				if("true".equals(valueStr)){
-					value = true;
-				}else{
-					value = false;
+				if(value instanceof String){
+					if("true".equals(value.toString())){
+						value = true;
+					}else{
+						value = false;
+					}
 				}
 			}else{
 				throw new IllegalArgumentException("在转换值的数据类型时，传入的value值["+value+"]，无法转换为boolean类型");
 			}
 		}else if(DataTypeConstants.INTEGER.equals(targetDataCodeType)){
 			if(DataTypeValidUtil.isInteger(value)){
-				value = Integer.valueOf(valueStr);
+				if(value instanceof String){
+					value = Integer.valueOf(value.toString());
+				}
 			}else{
 				throw new IllegalArgumentException("在转换值的数据类型时，传入的value值["+value+"]，无法转换为integer类型");
 			}
 		}else if(DataTypeConstants.DOUBLE.equals(targetDataCodeType)){
 			if(DataTypeValidUtil.isNumber(value)){
-				value = Double.valueOf(valueStr);
+				if(value instanceof String){
+					value = Double.valueOf(value.toString());
+				}
 			}else{
 				throw new IllegalArgumentException("在转换值的数据类型时，传入的value值["+value+"]，无法转换为浮点类型");
 			}
 		}else if(DataTypeConstants.DATE.equals(targetDataCodeType)){
 			if(DataTypeValidUtil.isDate(value)){
-				if(isCodeDateType){
-					value = DateUtil.parseDate(valueStr);
-				}else{
-					if(dateIsDetail){
-						value = DateUtil.parseTimestamp(valueStr);
+				if(value instanceof String){
+					if(isCodeDateType){
+						value = DateUtil.parseDate(value.toString());
 					}else{
-						value = DateUtil.parseDate(valueStr);
+						if(dateIsDetail){
+							value = DateUtil.parseSqlTimestamp(value.toString());
+						}else{
+							value = DateUtil.parseSqlDate(value.toString());
+						}
 					}
 				}
 			}else{

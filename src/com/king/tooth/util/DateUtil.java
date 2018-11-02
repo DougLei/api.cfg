@@ -102,7 +102,7 @@ public class DateUtil {
 	 * @param dateStr
 	 * @return
 	 */
-	public static Timestamp parseTimestamp(String dateStr){
+	public static Timestamp parseSqlTimestamp(String dateStr){
 		return new Timestamp(parseDate(dateStr).getTime());
 	}
 	
@@ -112,7 +112,7 @@ public class DateUtil {
 	 * @param dateStr
 	 * @return
 	 */
-	public static Timestamp parseTimestamp(Date date){
+	public static Timestamp parseSqlTimestamp(Date date){
 		return new Timestamp(date.getTime());
 	}
 	

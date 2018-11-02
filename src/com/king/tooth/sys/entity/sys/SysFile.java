@@ -90,6 +90,10 @@ public class SysFile extends BasicEntity implements IEntity{
 	 */
 	private String remark;
 	/**
+	 * 排序
+	 */
+	private Integer orderCode;
+	/**
 	 * 备用字段01
 	 */
 	private String backup01;
@@ -202,6 +206,12 @@ public class SysFile extends BasicEntity implements IEntity{
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	public Integer getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(Integer orderCode) {
+		this.orderCode = orderCode;
+	}
 	public String getBackup01() {
 		return backup01;
 	}
@@ -217,7 +227,7 @@ public class SysFile extends BasicEntity implements IEntity{
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(17+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(18+7);
 		
 		CfgColumn refDataIdColumn = new CfgColumn("ref_data_id", DataTypeConstants.STRING, 50);
 		refDataIdColumn.setName("关联的数据主键值");
@@ -297,6 +307,12 @@ public class SysFile extends BasicEntity implements IEntity{
 		remarkColumn.setName("备注");
 		remarkColumn.setComments("备注");
 		columns.add(remarkColumn);
+		
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
+		orderCodeColumn.setName("排序");
+		orderCodeColumn.setComments("排序");
+		orderCodeColumn.setDefaultValue("0");
+		columns.add(orderCodeColumn);
 		
 		CfgColumn backup01Column = new CfgColumn("backup01", DataTypeConstants.STRING, 1000);
 		backup01Column.setName("备用字段01");

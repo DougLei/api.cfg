@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.IExecute;
@@ -23,9 +21,9 @@ import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
-import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.datatype.DataTypeTurnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
@@ -232,11 +230,7 @@ public class ProcedureUtil {
 								if(json != null && json.size()>0){
 									valueArr = new Object[json.size()];
 									for(int j=0; j<objLength; j++){
-										if(DataTypeConstants.DATE.equals(inSqlResultSetMetadataInfos.get(j).getDataType())){
-											valueArr[j] = DateUtil.parseTimestamp(json.getString(inSqlResultSetMetadataInfos.get(j).getPropName()));
-										}else{
-											valueArr[j] = json.get(inSqlResultSetMetadataInfos.get(j).getPropName());
-										}
+										valueArr[j] = DataTypeTurnUtil.turnValueDataType(json.get(inSqlResultSetMetadataInfos.get(j).getPropName()), inSqlResultSetMetadataInfos.get(j).getDataType(), false, false, true);
 									}
 									table.addRow(valueArr);
 								}
