@@ -67,9 +67,13 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			}
 			inSqlResultSetMetadataInfoList.clear();
 		}
-		if(outSqlResultSetMetadataInfos != null && outSqlResultSetMetadataInfos.size() > 0){
-			outSqlResultSetMetadataInfos.clear();
+		
+		if(!SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){// select语句不清空的原因是，后续还要使用元数据信息中的数据类型，对值进行数据类型转换操作
+			if(outSqlResultSetMetadataInfos != null && outSqlResultSetMetadataInfos.size() > 0){
+				outSqlResultSetMetadataInfos.clear();
+			}
 		}
+		
 		if(actualParamsList != null && actualParamsList.size() > 0){
 			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
 				if(actualParams != null && actualParams.size() > 0){
