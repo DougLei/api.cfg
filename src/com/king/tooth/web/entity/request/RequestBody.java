@@ -2,12 +2,14 @@ package com.king.tooth.web.entity.request;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.code.resource.CodeResourceProcesser;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.valid.data.ResourceDataVerifier;
 import com.king.tooth.web.servlet.route.RouteBody;
@@ -43,17 +45,20 @@ public class RequestBody implements Serializable{
 	 */
 	private Map<String, String> requestResourceParams;
 	/**
-	 * 请求的resource元数据信息集合
-	 */
-	
-	
-	/**
 	 * 请求的parentResource参数键值对
 	 */
 	private Map<String, String> requestParentResourceParams;
+	
 	/**
-	 * 请求的parentResource元数据信息集合
+	 * 请求的查询资源的元数据信息集合
+	 * <p>在查询的时候，进行数据验证和值类型转换</p>
 	 */
+	protected List<ResourceMetadataInfo> queryResourceMetadataInfos;
+	/**
+	 * 请求的查询父资源的元数据信息集合
+	 * <p>在查询的时候，进行数据验证和值类型转换</p>
+	 */
+	protected List<ResourceMetadataInfo> queryParentResourceMetadataInfos;
 	
 	// -------------------------------------------------------------------------------------------------------------------------
 	/**
@@ -214,6 +219,12 @@ public class RequestBody implements Serializable{
 		if(formData != null && formData.size() > 0){
 			formData.clear();
 		}
+		if(queryResourceMetadataInfos != null && queryResourceMetadataInfos.size() > 0){
+			queryResourceMetadataInfos.clear();
+		}
+		if(queryParentResourceMetadataInfos != null && queryParentResourceMetadataInfos.size() > 0){
+			queryParentResourceMetadataInfos.clear();
+		}
 		if(resourceDataVerifier != null){
 			resourceDataVerifier.clear();
 		}
@@ -263,5 +274,17 @@ public class RequestBody implements Serializable{
 	}
 	public ResourcePropCodeRule getResourcePropCodeRule() {
 		return resourcePropCodeRule;
+	}
+	public List<ResourceMetadataInfo> getQueryResourceMetadataInfos() {
+		return queryResourceMetadataInfos;
+	}
+	public void setQueryResourceMetadataInfos(List<ResourceMetadataInfo> queryResourceMetadataInfos) {
+		this.queryResourceMetadataInfos = queryResourceMetadataInfos;
+	}
+	public List<ResourceMetadataInfo> getQueryParentResourceMetadataInfos() {
+		return queryParentResourceMetadataInfos;
+	}
+	public void setQueryParentResourceMetadataInfos(List<ResourceMetadataInfo> queryParentResourceMetadataInfos) {
+		this.queryParentResourceMetadataInfos = queryParentResourceMetadataInfos;
 	}
 }

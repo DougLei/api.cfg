@@ -101,7 +101,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		}else if(requestBody.isPostRequest() || requestBody.isPutRequest() || requestBody.isDeleteRequest()){
 			return validPostSqlResourceMetadata();
 		}
-		return "sql资源，系统只支持[get、post]两种请求方式";
+		return "sql资源，只支持[get、post、put、delete]四种请求方式";
 	}
 	
 	/**
@@ -557,6 +557,10 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				}
 			}
 		}
+		
+		// 记录请求的查询资源的元数据信息集合
+		requestBody.setQueryResourceMetadataInfos(outSqlResultSetMetadataInfos);
+		requestBody.setQueryParentResourceMetadataInfos(outSqlResultSetMetadataInfos);
 		return null;
 	}
 	

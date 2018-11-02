@@ -50,4 +50,9 @@ public final class BuiltinMethodProcesserType {
 	 * 子资源数据集合查询函数处理器
 	 */
 	public static final int SUB_LIST = 9;
+	
+	/**
+	 * 创建导出文件的函数处理器
+	 */
+	public static final int EXPORT_FILE = 10;
 }

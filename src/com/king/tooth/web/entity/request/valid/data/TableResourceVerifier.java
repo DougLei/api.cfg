@@ -138,6 +138,10 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 				}
 			}
 		}
+		
+		// 记录请求的查询资源的元数据信息集合
+		requestBody.setQueryResourceMetadataInfos(resourceMetadataInfos);
+		requestBody.setQueryParentResourceMetadataInfos(parentResourceMetadataInfos);
 		return null;
 	}
 	

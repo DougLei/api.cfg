@@ -11,6 +11,7 @@ import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.common.AbstractBuiltinCommonMethod;
 
 /**
@@ -127,6 +128,9 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	/** 查询sql资源，要导出的属性名集合hql */
 	private static final String querySqlExportPropNamesHql = "select propName from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
 	
+	public int getProcesserType() {
+		return BuiltinMethodProcesserType.EXPORT_FILE;
+	}
 	
 	public boolean getIsCreateExport() {
 		return isCreateExport;
