@@ -180,6 +180,14 @@ public abstract class AbstractResourceVerifier {
 	}
 	
 	public void clear(){
+		if(!requestBody.isGetRequest()){
+			if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
+				resourceMetadataInfos.clear();
+			}
+			if(parentResourceMetadataInfos != null && parentResourceMetadataInfos.size() > 0){
+				parentResourceMetadataInfos.clear();
+			}
+		}
 	}
 
 	// ------------------------------------------------------------------------------------------
