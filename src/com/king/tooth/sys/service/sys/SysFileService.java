@@ -99,7 +99,7 @@ public class SysFileService extends AService{
 						}
 						
 						if(file.isFormField()){
-							if(file.getFieldName().startsWith("secretLevel_") && StrUtils.notEmpty(file.getString())){
+							if(file.getFieldName().startsWith("secretLevel_") && StrUtils.notEmpty(file.getString()) && DataTypeValidUtil.isInteger(file.getString())){
 								sysFile.setSecretLevel(Integer.valueOf(file.getString()));
 							}else if(file.getFieldName().startsWith("remark_") && StrUtils.notEmpty(file.getString())){
 								sysFile.setRemark(file.getString());
@@ -107,6 +107,8 @@ public class SysFileService extends AService{
 								sysFile.setBackup01(file.getString());
 							}else if(file.getFieldName().startsWith("backup02_") && StrUtils.notEmpty(file.getString())){
 								sysFile.setBackup02(file.getString());
+							}else if(file.getFieldName().startsWith("orderCode_") && StrUtils.notEmpty(file.getString()) && DataTypeValidUtil.isInteger(file.getString())){
+								sysFile.setOrderCode(Integer.valueOf(file.getString()));
 							}
 						}else{
 							if(file.getFieldName().startsWith("file_")){
