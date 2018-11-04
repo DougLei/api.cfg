@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.king.tooth.util.datatype.DataTypeValidUtil;
+
 /**
  * 日期工具类
  * @author DougLei
@@ -206,4 +208,33 @@ public class DateUtil {
 	}
 	/**	MM */
 	private static final SimpleDateFormat mmSdf = new SimpleDateFormat("MM");
+
+	// -----------------------------------------------------------------
+	/**
+	 * 给指定日期【加/减】天数
+	 * @param dateStr 指定日期字符串类型
+	 * @param days 正数为加，负数为减
+	 * @return
+	 */
+	public static String addAndSubtractDay(Object date, int days) {
+		if(DataTypeValidUtil.isDate(date)){
+			if(days != 0){
+				long resultDateTime;
+				if(date instanceof String){
+					resultDateTime = parseDate(date.toString()).getTime() + (days*86400000);
+				}else{
+					resultDateTime = ((Date)date).getTime() + (days*86400000);
+				}
+				return formatDate(new Date(resultDateTime));
+			}
+		}else{
+			throw new IllegalArgumentException("传入的dateStr值["+date+"]，不是日期格式");
+		}
+		
+		if(date instanceof String){
+			return date.toString();
+		}else{
+			return formatDate((Date)date);
+		}
+	}
 }

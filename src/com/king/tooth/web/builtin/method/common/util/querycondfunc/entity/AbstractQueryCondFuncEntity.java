@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.datatype.DataTypeTurnUtil;
 
 
@@ -92,7 +94,25 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 	 */
 	protected Object[] processValuesByDataType(List<Object> valueList, boolean isTableResource) {
 		int index = 0;
-		Object[] values = new Object[valueList.size()];
+		Object[] values = null;
+		
+		if(DataTypeConstants.DATE.equals(dataType)){
+			// 如果是日期类型，都用区间查询的方式，所以长度只能为2
+			values = new Object[2];
+			String date;
+			if(valueList.size() == 1){
+				// 如果日期的值数量是1，则区间值为：btn(传入的日期值，传入的日期值+1天)
+				date = DateUtil.addAndSubtractDay(valueList.get(0).toString(), 1);
+			}else if(valueList.size() == 2){
+				// 如果日期的值数量是2，则区间值为：btn(传入的第一个日期值，传入的第二个日期值+1天)
+				date = DateUtil.addAndSubtractDay(valueList.remove(1).toString(), 1);
+			}else{
+				throw new IllegalArgumentException("查询条件为日期时，值得长度目前只支持1个或2个，请联系后端系统开发人员");
+			}
+			valueList.add(date);
+		}else{
+			values = new Object[valueList.size()];
+		}
 		for (Object vl : valueList) {
 			values[index++] = DataTypeTurnUtil.turnValueDataType(vl, dataType, true, isTableResource, false);
 		}
@@ -109,8 +129,14 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 		if(commonMatcher.find()){
 			this.methodName = commonMatcher.group().toLowerCase();
 		}else{
-			// 没有匹配到方法名，证明使用的是 propName=value 的默认规则，则方法名为eq
-			this.methodName = "eq";
+			// 没有匹配到方法名，证明使用的是 propName=value 的默认规则
+			// 如果是日期类型，则也用btn
+			if(DataTypeConstants.DATE.equals(dataType)){
+				this.methodName = "btn";
+			}else{
+				// 否则就用eq
+				this.methodName = "eq";
+			}
 		}
 	}
 	
