@@ -8,6 +8,8 @@ import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.entity.sys.reqlog.ReqLogData;
+import com.king.tooth.thread.operdb.account.online.status.UpdateAccountOnlineStatusThread;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 当前线程的上下文
@@ -176,5 +178,28 @@ public class CurrentThreadContext {
 	 */
 	public static CfgDatabase getDatabaseInstance() {
 		return  DatabaseInstancesMapping.getDatabasInstance(CurrentThreadContext.getDatabaseId());
+	}
+
+	//-------------------------------------------------------------------
+	/**
+	 * 更新相关数据
+	 * @param isClearCurrentThreadData 是否清空当前线程中的数据
+	 */
+	public static void updateDatas(boolean isClearCurrentThreadData) {
+		// 修改账户在线状态信息
+		new UpdateAccountOnlineStatusThread(HibernateUtil.openNewSession(),
+				getCurrentAccountOnlineStatus(),
+				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
+				CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
+				CurrentThreadContext.getProjectId(),
+				CurrentThreadContext.getCustomerId()).start();
+		
+		// 记录日志
+		getReqLogData().recordLogs();
+		
+		// (是否)清除本次请求的线程数据
+		if(isClearCurrentThreadData){
+			clearCurrentThreadData();
+		}
 	}
 }

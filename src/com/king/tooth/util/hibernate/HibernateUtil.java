@@ -246,37 +246,16 @@ public class HibernateUtil {
 	public static JSONObject updateObject(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntityJson();
 		String updateId = data.getString(ResourcePropNameConstants.ID);
-		if(StrUtils.isEmpty(updateId)){
+		if(updateId == null){
 			throw new NullPointerException("要修改的数据id值不能为空");
 		}
 		
 		ResourceHandlerUtil.initBasicPropValsForUpdate(entity.getEntityName(), data, shortDesc);
 		try {
 			List<Object> parameters = new ArrayList<Object>(data.size()-1);
-			StringBuilder updateHql = new StringBuilder("update ");
-			updateHql.append(entity.getEntityName()).append(" set ");
+			String updateHql = installUpdateHql(entity.getEntityName(), updateId, data, parameters);
 			
-			Set<String> propNames = data.keySet();
-			for (String pn : propNames) {
-				if(pn.equalsIgnoreCase(ResourcePropNameConstants.ID) || (data.get(pn) == null)){
-					continue;
-				}
-				
-				if(StrUtils.isEmpty(data.get(pn))){
-					updateHql.append(pn);
-					updateHql.append(" = null").append(",");
-				}else{
-					updateHql.append(pn);
-					updateHql.append(" = ?").append(",");
-					parameters.add(data.get(pn));
-				}
-			}
-			
-			updateHql.setLength(updateHql.length()-1);
-			updateHql.append(" where ").append(ResourcePropNameConstants.ID).append(" =?");
-			parameters.add(updateId);
-			
-			executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql.toString(), parameters);
+			executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql, parameters);
 			
 			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_edit");
 			Log4jUtil.debug("修改数据成功[{}]", data);
@@ -285,6 +264,40 @@ public class HibernateUtil {
 			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
 			throw e;
 		}
+	}
+	
+	/**
+	 * 组装update hql语句
+	 * @param entityName
+	 * @param id
+	 * @param data
+	 * @param finalUpdateHql
+	 * @param parameters
+	 */
+	public static String installUpdateHql(String entityName, String id, Map<String, Object> data, List<Object> parameters){
+		StringBuilder finalUpdateHql = new StringBuilder();
+		finalUpdateHql.append("update ").append(entityName).append(" set ");
+		
+		Set<String> propNames = data.keySet();
+		for (String pn : propNames) {
+			if(pn.equalsIgnoreCase(ResourcePropNameConstants.ID) || (data.get(pn) == null)){
+				continue;
+			}
+			if(StrUtils.isEmpty(data.get(pn))){
+				finalUpdateHql.append(pn);
+				finalUpdateHql.append(" = null").append(",");
+			}else{
+				finalUpdateHql.append(pn);
+				finalUpdateHql.append(" = ?").append(",");
+				parameters.add(data.get(pn));
+			}
+		}
+		
+		finalUpdateHql.setLength(finalUpdateHql.length()-1);
+		finalUpdateHql.append(" where ").append(ResourcePropNameConstants.ID).append(" =?");
+		parameters.add(id);
+		
+		return finalUpdateHql.toString();
 	}
 	
 	//------------------------------------------------------------------------------------------------------
@@ -455,7 +468,7 @@ public class HibernateUtil {
 	 * @param parameters
 	 * @return
 	 */
-	private static void setParamters(Query query, List<Object> parameters){
+	public static void setParamters(Query query, List<Object> parameters){
 		if(parameters != null && parameters.size() > 0){
 			int i = 0;
 			for (Object val : parameters) {

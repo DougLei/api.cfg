@@ -84,7 +84,6 @@ public class PrepareFilter extends AbstractFilter{
 			Log4jUtil.error("请求处理出现异常，异常信息为: {}", errMsg);
 			HibernateUtil.rollbackTransaction();
 			responseBody = new ResponseBody(errMsg, null);
-//			responseBody = new ResponseBody("后端系统出现异常，请查看系统日志排查问题", null);
 			printResult(resp, responseBody);
 		}finally{
 			// 关闭连接
@@ -100,10 +99,7 @@ public class PrepareFilter extends AbstractFilter{
 			if(!"get".equals(CurrentThreadContext.getReqLogData().getReqLog().getMethod())){
 				CurrentThreadContext.getReqLogData().getReqLog().setRespData(responseBody.toStrings());
 			}
-			CurrentThreadContext.getReqLogData().recordLogs();
-			
-			// 清除本次请求的线程数据
-			CurrentThreadContext.clearCurrentThreadData();
+			CurrentThreadContext.updateDatas(true);
 		}
 	}
 	

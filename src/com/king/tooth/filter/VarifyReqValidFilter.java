@@ -18,7 +18,6 @@ import com.king.tooth.sys.service.sys.SysAccountOnlineStatusService;
 import com.king.tooth.sys.service.sys.SysAccountService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 验证请求是否有效的过滤器
@@ -77,7 +76,8 @@ public class VarifyReqValidFilter extends AbstractFilter{
 		
 		// 修改最后的操作时间
 		onlineStatus.setLastOperDate(new Date());
-		HibernateUtil.updateObject(onlineStatus, null);
+		// 标识，要修改记录最后操作时间等信息
+		onlineStatus.setIsUpdate(true);
 		return null;
 	}
 

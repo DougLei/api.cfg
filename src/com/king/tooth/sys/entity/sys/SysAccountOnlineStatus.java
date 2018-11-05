@@ -110,6 +110,15 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	//-------------------------------------------------------------------------
 
 	/**
+	 * 是否修改账户在线状态信息
+	 * @see VarifyReqValidFilter
+	 * @see UpdateAccountOnlineStatusThread
+	 * <p>目前用在登陆后，每次请求都记录最后一次操作时间</p>
+	 */
+	@JSONField(serialize = false)
+	private boolean isUpdate;
+	
+	/**
 	 * 模块信息对象集合
 	 */
 	@JSONField(serialize = false)
@@ -164,6 +173,12 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	}
 	public Integer getTryLoginTimes() {
 		return tryLoginTimes;
+	}
+	public boolean getIsUpdate() {
+		return isUpdate;
+	}
+	public void setIsUpdate(boolean isUpdate) {
+		this.isUpdate = isUpdate;
 	}
 	public String getLoginMac() {
 		return loginMac;
