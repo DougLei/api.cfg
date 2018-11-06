@@ -16,15 +16,14 @@ import org.hibernate.internal.SessionFactoryImpl;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
-import com.king.tooth.util.SpringContextHelper;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.database.DynamicDBUtil;
 import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
 
 /**
@@ -35,17 +34,11 @@ import com.king.tooth.web.builtin.method.common.pager.PageQueryEntity;
 public class HibernateUtil {
 	
 	/**
-	 * 动态hibernate sessionfactory操作者
-	 */
-	private transient static final DynamicHibernateSessionFactoryHandler dynamicSessionFactoryHandler = 
-			SpringContextHelper.getBean(DynamicHibernateSessionFactoryHandler.class);
-	
-	/**
 	 * 获得对应的sessionFactory对象
 	 * @return
 	 */
 	private static SessionFactoryImpl getSessionFactory(){
-		return dynamicSessionFactoryHandler.getSessionFactory();
+		return DynamicDBUtil.getSessionFactory(CurrentThreadContext.getDatabaseId());
 	}
 	
 	/**
