@@ -9,6 +9,7 @@ import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.sys.entity.sys.reqlog.ReqLogData;
 import com.king.tooth.thread.operdb.account.online.status.UpdateAccountOnlineStatusThread;
+import com.king.tooth.thread.pool.ThreadPool;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
@@ -187,12 +188,12 @@ public class CurrentThreadContext {
 	 */
 	public static void updateDatas(boolean isClearCurrentThreadData) {
 		// 修改账户在线状态信息
-		new UpdateAccountOnlineStatusThread(HibernateUtil.openNewSession(),
+		ThreadPool.execute(new UpdateAccountOnlineStatusThread(HibernateUtil.openNewSession(),
 				getCurrentAccountOnlineStatus(),
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
 				CurrentThreadContext.getProjectId(),
-				CurrentThreadContext.getCustomerId()).start();
+				CurrentThreadContext.getCustomerId()));
 		
 		// 记录日志
 		getReqLogData().recordLogs();

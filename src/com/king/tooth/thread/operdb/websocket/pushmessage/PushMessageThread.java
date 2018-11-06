@@ -7,6 +7,7 @@ import org.hibernate.Session;
 
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
+import com.king.tooth.thread.pool.ThreadPool;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -56,7 +57,7 @@ public final class PushMessageThread extends PMThread{
 		}
 		
 		if(batchPushMessages.size() > 0){
-			new BatchPushMessageThread(batchSession, pushMessages, currentAccountId, currentUserId, projectId, customerId, batchNum).start();// 启动批量推送消息的线程
+			ThreadPool.execute(new BatchPushMessageThread(batchSession, pushMessages, currentAccountId, currentUserId, projectId, customerId, batchNum));// 启动批量推送消息的线程
 		}else{
 			batchSession.close();
 		}

@@ -94,8 +94,9 @@ public class HibernateUtil {
 	 * 在当前线程提交事务
 	 */
 	public static void commitTransaction() {
-		getCurrentThreadSession().flush();
-		getCurrentThreadSession().getTransaction().commit();
+		Session session = getCurrentThreadSession();
+		session.flush();
+		session.getTransaction().commit();
 		Log4jUtil.debug("[HibernateUtil.commitTransaction]提交当前事务");
 	}
 	/**

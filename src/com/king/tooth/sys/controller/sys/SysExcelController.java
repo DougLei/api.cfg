@@ -22,6 +22,7 @@ import com.king.tooth.sys.entity.sys.file.ie.ImportFileTemplate;
 import com.king.tooth.sys.service.sys.SysExcelService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.file.ie.log.RecordFileIELogThread;
+import com.king.tooth.thread.pool.ThreadPool;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -39,12 +40,12 @@ public class SysExcelController extends AController{
 	 * @param excelIELogs
 	 */
 	private void recordExcelIELogs(List<SysFileIELog> excelIELogs){
-		new RecordFileIELogThread(HibernateUtil.openNewSession(),
+		ThreadPool.execute(new RecordFileIELogThread(HibernateUtil.openNewSession(),
 				excelIELogs,
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
 				CurrentThreadContext.getProjectId(),
-				CurrentThreadContext.getCustomerId()).start();
+				CurrentThreadContext.getCustomerId()));
 	}
 	
 	/**

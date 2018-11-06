@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.king.tooth.sys.entity.sys.SysReqLog;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.log.RecordLogThread;
+import com.king.tooth.thread.pool.ThreadPool;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -40,11 +41,11 @@ public class ReqLogData implements Serializable{
 			return;
 		}
 		// 新线程保存日志数据
-		new RecordLogThread(HibernateUtil.openNewSession(),
+		ThreadPool.execute(new RecordLogThread(HibernateUtil.openNewSession(),
 				reqLog,
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
 				CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
 				CurrentThreadContext.getProjectId(),
-				CurrentThreadContext.getCustomerId()).start();
+				CurrentThreadContext.getCustomerId()));
 	}
 }

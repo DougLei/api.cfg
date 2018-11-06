@@ -16,6 +16,7 @@ import com.king.tooth.sys.entity.sys.pushmessage.PushMessage;
 import com.king.tooth.sys.service.sys.SysPushMessageInfoService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.thread.operdb.websocket.pushmessage.PushMessageThread;
+import com.king.tooth.thread.pool.ThreadPool;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -40,13 +41,14 @@ public class SysPushMessageInfoController extends AController{
 		analysisResourceProp(pushMessages, false);
 		if(analysisResult == null){
 			String batchNum = ResourceHandlerUtil.getBatchNum();
-			new PushMessageThread(HibernateUtil.openNewSession(),
+			// 启动推送消息的线程
+			ThreadPool.execute(new PushMessageThread(HibernateUtil.openNewSession(),
 					HibernateUtil.openNewSession(),
 					pushMessages,
 					CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
 					CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
 					CurrentThreadContext.getProjectId(),
-					CurrentThreadContext.getCustomerId(), batchNum).start();// 启动推送消息的线程
+					CurrentThreadContext.getCustomerId(), batchNum));
 			resultObject = ijson.getJson();
 		}
 		return getResultObject(pushMessages, null);
