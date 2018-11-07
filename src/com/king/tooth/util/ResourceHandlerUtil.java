@@ -1,6 +1,8 @@
 package com.king.tooth.util;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,6 +18,7 @@ import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInf
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.datatype.DataTypeValidUtil;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 资源工具类
@@ -309,5 +312,35 @@ public class ResourceHandlerUtil {
 			return "["+rmi.getDescName()+"]，系统目前不支持["+rmi.getDataType()+"]数据类型，请联系后端开发人员";
 		}
 		return null;
+	}
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取唯一数据的id值
+	 * <p>用在做数据唯一的校验时</p>
+	 * @param resourceName
+	 * @param rmi
+	 * @param dataValue
+	 * @return
+	 */
+	public static Object getUniqueDataId(String resourceName, ResourceMetadataInfo rmi, Object dataValue){
+		List<Object> parameters = new ArrayList<Object>(3);
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select ").append(ResourcePropNameConstants.ID).append(" from ").append(resourceName).append(" where ").append(rmi.getPropName()).append("=?");
+		parameters.add(dataValue);
+		
+		if(rmi.isProjectUnique()){
+			hql.append(" and projectId=? and customerId=?");
+			parameters.add(CurrentThreadContext.getProjectId());
+			parameters.add(CurrentThreadContext.getCustomerId());
+		}else if(rmi.isCustomerUnique()){
+			hql.append(" and customerId=?");
+			parameters.add(CurrentThreadContext.getCustomerId());
+		}
+		
+		Object id = HibernateUtil.executeUniqueQueryByHql(hql.toString(), parameters);
+		hql.setLength(0);
+		return id;
 	}
 }

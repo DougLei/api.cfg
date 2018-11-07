@@ -67,7 +67,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	private Integer isPrimaryKey;
 	/**
 	 * 是否唯一
-	 * <p>默认为0</p>
+	 * <p>默认为0，1表示表级别唯一，2表示项目级别唯一，3标识客户级别唯一</p>
 	 */
 	private Integer isUnique;
 	/**
@@ -404,7 +404,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		
 		CfgColumn isUniqueColumn = new CfgColumn("is_unique", DataTypeConstants.INTEGER, 1);
 		isUniqueColumn.setName("是否唯一");
-		isUniqueColumn.setComments("是否唯一:默认为0");
+		isUniqueColumn.setComments("默认为0，1表示表级别唯一，2表示项目级别唯一，3标识客户级别唯一");
 		isUniqueColumn.setDefaultValue("0");
 		columns.add(isUniqueColumn);
 		
@@ -592,20 +592,66 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		return new IETableResourceMetadataInfo(columnName, columnType, length, precision, isUnique, isNullabled, isIgnoreValid, ResourceInfoConstants.BUILTIN_RESOURCE, ieConfExtend, propName, comments);
 	}
 	
+	/**
+	 * 是否没有唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isUnUnique(){
+		return isUnique == UN_UNIQUE; 
+	}
+	/**
+	 * 是否是表级别唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isTableUnique(){
+		return isUnique == TABLE_UNIQUE; 
+	}
+	/**
+	 * 是否是项目级别唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isProjectUnique(){
+		return isUnique == PROJECT_UNIQUE; 
+	}
+	/**
+	 * 是否是客户级别唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isCustomerUnique(){
+		return isUnique == CUSTOMER_UNIQUE; 
+	}
+	
+	/** 没有唯一约束 */
+	public static final Integer UN_UNIQUE = 0;
+	/** 表级别的唯一约束 */
+	public static final Integer TABLE_UNIQUE = 1;
+	/** 项目级别的唯一约束 */
+	public static final Integer PROJECT_UNIQUE = 2;
+	/** 客户级别的唯一约束 */
+	public static final Integer CUSTOMER_UNIQUE = 3;
+	
 	// --------------------------------------------------------------------------------------
 	/**
+	 * 列的操作状态：
 	 * 0:待创建
 	 */
 	public static final Integer UN_CREATED = 0;
 	/**
+	 * 列的操作状态：
 	 * 1:已创建
 	 */
 	public static final Integer CREATED = 1;
 	/**
+	 * 列的操作状态：
 	 * 2:被删除
 	 */
 	public static final Integer DELETED = 2;
 	/**
+	 * 列的操作状态：
 	 * 3:被修改
 	 */
 	public static final Integer MODIFIED = 3;

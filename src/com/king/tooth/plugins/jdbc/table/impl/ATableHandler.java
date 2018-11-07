@@ -107,7 +107,7 @@ public abstract class ATableHandler {
 			if(StrUtils.notEmpty(column.getDefaultValue())){
 				addDefaultValueConstraint(tableName, column, operColumnSql);
 			}
-			if(column.getIsUnique() != null && 1 == column.getIsUnique()){
+			if(column.getIsUnique() != null && column.isTableUnique()){
 				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
 							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.UNIQUE))
 							 .append(" unique(").append(column.getColumnName()).append(")")

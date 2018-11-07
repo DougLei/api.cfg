@@ -10,10 +10,8 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
-import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
-import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.RequestBody;
 
 /**
@@ -120,9 +118,9 @@ public abstract class AbstractResourceVerifier {
 					}
 					
 					// 验证唯一约束
-					if(rmi.getIsUnique() == 1){
+					if(!rmi.isUnUnique()){
 						uniqueConstraintProps.add(rmi);
-						if(isValidUniqueInDb && validDataIsExists(rmi.getPropName(), dataValue, isUpdate, dataIdValue)){
+						if(isValidUniqueInDb && validDataIsExists(rmi, dataValue, isUpdate, dataIdValue)){
 							return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
 						}
 					}
@@ -154,21 +152,21 @@ public abstract class AbstractResourceVerifier {
 	
 	/**
 	 * 验证数据是否已经存在
-	 * @param propName
+	 * @param rmi
 	 * @param dataValue
 	 * @param isUpdate 是否是修改
-	 * @param dataIdValue 
+	 * @param originDataIdValue 源数据id值，用来在修改的时候判断唯一性，如果操作的是同一个数据，则不用做重复校验
 	 * @return
 	 */
-	private boolean validDataIsExists(String propName, Object dataValue, boolean isUpdate, Object dataIdValue) {
-		Object id = HibernateUtil.executeUniqueQueryByHqlArr("select "+ResourcePropNameConstants.ID+" from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+	private boolean validDataIsExists(ResourceMetadataInfo rmi, Object dataValue, boolean isUpdate, Object originDataIdValue) {
+		Object id = ResourceHandlerUtil.getUniqueDataId(resourceName, rmi, dataValue);
 		if(isUpdate){
 			// 如果是修改的话，要先判断是否能查询到数据，如果查询不到数据，则证明不存在
 			if(id == null){
 				return false;
 			}
 			// 如果查询到数据，再判断查询到的数据id是否和当前操作的数据id一致，如果一致，忽略唯一性验证
-			if(id.toString().equals(dataIdValue.toString())){
+			if(id.toString().equals(originDataIdValue.toString())){
 				return false;
 			}
 			// 否则就是数据出现重复

@@ -2,7 +2,9 @@ package com.king.tooth.sys.entity.tools.resource.metadatainfo;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.sys.entity.cfg.CfgColumn;
 
 /**
  * 资源元数据信息对象
@@ -115,5 +117,38 @@ public class ResourceMetadataInfo implements Serializable{
 	}
 	public void setIsIgnoreValid(Integer isIgnoreValid) {
 		this.isIgnoreValid = isIgnoreValid;
+	}
+	
+	/**
+	 * 是否没有唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isUnUnique(){
+		return isUnique == CfgColumn.UN_UNIQUE; 
+	}
+	/**
+	 * 是否是表级别唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isTableUnique(){
+		return isUnique == CfgColumn.TABLE_UNIQUE; 
+	}
+	/**
+	 * 是否是项目级别唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isProjectUnique(){
+		return isUnique == CfgColumn.PROJECT_UNIQUE; 
+	}
+	/**
+	 * 是否是客户级别唯一约束
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isCustomerUnique(){
+		return isUnique == CfgColumn.CUSTOMER_UNIQUE; 
 	}
 }

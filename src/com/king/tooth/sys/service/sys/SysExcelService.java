@@ -36,7 +36,6 @@ import com.king.tooth.sys.entity.sys.file.ie.ImportFileTemplate;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
-import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -187,13 +186,12 @@ public class SysExcelService extends AService{
 		int columnIndex =1;
 		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(ieResourceMetadataInfos.size());
 		JSONObject data = null;
-		Object dataIdValue = null;
 		boolean dataValueIsNull;
 		Object dataValue = null;
 		String validDataIsLegalResult = null;
 		for(int i=0;i<size;i++){
 			data = ijson.get(i);
-			dataIdValue = data.get(ResourcePropNameConstants.ID);
+			data.get(ResourcePropNameConstants.ID);
 			
 			for (IEResourceMetadataInfo rmi : ieResourceMetadataInfos) {
 				if(rmi.getIsIgnoreValid() == 1){
@@ -216,7 +214,7 @@ public class SysExcelService extends AService{
 					// 验证唯一约束
 					if(rmi.getIsUnique() == 1){
 						uniqueConstraintProps.add(rmi);
-						if(validDataIsExists(resourceName, rmi.getPropName(), dataValue, dataIdValue)){
+						if(validDataIsExists(resourceName, rmi, dataValue)){
 							return desc+"第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值已经存在，不能重复添加";
 						}
 					}
@@ -251,13 +249,12 @@ public class SysExcelService extends AService{
 	/**
 	 * 验证数据是否已经存在
 	 * @param resourceName
-	 * @param propName
+	 * @param rmi  .getPropName()
 	 * @param dataValue
-	 * @param dataIdValue 
 	 * @return
 	 */
-	private boolean validDataIsExists(String resourceName, String propName, Object dataValue, Object dataIdValue) {
-		Object id = HibernateUtil.executeUniqueQueryByHqlArr("select "+ResourcePropNameConstants.ID+" from " + resourceName + " where " + propName + "=? and projectId=? and customerId=?", dataValue, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+	private boolean validDataIsExists(String resourceName, ResourceMetadataInfo rmi, Object dataValue) {
+		Object id = ResourceHandlerUtil.getUniqueDataId(resourceName, rmi, dataValue);
 		return (id != null);
 	}
 	
