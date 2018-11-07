@@ -68,8 +68,9 @@ public class SysAccountService extends AService{
 	 */
 	public SysAccountOnlineStatus login(String loginIp, String accountName, String password){
 		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
-		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
+		accountOnlineStatus.setIsDoLogin(true);
 		
+		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		if(accountOnlineStatus.getIsSave()){
 			HibernateUtil.saveObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}else{

@@ -140,6 +140,12 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	 */
 	@JSONField(serialize = false)
 	private boolean isSave;
+	/**
+	 * 标识是否是登陆操作
+	 * <p>如果是登陆操作，无论如何都要提交事务，即主要是【保存/修改】账户在线状态信息</p>
+	 */
+	@JSONField(serialize = false)
+	private boolean isDoLogin;
 	
 	/**
 	 * 是否有存在关联的用户对象
@@ -155,6 +161,12 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	}
 	public void setIsSave(boolean isSave) {
 		this.isSave = isSave;
+	}
+	public boolean getIsDoLogin() {
+		return isDoLogin;
+	}
+	public void setIsDoLogin(boolean isDoLogin) {
+		this.isDoLogin = isDoLogin;
 	}
 	public void setToken(String token) {
 		this.token = token;

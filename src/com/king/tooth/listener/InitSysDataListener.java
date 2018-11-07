@@ -9,6 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.king.tooth.cache.SysConfig;
+import com.king.tooth.plugins.code.code.resource.PluginCodeResourceMapping;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.code.resource.CodeResourceMapping;
 import com.king.tooth.sys.service.tools.InitSystemService;
@@ -37,6 +38,9 @@ public class InitSysDataListener implements ServletContextListener {
 		
 		// 初始化系统代码资源映射
 		CodeResourceMapping.initCodeResourceMapping();
+		
+		// ****** 初始化系统插件代码资源映射 ****** //
+		PluginCodeResourceMapping.initPluginCodeResourceMapping();
 		
 		// 初始化系统核心数据信息
 		initSysCoreDataInfos();

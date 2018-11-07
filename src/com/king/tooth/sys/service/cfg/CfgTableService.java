@@ -225,6 +225,7 @@ public class CfgTableService extends AService {
 						dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 					}else{// 如果存在，则update
 						tableNames.clear();
+						removeDeleteColumns(columns);
 						
 						String oldTableName = table.getOldTableName();
 						if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名

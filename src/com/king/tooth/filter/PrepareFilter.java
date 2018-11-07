@@ -69,7 +69,7 @@ public class PrepareFilter extends AbstractFilter{
 				responseBody = new ResponseBody("本次请求处理后的responseBody为空，请联系开发人员", null);
 			}
 			
-			if(responseBody.getIsSuccess()){
+			if(responseBody.getIsSuccess() || CurrentThreadContext.getCurrentAccountOnlineStatus().getIsDoLogin()){// 如果是处理成功，或是登陆操作，都要提交事务
 				HibernateUtil.commitTransaction();
 			}else{
 				HibernateUtil.rollbackTransaction();

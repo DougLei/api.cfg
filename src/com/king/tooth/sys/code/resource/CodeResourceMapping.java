@@ -30,7 +30,7 @@ public class CodeResourceMapping {
 	private static boolean unInitCodeResourceMapping = true;
 	
 	@SuppressWarnings("rawtypes")
-	private static void put(String key, Class clz, String methodName){
+	public static void put(String key, Class clz, String methodName){
 		codeResourceMapping.put(key.toLowerCase(), new CodeResourceEntity(clz, methodName));
 	}
 	
