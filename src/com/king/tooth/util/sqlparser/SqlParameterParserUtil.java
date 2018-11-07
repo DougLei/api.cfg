@@ -102,8 +102,6 @@ public class SqlParameterParserUtil {
 			
 			sql = sb.toString();
 			sb.setLength(0);
-			
-			
 			if(len > 0){
 				if(isProcedure){
 					return sql.substring(parameterPlaceholderIndex.get(0),parameterPlaceholderIndex.get(1)+1);

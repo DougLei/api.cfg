@@ -44,19 +44,16 @@ public class RouteBody implements Serializable{
 	 * 资源主键ID
 	 */
 	private String resourceId;
+	
+	
 	/**
-	 * 属性名
-	 * <p>例如：UserType</p>
+	 * 是否是代码
 	 */
-	private String propName;
+	private boolean isCode;
 	/**
-	 * 是否请求的是一个action(动作)
+	 * 请求的code uri
 	 */
-	private boolean isAction;
-	/**
-	 * 调用的action(动作)名称
-	 */
-	private String actionName;
+	private String codeUri;
 	
 	public String getParentResourceName() {
 		return parentResourceName;
@@ -70,17 +67,23 @@ public class RouteBody implements Serializable{
 	public String getResourceId() {
 		return resourceId;
 	}
-	public String getPropName() {
-		return propName;
+	public boolean getIsCode() {
+		return isCode;
+	}
+	public void setIsCode(boolean isCode) {
+		this.isCode = isCode;
+	}
+	public String getCodeUri() {
+		return codeUri;
+	}
+	public void setCodeUri(String codeUri) {
+		this.codeUri = codeUri;
 	}
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
 	}
 	public void setResourceId(String resourceId) {
 		this.resourceId = resourceId;
-	}
-	public void setPropName(String propName) {
-		this.propName = propName;
 	}
 	public String getRouteRuleIdentity() {
 		return routeRuleIdentity;
@@ -99,17 +102,5 @@ public class RouteBody implements Serializable{
 		if(StrUtils.notEmpty(resourceName)){
 			CurrentThreadContext.getReqLogData().getReqLog().setResourceName(resourceName);
 		}
-	}
-	public boolean isAction() {
-		return isAction;
-	}
-	public void setIsAction(boolean isAction) {
-		this.isAction = isAction;
-	}
-	public String getActionName() {
-		return actionName;
-	}
-	public void setActionName(String actionName) {
-		this.actionName = actionName;
 	}
 }

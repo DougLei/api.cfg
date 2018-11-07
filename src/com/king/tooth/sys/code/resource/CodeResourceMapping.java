@@ -52,73 +52,73 @@ public class CodeResourceMapping {
 	 */
 	private static void initNormalCodeResource() {
 		// 数据库操作
-		put("CfgDatabase_post", CfgDatabaseController.class, "add");
-		put("CfgDatabase_put", CfgDatabaseController.class, "update");
-		put("CfgDatabase_delete", CfgDatabaseController.class, "delete");
+		put("/CfgDatabase_post", CfgDatabaseController.class, "add");
+		put("/CfgDatabase_put", CfgDatabaseController.class, "update");
+		put("/CfgDatabase_delete", CfgDatabaseController.class, "delete");
 		put("/database/add/post", CfgDatabaseController.class, "add");
 		put("/database/update/put", CfgDatabaseController.class, "update");
 		put("/database/delete/delete", CfgDatabaseController.class, "delete");
 		
 		// 项目操作
-		put("ComProject_post", CfgProjectController.class, "add");
-		put("ComProject_put", CfgProjectController.class, "update");
-		put("ComProject_delete", CfgProjectController.class, "delete");
+		put("/ComProject_post", CfgProjectController.class, "add");
+		put("/ComProject_put", CfgProjectController.class, "update");
+		put("/ComProject_delete", CfgProjectController.class, "delete");
 		put("/project/add/post", CfgProjectController.class, "add");
 		put("/project/update/put", CfgProjectController.class, "update");
 		put("/project/delete/delete", CfgProjectController.class, "delete");
 		
 		// 项目模块操作
-		put("ComProjectModule_post", CfgProjectModuleController.class, "add");
-		put("ComProjectModule_put", CfgProjectModuleController.class, "update");
-		put("ComProjectModule_delete", CfgProjectModuleController.class, "delete");
+		put("/ComProjectModule_post", CfgProjectModuleController.class, "add");
+		put("/ComProjectModule_put", CfgProjectModuleController.class, "update");
+		put("/ComProjectModule_delete", CfgProjectModuleController.class, "delete");
 		put("/project_module/add/post", CfgProjectModuleController.class, "add");
 		put("/project_module/update/put", CfgProjectModuleController.class, "update");
 		put("/project_module/delete/delete", CfgProjectModuleController.class, "delete");
 		
 		// 表操作
-		put("ComTabledata_post", CfgTableController.class, "add");
-		put("ComTabledata_put", CfgTableController.class, "update");
-		put("ComTabledata_delete", CfgTableController.class, "delete");
+		put("/CfgTable_post", CfgTableController.class, "add");
+		put("/CfgTable_put", CfgTableController.class, "update");
+		put("/CfgTable_delete", CfgTableController.class, "delete");
 		put("/table/add/post", CfgTableController.class, "add");
 		put("/table/update/put", CfgTableController.class, "update");
 		put("/table/delete/delete", CfgTableController.class, "delete");
 		
 		// 列操作
-		put("ComColumndata_post", CfgColumnController.class, "add");
-		put("ComColumndata_put", CfgColumnController.class, "update");
-		put("ComColumndata_delete", CfgColumnController.class, "delete");
+		put("/CfgColumn_post", CfgColumnController.class, "add");
+		put("/CfgColumn_put", CfgColumnController.class, "update");
+		put("/CfgColumn_delete", CfgColumnController.class, "delete");
 		put("/column/add/post", CfgColumnController.class, "add");
 		put("/column/update/put", CfgColumnController.class, "update");
 		put("/column/delete/delete", CfgColumnController.class, "delete");
 		
 		// sql脚本操作
-		put("ComSqlScript_post", CfgSqlController.class, "add");
-		put("ComSqlScript_put", CfgSqlController.class, "update");
-		put("ComSqlScript_delete", CfgSqlController.class, "delete");
+		put("/ComSqlScript_post", CfgSqlController.class, "add");
+		put("/ComSqlScript_put", CfgSqlController.class, "update");
+		put("/ComSqlScript_delete", CfgSqlController.class, "delete");
 		put("/sql/add/post", CfgSqlController.class, "add");
 		put("/sql/update/put", CfgSqlController.class, "update");
 		put("/sql/delete/delete", CfgSqlController.class, "delete");
 		
 		// sql脚本参数操作
-		put("ComSqlScriptParameter_post", CfgSqlParameterController.class, "add");
-		put("ComSqlScriptParameter_put", CfgSqlParameterController.class, "update");
-		put("ComSqlScriptParameter_delete", CfgSqlParameterController.class, "delete");
+		put("/ComSqlScriptParameter_post", CfgSqlParameterController.class, "add");
+		put("/ComSqlScriptParameter_put", CfgSqlParameterController.class, "update");
+		put("/ComSqlScriptParameter_delete", CfgSqlParameterController.class, "delete");
 		put("/sql_parameter/add/post", CfgSqlParameterController.class, "add");
 		put("/sql_parameter/update/put", CfgSqlParameterController.class, "update");
 		put("/sql_parameter/delete/delete", CfgSqlParameterController.class, "delete");
 		
 		// 用户操作
-		put("SysUser_post", SysUserController.class, "add");
-		put("SysUser_put", SysUserController.class, "update");
-		put("SysUser_delete", SysUserController.class, "delete");
+		put("/SysUser_post", SysUserController.class, "add");
+		put("/SysUser_put", SysUserController.class, "update");
+		put("/SysUser_delete", SysUserController.class, "delete");
 		put("/user/add/post", SysUserController.class, "add");
 		put("/user/update/put", SysUserController.class, "update");
 		put("/user/delete/delete", SysUserController.class, "delete");
 		
 		// 账户操作
-		put("SysAccount_post", SysAccountController.class, "add");
-		put("SysAccount_put", SysAccountController.class, "update");
-		put("SysAccount_delete", SysAccountController.class, "delete");
+		put("/SysAccount_post", SysAccountController.class, "add");
+		put("/SysAccount_put", SysAccountController.class, "update");
+		put("/SysAccount_delete", SysAccountController.class, "delete");
 		put("/account/add/post", SysAccountController.class, "add");
 		put("/account/update/put", SysAccountController.class, "update");
 		put("/account/delete/delete", SysAccountController.class, "delete");
@@ -177,15 +177,15 @@ public class CodeResourceMapping {
 	 * <p>即资源的保存的代码方法</p>
 	 */
 	private static void initImportDataCodeResource() {
-		put("CfgDatabase"+IMPORT_DATA_KEY_SUFFIX, CfgDatabaseController.class, "add");// 数据库信息导入操作
-		put("ComProject"+IMPORT_DATA_KEY_SUFFIX, CfgProjectController.class, "add");// 项目信息导入操作
-		put("ComProjectModule"+IMPORT_DATA_KEY_SUFFIX, CfgProjectModuleController.class, "add");// 项目模块信息导入操作
-		put("ComTabledata"+IMPORT_DATA_KEY_SUFFIX, CfgTableController.class, "add");// 表信息导入操作
-		put("ComColumndata"+IMPORT_DATA_KEY_SUFFIX, CfgColumnController.class, "add");// 列信息导入操作
-		put("ComSqlScript"+IMPORT_DATA_KEY_SUFFIX, CfgSqlController.class, "add");// sql脚本信息导入操作
-		put("ComSqlScriptParameter"+IMPORT_DATA_KEY_SUFFIX, CfgSqlParameterController.class, "add");// sql脚本参数信息导入操作
-		put("SysUser"+IMPORT_DATA_KEY_SUFFIX, SysUserController.class, "add");// 用户信息导入操作
-		put("SysAccount"+IMPORT_DATA_KEY_SUFFIX, SysAccountController.class, "add");// 账户信息导入操作
+		put("/CfgDatabase"+IMPORT_DATA_KEY_SUFFIX, CfgDatabaseController.class, "add");// 数据库信息导入操作
+		put("/ComProject"+IMPORT_DATA_KEY_SUFFIX, CfgProjectController.class, "add");// 项目信息导入操作
+		put("/ComProjectModule"+IMPORT_DATA_KEY_SUFFIX, CfgProjectModuleController.class, "add");// 项目模块信息导入操作
+		put("/ComTabledata"+IMPORT_DATA_KEY_SUFFIX, CfgTableController.class, "add");// 表信息导入操作
+		put("/ComColumndata"+IMPORT_DATA_KEY_SUFFIX, CfgColumnController.class, "add");// 列信息导入操作
+		put("/ComSqlScript"+IMPORT_DATA_KEY_SUFFIX, CfgSqlController.class, "add");// sql脚本信息导入操作
+		put("/ComSqlScriptParameter"+IMPORT_DATA_KEY_SUFFIX, CfgSqlParameterController.class, "add");// sql脚本参数信息导入操作
+		put("/SysUser"+IMPORT_DATA_KEY_SUFFIX, SysUserController.class, "add");// 用户信息导入操作
+		put("/SysAccount"+IMPORT_DATA_KEY_SUFFIX, SysAccountController.class, "add");// 账户信息导入操作
 	}
 	/** 保存导入数据的代码，映射的key值后缀 */
 	static final String IMPORT_DATA_KEY_SUFFIX = "/data/import";

@@ -100,11 +100,13 @@ public class RequestBody implements Serializable{
 		String requestUri = request.getRequestURI().replace(
 				request.getContextPath() + request.getServletPath() + "/", "");
 		
-		String codeUri = "/" + requestUri + "/" + request.getMethod().toLowerCase();
-		if(CodeResourceProcesser.isCodeResource(codeUri)){
+		String requestMethod = request.getMethod().toLowerCase();
+		String codeUri = null;
+		if(CodeResourceProcesser.isCodeResource(codeUri = ("/" + requestUri + "/" + requestMethod).toLowerCase()) 
+				|| CodeResourceProcesser.isCodeResource(codeUri = ("/" + requestUri + "_" + requestMethod).toLowerCase())){
 			this.routeBody = new RouteBody();
-			routeBody.setResourceName(codeUri);
-			routeBody.setIsAction(true);
+			routeBody.setCodeUri(codeUri);
+			routeBody.setIsCode(true);
 		}else{
 			this.routeBody = new RouteBody(requestUri);
 		}

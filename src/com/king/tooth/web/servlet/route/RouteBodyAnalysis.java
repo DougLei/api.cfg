@@ -19,7 +19,7 @@ public class RouteBodyAnalysis implements Serializable{
 	/**
 	 * 特殊标示符
 	 */
-	private transient static final String[] specialWords = {"counter", "values", "action"};
+	private transient static final String[] specialWords = {"counter"};
 	
 	/**
 	 * 路由解析规则map集合
@@ -70,7 +70,6 @@ public class RouteBodyAnalysis implements Serializable{
 				ReflectUtil.invokeMethod(routeBody, setMethod, new Class[]{String.class}, new Object[]{routeArr[index++]});
 			}
 		}
-		routeBody.setIsAction(rule.getIsAction());
 		routeBody.setRouteRuleIdentity(rule.getRouteRuleIdentity());
 	}
 	

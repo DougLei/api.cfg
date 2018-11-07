@@ -17,24 +17,10 @@ public class CodeResourceProcesser {
 	 * @return
 	 */
 	public static String getImportDataCodeResourceKey(String resourceName){
-		return resourceName + CodeResourceMapping.IMPORT_DATA_KEY_SUFFIX;
+		return "/" + resourceName + CodeResourceMapping.IMPORT_DATA_KEY_SUFFIX;
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------
-	/**
-	 * 获取代码资源的key值
-	 * @param resourceName
-	 * @param reqMethod
-	 * @param actionName
-	 * @return
-	 */
-	public static String getCodeResourceKey(String resourceName, String reqMethod, String actionName){
-		if(resourceName.indexOf("/") != -1){
-			return resourceName;
-		}
-		return resourceName.toLowerCase() + "_" + reqMethod + (actionName == null?"":"_"+actionName.toLowerCase());
-	}
-	
 	/**
 	 * 判断是否是代码资源类型
 	 * @param codeResourceKey

@@ -188,12 +188,14 @@ public class CurrentThreadContext {
 	 */
 	public static void updateDatas(boolean isClearCurrentThreadData) {
 		// 修改账户在线状态信息
-		ThreadPool.execute(new UpdateAccountOnlineStatusThread(HibernateUtil.openNewSession(),
-				getCurrentAccountOnlineStatus(),
-				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
-				CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
-				CurrentThreadContext.getProjectId(),
-				CurrentThreadContext.getCustomerId()));
+		if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
+			ThreadPool.execute(new UpdateAccountOnlineStatusThread(HibernateUtil.openNewSession(),
+					getCurrentAccountOnlineStatus(),
+					CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
+					CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
+					CurrentThreadContext.getProjectId(),
+					CurrentThreadContext.getCustomerId()));
+		}
 		
 		// 记录日志
 		getReqLogData().recordLogs();

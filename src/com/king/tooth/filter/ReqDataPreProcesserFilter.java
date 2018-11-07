@@ -100,6 +100,7 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 				if(key.equals("_")){
 					continue;
 				}
+				System.out.println(request.getParameter(key).trim());
 				urlParams.put(key, StrUtils.turnStrEncoding(request.getParameter(key).trim(), EncodingConstants.ISO8859_1, EncodingConstants.UTF_8));
 			}
 		}

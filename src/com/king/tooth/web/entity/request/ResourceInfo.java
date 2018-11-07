@@ -3,7 +3,6 @@ package com.king.tooth.web.entity.request;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
@@ -17,11 +16,6 @@ import com.king.tooth.web.servlet.route.RouteBody;
  * @author DougLei
  */
 public class ResourceInfo {
-	/**
-	 * 请求的代码资源key
-	 */
-	private String codeResourceKey;
-	
 	/**
 	 * 请求的资源类型
 	 */
@@ -58,11 +52,7 @@ public class ResourceInfo {
 		RouteBody routeBody = requestBody.getRouteBody();
 		String requestMethod = requestBody.getRequestMethod();
 		
-		codeResourceKey = CodeResourceProcesser.getCodeResourceKey(routeBody.getResourceName(), requestMethod, routeBody.getActionName());
-		if(routeBody.isAction() || CodeResourceProcesser.isCodeResource(codeResourceKey)){
-			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				throw new IllegalArgumentException("系统目前不支持处理[主子/递归]方式调用code资源");
-			}
+		if(routeBody.getIsCode()){
 			resourceType = ResourceInfoConstants.CODE;
 		}else{
 			reqResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getResourceName());
@@ -148,9 +138,6 @@ public class ResourceInfo {
 	//------------------------------------------------------------------
 	public int getResourceType() {
 		return resourceType;
-	}
-	public String getCodeResourceKey() {
-		return codeResourceKey;
 	}
 	public ComSqlScript getSqlScriptResource() {
 		return sqlScriptResource;
