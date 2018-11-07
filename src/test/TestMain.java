@@ -1,10 +1,14 @@
 package test;
 
+import com.king.tooth.util.JsonUtil;
+
 public class TestMain {
 	public static void main(String[] args) {
-		Object a = null;
-		String b = (String)a;
-		System.out.println(b);
-		System.out.println(0%2);
+		
+		
+		System.out.println(JsonUtil.toJsonString(System.getProperties(),true));
+		
+		
+		
 	}
 }

@@ -13,7 +13,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
@@ -100,8 +99,7 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 				if(key.equals("_")){
 					continue;
 				}
-				System.out.println(request.getParameter(key).trim());
-				urlParams.put(key, StrUtils.turnStrEncoding(request.getParameter(key).trim(), EncodingConstants.ISO8859_1, EncodingConstants.UTF_8));
+				urlParams.put(key, request.getParameter(key).trim());
 			}
 		}
 		
