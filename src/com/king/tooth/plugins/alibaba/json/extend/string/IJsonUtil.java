@@ -35,12 +35,12 @@ public class IJsonUtil implements Serializable{
 		Log4jUtil.debug("调用Json.getIJson()方法时，传入的json格式字符串为：{}", jsonStr);
 		
 		jsonStr = processSepcialWord(jsonStr);
-		if(jsonStr.startsWith("{")){
+		if(jsonStr.startsWith("{") && jsonStr.endsWith("}")){
 			ijson = new JSONObjectExtend(jsonStr);
-		}else if(jsonStr.startsWith("[")){
+		}else if(jsonStr.startsWith("[") && jsonStr.endsWith("]")){
 			ijson = new JSONArrayExtend(jsonStr);
 		}else{
-			Log4jUtil.debug("调用Json.getIJson()方法时，传入的json格式字符串异常，请检查：{}", jsonStr);
+			throw new IllegalArgumentException("传入的json格式错误，请检查："+ jsonStr);
 		}
 		return ijson;
 	}
