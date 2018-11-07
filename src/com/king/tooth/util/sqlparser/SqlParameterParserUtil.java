@@ -51,12 +51,15 @@ public class SqlParameterParserUtil {
 
 	/**
 	 * 读取多条sql语句，解析出里面的参数
+	 * <p>同时还有一个功能：验证存储过程中是否有$xxx$的变量，如果存在则返回解析出来的第一个变量，并提示存储过程中不能出现这种方式的变量声明</p>
 	 * @param sqlArr
 	 * @param sqlScript
+	 * @param isProcedure 是否是存储过程，如果是存储过程，则要去看，存储过程中是否出现$param$的变量，如果出现了这种变量，是会出现异常的
+	 * @return 解析出来的第一个参数名，目前主要是针对存储过程中不能有$param$变量处理的。返回null表示一切正常
 	 */
-	public static void analysisMultiSqlScriptParam(String[] sqlScriptArr, ComSqlScript sqlScript){
+	public static String analysisMultiSqlScriptParam(String[] sqlScriptArr, ComSqlScript sqlScript, boolean isProcedure){
 		if(sqlScriptArr == null || sqlScriptArr.length == 0){
-			return;
+			return null;
 		}
 		List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>();
 		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>();
@@ -91,40 +94,50 @@ public class SqlParameterParserUtil {
 					parameterPlaceholderIndex.add(j);
 				}
 			}
-			if(parameterPlaceholderIndex.size()%2!=0){
+			
+			len = parameterPlaceholderIndex.size();
+			if(len%2!=0){
 				throw new IllegalArgumentException("sql语句["+sqlScriptArr[i]+"]可能存在[$]符号，和系统内置的参数命名方式冲突，请检查修改，或联系管理员");
 			}
 			
 			sql = sb.toString();
 			sb.setLength(0);
 			
-			len = parameterPlaceholderIndex.size();
-			for (int j = 0; j < len; j++) {
-				parameterName = sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j));
-				parameterNameRecord.addParameterName(parameterName);
-				if(parameterNames.contains(parameterName)){
-					continue;
+			
+			if(len > 0){
+				if(isProcedure){
+					return sql.substring(parameterPlaceholderIndex.get(0),parameterPlaceholderIndex.get(1)+1);
 				}
-				parameterNames.add(parameterName);
-				
-				sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, orderCode++, true, true);
-				sqlScriptParameterList.add(sqlScriptParameter);
+				for (int j = 0; j < len; j++) {
+					parameterName = sql.substring(parameterPlaceholderIndex.get(j)+1,parameterPlaceholderIndex.get(++j));
+					parameterNameRecord.addParameterName(parameterName);
+					if(parameterNames.contains(parameterName)){
+						continue;
+					}
+					parameterNames.add(parameterName);
+					
+					sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, orderCode++, true, true);
+					sqlScriptParameterList.add(sqlScriptParameter);
+				}
 			}
 			parameterPlaceholderIndex.clear();
 		}
 		parameterNames.clear();
 		
-		sqlScript.doSetParameterRecordList(parameterNameRecordList);
-		
-		// 保存参数
-		if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-			String sqlScriptId = sqlScript.getId();
-			for (ComSqlScriptParameter sqlParam : sqlScriptParameterList) {
-				sqlParam.setSqlScriptId(sqlScriptId);
-				HibernateUtil.saveObject(sqlParam, null);
+		if(!isProcedure){
+			sqlScript.doSetParameterRecordList(parameterNameRecordList);
+			
+			// 保存参数
+			if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
+				String sqlScriptId = sqlScript.getId();
+				for (ComSqlScriptParameter sqlParam : sqlScriptParameterList) {
+					sqlParam.setSqlScriptId(sqlScriptId);
+					HibernateUtil.saveObject(sqlParam, null);
+				}
+				sqlScriptParameterList.clear();
 			}
-			sqlScriptParameterList.clear();
 		}
+		return null;
 	}
 	
 	/**

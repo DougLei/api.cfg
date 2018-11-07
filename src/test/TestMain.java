@@ -5,6 +5,6 @@ public class TestMain {
 		Object a = null;
 		String b = (String)a;
 		System.out.println(b);
-		
+		System.out.println(0%2);
 	}
 }
