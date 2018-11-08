@@ -23,8 +23,8 @@ import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
-import com.king.tooth.sys.entity.cfg.CfgResourceModel;
-import com.king.tooth.sys.entity.cfg.CfgResourceModelRelations;
+import com.king.tooth.sys.entity.cfg.CfgBusiResModel;
+import com.king.tooth.sys.entity.cfg.CfgBusiResModelRelations;
 import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
@@ -156,8 +156,8 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
 		instanceCache.put("SysFileIELog", new SysFileIELog());
 		instanceCache.put("CfgPropExtendConf", new CfgPropExtendConf());
-		instanceCache.put("CfgResourceModel", new CfgResourceModel());
-		instanceCache.put("CfgResourceModelRelations", new CfgResourceModelRelations());
+		instanceCache.put("CfgBusiResModel", new CfgBusiResModel());
+		instanceCache.put("CfgBusiResModelRelations", new CfgBusiResModelRelations());
 		
 		
 		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉

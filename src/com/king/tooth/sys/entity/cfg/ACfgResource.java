@@ -15,7 +15,7 @@ public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 	/**
 	 * 是否被创建
 	 * <p>默认值为0</p>
-	 * <p>该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0</p>
+	 * <p>[针对CfgTable资源描述]该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0</p>
 	 */
 	protected Integer isCreated;
 	/**

@@ -7,6 +7,7 @@ import java.util.List;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.PermissionConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
@@ -134,7 +135,7 @@ public class BuiltinObjectInstance {
 		resourceNameColumn.setComments("资源名");
 		
 		isCreatedColumn.setName("是否被创建");
-		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
+		isCreatedColumn.setComments("默认值为0，[针对CfgTable资源描述]该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
 		isCreatedColumn.setDefaultValue("0");
 		
 		isEnabledColumn.setName("是否有效");
@@ -142,7 +143,7 @@ public class BuiltinObjectInstance {
 		isEnabledColumn.setDefaultValue("1");
 		
 		requestMethodColumn.setName("请求资源的方法");
-		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
-		requestMethodColumn.setDefaultValue("all");
+		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，表示都不支持");
+		requestMethodColumn.setDefaultValue(ResourceInfoConstants.ALL);
 	}
 }

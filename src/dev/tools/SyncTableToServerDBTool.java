@@ -11,8 +11,8 @@ import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.CfgResourceModel;
-import com.king.tooth.sys.entity.cfg.CfgResourceModelRelations;
+import com.king.tooth.sys.entity.cfg.CfgBusiResModel;
+import com.king.tooth.sys.entity.cfg.CfgBusiResModelRelations;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.service.AService;
@@ -29,8 +29,8 @@ public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new CfgResourceModel().toCreateTable(),
-				new CfgResourceModelRelations().toCreateTable()
+				new CfgBusiResModel().toCreateTable(),
+				new CfgBusiResModelRelations().toCreateTable()
 				);
 	}
 	

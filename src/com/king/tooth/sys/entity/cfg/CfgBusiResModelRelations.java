@@ -9,19 +9,20 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.util.StrUtils;
 
 /**
- * 资源模型表
+ * 业务资源模型关系表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgResourceModelRelations extends BasicEntity implements IEntityPropAnalysis, IEntity{
+public class CfgBusiResModelRelations extends BasicEntity implements IEntityPropAnalysis, IEntity{
 	
 	/**
-	 * 关联的资源模型id
+	 * 关联的业务资源模型id
 	 */
-	private String refResourceModelId;
+	private String refBusiResModelId;
 	/**
 	 * 父id
 	 * <p>形成树表结构</p>
@@ -32,15 +33,7 @@ public class CfgResourceModelRelations extends BasicEntity implements IEntityPro
 	 * <p>CfgTable或CfgSql资源的id</p>
 	 */
 	private String refResourceId;
-	/**
-	 * 排序值
-	 */
-	private Integer orderCode;
-	/**
-	 * 是否有效
-	 * <p>默认值为1</p>
-	 */
-	private Integer isEnabled;
+	
 	/**
 	 * 关联父资源的方式
 	 * <p>默认值为1，1:子资源中有属性关联存储父资源的id、2:通过关系表，关联主子资源的数据</p>
@@ -53,19 +46,29 @@ public class CfgResourceModelRelations extends BasicEntity implements IEntityPro
 	private String pRefSubResourceKeyName;
 	/**
 	 * 关联父资源的属性id
-	 * <p>默认值为parentId，当ref_parent_resource_method=1时，需要指定子资源的哪个属性，存储父资源的id值</p>
+	 * <p>当ref_parent_resource_method=1时，需要指定子资源的哪个属性，存储父资源的id值</p>
 	 */
 	private String refParentResourcePropId;
 	
+	/**
+	 * 排序值
+	 */
+	private Integer orderCode;
+	/**
+	 * 是否有效
+	 * <p>默认值为1</p>
+	 */
+	private Integer isEnabled;
+	
 	//-------------------------------------------------------------------------
-	public String getRefResourceModelId() {
-		return refResourceModelId;
-	}
-	public void setRefResourceModelId(String refResourceModelId) {
-		this.refResourceModelId = refResourceModelId;
-	}
 	public String getParentId() {
 		return parentId;
+	}
+	public String getRefBusiResModelId() {
+		return refBusiResModelId;
+	}
+	public void setRefBusiResModelId(String refBusiResModelId) {
+		this.refBusiResModelId = refBusiResModelId;
 	}
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
@@ -111,9 +114,9 @@ public class CfgResourceModelRelations extends BasicEntity implements IEntityPro
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(8+7);
 		
-		CfgColumn refResourceModelIdColumn = new CfgColumn("ref_resource_model_id", DataTypeConstants.STRING, 32);
-		refResourceModelIdColumn.setName("关联的资源模型id");
-		refResourceModelIdColumn.setComments("关联的资源模型id");
+		CfgColumn refResourceModelIdColumn = new CfgColumn("ref_busi_res_model_id", DataTypeConstants.STRING, 32);
+		refResourceModelIdColumn.setName("关联的业务资源模型id");
+		refResourceModelIdColumn.setComments("关联的业务资源模型id");
 		columns.add(refResourceModelIdColumn);
 		
 		CfgColumn parentIdColumn = new CfgColumn("parent_id", DataTypeConstants.STRING, 32);
@@ -125,17 +128,6 @@ public class CfgResourceModelRelations extends BasicEntity implements IEntityPro
 		refResourceIdColumn.setName("关联的资源id");
 		refResourceIdColumn.setComments("CfgTable或CfgSql资源的id");
 		columns.add(refResourceIdColumn);
-		
-		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
-		orderCodeColumn.setName("排序值");
-		orderCodeColumn.setComments("排序值");
-		columns.add(orderCodeColumn);
-		
-		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
-		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("默认值为1");
-		isEnabledColumn.setDefaultValue("1");
-		columns.add(isEnabledColumn);
 		
 		CfgColumn refParentResourceMethodColumn = new CfgColumn("ref_parent_resource_method", DataTypeConstants.INTEGER, 1);
 		refParentResourceMethodColumn.setName("关联父资源的方式");
@@ -151,32 +143,60 @@ public class CfgResourceModelRelations extends BasicEntity implements IEntityPro
 		
 		CfgColumn refParentResourcePropIdColumn = new CfgColumn("ref_parent_resource_prop_id", DataTypeConstants.STRING, 32);
 		refParentResourcePropIdColumn.setName("关联父资源的属性id");
-		refParentResourcePropIdColumn.setComments("默认值为parentId，当ref_parent_resource_method=1时，需要指定子资源的哪个属性，存储父资源的id值");
-		refParentResourcePropIdColumn.setDefaultValue("parentId");
+		refParentResourcePropIdColumn.setComments("当ref_parent_resource_method=1时，需要指定子资源的哪个属性，存储父资源的id值");
 		columns.add(refParentResourcePropIdColumn);
+		
+		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
+		orderCodeColumn.setName("排序值");
+		orderCodeColumn.setComments("排序值");
+		columns.add(orderCodeColumn);
+		
+		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		columns.add(isEnabledColumn);
 		
 		return columns;
 	}
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("资源模型关系表");
-		table.setComments("资源模型关系表");
+		table.setName("业务资源模型关系表");
+		table.setComments("业务资源模型关系表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "CFG_RESOURCE_MODEL_RELATIONS";
+		return "CFG_BUSI_RES_MODEL_RELATIONS";
 	}
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "CfgResourceModelRelations";
+		return "CfgBusiResModelRelations";
 	}
 	
 	public String validNotNullProps() {
+		if(StrUtils.isEmpty(refBusiResModelId)){
+			return "关联的业务资源模型id值不能为空";
+		}
+		if(StrUtils.isEmpty(refResourceId)){
+			return "关联的资源id值不能为空";
+		}
+		if(refParentResourceMethod == null){
+			return "关联父资源的方式值不能为空";
+		}
+		if(refParentResourceMethod != 1 && refParentResourceMethod != 2){
+			return "关联父资源的方式值只能为1或2 [1:子资源中有属性关联存储父资源的id、2:通过关系表，关联主子资源的数据]";
+		}
+		if(refParentResourceMethod == 1 && StrUtils.isEmpty(refParentResourcePropId)){
+			return "关联父资源的属性id值不能为空";
+		}
+		if(orderCode == null || orderCode < 1){
+			return "排序值不能为空，且必须大于0！";
+		}
 		return null;
 	}
 	

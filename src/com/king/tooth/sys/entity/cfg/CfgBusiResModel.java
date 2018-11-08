@@ -13,12 +13,12 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 资源模型表
+ * 业务资源模型表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgResourceModel extends ACfgResource implements IEntityPropAnalysis, IEntity{
+public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 资源模型的描述
@@ -41,8 +41,8 @@ public class CfgResourceModel extends ACfgResource implements IEntityPropAnalysi
 		columns.add(BuiltinObjectInstance.resourceNameColumn);
 		
 		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 200);
-		commentsColumn.setName("资源模型的描述");
-		commentsColumn.setComments("资源模型的描述");
+		commentsColumn.setName("业务资源模型的描述");
+		commentsColumn.setComments("业务资源模型的描述");
 		columns.add(commentsColumn);
 		
 		columns.add(BuiltinObjectInstance.isCreatedColumn);
@@ -54,25 +54,25 @@ public class CfgResourceModel extends ACfgResource implements IEntityPropAnalysi
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("资源模型表");
-		table.setComments("资源模型表");
+		table.setName("业务资源模型表");
+		table.setComments("业务资源模型表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "CFG_RESOURCE_MODEL";
+		return "CFG_BUSI_RES_MODEL";
 	}
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "CfgResourceModel";
+		return "CfgBusiResModel";
 	}
 	
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(resourceName)){
-			return "模型的资源名不能为空！";
+			return "业务资源模型的资源名不能为空！";
 		}
 		return null;
 	}
