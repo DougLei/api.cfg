@@ -33,13 +33,13 @@ public class ResourcePropCodeRule {
 	 * @param requestBody
 	 */
 	private void analysisResourcePropCodeRule(RequestBody requestBody) {
-		if(requestBody.getRouteBody().getParentResourceName() == null && requestBody.isPostRequest() && !requestBody.getResourceInfo().isCodeResource()){
+		if(requestBody.getRouteBody().getParentResourceName() == null && requestBody.isPostRequest() && !requestBody.getResourceInfo().getReqResource().isCodeResource()){
 			// 内置的资源，不需要处理
 			if(ResourceInfoConstants.BUILTIN_RESOURCE.equals(requestBody.getResourceInfo().getReqResource().getRefResourceId())){
 				return;
 			}
 			// sql资源，如果不是insert语句，则不需要处理
-			if(requestBody.getResourceInfo().isSqlResource() && !SqlStatementTypeConstants.INSERT.equals(requestBody.getResourceInfo().getSqlScriptResource().getConfType())){
+			if(requestBody.getResourceInfo().getReqResource().isSqlResource() && !SqlStatementTypeConstants.INSERT.equals(requestBody.getResourceInfo().getSqlScriptResource().getConfType())){
 				return;
 			}
 			

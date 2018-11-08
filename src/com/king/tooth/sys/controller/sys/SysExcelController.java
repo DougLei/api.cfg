@@ -14,8 +14,8 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.sys.SysFileIELog;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.file.ie.ExportFile;
 import com.king.tooth.sys.entity.sys.file.ie.ImportFile;
 import com.king.tooth.sys.entity.sys.file.ie.ImportFileTemplate;
@@ -111,7 +111,7 @@ public class SysExcelController extends AController{
 	 * @param requestUrlParams
 	 * @return
 	 */
-	public Object createExportExcelFile(SysResource resource, String exportExcelFileSuffix, String exportTitle, String exportBasicPropNames, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
+	public Object createExportExcelFile(CfgResource resource, String exportExcelFileSuffix, String exportTitle, String exportBasicPropNames, PageResultEntity pageResultEntity, Query query, Map<String, String> requestUrlParams){
 		ExportFile exportFile = new ExportFile(ResourceHandlerUtil.getIdentity(), resource, exportExcelFileSuffix, exportTitle, exportBasicPropNames, pageResultEntity, query);
 		analysisResult = exportFile.analysisResourceProp();
 		List<SysFileIELog> excelIELogs = null;

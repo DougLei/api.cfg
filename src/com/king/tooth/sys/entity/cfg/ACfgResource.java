@@ -1,14 +1,13 @@
 package com.king.tooth.sys.entity.cfg;
 
 import com.king.tooth.sys.entity.BasicEntity;
-import com.king.tooth.sys.entity.sys.SysResource;
 
 /**
  * 资源抽象类
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public abstract class ASysResource extends BasicEntity implements ISysResource{
+public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 	/**
 	 * 资源模型的资源名称
 	 */
@@ -56,8 +55,8 @@ public abstract class ASysResource extends BasicEntity implements ISysResource{
 		this.requestMethod = requestMethod;
 	}
 	
-	public SysResource turnToResource() {
-		SysResource resource = new SysResource();
+	public CfgResource turnToResource() {
+		CfgResource resource = new CfgResource();
 		resource.setRefResourceId(id);
 		resource.setResourceName(resourceName);
 		resource.setIsEnabled(isEnabled);
@@ -65,9 +64,9 @@ public abstract class ASysResource extends BasicEntity implements ISysResource{
 		return resource;
 	}
 	
-	public boolean isUpdateResourceInfo(ISysResource oldResource) {
-		ASysResource oldASysResource = (ASysResource) oldResource;
-		if(!oldASysResource.getResourceName().equals(this.getResourceName()) || !oldASysResource.getRequestMethod().equals(this.getRequestMethod()) || oldASysResource.getIsEnabled() != this.getIsEnabled()){
+	public boolean isUpdateResourceInfo(ICfgResource oldResource) {
+		ACfgResource oldAResource = (ACfgResource) oldResource;
+		if(!oldAResource.getResourceName().equals(this.getResourceName()) || !oldAResource.getRequestMethod().equals(this.getRequestMethod()) || oldAResource.getIsEnabled() != this.getIsEnabled()){
 			return true;
 		}
 		return false;

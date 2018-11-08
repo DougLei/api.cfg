@@ -14,7 +14,7 @@ import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgResourceModel;
 import com.king.tooth.sys.entity.cfg.CfgResourceModelRelations;
 import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -65,7 +65,7 @@ public final class SyncTableToServerDBTool extends AService{
 			
 			String hbmId;
 			CfgHibernateHbm hbm;
-			SysResource resource;
+			CfgResource resource;
 			for (CfgTable table : tables) {
 				if(dbTableHandler.filterTable(true, table.getTableName()).size() == 1){
 					System.err.println("表名为["+table.getTableName()+"]的表，在服务器数据库中已经存在，不能能再进行操作");
@@ -83,7 +83,7 @@ public final class SyncTableToServerDBTool extends AService{
 				
 				// 3、获取插入资源数据的sql，并执行
 				resource = table.turnToResource();
-				executeInsertSysResourceSql(st, resource);
+				executeInsertCfgResourceSql(st, resource);
 				
 				// 5.将hbm的内容也保存到对应数据的hbmContent字段中
 				pst.setClob(1, new StringReader(hbm.getContent()));
@@ -118,13 +118,13 @@ public final class SyncTableToServerDBTool extends AService{
 	}
 	
 	/**
-	 * 获取插入SysResource表的sql语句，并执行
+	 * 获取插入CfgResource表的sql语句，并执行
 	 * @param st
 	 * @param resource
 	 * @return
 	 * @throws SQLException 
 	 */
-	private static String executeInsertSysResourceSql(Statement st, SysResource resource) throws SQLException {
+	private static String executeInsertCfgResourceSql(Statement st, CfgResource resource) throws SQLException {
 		String id = ResourceHandlerUtil.getIdentity();
 		// 先尝试删除之前的数据，再添加新的数据
 		st.executeUpdate("delete sys_resource where resource_name = '"+resource.getResourceName()+"'");

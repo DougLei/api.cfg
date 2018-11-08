@@ -11,7 +11,7 @@ import org.hibernate.Query;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
@@ -51,11 +51,11 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	/**
 	 * 要生成导出文件的资源对象
 	 */
-	private SysResource resource;
+	private CfgResource resource;
 	
 	public ExportFile() {
 	}
-	public ExportFile(String fileId, SysResource resource, String exportFileSuffix, String exportTitle, String exportBasicPropNames, PageResultEntity pageResultEntity, Query query) {
+	public ExportFile(String fileId, CfgResource resource, String exportFileSuffix, String exportTitle, String exportBasicPropNames, PageResultEntity pageResultEntity, Query query) {
 		this.fileId = fileId;
 		this.resource = resource;
 		this.exportFileSuffix = exportFileSuffix;
@@ -80,10 +80,10 @@ public class ExportFile extends AIEFile implements Serializable, IEntityPropAnal
 	public List<ResourceMetadataInfo> getExportBasicPropMetadataInfos() {
 		return exportBasicPropMetadataInfos;
 	}
-	public SysResource getResource() {
+	public CfgResource getResource() {
 		return resource;
 	}
-	public void setResource(SysResource resource) {
+	public void setResource(CfgResource resource) {
 		this.resource = resource;
 	}
 	public String getExportTitle() {

@@ -10,7 +10,6 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.StrUtils;
 
 /**
@@ -19,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgResourceModel extends ASysResource implements IEntityPropAnalysis, IEntity{
+public class CfgResourceModel extends ACfgResource implements IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 资源模型的描述
@@ -85,8 +84,8 @@ public class CfgResourceModel extends ASysResource implements IEntityPropAnalysi
 		return result;
 	}
 	
-	public SysResource turnToResource() {
-		SysResource resource = super.turnToResource();
+	public CfgResource turnToResource() {
+		CfgResource resource = super.turnToResource();
 		resource.setResourceType(ResourceInfoConstants.BUSINESS_MODEL);
 		return resource;
 	}

@@ -54,7 +54,7 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 	private Object analysisRequestBody(HttpServletRequest request) {
 		RequestBody requestBody = new RequestBody(request);
 		requestBody.setFormData(analysisFormData(request));
-		if(requestBody.getResourceInfo().isTableResource() && (requestBody.isPostRequest() || requestBody.isPutRequest()) && (requestBody.getFormData()==null || requestBody.getFormData().size()==0)){
+		if(requestBody.getResourceInfo().getReqResource().isTableResource() && (requestBody.isPostRequest() || requestBody.isPutRequest()) && (requestBody.getFormData()==null || requestBody.getFormData().size()==0)){
 			requestBody.clear();
 			return "系统要保存或修改的表资源"+requestBody.getResourceInfo().getReqResource().getResourceName()+"，表单数据不能为空";
 		}

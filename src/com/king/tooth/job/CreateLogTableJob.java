@@ -15,9 +15,9 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.sys.SysOperSqlLog;
 import com.king.tooth.sys.entity.sys.SysReqLog;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.DateUtil;
@@ -94,7 +94,7 @@ public class CreateLogTableJob implements Job, Serializable{
 		// 获取日志表的hbmContent以及CfgHibernateHbm对象
 		List<String> hbmContents = new ArrayList<String>(logTableSize);
 		CfgHibernateHbm hbm;
-		SysResource resource;
+		CfgResource resource;
 		int i = 0;
 		for (CfgTable logTable : logTables) {
 			hbmContents.add(HibernateHbmUtil.createHbmMappingContent(logTable, false));

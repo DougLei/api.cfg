@@ -4,9 +4,9 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
-import com.king.tooth.sys.service.sys.SysResourceService;
+import com.king.tooth.sys.service.cfg.CfgResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
@@ -29,11 +29,11 @@ public class ResourceInfo {
 	/**
 	 * 请求的资源对象
 	 */
-	private SysResource reqResource;
+	private CfgResource reqResource;
 	/**
 	 * 请求的父资源对象
 	 */
-	private SysResource reqParentResource;
+	private CfgResource reqParentResource;
 	
 	//------------------------------------------------------------------
 	public ResourceInfo() {
@@ -55,7 +55,7 @@ public class ResourceInfo {
 		if(routeBody.getIsCode()){
 			resourceType = ResourceInfoConstants.CODE;
 		}else{
-			reqResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getResourceName());
+			reqResource = BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).findResourceByResourceName(routeBody.getResourceName());
 			validIsSupportRequestMethod(requestMethod, reqResource.getRequestMethod(), reqResource.getResourceName(), reqResource.getResourceTypeDesc());
 			
 			resourceType = reqResource.getResourceType();
@@ -82,7 +82,7 @@ public class ResourceInfo {
 					throw new IllegalArgumentException("系统目前不支持处理[主子/递归]方式调用业务模型资源");
 				}
 				
-				reqParentResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getParentResourceName());
+				reqParentResource = BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).findResourceByResourceName(routeBody.getParentResourceName());
 				validIsSupportRequestMethod(requestMethod, reqParentResource.getRequestMethod(), reqParentResource.getResourceName(), reqParentResource.getResourceTypeDesc());
 				
 				if(reqParentResource.getResourceType() != resourceType){
@@ -122,30 +122,6 @@ public class ResourceInfo {
 		throw new IllegalArgumentException("请求的名为["+resourceName+"]的"+resourceType+"，只支持["+resourceSupportRequestMethod+"]方式的请求");
 	}
 	
-	/**
-	 * 是否是表资源
-	 * @return
-	 */
-	public boolean isTableResource(){
-		return resourceType == ResourceInfoConstants.TABLE;
-	}
-	
-	/**
-	 * 是否是sql资源
-	 * @return
-	 */
-	public boolean isSqlResource(){
-		return resourceType == ResourceInfoConstants.SQL;
-	}
-	
-	/**
-	 * 是否是code资源
-	 * @return
-	 */
-	public boolean isCodeResource(){
-		return resourceType == ResourceInfoConstants.CODE;
-	}
-	
 	//------------------------------------------------------------------
 	public int getResourceType() {
 		return resourceType;
@@ -153,10 +129,10 @@ public class ResourceInfo {
 	public ComSqlScript getSqlScriptResource() {
 		return sqlScriptResource;
 	}
-	public SysResource getReqResource() {
+	public CfgResource getReqResource() {
 		return reqResource;
 	}
-	public SysResource getReqParentResource() {
+	public CfgResource getReqParentResource() {
 		return reqParentResource;
 	}
 }

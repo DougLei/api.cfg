@@ -16,7 +16,6 @@ import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
-import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.StrUtils;
@@ -70,7 +69,7 @@ public class CfgSqlService extends AService {
 		if(count > 0){
 			return "您已经创建过相同sql脚本资源名["+sqlScript.getResourceName()+"]的数据";
 		}
-		if(BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).resourceIsExists(sqlScript.getResourceName())){
+		if(BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).resourceIsExists(sqlScript.getResourceName())){
 			return "系统中已经存在相同的资源名["+sqlScript.getResourceName()+"]的数据，请修sql脚本资源名";
 		}
 		return null;
@@ -135,7 +134,7 @@ public class CfgSqlService extends AService {
 				
 				// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
 				sqlScript.setId(sqlScriptId);
-				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(sqlScript);
+				BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).saveCfgResource(sqlScript);
 			
 				HibernateUtil.saveDataLinks("CfgProjectSqlLinks", projectId, sqlScriptId);
 				return sqlScriptJsonObject;
@@ -180,7 +179,7 @@ public class CfgSqlService extends AService {
 					sqlScript.setIsCreated(1);
 				}
 				if(sqlScript.isUpdateResourceInfo(oldSqlScript)){
-					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getResourceName(), sqlScript.getRequestMethod(), sqlScript.getIsEnabled());
+					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getResourceName(), sqlScript.getRequestMethod(), sqlScript.getIsEnabled());
 				}
 				return HibernateUtil.updateObject(sqlScript, null);
 			}
@@ -216,7 +215,7 @@ public class CfgSqlService extends AService {
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sql.getId());
 		HibernateUtil.deleteDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		
-		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(sqlScriptId);
+		BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(sqlScriptId);
 			
 		// 删除sql脚本资源时，如果是视图、存储过程等，还需要drop对应的对象【删除数据库对象】
 		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sql.getSqlScriptType())){

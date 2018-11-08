@@ -1,10 +1,10 @@
-package com.king.tooth.sys.service.sys;
+package com.king.tooth.sys.service.cfg;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.sys.entity.cfg.ISysResource;
-import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.cfg.ICfgResource;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
@@ -15,15 +15,15 @@ import com.king.tooth.util.hibernate.HibernateUtil;
  * @author DougLei
  */
 @Service
-public class SysResourceService extends AService{
+public class CfgResourceService extends AService{
 	
 	/**
 	 * 保存资源信息
 	 * <p>***保存的时候，确保传进来iresource的id有值***</p>
 	 * @param resource
 	 */
-	public void saveSysResource(ISysResource iresource){
-		SysResource resource = iresource.turnToResource();
+	public void saveCfgResource(ICfgResource iresource){
+		CfgResource resource = iresource.turnToResource();
 		HibernateUtil.saveObject(resource , null);
 	}
 
@@ -31,8 +31,8 @@ public class SysResourceService extends AService{
 	 * 删除资源信息
 	 * @param resourceId
 	 */
-	public void deleteSysResource(String resourceId){
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysResource where refResourceId = ? and projectId = ?", resourceId, CurrentThreadContext.getProjectId());
+	public void deleteCfgResource(String resourceId){
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgResource where refResourceId = ? and projectId = ?", resourceId, CurrentThreadContext.getProjectId());
 	}
 	
 	/**
@@ -40,12 +40,12 @@ public class SysResourceService extends AService{
 	 * @param resourceName
 	 * @return
 	 */
-	public SysResource findResourceByResourceName(String resourceName) {
+	public CfgResource findResourceByResourceName(String resourceName) {
 		if(StrUtils.isEmpty(resourceName)){
 			throw new NullPointerException("请求的资源名不能为空");
 		}
 		
-		SysResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysResource.class, "from SysResource where resourceName = ? and projectId = ? and customerId = ?", resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		CfgResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgResource.class, "from CfgResource where resourceName = ? and projectId = ? and customerId = ?", resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(resource == null){
 			throw new IllegalArgumentException("不存在请求的资源：" + resourceName);
 		}
@@ -64,7 +64,7 @@ public class SysResourceService extends AService{
 	 */
 	public void updateResourceInfo(String refResourceId, String resourceName, String resourceRequestMethod, Integer isEnabled) {
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, 
-				"update SysResource set resourceName=?, requestMethod=?, isEnabled=? where refResourceId=? and projectId=?", resourceName, resourceRequestMethod, isEnabled, refResourceId, CurrentThreadContext.getProjectId());
+				"update CfgResource set resourceName=?, requestMethod=?, isEnabled=? where refResourceId=? and projectId=?", resourceName, resourceRequestMethod, isEnabled, refResourceId, CurrentThreadContext.getProjectId());
 	}
 	
 	/**
@@ -76,5 +76,5 @@ public class SysResourceService extends AService{
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryResourceIsExistsHql, resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		return count > 0;
 	}
-	private static final String queryResourceIsExistsHql = "select count("+ResourcePropNameConstants.ID+") from SysResource where resourceName=? and projectId=? and customerId=?";
+	private static final String queryResourceIsExistsHql = "select count("+ResourcePropNameConstants.ID+") from CfgResource where resourceName=? and projectId=? and customerId=?";
 }

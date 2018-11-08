@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourceInfoConstants;
-import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.tools.resource.ResourceInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.NamingProcessUtil;
@@ -34,7 +34,7 @@ public class SystemToolsService {
 	 * @return
 	 */
 	public Object getResourceInfo(String name){
-		SysResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysResource.class, "from SysResource where (resourceName=? or resourceName=?) and projectId=? and customerId=?", name, NamingProcessUtil.tableNameTurnClassName(name), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		CfgResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgResource.class, "from CfgResource where (resourceName=? or resourceName=?) and projectId=? and customerId=?", name, NamingProcessUtil.tableNameTurnClassName(name), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(resource == null){
 			return "系统中没有查询到指定名称["+name+"]的资源";
 		}

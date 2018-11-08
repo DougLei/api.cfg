@@ -1,5 +1,6 @@
 package com.king.tooth.web.entity.request.valid.data;
 
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.web.entity.request.RequestBody;
 
 /**
@@ -23,11 +24,12 @@ public class ResourceDataVerifier {
 	 * @return
 	 */
 	public String doValidResourceData(RequestBody requestBody) {
-		if(requestBody.getResourceInfo().isTableResource()){
+		CfgResource resource = requestBody.getResourceInfo().getReqResource();
+		if(resource.isTableResource()){
 			resourceVerifier = new TableResourceVerifier(requestBody, requestBody.getRouteBody().getResourceName(), requestBody.getRouteBody().getParentResourceName());
-		}else if(requestBody.getResourceInfo().isSqlResource()){
+		}else if(resource.isSqlResource()){
 			resourceVerifier = new SqlResourceVerifier(requestBody, requestBody.getRouteBody().getResourceName(), requestBody.getRouteBody().getParentResourceName());
-		}else if(requestBody.getResourceInfo().isCodeResource()){
+		}else if(resource.isCodeResource()){
 			resourceVerifier = new CodeResourceVerifier(requestBody, requestBody.getRouteBody().getResourceName(), requestBody.getRouteBody().getParentResourceName());
 		}else{
 			return "系统目前只存在[表、sql脚本、代码]三种资源类型，本次请求的资源类型为["+requestBody.getResourceInfo().getResourceType()+"]，请联系后台系统开发人员";

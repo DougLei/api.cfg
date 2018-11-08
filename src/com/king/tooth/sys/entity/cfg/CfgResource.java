@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.sys;
+package com.king.tooth.sys.entity.cfg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,6 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
-import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
  * 资源信息表
@@ -19,7 +17,7 @@ import com.king.tooth.sys.entity.cfg.CfgTable;
  */
 @SuppressWarnings("serial")
 @Table
-public class SysResource extends BasicEntity implements IEntity{
+public class CfgResource extends BasicEntity implements IEntity{
 	
 	/**
 	 * 引用的资源主键
@@ -108,12 +106,12 @@ public class SysResource extends BasicEntity implements IEntity{
 	}
 
 	public String toDropTable() {
-		return "SYS_RESOURCE";
+		return "CFG_RESOURCE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysResource";
+		return "CfgResource";
 	}
 	
 	/**
@@ -145,6 +143,13 @@ public class SysResource extends BasicEntity implements IEntity{
 	public boolean isCodeResource(){
 		return resourceType == ResourceInfoConstants.CODE;
 	}
+	/**
+	 * 是否是业务模型资源
+	 * @return
+	 */
+	public boolean isBusinessModelResource(){
+		return resourceType == ResourceInfoConstants.BUSINESS_MODEL;
+	}
 	
 	/**
 	 * 获取资源描述
@@ -157,6 +162,8 @@ public class SysResource extends BasicEntity implements IEntity{
 			return "SQL资源";
 		}else if(ResourceInfoConstants.CODE == resourceType){
 			return "代码资源";
+		}else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
+			return "业务模型资源";
 		}
 		return resourceType+"资源";
 	}

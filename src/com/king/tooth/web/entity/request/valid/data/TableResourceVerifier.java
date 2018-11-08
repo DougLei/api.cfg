@@ -9,7 +9,7 @@ import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.TableResourceMetadataInfo;
 import com.king.tooth.util.StrUtils;
@@ -70,7 +70,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 * @param resource
 	 * @return
 	 */
-	private List<ResourceMetadataInfo> getTableResourceMetadataInfos(SysResource resource){
+	private List<ResourceMetadataInfo> getTableResourceMetadataInfos(CfgResource resource){
 		List<ResourceMetadataInfo> resourceMetadataInfos = null;
 		String resourceId = resource.getRefResourceId();
 		String resourceName = resource.getResourceName();

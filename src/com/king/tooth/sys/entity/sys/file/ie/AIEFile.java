@@ -11,10 +11,10 @@ import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
-import com.king.tooth.sys.entity.sys.SysResource;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IEResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
-import com.king.tooth.sys.service.sys.SysResourceService;
+import com.king.tooth.sys.service.cfg.CfgResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -88,9 +88,9 @@ public abstract class AIEFile {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected Object getIEResourceMetadataInfos(SysResource resource, String resourceName, int isImport){
+	protected Object getIEResourceMetadataInfos(CfgResource resource, String resourceName, int isImport){
 		if(resource == null){
-			resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
+			resource = BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).findResourceByResourceName(resourceName);
 		}
 		
 		Object obj = null;
@@ -123,7 +123,7 @@ public abstract class AIEFile {
 	 * @param isImport 
 	 * @return
 	 */
-	private List<IEResourceMetadataInfo> getIETableResourceMetadataInfos(SysResource resource, int isImport){
+	private List<IEResourceMetadataInfo> getIETableResourceMetadataInfos(CfgResource resource, int isImport){
 		List<IEResourceMetadataInfo> ieResourceMetadataInfos = null;
 		String resourceId = resource.getRefResourceId();
 		String resourceName = resource.getResourceName();
@@ -184,7 +184,7 @@ public abstract class AIEFile {
 	 * @param resource
 	 * @return
 	 */
-	private Object getIESqlExportMetadataInfos(SysResource resource) {
+	private Object getIESqlExportMetadataInfos(CfgResource resource) {
 		String resourceId = resource.getRefResourceId();
 		Object sqlType = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptType from ComSqlScript where "+ResourcePropNameConstants.ID+"=?", resourceId);
 		if(sqlType == null){

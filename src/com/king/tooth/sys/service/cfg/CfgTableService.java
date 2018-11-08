@@ -14,7 +14,6 @@ import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.AService;
-import com.king.tooth.sys.service.sys.SysResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.NamingProcessUtil;
@@ -40,7 +39,7 @@ public class CfgTableService extends AService {
 		if(count > 0){
 			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
-		if(BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).resourceIsExists(table.getResourceName())){
+		if(BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).resourceIsExists(table.getResourceName())){
 			return "系统中已经存在相同的资源名["+table.getResourceName()+"]的数据，请修改表名";
 		}
 		return null;
@@ -137,7 +136,7 @@ public class CfgTableService extends AService {
 			
 			if(operResult == null){
 				if(table.isUpdateResourceInfo(oldTable)){
-					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(table.getId(), table.getResourceName(), table.getRequestMethod(), table.getIsEnabled());
+					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).updateResourceInfo(table.getId(), table.getResourceName(), table.getRequestMethod(), table.getIsEnabled());
 				}
 				return HibernateUtil.updateObject(table, null);
 			}
@@ -180,7 +179,7 @@ public class CfgTableService extends AService {
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgColumn where tableId = '"+tableId+"'");
 		HibernateUtil.deleteDataLinks("CfgProjectTableLinks", null, tableId);
 		// 删除资源
-		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
+		BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(tableId);
 		return null;
 	}
 	
@@ -211,7 +210,7 @@ public class CfgTableService extends AService {
 					// 删除hbm信息
 					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgHibernateHbm where projectId='"+CurrentThreadContext.getProjectId()+"' and refTableId = '"+table.getId()+"'");
 					// 删除资源
-					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(table.getId());
+					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(table.getId());
 					
 					// 判断该表是否存在
 					List<String> tableNames = dbTableHandler.filterTable(true, table.getTableName());
@@ -250,7 +249,7 @@ public class CfgTableService extends AService {
 				HibernateUtil.saveObject(hbm, null);
 				
 				// 3、插入资源数据
-				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(table);
+				BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).saveCfgResource(table);
 				
 				// 4、将hbm配置内容，加入到sessionFactory中
 				HibernateUtil.appendNewConfig(hbm.getContent());
@@ -377,7 +376,7 @@ public class CfgTableService extends AService {
 				// 删除hbm信息
 				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgHibernateHbm where projectId=? and refTableId = ?", CurrentThreadContext.getProjectId(), tableId);
 				// 删除资源
-				BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).deleteSysResource(tableId);
+				BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(tableId);
 			}
 		}
 		return null;

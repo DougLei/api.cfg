@@ -35,6 +35,7 @@ import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -51,7 +52,6 @@ import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.SysPosition;
 import com.king.tooth.sys.entity.sys.SysPushMessageInfo;
 import com.king.tooth.sys.entity.sys.SysReqLog;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.entity.sys.SysRole;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserGroup;
@@ -62,7 +62,7 @@ import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.service.AService;
-import com.king.tooth.sys.service.sys.SysResourceService;
+import com.king.tooth.sys.service.cfg.CfgResourceService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.CryptographyUtil;
@@ -120,7 +120,7 @@ public class InitSystemService extends AService{
 		tables.add(new CfgProjectSqlLinks().toCreateTable());
 		tables.add(new SysAccount().toCreateTable());
 		tables.add(new SysDataDictionary().toCreateTable());
-		tables.add(new SysResource().toCreateTable());
+		tables.add(new CfgResource().toCreateTable());
 		tables.add(new SysDataLinks().toCreateTable());
 		tables.add(new SysReqLog().toCreateTable());
 		tables.add(new SysOperSqlLog().toCreateTable());
@@ -293,7 +293,7 @@ public class InitSystemService extends AService{
 	private void insertHbm(String adminAccountId) {
 		List<CfgTable> tables = getAllTables();
 		CfgHibernateHbm hbm;
-		SysResource resource;
+		CfgResource resource;
 		for (CfgTable table : tables) {
 			// 创建对应的hbm文件，并保存
 			hbm = new CfgHibernateHbm(table);
@@ -453,7 +453,7 @@ public class InitSystemService extends AService{
 		HibernateUtil.saveObject(hbm, null);
 		
 		// 插入资源数据
-		BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).saveSysResource(table);
+		BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).saveCfgResource(table);
 		
 		// 将hbm配置内容，加入到sessionFactory中
 		HibernateUtil.appendNewConfig(hbm.getContent());

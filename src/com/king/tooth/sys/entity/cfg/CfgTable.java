@@ -11,7 +11,6 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -21,7 +20,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgTable extends ASysResource implements IEntityPropAnalysis, IEntity{
+public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEntity{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -240,8 +239,8 @@ public class CfgTable extends ASysResource implements IEntityPropAnalysis, IEnti
 		return result;
 	}
 	
-	public SysResource turnToResource() {
-		SysResource resource = super.turnToResource();
+	public CfgResource turnToResource() {
+		CfgResource resource = super.turnToResource();
 		resource.setResourceType(ResourceInfoConstants.TABLE);
 		return resource;
 	}

@@ -20,7 +20,6 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
-import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -34,7 +33,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComSqlScript extends ASysResource implements IEntityPropAnalysis, IEntity{
+public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, IEntity{
 	/**
 	 * 数据库类型
 	 */
@@ -488,8 +487,8 @@ public class ComSqlScript extends ASysResource implements IEntityPropAnalysis, I
 		inSqlResultsets.add(sqlResultSet);
 	}
 	
-	public SysResource turnToResource() {
-		SysResource resource = super.turnToResource();
+	public CfgResource turnToResource() {
+		CfgResource resource = super.turnToResource();
 		resource.setResourceType(ResourceInfoConstants.SQL);
 		return resource;
 	}

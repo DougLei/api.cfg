@@ -6,8 +6,8 @@ import java.util.List;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.sys.SysResource;
-import com.king.tooth.sys.service.sys.SysResourceService;
+import com.king.tooth.sys.entity.cfg.CfgResource;
+import com.king.tooth.sys.service.cfg.CfgResourceService;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -49,7 +49,7 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	/**
 	 * 要生成导出文件的资源对象
 	 */
-	private SysResource resource;
+	private CfgResource resource;
 	
 	public BuiltinCreateExportFileMethodProcesser() {
 		Log4jUtil.debug("此次请求，没有使用到BuiltinCreateExportFileMethodProcesser内置方法处理器");
@@ -79,7 +79,7 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	@SuppressWarnings("unchecked")
 	public String getExportSelectPropNames() {
 		if(isUsed){
-			resource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(resourceName);
+			resource = BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).findResourceByResourceName(resourceName);
 			List<String> propNameList = null;
 			
 			if(resource.isBuiltinResource()){
@@ -144,7 +144,7 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 	public String getParentResourceName() {
 		return parentResourceName;
 	}
-	public SysResource getResource() {
+	public CfgResource getResource() {
 		return resource;
 	}
 	public String getExportTitle() {
