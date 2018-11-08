@@ -124,7 +124,7 @@ public class BuiltinCreateExportFileMethodProcesser extends AbstractBuiltinCommo
 		return null;
 	}
 	/** 查询表资源，要导出的属性名集合hql */
-	private static final String queryTableExportPropNamesHql = "select propName from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED + " and isExport=1 order by exportOrderCode asc";
+	private static final String queryTableExportPropNamesHql = "select propName from CfgColumn where tableId=? and operStatus="+CfgColumn.CREATED + " and isExport=1 order by exportOrderCode asc";
 	/** 查询sql资源，要导出的属性名集合hql */
 	private static final String querySqlExportPropNamesHql = "select propName from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
 	

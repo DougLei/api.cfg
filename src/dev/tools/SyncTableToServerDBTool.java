@@ -9,14 +9,11 @@ import java.sql.Statement;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
-import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
-import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
+import com.king.tooth.sys.entity.cfg.CfgResourceModel;
+import com.king.tooth.sys.entity.cfg.CfgResourceModelRelations;
 import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.sys.SysFileIELog;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -32,11 +29,8 @@ public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new SysFileIELog().toCreateTable(),
-				new CfgPropExtendConf().toCreateTable() ,
-				new CfgSeqInfo().toCreateTable(),
-				new CfgPropCodeRuleDetail().toCreateTable(),
-				new CfgPropCodeRule().toCreateTable()
+				new CfgResourceModel().toCreateTable(),
+				new CfgResourceModelRelations().toCreateTable()
 				);
 	}
 	

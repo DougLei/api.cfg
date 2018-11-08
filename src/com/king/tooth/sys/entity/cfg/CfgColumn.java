@@ -80,11 +80,6 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	 */
 	private Integer orderCode;
 	/**
-	 * 是否有效
-	 * <p>默认为1</p>
-	 */
-	private String isEnabled;
-	/**
 	 * 注释
 	 */
 	private String comments;
@@ -237,12 +232,6 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
-	public String getIsEnabled() {
-		return isEnabled;
-	}
-	public void setIsEnabled(String isEnabled) {
-		this.isEnabled = isEnabled;
-	}
 	public Integer getIsIgnoreValid() {
 		return isIgnoreValid;
 	}
@@ -347,7 +336,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(21+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(20+7);
 		
 		CfgColumn tableIdColumn = new CfgColumn("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -419,12 +408,6 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		orderCodeColumn.setComments("排序");
 		orderCodeColumn.setDefaultValue("0");
 		columns.add(orderCodeColumn);
-		
-		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
-		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("是否有效:默认为1");
-		isEnabledColumn.setDefaultValue("1");
-		columns.add(isEnabledColumn);
 		
 		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 650);
 		commentsColumn.setName("注释");

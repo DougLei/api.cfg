@@ -142,7 +142,7 @@ public abstract class AIEFile {
 		return ieResourceMetadataInfos;
 	}
 	/** 查询表资源元数据信息集合的hql头 */
-	private static final String queryTableMetadataInfosHqlHead = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	private static final String queryTableMetadataInfosHqlHead = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName, isIgnoreValid as isIgnoreValid) from CfgColumn where tableId=? and operStatus="+CfgColumn.CREATED;
 	/** 查询表资源配置的导入元数据信息集合的hql */
 	private static final String queryTableImportMetadataInfosHql = queryTableMetadataInfosHqlHead + " and isImport=1 order by importOrderCode asc";
 	/** 查询表资源配置的导出元数据信息集合的hql */

@@ -18,11 +18,13 @@ import com.king.tooth.sys.controller.sys.SysPushMessageInfoController;
 import com.king.tooth.sys.controller.sys.SysUserController;
 import com.king.tooth.sys.controller.tools.SystemToolsController;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
-import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
+import com.king.tooth.sys.entity.cfg.CfgResourceModel;
+import com.king.tooth.sys.entity.cfg.CfgResourceModelRelations;
 import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
@@ -154,6 +156,8 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
 		instanceCache.put("SysFileIELog", new SysFileIELog());
 		instanceCache.put("CfgPropExtendConf", new CfgPropExtendConf());
+		instanceCache.put("CfgResourceModel", new CfgResourceModel());
+		instanceCache.put("CfgResourceModelRelations", new CfgResourceModelRelations());
 		
 		
 		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉

@@ -81,9 +81,6 @@ public class CfgResourceModel extends ASysResource implements IEntityPropAnalysi
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
-			if(StrUtils.isEmpty(requestMethod)){
-				requestMethod = ResourceInfoConstants.ALL;
-			}
 		}
 		return result;
 	}

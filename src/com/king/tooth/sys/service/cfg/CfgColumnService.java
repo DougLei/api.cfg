@@ -73,7 +73,7 @@ public class CfgColumnService extends AService{
 		CfgTable table = getObjectById(column.getTableId(), CfgTable.class);
 		if(table.getIsCreated() == 1){// 表已经建模，不能修改列的类型，以及缩小列的长度
 			if(!oldColumn.getColumnType().equals(column.getColumnType())){
-				return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]";
+				return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]，此操作可能会损失已有数据";
 			}
 			if(oldColumn.getLength()> column.getLength()){
 				return "系统不允许修改["+column.getColumnName()+"]字段的数据长度[从"+oldColumn.getLength()+"降低到"+column.getLength()+"]，此操作可能会损失实际数据的精度";

@@ -198,7 +198,7 @@ public class CfgTableService extends AService {
 				return "表["+table.getTableName()+"]已经完成建模，且在无表名被修改、或任何字段信息被修改的情况下，无法重复进行建模操作";
 			}
 			boolean isNeedInitBasicColumns = false;
-			List<CfgColumn> columns = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumn.class, null, null, "from CfgColumn where isEnabled =1 and tableId =? order by orderCode asc", tableId);
+			List<CfgColumn> columns = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumn.class, null, null, "from CfgColumn where tableId =? order by orderCode asc", tableId);
 			
 			if(table.getType() == CfgTable.SINGLE_TABLE){
 				if(table.getIsCreated() == 0){

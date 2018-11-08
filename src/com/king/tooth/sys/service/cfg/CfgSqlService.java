@@ -407,7 +407,7 @@ public class CfgSqlService extends AService {
 		return sqlResultsetsList;
 	}
 	/** 查询表资源元数据信息集合的hql */
-	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and isEnabled=1 and operStatus="+CfgColumn.CREATED+" order by orderCode asc";
+	private static final String queryTableMetadataInfosHql = "select new map(columnName as columnName,propName as propName,columnType as dataType,length as length,precision as precision,isUnique as isUnique,isNullabled as isNullabled, name as descName) from CfgColumn where tableId=? and operStatus="+CfgColumn.CREATED+" order by orderCode asc";
 	
 	/**
 	 * 根据sql脚本id，查询对应的传出表类型的结果集信息集合

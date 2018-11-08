@@ -735,7 +735,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		return columnInfo;
 	}
 	/** 根据id查询column属性名的hql */
-	private static final String queryColumnInfoIdHql = "select propName,columnType from CfgColumn where " + ResourcePropNameConstants.ID + "=? and isEnabled=1 and operStatus="+CfgColumn.CREATED;
+	private static final String queryColumnInfoIdHql = "select propName,columnType from CfgColumn where " + ResourcePropNameConstants.ID + "=? and operStatus="+CfgColumn.CREATED;
 	
 	/**
 	 * 获取【5:column(其他列值)】
