@@ -54,6 +54,7 @@ public class ResourceInfo {
 		
 		if(routeBody.getIsCode()){
 			resourceType = ResourceInfoConstants.CODE;
+			reqResource = new CfgResource(resourceType);
 		}else{
 			reqResource = BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).findResourceByResourceName(routeBody.getResourceName());
 			validIsSupportRequestMethod(requestMethod, reqResource.getRequestMethod(), reqResource.getResourceName(), reqResource.getResourceTypeDesc());

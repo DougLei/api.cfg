@@ -44,6 +44,12 @@ public class CfgResource extends BasicEntity implements IEntity{
 	
 	//-------------------------------------------------------------------------
 	
+	public CfgResource() {
+	}
+	public CfgResource(Integer resourceType) {
+		this.resourceType = resourceType;
+	}
+	
 	public String getResourceName() {
 		return resourceName;
 	}
