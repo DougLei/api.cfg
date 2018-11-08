@@ -122,4 +122,27 @@ public class BuiltinObjectInstance {
 		lastUpdateUserIdColumn.setName("最后修改人主键");
 		lastUpdateUserIdColumn.setIsIgnoreValid(1);
 	}
+	
+	// -------------------------------------------------------
+	/** 资源字段对象 */
+	public static final CfgColumn resourceNameColumn = new CfgColumn("resource_name", DataTypeConstants.STRING, 60);
+	public static final CfgColumn isCreatedColumn = new CfgColumn("is_created", DataTypeConstants.INTEGER, 1);
+	public static final CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
+	public static final CfgColumn requestMethodColumn = new CfgColumn("request_method", DataTypeConstants.STRING, 30);
+	static{
+		resourceNameColumn.setName("资源名");
+		resourceNameColumn.setComments("资源名");
+		
+		isCreatedColumn.setName("是否被创建");
+		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
+		isCreatedColumn.setDefaultValue("0");
+		
+		isEnabledColumn.setName("是否有效");
+		isEnabledColumn.setComments("默认值为1");
+		isEnabledColumn.setDefaultValue("1");
+		
+		requestMethodColumn.setName("请求资源的方法");
+		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
+		requestMethodColumn.setDefaultValue("all");
+	}
 }

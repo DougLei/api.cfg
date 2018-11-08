@@ -675,7 +675,7 @@ public class SqlStatementParserUtil {
 			TSelectSqlStatement selectSqlStatement = (TSelectSqlStatement) sqlParser.sqlstatements.get(0);
 			TResultColumnList columns = analysisResultColumnList(selectSqlStatement);
 			if(columns == null || columns.size() == 0){
-				throw new NullPointerException("资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源，没有解析到任何查询结果字段，请联系后台系统开发人员");
+				throw new NullPointerException("资源名为["+sql.getResourceName()+"]的select sql资源，没有解析到任何查询结果字段，请联系后台系统开发人员");
 			}
 			
 			int columnSize = columns.size();
@@ -690,10 +690,10 @@ public class SqlStatementParserUtil {
 				columnName = column.getAliasClause() == null ? column.getColumnNameOnly() : column.getColumnAlias();
 				
 				if(StrUtils.isEmpty(columnName)){
-					throw new IllegalArgumentException("在资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源中，请给查询结果列["+column.toString()+"]指定合法的列名");
+					throw new IllegalArgumentException("在资源名为["+sql.getResourceName()+"]的select sql资源中，请给查询结果列["+column.toString()+"]指定合法的列名");
 				}
 				if("*".equals(columnName)){
-					throw new IllegalArgumentException("在资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源中，请指定具体查询的列名，禁止使用["+column.toString()+"]查询");
+					throw new IllegalArgumentException("在资源名为["+sql.getResourceName()+"]的select sql资源中，请指定具体查询的列名，禁止使用["+column.toString()+"]查询");
 				}
 				csr = new CfgSqlResultset(sql.getSqlScriptType(), columnName, (i+1), CfgSqlResultset.OUT);
 				csr.setSqlScriptId(sql.getId());
@@ -704,14 +704,14 @@ public class SqlStatementParserUtil {
 				}
 			}
 			if(!includeIdColumn){
-				throw new IllegalArgumentException("资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源，其查询结果字段，不包含id列，系统无法处理，请修改该sql脚本，增加查询id字段的语句");
+				throw new IllegalArgumentException("资源名为["+sql.getResourceName()+"]的select sql资源，其查询结果字段，不包含id列，系统无法处理，请修改该sql脚本，增加查询id字段的语句");
 			}
 			
 			for(int i=0;i<columnSize-1;i++){
 				columnName = sqlResultSets.get(i).getColumnName();
 				for(int j=i+1;j<columnSize;j++){
 					if(columnName.equals(sqlResultSets.get(j).getColumnName())){
-						throw new IllegalArgumentException("资源名为["+sql.getSqlScriptResourceName()+"]的select sql资源，其查询结果字段，出现重复列名["+columnName+"]，位置分别位于["+(i+1)+","+(j+1)+"]，请检查");
+						throw new IllegalArgumentException("资源名为["+sql.getResourceName()+"]的select sql资源，其查询结果字段，出现重复列名["+columnName+"]，位置分别位于["+(i+1)+","+(j+1)+"]，请检查");
 					}
 				}
 			}

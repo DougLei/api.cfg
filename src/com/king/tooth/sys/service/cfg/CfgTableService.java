@@ -40,8 +40,7 @@ public class CfgTableService extends AService {
 		if(count > 0){
 			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 		}
-		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysResource where resourceName = ? and projectId = ? and customerId = ?", table.getResourceName(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		if(count > 0){
+		if(BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).resourceIsExists(table.getResourceName())){
 			return "系统中已经存在相同的资源名["+table.getResourceName()+"]的数据，请修改表名";
 		}
 		return null;

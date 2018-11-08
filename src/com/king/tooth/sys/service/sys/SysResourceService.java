@@ -1,8 +1,9 @@
 package com.king.tooth.sys.service.sys;
 
 import com.king.tooth.annotation.Service;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.sys.entity.ISysResource;
+import com.king.tooth.sys.entity.cfg.ISysResource;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -65,4 +66,15 @@ public class SysResourceService extends AService{
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, 
 				"update SysResource set resourceName=?, requestMethod=?, isEnabled=? where refResourceId=? and projectId=?", resourceName, resourceRequestMethod, isEnabled, refResourceId, CurrentThreadContext.getProjectId());
 	}
+	
+	/**
+	 * 判断资源是否存在
+	 * @param resourceName
+	 * @return
+	 */
+	public boolean resourceIsExists(String resourceName){
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryResourceIsExistsHql, resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		return count > 0;
+	}
+	private static final String queryResourceIsExistsHql = "select count("+ResourcePropNameConstants.ID+") from SysResource where resourceName=? and projectId=? and customerId=?";
 }

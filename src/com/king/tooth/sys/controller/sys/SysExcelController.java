@@ -63,7 +63,7 @@ public class SysExcelController extends AController{
 			
 			SysFileIELog excelIELog = null;
 			for (ImportFile importFile : importFiles) {
-				excelIELog = new SysFileIELog(ResourceInfoConstants.IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
+				excelIELog = new SysFileIELog(ResourceInfoConstants.FILE_IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
 				excelIELogs.add(excelIELog);
 				
 				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(request, importFile);
@@ -117,7 +117,7 @@ public class SysExcelController extends AController{
 		List<SysFileIELog> excelIELogs = null;
 		if(analysisResult == null){
 			excelIELogs = new ArrayList<SysFileIELog>(1);
-			SysFileIELog excelIELog = new SysFileIELog(ResourceInfoConstants.IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
+			SysFileIELog excelIELog = new SysFileIELog(ResourceInfoConstants.FILE_IMPORT, exportFile.getFileId(), JsonUtil.toJsonString(requestUrlParams, false));
 			excelIELogs.add(excelIELog);
 			
 			resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).createExportExcelFile(exportFile);

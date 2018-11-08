@@ -68,9 +68,20 @@ public class ResourceInfo {
 					throw new IllegalArgumentException("系统目前不支持直接处理视图类型的sql资源");
 				}
 			}
+			// 如果是业务模型资源，则要去查询相关的信息
+			else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
+				// TODO .................
+				
+				
+				
+			}
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
+				if(resourceType == ResourceInfoConstants.BUSINESS_MODEL){
+					throw new IllegalArgumentException("系统目前不支持处理[主子/递归]方式调用业务模型资源");
+				}
+				
 				reqParentResource = BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).findResourceByResourceName(routeBody.getParentResourceName());
 				validIsSupportRequestMethod(requestMethod, reqParentResource.getRequestMethod(), reqParentResource.getResourceName(), reqParentResource.getResourceTypeDesc());
 				
@@ -96,11 +107,11 @@ public class ResourceInfo {
 	 * @param resourceType
 	 */
 	private void validIsSupportRequestMethod(String actualRequestMethod, String resourceSupportRequestMethod, String resourceName, String resourceType) {
-		if("all".equals(resourceSupportRequestMethod)){
-			return;
-		}
-		if("none".equals(resourceSupportRequestMethod)){
+		if(ResourceInfoConstants.NONE.equals(resourceSupportRequestMethod) || resourceSupportRequestMethod.contains(ResourceInfoConstants.NONE)){
 			throw new IllegalArgumentException("请求的名为["+resourceName+"]的"+resourceType+"，不支持任何方式的请求");
+		}
+		if(ResourceInfoConstants.ALL.equals(resourceSupportRequestMethod) || resourceSupportRequestMethod.contains(ResourceInfoConstants.ALL)){
+			return;
 		}
 		String[] supportRequestMethodArr = resourceSupportRequestMethod.split(",");
 		for (String srm : supportRequestMethodArr) {

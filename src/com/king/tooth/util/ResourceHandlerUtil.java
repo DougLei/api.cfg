@@ -305,6 +305,9 @@ public class ResourceHandlerUtil {
 				return "["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 			}
 		}else if(DataTypeConstants.STRING.equals(rmi.getDataType())){
+			if(!(dataValue instanceof String)){
+				return "["+rmi.getDescName()+"] 的值不合法，应为字符串类型";
+			}
 			if(rmi.getLength() != -1 && StrUtils.calcStrLength(dataValue.toString()) > rmi.getLength()){
 				return "["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 			}

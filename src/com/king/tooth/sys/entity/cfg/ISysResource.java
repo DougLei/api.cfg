@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity;
+package com.king.tooth.sys.entity.cfg;
 
 import com.king.tooth.sys.entity.sys.SysResource;
 
@@ -7,8 +7,10 @@ import com.king.tooth.sys.entity.sys.SysResource;
  * @author DougLei
  */
 public interface ISysResource {
+	
 	/**
 	 * 转换为资源对象
+	 * @return
 	 */
 	public SysResource turnToResource();
 	

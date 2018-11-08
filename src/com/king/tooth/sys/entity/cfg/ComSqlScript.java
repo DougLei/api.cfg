@@ -15,10 +15,9 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
-import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.sys.entity.sys.SysResource;
@@ -35,7 +34,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IEntity, ISysResource{
+public class ComSqlScript extends ASysResource implements IEntityPropAnalysis, IEntity{
 	/**
 	 * 数据库类型
 	 */
@@ -44,11 +43,6 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 	 * sql脚本的标题
 	 */
 	private String sqlScriptCaption;
-	/**
-	 * sql脚本资源名称
-	 * (调用时用到)
-	 */
-	private String sqlScriptResourceName;
 	/**
 	 * sql脚本类型
 	 * <p>如果有多个sql脚本，以第一个sql脚本的类型为准</p>
@@ -79,21 +73,6 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 	 * 备注
 	 */
 	private String comments;
-	
-	/**
-	 * 是否被创建
-	 */
-	private Integer isCreated;
-	/**
-	 * 是否有效
-	 */
-	private Integer isEnabled;
-	/**
-	 * 请求资源的方法
-	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
-	 * <p>默认值：all</p>
-	 */
-	private String requestMethod;
 	
 	//--------------------------------------------------------
 	
@@ -169,23 +148,17 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 	@JSONField(serialize = false)
 	private List<List<CfgSqlResultset>> outSqlResultsetsList;
 	
-	public void setSqlScriptResourceName(String sqlScriptResourceName) {
-		this.sqlScriptResourceName = sqlScriptResourceName;
-	}
 	public void setSqlScriptContent(String sqlScriptContent) {
 		this.sqlScriptContent = sqlScriptContent;
 	}
 	public String getSqlScriptCaption() {
 		if(StrUtils.isEmpty(sqlScriptCaption)){
-			sqlScriptCaption = sqlScriptResourceName;
+			sqlScriptCaption = resourceName;
 		}
 		return sqlScriptCaption;
 	}
 	public void setSqlScriptCaption(String sqlScriptCaption) {
 		this.sqlScriptCaption = sqlScriptCaption;
-	}
-	public String getSqlScriptResourceName() {
-		return sqlScriptResourceName;
 	}
 	public String getSqlScriptContent() {
 		return sqlScriptContent;
@@ -257,24 +230,6 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 			gsqlParser = SqlStatementParserUtil.getGsqlParser(this.sqlScriptContent.replaceAll("\n", " ").replace("\t", " ").replaceAll("\r", " "));
 		}
 	}
-	public Integer getIsCreated() {
-		return isCreated;
-	}
-	public void setIsCreated(Integer isCreated) {
-		this.isCreated = isCreated;
-	}
-	public Integer getIsEnabled() {
-		return isEnabled;
-	}
-	public void setIsEnabled(Integer isEnabled) {
-		this.isEnabled = isEnabled;
-	}
-	public String getRequestMethod() {
-		return requestMethod;
-	}
-	public void setRequestMethod(String requestMethod) {
-		this.requestMethod = requestMethod;
-	}
 	public TGSqlParser getGsqlParser() {
 		initGsqlParser();
 		return gsqlParser;
@@ -339,11 +294,7 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 		sqlScriptCaptionColumn.setComments("sql脚本的标题");
 		columns.add(sqlScriptCaptionColumn);
 		
-		CfgColumn sqlScriptResourceNameColumn = new CfgColumn("sql_script_resource_name", DataTypeConstants.STRING, 60);
-		sqlScriptResourceNameColumn.setName("sql脚本资源名称");
-		sqlScriptResourceNameColumn.setComments("sql脚本资源名称(调用时用到)");
-		sqlScriptResourceNameColumn.setIsNullabled(0);
-		columns.add(sqlScriptResourceNameColumn);
+		columns.add(BuiltinObjectInstance.resourceNameColumn);
 		
 		CfgColumn sqlScriptTypeColumn = new CfgColumn("sql_script_type", DataTypeConstants.STRING, 80);
 		sqlScriptTypeColumn.setName("sql脚本类型");
@@ -376,23 +327,9 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 		commentsColumn.setComments("备注");
 		columns.add(commentsColumn);
 		
-		CfgColumn isCreatedColumn = new CfgColumn("is_created", DataTypeConstants.INTEGER, 1);
-		isCreatedColumn.setName("是否被创建");
-		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
-		isCreatedColumn.setDefaultValue("0");
-		columns.add(isCreatedColumn);
-		
-		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
-		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("默认值为1");
-		isEnabledColumn.setDefaultValue("1");
-		columns.add(isEnabledColumn);
-		
-		CfgColumn requestMethodColumn = new CfgColumn("request_method", DataTypeConstants.STRING, 30);
-		requestMethodColumn.setName("请求资源的方法");
-		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
-		requestMethodColumn.setDefaultValue("all");
-		columns.add(requestMethodColumn);
+		columns.add(BuiltinObjectInstance.isCreatedColumn);
+		columns.add(BuiltinObjectInstance.isEnabledColumn);
+		columns.add(BuiltinObjectInstance.requestMethodColumn);
 		
 		return columns;
 	}
@@ -416,7 +353,7 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 	}
 
 	public String validNotNullProps() {
-		if(StrUtils.isEmpty(sqlScriptResourceName)){
+		if(StrUtils.isEmpty(resourceName)){
 			return "sql脚本资源名称不能为空";
 		}
 		if(StrUtils.isEmpty(sqlScriptContent)){
@@ -552,20 +489,8 @@ public class ComSqlScript extends BasicEntity implements IEntityPropAnalysis, IE
 	}
 	
 	public SysResource turnToResource() {
-		SysResource resource = new SysResource();
-		resource.setRefResourceId(id);
+		SysResource resource = super.turnToResource();
 		resource.setResourceType(ResourceInfoConstants.SQL);
-		resource.setResourceName(sqlScriptResourceName);
-		resource.setIsEnabled(isEnabled);
-		resource.setRequestMethod(requestMethod);
 		return resource;
-	}
-	
-	public boolean isUpdateResourceInfo(ISysResource oldResource) {
-		ComSqlScript oldSql = (ComSqlScript) oldResource;
-		if(!oldSql.getSqlScriptResourceName().equals(this.getSqlScriptResourceName()) || !oldSql.getRequestMethod().equals(this.getRequestMethod()) || oldSql.getIsEnabled() != this.getIsEnabled()){
-			return true;
-		}
-		return false;
 	}
 }

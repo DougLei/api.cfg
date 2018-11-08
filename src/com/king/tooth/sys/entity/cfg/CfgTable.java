@@ -8,10 +8,9 @@ import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
-import com.king.tooth.sys.entity.ISysResource;
 import com.king.tooth.sys.entity.sys.SysResource;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.StrUtils;
@@ -22,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntity, ISysResource{
+public class CfgTable extends ASysResource implements IEntityPropAnalysis, IEntity{
 	/**
 	 * 显示的汉字名称
 	 */
@@ -37,10 +36,6 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 	 */
 	private String oldTableName;
 	/**
-	 * 资源名
-	 */
-	private String resourceName;
-	/**
 	 * 表类型：1:单表、2、表类型/游标类型
 	 * <p>默认值:1</p>
 	 */
@@ -50,28 +45,11 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 	 */
 	private String comments;
 	/**
-	 * 是否被创建
-	 * <p>默认值为0</p>
-	 * <p>该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0</p>
-	 */
-	private Integer isCreated;
-	/**
 	 * 是否建模
 	 * <p>默认值为0</p>
 	 * <p>该字段在建模时，值改为1，后续修改字段信息等，该值改为0，用来标识是否建模，是否需要alter table xxx</p>
 	 */
 	private Integer isBuildModel;
-	/**
-	 * 是否有效
-	 * <p>默认值为1</p>
-	 */
-	private Integer isEnabled;
-	/**
-	 * 请求资源的方法
-	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
-	 * <p>默认值：all</p>
-	 */
-	private String requestMethod;
 	
 	//-----------------------------------------------------------------------
 	
@@ -111,18 +89,6 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 		}
 		return name;
 	}
-	public Integer getIsCreated() {
-		return isCreated;
-	}
-	public void setIsCreated(Integer isCreated) {
-		this.isCreated = isCreated;
-	}
-	public Integer getIsEnabled() {
-		return isEnabled;
-	}
-	public void setIsEnabled(Integer isEnabled) {
-		this.isEnabled = isEnabled;
-	}
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -147,9 +113,6 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 	public void setColumns(List<CfgColumn> columns) {
 		this.columns = columns;
 	}
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
 	public Integer getType() {
 		return type;
 	}
@@ -162,12 +125,6 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	public String getResourceName() {
-		if(StrUtils.isEmpty(resourceName)){
-			resourceName = NamingProcessUtil.tableNameTurnClassName(tableName);
-		}
-		return resourceName;
-	}
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
@@ -177,20 +134,13 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 	public void setIsBuildModel(Integer isBuildModel) {
 		this.isBuildModel = isBuildModel;
 	}
-	public String getRequestMethod() {
-		return requestMethod;
-	}
-	public void setRequestMethod(String requestMethod) {
-		this.requestMethod = requestMethod;
-	}
 	public int getIsBuildIn() {
 		return isBuildIn;
 	}
-	public void setIsBuildIn(int isBuildIn) {
-		this.isBuildIn = isBuildIn;
-	}
 	
-	
+	/**
+	 * 清空columns
+	 */
 	public void clear(){
 		if(columns != null && columns.size()>0){
 			columns.clear();
@@ -223,10 +173,7 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 		oldTableNameColumn.setComments("如果修改了表名，这里记录之前的表名");
 		columns.add(oldTableNameColumn);
 		
-		CfgColumn resourceNameColumn = new CfgColumn("resource_name", DataTypeConstants.STRING, 60);
-		resourceNameColumn.setName("资源名");
-		resourceNameColumn.setComments("资源名");
-		columns.add(resourceNameColumn);
+		columns.add(BuiltinObjectInstance.resourceNameColumn);
 		
 		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("表类型");
@@ -239,11 +186,7 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 		commentsColumn.setComments("注释");
 		columns.add(commentsColumn);
 		
-		CfgColumn isCreatedColumn = new CfgColumn("is_created", DataTypeConstants.INTEGER, 1);
-		isCreatedColumn.setName("是否被创建");
-		isCreatedColumn.setComments("默认值为0，该字段在建模时，值改为1，后续修改字段信息等，该值均不变，只有在取消建模时，才会改为0");
-		isCreatedColumn.setDefaultValue("0");
-		columns.add(isCreatedColumn);
+		columns.add(BuiltinObjectInstance.isCreatedColumn);
 		
 		CfgColumn isBuildModelColumn = new CfgColumn("is_build_model", DataTypeConstants.INTEGER, 1);
 		isBuildModelColumn.setName("是否建模");
@@ -251,17 +194,8 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 		isBuildModelColumn.setDefaultValue("0");
 		columns.add(isBuildModelColumn);
 		
-		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
-		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("默认值为1");
-		isEnabledColumn.setDefaultValue("1");
-		columns.add(isEnabledColumn);
-		
-		CfgColumn requestMethodColumn = new CfgColumn("request_method", DataTypeConstants.STRING, 30);
-		requestMethodColumn.setName("请求资源的方法");
-		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持");
-		requestMethodColumn.setDefaultValue("all");
-		columns.add(requestMethodColumn);
+		columns.add(BuiltinObjectInstance.isEnabledColumn);
+		columns.add(BuiltinObjectInstance.requestMethodColumn);
 		
 		return columns;
 	}
@@ -307,21 +241,9 @@ public class CfgTable extends BasicEntity implements IEntityPropAnalysis, IEntit
 	}
 	
 	public SysResource turnToResource() {
-		SysResource resource = new SysResource();
-		resource.setRefResourceId(id);
+		SysResource resource = super.turnToResource();
 		resource.setResourceType(ResourceInfoConstants.TABLE);
-		resource.setResourceName(resourceName);
-		resource.setIsEnabled(isEnabled);
-		resource.setRequestMethod(requestMethod);
 		return resource;
-	}
-	
-	public boolean isUpdateResourceInfo(ISysResource oldResource) {
-		CfgTable oldTable = (CfgTable) oldResource;
-		if(!oldTable.getResourceName().equals(this.getResourceName()) || !oldTable.getRequestMethod().equals(this.getRequestMethod()) || oldTable.getIsEnabled() != this.getIsEnabled()){
-			return true;
-		}
-		return false;
 	}
 	
 	// ---------------------------------------------------------

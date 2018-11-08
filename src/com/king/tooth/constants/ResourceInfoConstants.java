@@ -26,21 +26,9 @@ public class ResourceInfoConstants {
 	 */
 	public static final Integer CODE = 3;
 	/**
-	 * 4：数据库资源类型
+	 * 4：业务模型资源类型
 	 */
-	public static final Integer DATABASE = 4;
-	/**
-	 * 5：项目资源类型
-	 */
-	public static final Integer PROJECT = 5;
-	/**
-	 * 6：项目模块资源类型
-	 */
-	public static final Integer PROJECT_MODULE = 6;
-	/**
-	 * 7：项目模块操作资源类型
-	 */
-	public static final Integer PROJECT_MODULE_OPERATION = 7;
+	public static final Integer BUSINESS_MODEL = 4;
 	
 	// ----------------------------------------------------------------------------
 	/**
@@ -84,9 +72,9 @@ public class ResourceInfoConstants {
 	/**
 	 * 1:导入
 	 */
-	public static final Integer IMPORT = 1;
+	public static final Integer FILE_IMPORT = 1;
 	/**
 	 * 1:导出
 	 */
-	public static final Integer EXPORT = 2;
+	public static final Integer FILE_EXPORT = 2;
 }

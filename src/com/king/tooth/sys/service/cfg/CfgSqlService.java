@@ -66,13 +66,12 @@ public class CfgSqlService extends AService {
 	 * @return operResult
 	 */
 	private String validSqlScriptResourceNameIsExists(ComSqlScript sqlScript) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ? and customerId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ? and customerId = ?", sqlScript.getResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
-			return "您已经创建过相同sql脚本资源名["+sqlScript.getSqlScriptResourceName()+"]的数据";
+			return "您已经创建过相同sql脚本资源名["+sqlScript.getResourceName()+"]的数据";
 		}
-		count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysResource where resourceName = ? and projectId = ? and customerId = ?", sqlScript.getSqlScriptResourceName(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		if(count > 0){
-			return "系统中已经存在相同的资源名["+sqlScript.getSqlScriptResourceName()+"]的数据，请修sql脚本资源名";
+		if(BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).resourceIsExists(sqlScript.getResourceName())){
+			return "系统中已经存在相同的资源名["+sqlScript.getResourceName()+"]的数据，请修sql脚本资源名";
 		}
 		return null;
 	}
@@ -122,7 +121,7 @@ public class CfgSqlService extends AService {
 			}
 			operResult = validSqlScriptRefProjIsExists(projectId);
 			if(operResult == null){
-				operResult = validSameResourceNameSqlScriptInProject(sqlScript.getSqlScriptResourceName(), projectId);
+				operResult = validSameResourceNameSqlScriptInProject(sqlScript.getResourceName(), projectId);
 			}
 			
 			if(operResult == null){
@@ -153,7 +152,7 @@ public class CfgSqlService extends AService {
 	public Object updateSqlScript(ComSqlScript sqlScript) {
 		ComSqlScript oldSqlScript = getObjectById(sqlScript.getId(), ComSqlScript.class);
 		String operResult = null;
-		if(!oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
+		if(!oldSqlScript.getResourceName().equals(sqlScript.getResourceName())){
 			operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		}
 		
@@ -164,8 +163,8 @@ public class CfgSqlService extends AService {
 				return "sql脚本关联的项目id不能为空！";
 			}
 			operResult = validSqlScriptRefProjIsExists(projectId);
-			if(operResult == null && !oldSqlScript.getSqlScriptResourceName().equals(sqlScript.getSqlScriptResourceName())){
-				operResult = validSameResourceNameSqlScriptInProject(sqlScript.getSqlScriptResourceName(), projectId);
+			if(operResult == null && !oldSqlScript.getResourceName().equals(sqlScript.getResourceName())){
+				operResult = validSameResourceNameSqlScriptInProject(sqlScript.getResourceName(), projectId);
 			}
 			
 			if(operResult == null){
@@ -181,7 +180,7 @@ public class CfgSqlService extends AService {
 					sqlScript.setIsCreated(1);
 				}
 				if(sqlScript.isUpdateResourceInfo(oldSqlScript)){
-					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getSqlScriptResourceName(), sqlScript.getRequestMethod(), sqlScript.getIsEnabled());
+					BuiltinResourceInstance.getInstance("SysResourceService", SysResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getResourceName(), sqlScript.getRequestMethod(), sqlScript.getIsEnabled());
 				}
 				return HibernateUtil.updateObject(sqlScript, null);
 			}
@@ -246,7 +245,7 @@ public class CfgSqlService extends AService {
 				sqls.add(tmpSql);
 				updateHql.append("'").append(tmpSql.getId()).append("',");
 			}else{
-				return "创建资源名为["+tmpSql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中创建[create] [存储过程] 和 [视图]";
+				return "创建资源名为["+tmpSql.getResourceName()+"]的sql对象出错，系统目前只支持在数据库中创建[create] [存储过程] 和 [视图]";
 			}
 		}
 		updateHql.setLength(updateHql.length()-1);
@@ -286,7 +285,7 @@ public class CfgSqlService extends AService {
 				sqls.add(tmpSql);
 				updateHql.append("'").append(tmpSql.getId()).append("',");
 			}else{
-				return "删除资源名为["+tmpSql.getSqlScriptResourceName()+"]的sql对象出错，系统目前只支持在数据库中删除[drop] [存储过程] 和 [视图]";
+				return "删除资源名为["+tmpSql.getResourceName()+"]的sql对象出错，系统目前只支持在数据库中删除[drop] [存储过程] 和 [视图]";
 			}
 		}
 		updateHql.setLength(updateHql.length()-1);
@@ -313,7 +312,7 @@ public class CfgSqlService extends AService {
 	 */
 	public String addProjSqlScriptRelation(String projectId, String sqlScriptId) {
 		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		String operResult = validSameResourceNameSqlScriptInProject(sqlScript.getSqlScriptResourceName(), projectId);
+		String operResult = validSameResourceNameSqlScriptInProject(sqlScript.getResourceName(), projectId);
 		if(operResult == null){
 			HibernateUtil.saveDataLinks("CfgProjectSqlLinks", projectId, sqlScriptId);
 		}
