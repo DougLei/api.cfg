@@ -13,12 +13,12 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 业务资源模型表
+ * 业务模型表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis, IEntity{
+public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 资源模型的描述
@@ -28,10 +28,10 @@ public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis
 	//-------------------------------------------------------------------------
 	
 	/**
-	 * 业务资源模型包含的所有关系集合
+	 * 业务模型包含的所有关系集合
 	 */
 	@JSONField(serialize = false)
-	private List<CfgBusiResModelRelations> busiResModelRelationsList;
+	private List<CfgBusiModelResRelations> busiModelResRelationsList;
 	
 	public String getComments() {
 		return comments;
@@ -39,11 +39,11 @@ public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	public List<CfgBusiResModelRelations> getBusiResModelRelationsList() {
-		return busiResModelRelationsList;
+	public List<CfgBusiModelResRelations> getBusiModelResRelationsList() {
+		return busiModelResRelationsList;
 	}
-	public void setBusiResModelRelationsList(List<CfgBusiResModelRelations> busiResModelRelationsList) {
-		this.busiResModelRelationsList = busiResModelRelationsList;
+	public void setBusiModelResRelationsList(List<CfgBusiModelResRelations> busiModelResRelationsList) {
+		this.busiModelResRelationsList = busiModelResRelationsList;
 	}
 	
 	@JSONField(serialize = false)
@@ -53,8 +53,8 @@ public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis
 		columns.add(BuiltinObjectInstance.resourceNameColumn);
 		
 		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 200);
-		commentsColumn.setName("业务资源模型的描述");
-		commentsColumn.setComments("业务资源模型的描述");
+		commentsColumn.setName("描述");
+		commentsColumn.setComments("描述");
 		columns.add(commentsColumn);
 		
 		columns.add(BuiltinObjectInstance.isCreatedColumn);
@@ -66,25 +66,25 @@ public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("业务资源模型表");
-		table.setComments("业务资源模型表");
+		table.setName("业务模型表");
+		table.setComments("业务模型表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "CFG_BUSI_RES_MODEL";
+		return "CFG_BUSI_MODEL";
 	}
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "CfgBusiResModel";
+		return "CfgBusiModel";
 	}
 	
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(resourceName)){
-			return "业务资源模型的资源名不能为空！";
+			return "业务模型的资源名不能为空！";
 		}
 		return null;
 	}
@@ -103,8 +103,8 @@ public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis
 	}
 	
 	public void clear() {
-		if(busiResModelRelationsList != null && busiResModelRelationsList.size() > 0){
-			busiResModelRelationsList.clear();
+		if(busiModelResRelationsList != null && busiModelResRelationsList.size() > 0){
+			busiModelResRelationsList.clear();
 		}
 	}
 }

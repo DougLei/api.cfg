@@ -4,11 +4,11 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.sys.service.AService;
 
 /**
- * 业务资源模型关系表Service
+ * 业务模型资源关系表Service
  * @author DougLei
  */
 @Service
-public class CfgBusiResModelRelationsService extends AService{
+public class CfgBusiModelResRelationsService extends AService{
 
 	
 }

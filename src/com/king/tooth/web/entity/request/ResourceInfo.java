@@ -3,10 +3,10 @@ package com.king.tooth.web.entity.request;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.cfg.CfgBusiResModel;
+import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.service.cfg.CfgBusiResModelService;
+import com.king.tooth.sys.service.cfg.CfgBusiModelService;
 import com.king.tooth.sys.service.cfg.CfgResourceService;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -29,9 +29,9 @@ public class ResourceInfo {
 	private ComSqlScript sql;
 	
 	/**
-	 * 请求的业务资源模型
+	 * 请求的业务模型资源
 	 */
-	private CfgBusiResModel busiResModel;
+	private CfgBusiModel busiModel;
 	
 	/**
 	 * 请求的资源对象
@@ -81,7 +81,7 @@ public class ResourceInfo {
 				if("get".equals(requestMethod)){
 					throw new IllegalArgumentException("系统目前不支持[get]方式的请求，调用业务模型资源");
 				}
-				busiResModel = BuiltinResourceInstance.getInstance("CfgBusiResModelService", CfgBusiResModelService.class).findBusiResModel(reqResource.getRefResourceId());
+				busiModel = BuiltinResourceInstance.getInstance("CfgBusiModelService", CfgBusiModelService.class).findBusiModel(reqResource.getRefResourceId());
 			}
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
@@ -140,8 +140,8 @@ public class ResourceInfo {
 	public ComSqlScript getSql() {
 		return sql;
 	}
-	public CfgBusiResModel getBusiResModel() {
-		return busiResModel;
+	public CfgBusiModel getBusiModel() {
+		return busiModel;
 	}
 	public CfgResource getReqResource() {
 		return reqResource;
@@ -154,8 +154,8 @@ public class ResourceInfo {
 		if(sql != null){
 			sql.clear();
 		}
-		if(busiResModel != null){
-			busiResModel.clear();
+		if(busiModel != null){
+			busiModel.clear();
 		}
 	}
 }

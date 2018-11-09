@@ -26,8 +26,8 @@ import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
-import com.king.tooth.sys.entity.cfg.CfgBusiResModel;
-import com.king.tooth.sys.entity.cfg.CfgBusiResModelRelations;
+import com.king.tooth.sys.entity.cfg.CfgBusiModel;
+import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
@@ -151,8 +151,8 @@ public class InitSystemService extends AService{
 		tables.add(new SysFileIELog().toCreateTable());
 		tables.add(new CfgPropExtendConf().toCreateTable());
 		tables.add(new CfgSeqInfo().toCreateTable());
-		tables.add(new CfgBusiResModel().toCreateTable());
-		tables.add(new CfgBusiResModelRelations().toCreateTable());
+		tables.add(new CfgBusiModel().toCreateTable());
+		tables.add(new CfgBusiModelResRelations().toCreateTable());
 		return tables;
 	}
 	

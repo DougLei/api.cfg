@@ -163,13 +163,13 @@ public class CfgResource extends BasicEntity implements IEntity{
 	 */
 	public String getResourceTypeDesc() {
 		if(ResourceInfoConstants.TABLE == resourceType){
-			return "表资源";
+			return "[表]资源";
 		}else if(ResourceInfoConstants.SQL == resourceType){
-			return "SQL资源";
+			return "[SQL]资源";
 		}else if(ResourceInfoConstants.CODE == resourceType){
-			return "代码资源";
+			return "[代码]资源";
 		}else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
-			return "业务模型资源";
+			return "[业务模型]资源";
 		}
 		return resourceType+"资源";
 	}

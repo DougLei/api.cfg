@@ -4,11 +4,11 @@ import com.king.tooth.annotation.Controller;
 import com.king.tooth.sys.controller.AController;
 
 /**
- * 业务资源模型关系表Controller
+ * 业务模型资源关系表Controller
  * @author DougLei
  */
 @Controller
-public class CfgBusiResModelRelationsController extends AController{
+public class CfgBusiModelResRelationsController extends AController{
 
 	
 }

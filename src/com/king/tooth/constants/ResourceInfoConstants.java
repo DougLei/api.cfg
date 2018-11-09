@@ -14,19 +14,19 @@ public class ResourceInfoConstants {
 	 */
 	public static final String BUILTIN_RESOURCE = "builtinResource";
 	/**
-	 * 1：表资源类型
+	 * 1：[表]资源类型
 	 */
 	public static final Integer TABLE = 1;
 	/**
-	 * 2：sql脚本资源类型
+	 * 2：[sql脚本]资源类型
 	 */
 	public static final Integer SQL = 2;
 	/**
-	 * 3：代码资源类型
+	 * 3：[代码]资源类型
 	 */
 	public static final Integer CODE = 3;
 	/**
-	 * 4：业务模型资源类型
+	 * 4：[业务模型]资源类型
 	 */
 	public static final Integer BUSINESS_MODEL = 4;
 	
@@ -70,11 +70,11 @@ public class ResourceInfoConstants {
 	
 	// ----------------------------------------------------------------------------
 	/**
-	 * 1:导入
+	 * 1:文件导入
 	 */
 	public static final Integer FILE_IMPORT = 1;
 	/**
-	 * 1:导出
+	 * 1:文件导出
 	 */
 	public static final Integer FILE_EXPORT = 2;
 }

@@ -12,17 +12,17 @@ import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 业务资源模型关系表
+ * 业务模型资源关系表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgBusiResModelRelations extends BasicEntity implements IEntityPropAnalysis, IEntity{
+public class CfgBusiModelResRelations extends BasicEntity implements IEntityPropAnalysis, IEntity{
 	
 	/**
-	 * 关联的业务资源模型id
+	 * 关联的业务模型id
 	 */
-	private String refBusiResModelId;
+	private String refBusiModelId;
 	/**
 	 * 父id
 	 * <p>形成树表结构</p>
@@ -62,19 +62,19 @@ public class CfgBusiResModelRelations extends BasicEntity implements IEntityProp
 	
 	//-------------------------------------------------------------------------
 	/**
-	 * 子业务资源模型关系集合
+	 * 业务模型子资源关系集合
 	 */
 	@JSONField(serialize = false)
-	private List<CfgBusiResModelRelations> subBusiResModelRelationsList;
+	private List<CfgBusiModelResRelations> subBusiModelResRelationsList;
 	
 	public String getParentId() {
 		return parentId;
 	}
-	public String getRefBusiResModelId() {
-		return refBusiResModelId;
+	public String getRefBusiModelId() {
+		return refBusiModelId;
 	}
-	public void setRefBusiResModelId(String refBusiResModelId) {
-		this.refBusiResModelId = refBusiResModelId;
+	public void setRefBusiModelId(String refBusiModelId) {
+		this.refBusiModelId = refBusiModelId;
 	}
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
@@ -115,18 +115,18 @@ public class CfgBusiResModelRelations extends BasicEntity implements IEntityProp
 	public void setRefParentResourcePropId(String refParentResourcePropId) {
 		this.refParentResourcePropId = refParentResourcePropId;
 	}
-	public List<CfgBusiResModelRelations> getSubBusiResModelRelationsList() {
-		return subBusiResModelRelationsList;
+	public List<CfgBusiModelResRelations> getSubBusiModelResRelationsList() {
+		return subBusiModelResRelationsList;
 	}
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(8+7);
 		
-		CfgColumn refResourceModelIdColumn = new CfgColumn("ref_busi_res_model_id", DataTypeConstants.STRING, 32);
-		refResourceModelIdColumn.setName("关联的业务资源模型id");
-		refResourceModelIdColumn.setComments("关联的业务资源模型id");
-		columns.add(refResourceModelIdColumn);
+		CfgColumn refBusiModelIdColumn = new CfgColumn("ref_busi_model_id", DataTypeConstants.STRING, 32);
+		refBusiModelIdColumn.setName("关联的业务模型id");
+		refBusiModelIdColumn.setComments("关联的业务模型id");
+		columns.add(refBusiModelIdColumn);
 		
 		CfgColumn parentIdColumn = new CfgColumn("parent_id", DataTypeConstants.STRING, 32);
 		parentIdColumn.setName("父id");
@@ -171,25 +171,25 @@ public class CfgBusiResModelRelations extends BasicEntity implements IEntityProp
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("业务资源模型关系表");
-		table.setComments("业务资源模型关系表");
+		table.setName("业务模型资源关系表");
+		table.setComments("业务模型资源关系表");
 		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "CFG_BUSI_RES_MODEL_RELATIONS";
+		return "CFG_BUSI_MODEL_RES_RELATIONS";
 	}
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "CfgBusiResModelRelations";
+		return "CfgBusiModelResRelations";
 	}
 	
 	public String validNotNullProps() {
-		if(StrUtils.isEmpty(refBusiResModelId)){
-			return "关联的业务资源模型id值不能为空";
+		if(StrUtils.isEmpty(refBusiModelId)){
+			return "关联的业务模型id值不能为空";
 		}
 		if(StrUtils.isEmpty(refResourceId)){
 			return "关联的资源id值不能为空";
@@ -217,13 +217,13 @@ public class CfgBusiResModelRelations extends BasicEntity implements IEntityProp
 	}
 	
 	/**
-	 * 添加业务资源模型关系的子关系
-	 * @param busiResModelRelations
+	 * 添加业务模型资源关系的子关系
+	 * @param busiModelResRelations
 	 */
-	public void addSubBusiResModelRelations(CfgBusiResModelRelations busiResModelRelations) {
-		if(subBusiResModelRelationsList == null){
-			subBusiResModelRelationsList = new ArrayList<CfgBusiResModelRelations>();
+	public void addSubBusiModelResRelations(CfgBusiModelResRelations busiModelResRelations) {
+		if(subBusiModelResRelationsList == null){
+			subBusiModelResRelationsList = new ArrayList<CfgBusiModelResRelations>();
 		}
-		subBusiResModelRelationsList.add(busiResModelRelations);
+		subBusiModelResRelationsList.add(busiModelResRelations);
 	}
 }
