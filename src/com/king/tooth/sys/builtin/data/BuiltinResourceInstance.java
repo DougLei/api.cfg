@@ -3,6 +3,8 @@ package com.king.tooth.sys.builtin.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.king.tooth.sys.controller.cfg.CfgBusiResModelController;
+import com.king.tooth.sys.controller.cfg.CfgBusiResModelRelationsController;
 import com.king.tooth.sys.controller.cfg.CfgColumnController;
 import com.king.tooth.sys.controller.cfg.CfgDatabaseController;
 import com.king.tooth.sys.controller.cfg.CfgProjectController;
@@ -57,6 +59,7 @@ import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
+import com.king.tooth.sys.service.cfg.CfgBusiResModelRelationsService;
 import com.king.tooth.sys.service.cfg.CfgBusiResModelService;
 import com.king.tooth.sys.service.cfg.CfgColumnService;
 import com.king.tooth.sys.service.cfg.CfgDatabaseService;
@@ -100,6 +103,8 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysPushMessageInfoController", new SysPushMessageInfoController());
 		instanceCache.put("SysExcelController", new SysExcelController());
 		instanceCache.put("CfgPropExtendConfController", new CfgPropExtendConfController());
+		instanceCache.put("CfgBusiResModelController", new CfgBusiResModelController());
+		instanceCache.put("CfgBusiResModelRelationsController", new CfgBusiResModelRelationsController());
 		
 		instanceCache.put("CfgTableService", new CfgTableService());
 		instanceCache.put("CfgColumnService", new CfgColumnService());
@@ -118,6 +123,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysExcelService", new SysExcelService());
 		instanceCache.put("CfgPropExtendConfService", new CfgPropExtendConfService());
 		instanceCache.put("CfgBusiResModelService", new CfgBusiResModelService());
+		instanceCache.put("CfgBusiResModelRelationsService", new CfgBusiResModelRelationsService());
 		
 		instanceCache.put("CfgDatabase", new CfgDatabase());
 		instanceCache.put("CfgTable", new CfgTable());

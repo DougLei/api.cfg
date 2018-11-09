@@ -61,6 +61,12 @@ public class CfgBusiResModelRelations extends BasicEntity implements IEntityProp
 	private Integer isEnabled;
 	
 	//-------------------------------------------------------------------------
+	/**
+	 * 子业务资源模型关系集合
+	 */
+	@JSONField(serialize = false)
+	private List<CfgBusiResModelRelations> subBusiResModelRelationsList;
+	
 	public String getParentId() {
 		return parentId;
 	}
@@ -108,6 +114,9 @@ public class CfgBusiResModelRelations extends BasicEntity implements IEntityProp
 	}
 	public void setRefParentResourcePropId(String refParentResourcePropId) {
 		this.refParentResourcePropId = refParentResourcePropId;
+	}
+	public List<CfgBusiResModelRelations> getSubBusiResModelRelationsList() {
+		return subBusiResModelRelationsList;
 	}
 	
 	@JSONField(serialize = false)
@@ -205,5 +214,16 @@ public class CfgBusiResModelRelations extends BasicEntity implements IEntityProp
 		if(result == null){
 		}
 		return result;
+	}
+	
+	/**
+	 * 添加业务资源模型关系的子关系
+	 * @param busiResModelRelations
+	 */
+	public void addSubBusiResModelRelations(CfgBusiResModelRelations busiResModelRelations) {
+		if(subBusiResModelRelationsList == null){
+			subBusiResModelRelationsList = new ArrayList<CfgBusiResModelRelations>();
+		}
+		subBusiResModelRelationsList.add(busiResModelRelations);
 	}
 }
