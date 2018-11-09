@@ -78,6 +78,9 @@ public class ResourceInfo {
 			}
 			// 如果是业务模型资源，则要去查询相关的信息
 			else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
+				if("get".equals(requestMethod)){
+					throw new IllegalArgumentException("系统目前不支持[get]方式的请求，调用业务模型资源");
+				}
 				busiResModel = BuiltinResourceInstance.getInstance("CfgBusiResModelService", CfgBusiResModelService.class).findBusiResModel(reqResource.getRefResourceId());
 			}
 			
