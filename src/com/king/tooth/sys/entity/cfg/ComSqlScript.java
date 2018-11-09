@@ -337,6 +337,7 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("sql脚本信息表");
 		table.setComments("sql脚本信息表");
+		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
 		return table;

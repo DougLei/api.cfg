@@ -6,6 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.database.OracleDataTypeConstants;
 import com.king.tooth.constants.database.SQLServerDataTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
@@ -398,6 +399,7 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("sql脚本参数信息表");
 		table.setComments("sql脚本参数信息表");
+		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
 		return table;

@@ -9,6 +9,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
@@ -205,6 +206,7 @@ public class CfgDatabase extends BasicEntity implements IEntityPropAnalysis, IEn
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("数据库信息表");
 		table.setComments("数据库信息表");
+		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
 		return table;

@@ -203,6 +203,7 @@ public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEnti
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("表信息表");
 		table.setComments("表信息表");
+		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
 		return table;

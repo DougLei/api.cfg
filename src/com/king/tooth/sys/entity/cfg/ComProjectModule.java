@@ -6,6 +6,7 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -196,6 +197,7 @@ public class ComProjectModule extends BasicEntity implements IEntityPropAnalysis
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("项目模块信息表");
 		table.setComments("项目模块信息表");
+		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
 		return table;

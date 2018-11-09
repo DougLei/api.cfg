@@ -18,11 +18,12 @@ public class CfgBusiResModelService extends AService{
 	 * @return
 	 */
 	public CfgBusiResModel findBusiResModel(String busiResModelId) {
-	
+		CfgBusiResModel busiResModel = getObjectById(busiResModelId, CfgBusiResModel.class);
 		
-		
-		
-		
-		return null;
+		busiResModel.setBusiResModelRelationsList(null);
+		if(busiResModel.getBusiResModelRelationsList() == null || busiResModel.getBusiResModelRelationsList().size() == 0){
+			throw new NullPointerException("["+busiResModel.getResourceName()+"]业务资源模型，不存在任何资源关系，请检查配置");
+		}
+		return busiResModel;
 	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
@@ -386,6 +387,7 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("用户信息表");
 		table.setComments("用户信息表");
+		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
 		return table;
