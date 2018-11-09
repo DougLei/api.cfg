@@ -19,7 +19,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 	}
 	
 	protected boolean doGetProcess() {
-		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
 		
 		String coreQuerySql = sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql()+
 				builtinQueryMethodProcesser.getSql().append(getFromSql());
@@ -42,7 +42,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 	protected StringBuilder getFromSql() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" from ( ")
-		   .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
+		   .append(builtinSqlScriptMethodProcesser.getReqSql().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
 		   .append(" ) s_ ")
 		   .append(builtinQueryCondMethodProcesser.getSql());
 		return sql;

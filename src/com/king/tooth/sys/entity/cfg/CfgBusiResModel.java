@@ -27,11 +27,23 @@ public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis
 	
 	//-------------------------------------------------------------------------
 	
+	/**
+	 * 业务资源模型包含的所有关系集合
+	 */
+	@JSONField(serialize = false)
+	private List<CfgBusiResModelRelations> busiResModelRelationsList;
+	
 	public String getComments() {
 		return comments;
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+	public List<CfgBusiResModelRelations> getBusiResModelRelationsList() {
+		return busiResModelRelationsList;
+	}
+	public void setBusiResModelRelationsList(List<CfgBusiResModelRelations> busiResModelRelationsList) {
+		this.busiResModelRelationsList = busiResModelRelationsList;
 	}
 	
 	@JSONField(serialize = false)
@@ -88,5 +100,11 @@ public class CfgBusiResModel extends ACfgResource implements IEntityPropAnalysis
 		CfgResource resource = super.turnToResource();
 		resource.setResourceType(ResourceInfoConstants.BUSINESS_MODEL);
 		return resource;
+	}
+	
+	public void clear() {
+		if(busiResModelRelationsList != null && busiResModelRelationsList.size() > 0){
+			busiResModelRelationsList.clear();
+		}
 	}
 }

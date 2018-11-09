@@ -16,7 +16,7 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 	}
 	
 	protected boolean doGetProcess() {
-		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
 		
 		String querySql = sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql() + 
 						  getFromSql().toString();
@@ -33,7 +33,7 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 	
 	protected StringBuilder getFromSql() {
 		StringBuilder sql = new StringBuilder(" select count(1) from (");
-		sql.append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
+		sql.append(builtinSqlScriptMethodProcesser.getReqSql().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
 		   .append(" ) s_ ")
 		   .append(builtinQueryCondMethodProcesser.getSql());
 		return sql;

@@ -65,7 +65,7 @@ public class CfgSqlService extends AService {
 	 * @return operResult
 	 */
 	private String validSqlScriptResourceNameIsExists(ComSqlScript sqlScript) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where sqlScriptResourceName = ? and createUserId = ? and customerId = ?", sqlScript.getResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where resourceName = ? and createUserId = ? and customerId = ?", sqlScript.getResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
 			return "您已经创建过相同sql脚本资源名["+sqlScript.getResourceName()+"]的数据";
 		}
@@ -90,17 +90,17 @@ public class CfgSqlService extends AService {
 	
 	/**
 	 * 验证一个项目中，是否存在同名的sql脚本资源名
-	 * @param sqlScriptResourceName
+	 * @param resourceName
 	 * @param projectId
 	 * @return
 	 */
-	private String validSameResourceNameSqlScriptInProject(String sqlScriptResourceName, String projectId) {
+	private String validSameResourceNameSqlScriptInProject(String resourceName, String projectId) {
 		String hql = "select count(cs."+ResourcePropNameConstants.ID+") from " +
 				"ComProject p, CfgProjectSqlLinks ps, ComSqlScript cs " +
-				"where p.id = '"+projectId+"' and p.id = ps.leftId and cs.id = ps.rightId and cs.sqlScriptResourceName = '"+sqlScriptResourceName+"'";
+				"where p.id = '"+projectId+"' and p.id = ps.leftId and cs.id = ps.rightId and cs.resourceName = '"+resourceName+"'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
 		if(count > 0){
-			return "项目关联的sql脚本中已经存在sql脚本资源名为["+sqlScriptResourceName+"]的数据";
+			return "项目关联的sql脚本中已经存在sql脚本资源名为["+resourceName+"]的数据";
 		}
 		return null;
 	}

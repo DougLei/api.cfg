@@ -60,7 +60,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		// 内置递归函数处理器实例
 		setRecursiveProcesser(requestBuiltinParams, requestParentResourceParams, sqlParameterValues);
 		// 内置sql脚本处理器实例
-		setSqlScriptMethodProcesser(reqSqlScriptResource, sqlParameterValues);
+		setSqlScriptMethodProcesser(sql, sqlParameterValues);
 		// 最后剩下的数据，就都是条件查询的参数了【这个一定要放到最后被调用！】
 		// 内置查询条件函数处理器
 		setQuerycondProcesser(requestResourceParams, sqlParameterValues);
@@ -68,12 +68,12 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	
 	/**
 	 * 内置sql脚本处理器实例
-	 * @param reqSqlScriptResource 
+	 * @param sql 
 	 * @param requestResourceParams
 	 * @param sqlParameterValues 
 	 */
-	public void setSqlScriptMethodProcesser(ComSqlScript reqSqlScriptResource, List<List<Object>> sqlParameterValues) {
-		sqlScriptMethodProcesser = new BuiltinSqlMethodProcesser(reqSqlScriptResource);
+	public void setSqlScriptMethodProcesser(ComSqlScript sql, List<List<Object>> sqlParameterValues) {
+		sqlScriptMethodProcesser = new BuiltinSqlMethodProcesser(sql);
 		sqlScriptMethodProcesser.setResourceName(resourceName);
 		sqlScriptMethodProcesser.setParentResourceName(parentResourceName);
 		sqlScriptMethodProcesser.setSqlParameterValues(sqlParameterValues);
@@ -147,9 +147,9 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		}
 	}
 	
-	private ComSqlScript reqSqlScriptResource;
+	private ComSqlScript sql;
 	public BuiltinSqlResourceBMProcesser(RequestBody requestBody, List<List<Object>> sqlParameterValues){
-		reqSqlScriptResource = requestBody.getResourceInfo().getSqlScriptResource();
+		sql = requestBody.getResourceInfo().getSql();
 		requestBuiltinParams = requestBody.getRequestBuiltinParams();
 		requestResourceParams = requestBody.getRequestResourceParams();
 		requestParentResourceParams = requestBody.getRequestParentResourceParams();

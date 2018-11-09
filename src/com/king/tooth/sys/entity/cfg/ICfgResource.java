@@ -20,4 +20,10 @@ public interface ICfgResource {
 	 * @return
 	 */
 	public boolean isUpdateResourceInfo(ICfgResource oldResource);
+	
+	
+	public Integer getIsCreated();
+	public Integer getIsEnabled();
+	public String getResourceName();
+	public String getRequestMethod();
 }

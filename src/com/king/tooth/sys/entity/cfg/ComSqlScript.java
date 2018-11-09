@@ -448,27 +448,27 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	}
 	
 	public void clear(){
-		if(inSqlResultsets != null){
+		if(inSqlResultsets != null && inSqlResultsets.size() > 0){
 			inSqlResultsets.clear();
 		}
-		if(outSqlResultsetsList != null){
+		if(outSqlResultsetsList != null && outSqlResultsetsList.size() > 0){
 			for (List<CfgSqlResultset> sqlResultSets : outSqlResultsetsList) {
-				if(sqlResultSets != null){
+				if(sqlResultSets != null && sqlResultSets.size() > 0){
 					sqlResultSets.clear();
 				}
 			}
 			outSqlResultsetsList.clear();
 		}
 		
-		if(finalSqlScriptList != null){
+		if(finalSqlScriptList != null && finalSqlScriptList.size() > 0){
 			finalSqlScriptList.clear();
 		}
-		if(parameterNameRecordMap != null){
+		if(parameterNameRecordMap != null && parameterNameRecordMap.size() > 0){
 			parameterNameRecordMap.clear();
 		}
-		if(sqlParamsList != null){
+		if(sqlParamsList != null && sqlParamsList.size() > 0){
 			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
-				if(sqlParams != null){
+				if(sqlParams != null && sqlParams.size() > 0){
 					sqlParams.clear();
 				}
 			}

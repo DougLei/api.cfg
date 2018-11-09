@@ -1583,8 +1583,9 @@
 ```
 {
   "sqlScriptCaption": "",                               --sql脚本汉字名
-  "sqlScriptResourceName": "",                          --sql脚本资源名称
+  "resourceName": "",                                   --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
+  "requestMethod":"",                                   --请求资源的方法,get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none表示都不支持
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
   "isImmediateCreate":""                                --是否立即创建存储过程、视图等
 }
@@ -1607,8 +1608,9 @@
 {
   "Id":"",                                              --主键
   "sqlScriptCaption": "",                               --sql脚本汉字名
-  "sqlScriptResourceName": "",                          --sql脚本资源名称
+  "resourceName": "",                                   --sql脚本资源名称
   "sqlScriptContent": "",                               --sql脚本内容
+  "requestMethod":"",                                   --请求资源的方法,get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none表示都不支持
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
   "isImmediateCreate":""                                --是否立即创建存储过程、视图等
 }

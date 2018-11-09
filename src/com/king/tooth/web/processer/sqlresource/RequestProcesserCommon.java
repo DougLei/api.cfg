@@ -91,7 +91,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * @param sqlDesc @see BuiltinDatabaseData
 	 */
 	protected final void doModifyProcess(String sqlDesc){
-		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getReqSql();
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
 		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程

@@ -3,10 +3,12 @@ package com.king.tooth.web.entity.request;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgBusiResModel;
 import com.king.tooth.sys.entity.cfg.CfgResource;
-import com.king.tooth.sys.service.cfg.CfgSqlService;
+import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.service.cfg.CfgBusiResModelService;
 import com.king.tooth.sys.service.cfg.CfgResourceService;
+import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.servlet.route.RouteBody;
@@ -22,9 +24,14 @@ public class ResourceInfo {
 	private int resourceType;
 	
 	/**
-	 * 请求的sql脚本资源实例
+	 * 请求的sql脚本资源
 	 */
-	private ComSqlScript sqlScriptResource;
+	private ComSqlScript sql;
+	
+	/**
+	 * 请求的业务资源模型
+	 */
+	private CfgBusiResModel busiResModel;
 	
 	/**
 	 * 请求的资源对象
@@ -63,34 +70,34 @@ public class ResourceInfo {
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ResourceInfoConstants.SQL == resourceType){
-				sqlScriptResource = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(reqResource.getRefResourceId());
+				sql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(reqResource.getRefResourceId());
 				
-				if(SqlStatementTypeConstants.VIEW.equals(sqlScriptResource.getSqlScriptType())){
+				if(SqlStatementTypeConstants.VIEW.equals(sql.getSqlScriptType())){
 					throw new IllegalArgumentException("系统目前不支持直接处理视图类型的sql资源");
 				}
 			}
 			// 如果是业务模型资源，则要去查询相关的信息
 			else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
-				// TODO .................
-				
-				
-				
+				busiResModel = BuiltinResourceInstance.getInstance("CfgBusiResModelService", CfgBusiResModelService.class).findBusiResModel(reqResource.getRefResourceId());
 			}
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
+				if(!"get".equals(requestMethod)){
+					throw new IllegalArgumentException("系统目前不支持[非get]方式的请求，调用资源的[主子/递归]");
+				}
 				if(resourceType == ResourceInfoConstants.BUSINESS_MODEL){
-					throw new IllegalArgumentException("系统目前不支持处理[主子/递归]方式调用业务模型资源");
+					throw new IllegalArgumentException("系统目前不支持[主子/递归]方式调用业务模型资源");
 				}
 				
 				reqParentResource = BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).findResourceByResourceName(routeBody.getParentResourceName());
 				validIsSupportRequestMethod(requestMethod, reqParentResource.getRequestMethod(), reqParentResource.getResourceName(), reqParentResource.getResourceTypeDesc());
 				
 				if(reqParentResource.getResourceType() != resourceType){
-					throw new IllegalArgumentException("系统目前不支持处理不同类型的资源混合调用");
+					throw new IllegalArgumentException("系统目前不支持不同类型的资源混合调用");
 				}
 				if(reqParentResource.getResourceType() == ResourceInfoConstants.SQL && !routeBody.getParentResourceName().equals(routeBody.getResourceName())){
-					throw new IllegalArgumentException("系统目前不支持处理[主子]方式调用sql资源");
+					throw new IllegalArgumentException("系统目前不支持[主子]方式调用sql资源");
 				}
 			}
 		}
@@ -127,13 +134,25 @@ public class ResourceInfo {
 	public int getResourceType() {
 		return resourceType;
 	}
-	public ComSqlScript getSqlScriptResource() {
-		return sqlScriptResource;
+	public ComSqlScript getSql() {
+		return sql;
+	}
+	public CfgBusiResModel getBusiResModel() {
+		return busiResModel;
 	}
 	public CfgResource getReqResource() {
 		return reqResource;
 	}
 	public CfgResource getReqParentResource() {
 		return reqParentResource;
+	}
+	
+	public void clear() {
+		if(sql != null){
+			sql.clear();
+		}
+		if(busiResModel != null){
+			busiResModel.clear();
+		}
 	}
 }

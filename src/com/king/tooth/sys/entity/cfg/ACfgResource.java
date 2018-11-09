@@ -25,7 +25,7 @@ public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 	protected Integer isEnabled;
 	/**
 	 * 请求资源的方法
-	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none标识都不支持</p>
+	 * <p>get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none表示都不支持</p>
 	 * <p>默认值：all</p>
 	 */
 	protected String requestMethod;
@@ -65,8 +65,9 @@ public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 	}
 	
 	public boolean isUpdateResourceInfo(ICfgResource oldResource) {
-		ACfgResource oldAResource = (ACfgResource) oldResource;
-		if(!oldAResource.getResourceName().equals(this.getResourceName()) || !oldAResource.getRequestMethod().equals(this.getRequestMethod()) || oldAResource.getIsEnabled() != this.getIsEnabled()){
+		if(!oldResource.getResourceName().equals(this.getResourceName()) 
+				|| !oldResource.getRequestMethod().equals(this.getRequestMethod()) 
+				|| oldResource.getIsEnabled() != this.getIsEnabled()){
 			return true;
 		}
 		return false;

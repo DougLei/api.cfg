@@ -21,7 +21,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 	}
 	
 	protected boolean doGetProcess() {
-		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getSqlScriptResource();
+		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
 		
 		// 获取首次递归查询根数据的sql语句和参数集合
 		StringBuilder firstRecursiveQuerySql = new StringBuilder(sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql());
@@ -68,7 +68,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 	 */
 	private void getFirstRecursiveQueryInfo(StringBuilder firstRecursiveQuerySql, List<Object> firstRecursiveQueryParams) {
 		firstRecursiveQuerySql.append(" from ( ")
-        				      .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
+        				      .append(builtinSqlScriptMethodProcesser.getReqSql().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
         				      .append(" ) s_ ");
 		builtinRecursiveMethodProcesser.getFirstRecursiveQuerySql(firstRecursiveQuerySql, firstRecursiveQueryParams);
 		
@@ -79,7 +79,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 	protected StringBuilder getFromSql() {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" from ( ")
-		   .append(builtinSqlScriptMethodProcesser.getSqlScriptResource().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
+		   .append(builtinSqlScriptMethodProcesser.getReqSql().getFinalSqlScriptList().get(0).getFinalSelectSqlScript())
 		   .append(" ) s_ ")
 		   .append(builtinQueryCondMethodProcesser.getSql());
 		return sql;

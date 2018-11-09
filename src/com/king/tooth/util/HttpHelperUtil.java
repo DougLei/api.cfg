@@ -1,10 +1,8 @@
 package com.king.tooth.util;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,10 +47,8 @@ public class HttpHelperUtil {
 			while((tmp = br.readLine()) != null){
 				formData.append(tmp);
 			}
-		} catch (UnsupportedEncodingException e) {
-			Log4jUtil.debug("[HttpHelperUtil.analysisFormData]方法出现异常信息:{}", e.getMessage());
-		} catch (IOException e) {
-			Log4jUtil.debug("[HttpHelperUtil.analysisFormData]方法出现异常信息:{}", e.getMessage());
+		} catch (Exception e) {
+			throw new IllegalArgumentException("[HttpHelperUtil.analysisFormData]方法，在解析出请求体时，出现异常信息："+ ExceptionUtil.getErrMsg(e));
 		}finally{
 			CloseUtil.closeIO(br, reader);
 		}

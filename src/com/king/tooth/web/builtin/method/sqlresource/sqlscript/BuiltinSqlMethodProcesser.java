@@ -14,11 +14,11 @@ public class BuiltinSqlMethodProcesser extends AbstractSqlResourceBuiltinMethodP
 	/**
 	 * sql脚本资源
 	 */
-	private ComSqlScript sqlScriptResource;
+	private ComSqlScript reqSql;
 
-	public BuiltinSqlMethodProcesser(ComSqlScript reqSqlScriptResource) {
+	public BuiltinSqlMethodProcesser(ComSqlScript reqSql) {
 		super.isUsed = true;
-		this.sqlScriptResource = reqSqlScriptResource;
+		this.reqSql = reqSql;
 	}
 
 	public BuiltinSqlMethodProcesser() {
@@ -26,16 +26,16 @@ public class BuiltinSqlMethodProcesser extends AbstractSqlResourceBuiltinMethodP
 	}
 	
 	protected void execAnalysisParam() {
-		sqlScriptResource.analysisFinalSqlScript(sqlScriptResource, sqlParameterValues);
+		reqSql.analysisFinalSqlScript(reqSql, sqlParameterValues);
 	}
 
 	/**
 	 * 获取sql脚本资源
 	 * @return
 	 */
-	public ComSqlScript getSqlScriptResource() {
+	public ComSqlScript getReqSql() {
 		execAnalysisParams();
-		return sqlScriptResource;
+		return reqSql;
 	}
 
 	public int getProcesserType() {
@@ -48,8 +48,8 @@ public class BuiltinSqlMethodProcesser extends AbstractSqlResourceBuiltinMethodP
 	}
 	
 	public void clearInvalidMemory() {
-		if(sqlScriptResource != null){
-			sqlScriptResource.clear();
+		if(reqSql != null){
+			reqSql.clear();
 		}
 	}
 }

@@ -39,7 +39,7 @@ public class ResourcePropCodeRule {
 				return;
 			}
 			// sql资源，如果不是insert语句，则不需要处理
-			if(requestBody.getResourceInfo().getReqResource().isSqlResource() && !SqlStatementTypeConstants.INSERT.equals(requestBody.getResourceInfo().getSqlScriptResource().getConfType())){
+			if(requestBody.getResourceInfo().getReqResource().isSqlResource() && !SqlStatementTypeConstants.INSERT.equals(requestBody.getResourceInfo().getSql().getConfType())){
 				return;
 			}
 			

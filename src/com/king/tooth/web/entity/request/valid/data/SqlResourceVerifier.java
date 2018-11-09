@@ -53,7 +53,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	
 	public SqlResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
 		super(requestBody, resourceName, parentResourceName);
-		sql = requestBody.getResourceInfo().getSqlScriptResource();
+		sql = requestBody.getResourceInfo().getSql();
 		sqlParams = sql.getSqlParams();
 	}
 	

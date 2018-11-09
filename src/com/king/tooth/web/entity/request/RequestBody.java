@@ -227,6 +227,9 @@ public class RequestBody implements Serializable{
 		if(queryParentResourceMetadataInfos != null && queryParentResourceMetadataInfos.size() > 0){
 			queryParentResourceMetadataInfos.clear();
 		}
+		if(resourceInfo != null){
+			resourceInfo.clear();
+		}
 		if(resourceDataVerifier != null){
 			resourceDataVerifier.clear();
 		}
