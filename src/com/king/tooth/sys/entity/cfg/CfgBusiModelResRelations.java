@@ -35,18 +35,13 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	private String refResourceId;
 	
 	/**
-	 * 关联父资源的方式
-	 * <p>默认值为1，1:子资源中有属性关联存储父资源的id、2:通过关系表，关联主子资源的数据</p>
-	 */
-	private Integer refParentResourceMethod;
-	/**
 	 * 主资源中关联子资源的key名
 	 * <p>默认值为children，这个是在主资源对象中，用指定的key值存储子资源对象数组</p>
 	 */
-	private String pRefSubResourceKeyName;
+	private String refSubResourceKeyName;
 	/**
-	 * 关联父资源的属性id
-	 * <p>当ref_parent_resource_method=1时，需要指定子资源的哪个属性，存储父资源的id值</p>
+	 * 子资源中关联父资源的属性id
+	 * <p>指定子资源的哪个属性，存储父资源的id值</p>
 	 */
 	private String refParentResourcePropId;
 	
@@ -97,17 +92,14 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public void setIsEnabled(Integer isEnabled) {
 		this.isEnabled = isEnabled;
 	}
-	public Integer getRefParentResourceMethod() {
-		return refParentResourceMethod;
+	public String getRefSubResourceKeyName() {
+		return refSubResourceKeyName;
 	}
-	public void setRefParentResourceMethod(Integer refParentResourceMethod) {
-		this.refParentResourceMethod = refParentResourceMethod;
+	public void setRefSubResourceKeyName(String refSubResourceKeyName) {
+		this.refSubResourceKeyName = refSubResourceKeyName;
 	}
-	public String getpRefSubResourceKeyName() {
-		return pRefSubResourceKeyName;
-	}
-	public void setpRefSubResourceKeyName(String pRefSubResourceKeyName) {
-		this.pRefSubResourceKeyName = pRefSubResourceKeyName;
+	public void setSubBusiModelResRelationsList(List<CfgBusiModelResRelations> subBusiModelResRelationsList) {
+		this.subBusiModelResRelationsList = subBusiModelResRelationsList;
 	}
 	public String getRefParentResourcePropId() {
 		return refParentResourcePropId;
@@ -121,7 +113,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(8+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(7+7);
 		
 		CfgColumn refBusiModelIdColumn = new CfgColumn("ref_busi_model_id", DataTypeConstants.STRING, 32);
 		refBusiModelIdColumn.setName("关联的业务模型id");
@@ -138,21 +130,15 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		refResourceIdColumn.setComments("CfgTable或CfgSql资源的id");
 		columns.add(refResourceIdColumn);
 		
-		CfgColumn refParentResourceMethodColumn = new CfgColumn("ref_parent_resource_method", DataTypeConstants.INTEGER, 1);
-		refParentResourceMethodColumn.setName("关联父资源的方式");
-		refParentResourceMethodColumn.setComments("默认值为1，1:子资源中有属性关联存储父资源的id、2:通过关系表，关联主子资源的数据");
-		refParentResourceMethodColumn.setDefaultValue("1");
-		columns.add(refParentResourceMethodColumn);
-		
-		CfgColumn pRefSubResourceKeyNameColumn = new CfgColumn("p_ref_sub_resource_key_name", DataTypeConstants.STRING, 60);
-		pRefSubResourceKeyNameColumn.setName("主资源中关联子资源的key名");
-		pRefSubResourceKeyNameColumn.setComments("默认值为children，这个是在主资源对象中，用指定的key值存储子资源对象数组");
-		pRefSubResourceKeyNameColumn.setDefaultValue("children");
-		columns.add(pRefSubResourceKeyNameColumn);
+		CfgColumn refSubResourceKeyNameColumn = new CfgColumn("ref_sub_resource_key_name", DataTypeConstants.STRING, 60);
+		refSubResourceKeyNameColumn.setName("主资源中关联子资源的key名");
+		refSubResourceKeyNameColumn.setComments("默认值为children，这个是在主资源对象中，用指定的key值存储子资源对象数组");
+		refSubResourceKeyNameColumn.setDefaultValue("children");
+		columns.add(refSubResourceKeyNameColumn);
 		
 		CfgColumn refParentResourcePropIdColumn = new CfgColumn("ref_parent_resource_prop_id", DataTypeConstants.STRING, 32);
-		refParentResourcePropIdColumn.setName("关联父资源的属性id");
-		refParentResourcePropIdColumn.setComments("当ref_parent_resource_method=1时，需要指定子资源的哪个属性，存储父资源的id值");
+		refParentResourcePropIdColumn.setName("子资源中关联父资源的属性id");
+		refParentResourcePropIdColumn.setComments("指定子资源的哪个属性，存储父资源的id值");
 		columns.add(refParentResourcePropIdColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
@@ -194,14 +180,8 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		if(StrUtils.isEmpty(refResourceId)){
 			return "关联的资源id值不能为空";
 		}
-		if(refParentResourceMethod == null){
-			return "关联父资源的方式值不能为空";
-		}
-		if(refParentResourceMethod != 1 && refParentResourceMethod != 2){
-			return "关联父资源的方式值只能为1或2 [1:子资源中有属性关联存储父资源的id、2:通过关系表，关联主子资源的数据]";
-		}
-		if(refParentResourceMethod == 1 && StrUtils.isEmpty(refParentResourcePropId)){
-			return "关联父资源的属性id值不能为空";
+		if(StrUtils.isEmpty(refParentResourcePropId)){
+			return "子资源中关联父资源的属性id值不能为空";
 		}
 		if(orderCode == null || orderCode < 1){
 			return "排序值不能为空，且必须大于0！";

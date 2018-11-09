@@ -115,8 +115,9 @@ public class NamingProcessUtil {
 	//----------------------------------------------------------------------------------------------
 	/**
 	 * 提取数据库对象名称
-	 * <p>第一个下划线前的所有字母加_，再加后续每个单词的首字母，然后加_，加后续每个单词的尾字母，最后加_，再加总数量，均大写</p>
-	 * <p>例如: SYS_USER_LINE，提取结果为SYS_UL</p>
+	 * <p>保证名称在30个字符内，最多为30个字符</p>
+	 * <p>第一个下划线前的所有字母加_，再加后续每个单词的首字母，然后加_，加后续每个单词的尾字母，最后加_，再加名称的总数量，均大写</p>
+	 * <p>例如: SYS_USER_LINE，提取结果为SYS_UL_RE_13</p>
 	 * @param dbObjectName
 	 * @return
 	 */
@@ -124,24 +125,34 @@ public class NamingProcessUtil {
 		if(StrUtils.isEmpty(dbObjectName)){
 			return null;
 		}
+		if(dbObjectName.length() <= 30){
+			return dbObjectName;
+		}
+		
 		StringBuilder sb = new StringBuilder();
 		StringBuilder suffix = new StringBuilder();
-		try {
-			String[] nameArr = dbObjectName.split("_");
-			int length = nameArr.length;
-			for(int i=0;i<length;i++){
-				if(i == 0){
-					sb.append(nameArr[i]).append("_");
-				}else{
+		
+		String[] nameArr = dbObjectName.split("_");
+		int length = nameArr.length;
+		for(int i=0;i<length;i++){
+			if(i == 0){
+				sb.append(nameArr[i]).append("_");
+			}else{
+				if(StrUtils.notEmpty(nameArr[i])){
 					sb.append(nameArr[i].substring(0, 1));
 					suffix.append(nameArr[i].substring(nameArr[i].length()-1));
 				}
 			}
-			sb.append("_").append(suffix).append("_").append(dbObjectName.length());
-			return sb.toString().toUpperCase();
-		} finally{
-			sb.setLength(0);
-			suffix.setLength(0);
 		}
+		sb.append("_").append(suffix).append("_").append(dbObjectName.length());
+		suffix.setLength(0);
+		
+		String resultName = sb.toString();
+		sb.setLength(0);
+		
+		if(resultName.length() > 30){
+			throw new IllegalArgumentException("提取数据库对象名称时，传入的名称为["+dbObjectName+"]，提取名称为["+resultName+"]，提取名称长度超过30个字符，请联系后端系统开发人员");
+		}
+		return resultName.toUpperCase();
 	}
 }

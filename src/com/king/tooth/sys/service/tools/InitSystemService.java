@@ -20,14 +20,16 @@ import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.cfg.CfgBusiModel;
+import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
+import com.king.tooth.sys.entity.cfg.CfgCodeDataDictionary;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
-import com.king.tooth.sys.entity.cfg.CfgBusiModel;
-import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
+import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
@@ -35,7 +37,6 @@ import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.entity.cfg.ComProjectModule;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
-import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -153,6 +154,7 @@ public class InitSystemService extends AService{
 		tables.add(new CfgSeqInfo().toCreateTable());
 		tables.add(new CfgBusiModel().toCreateTable());
 		tables.add(new CfgBusiModelResRelations().toCreateTable());
+		tables.add(new CfgCodeDataDictionary().toCreateTable());
 		return tables;
 	}
 	

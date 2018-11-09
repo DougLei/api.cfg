@@ -32,7 +32,7 @@ public class ResourceDataVerifier {
 		}else if(resource.isCodeResource()){
 			resourceVerifier = new CodeResourceVerifier(requestBody, requestBody.getRouteBody().getResourceName(), requestBody.getRouteBody().getParentResourceName());
 		}else if(resource.isBuiltinResource()){
-			resourceVerifier = new BusiResModelResourceVerifier(requestBody, requestBody.getRouteBody().getResourceName(), requestBody.getRouteBody().getParentResourceName());
+			resourceVerifier = new BusiModelResourceVerifier(requestBody, requestBody.getRouteBody().getResourceName(), requestBody.getRouteBody().getParentResourceName());
 		}else{
 			return "系统目前只存在[表、sql脚本、代码、业务模型]四种资源类型，本次请求的资源类型为["+requestBody.getResourceInfo().getResourceType()+"]，请联系后台系统开发人员";
 		}

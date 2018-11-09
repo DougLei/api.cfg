@@ -47,7 +47,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Integer orderCode;
 	/**
 	 * 规则类型
-	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)</p>
+	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:code_data_dictionary(编码数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0</p>
 	 * <p>默认值为0</p>
 	 */
 	private Integer ruleType;
@@ -113,15 +113,15 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Integer columnValFrom;
 	
 	/**
-	 * 数据字典值的来源
+	 * 编码数据字典值的来源
 	 * <p>0:当前数据、1:当前数据资源对象、2:其他数据资源对象</p>
 	 * <p>默认值为0</p>
 	 */
-	private Integer dataDictionaryValFrom;
+	private Integer codeDataDictionaryValFrom;
 	/**
-	 * 数据字典id
+	 * 编码数据字典id
 	 */
-	private String dataDictionaryId;
+	private String codeDataDictionaryId;
 	
 	/**
 	 * 引用表的id
@@ -251,17 +251,17 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	public void setColumnValFrom(Integer columnValFrom) {
 		this.columnValFrom = columnValFrom;
 	}
-	public Integer getDataDictionaryValFrom() {
-		return dataDictionaryValFrom;
+	public Integer getCodeDataDictionaryValFrom() {
+		return codeDataDictionaryValFrom;
 	}
-	public void setDataDictionaryValFrom(Integer dataDictionaryValFrom) {
-		this.dataDictionaryValFrom = dataDictionaryValFrom;
+	public void setCodeDataDictionaryValFrom(Integer codeDataDictionaryValFrom) {
+		this.codeDataDictionaryValFrom = codeDataDictionaryValFrom;
 	}
-	public String getDataDictionaryId() {
-		return dataDictionaryId;
+	public String getCodeDataDictionaryId() {
+		return codeDataDictionaryId;
 	}
-	public void setDataDictionaryId(String dataDictionaryId) {
-		this.dataDictionaryId = dataDictionaryId;
+	public void setCodeDataDictionaryId(String codeDataDictionaryId) {
+		this.codeDataDictionaryId = codeDataDictionaryId;
 	}
 	public String getRefTableId() {
 		return refTableId;
@@ -334,7 +334,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn ruleTypeColumn = new CfgColumn("rule_type", DataTypeConstants.INTEGER, 1);
 		ruleTypeColumn.setName("规则类型");
-		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:data_dictionary(数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0");
+		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:code_data_dictionary(编码数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0");
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
@@ -391,16 +391,16 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		columnValFromColumn.setDefaultValue("0");
 		columns.add(columnValFromColumn);
 		
-		CfgColumn dataDictionaryValFromColumn = new CfgColumn("data_dictionary_val_from", DataTypeConstants.INTEGER, 1);
-		dataDictionaryValFromColumn.setName("数据字典值的来源");
-		dataDictionaryValFromColumn.setComments("0:当前数据、1:当前数据资源对象、2:其他数据资源对象，默认值为0");
-		dataDictionaryValFromColumn.setDefaultValue("0");
-		columns.add(dataDictionaryValFromColumn);
+		CfgColumn codeDataDictionaryValFromColumn = new CfgColumn("code_data_dictionary_val_from", DataTypeConstants.INTEGER, 1);
+		codeDataDictionaryValFromColumn.setName("编码数据字典值的来源");
+		codeDataDictionaryValFromColumn.setComments("0:当前数据、1:当前数据资源对象、2:其他数据资源对象，默认值为0");
+		codeDataDictionaryValFromColumn.setDefaultValue("0");
+		columns.add(codeDataDictionaryValFromColumn);
 		
-		CfgColumn dataDictionaryIdColumn = new CfgColumn("data_dictionary_id", DataTypeConstants.STRING, 50);
-		dataDictionaryIdColumn.setName("数据字典id");
-		dataDictionaryIdColumn.setComments("数据字典id");
-		columns.add(dataDictionaryIdColumn);
+		CfgColumn codeDataDictionaryIdColumn = new CfgColumn("code_data_dictionary_id", DataTypeConstants.STRING, 50);
+		codeDataDictionaryIdColumn.setName("编码数据字典id");
+		codeDataDictionaryIdColumn.setComments("编码数据字典id");
+		columns.add(codeDataDictionaryIdColumn);
 		
 		CfgColumn refTableIdColumn = new CfgColumn("ref_table_id", DataTypeConstants.STRING, 32);
 		refTableIdColumn.setName("引用表的id");
@@ -512,8 +512,8 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 			case 5: // 5:column(其他列值)
 				value = getColumnVal(resourceName, currentJsonObject, columnValFrom);
 				break;
-			case 6: // 6:data_dictionary(数据字典值)
-				value = getDataDictionaryVal(resourceName, currentJsonObject);
+			case 6: // 6:code_data_dictionary(编码数据字典值)
+				value = getCodeDataDictionaryVal(resourceName, currentJsonObject);
 				break;
 			case 7: // 7:weekCalendar(周日历，即当前日期是今年第几周)
 				value = getWeekCalendarVal(resourceName, currentJsonObject);
@@ -679,11 +679,11 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		String valueStr = value.toString();
 		int valueLength = valueStr.length();
 		if(serialNumIsAutoFillnull == 1 && valueLength < serialNumLength){
-			valueStr = zero.substring(0, serialNumLength-valueLength) + valueStr;
+			valueStr = zeros.substring(0, serialNumLength-valueLength) + valueStr;
 		}
 		return valueStr;
 	}
-	private static final String zero = "00000000000000000000";
+	private static final String zeros = "00000000000000000000";
 	
 	// ------------------------------------------------------------------------------------------
 	/**
@@ -769,32 +769,32 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取【6:data_dictionary(数据字典值)】
+	 * 获取【6:code_data_dictionary(编码数据字典值)】
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Object getDataDictionaryVal(String resourceName, JSONObject currentJsonObject) {
+	private Object getCodeDataDictionaryVal(String resourceName, JSONObject currentJsonObject) {
 		Object value = null;
-		List<Object[]> dataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), dataDictionaryId);
-		if(dataDictionarys != null && dataDictionarys.size() > 0){
-			value = getColumnVal(resourceName, currentJsonObject, dataDictionaryValFrom);
+		List<Object[]> codeDataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryCodeDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), codeDataDictionaryId);
+		if(codeDataDictionarys != null && codeDataDictionarys.size() > 0){
+			value = getColumnVal(resourceName, currentJsonObject, codeDataDictionaryValFrom);
 			if(value != null){
 				String valueStr = value.toString();
-				for (Object[] objects : dataDictionarys) {
+				for (Object[] objects : codeDataDictionarys) {
 					if(objects[0] != null && objects[0].toString().equals(valueStr)){
 						value = objects[1];
 						break;
 					}
 				}
 			}
-			dataDictionarys.clear();
+			codeDataDictionarys.clear();
 		}
 		return value;
 	}
-	/** 查询数据字典值的hql语句 */
-	private static final String queryDataDictionaryHql = "select val, caption from SysDataDictionary where isEnabled=1 and isDelete=0 and projectId=? and customerId=? and parentId=?";
+	/** 查询编码数据字典值的hql语句 */
+	private static final String queryCodeDataDictionaryHql = "select propValue, codeValue from CfgCodeDataDictionary where isEnabled=1 and projectId=? and customerId=? and parentId=?";
 	
 	// ------------------------------------------------------------------------------------------
 	/**

@@ -21,6 +21,7 @@ import com.king.tooth.sys.controller.sys.SysUserController;
 import com.king.tooth.sys.controller.tools.SystemToolsController;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
+import com.king.tooth.sys.entity.cfg.CfgCodeDataDictionary;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
@@ -137,8 +138,13 @@ public class BuiltinResourceInstance {
 		instanceCache.put("CfgPropCodeRule", new CfgPropCodeRule());
 		instanceCache.put("CfgPropCodeRuleDetail", new CfgPropCodeRuleDetail());
 		instanceCache.put("CfgSeqInfo", new CfgSeqInfo());
+		instanceCache.put("CfgCodeDataDictionary", new CfgCodeDataDictionary());
 		instanceCache.put("CfgProjectSqlLinks", new CfgProjectSqlLinks());
 		instanceCache.put("CfgProjectTableLinks", new CfgProjectTableLinks());
+		instanceCache.put("CfgPropExtendConf", new CfgPropExtendConf());
+		instanceCache.put("CfgBusiModel", new CfgBusiModel());
+		instanceCache.put("CfgBusiModelResRelations", new CfgBusiModelResRelations());
+		instanceCache.put("CfgResource", new CfgResource());
 		instanceCache.put("SysUser", new SysUser());
 		instanceCache.put("SysAccount", new SysAccount());
 		instanceCache.put("SysAccountOnlineStatus", new SysAccountOnlineStatus());
@@ -152,7 +158,6 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysPermissionPriority", new SysPermissionPriority());
 		instanceCache.put("SysReqLog", new SysReqLog());
 		instanceCache.put("SysOperSqlLog", new SysOperSqlLog());
-		instanceCache.put("CfgResource", new CfgResource());
 		instanceCache.put("SysFile", new SysFile());
 		instanceCache.put("SysUserGroup", new SysUserGroup());
 		instanceCache.put("SysUserGroupDetail", new SysUserGroupDetail());
@@ -163,9 +168,6 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
 		instanceCache.put("SysFileIELog", new SysFileIELog());
-		instanceCache.put("CfgPropExtendConf", new CfgPropExtendConf());
-		instanceCache.put("CfgBusiModel", new CfgBusiModel());
-		instanceCache.put("CfgBusiModelResRelations", new CfgBusiModelResRelations());
 		
 		
 		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉

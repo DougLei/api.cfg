@@ -9,12 +9,12 @@ import java.sql.Statement;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
-import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.sys.entity.cfg.CfgDatabase;
+import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgResource;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -127,8 +127,8 @@ public final class SyncTableToServerDBTool extends AService{
 	private static String executeInsertCfgResourceSql(Statement st, CfgResource resource) throws SQLException {
 		String id = ResourceHandlerUtil.getIdentity();
 		// 先尝试删除之前的数据，再添加新的数据
-		st.executeUpdate("delete sys_resource where resource_name = '"+resource.getResourceName()+"'");
-		st.executeUpdate("insert into sys_resource(ref_resource_id, resource_name, resource_type, id, customer_id, project_id, is_enabled, request_method, create_date, last_update_date, create_user_id, last_update_user_id) values('"+ResourceInfoConstants.BUILTIN_RESOURCE+"','"+resource.getResourceName()+"',1,'"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
+		st.executeUpdate("delete cfg_resource where resource_name = '"+resource.getResourceName()+"'");
+		st.executeUpdate("insert into cfg_resource(ref_resource_id, resource_name, resource_type, id, customer_id, project_id, is_enabled, request_method, create_date, last_update_date, create_user_id, last_update_user_id) values('"+ResourceInfoConstants.BUILTIN_RESOURCE+"','"+resource.getResourceName()+"',1,'"+id+"','unknow','90621e37b806o6fe8538c5eb782901bb',1, 'all', getdate(), getdate(), '16ed21bd7a7a41f5bea2ebaa258908cf', '16ed21bd7a7a41f5bea2ebaa258908cf')");
 		return id;
 	}
 }

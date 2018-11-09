@@ -6,9 +6,9 @@ import com.king.tooth.web.entity.request.RequestBody;
  * 业务模型资源的数据校验类
  * @author DougLei
  */
-public class BusiResModelResourceVerifier extends AbstractResourceVerifier{
+public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 
-	public BusiResModelResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
+	public BusiModelResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
 		super(requestBody, resourceName, parentResourceName);
 	}
 	

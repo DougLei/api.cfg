@@ -40,6 +40,7 @@ public class BuiltinObjectInstance {
 		currentSysBuiltinDatabaseInstance.setLoginPassword(SysConfig.getSystemConfig("jdbc.password"));
 		currentSysBuiltinDatabaseInstance.setIp(SysConfig.getSystemConfig("db.default.ip"));
 		currentSysBuiltinDatabaseInstance.setPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
+//		currentSysBuiltinDatabaseInstance.setPort(1433);
 	}
 	
 	/**
