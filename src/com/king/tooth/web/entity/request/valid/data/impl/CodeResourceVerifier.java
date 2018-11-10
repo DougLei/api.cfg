@@ -1,6 +1,7 @@
-package com.king.tooth.web.entity.request.valid.data;
+package com.king.tooth.web.entity.request.valid.data.impl;
 
 import com.king.tooth.web.entity.request.RequestBody;
+import com.king.tooth.web.entity.request.valid.data.AbstractResourceVerifier;
 
 /**
  * 代码资源的数据校验类

@@ -1,283 +1,79 @@
-package com.king.tooth.web.entity.request.valid.data;
+package com.king.tooth.web.entity.request.valid.data.util.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
-import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.ComSqlScript;
 import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
-import com.king.tooth.sys.entity.tools.resource.metadatainfo.SqlResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.datatype.DataTypeValidUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
-import com.king.tooth.web.entity.request.RequestBody;
+import com.king.tooth.web.entity.request.ResourcePropCodeRule;
+import com.king.tooth.web.entity.request.valid.data.util.TableResourceUtil;
 
 /**
- * sql资源的数据校验类
+ * sql参数的验证和set实际值
  * @author DougLei
  */
-public class SqlResourceVerifier extends AbstractResourceVerifier{
-
-	private ComSqlScript sql;
-	private List<ComSqlScriptParameter> sqlParams;
+@SuppressWarnings("serial")
+public class SqlParamValidAndSetActualValueEntity implements Serializable{
+	
+	public SqlParamValidAndSetActualValueEntity() {
+	}
+	public SqlParamValidAndSetActualValueEntity(ComSqlScript sql, boolean isGetRequest, List<List<ComSqlScriptParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList, ResourcePropCodeRule resourcePropCodeRule) {
+		this.sql = sql;
+		this.isGetRequest = isGetRequest;
+		this.actualParamsList = actualParamsList;
+		this.resourceMetadataInfos = resourceMetadataInfos;
+		this.inSqlResultSetMetadataInfoList = inSqlResultSetMetadataInfoList;
+		this.resourcePropCodeRule = resourcePropCodeRule;
+		
+		sqlParams = sql.getSqlParams();
+		resourceName = sql.getResourceName();
+	}
 	
 	/**
 	 * sql脚本实际传入的参数集合
 	 */
 	private List<List<ComSqlScriptParameter>> actualParamsList;
 	/**
-	 * 针对select sql查询结果集的元数据信息集合
+	 * 资源的元数据信息集合
 	 */
-	private List<ResourceMetadataInfo> outSqlResultSetMetadataInfos;
+	protected List<ResourceMetadataInfo> resourceMetadataInfos;
+	/**
+	 * 请求资源的属性(字段、列)值编码规范
+	 */
+	private ResourcePropCodeRule resourcePropCodeRule;
+	/**
+	 * 是否是get请求
+	 */
+	private boolean isGetRequest;
+	
+	/**
+	 * 要操作的sql对象
+	 */
+	private ComSqlScript sql;
 	/**
 	 * 针对procedure sql传入表对象的元数据信息集合
 	 */
 	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList;
+	private List<ComSqlScriptParameter> sqlParams;
+	private String resourceName;
 	
-	public SqlResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
-		super(requestBody, resourceName, parentResourceName);
-		sql = requestBody.getResourceInfo().getSql();
-		sqlParams = sql.getSqlParams();
-	}
-	
-	public void clear(){
-		super.clear();
-		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
-			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
-				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
-					inSqlResultSetMetadataInfos.clear();
-				}
-			}
-			inSqlResultSetMetadataInfoList.clear();
-		}
-		
-		if(!SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){// select语句不清空的原因是，后续还要使用元数据信息中的数据类型，对值进行数据类型转换操作
-			if(outSqlResultSetMetadataInfos != null && outSqlResultSetMetadataInfos.size() > 0){
-				outSqlResultSetMetadataInfos.clear();
-			}
-		}
-		
-		if(actualParamsList != null && actualParamsList.size() > 0){
-			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
-				if(actualParams != null && actualParams.size() > 0){
-					actualParams.clear();
-				}
-			}
-			actualParamsList.clear();
-		}
-	}
-	
-	public String doValid(){
-		return doValidSqlResourceMetadata();
-	}
-
-	/**
-	 * 验证sql资源的元数据
-	 * @return
-	 */
-	private String doValidSqlResourceMetadata() {
-		initSqlResourceMetadataInfos();
-		initActualParamsList();
-		String validResult = validAndSetActualParams();
-		if(validResult != null){
-			return validResult;
-		}
-		
-		if(requestBody.isGetRequest()){
-			return validGetSqlResourceMetadata();
-		}else if(requestBody.isPostRequest() || requestBody.isPutRequest() || requestBody.isDeleteRequest()){
-			return validPostSqlResourceMetadata();
-		}
-		return "sql资源，只支持[get、post、put、delete]四种请求方式";
-	}
-	
-	/**
-	 * 初始化sql资源元数据信息集合
-	 * @return
-	 */
-	private void initSqlResourceMetadataInfos() {
-		resourceMetadataInfos = getSqlResourceParamsMetadataInfos(sqlParams);
-		if(requestBody.isParentSubResourceQuery() && requestBody.isRecursiveQuery()){
-			parentResourceMetadataInfos = resourceMetadataInfos;
-		}
-		inSqlResultSetMetadataInfoList = getSqlInResultSetMetadataInfoList(sql);
-		outSqlResultSetMetadataInfos = getSqlOutResultSetMetadataInfos(sql);
-	}
-	
-	/**
-	 * 获取sql资源的参数元数据信息集合
-	 * @param sqlParams
-	 * @return
-	 */
-	private List<ResourceMetadataInfo> getSqlResourceParamsMetadataInfos(List<ComSqlScriptParameter> sqlParams){
-		List<ResourceMetadataInfo> metadataInfos = null;
-		if(sqlParams != null && sqlParams.size() > 0){
-			metadataInfos = new ArrayList<ResourceMetadataInfo>(sqlParams.size());
-			for (ComSqlScriptParameter sqlParam : sqlParams) {
-				metadataInfos.add(new SqlResourceMetadataInfo(
-						null,
-						sqlParam.getParameterDataType(),
-						sqlParam.getLength(),
-						sqlParam.getPrecision(),
-						0, // sql脚本参数不需要唯一约束
-						0, // sql脚本参数不能为空
-						0, // 不能忽略检查
-						sqlParam.getParameterName(),
-						sqlParam.getRemark()));
-			}
-		}
-		return metadataInfos;
-	}
-	
-	/**
-	 * 获取sql资源的传入表对象参数的元数据信息集合
-	 * <p>主要针对procedure</p>
-	 * @param sql
-	 * @return
-	 */
-	private List<List<ResourceMetadataInfo>> getSqlInResultSetMetadataInfoList(ComSqlScript sql){
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType())){
-			List<CfgSqlResultset> inSqlResultsets = sql.getInSqlResultsets();
-			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
-				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsets.size());
-				for (CfgSqlResultset cfgSqlResultset : inSqlResultsets) {
-					inSqlResultSetMetadataInfoList.add(cfgSqlResultset.getInSqlResultSetMetadataInfos());
-				}
-				return inSqlResultSetMetadataInfoList;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * 获取sql资源传出的结果集元数据信息集合
-	 * <p>主要针对select</p>
-	 * @param sql
-	 * @return
-	 */
-	private List<ResourceMetadataInfo> getSqlOutResultSetMetadataInfos(ComSqlScript sql){
-		if(SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){
-			List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
-			List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
-			for (CfgSqlResultset csr : outSqlResultSet) {
-				metadataInfos.add(new SqlResourceMetadataInfo(csr.getPropName(), csr.getDataType()));
-			}
-			return metadataInfos;
-		}
-		return null;
-	}
-	
-	
-	/**
-	 * 初始化sql脚本实际传入的参数集合
-	 */
-	private void initActualParamsList() {
-		Map<String, String> inSqlParams = analysisInSqlParams();
-		IJson formData = requestBody.getFormData();
-		
-		List<ComSqlScriptParameter> sqlScriptActualParameters = null;
-		ComSqlScriptParameter ssp = null;
-		
-		// 请求体为空，那么判断是否从url传参
-		if((formData == null || formData.size() == 0)){
-			if(inSqlParams != null && inSqlParams.size() > 0){
-				actualParamsList = new ArrayList<List<ComSqlScriptParameter>>(1);
-				// 解析sql脚本的参数
-				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(inSqlParams.size());
-				actualParamsList.add(sqlScriptActualParameters);
-				
-				Set<String> parameterNames = inSqlParams.keySet();
-				for (String parameterName : parameterNames) {
-					ssp = new ComSqlScriptParameter(parameterName, null, false, 0, -1, false, true);
-					ssp.setActualInValue(processActualValue(inSqlParams.get(parameterName).trim()));
-					sqlScriptActualParameters.add(ssp);
-				}
-				inSqlParams.clear();
-			}
-		}
-		// 否则就是通过请求体传参
-		else{
-			int len = formData.size();
-			actualParamsList = new ArrayList<List<ComSqlScriptParameter>>(len);
-			
-			JSONObject json = null;
-			for(int i=0;i<len;i++){
-				json = formData.get(i);
-				if(json != null && json.size()>0){
-					sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(json.size());
-					actualParamsList.add(sqlScriptActualParameters);
-					
-					Set<String> parameterNames = json.keySet();
-					for (String parameterName : parameterNames) {
-						ssp = new ComSqlScriptParameter(parameterName, null, false, 0, -1, false, true);
-						ssp.setActualInValue(json.get(parameterName));
-						sqlScriptActualParameters.add(ssp);
-					}
-				}else{
-					actualParamsList.add(null);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * 解析传入的sql脚本参数
-	 * @return
-	 */
-	private Map<String, String> analysisInSqlParams() {
-		Map<String, String> requestResourceParams = requestBody.getRequestResourceParams();
-		Map<String, String> inSqlParams = null;
-		if(sqlParams != null && sqlParams.size() > 0 && requestResourceParams.size() > 0){
-			inSqlParams = new HashMap<String, String>(16);// 默认初始长度为16
-			
-			Set<String> keys = requestResourceParams.keySet();
-			for (ComSqlScriptParameter sqlParam : sqlParams) {
-				for (String key : keys) {
-					if(key.equalsIgnoreCase(sqlParam.getParameterName())){
-						inSqlParams.put(key, requestResourceParams.get(key));
-						break;
-					}
-				}
-			}
-			
-			if(inSqlParams.size() > 0){
-				keys = inSqlParams.keySet();
-				for (String key : keys) {
-					requestResourceParams.remove(key);
-				}
-			}
-		}
-		return inSqlParams;
-	}
-	
-	/**
-	 * 处理每个值最外层的单引号或双引号
-	 * <p>主要针对url参数的处理</p>
-	 * @param actualValue
-	 * @return
-	 */
-	private String processActualValue(String actualValue){
-		if(actualValue.startsWith("'") || actualValue.startsWith("\"")){
-			actualValue = actualValue.substring(1, actualValue.length()-1);
-		}
-		return actualValue;
+	public ComSqlScript getSql() {
+		return sql;
 	}
 	
 	/**
@@ -285,7 +81,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * <p>同时将调用sql资源时，实际传过来的值存到参数集合中(sql参数集合/procedure sql参数集合)</p>
 	 * @return 
 	 */
-	private String validAndSetActualParams() {
+	public String doValidAndSetActualParams() {
 		if((actualParamsList == null || actualParamsList.size() == 0) && (this.sqlParams == null || this.sqlParams.size() == 0)){
 			return null;
 		}
@@ -313,7 +109,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			sqlParamsList.add(sqlParams);
 			
 			for (ComSqlScriptParameter ssp : sqlParams) {
-				analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), null, index++);
+				analysisActualInValueResult = analysisActualInValue(ssp, isGetRequest, null, index++);
 				if(analysisActualInValueResult != null){
 					return analysisActualInValueResult;
 				}
@@ -331,7 +127,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 					for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
 						if(ssp.getParameterName().equals(rmi.getPropName())){
 							if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
-								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), null, index);
+								analysisActualInValueResult = analysisActualInValue(ssp, isGetRequest, null, index);
 							}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
 								if(actualParams != null && actualParams.size() > 0){
 									for (ComSqlScriptParameter ssap : actualParams) {
@@ -341,7 +137,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 										}
 									}
 								}
-								analysisActualInValueResult = analysisActualInValue(ssp, requestBody.isGetRequest(), rmi, index);
+								analysisActualInValueResult = analysisActualInValue(ssp, isGetRequest, rmi, index);
 							}
 							if(analysisActualInValueResult != null){
 								return analysisActualInValueResult;
@@ -390,7 +186,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * @param index
 	 * @return
 	 */
-	public String analysisActualInValue(ComSqlScriptParameter ssp, boolean isGetRequest, ResourceMetadataInfo rmi, int index) {
+	private String analysisActualInValue(ComSqlScriptParameter ssp, boolean isGetRequest, ResourceMetadataInfo rmi, int index) {
 		String desc = "操作sql资源时，";
 		if(rmi != null && !ssp.getParameterDataType().equals(rmi.getDataType())){
 			return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 参数，配置的数据类型("+ssp.getParameterDataType()+")和实际加载的数据类型("+rmi.getDataType()+")不一致，请联系后端系统开发人员";
@@ -487,7 +283,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.AUTO_CODE){
-			actualInValue = PropCodeRuleUtil.getFinalCodeVal(ssp.getParameterName(), paramIndex++, requestBody.getResourcePropCodeRule());
+			actualInValue = PropCodeRuleUtil.getFinalCodeVal(ssp.getParameterName(), paramIndex++, resourcePropCodeRule);
 			if(actualInValue == null){
 				return desc+"自动编码参数["+ssp.getParameterName()+"]的值为空，请联系后端系统开发人员";
 			}
@@ -518,7 +314,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			return desc+"第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
 		}
 		if(ijson != null && ijson.size() > 0){
-			return validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表对象中，", ijson, false, false);
+			return TableResourceUtil.validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表对象中，", null, inSqlResultSetMetadataInfos, ijson, false, false);
 		}
 		return null;
 	}
@@ -538,42 +334,5 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			return "''";
 		}
 		return ssp.getValuePackStart()+sqlParameterValue.toString()+ssp.getValuePackEnd();
-	}
-	
-	/**
-	 * 验证get请求的sql资源数据
-	 * <p>主要验证请求的select sql，筛选的列名是否存在</p>
-	 * @return
-	 */
-	private String validGetSqlResourceMetadata() {
-		Set<String> requestResourcePropNames = requestBody.getRequestResourceParams().keySet();
-		for (String propName : requestResourcePropNames) {
-			if(validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
-				return "执行selec sql资源["+resourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
-			}
-		}
-		
-		if(requestBody.isParentSubResourceQuery()){
-			requestResourcePropNames = requestBody.getRequestParentResourceParams().keySet();
-			for (String propName : requestResourcePropNames) {
-				if(validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
-					return "执行selec sql资源["+parentResourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
-				}
-			}
-		}
-		
-		// 记录请求的查询资源的元数据信息集合
-		requestBody.setQueryResourceMetadataInfos(outSqlResultSetMetadataInfos);
-		requestBody.setQueryParentResourceMetadataInfos(outSqlResultSetMetadataInfos);
-		return null;
-	}
-	
-	/**
-	 * 验证post请求的sql资源数据
-	 * <p>sql参数验证完，目前post请求不需要再验证其他数据</p>
-	 * @return
-	 */
-	private String validPostSqlResourceMetadata() {
-		return null;
 	}
 }

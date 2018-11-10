@@ -53,14 +53,14 @@ public class DBUtil {
 //		String dbType = BuiltinDatabaseData.DB_TYPE_SQLSERVER;
 		String dbType = HibernateUtil.getCurrentDatabaseType();
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
-			String constraintName = tableName+"_"+columnName;
-			if(constraintName.length() >= 27){
+			String constraintName = constraintType+"_"+tableName+"_"+columnName;
+			if(constraintName.length() > 30){
 				// oracle的约束名长度不能超过30个字符，所以这里对约束名做处理：
 				Log4jUtil.debug("在oracle数据库中，因约束名长度超过30个字符，系统自动处理:{}",  constraintName);
 				constraintName = NamingProcessUtil.extractDbObjName(constraintName);
 				Log4jUtil.debug("自动处理的新约束名为:{}",  constraintName);
 			}
-			return constraintType+"_"+constraintName;
+			return constraintName;
 		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){
 			return constraintType+"_"+tableName+"_"+columnName;
 		}

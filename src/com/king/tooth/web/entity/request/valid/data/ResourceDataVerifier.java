@@ -2,6 +2,10 @@ package com.king.tooth.web.entity.request.valid.data;
 
 import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.web.entity.request.RequestBody;
+import com.king.tooth.web.entity.request.valid.data.impl.BusiModelResourceVerifier;
+import com.king.tooth.web.entity.request.valid.data.impl.CodeResourceVerifier;
+import com.king.tooth.web.entity.request.valid.data.impl.SqlResourceVerifier;
+import com.king.tooth.web.entity.request.valid.data.impl.TableResourceVerifier;
 
 /**
  * 资源的数据校验类

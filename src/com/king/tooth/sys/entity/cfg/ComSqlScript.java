@@ -359,6 +359,9 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 		if(StrUtils.isEmpty(sqlScriptContent)){
 			return "sql脚本内容不能为空";
 		}
+		if(isEnabled == null){
+			isEnabled = 1;
+		}
 		return null;
 	}
 	
