@@ -63,6 +63,9 @@ public class JSONObjectExtend implements IJson{
 	}
 
 	public void add(JSONObject json) {
+		if(jsonObject != null && jsonObject.size() > 0){
+			jsonObject.clear();
+		}
 		jsonObject = json;
 	}
 }

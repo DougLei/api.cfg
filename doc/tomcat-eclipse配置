@@ -1,1 +1,3 @@
 -server -Xms512m -Xmx1024m -XX:PermSize=256M -XX:MaxPermSize=512m
+
+tomcat service.xml Connector标签中增加配置 URIEncoding="UTF-8"，定义uri的字符集，默认是iso8859-1
