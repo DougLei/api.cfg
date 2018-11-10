@@ -16,7 +16,8 @@ public class Log4jUtil {
 	 * @param content
 	 */
 	public static final void debug(String content){
-		logger.debug("============================> " + content);
+		if(logger.isDebugEnabled())
+			logger.debug("============================> " + content);
 	}
 	/**
 	 * debug
@@ -24,7 +25,8 @@ public class Log4jUtil {
 	 * @param params
 	 */
 	public static final void debug(String content, Object... params){
-		logger.debug("============================> " + content, params);
+		if(logger.isDebugEnabled())
+			logger.debug("============================> " + content, params);
 	}
 	/**
 	 * debug
@@ -34,7 +36,8 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void debug(Class clz, String methodName, String content){
-		logger.debug("============================> ["+clz.getName()+"."+methodName+"()]" + content);
+		if(logger.isDebugEnabled())
+			logger.debug("============================> ["+clz.getName()+"."+methodName+"()]" + content);
 	}
 	/**
 	 * debug
@@ -45,7 +48,8 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void debug(Class clz, String methodName, String content, Object... params){
-		logger.debug("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
+		if(logger.isDebugEnabled())
+			logger.debug("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
 	}
 	
 	
@@ -54,7 +58,8 @@ public class Log4jUtil {
 	 * @param content
 	 */
 	public static final void info(String content){
-		logger.info("============================> " + content);
+		if(logger.isInfoEnabled())
+			logger.info("============================> " + content);
 	}
 	/**
 	 * info
@@ -62,7 +67,8 @@ public class Log4jUtil {
 	 * @param params
 	 */
 	public static final void info(String content, Object... params){
-		logger.info("============================> " + content, params);
+		if(logger.isInfoEnabled())
+			logger.info("============================> " + content, params);
 	}
 	/**
 	 * info
@@ -72,7 +78,8 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void info(Class clz, String methodName, String content){
-		logger.info("============================> ["+clz.getName()+"."+methodName+"()]" + content);
+		if(logger.isInfoEnabled())
+			logger.info("============================> ["+clz.getName()+"."+methodName+"()]" + content);
 	}
 	/**
 	 * info
@@ -83,7 +90,8 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void info(Class clz, String methodName, String content, Object... params){
-		logger.info("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
+		if(logger.isInfoEnabled())
+			logger.info("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
 	}
 	
 	
@@ -92,7 +100,8 @@ public class Log4jUtil {
 	 * @param content
 	 */
 	public static final void warn(String content){
-		logger.warn("============================> " + content);
+		if(logger.isWarnEnabled())
+			logger.warn("============================> " + content);
 	}
 	/**
 	 * warn
@@ -100,7 +109,8 @@ public class Log4jUtil {
 	 * @param params
 	 */
 	public static final void warn(String content, Object... params){
-		logger.warn("============================> " + content, params);
+		if(logger.isWarnEnabled())
+			logger.warn("============================> " + content, params);
 	}
 	/**
 	 * warn
@@ -110,7 +120,8 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void warn(Class clz, String methodName, String content){
-		logger.warn("============================> ["+clz.getName()+"."+methodName+"()]" + content);
+		if(logger.isWarnEnabled())
+			logger.warn("============================> ["+clz.getName()+"."+methodName+"()]" + content);
 	}
 	/**
 	 * warn
@@ -121,7 +132,8 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void warn(Class clz, String methodName, String content, Object... params){
-		logger.warn("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
+		if(logger.isWarnEnabled())
+			logger.warn("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
 	}
 	
 	
@@ -130,7 +142,8 @@ public class Log4jUtil {
 	 * @param content
 	 */
 	public static final void error(String content){
-		logger.error("============================> " + content);
+		if(logger.isErrorEnabled())
+			logger.error("============================> " + content);
 	}
 	/**
 	 * error
@@ -138,7 +151,8 @@ public class Log4jUtil {
 	 * @param params
 	 */
 	public static final void error(String content, Object... params){
-		logger.error("============================> " + content, params);
+		if(logger.isErrorEnabled())
+			logger.error("============================> " + content, params);
 	}
 	/**
 	 * error
@@ -148,7 +162,8 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void error(Class clz, String methodName, String content){
-		logger.error("============================> ["+clz.getName()+"."+methodName+"()]" + content);
+		if(logger.isErrorEnabled())
+			logger.error("============================> ["+clz.getName()+"."+methodName+"()]" + content);
 	}
 	/**
 	 * error
@@ -159,6 +174,7 @@ public class Log4jUtil {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static final void error(Class clz, String methodName, String content, Object... params){
-		logger.error("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
+		if(logger.isErrorEnabled())
+			logger.error("============================> ["+clz.getName()+"."+methodName+"()]" + content, params);
 	}
 }

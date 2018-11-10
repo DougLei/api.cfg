@@ -78,8 +78,8 @@ public class ResourceInfo {
 			}
 			// 如果是业务模型资源，则要去查询相关的信息
 			else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
-				if("get".equals(requestMethod) || "delete".equals(requestMethod)){
-					throw new IllegalArgumentException("系统目前不支持通过[get/delete]方式的请求，调用业务模型资源");
+				if(!"post".equals(requestMethod)){
+					throw new IllegalArgumentException("系统目前不支持通过[非post]方式的请求，调用业务模型资源");
 				}
 				busiModel = BuiltinResourceInstance.getInstance("CfgBusiModelService", CfgBusiModelService.class).findBusiModel(reqResource.getRefResourceId());
 			}

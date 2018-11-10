@@ -15,8 +15,8 @@ import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
  */
 public class TableResourceVerifier extends AbstractResourceVerifier{
 	
-	public TableResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
-		super(requestBody, resourceName, parentResourceName);
+	public TableResourceVerifier(RequestBody requestBody) {
+		super(requestBody);
 	}
 
 	public String doValid(){

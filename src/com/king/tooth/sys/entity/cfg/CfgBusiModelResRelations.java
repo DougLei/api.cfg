@@ -54,6 +54,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * <p>默认值为1</p>
 	 */
 	private Integer isEnabled;
+	/**
+	 * 是否可为空
+	 * <p>默认为0</p>
+	 */
+	private Integer isNullabled;
 	
 	//-------------------------------------------------------------------------
 	/**
@@ -104,6 +109,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public String getRefParentResourcePropId() {
 		return refParentResourcePropId;
 	}
+	public Integer getIsNullabled() {
+		return isNullabled;
+	}
+	public void setIsNullabled(Integer isNullabled) {
+		this.isNullabled = isNullabled;
+	}
 	public void setRefParentResourcePropId(String refParentResourcePropId) {
 		this.refParentResourcePropId = refParentResourcePropId;
 	}
@@ -113,7 +124,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(7+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(8+7);
 		
 		CfgColumn refBusiModelIdColumn = new CfgColumn("ref_busi_model_id", DataTypeConstants.STRING, 32);
 		refBusiModelIdColumn.setName("关联的业务模型id");
@@ -151,6 +162,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		isEnabledColumn.setComments("默认值为1");
 		isEnabledColumn.setDefaultValue("1");
 		columns.add(isEnabledColumn);
+		
+		CfgColumn isNullabledColumn = new CfgColumn("is_nullabled", DataTypeConstants.INTEGER, 1);
+		isNullabledColumn.setName("是否可为空");
+		isNullabledColumn.setComments("默认为0");
+		isNullabledColumn.setDefaultValue("0");
+		columns.add(isNullabledColumn);
 		
 		return columns;
 	}

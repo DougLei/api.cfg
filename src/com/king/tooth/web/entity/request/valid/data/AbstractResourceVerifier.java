@@ -14,10 +14,10 @@ public abstract class AbstractResourceVerifier {
 	protected String resourceName;
 	protected String parentResourceName;
 	
-	public AbstractResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
+	public AbstractResourceVerifier(RequestBody requestBody) {
 		this.requestBody = requestBody;
-		this.resourceName = resourceName;
-		this.parentResourceName = parentResourceName;
+		this.resourceName = requestBody.getResourceName();
+		this.parentResourceName = requestBody.getParentResourceName();
 	}
 
 	/**

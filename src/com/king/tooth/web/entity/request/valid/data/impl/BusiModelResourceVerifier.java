@@ -1,5 +1,6 @@
 package com.king.tooth.web.entity.request.valid.data.impl;
 
+import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.request.valid.data.AbstractResourceVerifier;
 
@@ -9,8 +10,11 @@ import com.king.tooth.web.entity.request.valid.data.AbstractResourceVerifier;
  */
 public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 
-	public BusiModelResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
-		super(requestBody, resourceName, parentResourceName);
+	private CfgBusiModel busiModel;
+	
+	public BusiModelResourceVerifier(RequestBody requestBody) {
+		super(requestBody);
+		busiModel = requestBody.getResourceInfo().getBusiModel();
 	}
 	
 	public String doValid(){

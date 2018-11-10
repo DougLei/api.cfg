@@ -10,8 +10,8 @@ import com.king.tooth.web.entity.request.valid.data.AbstractResourceVerifier;
  */
 public class CodeResourceVerifier extends AbstractResourceVerifier{
 
-	public CodeResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
-		super(requestBody, resourceName, parentResourceName);
+	public CodeResourceVerifier(RequestBody requestBody) {
+		super(requestBody);
 	}
 	
 	public String doValid(){

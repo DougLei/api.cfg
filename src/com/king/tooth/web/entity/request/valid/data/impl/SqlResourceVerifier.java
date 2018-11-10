@@ -37,8 +37,8 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList;
 	
-	public SqlResourceVerifier(RequestBody requestBody, String resourceName, String parentResourceName) {
-		super(requestBody, resourceName, parentResourceName);
+	public SqlResourceVerifier(RequestBody requestBody) {
+		super(requestBody);
 		sql = requestBody.getResourceInfo().getSql();
 		sqlParams = sql.getSqlParams();
 	}
