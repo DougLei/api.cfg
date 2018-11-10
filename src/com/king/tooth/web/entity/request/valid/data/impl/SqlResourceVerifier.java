@@ -12,8 +12,8 @@ import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInf
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.request.valid.data.AbstractResourceVerifier;
-import com.king.tooth.web.entity.request.valid.data.util.SqlResourceUtil;
-import com.king.tooth.web.entity.request.valid.data.util.TableResourceUtil;
+import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
+import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 
 /**
  * sql资源的数据校验类
@@ -80,9 +80,9 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private String doValidSqlResourceMetadata() {
 		initSqlResourceMetadataInfos();
-		actualParamsList = SqlResourceUtil.initActualParamsList(analysisInSqlParams(), requestBody.getFormData());
+		actualParamsList = SqlResourceValidUtil.initActualParamsList(analysisInSqlParams(), requestBody.getFormData());
 		
-		String validResult = SqlResourceUtil.doValidAndSetActualParams(sql, requestBody.isGetRequest(), actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList, requestBody.getResourcePropCodeRule());
+		String validResult = SqlResourceValidUtil.doValidAndSetActualParams(sql, requestBody.isGetRequest(), actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList, requestBody.getResourcePropCodeRule());
 		if(validResult != null){
 			return validResult;
 		}
@@ -100,12 +100,12 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private void initSqlResourceMetadataInfos() {
-		resourceMetadataInfos = SqlResourceUtil.getSqlResourceParamsMetadataInfos(sql);
+		resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(sql);
 		if(requestBody.isParentSubResourceQuery() && requestBody.isRecursiveQuery()){
 			parentResourceMetadataInfos = resourceMetadataInfos;
 		}
-		inSqlResultSetMetadataInfoList = SqlResourceUtil.getSqlInResultSetMetadataInfoList(sql);
-		outSqlResultSetMetadataInfos = SqlResourceUtil.getSqlOutResultSetMetadataInfos(sql);
+		inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(sql);
+		outSqlResultSetMetadataInfos = SqlResourceValidUtil.getSqlOutResultSetMetadataInfos(sql);
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	private String validGetSqlResourceMetadata() {
 		Set<String> requestResourcePropNames = requestBody.getRequestResourceParams().keySet();
 		for (String propName : requestResourcePropNames) {
-			if(TableResourceUtil.validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
+			if(TableResourceValidUtil.validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
 				return "执行selec sql资源["+resourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
 			}
 		}
@@ -154,7 +154,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		if(requestBody.isParentSubResourceQuery()){
 			requestResourcePropNames = requestBody.getRequestParentResourceParams().keySet();
 			for (String propName : requestResourcePropNames) {
-				if(TableResourceUtil.validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
+				if(TableResourceValidUtil.validPropUnExists(true, propName, outSqlResultSetMetadataInfos)){
 					return "执行selec sql资源["+parentResourceName+"]时，查询结果集不存在名为["+NamingProcessUtil.propNameTurnColumnName(propName)+"]的列";
 				}
 			}

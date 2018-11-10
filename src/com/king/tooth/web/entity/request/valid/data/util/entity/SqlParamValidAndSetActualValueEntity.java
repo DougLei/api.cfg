@@ -21,7 +21,7 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.datatype.DataTypeValidUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.ResourcePropCodeRule;
-import com.king.tooth.web.entity.request.valid.data.util.TableResourceUtil;
+import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 
 /**
  * sql参数的验证和set实际值
@@ -314,7 +314,7 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 			return desc+"第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
 		}
 		if(ijson != null && ijson.size() > 0){
-			return TableResourceUtil.validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表对象中，", null, inSqlResultSetMetadataInfos, ijson, false, false);
+			return TableResourceValidUtil.validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表对象中，", null, inSqlResultSetMetadataInfos, ijson, false, false);
 		}
 		return null;
 	}

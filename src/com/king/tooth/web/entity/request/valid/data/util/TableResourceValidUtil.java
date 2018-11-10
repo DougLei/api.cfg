@@ -23,10 +23,10 @@ import com.king.tooth.util.build.model.DynamicBasicColumnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
- * 表资源的工具类
+ * 表资源验证的工具类
  * @author DougLei
  */
-public class TableResourceUtil {
+public class TableResourceValidUtil {
 
 	/**
 	 * 获取表资源的元数据信息集合

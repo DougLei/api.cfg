@@ -7,7 +7,7 @@ import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;
 import com.king.tooth.web.entity.request.valid.data.AbstractResourceVerifier;
-import com.king.tooth.web.entity.request.valid.data.util.TableResourceUtil;
+import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 
 /**
  * 表资源的数据校验类
@@ -46,13 +46,13 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private void initTableResourceMetadataInfos() {
-		resourceMetadataInfos = TableResourceUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource());
+		resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqResource());
 		
 		if(requestBody.isParentSubResourceQuery()){
 			if(requestBody.isRecursiveQuery()){
 				parentResourceMetadataInfos = resourceMetadataInfos;
 			}else{
-				parentResourceMetadataInfos = TableResourceUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource());
+				parentResourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(requestBody.getResourceInfo().getReqParentResource());
 			}
 		}
 	}
@@ -64,7 +64,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	private String validGetTableResourceMetadata() {
 		Set<String> requestResourcePropNames = requestBody.getRequestResourceParams().keySet();
 		for (String propName : requestResourcePropNames) {
-			if(TableResourceUtil.validPropUnExists(true, propName, resourceMetadataInfos)){
+			if(TableResourceValidUtil.validPropUnExists(true, propName, resourceMetadataInfos)){
 				return "操作表资源["+resourceName+"]时，不存在名为["+propName+"]的属性";
 			}
 		}
@@ -72,7 +72,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 		if(requestBody.isParentSubResourceQuery()){
 			requestResourcePropNames = requestBody.getRequestParentResourceParams().keySet();
 			for (String propName : requestResourcePropNames) {
-				if(TableResourceUtil.validPropUnExists(true, propName, parentResourceMetadataInfos)){
+				if(TableResourceValidUtil.validPropUnExists(true, propName, parentResourceMetadataInfos)){
 					return "操作父表资源["+parentResourceName+"]时，不存在名为["+propName+"]的属性";
 				}
 			}
@@ -91,7 +91,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private String validPostTableResourceMetadata(boolean isUpdate) {
 		IJson ijson = requestBody.getFormData();
-		return TableResourceUtil.validTableResourceMetadata("操作表资源["+resourceName+"]时，", resourceName, resourceMetadataInfos, ijson, isUpdate, true);
+		return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+resourceName+"]时，", resourceName, resourceMetadataInfos, ijson, isUpdate, true);
 	}
 	
 	/**

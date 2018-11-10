@@ -17,10 +17,10 @@ import com.king.tooth.web.entity.request.ResourcePropCodeRule;
 import com.king.tooth.web.entity.request.valid.data.util.entity.SqlParamValidAndSetActualValueEntity;
 
 /**
- * sql资源的工具类
+ * sql资源验证的工具类
  * @author DougLei
  */
-public class SqlResourceUtil {
+public class SqlResourceValidUtil {
 
 	/**
 	 * 获取sql资源的参数元数据信息集合
