@@ -21,4 +21,9 @@ public class ResourcePropNameConstants {
 	 * <p>hql查询语句，返回的$type$指明了查询的资源名，例如from SysAccount，则返回的$type$=SysAccount</p>
 	 */
 	public static final String HQL_QUERY_RETURN_TYPE_PROP = "$type$";
+	
+	/**
+	 * 标识从前端传递的某个对象，所属资源的资源名(的key)
+	 */
+	public static final String DATA_REF_RESOURCENAME = "$refResourceName$";
 }

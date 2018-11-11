@@ -70,7 +70,7 @@ public class ResourceInfo {
 			
 			// 如果是sql脚本资源，则要去查询sql脚本实例
 			if(ResourceInfoConstants.SQL == resourceType){
-				sql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(reqResource.getRefResourceId());
+				sql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceAllInfoById(reqResource.getRefResourceId());
 				
 				if(SqlStatementTypeConstants.VIEW.equals(sql.getSqlScriptType())){
 					throw new IllegalArgumentException("系统目前不支持直接处理视图类型的sql资源");
@@ -79,7 +79,7 @@ public class ResourceInfo {
 			// 如果是业务模型资源，则要去查询相关的信息
 			else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
 				if(!"post".equals(requestMethod)){
-					throw new IllegalArgumentException("系统目前不支持通过[非post]方式的请求，调用业务模型资源");
+					throw new IllegalArgumentException("系统目前只支持通过[post]方式的请求，调用业务模型资源");
 				}
 				busiModel = BuiltinResourceInstance.getInstance("CfgBusiModelService", CfgBusiModelService.class).findBusiModel(reqResource.getRefResourceId());
 			}
@@ -87,7 +87,7 @@ public class ResourceInfo {
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
 				if(!"get".equals(requestMethod)){
-					throw new IllegalArgumentException("系统目前不支持[非get]方式的请求，调用资源的[主子/递归]");
+					throw new IllegalArgumentException("系统目前只支持[get]方式的请求，调用资源的[主子/递归]");
 				}
 				if(resourceType == ResourceInfoConstants.BUSINESS_MODEL){
 					throw new IllegalArgumentException("系统目前不支持[主子/递归]方式调用业务模型资源");

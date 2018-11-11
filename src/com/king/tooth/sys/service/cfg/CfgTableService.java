@@ -9,10 +9,10 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
-import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.cfg.ComProject;
+import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.sys.entity.cfg.ComProject;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
@@ -102,6 +102,19 @@ public class CfgTableService extends AService {
 		return operResult;
 	}
 
+	/**
+	 * 根据id，获取表脚本资源对象
+	 * @param tableId
+	 * @return
+	 */
+	public CfgTable findTableResourceById(String tableId){
+		CfgTable table = getObjectById(tableId, CfgTable.class);
+		if(table.getIsEnabled() == 0){
+			throw new IllegalArgumentException("请求的表脚本资源被禁用，请联系管理员");
+		}
+		return table;
+	}
+	
 	/**
 	 * 修改表
 	 * @param table

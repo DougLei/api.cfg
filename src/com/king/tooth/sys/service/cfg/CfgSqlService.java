@@ -37,12 +37,20 @@ public class CfgSqlService extends AService {
 	 */
 	public ComSqlScript findSqlScriptResourceById(String sqlScriptId){
 		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
-		if(sqlScript == null){
-			throw new NullPointerException("不存在请求的sql脚本资源，请联系管理员");
-		}
 		if(sqlScript.getIsEnabled() == 0){
 			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员");
 		}
+		return sqlScript;
+	}
+	
+	/**
+	 * 根据id，获取sql脚本资源的所有信息对象
+	 * <p>包括参数集合、传入传出结果集信息集合</p>
+	 * @param sqlScriptId
+	 * @return
+	 */
+	public ComSqlScript findSqlScriptResourceAllInfoById(String sqlScriptId){
+		ComSqlScript sqlScript = findSqlScriptResourceById(sqlScriptId);
 		sqlScript.setSqlParams(findSqlParams(sqlScriptId));
 		sqlScript.setInSqlResultsets(findInSqlResultsetsList(sqlScript));
 		sqlScript.setOutSqlResultsetsList(findOutSqlResultsetsList(sqlScript));

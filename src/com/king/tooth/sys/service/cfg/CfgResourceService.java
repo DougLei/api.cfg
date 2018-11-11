@@ -47,10 +47,10 @@ public class CfgResourceService extends AService{
 		
 		CfgResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgResource.class, "from CfgResource where resourceName = ? and projectId = ? and customerId = ?", resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(resource == null){
-			throw new IllegalArgumentException("不存在请求的资源：" + resourceName);
+			throw new IllegalArgumentException("不存在资源名为["+resourceName+"]的资源");
 		}
 		if(resource.getIsEnabled() == 0){
-			throw new IllegalArgumentException("请求的资源被禁用，请联系管理员：" + resourceName);
+			throw new IllegalArgumentException("请求的资源["+resourceName+"]被禁用，请联系管理员");
 		}
 		return resource;
 	}
