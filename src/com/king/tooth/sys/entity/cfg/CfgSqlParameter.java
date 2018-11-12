@@ -22,15 +22,15 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEntityPropAnalysis, Cloneable{
+public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityPropAnalysis, Cloneable{
 	/**
 	 * 关联的sql脚本id
 	 */
-	private String sqlScriptId;
+	private String sqlId;
 	/**
 	 * 参数名称
 	 */
-	private String parameterName;
+	private String name;
 	/**
 	 * 参数的值长度
 	 * <p>默认值为32</p>
@@ -45,7 +45,7 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	 * 参数数据类型
 	 * <p>默认值为string</p>
 	 */
-	private String parameterDataType;
+	private String dataType;
 	/**
 	 * 是否是表类型
 	 * <p>存储过程专用的属性，因为存储过程的参数，可以使用表类型</p>
@@ -57,11 +57,11 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	 */
 	private String defaultValue;
 	/**
-	 * 参数来源
+	 * 参数值来源
 	 * <p>0.用户输入、1.系统内置、2.自动编码</p>
 	 * <p>默认值是0</p>
 	 */
-	private Integer parameterFrom = 0;
+	private Integer valueFrom = 0;
 	
 	/**
 	 * 是否是需要占位符的参数
@@ -123,15 +123,15 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	@JSONField(serialize = false)
 	private boolean isIgnoreValidNotNullProps;
 	
-	public ComSqlScriptParameter() {
+	public CfgSqlParameter() {
 	}
-	public ComSqlScriptParameter(String parameterName, String parameterDataType, boolean isDbDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp, boolean isIgnoreValidNotNullProps) {
+	public CfgSqlParameter(String name, String dataType, boolean isDbDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp, boolean isIgnoreValidNotNullProps) {
 		this.id = ResourceHandlerUtil.getIdentity();
-		this.parameterName = parameterName;
+		this.name = name;
 		if(isDbDataType){
-			this.parameterDataType = turnDbDataTypeToCodeDataType(parameterDataType.toLowerCase());
+			this.dataType = turnDbDataTypeToCodeDataType(dataType.toLowerCase());
 		}else{
-			this.parameterDataType = parameterDataType;
+			this.dataType = dataType;
 		}
 		this.inOut = inOut;
 		this.orderCode = orderCode;
@@ -172,17 +172,17 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 		throw new IllegalArgumentException("系统目前不支持数据库的["+dbDataType+"]数据类型转换，请联系管理员，目前支持的数据类型为：oracle数据库[varchar2、char、number、date]、sqlserver数据库[varchar、char、bit、int、decimal、datetime]");
 	}
 	
-	public String getParameterName() {
-		return parameterName;
+	public String getName() {
+		return name;
 	}
-	public void setParameterName(String parameterName) {
-		this.parameterName = parameterName;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getParameterDataType() {
-		return parameterDataType;
+	public String getDataType() {
+		return dataType;
 	}
-	public void setParameterDataType(String parameterDataType) {
-		this.parameterDataType = parameterDataType;
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
 	}
 	public String getDefaultValue() {
 		return defaultValue;
@@ -192,7 +192,7 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	}
 	public Object getActualInValue() {
 		// 如果是id，则每次的id值都要不一样
-		if(parameterFrom == 1 && BuiltinQueryParameters.isBuiltinIdParameter(parameterName)){
+		if(valueFrom == 1 && BuiltinQueryParameters.isBuiltinIdParameter(name)){
 			return ResourceHandlerUtil.getIdentity();
 		}
 		return actualInValue;
@@ -206,8 +206,8 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	public void setAcutalOutValue(Object acutalOutValue) {
 		this.acutalOutValue = acutalOutValue;
 	}
-	public String getSqlScriptId() {
-		return sqlScriptId;
+	public String getSqlId() {
+		return sqlId;
 	}
 	public Integer getLength() {
 		return length;
@@ -253,14 +253,14 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	public void setPrecisionStr(String precision) {
 		if(StrUtils.notEmpty(precision)){
 			this.precision = Integer.valueOf(precision.trim());
-			this.parameterDataType = DataTypeConstants.DOUBLE;
+			this.dataType = DataTypeConstants.DOUBLE;
 		}
 	}
-	public Integer getParameterFrom() {
-		return parameterFrom;
+	public Integer getValueFrom() {
+		return valueFrom;
 	}
-	public void setParameterFrom(Integer parameterFrom) {
-		this.parameterFrom = parameterFrom;
+	public void setValueFrom(Integer valueFrom) {
+		this.valueFrom = valueFrom;
 	}
 	public Integer getIsPlaceholder() {
 		return isPlaceholder;
@@ -289,8 +289,8 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
-	public void setSqlScriptId(String sqlScriptId) {
-		this.sqlScriptId = sqlScriptId;
+	public void setSqlId(String sqlId) {
+		this.sqlId = sqlId;
 	}
 	public String getRemark() {
 		return remark;
@@ -302,22 +302,22 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComSqlScriptParameter";
+		return "CfgSqlParameter";
 	}
 
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(15+7);
 		
-		CfgColumn sqlScriptIdColumn = new CfgColumn("sql_script_id", DataTypeConstants.STRING, 32);
-		sqlScriptIdColumn.setName("关联的sql脚本id");
-		sqlScriptIdColumn.setComments("关联的sql脚本id");
-		columns.add(sqlScriptIdColumn);
+		CfgColumn sqlIdColumn = new CfgColumn("sql_id", DataTypeConstants.STRING, 32);
+		sqlIdColumn.setName("关联的sql脚本id");
+		sqlIdColumn.setComments("关联的sql脚本id");
+		columns.add(sqlIdColumn);
 		
-		CfgColumn parameterNameColumn = new CfgColumn("parameter_name", DataTypeConstants.STRING, 50);
-		parameterNameColumn.setName("参数名称");
-		parameterNameColumn.setComments("参数名称");
-		columns.add(parameterNameColumn);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 50);
+		nameColumn.setName("参数名称");
+		nameColumn.setComments("参数名称");
+		columns.add(nameColumn);
 		
 		CfgColumn lengthColumn = new CfgColumn("length", DataTypeConstants.INTEGER, 4);
 		lengthColumn.setName("参数的值长度");
@@ -331,11 +331,11 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 		precisionColumn.setDefaultValue("0");
 		columns.add(precisionColumn);
 		
-		CfgColumn parameterDataTypeColumn = new CfgColumn("parameter_data_type", DataTypeConstants.STRING, 20);
-		parameterDataTypeColumn.setName("参数数据类型");
-		parameterDataTypeColumn.setComments("默认值为string");
-		parameterDataTypeColumn.setDefaultValue(DataTypeConstants.STRING);
-		columns.add(parameterDataTypeColumn);
+		CfgColumn dataTypeColumn = new CfgColumn("data_type", DataTypeConstants.STRING, 20);
+		dataTypeColumn.setName("参数数据类型");
+		dataTypeColumn.setComments("默认值为string");
+		dataTypeColumn.setDefaultValue(DataTypeConstants.STRING);
+		columns.add(dataTypeColumn);
 		
 		CfgColumn isTableTypeColumn = new CfgColumn("is_table_type", DataTypeConstants.INTEGER, 1);
 		isTableTypeColumn.setName("是否是表类型");
@@ -348,11 +348,11 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 		defaultValueColumn.setComments("默认值");
 		columns.add(defaultValueColumn);
 		
-		CfgColumn parameterFromColumn = new CfgColumn("parameter_from", DataTypeConstants.INTEGER, 1);
-		parameterFromColumn.setName("参数来源");
-		parameterFromColumn.setComments("参数来源:0.用户输入、1.系统内置、2.自动编码，默认值为0");
-		parameterFromColumn.setDefaultValue("0");
-		columns.add(parameterFromColumn);
+		CfgColumn valueFromColumn = new CfgColumn("value_from", DataTypeConstants.INTEGER, 1);
+		valueFromColumn.setName("参数值来源");
+		valueFromColumn.setComments("0.用户输入、1.系统内置、2.自动编码，默认值为0");
+		valueFromColumn.setDefaultValue("0");
+		columns.add(valueFromColumn);
 		
 		CfgColumn isPlaceholderColumn = new CfgColumn("is_placeholder", DataTypeConstants.INTEGER, 1);
 		isPlaceholderColumn.setName("是否是需要占位符的参数");
@@ -406,27 +406,27 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	}
 	
 	public String toDropTable() {
-		return "COM_SQL_SCRIPT_PARAMETER";
+		return "CFG_SQL_PARAMETER";
 	}
 	
 	public String validNotNullProps() {
 		if(!isIgnoreValidNotNullProps){
-			if(StrUtils.isEmpty(sqlScriptId)){
+			if(StrUtils.isEmpty(sqlId)){
 				return "sql脚本参数对象，关联的sql脚本id不能为空";
 			}
-			if(StrUtils.isEmpty(parameterName)){
+			if(StrUtils.isEmpty(name)){
 				return "sql脚本参数名不能为空";
 			}
-			if(StrUtils.isEmpty(parameterDataType)){
+			if(StrUtils.isEmpty(dataType)){
 				return "sql脚本参数的数据类型不能为空";
 			}
-			if(!DataTypeConstants.isLegalDataType(parameterDataType)){
+			if(!DataTypeConstants.isLegalDataType(dataType)){
 				return "sql脚本参数的数据类型不合法，目前系统支持的数据类型值包括:[char]、[string]、[boolean]、[integer]、[double]、[date]、[clob]、[blob]、[sys_refcursor]";
 			}
-			if((DataTypeConstants.STRING.equals(parameterDataType) 
-					|| DataTypeConstants.CHAR.equals(parameterDataType) 
-					|| DataTypeConstants.DOUBLE.equals(parameterDataType)
-					|| DataTypeConstants.INTEGER.equals(parameterDataType)) 
+			if((DataTypeConstants.STRING.equals(dataType) 
+					|| DataTypeConstants.CHAR.equals(dataType) 
+					|| DataTypeConstants.DOUBLE.equals(dataType)
+					|| DataTypeConstants.INTEGER.equals(dataType)) 
 						&& (length == null || length < 1)){
 				return "sql脚本参数的长度不能为空，且必须大于0！";
 			}
@@ -437,12 +437,12 @@ public class ComSqlScriptParameter extends BasicEntity implements IEntity, IEnti
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
-			if(parameterDataType == null){
-				parameterDataType = DataTypeConstants.STRING;
+			if(dataType == null){
+				dataType = DataTypeConstants.STRING;
 			}
 			
-			if(BuiltinQueryParameters.isBuiltinQueryParams(parameterName)){
-				parameterFrom = 1;
+			if(BuiltinQueryParameters.isBuiltinQueryParams(name)){
+				valueFrom = 1;
 			}
 			
 			if(inOut == 0 || inOut == 5 || inOut == 1){// in (inOut == 0是sqlserver的input，inOut == 5是sqlserver的readonly，inOut == 1是oracle的input)

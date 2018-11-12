@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.web.entity.request.RequestBody;
@@ -21,13 +21,13 @@ import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
  */
 public class SqlResourceVerifier extends AbstractResourceVerifier{
 
-	private ComSqlScript sql;
-	private List<ComSqlScriptParameter> sqlParams;
+	private CfgSql sql;
+	private List<CfgSqlParameter> sqlParams;
 	
 	/**
 	 * sql脚本实际传入的参数集合
 	 */
-	private List<List<ComSqlScriptParameter>> actualParamsList;
+	private List<List<CfgSqlParameter>> actualParamsList;
 	/**
 	 * 针对select sql查询结果集的元数据信息集合
 	 */
@@ -54,14 +54,14 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			inSqlResultSetMetadataInfoList.clear();
 		}
 		
-		if(!SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){// select语句不清空的原因是，后续还要使用元数据信息中的数据类型，对值进行数据类型转换操作
+		if(!SqlStatementTypeConstants.SELECT.equals(sql.getType())){// select语句不清空的原因是，后续还要使用元数据信息中的数据类型，对值进行数据类型转换操作
 			if(outSqlResultSetMetadataInfos != null && outSqlResultSetMetadataInfos.size() > 0){
 				outSqlResultSetMetadataInfos.clear();
 			}
 		}
 		
 		if(actualParamsList != null && actualParamsList.size() > 0){
-			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
+			for (List<CfgSqlParameter> actualParams : actualParamsList) {
 				if(actualParams != null && actualParams.size() > 0){
 					actualParams.clear();
 				}
@@ -119,9 +119,9 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 			inSqlParams = new HashMap<String, String>(16);// 默认初始长度为16
 			
 			Set<String> keys = requestResourceParams.keySet();
-			for (ComSqlScriptParameter sqlParam : sqlParams) {
+			for (CfgSqlParameter sqlParam : sqlParams) {
 				for (String key : keys) {
-					if(key.equalsIgnoreCase(sqlParam.getParameterName())){
+					if(key.equalsIgnoreCase(sqlParam.getName())){
 						inSqlParams.put(key, requestResourceParams.get(key));
 						break;
 					}

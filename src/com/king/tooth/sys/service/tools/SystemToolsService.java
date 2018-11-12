@@ -80,7 +80,7 @@ public class SystemToolsService {
 	 */
 	@SuppressWarnings("unchecked")
 	private void setSqlResourceStruct(String sqlResourceId, ResourceInfo resourceInfo) {
-		List<Object[]> sqlParams = HibernateUtil.executeListQueryByHqlArr(null, null, "select parameterName,parameterDataType from ComSqlScriptParameter where sqlScriptId=? and parameterFrom=0", sqlResourceId);
+		List<Object[]> sqlParams = HibernateUtil.executeListQueryByHqlArr(null, null, "select parameterName,parameterDataType from CfgSqlParameter where sqlScriptId=? and parameterFrom=0", sqlResourceId);
 		if(sqlParams == null || sqlParams.size() == 0){
 			resourceInfo.setMsg("名为["+resourceInfo.getResourceName()+"]的sql脚本资源不存在结构信息，没有任何参数，可以直接调用");
 			return;

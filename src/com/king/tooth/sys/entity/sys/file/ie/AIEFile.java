@@ -186,7 +186,7 @@ public abstract class AIEFile {
 	 */
 	private Object getIESqlExportMetadataInfos(CfgResource resource) {
 		String resourceId = resource.getRefResourceId();
-		Object sqlType = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptType from ComSqlScript where "+ResourcePropNameConstants.ID+"=?", resourceId);
+		Object sqlType = HibernateUtil.executeUniqueQueryByHqlArr("select sqlScriptType from CfgSql where "+ResourcePropNameConstants.ID+"=?", resourceId);
 		if(sqlType == null){
 			return "没有查询到名为["+resource.getResourceName()+"]的sql资源，请联系后台系统开发人员";
 		}

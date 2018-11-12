@@ -32,10 +32,10 @@ import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.cfg.ComProject;
-import com.king.tooth.sys.entity.cfg.ComProjectModule;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgProject;
+import com.king.tooth.sys.entity.cfg.CfgProjectModule;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -130,10 +130,10 @@ public class BuiltinResourceInstance {
 		instanceCache.put("CfgTable", new CfgTable());
 		instanceCache.put("CfgColumn", new CfgColumn());
 		instanceCache.put("CfgHibernateHbm", new CfgHibernateHbm());
-		instanceCache.put("CfgProject", new ComProject());
-		instanceCache.put("CfgProjectModule", new ComProjectModule());
-		instanceCache.put("CfgSql", new ComSqlScript());
-		instanceCache.put("CfgSqlParameter", new ComSqlScriptParameter());
+		instanceCache.put("CfgProject", new CfgProject());
+		instanceCache.put("CfgProjectModule", new CfgProjectModule());
+		instanceCache.put("CfgSql", new CfgSql());
+		instanceCache.put("CfgSqlParameter", new CfgSqlParameter());
 		instanceCache.put("CfgSqlResultset", new CfgSqlResultset());
 		instanceCache.put("CfgPropCodeRule", new CfgPropCodeRule());
 		instanceCache.put("CfgPropCodeRuleDetail", new CfgPropCodeRuleDetail());
@@ -168,13 +168,6 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
 		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
 		instanceCache.put("SysFileIELog", new SysFileIELog());
-		
-		
-		// 以下是因为之前命名不规范造成的遗留key值，后续要处理掉
-		instanceCache.put("ComProject", new ComProject());
-		instanceCache.put("ComProjectModule", new ComProjectModule());
-		instanceCache.put("ComSqlScript", new ComSqlScript());
-		instanceCache.put("ComSqlScriptParameter", new ComSqlScriptParameter());
 	}
 	
 	/**

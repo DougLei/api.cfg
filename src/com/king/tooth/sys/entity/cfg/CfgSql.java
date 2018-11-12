@@ -33,7 +33,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, IEntity{
+public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity{
 	/**
 	 * 数据库类型
 	 */
@@ -41,12 +41,12 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	/**
 	 * sql脚本的标题
 	 */
-	private String sqlScriptCaption;
+	private String caption;
 	/**
 	 * sql脚本类型
 	 * <p>如果有多个sql脚本，以第一个sql脚本的类型为准</p>
 	 */
-	private String sqlScriptType;
+	private String type;
 	/**
 	 * 配置的sql脚本类型
 	 * <p>默认和sql脚本类型一样，用户可以根据sql脚本的内容修改为insert/update/delete三个值之一，解决定位查询focuseid中id+_add/_edit/_delete</p>
@@ -55,7 +55,7 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	/**
 	 * sql脚本内容
 	 */
-	private String sqlScriptContent;
+	private String contents;
 	/**
 	 * sql对象名称
 	 * <p>[存储过程、视图等]</p>
@@ -129,10 +129,10 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	 * sql脚本的参数集合
 	 */
 	@JSONField(serialize = false)
-	private List<ComSqlScriptParameter> sqlParams;
+	private List<CfgSqlParameter> sqlParams;
 	// 同上，是为了实现批量执行同一个sql脚本的时候加入的属性
 	@JSONField(serialize = false)
-	private List<List<ComSqlScriptParameter>> sqlParamsList;
+	private List<List<CfgSqlParameter>> sqlParamsList;
 	
 	/**
 	 * sql结果集信息集合
@@ -147,20 +147,20 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	@JSONField(serialize = false)
 	private List<List<CfgSqlResultset>> outSqlResultsetsList;
 	
-	public void setSqlScriptContent(String sqlScriptContent) {
-		this.sqlScriptContent = sqlScriptContent;
+	public void setContents(String contents) {
+		this.contents = contents;
 	}
-	public String getSqlScriptCaption() {
-		if(StrUtils.isEmpty(sqlScriptCaption)){
-			sqlScriptCaption = resourceName;
+	public String getCaption() {
+		if(StrUtils.isEmpty(caption)){
+			caption = resourceName;
 		}
-		return sqlScriptCaption;
+		return caption;
 	}
-	public void setSqlScriptCaption(String sqlScriptCaption) {
-		this.sqlScriptCaption = sqlScriptCaption;
+	public void setCaption(String caption) {
+		this.caption = caption;
 	}
-	public String getSqlScriptContent() {
-		return sqlScriptContent;
+	public String getContents() {
+		return contents;
 	}
 	@SuppressWarnings("unchecked")
 	public void setParameterNameRecords(String parameterNameRecords) {
@@ -187,10 +187,10 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	public String getParameterNameRecords() {
 		return parameterNameRecords;
 	}
-	public List<ComSqlScriptParameter> getSqlParams() {
+	public List<CfgSqlParameter> getSqlParams() {
 		return sqlParams;
 	}
-	public void setSqlParams(List<ComSqlScriptParameter> sqlParams) {
+	public void setSqlParams(List<CfgSqlParameter> sqlParams) {
 		this.sqlParams = sqlParams;
 	}
 	public String getComments() {
@@ -226,18 +226,18 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	}
 	public void initGsqlParser() {
 		if(gsqlParser == null){
-			gsqlParser = SqlStatementParserUtil.getGsqlParser(this.sqlScriptContent.replaceAll("\n", " ").replace("\t", " ").replaceAll("\r", " "));
+			gsqlParser = SqlStatementParserUtil.getGsqlParser(this.contents.replaceAll("\n", " ").replace("\t", " ").replaceAll("\r", " "));
 		}
 	}
 	public TGSqlParser getGsqlParser() {
 		initGsqlParser();
 		return gsqlParser;
 	}
-	public String getSqlScriptType() {
-		return sqlScriptType;
+	public String getType() {
+		return type;
 	}
-	public void setSqlScriptType(String sqlScriptType) {
-		this.sqlScriptType = sqlScriptType;
+	public void setType(String type) {
+		this.type = type;
 	}
 	public boolean getIsCoverSqlObject() {
 		return isCoverSqlObject;
@@ -254,10 +254,10 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	public void setIsImmediateCreate(int isImmediateCreate) {
 		this.isImmediateCreate = isImmediateCreate;
 	}
-	public List<List<ComSqlScriptParameter>> getSqlParamsList() {
+	public List<List<CfgSqlParameter>> getSqlParamsList() {
 		return sqlParamsList;
 	}
-	public void setSqlParamsList(List<List<ComSqlScriptParameter>> sqlParamsList) {
+	public void setSqlParamsList(List<List<CfgSqlParameter>> sqlParamsList) {
 		this.sqlParamsList = sqlParamsList;
 	}
 	public String getConfType() {
@@ -288,28 +288,28 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 		dbTypeColumn.setComments("数据库类型");
 		columns.add(dbTypeColumn);
 		
-		CfgColumn sqlScriptCaptionColumn = new CfgColumn("sql_script_caption", DataTypeConstants.STRING, 50);
-		sqlScriptCaptionColumn.setName("sql脚本的标题");
-		sqlScriptCaptionColumn.setComments("sql脚本的标题");
-		columns.add(sqlScriptCaptionColumn);
+		CfgColumn captionColumn = new CfgColumn("caption", DataTypeConstants.STRING, 50);
+		captionColumn.setName("sql脚本的标题");
+		captionColumn.setComments("sql脚本的标题");
+		columns.add(captionColumn);
 		
 		columns.add(BuiltinObjectInstance.resourceNameColumn);
 		
-		CfgColumn sqlScriptTypeColumn = new CfgColumn("sql_script_type", DataTypeConstants.STRING, 80);
-		sqlScriptTypeColumn.setName("sql脚本类型");
-		sqlScriptTypeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
-		columns.add(sqlScriptTypeColumn);
+		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.STRING, 80);
+		typeColumn.setName("sql脚本类型");
+		typeColumn.setComments("sql脚本类型：如果有多个sql脚本，以第一个sql脚本的类型为准");
+		columns.add(typeColumn);
 		
 		CfgColumn confTypeColumn = new CfgColumn("conf_type", DataTypeConstants.STRING, 80);
 		confTypeColumn.setName("配置的sql脚本类型");
 		confTypeColumn.setComments("默认和sql脚本类型一样，用户可以根据sql脚本的内容修改为insert/update/delete三个值之一，解决定位查询focuseid中id+_add/_edit/_delete");
 		columns.add(confTypeColumn);
 		
-		CfgColumn sqlScriptContentColumn = new CfgColumn("sql_script_content", DataTypeConstants.CLOB, 0);
-		sqlScriptContentColumn.setName("sql脚本内容");
-		sqlScriptContentColumn.setComments("sql脚本内容");
-		sqlScriptContentColumn.setIsNullabled(0);
-		columns.add(sqlScriptContentColumn);
+		CfgColumn contentsColumn = new CfgColumn("contents", DataTypeConstants.CLOB, 0);
+		contentsColumn.setName("sql脚本内容");
+		contentsColumn.setComments("sql脚本内容");
+		contentsColumn.setIsNullabled(0);
+		columns.add(contentsColumn);
 		
 		CfgColumn objectNameColumn = new CfgColumn("object_name", DataTypeConstants.STRING, 80);
 		objectNameColumn.setName("sql对象名称");
@@ -344,19 +344,19 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	}
 
 	public String toDropTable() {
-		return "COM_SQL_SCRIPT";
+		return "CFG_SQL";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComSqlScript";
+		return "CfgSql";
 	}
 
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(resourceName)){
 			return "sql脚本资源名称不能为空";
 		}
-		if(StrUtils.isEmpty(sqlScriptContent)){
+		if(StrUtils.isEmpty(contents)){
 			return "sql脚本内容不能为空";
 		}
 		if(isEnabled == null){
@@ -382,13 +382,13 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 			String[] sqlScriptArr = SqlStatementParserUtil.parseSqlScript(this.gsqlParser, this);
 			
 			if(isAnalysisParameters == 1){
-				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", id);// 删除之前的参数
-				if(SqlStatementTypeConstants.SELECT.equals(sqlScriptType) || SqlStatementTypeConstants.PROCEDURE.equals(sqlScriptType) || SqlStatementTypeConstants.VIEW.equals(sqlScriptType)){
+				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", id);// 删除之前的参数
+				if(SqlStatementTypeConstants.SELECT.equals(type) || SqlStatementTypeConstants.PROCEDURE.equals(type) || SqlStatementTypeConstants.VIEW.equals(type)){
 					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", id);// 删除之前的所有结果集信息(select/存储过程/视图)
 				}
 				
 				// 如果是存储过程，则用另一个方法处理，解析出参数
-				if(SqlStatementTypeConstants.PROCEDURE.equals(this.sqlScriptType)){ 
+				if(SqlStatementTypeConstants.PROCEDURE.equals(this.type)){ 
 					result = SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this, true);
 					if(result != null){
 						return "["+result+"]错误！存储过程中不能使用[$xxx$]的变量声明方式，请将需要传入的变量写到存储过程的参数列表中";
@@ -396,7 +396,7 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this);
 				}
 				// 如果是视图，则不用解析参数，只要解析出视图名即可
-				else if(SqlStatementTypeConstants.VIEW.equals(this.sqlScriptType)){ 
+				else if(SqlStatementTypeConstants.VIEW.equals(this.type)){ 
 					SqlStatementParserUtil.analysisViewName(this);
 				}
 				// 否则是一般sql脚本，解析[$xxx$]的参数
@@ -425,7 +425,7 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 	 * @param sqlScriptResource
 	 * @param sqlParameterValues
 	 */
-	public void analysisFinalSqlScript(ComSqlScript sqlScriptResource, List<List<Object>> sqlParameterValues) {
+	public void analysisFinalSqlScript(CfgSql sqlScriptResource, List<List<Object>> sqlParameterValues) {
 		this.finalSqlScriptList = SqlStatementParserUtil.getFinalSqlScriptList(sqlScriptResource, sqlParameterValues);
 	}
 	
@@ -471,7 +471,7 @@ public class ComSqlScript extends ACfgResource implements IEntityPropAnalysis, I
 			parameterNameRecordMap.clear();
 		}
 		if(sqlParamsList != null && sqlParamsList.size() > 0){
-			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
+			for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
 				if(sqlParams != null && sqlParams.size() > 0){
 					sqlParams.clear();
 				}

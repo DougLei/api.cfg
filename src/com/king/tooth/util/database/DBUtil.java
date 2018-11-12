@@ -16,7 +16,7 @@ import org.hibernate.jdbc.Work;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.NamingProcessUtil;
@@ -74,8 +74,8 @@ public class DBUtil {
 	 * @param sql
 	 * @param isCover
 	 */
-	public static void createObject(ComSqlScript sql) {
-		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
+	public static void createObject(CfgSql sql) {
+		List<CfgSql> sqls = new ArrayList<CfgSql>(1);
 		sqls.add(sql);
 		createObjects(sqls);
 		sqls.clear();
@@ -86,7 +86,7 @@ public class DBUtil {
 	 * @param sqls
 	 * @param isCover
 	 */
-	public static void createObjects(List<ComSqlScript> sqls) {
+	public static void createObjects(List<CfgSql> sqls) {
 		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
 		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqls.get(0).getDbType());
 		if(!isSqlServler && !isOracle){
@@ -101,8 +101,8 @@ public class DBUtil {
 	 * @param sqls
 	 * @param isCover
 	 */
-	public static void dropObject(ComSqlScript sql){
-		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(1);
+	public static void dropObject(CfgSql sql){
+		List<CfgSql> sqls = new ArrayList<CfgSql>(1);
 		sqls.add(sql);
 		dropObjects(sqls);
 		sqls.clear();
@@ -113,7 +113,7 @@ public class DBUtil {
 	 * @param sqls
 	 * @param isCover
 	 */
-	public static void dropObjects(List<ComSqlScript> sqls){
+	public static void dropObjects(List<CfgSql> sqls){
 		final boolean isSqlServler = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqls.get(0).getDbType());
 		final boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqls.get(0).getDbType());
 		if(!isSqlServler && !isOracle){
@@ -130,50 +130,50 @@ public class DBUtil {
 	 * @param isSqlServler
 	 * @param isOracle
 	 */
-	private static void processDBObjects(final List<ComSqlScript> sqls, final boolean isCreate, final boolean isSqlServler, final boolean isOracle) {
+	private static void processDBObjects(final List<CfgSql> sqls, final boolean isCreate, final boolean isSqlServler, final boolean isOracle) {
 		HibernateUtil.getCurrentThreadSession().doWork(new Work() {
 			public void execute(Connection conn) throws SQLException {
 				Statement st = null;
 				PreparedStatement pst = null;
 				ResultSet rs = null;
 				try {
-					ComSqlScript tmpSql = sqls.get(0);
+					CfgSql tmpSql = sqls.get(0);
 					if(isSqlServler){
 						pst = conn.prepareStatement(BuiltinDatabaseData.sqlserver_queryObjectIsExistsSql);
-						if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType())){
+						if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getType())){
 							pst.setString(2, "P");
-						}else if(SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
+						}else if(SqlStatementTypeConstants.VIEW.equals(tmpSql.getType())){
 							pst.setString(2, "V");
 						}else{
-							throw new IllegalArgumentException("系统目前不支持在sqlserver数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");
+							throw new IllegalArgumentException("系统目前不支持在sqlserver数据库中创建["+tmpSql.getType()+"]类型的sql对象");
 						}
 					}else if(isOracle){
 						pst = conn.prepareStatement(BuiltinDatabaseData.oracle_queryObjectIsExistsSql);
-						if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType())){
+						if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getType())){
 							pst.setString(2, "PROCEDURE");
-						}else if(SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
+						}else if(SqlStatementTypeConstants.VIEW.equals(tmpSql.getType())){
 							pst.setString(2, "VIEW");
 						}else{
-							throw new IllegalArgumentException("系统目前不支持在oracle数据库中创建["+tmpSql.getSqlScriptType()+"]类型的sql对象");
+							throw new IllegalArgumentException("系统目前不支持在oracle数据库中创建["+tmpSql.getType()+"]类型的sql对象");
 						}
 					}
 					
 					st = conn.createStatement();
-					for (ComSqlScript sql : sqls) {
+					for (CfgSql sql : sqls) {
 						pst.setString(1, sql.getObjectName());
 						
 						// 如果已经存在对象，则删除
 						rs = pst.executeQuery();
 						if(rs.next() && (rs.getInt(1) > 0)){
 							if(sql.getIsCoverSqlObject()){
-								st.executeUpdate("drop " + sql.getSqlScriptType() + " " + sql.getObjectName());
+								st.executeUpdate("drop " + sql.getType() + " " + sql.getObjectName());
 							}else{
-								throw new IllegalArgumentException("系统中已经存在名为["+sql.getObjectName()+"]的" + sql.getSqlScriptType());
+								throw new IllegalArgumentException("系统中已经存在名为["+sql.getObjectName()+"]的" + sql.getType());
 							}
 						}
 						
 						if(isCreate){
-							st.executeUpdate(sql.getSqlScriptContent());// 创建对象
+							st.executeUpdate(sql.getContents());// 创建对象
 						}
 					}
 				} finally{

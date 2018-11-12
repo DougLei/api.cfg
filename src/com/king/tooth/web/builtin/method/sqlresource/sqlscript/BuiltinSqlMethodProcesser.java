@@ -1,6 +1,6 @@
 package com.king.tooth.web.builtin.method.sqlresource.sqlscript;
 
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
 import com.king.tooth.web.builtin.method.sqlresource.AbstractSqlResourceBuiltinMethodProcesser;
@@ -14,9 +14,9 @@ public class BuiltinSqlMethodProcesser extends AbstractSqlResourceBuiltinMethodP
 	/**
 	 * sql脚本资源
 	 */
-	private ComSqlScript reqSql;
+	private CfgSql reqSql;
 
-	public BuiltinSqlMethodProcesser(ComSqlScript reqSql) {
+	public BuiltinSqlMethodProcesser(CfgSql reqSql) {
 		super.isUsed = true;
 		this.reqSql = reqSql;
 	}
@@ -33,7 +33,7 @@ public class BuiltinSqlMethodProcesser extends AbstractSqlResourceBuiltinMethodP
 	 * 获取sql脚本资源
 	 * @return
 	 */
-	public ComSqlScript getReqSql() {
+	public CfgSql getReqSql() {
 		execAnalysisParams();
 		return reqSql;
 	}

@@ -12,8 +12,8 @@ import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -35,8 +35,8 @@ public class CfgSqlService extends AService {
 	 * @param sqlScriptId
 	 * @return
 	 */
-	public ComSqlScript findSqlScriptResourceById(String sqlScriptId){
-		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
+	public CfgSql findSqlScriptResourceById(String sqlScriptId){
+		CfgSql sqlScript = getObjectById(sqlScriptId, CfgSql.class);
 		if(sqlScript.getIsEnabled() == 0){
 			throw new IllegalArgumentException("请求的sql脚本资源被禁用，请联系管理员");
 		}
@@ -49,8 +49,8 @@ public class CfgSqlService extends AService {
 	 * @param sqlScriptId
 	 * @return
 	 */
-	public ComSqlScript findSqlScriptResourceAllInfoById(String sqlScriptId){
-		ComSqlScript sqlScript = findSqlScriptResourceById(sqlScriptId);
+	public CfgSql findSqlScriptResourceAllInfoById(String sqlScriptId){
+		CfgSql sqlScript = findSqlScriptResourceById(sqlScriptId);
 		sqlScript.setSqlParams(findSqlParams(sqlScriptId));
 		sqlScript.setInSqlResultsets(findInSqlResultsetsList(sqlScript));
 		sqlScript.setOutSqlResultsetsList(findOutSqlResultsetsList(sqlScript));
@@ -62,9 +62,9 @@ public class CfgSqlService extends AService {
 	 * @param sqlScriptId
 	 * @return
 	 */
-	private List<ComSqlScriptParameter> findSqlParams(String sqlScriptId) {
+	private List<CfgSqlParameter> findSqlParams(String sqlScriptId) {
 		return HibernateUtil.extendExecuteListQueryByHqlArr(
-				ComSqlScriptParameter.class, null, null, "from ComSqlScriptParameter where sqlScriptId = ? and projectId=? and customerId=? order by orderCode asc", sqlScriptId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+				CfgSqlParameter.class, null, null, "from CfgSqlParameter where sqlScriptId = ? and projectId=? and customerId=? order by orderCode asc", sqlScriptId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 	}
 	
 	/**
@@ -72,8 +72,8 @@ public class CfgSqlService extends AService {
 	 * @param table
 	 * @return operResult
 	 */
-	private String validSqlScriptResourceNameIsExists(ComSqlScript sqlScript) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where resourceName = ? and createUserId = ? and customerId = ?", sqlScript.getResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
+	private String validSqlScriptResourceNameIsExists(CfgSql sqlScript) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgSql where resourceName = ? and createUserId = ? and customerId = ?", sqlScript.getResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 		if(count > 0){
 			return "您已经创建过相同sql脚本资源名["+sqlScript.getResourceName()+"]的数据";
 		}
@@ -89,7 +89,7 @@ public class CfgSqlService extends AService {
 	 * @return operResult
 	 */
 	private String validSqlScriptRefProjIsExists(String projectId) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComProject where id = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProject where id = ?", projectId);
 		if(count != 1){
 			return "sql脚本关联的，id为["+projectId+"]的项目信息不存在";
 		}
@@ -104,7 +104,7 @@ public class CfgSqlService extends AService {
 	 */
 	private String validSameResourceNameSqlScriptInProject(String resourceName, String projectId) {
 		String hql = "select count(cs."+ResourcePropNameConstants.ID+") from " +
-				"ComProject p, CfgProjectSqlLinks ps, ComSqlScript cs " +
+				"CfgProject p, CfgProjectSqlLinks ps, CfgSql cs " +
 				"where p.id = '"+projectId+"' and p.id = ps.leftId and cs.id = ps.rightId and cs.resourceName = '"+resourceName+"'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
 		if(count > 0){
@@ -118,7 +118,7 @@ public class CfgSqlService extends AService {
 	 * @param sqlScript
 	 * @return
 	 */
-	public Object saveSqlScript(ComSqlScript sqlScript) {
+	public Object saveSqlScript(CfgSql sqlScript) {
 		String operResult = validSqlScriptResourceNameIsExists(sqlScript);
 		if(operResult == null){
 			String projectId = CurrentThreadContext.getConfProjectId();
@@ -132,7 +132,7 @@ public class CfgSqlService extends AService {
 			}
 			
 			if(operResult == null){
-				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getType()))){
 					DBUtil.createObject(sqlScript);
 					sqlScript.setIsCreated(1);
 				}
@@ -156,8 +156,8 @@ public class CfgSqlService extends AService {
 	 * @param sqlScript
 	 * @return
 	 */
-	public Object updateSqlScript(ComSqlScript sqlScript) {
-		ComSqlScript oldSqlScript = getObjectById(sqlScript.getId(), ComSqlScript.class);
+	public Object updateSqlScript(CfgSql sqlScript) {
+		CfgSql oldSqlScript = getObjectById(sqlScript.getId(), CfgSql.class);
 		String operResult = null;
 		if(!oldSqlScript.getResourceName().equals(sqlScript.getResourceName())){
 			operResult = validSqlScriptResourceNameIsExists(sqlScript);
@@ -175,11 +175,11 @@ public class CfgSqlService extends AService {
 			}
 			
 			if(operResult == null){
-				if((SqlStatementTypeConstants.PROCEDURE.equals(oldSqlScript.getSqlScriptType()) && !SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()))
-						|| (SqlStatementTypeConstants.VIEW.equals(oldSqlScript.getSqlScriptType()) && !SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+				if((SqlStatementTypeConstants.PROCEDURE.equals(oldSqlScript.getType()) && !SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType()))
+						|| (SqlStatementTypeConstants.VIEW.equals(oldSqlScript.getType()) && !SqlStatementTypeConstants.VIEW.equals(sqlScript.getType()))){
 					DBUtil.dropObject(oldSqlScript);
 				}
-				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getSqlScriptType()))){
+				if(sqlScript.getIsImmediateCreate() == 1 && (SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType()) || SqlStatementTypeConstants.VIEW.equals(sqlScript.getType()))){
 					if(oldSqlScript.getObjectName() != null && oldSqlScript.getObjectName().equals(sqlScript.getObjectName())){
 						sqlScript.setIsCoverSqlObject(true);
 					}
@@ -201,12 +201,12 @@ public class CfgSqlService extends AService {
 	 * @return
 	 */
 	public String deleteSqlScript(String sqlScriptId) {
-		ComSqlScript sql = getObjectById(sqlScriptId, ComSqlScript.class);
+		CfgSql sql = getObjectById(sqlScriptId, CfgSql.class);
 		
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		if(datalinks.size() > 1){
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
-			StringBuilder hql = new StringBuilder("select projName from ComProject where id in (");
+			StringBuilder hql = new StringBuilder("select projName from CfgProject where id in (");
 			for (JSONObject json : datalinks) {
 				projectIds.add(json.getString("leftId"));
 				hql.append("?,");
@@ -218,15 +218,15 @@ public class CfgSqlService extends AService {
 			projectIds.clear();
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComSqlScript where "+ResourcePropNameConstants.ID+" = ?", sql.getId());
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComSqlScriptParameter where sqlScriptId = ?", sql.getId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSql where "+ResourcePropNameConstants.ID+" = ?", sql.getId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", sql.getId());
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sql.getId());
 		HibernateUtil.deleteDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		
 		BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(sqlScriptId);
 			
 		// 删除sql脚本资源时，如果是视图、存储过程等，还需要drop对应的对象【删除数据库对象】
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(sql.getSqlScriptType())){
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getType()) || SqlStatementTypeConstants.VIEW.equals(sql.getType())){
 			sql.setIsCoverSqlObject(true);
 			DBUtil.dropObject(sql);
 		}
@@ -242,13 +242,13 @@ public class CfgSqlService extends AService {
 	 */
 	public Object createSqlObject(IJson ijson) {
 		int len = ijson.size();
-		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(len);
+		List<CfgSql> sqls = new ArrayList<CfgSql>(len);
 		
-		StringBuilder updateHql = new StringBuilder("update ComSqlScript set isCreated=1 where id in (");
-		ComSqlScript tmpSql;
+		StringBuilder updateHql = new StringBuilder("update CfgSql set isCreated=1 where id in (");
+		CfgSql tmpSql;
 		for(int i=0;i<len ;i++){
-			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), ComSqlScript.class);
-			if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
+			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), CfgSql.class);
+			if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getType()) || SqlStatementTypeConstants.VIEW.equals(tmpSql.getType())){
 				sqls.add(tmpSql);
 				updateHql.append("'").append(tmpSql.getId()).append("',");
 			}else{
@@ -264,7 +264,7 @@ public class CfgSqlService extends AService {
 		} catch (Exception e) {
 			return ExceptionUtil.getErrMsg(e);
 		} finally {
-			for (ComSqlScript sql : sqls) {
+			for (CfgSql sql : sqls) {
 				sql.clear();
 			}
 		}
@@ -281,13 +281,13 @@ public class CfgSqlService extends AService {
 	 */
 	public Object dropSqlObject(IJson ijson) {
 		int len = ijson.size();
-		List<ComSqlScript> sqls = new ArrayList<ComSqlScript>(len);
+		List<CfgSql> sqls = new ArrayList<CfgSql>(len);
 		
-		StringBuilder updateHql = new StringBuilder("update ComSqlScript set isCreated=0 where id in (");
-		ComSqlScript tmpSql;
+		StringBuilder updateHql = new StringBuilder("update CfgSql set isCreated=0 where id in (");
+		CfgSql tmpSql;
 		for(int i=0;i<len ;i++){
-			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), ComSqlScript.class);
-			if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getSqlScriptType()) || SqlStatementTypeConstants.VIEW.equals(tmpSql.getSqlScriptType())){
+			tmpSql = getObjectById(ijson.get(i).getString(ResourcePropNameConstants.ID), CfgSql.class);
+			if(SqlStatementTypeConstants.PROCEDURE.equals(tmpSql.getType()) || SqlStatementTypeConstants.VIEW.equals(tmpSql.getType())){
 				tmpSql.setIsCoverSqlObject(true);
 				sqls.add(tmpSql);
 				updateHql.append("'").append(tmpSql.getId()).append("',");
@@ -304,7 +304,7 @@ public class CfgSqlService extends AService {
 		} catch (Exception e) {
 			return ExceptionUtil.getErrMsg(e);
 		} finally {
-			for (ComSqlScript sql : sqls) {
+			for (CfgSql sql : sqls) {
 				sql.clear();
 			}
 		}
@@ -318,7 +318,7 @@ public class CfgSqlService extends AService {
 	 * @return
 	 */
 	public String addProjSqlScriptRelation(String projectId, String sqlScriptId) {
-		ComSqlScript sqlScript = getObjectById(sqlScriptId, ComSqlScript.class);
+		CfgSql sqlScript = getObjectById(sqlScriptId, CfgSql.class);
 		String operResult = validSameResourceNameSqlScriptInProject(sqlScript.getResourceName(), projectId);
 		if(operResult == null){
 			HibernateUtil.saveDataLinks("CfgProjectSqlLinks", projectId, sqlScriptId);
@@ -345,7 +345,7 @@ public class CfgSqlService extends AService {
 	 * @return
 	 */
 	private boolean validSqlIsExistsById(String sqlId) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComSqlScript where "+ResourcePropNameConstants.ID+"=? and customerId = ?", sqlId, CurrentThreadContext.getCustomerId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgSql where "+ResourcePropNameConstants.ID+"=? and customerId = ?", sqlId, CurrentThreadContext.getCustomerId());
 		if(count > 0){
 			return true;
 		}
@@ -357,9 +357,9 @@ public class CfgSqlService extends AService {
 	 * @param sqlParam
 	 * @return
 	 */
-	public Object saveSqlScriptParameter(ComSqlScriptParameter sqlParam) {
-		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
-			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
+	public Object saveSqlScriptParameter(CfgSqlParameter sqlParam) {
+		if(!validSqlIsExistsById(sqlParam.getSqlId())){
+			return "不存在id为["+sqlParam.getSqlId()+"]的sql脚本对象";
 		}
 		return HibernateUtil.saveObject(sqlParam, null);
 	}
@@ -369,9 +369,9 @@ public class CfgSqlService extends AService {
 	 * @param sqlParam
 	 * @return
 	 */
-	public Object updateSqlScriptParameter(ComSqlScriptParameter sqlParam) {
-		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
-			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
+	public Object updateSqlScriptParameter(CfgSqlParameter sqlParam) {
+		if(!validSqlIsExistsById(sqlParam.getSqlId())){
+			return "不存在id为["+sqlParam.getSqlId()+"]的sql脚本对象";
 		}
 		return HibernateUtil.updateObject(sqlParam, null);
 	}
@@ -382,7 +382,7 @@ public class CfgSqlService extends AService {
 	 * @return
 	 */
 	public String deleteSqlScriptParameter(String sqlScriptParameterIds) {
-		return deleteDataById("ComSqlScriptParameter", sqlScriptParameterIds);
+		return deleteDataById("CfgSqlParameter", sqlScriptParameterIds);
 	}
 	
 	//--------------------------------------------------------------------------------------------------------
@@ -391,20 +391,20 @@ public class CfgSqlService extends AService {
 	 * @param sqlScript
 	 * @return
 	 */
-	private List<CfgSqlResultset> findInSqlResultsetsList(ComSqlScript sqlScript) {
+	private List<CfgSqlResultset> findInSqlResultsetsList(CfgSql sqlScript) {
 		List<CfgSqlResultset> sqlResultsetsList = null;
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){
-			List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType())){
+			List<CfgSqlParameter> sqlParams = sqlScript.getSqlParams();
 			if(sqlParams != null && sqlParams.size() > 0){
 				sqlResultsetsList = new ArrayList<CfgSqlResultset>(sqlParams.size());
 				CfgSqlResultset cfgSqlResultset = null;
-				for (ComSqlScriptParameter sqlParam : sqlParams) {
+				for (CfgSqlParameter sqlParam : sqlParams) {
 					// 只有表类型，再查询其结果集信息
 					if(sqlParam.getIsTableType() == 1){
 						cfgSqlResultset = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSqlResultset.class, "from CfgSqlResultset where sqlScriptId = ? and sqlParameterId = ? and inOut = ? and projectId=? and customerId=?", sqlScript.getId(), sqlParam.getId(), CfgSqlResultset.IN, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 						cfgSqlResultset.setInSqlResultSetMetadataInfos(HibernateUtil.extendExecuteListQueryByHqlArr(ResourceMetadataInfo.class, null, null, queryTableMetadataInfosHql, cfgSqlResultset.getTableId()));
 						if(cfgSqlResultset.getInSqlResultSetMetadataInfos() == null || cfgSqlResultset.getInSqlResultSetMetadataInfos().size() == 0){
-							throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+sqlParam.getParameterName()+"]，引用的表类型没有查询到任何列信息，请联系系统管理员");
+							throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+sqlParam.getName()+"]，引用的表类型没有查询到任何列信息，请联系系统管理员");
 						}
 						sqlResultsetsList.add(cfgSqlResultset);
 					}
@@ -421,24 +421,24 @@ public class CfgSqlService extends AService {
 	 * @param sqlScript
 	 * @return
 	 */
-	private List<List<CfgSqlResultset>> findOutSqlResultsetsList(ComSqlScript sqlScript) {
+	private List<List<CfgSqlResultset>> findOutSqlResultsetsList(CfgSql sqlScript) {
 		List<List<CfgSqlResultset>> sqlResultsetsList = null;
 		
 		// 查询语句，直接查询结果集
-		if(SqlStatementTypeConstants.SELECT.equals(sqlScript.getSqlScriptType())){
+		if(SqlStatementTypeConstants.SELECT.equals(sqlScript.getType())){
 			sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(1);
 			sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(
 					CfgSqlResultset.class, null, null, "from CfgSqlResultset where sqlScriptId = ? and inOut = 2 and projectId=? and customerId=? order by orderCode asc", sqlScript.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 		}
 		
 		// 存储过程，要判断是否有返回结果集，再查询对应的结果集
-		else if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){
+		else if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType())){
 			// oracle的存储过程返回结果集，通过输出参数
 			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType())){
-				List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
+				List<CfgSqlParameter> sqlParams = sqlScript.getSqlParams();
 				if(sqlParams != null && sqlParams.size() > 0){
 					sqlResultsetsList = new ArrayList<List<CfgSqlResultset>>(sqlParams.size());
-					for (ComSqlScriptParameter sqlParam : sqlParams) {
+					for (CfgSqlParameter sqlParam : sqlParams) {
 						// 只有表类型，再查询其结果集信息
 						if(sqlParam.getIsTableType() == 1){
 							sqlResultsetsList.add(HibernateUtil.extendExecuteListQueryByHqlArr(

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**
@@ -19,7 +19,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 	}
 	
 	protected boolean doGetProcess() {
-		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
+		CfgSql sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
 		
 		String coreQuerySql = sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql()+
 				builtinQueryMethodProcesser.getSql().append(getFromSql());

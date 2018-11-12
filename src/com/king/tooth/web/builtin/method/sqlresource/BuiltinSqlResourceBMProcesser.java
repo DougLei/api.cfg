@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.builtin.method.AbstractCommonBuiltinBMProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.query.BuiltinQueryMethodProcesser;
@@ -72,7 +72,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	 * @param requestResourceParams
 	 * @param sqlParameterValues 
 	 */
-	public void setSqlScriptMethodProcesser(ComSqlScript sql, List<List<Object>> sqlParameterValues) {
+	public void setSqlScriptMethodProcesser(CfgSql sql, List<List<Object>> sqlParameterValues) {
 		sqlScriptMethodProcesser = new BuiltinSqlMethodProcesser(sql);
 		sqlScriptMethodProcesser.setResourceName(resourceName);
 		sqlScriptMethodProcesser.setParentResourceName(parentResourceName);
@@ -147,7 +147,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 		}
 	}
 	
-	private ComSqlScript sql;
+	private CfgSql sql;
 	public BuiltinSqlResourceBMProcesser(RequestBody requestBody, List<List<Object>> sqlParameterValues){
 		sql = requestBody.getResourceInfo().getSql();
 		requestBuiltinParams = requestBody.getRequestBuiltinParams();

@@ -85,7 +85,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 关联的sql资源对象
 	 */
 	@JSONField(serialize = false)
-	private ComSqlScript refSql;
+	private CfgSql refSql;
 	
 	public String getParentId() {
 		return parentId;
@@ -304,7 +304,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public CfgTable getRefTable() {
 		return refTable;
 	}
-	public ComSqlScript getRefSql() {
+	public CfgSql getRefSql() {
 		return refSql;
 	}
 	

@@ -11,7 +11,7 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.entity.cfg.ComProject;
+import com.king.tooth.sys.entity.cfg.CfgProject;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.util.DateUtil;
@@ -46,7 +46,7 @@ public class BuiltinObjectInstance {
 	/**
 	 * 当前系统项目对象实例
 	 */
-	public transient static final ComProject currentSysBuiltinProjectInstance = new ComProject(); 
+	public transient static final CfgProject currentSysBuiltinProjectInstance = new CfgProject(); 
 	static{
 		currentSysBuiltinProjectInstance.setId(SysConfig.getSystemConfig("current.sys.project.id"));
 	}

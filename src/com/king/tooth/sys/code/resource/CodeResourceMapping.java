@@ -178,12 +178,12 @@ public class CodeResourceMapping {
 	 */
 	private static void initImportDataCodeResource() {
 		put("/CfgDatabase"+IMPORT_DATA_KEY_SUFFIX, CfgDatabaseController.class, "add");// 数据库信息导入操作
-		put("/ComProject"+IMPORT_DATA_KEY_SUFFIX, CfgProjectController.class, "add");// 项目信息导入操作
-		put("/ComProjectModule"+IMPORT_DATA_KEY_SUFFIX, CfgProjectModuleController.class, "add");// 项目模块信息导入操作
+		put("/CfgProject"+IMPORT_DATA_KEY_SUFFIX, CfgProjectController.class, "add");// 项目信息导入操作
+		put("/CfgProjectModule"+IMPORT_DATA_KEY_SUFFIX, CfgProjectModuleController.class, "add");// 项目模块信息导入操作
 		put("/ComTabledata"+IMPORT_DATA_KEY_SUFFIX, CfgTableController.class, "add");// 表信息导入操作
 		put("/ComColumndata"+IMPORT_DATA_KEY_SUFFIX, CfgColumnController.class, "add");// 列信息导入操作
-		put("/ComSqlScript"+IMPORT_DATA_KEY_SUFFIX, CfgSqlController.class, "add");// sql脚本信息导入操作
-		put("/ComSqlScriptParameter"+IMPORT_DATA_KEY_SUFFIX, CfgSqlParameterController.class, "add");// sql脚本参数信息导入操作
+		put("/CfgSql"+IMPORT_DATA_KEY_SUFFIX, CfgSqlController.class, "add");// sql脚本信息导入操作
+		put("/CfgSqlParameter"+IMPORT_DATA_KEY_SUFFIX, CfgSqlParameterController.class, "add");// sql脚本参数信息导入操作
 		put("/SysUser"+IMPORT_DATA_KEY_SUFFIX, SysUserController.class, "add");// 用户信息导入操作
 		put("/SysAccount"+IMPORT_DATA_KEY_SUFFIX, SysAccountController.class, "add");// 账户信息导入操作
 	}

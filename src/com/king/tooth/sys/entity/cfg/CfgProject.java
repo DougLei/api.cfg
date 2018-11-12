@@ -18,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComProject extends BasicEntity implements IEntityPropAnalysis, IEntity{
+public class CfgProject extends BasicEntity implements IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 关联的数据库主键
@@ -28,11 +28,11 @@ public class ComProject extends BasicEntity implements IEntityPropAnalysis, IEnt
 	/**
 	 * 项目名称
 	 */
-	private String projName;
+	private String name;
 	/**
 	 * 项目编码
 	 */
-	private String projCode;
+	private String code;
 	/**
 	 * 项目描述
 	 */
@@ -40,14 +40,14 @@ public class ComProject extends BasicEntity implements IEntityPropAnalysis, IEnt
 	
 	//-----------------------------------------------------------
 	
-	public void setProjName(String projName) {
-		this.projName = projName;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getProjName() {
-		if(StrUtils.isEmpty(projName)){
-			projName = projCode;
+	public String getName() {
+		if(StrUtils.isEmpty(name)){
+			name = code;
 		}
-		return projName;
+		return name;
 	}
 	public String getDescs() {
 		return descs;
@@ -61,11 +61,11 @@ public class ComProject extends BasicEntity implements IEntityPropAnalysis, IEnt
 	public void setRefDatabaseId(String refDatabaseId) {
 		this.refDatabaseId = refDatabaseId;
 	}
-	public String getProjCode() {
-		return projCode;
+	public String getCode() {
+		return code;
 	}
-	public void setProjCode(String projCode) {
-		this.projCode = projCode;
+	public void setCode(String code) {
+		this.code = code;
 	}
 	
 	@JSONField(serialize = false)
@@ -78,16 +78,16 @@ public class ComProject extends BasicEntity implements IEntityPropAnalysis, IEnt
 		refDatabaseIdColumn.setIsNullabled(0);
 		columns.add(refDatabaseIdColumn);
 		
-		CfgColumn projNameColumn = new CfgColumn("proj_name", DataTypeConstants.STRING, 200);
-		projNameColumn.setName("项目名称");
-		projNameColumn.setComments("项目名称");
-		columns.add(projNameColumn);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 200);
+		nameColumn.setName("项目名称");
+		nameColumn.setComments("项目名称");
+		columns.add(nameColumn);
 		
-		CfgColumn projCodeColumn = new CfgColumn("proj_code", DataTypeConstants.STRING, 100);
-		projCodeColumn.setName("项目编码");
-		projCodeColumn.setComments("项目编码");
-		projCodeColumn.setIsNullabled(0);
-		columns.add(projCodeColumn);
+		CfgColumn codeColumn = new CfgColumn("code", DataTypeConstants.STRING, 100);
+		codeColumn.setName("项目编码");
+		codeColumn.setComments("项目编码");
+		codeColumn.setIsNullabled(0);
+		columns.add(codeColumn);
 		
 		CfgColumn descsColumn = new CfgColumn("descs", DataTypeConstants.STRING, 800);
 		descsColumn.setName("项目描述");
@@ -107,19 +107,19 @@ public class ComProject extends BasicEntity implements IEntityPropAnalysis, IEnt
 		return table;
 	}
 	public String toDropTable() {
-		return "COM_PROJECT";
+		return "CFG_PROJECT";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComProject";
+		return "CfgProject";
 	}
 
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(refDatabaseId)){
 			return "项目关联的数据库id不能为空";
 		}
-		if(StrUtils.isEmpty(projCode)){
+		if(StrUtils.isEmpty(code)){
 			return "项目编码不能为空";
 		}
 		return null;

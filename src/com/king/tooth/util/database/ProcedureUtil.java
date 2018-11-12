@@ -16,8 +16,8 @@ import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.IExecute;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -39,18 +39,18 @@ public class ProcedureUtil {
 	 * @param sqlScript
 	 * @return
 	 */
-	public static JSONArray executeProcedure(ComSqlScript sqlScript) {
+	public static JSONArray executeProcedure(CfgSql sqlScript) {
 		JSONArray jsonArray = null;
 		
 		boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType());
 		boolean isSqlServer = BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(sqlScript.getDbType());
 		String sqlScriptId = sqlScript.getId();
-		String sqlScriptType = sqlScript.getSqlScriptType();
+		String sqlScriptType = sqlScript.getType();
 		
 		List<CfgSqlResultset> inSqlResultSets = sqlScript.getInSqlResultsets()==null?new ArrayList<CfgSqlResultset>(5):sqlScript.getInSqlResultsets();
 		List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getOutSqlResultsetsList();
 		
-		List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
+		List<List<CfgSqlParameter>> sqlParamsList = sqlScript.getSqlParamsList();
 		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
 		
 		String procedureName = sqlScript.getObjectName();
@@ -61,7 +61,7 @@ public class ProcedureUtil {
 			jsonArray = new JSONArray(sqlParamsList.size());
 			callProcedure = callProcedure(procedureName, sqlParamsList.get(0));
 			int count = 1;
-			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
+			for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
 				json = new JSONObject(10);
 				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, sqlScriptType, inSqlResultSets, outSqlResultSetsList, sqlParams, callProcedure, json);
 				jsonArray.add(json);
@@ -82,7 +82,7 @@ public class ProcedureUtil {
 		}
 		
 		if(sqlScriptHavaParams){
-			for (List<ComSqlScriptParameter> sp : sqlParamsList) {
+			for (List<CfgSqlParameter> sp : sqlParamsList) {
 				if(sp != null){
 					sp.clear();
 				}
@@ -98,7 +98,7 @@ public class ProcedureUtil {
 	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	private static String callProcedure(final String procedureName, final List<ComSqlScriptParameter> sqlParams) {
+	private static String callProcedure(final String procedureName, final List<CfgSqlParameter> sqlParams) {
 		StringBuilder procedure = new StringBuilder();
 		procedure.append("{call ").append(procedureName).append("(");
 		if(sqlParams != null && sqlParams.size() > 0){
@@ -132,7 +132,7 @@ public class ProcedureUtil {
 	 * @param callProcedure
 	 * @param json
 	 */
-	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final String sqlScriptType, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<ComSqlScriptParameter> sqlParams, final String callProcedure, final JSONObject json){
+	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final String sqlScriptType, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<CfgSqlParameter> sqlParams, final String callProcedure, final JSONObject json){
 		new DBLink(CurrentThreadContext.getDatabaseInstance()).doExecute(new IExecute() {
 			private int inSqlResultsetIndex = 0;
 			
@@ -155,16 +155,16 @@ public class ProcedureUtil {
 			 * @param sqlParams
 			 * @throws SQLException 
 			 */
-			private void setParameters(CallableStatement cs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
+			private void setParameters(CallableStatement cs, List<CfgSqlParameter> sqlParams) throws SQLException {
 				if(sqlParams != null && sqlParams.size() > 0){
-					for (ComSqlScriptParameter parameter : sqlParams) {
+					for (CfgSqlParameter parameter : sqlParams) {
 						if(parameter.getInOut() == 1){//in
 							setParameter(cs, parameter, parameter.getActualInValue());
 						}else if(parameter.getInOut() == 2){//out
-							cs.registerOutParameter(parameter.getOrderCode(), DBUtil.getDatabaseDataTypeCode(parameter.getParameterDataType(), parameter.getIsTableType(), isOracle, isSqlServer));
+							cs.registerOutParameter(parameter.getOrderCode(), DBUtil.getDatabaseDataTypeCode(parameter.getDataType(), parameter.getIsTableType(), isOracle, isSqlServer));
 						}else if(parameter.getInOut() == 3){//in out
 							setParameter(cs, parameter, parameter.getActualInValue());
-							cs.registerOutParameter(parameter.getOrderCode(), DBUtil.getDatabaseDataTypeCode(parameter.getParameterDataType(), parameter.getIsTableType(), isOracle, isSqlServer));
+							cs.registerOutParameter(parameter.getOrderCode(), DBUtil.getDatabaseDataTypeCode(parameter.getDataType(), parameter.getIsTableType(), isOracle, isSqlServer));
 						}
 					}
 				}
@@ -177,7 +177,7 @@ public class ProcedureUtil {
 			 * @param actualInValue
 			 * @throws SQLException
 			 */
-			private void setParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
+			private void setParameter(CallableStatement cs, CfgSqlParameter parameter, Object actualInValue) throws SQLException {
 				if(isOracle){
 					setOracleParameter(cs, parameter, actualInValue);
 				}else if(isSqlServer){
@@ -192,7 +192,7 @@ public class ProcedureUtil {
 			 * @param actualInValue
 			 * @throws SQLException
 			 */
-			private void setOracleParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
+			private void setOracleParameter(CallableStatement cs, CfgSqlParameter parameter, Object actualInValue) throws SQLException {
 				if(parameter.getIsTableType() == 1){
 					// TODO 处理oracle游标类型的参数
 					inSqlResultsetIndex++;
@@ -208,7 +208,7 @@ public class ProcedureUtil {
 			 * @param actualInValue
 			 * @throws SQLException 
 			 */
-			private void setSqlServerParameter(CallableStatement cs, ComSqlScriptParameter parameter, Object actualInValue) throws SQLException {
+			private void setSqlServerParameter(CallableStatement cs, CfgSqlParameter parameter, Object actualInValue) throws SQLException {
 				if(parameter.getIsTableType() == 1){
 					List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = inSqlResultSets.get(inSqlResultsetIndex).getInSqlResultSetMetadataInfos();
 					
@@ -239,7 +239,7 @@ public class ProcedureUtil {
 						}
 					}
 					SQLServerCallableStatement scs = (SQLServerCallableStatement) cs;
-					scs.setStructured(parameter.getOrderCode(), parameter.getParameterDataType(), table);
+					scs.setStructured(parameter.getOrderCode(), parameter.getDataType(), table);
 					
 					inSqlResultsetIndex++;
 				}else{
@@ -254,20 +254,20 @@ public class ProcedureUtil {
 			 * @param sqlParams
 			 * @throws SQLException 
 			 */
-			private void putOutputValues(CallableStatement cs, ResultSet rs, List<ComSqlScriptParameter> sqlParams) throws SQLException {
+			private void putOutputValues(CallableStatement cs, ResultSet rs, List<CfgSqlParameter> sqlParams) throws SQLException {
 				if(isOracle){
 					if(!sqlScriptHavaParams){
 						return;
 					}
 					if(sqlParams != null && sqlParams.size() > 0){
 						int outSqlResultsetIndex = 0;
-						for (ComSqlScriptParameter sp : sqlParams) {
+						for (CfgSqlParameter sp : sqlParams) {
 							if(sp.getInOut() == 2 || sp.getInOut() == 3){
 								if(sp.getIsTableType() == 1){
-									json.put(sp.getParameterName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), outSqlResultsetIndex, sp.getId(), sp.getParameterName()));
+									json.put(sp.getName(), getOracleCursorDataSet(cs, rs, sp.getOrderCode(), outSqlResultsetIndex, sp.getId(), sp.getName()));
 									outSqlResultsetIndex++;
 								}else{
-									json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
+									json.put(sp.getName(), cs.getObject(sp.getOrderCode()));
 								}
 							}
 						}
@@ -275,9 +275,9 @@ public class ProcedureUtil {
 				}else if(isSqlServer){
 					putSqlServerDataSet(cs, rs);
 					if(sqlParams != null && sqlParams.size() > 0){
-						for (ComSqlScriptParameter sp : sqlParams) {
+						for (CfgSqlParameter sp : sqlParams) {
 							if(sp.getInOut() == 2 || sp.getInOut() == 3){
-								json.put(sp.getParameterName(), cs.getObject(sp.getOrderCode()));
+								json.put(sp.getName(), cs.getObject(sp.getOrderCode()));
 							}
 						}
 					}

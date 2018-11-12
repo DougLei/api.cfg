@@ -33,10 +33,10 @@ import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.cfg.ComProject;
-import com.king.tooth.sys.entity.cfg.ComProjectModule;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgProject;
+import com.king.tooth.sys.entity.cfg.CfgProjectModule;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -114,10 +114,10 @@ public class InitSystemService extends AService{
 	private List<CfgTable> getAllTables(){
 		List<CfgTable> tables = new ArrayList<CfgTable>(50);
 		tables.add(new CfgDatabase().toCreateTable());
-		tables.add(new ComProject().toCreateTable());
-		tables.add(new ComProjectModule().toCreateTable());
+		tables.add(new CfgProject().toCreateTable());
+		tables.add(new CfgProjectModule().toCreateTable());
 		tables.add(new CfgHibernateHbm().toCreateTable());
-		tables.add(new ComSqlScript().toCreateTable());
+		tables.add(new CfgSql().toCreateTable());
 		tables.add(new CfgProjectSqlLinks().toCreateTable());
 		tables.add(new SysAccount().toCreateTable());
 		tables.add(new SysDataDictionary().toCreateTable());
@@ -129,7 +129,7 @@ public class InitSystemService extends AService{
 		tables.add(new SysUser().toCreateTable());
 		tables.add(new CfgColumn().toCreateTable());
 		tables.add(new CfgTable().toCreateTable());
-		tables.add(new ComSqlScriptParameter().toCreateTable());
+		tables.add(new CfgSqlParameter().toCreateTable());
 		tables.add(new CfgProjectTableLinks().toCreateTable());
 		tables.add(new SysRole().toCreateTable());
 		tables.add(new SysPermission().toCreateTable());
@@ -275,11 +275,11 @@ public class InitSystemService extends AService{
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加项目信息【运行平台数据库中的一个项目】
-		ComProject project = new ComProject();
+		CfgProject project = new CfgProject();
 		project.setId("7fe971700f21d3a796d2017398812dcd");
 		project.setRefDatabaseId("05fb6ef9c3ackfccb91b00add666odb9");
-		project.setProjName("自动化配置项目(内置)");
-		project.setProjCode("AutoConfigProj");
+		project.setName("自动化配置项目(内置)");
+		project.setCode("AutoConfigProj");
 		project.analysisResourceProp();
 		HibernateUtil.saveObject(project, normalAccountId);
 		

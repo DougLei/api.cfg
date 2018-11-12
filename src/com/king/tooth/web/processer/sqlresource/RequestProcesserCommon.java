@@ -11,7 +11,7 @@ import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
@@ -91,10 +91,10 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * @param sqlDesc @see BuiltinDatabaseData
 	 */
 	protected final void doModifyProcess(String sqlDesc){
-		ComSqlScript sqlScript = builtinSqlScriptMethodProcesser.getReqSql();
+		CfgSql sqlScript = builtinSqlScriptMethodProcesser.getReqSql();
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 是存储过程
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType())){// 是存储过程
 			JSONArray jsonArray = ProcedureUtil.executeProcedure(sqlScript);
 			
 			if(jsonArray != null && jsonArray.size() > 0){

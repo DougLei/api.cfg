@@ -18,7 +18,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class ComProjectModule extends BasicEntity implements IEntityPropAnalysis, IEntity{
+public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis, IEntity{
 	
 	/**
 	 * 关联的项目主键
@@ -208,7 +208,7 @@ public class ComProjectModule extends BasicEntity implements IEntityPropAnalysis
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "ComProjectModule";
+		return "CfgProjectModule";
 	}
 	
 	public String validNotNullProps() {

@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.king.tooth.constants.DataTypeConstants;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
 import com.king.tooth.util.hibernate.HibernateUtil;
@@ -57,11 +57,11 @@ public class SqlParameterParserUtil {
 	 * @param isProcedure 是否是存储过程，如果是存储过程，则要去看，存储过程中是否出现$param$的变量，如果出现了这种变量，是会出现异常的
 	 * @return 解析出来的第一个参数名，目前主要是针对存储过程中不能有$param$变量处理的。返回null表示一切正常
 	 */
-	public static String analysisMultiSqlScriptParam(String[] sqlScriptArr, ComSqlScript sqlScript, boolean isProcedure){
+	public static String analysisMultiSqlScriptParam(String[] sqlScriptArr, CfgSql sqlScript, boolean isProcedure){
 		if(sqlScriptArr == null || sqlScriptArr.length == 0){
 			return null;
 		}
-		List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>();
+		List<CfgSqlParameter> sqlScriptParameterList = new ArrayList<CfgSqlParameter>();
 		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>();
 		
 		List<String> parameterNames = new ArrayList<String>();// 记录参数名
@@ -74,7 +74,7 @@ public class SqlParameterParserUtil {
 		String sql;
 		String parameterName;
 		SqlScriptParameterNameRecord parameterNameRecord;
-		ComSqlScriptParameter sqlScriptParameter;
+		CfgSqlParameter sqlScriptParameter;
 		int orderCode =1;
 		for(int i=0; i<sqlScriptArrLength; i++){
 			parameterNameRecord = new SqlScriptParameterNameRecord(i);
@@ -114,7 +114,7 @@ public class SqlParameterParserUtil {
 					}
 					parameterNames.add(parameterName);
 					
-					sqlScriptParameter = new ComSqlScriptParameter(parameterName, DataTypeConstants.STRING, false, 0, orderCode++, true, true);
+					sqlScriptParameter = new CfgSqlParameter(parameterName, DataTypeConstants.STRING, false, 0, orderCode++, true, true);
 					sqlScriptParameterList.add(sqlScriptParameter);
 				}
 			}
@@ -128,8 +128,8 @@ public class SqlParameterParserUtil {
 			// 保存参数
 			if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 				String sqlScriptId = sqlScript.getId();
-				for (ComSqlScriptParameter sqlParam : sqlScriptParameterList) {
-					sqlParam.setSqlScriptId(sqlScriptId);
+				for (CfgSqlParameter sqlParam : sqlScriptParameterList) {
+					sqlParam.setSqlId(sqlScriptId);
 					HibernateUtil.saveObject(sqlParam, null);
 				}
 				sqlScriptParameterList.clear();

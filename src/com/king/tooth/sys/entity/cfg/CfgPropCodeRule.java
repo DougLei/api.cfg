@@ -224,7 +224,7 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 		this.refPropName = refPropName.toString();
 	}
 	private static final String queryColumnPropNameHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID+"=?";
-	private static final String querySqlParameterPropNameHql = "select parameterName from ComSqlScriptParameter where " + ResourcePropNameConstants.ID+"=?";
+	private static final String querySqlParameterPropNameHql = "select parameterName from CfgSqlParameter where " + ResourcePropNameConstants.ID+"=?";
 	
 	/**
 	 * 处理并获取最终的属性编码值

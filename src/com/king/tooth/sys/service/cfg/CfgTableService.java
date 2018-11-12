@@ -12,7 +12,7 @@ import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.cfg.ComProject;
+import com.king.tooth.sys.entity.cfg.CfgProject;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ExceptionUtil;
@@ -51,7 +51,7 @@ public class CfgTableService extends AService {
 	 * @return operResult
 	 */
 	private String validTableRefProjIsExists(String projectId) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComProject where id = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProject where id = ?", projectId);
 		if(count != 1){
 			return "表关联的，id为["+projectId+"]的项目信息不存在";
 		}
@@ -65,9 +65,9 @@ public class CfgTableService extends AService {
 	 * @return
 	 */
 	private String validTableIsExistsInDatabase(String projectId, String tableName) {
-		ComProject project = getObjectById(projectId, ComProject.class);
+		CfgProject project = getObjectById(projectId, CfgProject.class);
 		String hql = "select count(tb."+ResourcePropNameConstants.ID+") from " + 
-				"CfgDatabase d, ComProject p, CfgProjectTableLinks pt, CfgTable tb " +
+				"CfgDatabase d, CfgProject p, CfgProjectTableLinks pt, CfgTable tb " +
 				"where d.id = '"+project.getRefDatabaseId()+"' and d.id = p.refDatabaseId and p.id=pt.leftId and tb.id=pt.rightId and tb.tableName='"+tableName + "'";
 		long count = (long) HibernateUtil.executeUniqueQueryByHql(hql, null);
 		if(count > 0){
@@ -175,7 +175,7 @@ public class CfgTableService extends AService {
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("CfgProjectTableLinks", null, tableId);
 		if(datalinks.size() > 1){
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
-			StringBuilder hql = new StringBuilder("select projName from ComProject where id in (");
+			StringBuilder hql = new StringBuilder("select projName from CfgProject where id in (");
 			for (JSONObject json : datalinks) {
 				projectIds.add(json.getString("leftId"));
 				hql.append("?,");

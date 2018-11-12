@@ -8,7 +8,7 @@ import java.util.List;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.sys.entity.cfg.ComProjectModule;
+import com.king.tooth.sys.entity.cfg.CfgProjectModule;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModule;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
@@ -29,8 +29,8 @@ public class CfgProjectModuleService extends AService {
 	 * @param projectModule
 	 * @return operResult
 	 */
-	private String validProjectModuleCodeIsExists(ComProjectModule projectModule) {
-		String hql = "select count("+ResourcePropNameConstants.ID+") from ComProjectModule where code = ? and refProjectId = ?";
+	private String validProjectModuleCodeIsExists(CfgProjectModule projectModule) {
+		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProjectModule where code = ? and refProjectId = ?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), CurrentThreadContext.getConfProjectId());
 		if(count > 0){
 			return "编码为["+projectModule.getCode()+"]的模块信息已存在";
@@ -43,7 +43,7 @@ public class CfgProjectModuleService extends AService {
 	 * @param projectModule
 	 * @return
 	 */
-	public Object saveProjectModule(ComProjectModule projectModule) {
+	public Object saveProjectModule(CfgProjectModule projectModule) {
 		String operResult = validProjectModuleCodeIsExists(projectModule);
 		if(operResult == null){
 			projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
@@ -57,8 +57,8 @@ public class CfgProjectModuleService extends AService {
 	 * @param projectModule
 	 * @return
 	 */
-	public Object updateProjectModule(ComProjectModule projectModule) {
-		ComProjectModule oldProjectModule = getObjectById(projectModule.getId(), ComProjectModule.class);
+	public Object updateProjectModule(CfgProjectModule projectModule) {
+		CfgProjectModule oldProjectModule = getObjectById(projectModule.getId(), CfgProjectModule.class);
 		
 		String operResult = null;
 		if(!oldProjectModule.getCode().equals(projectModule.getCode())){
@@ -77,9 +77,9 @@ public class CfgProjectModuleService extends AService {
 	 * @return
 	 */
 	public String deleteProjectModule(String projectModuleId) {
-		getObjectById(projectModuleId, ComProjectModule.class);
+		getObjectById(projectModuleId, CfgProjectModule.class);
 		
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComProjectModule where "+ResourcePropNameConstants.ID+" = '"+projectModuleId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProjectModule where "+ResourcePropNameConstants.ID+" = '"+projectModuleId+"'");
 		return null;
 	}
 	
@@ -116,9 +116,9 @@ public class CfgProjectModuleService extends AService {
 		return subProjectModules;
 	}
 	/** 查询根模块集合的hql */
-	private static final String queryRootModulesHql = queryModulesSelectHqlHead + "from ComProjectModule where (parentId is null or parentId = '') and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
+	private static final String queryRootModulesHql = queryModulesSelectHqlHead + "from CfgProjectModule where (parentId is null or parentId = '') and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
 	/** 查询子模块集合的hql */
-	private static final String queryModulesHql = queryModulesSelectHqlHead + "from ComProjectModule where parentId=? and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
+	private static final String queryModulesHql = queryModulesSelectHqlHead + "from CfgProjectModule where parentId=? and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 根据权限获取对应的模块集合
@@ -171,7 +171,7 @@ public class CfgProjectModuleService extends AService {
 		return modules;
 	}
 	/** 根据id查询模块信息集合的hql */
-	private final static String queryProjectModuleByIdHql = queryModulesSelectHqlHead + "from ComProjectModule where "+ResourcePropNameConstants.ID+"=? and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
+	private final static String queryProjectModuleByIdHql = queryModulesSelectHqlHead + "from CfgProjectModule where "+ResourcePropNameConstants.ID+"=? and projectId=? and customerId=? and isEnabled = 1 order by orderCode asc";
 	//--------------------------------------------------------------------------------------------------------
 	/**
 	 * 组装projectModule实例对象

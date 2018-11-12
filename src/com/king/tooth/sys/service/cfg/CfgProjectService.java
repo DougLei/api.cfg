@@ -4,7 +4,7 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
-import com.king.tooth.sys.entity.cfg.ComProject;
+import com.king.tooth.sys.entity.cfg.CfgProject;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -20,7 +20,7 @@ public class CfgProjectService extends AService {
 	 * @param project
 	 * @return operResult
 	 */
-	private String validProjectRefDatabaseIsExists(ComProject project) {
+	private String validProjectRefDatabaseIsExists(CfgProject project) {
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgDatabase where id = ?", project.getRefDatabaseId());
 		if(count != 1){
 			return "关联的id=["+project.getRefDatabaseId()+"]的数据库信息不存在";
@@ -33,11 +33,11 @@ public class CfgProjectService extends AService {
 	 * @param project
 	 * @return operResult
 	 */
-	private String validProjectCodeIsExists(ComProject project) {
-		String hql = "select count("+ResourcePropNameConstants.ID+") from ComProject where projCode = ?";
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, project.getProjCode());
+	private String validProjectCodeIsExists(CfgProject project) {
+		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProject where projCode = ?";
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, project.getCode());
 		if(count > 0){
-			return "编码为["+project.getProjCode()+"]项目信息已存在";
+			return "编码为["+project.getCode()+"]项目信息已存在";
 		}
 		return null;
 	}
@@ -47,7 +47,7 @@ public class CfgProjectService extends AService {
 	 * @param project
 	 * @return
 	 */
-	public Object saveProject(ComProject project) {
+	public Object saveProject(CfgProject project) {
 		String operResult = validProjectRefDatabaseIsExists(project);
 		if(operResult == null){
 			operResult = validProjectCodeIsExists(project);
@@ -63,11 +63,11 @@ public class CfgProjectService extends AService {
 	 * @param project
 	 * @return
 	 */
-	public Object updateProject(ComProject project) {
-		ComProject oldProject = getObjectById(project.getId(), ComProject.class);
+	public Object updateProject(CfgProject project) {
+		CfgProject oldProject = getObjectById(project.getId(), CfgProject.class);
 		
 		String operResult = null;
-		if(!oldProject.getProjCode().equals(project.getProjCode())){
+		if(!oldProject.getCode().equals(project.getCode())){
 			operResult = validProjectCodeIsExists(project);
 		}
 		
@@ -89,7 +89,7 @@ public class CfgProjectService extends AService {
 		if(BuiltinObjectInstance.currentSysBuiltinProjectInstance.getId().equals(projectId)){
 			return "禁止删除内置的项目信息";
 		}
-		getObjectById(projectId, ComProject.class);
+		getObjectById(projectId, CfgProject.class);
 		
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProjectTableLinks where leftId = ?", projectId);
 		if(count > 0){
@@ -99,7 +99,7 @@ public class CfgProjectService extends AService {
 		if(count > 0){
 			return "该项目下还关联着[脚本信息]，无法删除，请先取消他们的关联信息";
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete ComProject where "+ResourcePropNameConstants.ID+" = '"+projectId+"'");
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProject where "+ResourcePropNameConstants.ID+" = '"+projectId+"'");
 		return null;
 	}
 

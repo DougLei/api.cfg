@@ -9,8 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.SqlResourceMetadataInfo;
 import com.king.tooth.web.entity.request.ResourcePropCodeRule;
@@ -27,21 +27,21 @@ public class SqlResourceValidUtil {
 	 * @param sqlParams
 	 * @return
 	 */
-	public static List<ResourceMetadataInfo> getSqlResourceParamsMetadataInfos(ComSqlScript sql){
-		List<ComSqlScriptParameter> sqlParams = sql.getSqlParams();
+	public static List<ResourceMetadataInfo> getSqlResourceParamsMetadataInfos(CfgSql sql){
+		List<CfgSqlParameter> sqlParams = sql.getSqlParams();
 		List<ResourceMetadataInfo> metadataInfos = null;
 		if(sqlParams != null && sqlParams.size() > 0){
 			metadataInfos = new ArrayList<ResourceMetadataInfo>(sqlParams.size());
-			for (ComSqlScriptParameter sqlParam : sqlParams) {
+			for (CfgSqlParameter sqlParam : sqlParams) {
 				metadataInfos.add(new SqlResourceMetadataInfo(
 						null,
-						sqlParam.getParameterDataType(),
+						sqlParam.getDataType(),
 						sqlParam.getLength(),
 						sqlParam.getPrecision(),
 						0, // sql脚本参数不需要唯一约束
 						0, // sql脚本参数不能为空
 						0, // 不能忽略检查
-						sqlParam.getParameterName(),
+						sqlParam.getName(),
 						sqlParam.getRemark()));
 			}
 		}
@@ -55,8 +55,8 @@ public class SqlResourceValidUtil {
 	 * @param sql
 	 * @return
 	 */
-	public static List<List<ResourceMetadataInfo>> getSqlInResultSetMetadataInfoList(ComSqlScript sql){
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getSqlScriptType())){
+	public static List<List<ResourceMetadataInfo>> getSqlInResultSetMetadataInfoList(CfgSql sql){
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getType())){
 			List<CfgSqlResultset> inSqlResultsets = sql.getInSqlResultsets();
 			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
 				List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList = new ArrayList<List<ResourceMetadataInfo>>(inSqlResultsets.size());
@@ -76,8 +76,8 @@ public class SqlResourceValidUtil {
 	 * @param sql
 	 * @return
 	 */
-	public static List<ResourceMetadataInfo> getSqlOutResultSetMetadataInfos(ComSqlScript sql){
-		if(SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){
+	public static List<ResourceMetadataInfo> getSqlOutResultSetMetadataInfos(CfgSql sql){
+		if(SqlStatementTypeConstants.SELECT.equals(sql.getType())){
 			List<CfgSqlResultset> outSqlResultSet = sql.getOutSqlResultsetsList().get(0);
 			List<ResourceMetadataInfo> metadataInfos = new ArrayList<ResourceMetadataInfo>(outSqlResultSet.size());
 			for (CfgSqlResultset csr : outSqlResultSet) {
@@ -95,23 +95,23 @@ public class SqlResourceValidUtil {
 	 * @param formData
 	 * @return
 	 */
-	public static List<List<ComSqlScriptParameter>> initActualParamsList(Map<String, String> inSqlParams, IJson formData) {
-		List<List<ComSqlScriptParameter>> actualParamsList = null;
+	public static List<List<CfgSqlParameter>> initActualParamsList(Map<String, String> inSqlParams, IJson formData) {
+		List<List<CfgSqlParameter>> actualParamsList = null;
 		
-		List<ComSqlScriptParameter> sqlScriptActualParameters = null;
-		ComSqlScriptParameter ssp = null;
+		List<CfgSqlParameter> sqlScriptActualParameters = null;
+		CfgSqlParameter ssp = null;
 		
 		// 请求体为空，那么判断是否从url传参
 		if((formData == null || formData.size() == 0)){
 			if(inSqlParams != null && inSqlParams.size() > 0){
-				actualParamsList = new ArrayList<List<ComSqlScriptParameter>>(1);
+				actualParamsList = new ArrayList<List<CfgSqlParameter>>(1);
 				// 解析sql脚本的参数
-				sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(inSqlParams.size());
+				sqlScriptActualParameters = new ArrayList<CfgSqlParameter>(inSqlParams.size());
 				actualParamsList.add(sqlScriptActualParameters);
 				
 				Set<String> parameterNames = inSqlParams.keySet();
 				for (String parameterName : parameterNames) {
-					ssp = new ComSqlScriptParameter(parameterName, null, false, 0, -1, false, true);
+					ssp = new CfgSqlParameter(parameterName, null, false, 0, -1, false, true);
 					ssp.setActualInValue(processActualValue(inSqlParams.get(parameterName).trim()));
 					sqlScriptActualParameters.add(ssp);
 				}
@@ -121,18 +121,18 @@ public class SqlResourceValidUtil {
 		// 否则就是通过请求体传参
 		else{
 			int len = formData.size();
-			actualParamsList = new ArrayList<List<ComSqlScriptParameter>>(len);
+			actualParamsList = new ArrayList<List<CfgSqlParameter>>(len);
 			
 			JSONObject json = null;
 			for(int i=0;i<len;i++){
 				json = formData.get(i);
 				if(json != null && json.size()>0){
-					sqlScriptActualParameters = new ArrayList<ComSqlScriptParameter>(json.size());
+					sqlScriptActualParameters = new ArrayList<CfgSqlParameter>(json.size());
 					actualParamsList.add(sqlScriptActualParameters);
 					
 					Set<String> parameterNames = json.keySet();
 					for (String parameterName : parameterNames) {
-						ssp = new ComSqlScriptParameter(parameterName, null, false, 0, -1, false, true);
+						ssp = new CfgSqlParameter(parameterName, null, false, 0, -1, false, true);
 						ssp.setActualInValue(json.get(parameterName));
 						sqlScriptActualParameters.add(ssp);
 					}
@@ -169,7 +169,7 @@ public class SqlResourceValidUtil {
 	 * @param resourcePropCodeRule
 	 * @return
 	 */
-	public static String doValidAndSetActualParams(ComSqlScript sql, boolean isGetRequest, List<List<ComSqlScriptParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList, ResourcePropCodeRule resourcePropCodeRule) {
+	public static String doValidAndSetActualParams(CfgSql sql, boolean isGetRequest, List<List<CfgSqlParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList, ResourcePropCodeRule resourcePropCodeRule) {
 		SqlParamValidAndSetActualValueEntity sqlParamValidAndSetActualValueEntity = 
 				new SqlParamValidAndSetActualValueEntity(sql, isGetRequest, actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList, resourcePropCodeRule);
 		return sqlParamValidAndSetActualValueEntity.doValidAndSetActualParams();

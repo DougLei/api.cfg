@@ -5,7 +5,7 @@ import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgResource;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.service.cfg.CfgBusiModelService;
 import com.king.tooth.sys.service.cfg.CfgResourceService;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
@@ -26,7 +26,7 @@ public class ResourceInfo {
 	/**
 	 * 请求的sql脚本资源
 	 */
-	private ComSqlScript sql;
+	private CfgSql sql;
 	
 	/**
 	 * 请求的业务模型资源
@@ -72,7 +72,7 @@ public class ResourceInfo {
 			if(ResourceInfoConstants.SQL == resourceType){
 				sql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceAllInfoById(reqResource.getRefResourceId());
 				
-				if(SqlStatementTypeConstants.VIEW.equals(sql.getSqlScriptType())){
+				if(SqlStatementTypeConstants.VIEW.equals(sql.getType())){
 					throw new IllegalArgumentException("系统目前不支持直接处理视图类型的sql资源");
 				}
 			}
@@ -137,7 +137,7 @@ public class ResourceInfo {
 	public int getResourceType() {
 		return resourceType;
 	}
-	public ComSqlScript getSql() {
+	public CfgSql getSql() {
 		return sql;
 	}
 	public CfgBusiModel getBusiModel() {

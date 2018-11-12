@@ -11,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.cfg.ComProjectModule;
+import com.king.tooth.sys.entity.cfg.CfgProjectModule;
 import com.king.tooth.sys.service.cfg.CfgProjectModuleService;
 import com.king.tooth.util.StrUtils;
 
@@ -29,10 +29,10 @@ public class CfgProjectModuleController extends AController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson) {
-		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
+		List<CfgProjectModule> projectModules = getDataInstanceList(ijson, CfgProjectModule.class, true);
 		analysisResourceProp(projectModules, false);
 		if(analysisResult == null){
-			for (ComProjectModule projectModule : projectModules) {
+			for (CfgProjectModule projectModule : projectModules) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).saveProjectModule(projectModule);
 				if(resultObject instanceof String){
 					index++;
@@ -52,10 +52,10 @@ public class CfgProjectModuleController extends AController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson) {
-		List<ComProjectModule> projectModules = getDataInstanceList(ijson, ComProjectModule.class, true);
+		List<CfgProjectModule> projectModules = getDataInstanceList(ijson, CfgProjectModule.class, true);
 		analysisResourceProp(projectModules, true);
 		if(analysisResult == null){
-			for (ComProjectModule projectModule : projectModules) {
+			for (CfgProjectModule projectModule : projectModules) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgProjectModuleService", CfgProjectModuleService.class).updateProjectModule(projectModule);
 				if(resultObject instanceof String){
 					index++;

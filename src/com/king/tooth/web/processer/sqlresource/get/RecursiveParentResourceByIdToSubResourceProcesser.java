@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.web.entity.resulttype.PageResultEntity;
 
 /**
@@ -21,7 +21,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 	}
 	
 	protected boolean doGetProcess() {
-		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
+		CfgSql sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
 		
 		// 获取首次递归查询根数据的sql语句和参数集合
 		StringBuilder firstRecursiveQuerySql = new StringBuilder(sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql());

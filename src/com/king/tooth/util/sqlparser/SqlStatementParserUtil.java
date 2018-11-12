@@ -23,8 +23,8 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
@@ -94,7 +94,7 @@ public class SqlStatementParserUtil {
 	 * @param comSqlScript
 	 * @return 返回解析的sql脚本内容数组
 	 */
-	public static String[] parseSqlScript(TGSqlParser gsqlParser, ComSqlScript sql) {
+	public static String[] parseSqlScript(TGSqlParser gsqlParser, CfgSql sql) {
 		TStatementList sqlList = gsqlParser.sqlstatements;
 		int len = sqlList.size();
 		
@@ -102,8 +102,8 @@ public class SqlStatementParserUtil {
 		if(len > 1 &&  ("true".equals(typeMap.get("isUnique")))){
 			throw new ArrayIndexOutOfBoundsException("目前系统只支持一次处理一条["+typeMap.get("type")+"]类型的sql脚本语句");
 		}
-		sql.setSqlScriptType(typeMap.get("type"));
-		sql.setConfType(sql.getSqlScriptType());
+		sql.setType(typeMap.get("type"));
+		sql.setConfType(sql.getType());
 		if(StrUtils.isEmpty(sql.getRequestMethod())){
 			sql.setRequestMethod(typeMap.get("reqMethod"));
 		}
@@ -176,7 +176,7 @@ public class SqlStatementParserUtil {
 	 * @param sqlScript
 	 * @return
 	 */
-	public static void analysisProcedureSqlScriptParam(ComSqlScript sqlScript) {
+	public static void analysisProcedureSqlScriptParam(CfgSql sqlScript) {
 		TCustomSqlStatement sqlStatement = sqlScript.getGsqlParser().sqlstatements.get(0);
 		switch(sqlStatement.sqlstatementtype){
 		    case sstplsql_createprocedure:
@@ -191,10 +191,10 @@ public class SqlStatementParserUtil {
 		String sqlScriptId = sqlScript.getId();
 		
 		// 保存参数
-		List<ComSqlScriptParameter> sqlParams = sqlScript.getSqlParams();
+		List<CfgSqlParameter> sqlParams = sqlScript.getSqlParams();
 		if(sqlParams != null && sqlParams.size() > 0){
-			for (ComSqlScriptParameter sqlParam : sqlParams) {
-				sqlParam.setSqlScriptId(sqlScriptId);
+			for (CfgSqlParameter sqlParam : sqlParams) {
+				sqlParam.setSqlId(sqlScriptId);
 				HibernateUtil.saveObject(sqlParam, null);
 			}
 			sqlParams.clear();
@@ -216,7 +216,7 @@ public class SqlStatementParserUtil {
 	 * @param procedureSqlStatement
 	 * @param sqlScript
 	 */
-	private static void analysisOracleProcedure(TPlsqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
+	private static void analysisOracleProcedure(TPlsqlCreateProcedure procedureSqlStatement, CfgSql sqlScript) {
 		// 解析出存储过程名
 		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
 
@@ -228,8 +228,8 @@ public class SqlStatementParserUtil {
 		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
 			int len = procedureSqlStatement.getParameterDeclarations().size();
 			
-			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
-			ComSqlScriptParameter parameter = null;
+			List<CfgSqlParameter> sqlScriptParameterList = new ArrayList<CfgSqlParameter>(len);
+			CfgSqlParameter parameter = null;
 			
 			TParameterDeclaration param = null;
 			String defaultValue = null;
@@ -264,7 +264,7 @@ public class SqlStatementParserUtil {
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
-				parameter = new ComSqlScriptParameter(parameterName, dataType, true, param.getMode(), (i+1), true, true);
+				parameter = new CfgSqlParameter(parameterName, dataType, true, param.getMode(), (i+1), true, true);
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
 				processProcedureTableParam(parameter, sqlScript);
@@ -282,7 +282,7 @@ public class SqlStatementParserUtil {
 	 * @param procedureSqlStatement
 	 * @param sqlScript
 	 */
-	private static void analysisSqlServerProcedure(TMssqlCreateProcedure procedureSqlStatement, ComSqlScript sqlScript) {
+	private static void analysisSqlServerProcedure(TMssqlCreateProcedure procedureSqlStatement, CfgSql sqlScript) {
 		// 解析出存储过程名
 		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
 
@@ -294,8 +294,8 @@ public class SqlStatementParserUtil {
 		if(procedureSqlStatement.getParameterDeclarations() != null && procedureSqlStatement.getParameterDeclarations().size() > 0){
 			int len = procedureSqlStatement.getParameterDeclarations().size();
 		
-			List<ComSqlScriptParameter> sqlScriptParameterList = new ArrayList<ComSqlScriptParameter>(len);
-			ComSqlScriptParameter parameter = null;
+			List<CfgSqlParameter> sqlScriptParameterList = new ArrayList<CfgSqlParameter>(len);
+			CfgSqlParameter parameter = null;
 			
 			TParameterDeclaration param = null;
 			String defaultValue = null;
@@ -333,7 +333,7 @@ public class SqlStatementParserUtil {
 					dataType = dataType.substring(0, dataType.indexOf("("));
 				}
 				
-				parameter = new ComSqlScriptParameter(parameterName , dataType, true, param.getMode(), (i+1), true, true);
+				parameter = new CfgSqlParameter(parameterName , dataType, true, param.getMode(), (i+1), true, true);
 				parameter.setLengthStr(length);
 				parameter.setPrecisionStr(precision);
 				parameter.setDefaultValue(defaultValue);
@@ -351,18 +351,18 @@ public class SqlStatementParserUtil {
 	 * @param parameter
 	 * @param sqlScript 
 	 */
-	private static void processProcedureTableParam(ComSqlScriptParameter parameter, ComSqlScript sqlScript) {
-		CfgTable table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgTable.class, queryTableDataTypeOfTable, CfgTable.TABLE_DATATYPE, parameter.getParameterDataType());
+	private static void processProcedureTableParam(CfgSqlParameter parameter, CfgSql sqlScript) {
+		CfgTable table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgTable.class, queryTableDataTypeOfTable, CfgTable.TABLE_DATATYPE, parameter.getDataType());
 		if(table != null){
 			if(table.getIsEnabled() == 0){
-				throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+parameter.getParameterName()+"]，引用的表类型被禁用，请联系系统管理员");
+				throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+parameter.getName()+"]，引用的表类型被禁用，请联系系统管理员");
 			}
 			if(table.getIsCreated() == 0 || table.getIsBuildModel() == 0){
-				throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+parameter.getParameterName()+"]，引用的表类型还未建模，请联系系统管理员");
+				throw new IllegalArgumentException("存储过程["+sqlScript.getObjectName()+"]，参数["+parameter.getName()+"]，引用的表类型还未建模，请联系系统管理员");
 			}
 			parameter.setIsTableType(1);
 			
-			CfgSqlResultset sqlResultSet = new CfgSqlResultset(sqlScript.getSqlScriptType(), null, 0, CfgSqlResultset.IN);
+			CfgSqlResultset sqlResultSet = new CfgSqlResultset(sqlScript.getType(), null, 0, CfgSqlResultset.IN);
 			sqlResultSet.setSqlParameterId(parameter.getId());
 			sqlResultSet.setTableId(table.getId());
 			sqlScript.addInSqlResultsets(sqlResultSet);
@@ -376,7 +376,7 @@ public class SqlStatementParserUtil {
 	 * 解析出视图名
 	 * @param sqlScript
 	 */
-	public static void analysisViewName(ComSqlScript sqlScript) {
+	public static void analysisViewName(CfgSql sqlScript) {
 		TCustomSqlStatement sqlStatement = sqlScript.getGsqlParser().sqlstatements.get(0);
 		sqlScript.setObjectName(((TCreateViewSqlStatement) sqlStatement).getViewName().toString());
 	}
@@ -387,13 +387,13 @@ public class SqlStatementParserUtil {
 	 * @param sqlParameterValues 
 	 * @param 
 	 */
-	public static List<FinalSqlScriptStatement> getFinalSqlScriptList(ComSqlScript sqlScript, List<List<Object>> sqlParameterValues) {
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getSqlScriptType())){// 存储过程，不解析最终的sql语句
+	public static List<FinalSqlScriptStatement> getFinalSqlScriptList(CfgSql sqlScript, List<List<Object>> sqlParameterValues) {
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType())){// 存储过程，不解析最终的sql语句
 			return null;
 		}
 		
 		// 获取sql脚本参数集合
-		List<List<ComSqlScriptParameter>> sqlParamsList = sqlScript.getSqlParamsList();
+		List<List<CfgSqlParameter>> sqlParamsList = sqlScript.getSqlParamsList();
 		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
 		
 		// 初始化最终的sql脚本对象集合
@@ -405,7 +405,7 @@ public class SqlStatementParserUtil {
 		ESqlStatementType sqlStatementType = sqlStatementList.get(0).sqlstatementtype;
 		
 		if(sqlScriptHavaParams){
-			for (List<ComSqlScriptParameter> sqlParams : sqlParamsList) {
+			for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
 				finalSqlScript = new FinalSqlScriptStatement();
 				finalSqlScriptList.add(finalSqlScript);
 				setFinalSqlHandler(sqlStatementType, finalSqlScript, sqlScript, sqlParams, sqlStatementList, sqlParameterValues);
@@ -427,7 +427,7 @@ public class SqlStatementParserUtil {
 	 * @param sqlStatementList
 	 * @param sqlParameterValues
 	 */
-	private static void setFinalSqlHandler(ESqlStatementType sqlStatementType, FinalSqlScriptStatement finalSqlScript, ComSqlScript sqlScript, List<ComSqlScriptParameter> sqlParams, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues){
+	private static void setFinalSqlHandler(ESqlStatementType sqlStatementType, FinalSqlScriptStatement finalSqlScript, CfgSql sqlScript, List<CfgSqlParameter> sqlParams, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues){
 		switch(sqlStatementType){
 			case sstselect:
 				finalSqlScript.setIsSelectSqlScript(true);
@@ -460,7 +460,7 @@ public class SqlStatementParserUtil {
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalSelectSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlParams, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
+	private static void setFinalSelectSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<CfgSqlParameter> sqlParams, FinalSqlScriptStatement finalSelect, TCustomSqlStatement sqlStatement, List<List<Object>> sqlParameterValues) {
 		List<String> parameterNames = parameterNameRecordMap.get(0);
 		if(parameterNames!=null && parameterNames.size()>0){
 			List<Object> queryCondParameters = new ArrayList<Object>(parameterNames.size());
@@ -472,8 +472,8 @@ public class SqlStatementParserUtil {
 				// 记录系统内置参数和值
 				StringBuilder placeHolder = new StringBuilder();
 				for (String parameterName : parameterNames) {
-					for (ComSqlScriptParameter ssp : sqlParams) {
-						if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+					for (CfgSqlParameter ssp : sqlParams) {
+						if(parameterName.equalsIgnoreCase(ssp.getName())){
 							actParam = new ActParameter();
 							actParam.setParameterName(parameterName);
 							actParams.add(actParam);
@@ -523,7 +523,7 @@ public class SqlStatementParserUtil {
 	 * @param sqlStatement
 	 * @param sqlParameterValues 
 	 */
-	private static void setFinalModifySqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlParams, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
+	private static void setFinalModifySqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<CfgSqlParameter> sqlParams, FinalSqlScriptStatement finalSqlScript, TStatementList sqlStatementList, List<List<Object>> sqlParameterValues) {
 		int sqlLen = sqlStatementList.size();
 		String[] modifySqlArr = new String[sqlLen];
 		
@@ -541,8 +541,8 @@ public class SqlStatementParserUtil {
 				
 				if(sqlParams != null && sqlParams.size()>0){
 					for (String parameterName : parameterNames) {
-						for (ComSqlScriptParameter ssp : sqlParams) {
-							if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+						for (CfgSqlParameter ssp : sqlParams) {
+							if(parameterName.equalsIgnoreCase(ssp.getName())){
 								actParam = new ActParameter();
 								actParam.setParameterName(parameterName);
 								actParams.add(actParam);
@@ -577,7 +577,7 @@ public class SqlStatementParserUtil {
 	 * @param otherSql
 	 * @param sqlParameterValues
 	 */
-	private static void setFinalOtherSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<ComSqlScriptParameter> sqlParams, FinalSqlScriptStatement finalSqlScript, String otherSql, List<List<Object>> sqlParameterValues) {
+	private static void setFinalOtherSqlHandler(Map<Integer, List<String>> parameterNameRecordMap, List<CfgSqlParameter> sqlParams, FinalSqlScriptStatement finalSqlScript, String otherSql, List<List<Object>> sqlParameterValues) {
 		List<String> parameterNames = parameterNameRecordMap.get(0);
 		String[] otherSqlArr = new String[1];
 		
@@ -594,8 +594,8 @@ public class SqlStatementParserUtil {
 				// 记录系统内置参数和值
 				StringBuilder placeHolder = new StringBuilder();
 				for (String parameterName : parameterNames) {
-					for (ComSqlScriptParameter ssp : sqlParams) {
-						if(parameterName.equalsIgnoreCase(ssp.getParameterName())){
+					for (CfgSqlParameter ssp : sqlParams) {
+						if(parameterName.equalsIgnoreCase(ssp.getName())){
 							actParam = new ActParameter();
 							actParam.setParameterName(parameterName);
 							actParams.add(actParam);
@@ -623,9 +623,9 @@ public class SqlStatementParserUtil {
 	 * @param sqlParamValues
 	 * @param actParam
 	 */
-	private static void processActualParameter(String parameterName, ComSqlScriptParameter ssp, StringBuilder placeHolder, List<Object> sqlParamValues, ActParameter actParam) {
+	private static void processActualParameter(String parameterName, CfgSqlParameter ssp, StringBuilder placeHolder, List<Object> sqlParamValues, ActParameter actParam) {
 		Object actualInValue = ssp.getActualInValue();
-		if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){ // 如果参数是内置的
+		if(ssp.getValueFrom() == CfgSqlParameter.SYSTEM_BUILTIN){ // 如果参数是内置的
 			
 			// 如果是条件参数，将值加入到sqlParamValues中，并将实际值改为?
 			if(ssp.getIsPlaceholder() == 1){
@@ -669,8 +669,8 @@ public class SqlStatementParserUtil {
 	 * <p>如果select语句查询的是*，则抛出异常，不能这样写，这样写不规范</p>
 	 * @param sql
 	 */
-	public static void analysisSelectSqlResultSetList(ComSqlScript sql) {
-		if(SqlStatementTypeConstants.SELECT.equals(sql.getSqlScriptType())){ 
+	public static void analysisSelectSqlResultSetList(CfgSql sql) {
+		if(SqlStatementTypeConstants.SELECT.equals(sql.getType())){ 
 			TGSqlParser sqlParser = sql.getGsqlParser();
 			TSelectSqlStatement selectSqlStatement = (TSelectSqlStatement) sqlParser.sqlstatements.get(0);
 			TResultColumnList columns = analysisResultColumnList(selectSqlStatement);
@@ -695,7 +695,7 @@ public class SqlStatementParserUtil {
 				if("*".equals(columnName)){
 					throw new IllegalArgumentException("在资源名为["+sql.getResourceName()+"]的select sql资源中，请指定具体查询的列名，禁止使用["+column.toString()+"]查询");
 				}
-				csr = new CfgSqlResultset(sql.getSqlScriptType(), columnName, (i+1), CfgSqlResultset.OUT);
+				csr = new CfgSqlResultset(sql.getType(), columnName, (i+1), CfgSqlResultset.OUT);
 				csr.setSqlScriptId(sql.getId());
 				sqlResultSets.add(csr);
 				

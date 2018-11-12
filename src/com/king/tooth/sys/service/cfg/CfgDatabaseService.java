@@ -68,7 +68,7 @@ public class CfgDatabaseService extends AService {
 	public String deleteDatabase(String databaseId) {
 		getObjectById(databaseId, CfgDatabase.class);
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from ComProject where refDatabaseId = ?", databaseId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProject where refDatabaseId = ?", databaseId);
 		if(count > 0){
 			return "该数据库下还存在项目，无法删除，请先删除相关项目";
 		}

@@ -11,7 +11,7 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.util.StrUtils;
 
@@ -29,10 +29,10 @@ public class CfgSqlParameterController extends AController{
 	 */
 	@RequestMapping
 	public Object add(HttpServletRequest request, IJson ijson){
-		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
+		List<CfgSqlParameter> sqlScriptParameters = getDataInstanceList(ijson, CfgSqlParameter.class, true);
 		analysisResourceProp(sqlScriptParameters, false);
 		if(analysisResult == null){
-			for (ComSqlScriptParameter sqlParam : sqlScriptParameters) {
+			for (CfgSqlParameter sqlParam : sqlScriptParameters) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).saveSqlScriptParameter(sqlParam);
 				if(resultObject instanceof String){
 					index++;
@@ -52,10 +52,10 @@ public class CfgSqlParameterController extends AController{
 	 */
 	@RequestMapping
 	public Object update(HttpServletRequest request, IJson ijson){
-		List<ComSqlScriptParameter> sqlScriptParameters = getDataInstanceList(ijson, ComSqlScriptParameter.class, true);
+		List<CfgSqlParameter> sqlScriptParameters = getDataInstanceList(ijson, CfgSqlParameter.class, true);
 		analysisResourceProp(sqlScriptParameters, true);
 		if(analysisResult == null){
-			for (ComSqlScriptParameter sqlParam : sqlScriptParameters) {
+			for (CfgSqlParameter sqlParam : sqlScriptParameters) {
 				resultObject = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).updateSqlScriptParameter(sqlParam);
 				if(resultObject instanceof String){
 					index++;

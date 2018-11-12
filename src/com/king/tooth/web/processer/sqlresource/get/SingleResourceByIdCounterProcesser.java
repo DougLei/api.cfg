@@ -2,7 +2,7 @@ package com.king.tooth.web.processer.sqlresource.get;
 
 import org.hibernate.Query;
 
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.web.entity.resulttype.TextResultEntity;
 
 /**
@@ -16,7 +16,7 @@ public final class SingleResourceByIdCounterProcesser extends GetProcesser {
 	}
 	
 	protected boolean doGetProcess() {
-		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
+		CfgSql sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
 		
 		String querySql = sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql() + 
 						  getFromSql().toString();

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.hibernate.Query;
 
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
+import com.king.tooth.sys.entity.cfg.CfgSql;
 
 /**
  * 处理这种请求路径格式的处理器：/{resourceType}/{resourceId}
@@ -18,7 +18,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 	}
 	
 	protected boolean doGetProcess() {
-		ComSqlScript sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
+		CfgSql sqlScriptResource = builtinSqlScriptMethodProcesser.getReqSql();
 		
 		String coreQuerySql =  sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql()+
 				  builtinQueryMethodProcesser.getSql().append(getFromSql());

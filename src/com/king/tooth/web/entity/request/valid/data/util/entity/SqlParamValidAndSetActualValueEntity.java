@@ -9,8 +9,8 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
-import com.king.tooth.sys.entity.cfg.ComSqlScript;
-import com.king.tooth.sys.entity.cfg.ComSqlScriptParameter;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
@@ -32,7 +32,7 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	
 	public SqlParamValidAndSetActualValueEntity() {
 	}
-	public SqlParamValidAndSetActualValueEntity(ComSqlScript sql, boolean isGetRequest, List<List<ComSqlScriptParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList, ResourcePropCodeRule resourcePropCodeRule) {
+	public SqlParamValidAndSetActualValueEntity(CfgSql sql, boolean isGetRequest, List<List<CfgSqlParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList, ResourcePropCodeRule resourcePropCodeRule) {
 		this.sql = sql;
 		this.isGetRequest = isGetRequest;
 		this.actualParamsList = actualParamsList;
@@ -47,7 +47,7 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	/**
 	 * sql脚本实际传入的参数集合
 	 */
-	private List<List<ComSqlScriptParameter>> actualParamsList;
+	private List<List<CfgSqlParameter>> actualParamsList;
 	/**
 	 * 资源的元数据信息集合
 	 */
@@ -64,15 +64,15 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	/**
 	 * 要操作的sql对象
 	 */
-	private ComSqlScript sql;
+	private CfgSql sql;
 	/**
 	 * 针对procedure sql传入表对象的元数据信息集合
 	 */
 	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList;
-	private List<ComSqlScriptParameter> sqlParams;
+	private List<CfgSqlParameter> sqlParams;
 	private String resourceName;
 	
-	public ComSqlScript getSql() {
+	public CfgSql getSql() {
 		return sql;
 	}
 	
@@ -90,25 +90,25 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 			return "在调用sql资源时，传入的实际参数信息为：["+JsonUtil.toJsonString(actualParamsList, false)+"]，但是被调用的sql资源["+resourceName+"]却不存在任何参数信息。请检查该sql资源是否确实有参数配置，并确认是否合法调用sql资源";
 		}
 		
-		List<List<ComSqlScriptParameter>> sqlParamsList = null;// set实际传入的参数值的集合
-		List<ComSqlScriptParameter> sqlParams = null;
+		List<List<CfgSqlParameter>> sqlParamsList = null;// set实际传入的参数值的集合
+		List<CfgSqlParameter> sqlParams = null;
 		String analysisActualInValueResult = null;
 		
 		int index = 1;
 		// 如果没有传入任何参数，还能进入到这里，说明配置的参数要么是系统内置，要么是自动生成，要么是有默认值的
 		if((actualParamsList == null || actualParamsList.size() == 0)){
 			// 如果配置了sql参数，但是实际调用的时候没有传入任何参数
-			for (ComSqlScriptParameter sqlParam : this.sqlParams) {
-				if(sqlParam.getParameterFrom() == ComSqlScriptParameter.USER_INPUT && StrUtils.isEmpty(sqlParam.getDefaultValue())){
-					return "在调用sql资源时，必须传入名为"+sqlParam.getParameterName()+"的参数值";
+			for (CfgSqlParameter sqlParam : this.sqlParams) {
+				if(sqlParam.getValueFrom() == CfgSqlParameter.USER_INPUT && StrUtils.isEmpty(sqlParam.getDefaultValue())){
+					return "在调用sql资源时，必须传入名为"+sqlParam.getName()+"的参数值";
 				}
 			}
 			
-			sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(1);
+			sqlParamsList = new ArrayList<List<CfgSqlParameter>>(1);
 			sqlParams = this.sqlParams;
 			sqlParamsList.add(sqlParams);
 			
-			for (ComSqlScriptParameter ssp : sqlParams) {
+			for (CfgSqlParameter ssp : sqlParams) {
 				analysisActualInValueResult = analysisActualInValue(ssp, isGetRequest, null, index++);
 				if(analysisActualInValueResult != null){
 					return analysisActualInValueResult;
@@ -117,21 +117,21 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 		}
 		// 否则就去解析实际的参数，将其和配置的参数进行匹配
 		else{
-			sqlParamsList = new ArrayList<List<ComSqlScriptParameter>>(actualParamsList.size());
+			sqlParamsList = new ArrayList<List<CfgSqlParameter>>(actualParamsList.size());
 			
-			for (List<ComSqlScriptParameter> actualParams : actualParamsList) {
+			for (List<CfgSqlParameter> actualParams : actualParamsList) {
 				sqlParams = cloneSqlParams();
 				sqlParamsList.add(sqlParams);
 				
-				for (ComSqlScriptParameter ssp : sqlParams) {
+				for (CfgSqlParameter ssp : sqlParams) {
 					for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
-						if(ssp.getParameterName().equals(rmi.getPropName())){
-							if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
+						if(ssp.getName().equals(rmi.getPropName())){
+							if(ssp.getValueFrom() == CfgSqlParameter.SYSTEM_BUILTIN){// 参数值来源为系统内置
 								analysisActualInValueResult = analysisActualInValue(ssp, isGetRequest, null, index);
-							}else if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){// 参数值来源为用户输入
+							}else if(ssp.getValueFrom() == CfgSqlParameter.USER_INPUT){// 参数值来源为用户输入
 								if(actualParams != null && actualParams.size() > 0){
-									for (ComSqlScriptParameter ssap : actualParams) {
-										if(ssp.getParameterName().equals(ssap.getParameterName())){
+									for (CfgSqlParameter ssap : actualParams) {
+										if(ssp.getName().equals(ssap.getName())){
 											ssp.setActualInValue(ssap.getActualInValue());
 											break;
 										}
@@ -163,11 +163,11 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	 * @param sqlScriptParameterList
 	 * @return
 	 */
-	private List<ComSqlScriptParameter> cloneSqlParams() {
-		List<ComSqlScriptParameter> sqlParams = new ArrayList<ComSqlScriptParameter>(this.sqlParams.size());
+	private List<CfgSqlParameter> cloneSqlParams() {
+		List<CfgSqlParameter> sqlParams = new ArrayList<CfgSqlParameter>(this.sqlParams.size());
 		try {
-			for (ComSqlScriptParameter sqlParam : this.sqlParams) {
-				sqlParams.add((ComSqlScriptParameter)sqlParam.clone());
+			for (CfgSqlParameter sqlParam : this.sqlParams) {
+				sqlParams.add((CfgSqlParameter)sqlParam.clone());
 			}
 		} catch (CloneNotSupportedException e) {
 			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e));
@@ -186,32 +186,32 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	 * @param index
 	 * @return
 	 */
-	private String analysisActualInValue(ComSqlScriptParameter ssp, boolean isGetRequest, ResourceMetadataInfo rmi, int index) {
+	private String analysisActualInValue(CfgSqlParameter ssp, boolean isGetRequest, ResourceMetadataInfo rmi, int index) {
 		String desc = "操作sql资源时，";
-		if(rmi != null && !ssp.getParameterDataType().equals(rmi.getDataType())){
-			return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 参数，配置的数据类型("+ssp.getParameterDataType()+")和实际加载的数据类型("+rmi.getDataType()+")不一致，请联系后端系统开发人员";
+		if(rmi != null && !ssp.getDataType().equals(rmi.getDataType())){
+			return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 参数，配置的数据类型("+ssp.getDataType()+")和实际加载的数据类型("+rmi.getDataType()+")不一致，请联系后端系统开发人员";
 		}
 		
 		if(ssp.getIsNullabled() == 1){
 			return null;
 		}
-		if(ssp.getParameterFrom() == ComSqlScriptParameter.USER_INPUT){
+		if(ssp.getValueFrom() == CfgSqlParameter.USER_INPUT){
 			if(ssp.getActualInValue() == null){
 				if(ssp.getDefaultValue() == null){
-					return desc+"第"+index+"个对象，必须传入名为"+ssp.getParameterName()+"的参数值";
+					return desc+"第"+index+"个对象，必须传入名为"+ssp.getName()+"的参数值";
 				}
 				ssp.setActualInValue(ssp.getDefaultValue());
 			}
 			if(rmi != null){
 				actualInValue = ssp.getActualInValue();
 				if(actualInValue == null){
-					return desc+"必须要传入的参数["+ssp.getParameterName()+"]，请修改调用方式，传入该参数值";
+					return desc+"必须要传入的参数["+ssp.getName()+"]，请修改调用方式，传入该参数值";
 				}
 				if(ssp.getIsPlaceholder() == 1){
 					dataValueStr = actualInValue.toString();
 					
 					// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
-					if(DataTypeConstants.DATE.equals(ssp.getParameterDataType())){
+					if(DataTypeConstants.DATE.equals(ssp.getDataType())){
 						if(DataTypeValidUtil.isDate(actualInValue)){
 							actualInValue = DateUtil.parseSqlTimestamp(dataValueStr);
 						}else{
@@ -219,7 +219,7 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 						}
 					}else{
 						if(isGetRequest){// get请求，值都是string类型，需要进行转换
-							if(DataTypeConstants.INTEGER.equals(ssp.getParameterDataType())){
+							if(DataTypeConstants.INTEGER.equals(ssp.getDataType())){
 								if(DataTypeValidUtil.isInteger(dataValueStr)){
 									actualInValue = Integer.valueOf(dataValueStr);
 									if(rmi.getLength() != -1 && dataValueStr.length() > rmi.getLength()){
@@ -228,7 +228,7 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 								}else{
 									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
 								}
-							}else if(DataTypeConstants.DOUBLE.equals(ssp.getParameterDataType())){
+							}else if(DataTypeConstants.DOUBLE.equals(ssp.getDataType())){
 								if(DataTypeValidUtil.isNumber(dataValueStr)){
 									actualInValue = BigDecimal.valueOf(Double.valueOf(dataValueStr));
 									if(rmi.getLength() != -1 && (dataValueStr.length()-1) > rmi.getLength()){
@@ -240,23 +240,23 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 								}else{
 									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";
 								}
-							}else if(DataTypeConstants.BOOLEAN.equals(ssp.getParameterDataType())){
+							}else if(DataTypeConstants.BOOLEAN.equals(ssp.getDataType())){
 								if(DataTypeValidUtil.isBoolean(dataValueStr)){
 									actualInValue = ("true".equals(dataValueStr))? "1":"0";
 								}else{
 									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
 								}
-							}else if(DataTypeConstants.STRING.equals(ssp.getParameterDataType())){
+							}else if(DataTypeConstants.STRING.equals(ssp.getDataType())){
 								if(rmi.getLength() != -1 && StrUtils.calcStrLength(dataValueStr) > rmi.getLength()){
 									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
 								}
 							}else{
-								return desc+"第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+ssp.getParameterDataType()+"]数据类型，请联系后端开发人员";
+								return desc+"第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+ssp.getDataType()+"]数据类型，请联系后端开发人员";
 							}
 						}else{// 否则就是post请求，直接判断，不需要转换
 							if(ssp.getIsTableType() == 1){
 								if(inSqlResultSetMetadataInfoList == null || inSqlResultSetMetadataInfoList.size() == 0){
-									return "["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
+									return "["+ssp.getName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
 								}
 								
 								actualInValue = IJsonUtil.getIJson(dataValueStr);
@@ -274,18 +274,18 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 					actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 				}
 			}
-		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.SYSTEM_BUILTIN){
-			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(ssp.getParameterName());
+		}else if(ssp.getValueFrom() == CfgSqlParameter.SYSTEM_BUILTIN){
+			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(ssp.getName());
 			if(actualInValue == null){
-				return desc+"内置参数["+ssp.getParameterName()+"]的值为空，请联系后端系统开发人员";
+				return desc+"内置参数["+ssp.getName()+"]的值为空，请联系后端系统开发人员";
 			}
 			if(ssp.getIsPlaceholder() == 0){
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
-		}else if(ssp.getParameterFrom() == ComSqlScriptParameter.AUTO_CODE){
-			actualInValue = PropCodeRuleUtil.getFinalCodeVal(ssp.getParameterName(), paramIndex++, resourcePropCodeRule);
+		}else if(ssp.getValueFrom() == CfgSqlParameter.AUTO_CODE){
+			actualInValue = PropCodeRuleUtil.getFinalCodeVal(ssp.getName(), paramIndex++, resourcePropCodeRule);
 			if(actualInValue == null){
-				return desc+"自动编码参数["+ssp.getParameterName()+"]的值为空，请联系后端系统开发人员";
+				return desc+"自动编码参数["+ssp.getName()+"]的值为空，请联系后端系统开发人员";
 			}
 			if(ssp.getIsPlaceholder() == 0){
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
@@ -308,13 +308,13 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	 * @param ijson
 	 * @return
 	 */
-	private String validProcedureSqlInResultSet(String desc, ComSqlScriptParameter ssp, int index, IJson ijson) {
+	private String validProcedureSqlInResultSet(String desc, CfgSqlParameter ssp, int index, IJson ijson) {
 		List<ResourceMetadataInfo> inSqlResultSetMetadataInfos = inSqlResultSetMetadataInfoList.get(inSqlResultSetMetadataInfoIndex++);
 		if(inSqlResultSetMetadataInfos == null || inSqlResultSetMetadataInfos.size() == 0){
-			return desc+"第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
+			return desc+"第"+index+"个对象，["+ssp.getName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
 		}
 		if(ijson != null && ijson.size() > 0){
-			return TableResourceValidUtil.validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getParameterName()+"] 参数关联的表对象中，", null, inSqlResultSetMetadataInfos, ijson, false, false);
+			return TableResourceValidUtil.validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getName()+"] 参数关联的表对象中，", null, inSqlResultSetMetadataInfos, ijson, false, false);
 		}
 		return null;
 	}
@@ -328,9 +328,9 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	 * @param sqlParameterValue
 	 * @return
 	 */
-	private String getSimpleSqlParameterValue(ComSqlScriptParameter ssp, Object sqlParameterValue){
+	private String getSimpleSqlParameterValue(CfgSqlParameter ssp, Object sqlParameterValue){
 		if(sqlParameterValue == null){
-			Log4jUtil.warn(ComSqlScriptParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
+			Log4jUtil.warn(CfgSqlParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
 			return "''";
 		}
 		return ssp.getValuePackStart()+sqlParameterValue.toString()+ssp.getValuePackEnd();
