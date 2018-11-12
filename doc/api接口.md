@@ -1692,7 +1692,9 @@
 {
   "name":"",                                            --参数名
   "length":"",                                          --参数的值长度
+  "precision":"",                                       --数据精度
   "dataType":"",                                        --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
+  "isNullabled":"",                                     --是否可为空
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }
@@ -1716,7 +1718,9 @@
   "Id":"",                                              --主键
   "name":"",                                            --参数名
   "length":"",                                          --参数的值长度
+  "precision":"",                                       --数据精度
   "dataType":"",                                        --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
+  "isNullabled":"",                                     --是否可为空
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }
