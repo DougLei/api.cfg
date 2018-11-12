@@ -44,6 +44,19 @@ public class CfgSqlService extends AService {
 	}
 	
 	/**
+	 * 给sql脚本资源对象，set所有信息对象
+	 * <p>包括参数集合、传入传出结果集信息集合</p>
+	 * @param sqlScript
+	 * @return
+	 */
+	public void setSqlScriptResourceAllInfo(CfgSql sqlScript){
+		sqlScript.setSqlParams(findSqlParams(sqlScript.getId()));
+		sqlScript.setInSqlResultsets(findInSqlResultsetsList(sqlScript));
+		sqlScript.setOutSqlResultsetsList(findOutSqlResultsetsList(sqlScript));
+		sqlScript.setIncludeAllInfo(true);
+	}
+	
+	/**
 	 * 根据id，获取sql脚本资源的所有信息对象
 	 * <p>包括参数集合、传入传出结果集信息集合</p>
 	 * @param sqlScriptId
@@ -51,9 +64,7 @@ public class CfgSqlService extends AService {
 	 */
 	public CfgSql findSqlScriptResourceAllInfoById(String sqlScriptId){
 		CfgSql sqlScript = findSqlScriptResourceById(sqlScriptId);
-		sqlScript.setSqlParams(findSqlParams(sqlScriptId));
-		sqlScript.setInSqlResultsets(findInSqlResultsetsList(sqlScript));
-		sqlScript.setOutSqlResultsetsList(findOutSqlResultsetsList(sqlScript));
+		setSqlScriptResourceAllInfo(sqlScript);
 		return sqlScript;
 	}
 	

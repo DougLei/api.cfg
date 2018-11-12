@@ -147,6 +147,13 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	@JSONField(serialize = false)
 	private List<List<CfgSqlResultset>> outSqlResultsetsList;
 	
+	/**
+	 * 该对象中，是否包含所有信息
+	 * <p>包括参数集合、传入传出结果集信息集合</p>
+	 */
+	@JSONField(serialize = false)
+	private boolean includeAllInfo;
+	
 	public void setContents(String contents) {
 		this.contents = contents;
 	}
@@ -271,6 +278,12 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	}
 	public void setInSqlResultsets(List<CfgSqlResultset> inSqlResultsets) {
 		this.inSqlResultsets = inSqlResultsets;
+	}
+	public boolean getIncludeAllInfo() {
+		return includeAllInfo;
+	}
+	public void setIncludeAllInfo(boolean includeAllInfo) {
+		this.includeAllInfo = includeAllInfo;
 	}
 	public List<List<CfgSqlResultset>> getOutSqlResultsetsList() {
 		return outSqlResultsetsList;

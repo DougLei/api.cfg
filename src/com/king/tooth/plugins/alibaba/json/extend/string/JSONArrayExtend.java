@@ -41,6 +41,13 @@ public class JSONArrayExtend implements IJson{
 		return null;
 	}
 	
+	public IJson getIJson(int index) {
+		if(jsonArray != null && jsonArray.size() > 0){
+			return IJsonUtil.getIJson(jsonArray.get(index));
+		}
+		return null;
+	}
+	
 	public int size() {
 		return jsonArray.size();
 	}

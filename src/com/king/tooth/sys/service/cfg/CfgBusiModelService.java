@@ -38,7 +38,7 @@ public class CfgBusiModelService extends AService{
 	private List<CfgBusiModelResRelations> getBusiModelResRelationsList(CfgBusiModel busiModel) {
 		List<CfgBusiModelResRelations> tmpBusiModelResRelationsList = 
 				HibernateUtil.extendExecuteListQueryByHqlArr(CfgBusiModelResRelations.class, null, null, 
-						"from CfgBusiModelResRelations where refBusiModelId=? and isEnabled=1 and projectId=? and customerId=? order by orderCode asc", 
+						"from CfgBusiModelResRelations where refBusiModelId=? and projectId=? and customerId=? order by orderCode asc", 
 						busiModel.getId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		
 		if(tmpBusiModelResRelationsList == null || tmpBusiModelResRelationsList.size() == 0){

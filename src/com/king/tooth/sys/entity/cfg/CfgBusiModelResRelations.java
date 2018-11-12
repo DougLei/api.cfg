@@ -6,13 +6,16 @@ import java.util.List;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.cfg.busi.model.resource.data.BusiModelResourceData;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 业务模型资源关系表
@@ -57,16 +60,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 排序值
 	 */
 	private Integer orderCode;
-	/**
-	 * 是否有效
-	 * <p>默认值为1</p>
-	 */
-	private Integer isEnabled;
-	/**
-	 * 是否可为空
-	 * <p>默认为0</p>
-	 */
-	private Integer isNullabled;
 	
 	//-------------------------------------------------------------------------
 	/**
@@ -86,6 +79,20 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	@JSONField(serialize = false)
 	private CfgSql refSql;
+	
+	/**
+	 * 业务模型的资源数据
+	 * <p>存储实际传入的数据对象</p>
+	 */
+	@JSONField(serialize = false)
+	private BusiModelResourceData resourceData;
+	
+	/**
+	 * 子资源中关联父资源的属性名
+	 * <p>根据refParentResourcePropId获得</p>
+	 */
+	@JSONField(serialize = false)
+	private String refParentResourcePropName;
 	
 	public String getParentId() {
 		return parentId;
@@ -117,12 +124,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
-	public Integer getIsEnabled() {
-		return isEnabled;
-	}
-	public void setIsEnabled(Integer isEnabled) {
-		this.isEnabled = isEnabled;
-	}
 	public String getRefSubResourceKeyName() {
 		return refSubResourceKeyName;
 	}
@@ -135,11 +136,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public String getRefParentResourcePropId() {
 		return refParentResourcePropId;
 	}
-	public Integer getIsNullabled() {
-		return isNullabled;
+	public BusiModelResourceData getResourceData() {
+		return resourceData;
 	}
-	public void setIsNullabled(Integer isNullabled) {
-		this.isNullabled = isNullabled;
+	public void setResourceData(BusiModelResourceData resourceData) {
+		this.resourceData = resourceData;
 	}
 	public void setRefParentResourcePropId(String refParentResourcePropId) {
 		this.refParentResourcePropId = refParentResourcePropId;
@@ -150,7 +151,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(9+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(7+7);
 		
 		CfgColumn refBusiModelIdColumn = new CfgColumn("ref_busi_model_id", DataTypeConstants.STRING, 32);
 		refBusiModelIdColumn.setName("关联的业务模型id");
@@ -187,18 +188,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		orderCodeColumn.setName("排序值");
 		orderCodeColumn.setComments("排序值");
 		columns.add(orderCodeColumn);
-		
-		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
-		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("默认值为1");
-		isEnabledColumn.setDefaultValue("1");
-		columns.add(isEnabledColumn);
-		
-		CfgColumn isNullabledColumn = new CfgColumn("is_nullabled", DataTypeConstants.INTEGER, 1);
-		isNullabledColumn.setName("是否可为空");
-		isNullabledColumn.setComments("默认为0");
-		isNullabledColumn.setDefaultValue("0");
-		columns.add(isNullabledColumn);
 		
 		return columns;
 	}
@@ -259,6 +248,33 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	public static final Integer REF_RESOURCE_TYPE_CFG_SQL = 2;
 	
+	private void setRefParentResourcePropName() {
+		if(this.refParentResourcePropName == null){
+			Object refParentResourcePropName = null;
+			if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
+				refParentResourcePropName = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropNameHql, refParentResourcePropId);
+				if(StrUtils.isEmpty(refParentResourcePropName)){
+					throw new NullPointerException("在处理业务资源时，关系资源名为["+getRefResourceName()+"]，没有查询到其中有id=["+refParentResourcePropId+"]的列信息");
+				}
+			}else if(refResourceType == REF_RESOURCE_TYPE_CFG_SQL){
+				refParentResourcePropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlParameterPropNameHql, refParentResourcePropId);
+				if(StrUtils.isEmpty(refParentResourcePropName)){
+					throw new NullPointerException("在处理业务资源时，关系资源名为["+getRefResourceName()+"]，没有查询到其中有id=["+refParentResourcePropId+"]的sql参数信息");
+				}
+			}else{
+				throw new IllegalArgumentException("关联的资源类型[refResourceType]值目前只能为[1.CfgTable]或[2.CfgSql]");
+			}
+			this.refParentResourcePropName = refParentResourcePropName.toString();
+		}
+	}
+	private static final String queryColumnPropNameHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID+"=?";
+	private static final String querySqlParameterPropNameHql = "select name from CfgSqlParameter where " + ResourcePropNameConstants.ID+"=?";
+	
+	public String getRefParentResourcePropName() {
+		setRefParentResourcePropName();
+		return refParentResourcePropName;
+	}
+	
 	/**
 	 * 添加业务模型资源关系的子关系
 	 * @param busiModelResRelations
@@ -271,23 +287,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	}
 	
 	/**
-	 * 获取引用的资源名
+	 * 设置引用的资源对象
 	 * @return
 	 */
-	public String getRefResourceName() {
-		getRefResource();
-		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
-			return refTable.getResourceName();
-		}else{
-			return refSql.getResourceName();
-		}
-	}
-	
-	/**
-	 * 获取引用的资源对象
-	 * @return
-	 */
-	public Object getRefResource() {
+	private Object setRefResource() {
 		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
 			if(refTable == null){
 				refTable = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).findTableResourceById(refResourceId);
@@ -295,16 +298,35 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 			return refTable;
 		}else if(refResourceType == REF_RESOURCE_TYPE_CFG_SQL){
 			if(refSql == null){
-				refSql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceAllInfoById(refResourceId);
+				refSql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(refResourceId);
 			}
 			return refSql;
 		}
 		throw new IllegalArgumentException("关联的资源类型[refResourceType]值目前只能为[1.CfgTable]或[2.CfgSql]");
 	}
+	/**
+	 * 获取引用的资源名
+	 * @return
+	 */
+	public String getRefResourceName() {
+		setRefResource();
+		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
+			return refTable.getResourceName();
+		}else{
+			return refSql.getResourceName();
+		}
+	}
+	
 	public CfgTable getRefTable() {
+		setRefResource();
 		return refTable;
 	}
+	
 	public CfgSql getRefSql() {
+		setRefResource();
+		if(!refSql.getIncludeAllInfo()){
+			BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
+		}
 		return refSql;
 	}
 	

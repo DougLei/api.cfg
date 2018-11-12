@@ -48,6 +48,19 @@ public class ResourcePropCodeRule {
 				return;
 			}
 			
+			// 判读是否同一个属性，有多个有效的自动编码规则
+			int size = rules.size();
+			int actSize = size-1;
+			String refPropId = null;
+			for (int i=0;i<actSize;i++) {
+				refPropId = rules.get(i).getRefPropId();
+				for(int j=1;j<size;j++){
+					if(i != j && refPropId.equals(rules.get(j).getRefPropId())){
+						throw new IllegalArgumentException("在生成自动编码值时，属性["+rules.get(j).getRefPropName()+"]出现多次有效的编码规则配置，请检查");
+					}
+				}
+			}
+			
 			IJson ijson = requestBody.getFormData();
 			String resourceName = requestBody.getResourceInfo().getReqResource().getResourceName();
 			for (CfgPropCodeRule rule : rules) {

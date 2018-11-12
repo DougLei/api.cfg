@@ -105,6 +105,7 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 		this.remark = remark;
 	}
 	public String getRefPropName() {
+		setRefPropName();
 		return refPropName;
 	}
 
@@ -207,21 +208,23 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	}
 	
 	private void setRefPropName() {
-		Object refPropName=null;
-		if(refPropType == REF_PROP_TYPE_COLUMN){
-			refPropName = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropNameHql, refPropId);
-			if(StrUtils.isEmpty(refPropName)){
-				throw new NullPointerException("在创建属性编码值时，没有查询到id=["+refPropId+"]的列信息");
+		if(this.refPropName == null){
+			Object refPropName=null;
+			if(refPropType == REF_PROP_TYPE_COLUMN){
+				refPropName = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropNameHql, refPropId);
+				if(StrUtils.isEmpty(refPropName)){
+					throw new NullPointerException("在创建属性编码值时，没有查询到id=["+refPropId+"]的列信息");
+				}
+			}else if(refPropType == REF_PROP_TYPE_SQLPARAM){
+				refPropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlParameterPropNameHql, refPropId);
+				if(StrUtils.isEmpty(refPropName)){
+					throw new NullPointerException("在创建属性编码值时，没有查询到id=["+refPropId+"]的sql参数信息");
+				}
+			}else{
+				throw new IllegalArgumentException("不存在refPropType="+refPropType+"的属性规则，请联系后端系统开发人员");
 			}
-		}else if(refPropType == REF_PROP_TYPE_SQLPARAM){
-			refPropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlParameterPropNameHql, refPropId);
-			if(StrUtils.isEmpty(refPropName)){
-				throw new NullPointerException("在创建属性编码值时，没有查询到id=["+refPropId+"]的sql参数信息");
-			}
-		}else{
-			throw new IllegalArgumentException("不存在refPropType="+refPropType+"的属性规则，请联系后端系统开发人员");
+			this.refPropName = refPropName.toString();
 		}
-		this.refPropName = refPropName.toString();
 	}
 	private static final String queryColumnPropNameHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID+"=?";
 	private static final String querySqlParameterPropNameHql = "select name from CfgSqlParameter where " + ResourcePropNameConstants.ID+"=?";

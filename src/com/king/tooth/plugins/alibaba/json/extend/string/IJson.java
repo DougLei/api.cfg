@@ -25,6 +25,13 @@ public interface IJson extends Serializable{
 	JSONObject get(int index);
 	
 	/**
+	 * 获取值
+	 * @param index
+	 * @return
+	 */
+	IJson getIJson(int index);
+	
+	/**
 	 * 获得长度
 	 * @return
 	 */

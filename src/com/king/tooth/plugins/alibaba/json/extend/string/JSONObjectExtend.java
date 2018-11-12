@@ -33,6 +33,10 @@ public class JSONObjectExtend implements IJson{
 		return jsonObject;
 	}
 	
+	public IJson getIJson(int index) {
+		return this;
+	}
+	
 	public int size() {
 		return 1;
 	}
