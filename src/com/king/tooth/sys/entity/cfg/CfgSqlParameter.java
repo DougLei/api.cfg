@@ -26,7 +26,7 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	/**
 	 * 关联的sql脚本id
 	 */
-	private String sqlId;
+	private String sqlScriptId;
 	/**
 	 * 参数名称
 	 */
@@ -206,8 +206,8 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	public void setAcutalOutValue(Object acutalOutValue) {
 		this.acutalOutValue = acutalOutValue;
 	}
-	public String getSqlId() {
-		return sqlId;
+	public String getSqlScriptId() {
+		return sqlScriptId;
 	}
 	public Integer getLength() {
 		return length;
@@ -289,8 +289,8 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
-	public void setSqlId(String sqlId) {
-		this.sqlId = sqlId;
+	public void setSqlScriptId(String sqlScriptId) {
+		this.sqlScriptId = sqlScriptId;
 	}
 	public String getRemark() {
 		return remark;
@@ -309,10 +309,10 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(15+7);
 		
-		CfgColumn sqlIdColumn = new CfgColumn("sql_id", DataTypeConstants.STRING, 32);
-		sqlIdColumn.setName("关联的sql脚本id");
-		sqlIdColumn.setComments("关联的sql脚本id");
-		columns.add(sqlIdColumn);
+		CfgColumn sqlScriptIdColumn = new CfgColumn("sql_script_id", DataTypeConstants.STRING, 32);
+		sqlScriptIdColumn.setName("关联的sql脚本id");
+		sqlScriptIdColumn.setComments("关联的sql脚本id");
+		columns.add(sqlScriptIdColumn);
 		
 		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 50);
 		nameColumn.setName("参数名称");
@@ -411,7 +411,7 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	
 	public String validNotNullProps() {
 		if(!isIgnoreValidNotNullProps){
-			if(StrUtils.isEmpty(sqlId)){
+			if(StrUtils.isEmpty(sqlScriptId)){
 				return "sql脚本参数对象，关联的sql脚本id不能为空";
 			}
 			if(StrUtils.isEmpty(name)){

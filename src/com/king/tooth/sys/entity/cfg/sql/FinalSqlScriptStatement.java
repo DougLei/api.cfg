@@ -6,7 +6,7 @@ import com.king.tooth.util.StrUtils;
 
 /**
  * 最终的sql脚本对象
- * @see ComSqlScript使用到
+ * @see CfgSql使用到
  * @author DougLei
  */
 @SuppressWarnings("serial")

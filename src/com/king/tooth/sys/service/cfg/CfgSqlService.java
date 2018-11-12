@@ -89,7 +89,7 @@ public class CfgSqlService extends AService {
 	 * @return operResult
 	 */
 	private String validSqlScriptRefProjIsExists(String projectId) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProject where id = ?", projectId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgProject where "+ResourcePropNameConstants.ID+" = ?", projectId);
 		if(count != 1){
 			return "sql脚本关联的，id为["+projectId+"]的项目信息不存在";
 		}
@@ -206,7 +206,7 @@ public class CfgSqlService extends AService {
 		List<JSONObject> datalinks = HibernateUtil.queryDataLinks("CfgProjectSqlLinks", null, sqlScriptId);
 		if(datalinks.size() > 1){
 			List<Object> projectIds = new ArrayList<Object>(datalinks.size());
-			StringBuilder hql = new StringBuilder("select projName from CfgProject where id in (");
+			StringBuilder hql = new StringBuilder("select name from CfgProject where ").append(ResourcePropNameConstants.ID).append(" in (");
 			for (JSONObject json : datalinks) {
 				projectIds.add(json.getString("leftId"));
 				hql.append("?,");
@@ -358,8 +358,8 @@ public class CfgSqlService extends AService {
 	 * @return
 	 */
 	public Object saveSqlScriptParameter(CfgSqlParameter sqlParam) {
-		if(!validSqlIsExistsById(sqlParam.getSqlId())){
-			return "不存在id为["+sqlParam.getSqlId()+"]的sql脚本对象";
+		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
+			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
 		}
 		return HibernateUtil.saveObject(sqlParam, null);
 	}
@@ -370,8 +370,8 @@ public class CfgSqlService extends AService {
 	 * @return
 	 */
 	public Object updateSqlScriptParameter(CfgSqlParameter sqlParam) {
-		if(!validSqlIsExistsById(sqlParam.getSqlId())){
-			return "不存在id为["+sqlParam.getSqlId()+"]的sql脚本对象";
+		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
+			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
 		}
 		return HibernateUtil.updateObject(sqlParam, null);
 	}

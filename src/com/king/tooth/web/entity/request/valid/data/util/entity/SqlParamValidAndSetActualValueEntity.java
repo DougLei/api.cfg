@@ -291,7 +291,7 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else{
-			return "parameterFrom的值，仅限于：[0(用户输入)、1(系统内置)、2(自动编码)]，请联系后端系统开发人员";
+			return "valueFrom的值，仅限于：[0(用户输入)、1(系统内置)、2(自动编码)]，请联系后端系统开发人员";
 		}
 		ssp.setActualInValue(actualInValue);
 		return null;

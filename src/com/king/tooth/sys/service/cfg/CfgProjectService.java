@@ -34,7 +34,7 @@ public class CfgProjectService extends AService {
 	 * @return operResult
 	 */
 	private String validProjectCodeIsExists(CfgProject project) {
-		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProject where projCode = ?";
+		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProject where code = ?";
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, project.getCode());
 		if(count > 0){
 			return "编码为["+project.getCode()+"]项目信息已存在";

@@ -129,7 +129,7 @@ public class SqlParameterParserUtil {
 			if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
 				String sqlScriptId = sqlScript.getId();
 				for (CfgSqlParameter sqlParam : sqlScriptParameterList) {
-					sqlParam.setSqlId(sqlScriptId);
+					sqlParam.setSqlScriptId(sqlScriptId);
 					HibernateUtil.saveObject(sqlParam, null);
 				}
 				sqlScriptParameterList.clear();

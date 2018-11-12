@@ -16,7 +16,7 @@ public interface IEntityPropAnalysis {
 	
 	/**
 	 * 解析资源属性
-	 * <p>例如:解析ComSqlScript，根据传入的sql脚本，获取sql脚本的类型，参数集合等</p>
+	 * <p>例如:解析CfgSql，根据传入的sql脚本，获取sql脚本的类型，参数集合等</p>
 	 * @return 解析结果，如果为null，标识解析通过
 	 */
 	public String analysisResourceProp();

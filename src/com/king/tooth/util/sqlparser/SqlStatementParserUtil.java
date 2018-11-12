@@ -41,20 +41,20 @@ public class SqlStatementParserUtil {
 	
 	/**
 	 * 根据sql脚本，获取gsql解析对象实例
-	 * @param sqlScriptContent
+	 * @param contents
 	 * @return
 	 */
-	public static TGSqlParser getGsqlParser(String sqlScriptContent){
-		return parserSqlScript(sqlScriptContent);
+	public static TGSqlParser getGsqlParser(String contents){
+		return parserSqlScript(contents);
 	}
 	
 	/**
 	 * 解析sql脚本
-	 * @param sqlScript sql脚本内容
+	 * @param contents sql脚本内容
 	 * @return 返回TGSqlParser解析器对象实例
 	 */
-	private static TGSqlParser parserSqlScript(String sqlScript) {
-		TGSqlParser sqlParser = preAnalysisSqlScript(sqlScript);
+	private static TGSqlParser parserSqlScript(String contents) {
+		TGSqlParser sqlParser = preAnalysisSqlScript(contents);
 		int ret = sqlParser.parse();
 		if(ret != 0){
 			throw new IllegalArgumentException("解析的sql脚本内容出现语法错误，请检查sql：" + sqlParser.getErrormessage());
@@ -64,13 +64,13 @@ public class SqlStatementParserUtil {
 	
 	/**
 	 * 预处理解析sql，获取TGSqlParser解析器实例
-	 * @param sqlScript sql脚本内容
+	 * @param contents sql脚本内容
 	 * @return
 	 */
-	private static TGSqlParser preAnalysisSqlScript(String sqlScript) {
+	private static TGSqlParser preAnalysisSqlScript(String contents) {
 		EDbVendor dbDialect = getSqlParserDbDialect();
 		TGSqlParser sqlParser = new TGSqlParser(dbDialect);
-		sqlParser.sqltext = sqlScript;
+		sqlParser.sqltext = contents;
 		return sqlParser;
 	}
 	
@@ -194,7 +194,7 @@ public class SqlStatementParserUtil {
 		List<CfgSqlParameter> sqlParams = sqlScript.getSqlParams();
 		if(sqlParams != null && sqlParams.size() > 0){
 			for (CfgSqlParameter sqlParam : sqlParams) {
-				sqlParam.setSqlId(sqlScriptId);
+				sqlParam.setSqlScriptId(sqlScriptId);
 				HibernateUtil.saveObject(sqlParam, null);
 			}
 			sqlParams.clear();

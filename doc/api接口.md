@@ -1241,7 +1241,7 @@
 
 ### (二)、项目信息管理
 
-> 资源名: ComProject
+> 资源名: CfgProject
 
 #### 1. 添加项目
 
@@ -1259,8 +1259,8 @@
 ```
 {
   "refDatabaseId":"",                                   --关联的数据库id
-  "projName":"",                                        --项目名称
-  "projCode":"",                                        --项目编码
+  "name":"",                                            --项目名称
+  "code":"",                                            --项目编码
   "descs":""                                            --项目描述
 }
 ```
@@ -1282,8 +1282,8 @@
 {
   "Id":"",                                              --主键
   "refDatabaseId":"",                                   --关联的数据库id
-  "projName":"",                                        --项目名称
-  "projCode":"",                                        --项目编码
+  "name":"",                                            --项目名称
+  "code":"",                                            --项目编码
   "descs":""                                            --项目描述
 }
 ```
@@ -1307,7 +1307,7 @@
 
 ### (三)、项目模块管理
 
-> 资源名: ComProjectModule
+> 资源名: CfgProjectModule
 
 #### 1. 添加项目模块
 
@@ -1565,7 +1565,7 @@
 
 ### (六)、sql脚本管理
 
-> 资源名: ComSqlScript
+> 资源名: CfgSql
 
 #### 1. 添加sql脚本
 
@@ -1582,9 +1582,9 @@
 - 请求体: 
 ```
 {
-  "sqlScriptCaption": "",                               --sql脚本汉字名
+  "caption": "",                                        --sql脚本汉字名
   "resourceName": "",                                   --sql脚本资源名称
-  "sqlScriptContent": "",                               --sql脚本内容
+  "contents": "",                                       --sql脚本内容
   "requestMethod":"",                                   --请求资源的方法,get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none表示都不支持
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
   "isImmediateCreate":""                                --是否立即创建存储过程、视图等
@@ -1607,9 +1607,9 @@
 ```
 {
   "Id":"",                                              --主键
-  "sqlScriptCaption": "",                               --sql脚本汉字名
+  "caption": "",                                        --sql脚本汉字名
   "resourceName": "",                                   --sql脚本资源名称
-  "sqlScriptContent": "",                               --sql脚本内容
+  "contents": "",                                       --sql脚本内容
   "requestMethod":"",                                   --请求资源的方法,get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none表示都不支持
   "isAnalysisParameters":"",                            --是否解析参数: 1是0否
   "isImmediateCreate":""                                --是否立即创建存储过程、视图等
@@ -1673,7 +1673,7 @@
 
 ### (七)、sql脚本参数管理
 
-> 资源名: ComSqlScriptParameter
+> 资源名: CfgSqlParameter
 
 #### 1. 添加sql脚本参数
 
@@ -1690,9 +1690,9 @@
 - 请求体: 
 ```
 {
-  "parameterName":"",                                   --参数名
+  "name":"",                                            --参数名
   "length":"",                                          --参数的值长度
-  "parameterDataType":"",                               --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
+  "dataType":"",                                        --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }
@@ -1714,9 +1714,9 @@
 ```
 {
   "Id":"",                                              --主键
-  "parameterName":"",                                   --参数名
+  "name":"",                                            --参数名
   "length":"",                                          --参数的值长度
-  "parameterDataType":"",                               --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
+  "dataType":"",                                        --参数值的数据类型: 字符串: string、布尔值: boolean、整型: integer、浮点型: double、日期: date
   "defaultValue":"",                                    --默认值
   "orderCode":1                                         --排序
 }

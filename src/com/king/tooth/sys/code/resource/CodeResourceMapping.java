@@ -60,17 +60,17 @@ public class CodeResourceMapping {
 		put("/database/delete/delete", CfgDatabaseController.class, "delete");
 		
 		// 项目操作
-		put("/ComProject_post", CfgProjectController.class, "add");
-		put("/ComProject_put", CfgProjectController.class, "update");
-		put("/ComProject_delete", CfgProjectController.class, "delete");
+		put("/CfgProject_post", CfgProjectController.class, "add");
+		put("/CfgProject_put", CfgProjectController.class, "update");
+		put("/CfgProject_delete", CfgProjectController.class, "delete");
 		put("/project/add/post", CfgProjectController.class, "add");
 		put("/project/update/put", CfgProjectController.class, "update");
 		put("/project/delete/delete", CfgProjectController.class, "delete");
 		
 		// 项目模块操作
-		put("/ComProjectModule_post", CfgProjectModuleController.class, "add");
-		put("/ComProjectModule_put", CfgProjectModuleController.class, "update");
-		put("/ComProjectModule_delete", CfgProjectModuleController.class, "delete");
+		put("/CfgProjectModule_post", CfgProjectModuleController.class, "add");
+		put("/CfgProjectModule_put", CfgProjectModuleController.class, "update");
+		put("/CfgProjectModule_delete", CfgProjectModuleController.class, "delete");
 		put("/project_module/add/post", CfgProjectModuleController.class, "add");
 		put("/project_module/update/put", CfgProjectModuleController.class, "update");
 		put("/project_module/delete/delete", CfgProjectModuleController.class, "delete");
@@ -92,17 +92,17 @@ public class CodeResourceMapping {
 		put("/column/delete/delete", CfgColumnController.class, "delete");
 		
 		// sql脚本操作
-		put("/ComSqlScript_post", CfgSqlController.class, "add");
-		put("/ComSqlScript_put", CfgSqlController.class, "update");
-		put("/ComSqlScript_delete", CfgSqlController.class, "delete");
+		put("/CfgSql_post", CfgSqlController.class, "add");
+		put("/CfgSql_put", CfgSqlController.class, "update");
+		put("/CfgSql_delete", CfgSqlController.class, "delete");
 		put("/sql/add/post", CfgSqlController.class, "add");
 		put("/sql/update/put", CfgSqlController.class, "update");
 		put("/sql/delete/delete", CfgSqlController.class, "delete");
 		
 		// sql脚本参数操作
-		put("/ComSqlScriptParameter_post", CfgSqlParameterController.class, "add");
-		put("/ComSqlScriptParameter_put", CfgSqlParameterController.class, "update");
-		put("/ComSqlScriptParameter_delete", CfgSqlParameterController.class, "delete");
+		put("/CfgSqlParameter_post", CfgSqlParameterController.class, "add");
+		put("/CfgSqlParameter_put", CfgSqlParameterController.class, "update");
+		put("/CfgSqlParameter_delete", CfgSqlParameterController.class, "delete");
 		put("/sql_parameter/add/post", CfgSqlParameterController.class, "add");
 		put("/sql_parameter/update/put", CfgSqlParameterController.class, "update");
 		put("/sql_parameter/delete/delete", CfgSqlParameterController.class, "delete");
