@@ -203,7 +203,7 @@ public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis
 		return table;
 	}
 	public String toDropTable() {
-		return "COM_PROJECT_MODULE";
+		return "CFG_PROJECT_MODULE";
 	}
 
 	@JSONField(serialize = false)

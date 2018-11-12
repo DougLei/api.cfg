@@ -139,9 +139,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public BusiModelResourceData getResourceData() {
 		return resourceData;
 	}
-	public void setResourceData(BusiModelResourceData resourceData) {
-		this.resourceData = resourceData;
-	}
 	public void setRefParentResourcePropId(String refParentResourcePropId) {
 		this.refParentResourcePropId = refParentResourcePropId;
 	}
@@ -317,12 +314,17 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		}
 	}
 	
-	public CfgTable getRefTable() {
+	public String validResourceData(BusiModelResourceData resourceData) {
+		this.resourceData = resourceData;
+		return resourceData.doBusiResourceDataValid(getRefTable(), getRefSql());
+	}
+	
+	private CfgTable getRefTable() {
 		setRefResource();
 		return refTable;
 	}
 	
-	public CfgSql getRefSql() {
+	private CfgSql getRefSql() {
 		setRefResource();
 		if(!refSql.getIncludeAllInfo()){
 			BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);

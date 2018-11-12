@@ -3,6 +3,10 @@ package com.king.tooth.sys.entity.cfg.busi.model.resource.data;
 import java.io.Serializable;
 
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
+import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 
 /**
  * 业务模型的资源数据
@@ -26,9 +30,9 @@ public class BusiModelResourceData implements Serializable{
 	// -----------------------------------------------------------
 	public BusiModelResourceData() {
 	}
-	public BusiModelResourceData(String dataParentId, IJson ijsonData) {
-		this.dataParentId = dataParentId;
+	public BusiModelResourceData(Object dataParentId, IJson ijsonData) {
 		this.data = ijsonData;
+		this.dataParentId = dataParentId.toString();
 	}
 	
 	// -----------------------------------------------------------
@@ -43,5 +47,26 @@ public class BusiModelResourceData implements Serializable{
 	}
 	public void setData(IJson data) {
 		this.data = data;
+	}
+	
+	/**
+	 * 进行业务资源数据验证
+	 * @param table
+	 * @param sql
+	 * @return
+	 */
+	public String doBusiResourceDataValid(CfgTable table, CfgSql sql) {
+		if(table != null){
+			String tableResourceName = table.getResourceName();
+			return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+tableResourceName+"]时，", tableResourceName, TableResourceValidUtil.getTableResourceMetadataInfos(tableResourceName), data, false, true);
+		}else if(sql != null){
+			return SqlResourceValidUtil.doValidAndSetActualParams(sql, 
+						false, 
+						SqlResourceValidUtil.initActualParamsList(null, data), 
+						SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(sql), 
+						SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(sql), 
+						requestBody.getResourcePropCodeRule());
+		}
+		throw new NullPointerException("进行业务资源数据验证时，传入的对象都为空，请联系后端系统开发人员");
 	}
 }
