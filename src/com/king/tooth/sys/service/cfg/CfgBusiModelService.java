@@ -18,6 +18,10 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 @Service
 public class CfgBusiModelService extends AService{
 
+	
+	
+	
+	// -----------------------------------------------------------------------------
 	/**
 	 * 查询指定id的获取业务模型对象
 	 * <p>包括该业务模型下的所有资源关系</p>
