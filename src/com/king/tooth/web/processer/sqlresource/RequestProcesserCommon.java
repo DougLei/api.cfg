@@ -19,6 +19,7 @@ import com.king.tooth.util.database.ProcedureUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.sqlresource.BuiltinSqlResourceBMProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sqlscript.BuiltinSqlMethodProcesser;
+import com.king.tooth.web.entity.request.valid.data.util.entity.SqlParamSetActualValueEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.CommonProcesser;
 
@@ -93,6 +94,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	protected final void doModifyProcess(String sqlDesc){
 		CfgSql sqlScript = builtinSqlScriptMethodProcesser.getReqSql();
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
+		new SqlParamSetActualValueEntity().setFinalCodeVals(sqlScript, requestBody.getResourcePropCodeRule());
 		
 		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType())){// 是存储过程
 			JSONArray jsonArray = ProcedureUtil.executeProcedure(sqlScript);

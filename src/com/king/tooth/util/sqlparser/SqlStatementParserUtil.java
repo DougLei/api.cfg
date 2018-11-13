@@ -22,9 +22,9 @@ import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
@@ -199,15 +199,23 @@ public class SqlStatementParserUtil {
 			}
 			sqlParams.clear();
 		}
-		
-		// 保存输入结果集信息
-		List<CfgSqlResultset> inSqlResultsets = sqlScript.getInSqlResultsets();
-		if(inSqlResultsets != null && inSqlResultsets.size() > 0){
-			for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
-				inSqlResultset.setSqlScriptId(sqlScriptId);
-				HibernateUtil.saveObject(inSqlResultset, null);
+	}
+	
+	/**
+	 * 保存存储过程中，输入结果集信息
+	 * @param sql
+	 */
+	public static void saveProcedureTableTypeResultset(CfgSql sql) {
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getType())){ 
+			List<CfgSqlResultset> inSqlResultsets = sql.getInSqlResultsets();
+			if(inSqlResultsets != null && inSqlResultsets.size() > 0){
+				String sqlScriptId = sql.getId();
+				for (CfgSqlResultset inSqlResultset : inSqlResultsets) {
+					inSqlResultset.setSqlScriptId(sqlScriptId);
+					HibernateUtil.saveObject(inSqlResultset, null);
+				}
+				inSqlResultsets.clear();
 			}
-			inSqlResultsets.clear();
 		}
 	}
 

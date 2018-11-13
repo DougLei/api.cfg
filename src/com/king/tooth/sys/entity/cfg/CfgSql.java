@@ -381,7 +381,9 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
+			boolean sqlIsExists = true;// 用来标识sql是否存在，判断是添加还是修改
 			if(StrUtils.isEmpty(id)){
+				sqlIsExists = false;
 				this.id = ResourceHandlerUtil.getIdentity();
 			}
 			
@@ -395,9 +397,8 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 			String[] sqlScriptArr = SqlStatementParserUtil.parseSqlScript(this.gsqlParser, this);
 			
 			if(isAnalysisParameters == 1){
-				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", id);// 删除之前的参数
-				if(SqlStatementTypeConstants.SELECT.equals(type) || SqlStatementTypeConstants.PROCEDURE.equals(type) || SqlStatementTypeConstants.VIEW.equals(type)){
-					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", id);// 删除之前的所有结果集信息(select/存储过程/视图)
+				if(sqlIsExists){
+					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", id);// 删除之前的参数
 				}
 				
 				// 如果是存储过程，则用另一个方法处理，解析出参数
@@ -417,9 +418,18 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 					SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this, false);// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
 					this.isCreated = 1;
 				}
-				// 如果是select语句，还要解析出查询结果字段集合，如果select语句查询的是*，则抛出异常，不能这样写，这样写不规范
-				SqlStatementParserUtil.analysisSelectSqlResultSetList(this);
 			}
+			
+			// 尝试删除该sql关联的所有结果集信息
+			if(sqlIsExists && SqlStatementTypeConstants.SELECT.equals(type) || SqlStatementTypeConstants.PROCEDURE.equals(type) || SqlStatementTypeConstants.VIEW.equals(type)){
+				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", id);// 删除之前的所有结果集信息(select/存储过程/视图)
+			}
+			
+			// 如果是select语句，还要解析出查询结果字段集合，如果select语句查询的是*，则抛出异常，不能这样写，这样写不规范
+			SqlStatementParserUtil.analysisSelectSqlResultSetList(this);
+			
+			// 如果是存储过程，可能还要保存输入结果集信息
+			SqlStatementParserUtil.saveProcedureTableTypeResultset(this);
 		}
 		return result;
 	}

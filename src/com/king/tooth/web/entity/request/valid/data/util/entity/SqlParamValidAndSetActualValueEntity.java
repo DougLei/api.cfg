@@ -1,6 +1,5 @@
 package com.king.tooth.web.entity.request.valid.data.util.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,12 +14,9 @@ import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInf
 import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
-import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.datatype.DataTypeValidUtil;
-import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
-import com.king.tooth.web.entity.request.ResourcePropCodeRule;
 import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 
 /**
@@ -28,17 +24,16 @@ import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class SqlParamValidAndSetActualValueEntity implements Serializable{
+public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValueEntity{
 	
 	public SqlParamValidAndSetActualValueEntity() {
 	}
-	public SqlParamValidAndSetActualValueEntity(CfgSql sql, boolean isGetRequest, List<List<CfgSqlParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList, ResourcePropCodeRule resourcePropCodeRule) {
+	public SqlParamValidAndSetActualValueEntity(CfgSql sql, boolean isGetRequest, List<List<CfgSqlParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList) {
 		this.sql = sql;
 		this.isGetRequest = isGetRequest;
 		this.actualParamsList = actualParamsList;
 		this.resourceMetadataInfos = resourceMetadataInfos;
 		this.inSqlResultSetMetadataInfoList = inSqlResultSetMetadataInfoList;
-		this.resourcePropCodeRule = resourcePropCodeRule;
 		
 		sqlParams = sql.getSqlParams();
 		resourceName = sql.getResourceName();
@@ -52,10 +47,6 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	 * 资源的元数据信息集合
 	 */
 	protected List<ResourceMetadataInfo> resourceMetadataInfos;
-	/**
-	 * 请求资源的属性(字段、列)值编码规范
-	 */
-	private ResourcePropCodeRule resourcePropCodeRule;
 	/**
 	 * 是否是get请求
 	 */
@@ -147,7 +138,6 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 					}	
 				}
 				index++;
-				paramIndex = 0;
 				inSqlResultSetMetadataInfoIndex = 0;
 			}
 			this.sqlParams.clear();
@@ -155,8 +145,6 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 		sql.setSqlParamsList(sqlParamsList);
 		return null;
 	}
-	/** 用来自动生成编码的下标 */
-	private int paramIndex;
 	
 	/**
 	 * 克隆sql参数集合
@@ -283,13 +271,7 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
 			}
 		}else if(ssp.getValueFrom() == CfgSqlParameter.AUTO_CODE){
-			actualInValue = PropCodeRuleUtil.getFinalCodeVal(ssp.getName(), paramIndex++, resourcePropCodeRule);
-			if(actualInValue == null){
-				return desc+"自动编码参数["+ssp.getName()+"]的值为空，请联系后端系统开发人员";
-			}
-			if(ssp.getIsPlaceholder() == 0){
-				actualInValue = getSimpleSqlParameterValue(ssp, actualInValue);
-			}
+			// 自动编码的值，在操作的时候再赋值
 		}else{
 			return "valueFrom的值，仅限于：[0(用户输入)、1(系统内置)、2(自动编码)]，请联系后端系统开发人员";
 		}
@@ -320,19 +302,4 @@ public class SqlParamValidAndSetActualValueEntity implements Serializable{
 	}
 	/** 如果调用存储过程，传入表参数类型，这里记录表参数元数据集合的下标，用来取对应的元数据集合来做数据验证 */
 	private int inSqlResultSetMetadataInfoIndex = 0;
-	
-	/**
-	 * 获取简单的sql参数值
-	 * <p>目前就是对值加上''</p>
-	 * @param ssp
-	 * @param sqlParameterValue
-	 * @return
-	 */
-	private String getSimpleSqlParameterValue(CfgSqlParameter ssp, Object sqlParameterValue){
-		if(sqlParameterValue == null){
-			Log4jUtil.warn(CfgSqlParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
-			return "''";
-		}
-		return ssp.getValuePackStart()+sqlParameterValue.toString()+ssp.getValuePackEnd();
-	}
 }

@@ -8,12 +8,11 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.SqlResourceMetadataInfo;
-import com.king.tooth.web.entity.request.ResourcePropCodeRule;
 import com.king.tooth.web.entity.request.valid.data.util.entity.SqlParamValidAndSetActualValueEntity;
 
 /**
@@ -166,12 +165,11 @@ public class SqlResourceValidUtil {
 	 * @param actualParamsList
 	 * @param resourceMetadataInfos
 	 * @param inSqlResultSetMetadataInfoList
-	 * @param resourcePropCodeRule
 	 * @return
 	 */
-	public static String doValidAndSetActualParams(CfgSql sql, boolean isGetRequest, List<List<CfgSqlParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList, ResourcePropCodeRule resourcePropCodeRule) {
+	public static String doValidAndSetActualParams(CfgSql sql, boolean isGetRequest, List<List<CfgSqlParameter>> actualParamsList, List<ResourceMetadataInfo> resourceMetadataInfos, List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList) {
 		SqlParamValidAndSetActualValueEntity sqlParamValidAndSetActualValueEntity = 
-				new SqlParamValidAndSetActualValueEntity(sql, isGetRequest, actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList, resourcePropCodeRule);
+				new SqlParamValidAndSetActualValueEntity(sql, isGetRequest, actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList);
 		return sqlParamValidAndSetActualValueEntity.doValidAndSetActualParams();
 	}
 }

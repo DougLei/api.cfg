@@ -5,7 +5,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
+import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.ResourcePropCodeRule;
 
 /**
@@ -15,14 +18,49 @@ import com.king.tooth.web.entity.request.ResourcePropCodeRule;
 public class PropCodeRuleUtil {
 	
 	/**
-	 * 给对象的属性设置最终的编码值
+	 * 解析出指定字段编码规则对象集合
+	 * @param resourceId
+	 * @param resourceName
+	 * @param ijson
+	 * @return
+	 */
+	public static List<CfgPropCodeRule> analyzeRules(String resourceId, String resourceName, IJson ijson){
+		List<CfgPropCodeRule> rules = HibernateUtil.extendExecuteListQueryByHqlArr(CfgPropCodeRule.class, null, null, queryPropCodeRuleHql, resourceId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(rules == null || rules.size() == 0){
+			return null;
+		}
+		
+		// 判读是否同一个属性，有多个有效的自动编码规则
+		int size = rules.size();
+		int actSize = size-1;
+		String refPropId = null;
+		for (int i=0;i<actSize;i++) {
+			refPropId = rules.get(i).getRefPropId();
+			for(int j=1;j<size;j++){
+				if(i != j && refPropId.equals(rules.get(j).getRefPropId())){
+					throw new IllegalArgumentException("在生成自动编码值时，属性["+rules.get(j).getRefPropName()+"]出现多次有效的编码规则配置，请检查");
+				}
+			}
+		}
+		
+		for (CfgPropCodeRule rule : rules) {
+			rule.doProcessFinalCodeVal(ijson, resourceName);
+		}
+		return rules;
+	}
+	/** 查询属性编码规则集合的hql */
+	private static final String queryPropCodeRuleHql = "from CfgPropCodeRule where refResourceId=? and isEnabled=1 and projectId=? and customerId=? order by orderCode asc";
+	
+	// ----------------------------------------------------------------
+	/**
+	 * 给table资源对象的属性设置最终的编码值
 	 * <p>添加表资源时使用</p>
 	 * @see com.king.tooth.web.processer.tableresource.post.SingleResourceProcesser
 	 * @param data
 	 * @param index
 	 * @param resourcePropCodeRule
 	 */
-	public static void setFinalCodeVal(JSONObject data, int index, ResourcePropCodeRule resourcePropCodeRule) {
+	public static void setTableResourceFinalCodeVal(JSONObject data, int index, ResourcePropCodeRule resourcePropCodeRule) {
 		if(resourcePropCodeRule == null){
 			return;
 		}
@@ -35,15 +73,16 @@ public class PropCodeRuleUtil {
 		}
 	}
 	
+	// ----------------------------------------------------------------
 	/**
-	 * 获取对象属性的最终编码值
+	 * 获取sql资源对象属性的最终编码值
 	 * <p>insert sql资源使用</p>
 	 * @see com.king.tooth.web.entity.request.valid.data.SqlResourceVerifier.analysisActualInValue()
 	 * @param sqlParamName sql参数名
 	 * @param paramIndex 第几个参数下标，即每个sql脚本参数的下标
 	 * @param resourcePropCodeRule
 	 */
-	public static Object getFinalCodeVal(String sqlParamName, int paramIndex, ResourcePropCodeRule resourcePropCodeRule) {
+	public static Object getSqlResourceFinalCodeVal(String sqlParamName, int paramIndex, ResourcePropCodeRule resourcePropCodeRule) {
 		if(resourcePropCodeRule == null){
 			return null;
 		}

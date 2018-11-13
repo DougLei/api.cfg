@@ -128,6 +128,7 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	public CfgSqlParameter(String name, String dataType, boolean isDbDataType, int inOut, int orderCode, boolean isNeedAnalysisResourceProp, boolean isIgnoreValidNotNullProps) {
 		this.id = ResourceHandlerUtil.getIdentity();
 		this.name = name;
+		this.remark = name;
 		if(isDbDataType){
 			this.dataType = turnDbDataTypeToCodeDataType(dataType.toLowerCase());
 		}else{

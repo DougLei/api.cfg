@@ -82,7 +82,7 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		initSqlResourceMetadataInfos();
 		actualParamsList = SqlResourceValidUtil.initActualParamsList(analysisInSqlParams(), requestBody.getFormData());
 		
-		String validResult = SqlResourceValidUtil.doValidAndSetActualParams(sql, requestBody.isGetRequest(), actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList, requestBody.getResourcePropCodeRule());
+		String validResult = SqlResourceValidUtil.doValidAndSetActualParams(sql, requestBody.isGetRequest(), actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList);
 		if(validResult != null){
 			return validResult;
 		}
