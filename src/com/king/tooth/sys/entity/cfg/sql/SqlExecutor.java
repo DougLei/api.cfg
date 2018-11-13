@@ -37,67 +37,55 @@ public class SqlExecutor implements Serializable{
 	 * @return
 	 */
 	public Object doExecuteModifySql(CfgSql sql, List<List<Object>> sqlParameterValues, IJson data, List<CfgPropCodeRule> rules){
-		try {
-			this.sqlParameterValues = sqlParameterValues;
-			
-			List<FinalSqlScriptStatement> finalSqlScriptList = sql.getFinalSqlScriptList();
-			new SqlParamSetActualValueEntity().setFinalCodeVals(sql, rules);
-			
-			String operDataType = null;
-			if(SqlStatementTypeConstants.INSERT.equals(sql.getConfType())){
-				operDataType = OperDataTypeConstants.ADD;
-			}else if(SqlStatementTypeConstants.UPDATE.equals(sql.getConfType())){
-				operDataType = OperDataTypeConstants.EDIT;
-			}else if(SqlStatementTypeConstants.DELETE.equals(sql.getConfType())){
-				operDataType = OperDataTypeConstants.DELETE;
-			}
-			
-			if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getType())){// 是存储过程
-				JSONArray jsonArray = ProcedureUtil.executeProcedureOnDataFocused(sql, operDataType, data);
-				if(jsonArray != null && jsonArray.size() > 0){
-					if(jsonArray.size() == 1){
-						return jsonArray.getJSONObject(0);
-					}else{
-						return jsonArray;
-					}
+		this.sqlParameterValues = sqlParameterValues;
+		
+		List<FinalSqlScriptStatement> finalSqlScriptList = sql.getFinalSqlScriptList();
+		new SqlParamSetActualValueEntity().setFinalCodeVals(sql, rules);
+		
+		String operDataType = null;
+		if(SqlStatementTypeConstants.INSERT.equals(sql.getConfType())){
+			operDataType = OperDataTypeConstants.ADD;
+		}else if(SqlStatementTypeConstants.UPDATE.equals(sql.getConfType())){
+			operDataType = OperDataTypeConstants.EDIT;
+		}else if(SqlStatementTypeConstants.DELETE.equals(sql.getConfType())){
+			operDataType = OperDataTypeConstants.DELETE;
+		}
+		
+		if(SqlStatementTypeConstants.PROCEDURE.equals(sql.getType())){// 是存储过程
+			JSONArray jsonArray = ProcedureUtil.executeProcedureOnDataFocused(sql, operDataType, data);
+			if(jsonArray != null && jsonArray.size() > 0){
+				if(jsonArray.size() == 1){
+					return jsonArray.getJSONObject(0);
 				}else{
-					return "成功执行名为["+sql.getObjectName()+"]的存储过程";
+					return jsonArray;
 				}
 			}else{
-				String[] modifySqlArr;
-				Query query;
-				int index = 0;
-				for (FinalSqlScriptStatement finalSqlScript : finalSqlScriptList) {
-					modifySqlArr = finalSqlScript.getFinalModifySqlArr();
-					int len = modifySqlArr.length;
-					for (int i = 0; i < len; i++) {
-						query = createQuery(index++, modifySqlArr[i].replace(";", ""));
-						query.executeUpdate();
-					}
-				}
-				
-				if(operDataType != null){
-					int size = data.size();
-					JSONObject jsonObject;
-					for(int i=0;i<size;i++){
-						jsonObject = data.get(i);
-						if(jsonObject.get(ResourcePropNameConstants.ID) != null){
-							jsonObject.put(ResourcePropNameConstants.FOCUSED_OPER, jsonObject.getString(ResourcePropNameConstants.ID) + "_" + operDataType);
-						}
-					}
-				}
-				return data.getJson();
+				return "成功执行名为["+sql.getObjectName()+"]的存储过程";
 			}
-		} finally{
-			// 清除sql语句中的参数值集合
-			if(sqlParameterValues.size() > 0){
-				for(List<Object> list : sqlParameterValues){
-					if(list != null){
-						list.clear();
+		}else{
+			String[] modifySqlArr;
+			Query query;
+			int index = 0;
+			for (FinalSqlScriptStatement finalSqlScript : finalSqlScriptList) {
+				modifySqlArr = finalSqlScript.getFinalModifySqlArr();
+				int len = modifySqlArr.length;
+				for (int i = 0; i < len; i++) {
+					query = createQuery(index++, modifySqlArr[i].replace(";", ""));
+					query.executeUpdate();
+				}
+			}
+			
+			if(operDataType != null){
+				int size = data.size();
+				JSONObject jsonObject;
+				for(int i=0;i<size;i++){
+					jsonObject = data.get(i);
+					if(jsonObject.get(ResourcePropNameConstants.ID) != null){
+						jsonObject.put(ResourcePropNameConstants.FOCUSED_OPER, jsonObject.getString(ResourcePropNameConstants.ID) + "_" + operDataType);
 					}
 				}
-				sqlParameterValues.clear();
 			}
+			return data.getJson();
 		}
 	}
 	

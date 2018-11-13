@@ -16,9 +16,9 @@ public class ResourceDataVerifier {
 	private AbstractResourceVerifier resourceVerifier;
 	
 	//------------------------------------------------------------------
-	public void clear(){
+	public void clearValidData(){
 		if(resourceVerifier != null){
-			resourceVerifier.clear();
+			resourceVerifier.clearValidData();
 		}
 	}
 	

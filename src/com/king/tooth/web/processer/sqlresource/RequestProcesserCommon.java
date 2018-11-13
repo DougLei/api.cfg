@@ -92,6 +92,15 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * 释放不用的内存
 	 */
 	protected final void releaseInvalidMemory() {
+		// 清除sql语句中的参数值集合
+		if(sqlParameterValues.size() > 0){
+			for(List<Object> list : sqlParameterValues){
+				if(list != null && list.size() > 0){
+					list.clear();
+				}
+			}
+			sqlParameterValues.clear();
+		}
 		// 清除内置函数处理器的无效数据
 		builtinSqlResourceBMProcesser.releaseInvalidMemory();
 	}

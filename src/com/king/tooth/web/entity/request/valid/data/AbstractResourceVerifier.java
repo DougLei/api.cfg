@@ -29,7 +29,10 @@ public abstract class AbstractResourceVerifier {
 	 */
 	protected List<ResourceMetadataInfo> parentResourceMetadataInfos;
 	
-	public void clear(){
+	/**
+	 * 清空验证使用的数据
+	 */
+	public void clearValidData(){
 		if(!requestBody.isGetRequest()){
 			if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
 				resourceMetadataInfos.clear();

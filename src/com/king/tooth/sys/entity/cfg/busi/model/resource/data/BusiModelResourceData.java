@@ -11,8 +11,10 @@ import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
+import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.sql.SqlExecutor;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
@@ -70,25 +72,63 @@ public class BusiModelResourceData implements Serializable{
 	 * @return
 	 */
 	public String doBusiResourceDataValid(CfgBusiModelResRelations busiModelResRelations) {
-		this.busiModelResRelations = busiModelResRelations;
-		CfgTable refTable = busiModelResRelations.getRefTable();
-		refSql = busiModelResRelations.getRefSql();
-		
-		if(refTable != null){
-			isTableResource = true;
-			refResourceId = refTable.getId();
-			refResourceName = refTable.getResourceName();
+		try {
+			this.busiModelResRelations = busiModelResRelations;
+			CfgTable refTable = busiModelResRelations.getRefTable();
+			refSql = busiModelResRelations.getRefSql();
 			
-			return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+refResourceName+"]时，", refResourceName, TableResourceValidUtil.getTableResourceMetadataInfos(refResourceName), datas, false, true);
-		}else if(refSql != null){
-			refResourceId = refSql.getId();
-			refResourceName = refSql.getResourceName();
-			
-			return SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, SqlResourceValidUtil.initActualParamsList(null, datas), SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql), SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql));
+			String validResult = null;
+			if(refTable != null){
+				isTableResource = true;
+				refResourceId = refTable.getId();
+				refResourceName = refTable.getResourceName();
+				
+				resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refResourceName);
+				validResult = TableResourceValidUtil.validTableResourceMetadata("操作表资源["+refResourceName+"]时，", refResourceName, resourceMetadataInfos, datas, false, true);
+			}else if(refSql != null){
+				refResourceId = refSql.getId();
+				refResourceName = refSql.getResourceName();
+				
+				resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql);
+				actualParamsList = SqlResourceValidUtil.initActualParamsList(null, datas);
+				inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
+				
+				validResult = SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList);
+			}
+			return validResult;
+		} finally{
+			clearValidData();
 		}
-		throw new NullPointerException("进行业务模型资源数据验证时，传入对象[busiModelResRelations的refTable、refSql]都为空，请联系后端系统开发人员");
 	}
 	
+	private List<ResourceMetadataInfo> resourceMetadataInfos;
+	private List<List<CfgSqlParameter>> actualParamsList ;
+	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList ;
+	/**
+	 * 清空验证使用的数据
+	 */
+	private void clearValidData() {
+		if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
+			resourceMetadataInfos.clear();
+		}
+		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
+			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
+				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
+					inSqlResultSetMetadataInfos.clear();
+				}
+			}
+			inSqlResultSetMetadataInfoList.clear();
+		}
+		if(actualParamsList != null && actualParamsList.size() > 0){
+			for (List<CfgSqlParameter> actualParams : actualParamsList) {
+				if(actualParams != null && actualParams.size() > 0){
+					actualParams.clear();
+				}
+			}
+			actualParamsList.clear();
+		}
+	}
+
 	// -----------------------------------------------------------
 	/** 引用的sql资源 */
 	private CfgSql refSql;
@@ -146,6 +186,20 @@ public class BusiModelResourceData implements Serializable{
 	 * 清空数据
 	 */
 	public void clear() {
-		// TODO Auto-generated method stub
+		// 清除sql语句中的参数值集合
+		if(sqlParameterValues.size() > 0){
+			for(List<Object> list : sqlParameterValues){
+				if(list != null && list.size() > 0){
+					list.clear();
+				}
+			}
+			sqlParameterValues.clear();
+		}
+		if(refSql != null){
+			refSql.clear();
+		}
+		if(rules != null && rules.size() > 0){
+			rules.clear();
+		}
 	}
 }

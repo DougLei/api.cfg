@@ -43,8 +43,8 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 		sqlParams = sql.getSqlParams();
 	}
 	
-	public void clear(){
-		super.clear();
+	public void clearValidData(){
+		super.clearValidData();
 		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
 			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
 				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){

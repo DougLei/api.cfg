@@ -130,7 +130,7 @@ public class RequestBody implements Serializable{
 			return resourceDataVerifier.doValidResourceData(this);
 		} finally {
 			if(resourceDataVerifier != null){
-				resourceDataVerifier.clear();
+				resourceDataVerifier.clearValidData();
 				resourceDataVerifier = null;
 			}
 		}
@@ -231,7 +231,7 @@ public class RequestBody implements Serializable{
 			resourceInfo.clear();
 		}
 		if(resourceDataVerifier != null){
-			resourceDataVerifier.clear();
+			resourceDataVerifier.clearValidData();
 		}
 	}
 	
