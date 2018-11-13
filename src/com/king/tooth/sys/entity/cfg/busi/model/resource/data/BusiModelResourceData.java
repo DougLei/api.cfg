@@ -141,7 +141,10 @@ public class BusiModelResourceData implements Serializable{
 	/**
 	 * 保存业务数据
 	 */
-	public void saveBusiData(){
+	public Object saveBusiData(){
+		// 操作结果对象
+		Object resultDatas = null;
+		
 		String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
 		rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
 		
@@ -174,11 +177,6 @@ public class BusiModelResourceData implements Serializable{
 			refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
 			resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas, rules);
 		}
-	}
-	
-	/** 操作结果对象 */
-	private Object resultDatas;
-	public Object getResultDatas() {
 		return resultDatas;
 	}
 	

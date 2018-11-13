@@ -341,9 +341,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	/**
 	 * 进行业务数据保存
 	 */
-	public void doSaveBusiData(){
+	public Object doSaveBusiData(){
 		if(resourceData != null){
-			resourceData.saveBusiData();
+			return resourceData.saveBusiData();
 		}
+		return null;
 	}
 }
