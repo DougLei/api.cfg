@@ -1,19 +1,29 @@
 package test;
 
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 public class TestMain {
 	public static void main(String[] args) {
 		
-		String a = "[{'name':'哈哈'},[{'age':22},{'age':27}]]";
-		IJson ijson = IJsonUtil.getIJson(a);
+		JSONArray jr =new JSONArray();
+		jr.add(new JSONObject());
+		jr.getJSONObject(0).put("1", "1");
+		jr.add(new JSONObject());
+		jr.getJSONObject(1).put("2", "2");
 		
-		IJson ijson1 = ijson.getIJson(0);
-		System.out.println(ijson1);
-		System.out.println(ijson1.isArray());
-		System.out.println(ijson1.isObject());
+		d(jr);
+		System.out.println(jr);
 		
 		
+		
+	}
+	
+	public static void d(JSONArray jr){
+		JSONObject j = jr.getJSONObject(0);
+		JSONObject jj = new JSONObject();
+		jj.put("333", 333);
+		j = jj;
+		System.out.println(j);
 	}
 }

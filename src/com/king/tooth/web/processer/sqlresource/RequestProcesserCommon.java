@@ -5,21 +5,13 @@ import java.util.List;
 
 import org.hibernate.Query;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.OperDataTypeConstants;
-import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.entity.cfg.CfgSql;
-import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
+import com.king.tooth.sys.entity.cfg.sql.SqlExecutor;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.database.ProcedureUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.builtin.method.sqlresource.BuiltinSqlResourceBMProcesser;
 import com.king.tooth.web.builtin.method.sqlresource.sqlscript.BuiltinSqlMethodProcesser;
-import com.king.tooth.web.entity.request.valid.data.util.entity.SqlParamSetActualValueEntity;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.CommonProcesser;
 
@@ -89,79 +81,17 @@ public class RequestProcesserCommon extends CommonProcesser{
 	 * 		update(put)
 	 * 		delete(delete)
 	 * </pre>
-	 * @param sqlDesc @see BuiltinDatabaseData
 	 */
-	protected final void doModifyProcess(String sqlDesc){
-		CfgSql sqlScript = builtinSqlScriptMethodProcesser.getReqSql();
-		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
-		new SqlParamSetActualValueEntity().setFinalCodeVals(sqlScript, requestBody.getResourcePropCodeRule());
-		
-		String operDataType = null;
-		if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getConfType())){
-			operDataType = OperDataTypeConstants.ADD;
-		}else if(SqlStatementTypeConstants.UPDATE.equals(sqlScript.getConfType())){
-			operDataType = OperDataTypeConstants.EDIT;
-		}else if(SqlStatementTypeConstants.DELETE.equals(sqlScript.getConfType())){
-			operDataType = OperDataTypeConstants.DELETE;
-		}
-		
-		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType())){// 是存储过程
-			JSONArray jsonArray = ProcedureUtil.executeProcedureOnDataFocused(sqlScript, operDataType, requestBody.getFormData());
-			if(jsonArray != null && jsonArray.size() > 0){
-				if(jsonArray.size() == 1){
-					setResponseBody(new ResponseBody(null, jsonArray.getJSONObject(0)));
-				}else{
-					setResponseBody(new ResponseBody(null, jsonArray));
-				}
-			}else{
-				setResponseBody(new ResponseBody(null, "成功执行名为["+sqlScript.getObjectName()+"]的存储过程"));
-			}
-			return;
-		}
-		
-		String[] modifySqlArr;
-		Query query;
-		int index = 0;
-		for (FinalSqlScriptStatement finalSqlScript : finalSqlScriptList) {
-			modifySqlArr = finalSqlScript.getFinalModifySqlArr();
-			int len = modifySqlArr.length;
-			for (int i = 0; i < len; i++) {
-				query = createQuery(index++, modifySqlArr[i].replace(";", ""));
-				query.executeUpdate();
-			}
-		}
-		
-		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
-			setResponseBody(new ResponseBody(null, requestBody.installAllUrlParams()));
-		}else{
-			IJson ijson = requestBody.getFormData();
-			if(operDataType != null){
-				int size = ijson.size();
-				JSONObject jsonObject;
-				for(int i=0;i<size;i++){
-					jsonObject = ijson.get(i);
-					if(jsonObject.get(ResourcePropNameConstants.ID) != null){
-						jsonObject.put(ResourcePropNameConstants.FOCUSED_OPER, jsonObject.getString(ResourcePropNameConstants.ID) + "_" + operDataType);
-					}
-				}
-			}
-			setResponseBody(new ResponseBody(null, ijson.getJson()));
-		}
+	protected final void doModifyProcess(){
+		List<CfgPropCodeRule> rules = requestBody.getResourcePropCodeRule() == null?null:requestBody.getResourcePropCodeRule().getRules();
+		setResponseBody(new ResponseBody(null, 
+				new SqlExecutor().doExecuteModifySql(builtinSqlScriptMethodProcesser.getReqSql(), sqlParameterValues, requestBody.getFormData(), rules)));
 	}
 	
 	/**
 	 * 释放不用的内存
 	 */
 	protected final void releaseInvalidMemory() {
-		// 清除sql语句中的参数值集合
-		if(sqlParameterValues.size() > 0){
-			for(List<Object> list : sqlParameterValues){
-				if(list != null){
-					list.clear();
-				}
-			}
-			sqlParameterValues.clear();
-		}
 		// 清除内置函数处理器的无效数据
 		builtinSqlResourceBMProcesser.releaseInvalidMemory();
 	}

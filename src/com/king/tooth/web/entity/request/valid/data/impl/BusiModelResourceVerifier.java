@@ -20,11 +20,13 @@ import com.king.tooth.web.entity.request.valid.data.AbstractResourceVerifier;
  */
 public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 
+	private String busiModelResourceName;
 	private CfgBusiModel busiModel;
 	
 	public BusiModelResourceVerifier(RequestBody requestBody) {
 		super(requestBody);
 		busiModel = requestBody.getResourceInfo().getBusiModel();
+		busiModelResourceName = busiModel.getResourceName();
 	}
 	
 	public String doValid(){
@@ -92,7 +94,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 					}
 				}
 			}
-			validResult = busiModelResRelations.validResourceData(new BusiModelResourceData(dataParentId, ijsonData));
+			validResult = busiModelResRelations.validResourceData(new BusiModelResourceData(busiModelResourceName, dataParentId, ijsonData));
 		}
 		return validResult;
 	}

@@ -1,6 +1,5 @@
 package com.king.tooth.web.processer.sqlresource.put;
 
-import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.web.processer.sqlresource.RequestProcesser;
 
 /**
@@ -14,7 +13,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 	}
 	
 	protected boolean doProcess() {
-		doModifyProcess(SqlStatementTypeConstants.UPDATE);
+		doModifyProcess();
 		return true;
 	}
 }

@@ -3,11 +3,11 @@ package com.king.tooth.web.entity.request.valid.data.util.entity;
 import java.io.Serializable;
 import java.util.List;
 
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
-import com.king.tooth.web.entity.request.ResourcePropCodeRule;
 
 /**
  * sql参数的set实际值
@@ -35,27 +35,29 @@ public class SqlParamSetActualValueEntity implements Serializable{
 	/**
 	 * 给sql对象中的参数，赋予最终的编码值
 	 * @param sql
-	 * @param resourcePropCodeRule
+	 * @param rules
 	 */
-	public void setFinalCodeVals(CfgSql sql, ResourcePropCodeRule resourcePropCodeRule){
-		List<List<CfgSqlParameter>> sqlParamsList = sql.getSqlParamsList();
-		if(sqlParamsList != null && sqlParamsList.size() > 0){
-			Object finalCodeVal = null;
-			for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
-				if(sqlParams != null && sqlParams.size() > 0){
-					for (CfgSqlParameter ssp : sqlParams) {
-						if(ssp.getValueFrom() == CfgSqlParameter.AUTO_CODE){
-							finalCodeVal = PropCodeRuleUtil.getSqlResourceFinalCodeVal(ssp.getName(), codeValIndex++, resourcePropCodeRule);
-							if(finalCodeVal == null){
-								throw new NullPointerException("操作sql资源["+sql.getResourceName()+"]时，获取自动编码参数["+ssp.getName()+"]的值为空，请联系后端系统开发人员");
+	public void setFinalCodeVals(CfgSql sql, List<CfgPropCodeRule> rules){
+		if(rules != null && rules.size() > 0){
+			List<List<CfgSqlParameter>> sqlParamsList = sql.getSqlParamsList();
+			if(sqlParamsList != null && sqlParamsList.size() > 0){
+				Object finalCodeVal = null;
+				for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
+					if(sqlParams != null && sqlParams.size() > 0){
+						for (CfgSqlParameter ssp : sqlParams) {
+							if(ssp.getValueFrom() == CfgSqlParameter.AUTO_CODE){
+								finalCodeVal = PropCodeRuleUtil.getSqlResourceFinalCodeVal(ssp.getName(), codeValIndex++, rules);
+								if(finalCodeVal == null){
+									throw new NullPointerException("操作sql资源["+sql.getResourceName()+"]时，获取自动编码参数["+ssp.getName()+"]的值为空，请联系后端系统开发人员");
+								}
+								if(ssp.getIsPlaceholder() == 0){
+									finalCodeVal = getSimpleSqlParameterValue(ssp, finalCodeVal);
+								}
+								ssp.setActualInValue(finalCodeVal);
 							}
-							if(ssp.getIsPlaceholder() == 0){
-								finalCodeVal = getSimpleSqlParameterValue(ssp, finalCodeVal);
-							}
-							ssp.setActualInValue(finalCodeVal);
 						}
+						codeValIndex = 0;
 					}
-					codeValIndex = 0;
 				}
 			}
 		}

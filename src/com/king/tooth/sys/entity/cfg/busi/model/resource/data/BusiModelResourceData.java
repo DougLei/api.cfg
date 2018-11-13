@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity.cfg.busi.model.resource.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -11,6 +12,7 @@ import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.sys.entity.cfg.sql.SqlExecutor;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
@@ -25,6 +27,10 @@ import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 @SuppressWarnings("serial")
 public class BusiModelResourceData implements Serializable{
 	
+	/**
+	 * 业务模型资源
+	 */
+	private String busiModelResourceName;
 	/**
 	 * 数据的父级id
 	 * <p>如果是根，则该值为null</p>
@@ -43,31 +49,13 @@ public class BusiModelResourceData implements Serializable{
 	// -----------------------------------------------------------
 	public BusiModelResourceData() {
 	}
-	public BusiModelResourceData(Object dataParentId, IJson datas) {
+	public BusiModelResourceData(String busiModelResourceName, Object dataParentId, IJson datas) {
+		this.busiModelResourceName = busiModelResourceName;
 		this.datas = datas;
 		this.dataParentId = dataParentId.toString();
 	}
 	
 	// -----------------------------------------------------------
-	public String getDataParentId() {
-		return dataParentId;
-	}
-	public void setDataParentId(String dataParentId) {
-		this.dataParentId = dataParentId;
-	}
-	public IJson getDatas() {
-		return datas;
-	}
-	public void setDatas(IJson datas) {
-		this.datas = datas;
-	}
-	public List<CfgPropCodeRule> getRules() {
-		return rules;
-	}
-	public void setRules(List<CfgPropCodeRule> rules) {
-		this.rules = rules;
-	}
-
 	private CfgBusiModelResRelations busiModelResRelations;
 	/** 是否是表资源，如果不是，就是sql资源 */
 	private boolean isTableResource;
@@ -83,63 +71,75 @@ public class BusiModelResourceData implements Serializable{
 	 */
 	public String doBusiResourceDataValid(CfgBusiModelResRelations busiModelResRelations) {
 		this.busiModelResRelations = busiModelResRelations;
-		CfgTable table = busiModelResRelations.getRefTable();
-		CfgSql sql = busiModelResRelations.getRefSql();
+		CfgTable refTable = busiModelResRelations.getRefTable();
+		refSql = busiModelResRelations.getRefSql();
 		
-		if(table != null){
+		if(refTable != null){
 			isTableResource = true;
-			refResourceId = table.getId();
-			refResourceName = table.getResourceName();
+			refResourceId = refTable.getId();
+			refResourceName = refTable.getResourceName();
 			
 			return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+refResourceName+"]时，", refResourceName, TableResourceValidUtil.getTableResourceMetadataInfos(refResourceName), datas, false, true);
-		}else if(sql != null){
-			refResourceId = sql.getId();
-			refResourceName = sql.getResourceName();
+		}else if(refSql != null){
+			refResourceId = refSql.getId();
+			refResourceName = refSql.getResourceName();
 			
-			return SqlResourceValidUtil.doValidAndSetActualParams(sql, false, SqlResourceValidUtil.initActualParamsList(null, datas), SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(sql), SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(sql));
+			return SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, SqlResourceValidUtil.initActualParamsList(null, datas), SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql), SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql));
 		}
-		throw new NullPointerException("进行业务资源数据验证时，传入对象[busiModelResRelations的refTable、refSql]都为空，请联系后端系统开发人员");
+		throw new NullPointerException("进行业务模型资源数据验证时，传入对象[busiModelResRelations的refTable、refSql]都为空，请联系后端系统开发人员");
 	}
+	
+	// -----------------------------------------------------------
+	/** 引用的sql资源 */
+	private CfgSql refSql;
+	/**
+	 * sql语句中的参数值集合
+	 * <p>可能有多个sql语句，所有用集合的集合封装参数</p>
+	 */
+	private List<List<Object>> sqlParameterValues;
 	
 	/**
 	 * 保存业务数据
 	 */
 	public void saveBusiData(){
-		if(datas != null && datas.size() > 0){
-			rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
-			String refParentResourcePropName = busiModelResRelations.getRefParentResourcePropName();
-			Object operDataType = null;
-			Object operDataId = null;
-			
-			JSONObject data = null;
-			for(int i=0; i < datas.size(); i++){
-				data = datas.get(i);
-				data.put(refParentResourcePropName, dataParentId);
-				operDataType = data.get(ResourcePropNameConstants.OPER_DATA_TYPE);
-				
-				if(operDataType == null || OperDataTypeConstants.ADD.equals(operDataType)){
-					PropCodeRuleUtil.setTableResourceFinalCodeVal(data, i, rules);
-					HibernateUtil.saveObject(refResourceName, data, null);
-				}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
-					HibernateUtil.updateObject(refResourceName, data, null, null);
-				}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
-					operDataId = data.get(ResourcePropNameConstants.ID);
-					
+		String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
+		rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
+		
+		if(isTableResource){
+			if(datas != null && datas.size() > 0){
+				JSONObject data = null;
+				Object operDataType = null;
+				for(int i=0; i < datas.size(); i++){
+					data = datas.get(i);
+					operDataType = data.get(ResourcePropNameConstants.OPER_DATA_TYPE);
+					if(operDataType == null){
+						throw new NullPointerException("操作["+busiModelResourceName+"]业务模型资源，其中关联的["+refResourceName+"]表资源数据时，第"+(i+1)+"个数据传入操作类型[$operDataType$]的值为空，请检查");
+					}
+					if(dataParentId != null){
+						data.put(refParentResourcePropName, dataParentId);
+					}
+					if(OperDataTypeConstants.ADD.equals(operDataType)){
+						PropCodeRuleUtil.setTableResourceFinalCodeVal(data, i, rules);
+						HibernateUtil.saveObject(refResourceName, data, null);
+					}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
+						HibernateUtil.updateObject(refResourceName, data, null, null);
+					}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
+						HibernateUtil.deleteObject(refResourceName, data);
+					}
 				}
-				
-//				
-//				saveData(requestBody.getRouteBody().getResourceName(), data);
 			}
-			
-			
-			if(isTableResource){
-				
-				
-				
-			}else{
-				
-			}
+			resultDatas = datas;
+		}else{
+			sqlParameterValues = new ArrayList<List<Object>>(20);
+			refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
+			resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas, rules);
 		}
+	}
+	
+	/** 操作结果对象 */
+	private Object resultDatas;
+	public Object getResultDatas() {
+		return resultDatas;
 	}
 	
 	/**
