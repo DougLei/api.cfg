@@ -596,7 +596,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		}else{
 			seq.setCurrentVal(seq.getCurrentVal() + seqSkipVal);
 			setSeqIsReinit(seq);
-			HibernateUtil.updateObject(seq, null);
+			HibernateUtil.updateEntityObject(seq, null);
 		}
 		return seq.getCurrentVal();
 	}

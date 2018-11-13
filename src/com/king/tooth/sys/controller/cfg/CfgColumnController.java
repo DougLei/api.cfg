@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
-import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -42,7 +41,7 @@ public class CfgColumnController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(columns, OperDataTypeConstants.ADD);
+		return getResultObject(columns, null);
 	}
 	
 	/**
@@ -65,7 +64,7 @@ public class CfgColumnController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(columns, OperDataTypeConstants.EDIT);
+		return getResultObject(columns, null);
 	}
 	
 	/**

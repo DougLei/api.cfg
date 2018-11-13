@@ -345,7 +345,7 @@ public class SysPermissionService extends AService{
 			permission = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).findAccountOfPermissions(accountOnlineStatus);
 			
 			sapc.setPermission(JsonUtil.toJsonString(permission, false));
-			HibernateUtil.updateObject(sapc, null);
+			HibernateUtil.updateEntityObject(sapc, null);
 		}else{
 			permission = JsonUtil.parseObject(sapc.getPermission(), SysPermissionExtend.class);
 		}

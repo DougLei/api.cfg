@@ -74,7 +74,7 @@ public class SysAccountService extends AService{
 		if(accountOnlineStatus.getIsSave()){
 			HibernateUtil.saveObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}else{
-			HibernateUtil.updateObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
+			HibernateUtil.updateEntityObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}
 		return accountOnlineStatus;
 	}
@@ -452,7 +452,7 @@ public class SysAccountService extends AService{
 			result = validTelIsExists(account.getTel());
 		}
 		if(result == null){
-			return HibernateUtil.updateObject(account, null);
+			return HibernateUtil.updateEntityObject(account, null);
 		}
 		return result;
 	}

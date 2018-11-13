@@ -46,7 +46,7 @@ public class CfgSqlController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(sqlScripts, OperDataTypeConstants.ADD);
+		return getResultObject(sqlScripts, null);
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class CfgSqlController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(sqlScripts, OperDataTypeConstants.EDIT);
+		return getResultObject(sqlScripts, null);
 	}
 	
 	/**

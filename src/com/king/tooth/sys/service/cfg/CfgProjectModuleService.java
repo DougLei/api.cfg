@@ -66,7 +66,7 @@ public class CfgProjectModuleService extends AService {
 		}
 		
 		if(operResult == null){
-			return HibernateUtil.updateObject(projectModule, null);
+			return HibernateUtil.updateEntityObject(projectModule, null);
 		}
 		return operResult;
 	}

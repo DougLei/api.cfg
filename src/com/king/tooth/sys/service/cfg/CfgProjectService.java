@@ -75,7 +75,7 @@ public class CfgProjectService extends AService {
 			operResult = validProjectRefDatabaseIsExists(project);
 		}
 		if(operResult == null){
-			return HibernateUtil.updateObject(project, null);
+			return HibernateUtil.updateEntityObject(project, null);
 		}
 		return operResult;
 	}

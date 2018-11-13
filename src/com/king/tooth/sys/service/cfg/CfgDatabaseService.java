@@ -55,7 +55,7 @@ public class CfgDatabaseService extends AService {
 			operResult = validDatabaseDataIsExists(database);
 		}
 		if(operResult == null){
-			return HibernateUtil.updateObject(database, null);
+			return HibernateUtil.updateEntityObject(database, null);
 		}
 		return operResult;
 	}

@@ -96,9 +96,17 @@ public class RequestProcesserCommon extends CommonProcesser{
 		List<FinalSqlScriptStatement> finalSqlScriptList = sqlScript.getFinalSqlScriptList();
 		new SqlParamSetActualValueEntity().setFinalCodeVals(sqlScript, requestBody.getResourcePropCodeRule());
 		
+		String operDataType = null;
+		if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getConfType())){
+			operDataType = OperDataTypeConstants.ADD;
+		}else if(SqlStatementTypeConstants.UPDATE.equals(sqlScript.getConfType())){
+			operDataType = OperDataTypeConstants.EDIT;
+		}else if(SqlStatementTypeConstants.DELETE.equals(sqlScript.getConfType())){
+			operDataType = OperDataTypeConstants.DELETE;
+		}
+		
 		if(SqlStatementTypeConstants.PROCEDURE.equals(sqlScript.getType())){// 是存储过程
-			JSONArray jsonArray = ProcedureUtil.executeProcedure(sqlScript);
-			
+			JSONArray jsonArray = ProcedureUtil.executeProcedureOnDataFocused(sqlScript, operDataType, requestBody.getFormData());
 			if(jsonArray != null && jsonArray.size() > 0){
 				if(jsonArray.size() == 1){
 					setResponseBody(new ResponseBody(null, jsonArray.getJSONObject(0)));
@@ -106,7 +114,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 					setResponseBody(new ResponseBody(null, jsonArray));
 				}
 			}else{
-				setResponseBody(new ResponseBody("成功执行名为["+sqlScript.getObjectName()+"]的存储过程", true));
+				setResponseBody(new ResponseBody(null, "成功执行名为["+sqlScript.getObjectName()+"]的存储过程"));
 			}
 			return;
 		}
@@ -126,23 +134,14 @@ public class RequestProcesserCommon extends CommonProcesser{
 		if(requestBody.getFormData() == null || requestBody.getFormData().size() == 0){
 			setResponseBody(new ResponseBody(null, requestBody.installAllUrlParams()));
 		}else{
-			String operType = null;
-			if(SqlStatementTypeConstants.INSERT.equals(sqlScript.getConfType())){
-				operType = "_" + OperDataTypeConstants.ADD;
-			}else if(SqlStatementTypeConstants.UPDATE.equals(sqlScript.getConfType())){
-				operType = "_" + OperDataTypeConstants.EDIT;
-			}else if(SqlStatementTypeConstants.DELETE.equals(sqlScript.getConfType())){
-				operType = "_" + OperDataTypeConstants.DELETE;
-			}
-			
 			IJson ijson = requestBody.getFormData();
-			if(operType != null){
+			if(operDataType != null){
 				int size = ijson.size();
 				JSONObject jsonObject;
 				for(int i=0;i<size;i++){
 					jsonObject = ijson.get(i);
 					if(jsonObject.get(ResourcePropNameConstants.ID) != null){
-						jsonObject.put(ResourcePropNameConstants.FOCUSED_OPER, jsonObject.getString(ResourcePropNameConstants.ID) + operType);
+						jsonObject.put(ResourcePropNameConstants.FOCUSED_OPER, jsonObject.getString(ResourcePropNameConstants.ID) + "_" + operDataType);
 					}
 				}
 			}

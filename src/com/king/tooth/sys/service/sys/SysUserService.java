@@ -57,7 +57,7 @@ public class SysUserService extends AService{
 		account.setTel(user.getTel());
 		account.setEmail(user.getEmail());
 		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
-		HibernateUtil.updateObject(account, null);
+		HibernateUtil.updateEntityObject(account, null);
 		
 		JSONObject json = new JSONObject(2);
 		json.put(ResourcePropNameConstants.ID, userId);
@@ -302,14 +302,14 @@ public class SysUserService extends AService{
 		if(result == null){
 			if(isCreateAccount){
 				if(accountIsExists){
-					HibernateUtil.updateObject(account, null);
+					HibernateUtil.updateEntityObject(account, null);
 				}else{
 					account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 					account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 					HibernateUtil.saveObject(account, null);
 				}
 			}
-			JSONObject userJsonObject = HibernateUtil.updateObject(user, null);
+			JSONObject userJsonObject = HibernateUtil.updateEntityObject(user, null);
 			String userId = oldUser.getId();
 			
 			// 可能修改部门
@@ -377,7 +377,7 @@ public class SysUserService extends AService{
 				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
-				HibernateUtil.updateObject(account, null);
+				HibernateUtil.updateEntityObject(account, null);
 			}
 		}else{
 			SysAccount account = new SysAccount();
@@ -411,7 +411,7 @@ public class SysUserService extends AService{
 			}else if(account.getIsDelete() == 0){
 				account.setIsDelete(1);
 				account.setLastUpdateDate(new Date());
-				HibernateUtil.updateObject(account, null);
+				HibernateUtil.updateEntityObject(account, null);
 			}
 		}else{
 			return "用户["+user.getName()+"]不存在账户，无法关闭";

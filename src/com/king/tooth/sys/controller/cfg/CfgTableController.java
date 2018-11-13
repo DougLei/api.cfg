@@ -47,7 +47,7 @@ public class CfgTableController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(tables, OperDataTypeConstants.ADD);
+		return getResultObject(tables, null);
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class CfgTableController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(tables, OperDataTypeConstants.EDIT);
+		return getResultObject(tables, null);
 	}
 	
 	/**

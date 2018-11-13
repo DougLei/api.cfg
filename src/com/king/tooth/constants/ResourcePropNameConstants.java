@@ -23,7 +23,13 @@ public class ResourcePropNameConstants {
 	public static final String HQL_QUERY_RETURN_TYPE_PROP = "$type$";
 	
 	/**
-	 * 标识从前端传递的某个对象，所属资源的资源名(的key)
+	 * 标识从前端传递的数据对象的操作类型
+	 * @see OperDataTypeConstants
+	 */
+	public static final String OPER_DATA_TYPE = "$operDataType$";
+	
+	/**
+	 * 标识从前端传递的数据对象，所属资源的资源名(的key)
 	 */
 	public static final String DATA_REF_RESOURCENAME = "$refResourceName$";
 }

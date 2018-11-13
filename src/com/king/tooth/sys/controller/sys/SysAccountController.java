@@ -8,7 +8,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
-import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
@@ -97,7 +96,7 @@ public class SysAccountController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(accounts, OperDataTypeConstants.ADD);
+		return getResultObject(accounts, null);
 	}
 	
 	/**
@@ -120,7 +119,7 @@ public class SysAccountController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(accounts, OperDataTypeConstants.EDIT);
+		return getResultObject(accounts, null);
 	}
 	
 	/**

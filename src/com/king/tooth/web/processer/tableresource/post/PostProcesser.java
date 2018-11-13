@@ -1,10 +1,6 @@
 package com.king.tooth.web.processer.tableresource.post;
 
-import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.OperDataTypeConstants;
-import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
 
@@ -47,16 +43,6 @@ public abstract class PostProcesser extends RequestProcesser {
 	// ******************************************************************************************************
 	// 以下是给子类使用的通用方法
 
-	/**
-	 * 保存数据
-	 * @param resourceName
-	 * @param data
-	 */
-	protected void saveData(String resourceName, JSONObject data){
-		HibernateUtil.saveObject(resourceName, data, null);
-		data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.ADD);
-	}
-	
 	/**
 	 * 添加数据后，组装ResponseBody对象
 	 * @param message

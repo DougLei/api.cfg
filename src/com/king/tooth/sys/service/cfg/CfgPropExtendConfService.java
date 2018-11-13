@@ -70,7 +70,7 @@ public class CfgPropExtendConfService extends AService{
 			}
 		}
 		if(operResult == null){
-			return HibernateUtil.updateObject(propExtendConf, null);
+			return HibernateUtil.updateEntityObject(propExtendConf, null);
 		}
 		return operResult;
 	}

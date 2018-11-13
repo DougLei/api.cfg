@@ -316,15 +316,15 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	public String validResourceData(BusiModelResourceData resourceData) {
 		this.resourceData = resourceData;
-		return resourceData.doBusiResourceDataValid(getRefTable(), getRefSql());
+		return resourceData.doBusiResourceDataValid(this);
 	}
 	
-	private CfgTable getRefTable() {
+	public CfgTable getRefTable() {
 		setRefResource();
 		return refTable;
 	}
 	
-	private CfgSql getRefSql() {
+	public CfgSql getRefSql() {
 		setRefResource();
 		if(!refSql.getIncludeAllInfo()){
 			BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
@@ -333,8 +333,17 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	}
 	
 	public void clear(){
-		if(refSql != null){
-			refSql.clear();
+		if(resourceData != null){
+			resourceData.clear();
+		}
+	}
+	
+	/**
+	 * 进行业务数据保存
+	 */
+	public void doSaveBusiData(){
+		if(resourceData != null){
+			resourceData.saveBusiData();
 		}
 	}
 }

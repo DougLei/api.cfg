@@ -9,20 +9,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.IExecute;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.datatype.DataTypeTurnUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
@@ -33,6 +36,34 @@ import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
  * @author DougLei
  */
 public class ProcedureUtil {
+	
+	/**
+	 * 带数据定位的执行存储过程
+	 * @param sqlScript
+	 * @param operDataType
+	 * @param ijson
+	 * @return
+	 */
+	public static JSONArray executeProcedureOnDataFocused(CfgSql sqlScript, String operDataType, IJson ijson) {
+		JSONArray jsonArray = executeProcedure(sqlScript);
+		if(operDataType != null && ijson != null && ijson.size() > 0){
+			int size = ijson.size();
+			Object focusedDataId = null;
+			for(int i=0;i<size;i++){
+				focusedDataId = ijson.get(i).get(ResourcePropNameConstants.ID);
+				if(StrUtils.notEmpty(focusedDataId)){
+					if(jsonArray == null){
+						jsonArray = new JSONArray(size);
+					}
+					if(jsonArray.get(i) == null){
+						jsonArray.add(new JSONObject(1));
+					}
+					jsonArray.getJSONObject(i).put(ResourcePropNameConstants.FOCUSED_OPER, focusedDataId + "_" + operDataType);
+				}
+			}
+		}
+		return jsonArray;
+	}
 	
 	/**
 	 * 执行存储过程

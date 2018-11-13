@@ -200,7 +200,7 @@ public class CfgSqlService extends AService {
 				if(sqlScript.isUpdateResourceInfo(oldSqlScript)){
 					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).updateResourceInfo(sqlScript.getId(), sqlScript.getResourceName(), sqlScript.getRequestMethod(), sqlScript.getIsEnabled());
 				}
-				return HibernateUtil.updateObject(sqlScript, null);
+				return HibernateUtil.updateEntityObject(sqlScript, null);
 			}
 		}
 		return operResult;
@@ -384,7 +384,7 @@ public class CfgSqlService extends AService {
 		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
 			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
 		}
-		return HibernateUtil.updateObject(sqlParam, null);
+		return HibernateUtil.updateEntityObject(sqlParam, null);
 	}
 
 	/**

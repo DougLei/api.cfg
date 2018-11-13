@@ -54,7 +54,7 @@ public final class UpdateAccountOnlineStatusThread extends HibernateOperDBThread
 		
 		data = accountOnlineStatus.toEntityJson();
 		parameters = new ArrayList<Object>(data.size()-1);
-		String updateHql = HibernateUtil.installUpdateHql(accountOnlineStatus.getEntityName(), accountOnlineStatus.getId(), data, parameters);
+		String updateHql = HibernateUtil.installEntityUpdateHql(accountOnlineStatus.getEntityName(), accountOnlineStatus.getId(), data, parameters);
 		
 		Query query = session.createQuery(updateHql);
 		HibernateUtil.setParamters(query, parameters);

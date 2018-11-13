@@ -55,7 +55,6 @@ public class PropCodeRuleUtil {
 	/**
 	 * 给table资源对象的属性设置最终的编码值
 	 * <p>添加表资源时使用</p>
-	 * @see com.king.tooth.web.processer.tableresource.post.SingleResourceProcesser
 	 * @param data
 	 * @param index
 	 * @param resourcePropCodeRule
@@ -64,8 +63,17 @@ public class PropCodeRuleUtil {
 		if(resourcePropCodeRule == null){
 			return;
 		}
-		
-		List<CfgPropCodeRule> rules = resourcePropCodeRule.getRules();
+		setTableResourceFinalCodeVal(data, index, resourcePropCodeRule.getRules());
+	}
+	
+	/**
+	 * 给table资源对象的属性设置最终的编码值
+	 * <p>添加表资源时使用</p>
+	 * @param data
+	 * @param index
+	 * @param rules
+	 */
+	public static void setTableResourceFinalCodeVal(JSONObject data, int index, List<CfgPropCodeRule> rules) {
 		if(rules != null && rules.size() > 0){
 			for (CfgPropCodeRule rule : rules) {
 				data.put(rule.getRefPropName(), rule.getFinalCodeVal(index));
@@ -77,7 +85,6 @@ public class PropCodeRuleUtil {
 	/**
 	 * 获取sql资源对象属性的最终编码值
 	 * <p>insert sql资源使用</p>
-	 * @see com.king.tooth.web.entity.request.valid.data.SqlResourceVerifier.analysisActualInValue()
 	 * @param sqlParamName sql参数名
 	 * @param paramIndex 第几个参数下标，即每个sql脚本参数的下标
 	 * @param resourcePropCodeRule
@@ -86,8 +93,19 @@ public class PropCodeRuleUtil {
 		if(resourcePropCodeRule == null){
 			return null;
 		}
+		return getSqlResourceFinalCodeVal(sqlParamName, paramIndex, resourcePropCodeRule.getRules());
 		
-		List<CfgPropCodeRule> rules = resourcePropCodeRule.getRules();
+	}
+	
+	/**
+	 * 获取sql资源对象属性的最终编码值
+	 * <p>insert sql资源使用</p>
+	 * @param sqlParamName
+	 * @param paramIndex
+	 * @param rules
+	 * @return
+	 */
+	public static Object getSqlResourceFinalCodeVal(String sqlParamName, int paramIndex, List<CfgPropCodeRule> rules) {
 		if(rules == null || rules.size() == 0){
 			return null;
 		}

@@ -1,8 +1,5 @@
 package com.king.tooth.web.processer.tableresource.put;
 
-import java.util.List;
-
-import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
@@ -43,21 +40,8 @@ public abstract class PutProcesser extends RequestProcesser {
 	 */
 	protected abstract boolean doPutProcess();
 	
-	/**
-	 * 获取包括update在内的，后续的hql语句，由各个子类实现
-	 * <p>例1： update from tableName set xxxx = ?, xxx = ?...</p>
-	 * @param updatedJsonObj 要被更新的json对象
-	 * @param params 记录set以及where id条件的值
-	 * @param hibernateDefineResourceProps 当前更新的资源，在系统hibernate定义的属性集合
-	 * @return
-	 */
-	protected abstract StringBuilder getUpdateHql(JSONObject updatedJsonObj, List<Object> params);
-	protected final StringBuilder updateHql = new StringBuilder();// 因为子类会多次操作这个对象，所以提取出来，作为属性，方便调用
-	
 	// ******************************************************************************************************
 	// 以下是给子类使用的通用方法
-	
-	
 	
 	/**
 	 * 修改数据后，组装ResponseBody对象

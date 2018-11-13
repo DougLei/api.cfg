@@ -44,7 +44,7 @@ public class SysUserController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(users, OperDataTypeConstants.ADD);
+		return getResultObject(users, null);
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public class SysUserController extends AController{
 				resultJsonArray.add(resultObject);
 			}
 		}
-		return getResultObject(users, OperDataTypeConstants.EDIT);
+		return getResultObject(users, null);
 	}
 	
 	/**

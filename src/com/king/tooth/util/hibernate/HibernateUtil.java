@@ -14,6 +14,7 @@ import org.hibernate.entity.HibernateClassMetadata;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.entity.IEntity;
@@ -196,12 +197,11 @@ public class HibernateUtil {
 	}
 	
 	//------------------------------------------------------------------------------------------------------
-	
 	/**
 	 * 保存对象
 	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return JSONObject
+	 * @return 
 	 */
 	public static JSONObject saveObject(IEntity entity, String shortDesc){
 		return saveObject(entity.getEntityName(), entity.toEntityJson(), shortDesc);
@@ -212,7 +212,7 @@ public class HibernateUtil {
 	 * @param entityName 实体名
 	 * @param data 要保存的对象数据
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return JSONObject
+	 * @return 
 	 */
 	public static JSONObject saveObject(String entityName, JSONObject data, String shortDesc){
 		ResourceHandlerUtil.initBasicPropValsForSave(entityName, data, shortDesc);
@@ -221,6 +221,7 @@ public class HibernateUtil {
 			
 			// 日志记录发出的hql/sql语句
 			CurrentThreadContext.toReqLogDataAddOperSqlLog("insert " + entityName, data);
+			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.ADD);
 			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
@@ -229,15 +230,54 @@ public class HibernateUtil {
 		}
 	}
 	
+	//------------------------------------------------------------------------------------------------------
+	/**
+	 * 删除对象
+	 * @param entity
+	 * @param shortDesc
+	 * @return
+	 */
+	public static JSONObject deleteObject(IEntity entity, String shortDesc){
+		return deleteObject(entity.getEntityName(), entity.toEntityJson());
+	}
+	
+	/**
+	 * 删除对象
+	 * @param entityName
+	 * @param data
+	 */
+	public static JSONObject deleteObject(String entityName, JSONObject data){
+		String deleteDataId = data.getString(ResourcePropNameConstants.ID);
+		if(deleteDataId == null){
+			throw new NullPointerException("要删除的数据id值不能为空");
+		}
+		try {
+			List<Object> parameters = new ArrayList<Object>(1);
+			parameters.add(deleteDataId);
+			
+			String deleteHql = "delete " + entityName + " where " + ResourcePropNameConstants.ID + "=?";
+			executeUpdateByHql(SqlStatementTypeConstants.DELETE, deleteHql, parameters);
+			
+			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.DELETE);
+			Log4jUtil.debug("删除数据成功[{}]", data);
+			return data;
+		} catch (Exception e) {
+			Log4jUtil.debug("删除数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			throw e;
+		}
+	}
+	
+	//------------------------------------------------------------------------------------------------------
 	/**
 	 * 修改对象
 	 * 通过拼接update hql语句修改对象
-	 * <p>目前这个方法，和通用表资源的update不是统一的，这个是开发代码资源专用的update方法</p>
+	 * <b>修改已有的实体类数据，例如CfgTable,CfgSql...</b>
+	 * <p>用在各个代码功能中，例如controller、service...，和updateObject方法在组装hql语句中有些区别</p>
 	 * @param entity
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
-	 * @return JSONObject
+	 * @return 
 	 */
-	public static JSONObject updateObject(IEntity entity, String shortDesc){
+	public static JSONObject updateEntityObject(IEntity entity, String shortDesc){
 		JSONObject data = entity.toEntityJson();
 		String updateId = data.getString(ResourcePropNameConstants.ID);
 		if(updateId == null){
@@ -247,11 +287,11 @@ public class HibernateUtil {
 		ResourceHandlerUtil.initBasicPropValsForUpdate(entity.getEntityName(), data, shortDesc);
 		try {
 			List<Object> parameters = new ArrayList<Object>(data.size()-1);
-			String updateHql = installUpdateHql(entity.getEntityName(), updateId, data, parameters);
+			String updateHql = installEntityUpdateHql(entity.getEntityName(), updateId, data, parameters);
 			
 			executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql, parameters);
 			
-			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_edit");
+			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.EDIT);
 			Log4jUtil.debug("修改数据成功[{}]", data);
 			return data;
 		} catch (Exception e) {
@@ -262,35 +302,122 @@ public class HibernateUtil {
 	
 	/**
 	 * 组装update hql语句
+	 * <b>组装已有的实体类数据update hql语句，例如CfgTable,CfgSql...</b>
+	 * <p>用在各个代码功能中，例如controller、service...，和installUpdateHql方法在组装hql语句中有些区别</p>
 	 * @param entityName
 	 * @param id
 	 * @param data
 	 * @param finalUpdateHql
 	 * @param parameters
 	 */
-	public static String installUpdateHql(String entityName, String id, Map<String, Object> data, List<Object> parameters){
-		StringBuilder finalUpdateHql = new StringBuilder();
-		finalUpdateHql.append("update ").append(entityName).append(" set ");
+	public static String installEntityUpdateHql(String entityName, String id, JSONObject data, List<Object> parameters){
+		StringBuilder finalUpdateEntityHql = new StringBuilder();
+		finalUpdateEntityHql.append("update ").append(entityName).append(" set ");
 		
 		Set<String> propNames = data.keySet();
 		for (String pn : propNames) {
 			if(pn.equalsIgnoreCase(ResourcePropNameConstants.ID) || (data.get(pn) == null)){
 				continue;
 			}
-			if(StrUtils.isEmpty(data.get(pn))){
-				finalUpdateHql.append(pn);
-				finalUpdateHql.append(" = null").append(",");
+			if(StrUtils.isEmpty(data.get(pn))){// 这块和installUpdateHql方法不同
+				finalUpdateEntityHql.append(pn);
+				finalUpdateEntityHql.append("=null").append(",");
 			}else{
-				finalUpdateHql.append(pn);
-				finalUpdateHql.append(" = ?").append(",");
+				finalUpdateEntityHql.append(pn);
+				finalUpdateEntityHql.append("=?").append(",");
 				parameters.add(data.get(pn));
 			}
 		}
 		
-		finalUpdateHql.setLength(finalUpdateHql.length()-1);
-		finalUpdateHql.append(" where ").append(ResourcePropNameConstants.ID).append(" =?");
+		finalUpdateEntityHql.setLength(finalUpdateEntityHql.length()-1);
+		finalUpdateEntityHql.append(" where ").append(ResourcePropNameConstants.ID).append("=?");
 		parameters.add(id);
 		
+		return finalUpdateEntityHql.toString();
+	}
+	
+	//------------------------------------------------------------------------------------------------------
+	/**
+	 * 修改对象
+	 * <b>修改没有的实体类数据update hql语句，主要是配置的各种表信息</b>
+	 * <p>用在修改表资源的功能中</p>
+	 * @param entityName
+	 * @param data
+	 * @param otherQueryCondHql 其他查询条件hql
+	 * @param otherQueryCondHqlParamValues 其他查询条件hql的参数值值
+	 */
+	public static JSONObject updateObject(String entityName, JSONObject data, String otherQueryCondHql, List<Object> otherQueryCondHqlParamValues){
+		String updateId = data.getString(ResourcePropNameConstants.ID);
+		if(updateId == null){
+			throw new NullPointerException("要修改的数据id值不能为空");
+		}
+		try {
+			List<Object> parameters = new ArrayList<Object>(data.size()-1);
+			String updateHql = installUpdateHql(entityName, data, parameters, otherQueryCondHql, otherQueryCondHqlParamValues);
+			
+			executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql, parameters);
+			
+			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.EDIT);
+			Log4jUtil.debug("修改数据成功[{}]", data);
+			return data;
+		} catch (Exception e) {
+			Log4jUtil.debug("修改数据[{}]失败，异常信息为：", data, ExceptionUtil.getErrMsg(e));
+			throw e;
+		}
+	}
+	
+	/**
+	 * 组装update hql语句
+	 * <b>组装没有的实体类数据update hql语句，主要是配置的各种表信息</b>
+	 * <p>用在修改表资源的功能中</p>
+	 * @param entityName
+	 * @param data
+	 * @param parameters
+	 * @param otherQueryCondHql 其他查询条件hql
+	 * @param otherQueryCondHqlParamValues 其他查询条件hql的参数值值
+	 * @return
+	 */
+	private static String installUpdateHql(String entityName, JSONObject data, List<Object> parameters, String otherQueryCondHql, List<Object> otherQueryCondHqlParamValues){
+		StringBuilder finalUpdateHql = new StringBuilder();
+		ResourceHandlerUtil.initBasicPropValsForUpdate(entityName, data, null);
+		
+		finalUpdateHql.setLength(0);
+		finalUpdateHql.append("update ").append(entityName).append(" set ");
+		
+		String whereIdHql = null;// 记录id的where条件，这个可有可无。还能根据builtinQueryCondMethodProcesser查询参数做为条件，更新数据
+		String idValue = null;// 记录id的值
+		
+		Set<String> propsNames = data.keySet();
+		
+		for (String pn : propsNames) {
+			if(pn.equalsIgnoreCase(ResourcePropNameConstants.ID)){
+				whereIdHql = " where " + ResourcePropNameConstants.ID + "=? ";
+				idValue = data.getString(pn);
+				continue;
+			}
+			if(data.get(pn) == null){// 这块和installEntityUpdateHql方法不同
+				finalUpdateHql.append(pn);
+				finalUpdateHql.append("=null").append(",");
+			}else{
+				finalUpdateHql.append(pn);
+				finalUpdateHql.append("=?").append(",");
+				parameters.add(data.get(pn));
+			}
+		}
+		finalUpdateHql.setLength(finalUpdateHql.length()-1);
+		
+		if(StrUtils.notEmpty(whereIdHql)){
+			finalUpdateHql.append(whereIdHql);
+			parameters.add(idValue);
+		}
+		if(StrUtils.notEmpty(otherQueryCondHql)){
+			otherQueryCondHql = otherQueryCondHql.replace("where", "and");// 去掉otherQueryCondHql的hql语句的where，换成and，如果有where的话
+			finalUpdateHql.append(otherQueryCondHql);
+			
+			if(otherQueryCondHqlParamValues != null && otherQueryCondHqlParamValues.size() > 0){
+				parameters.addAll(otherQueryCondHqlParamValues);
+			}
+		}
 		return finalUpdateHql.toString();
 	}
 	

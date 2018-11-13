@@ -91,7 +91,7 @@ public class CfgColumnService extends AService{
 			if(column.analysisOldColumnInfo(oldColumn)){
 				modifyTableIsBuildModel(column.getTableId(), null, 0);
 			}
-			return HibernateUtil.updateObject(column, null);
+			return HibernateUtil.updateEntityObject(column, null);
 		}
 		return operResult;
 	}

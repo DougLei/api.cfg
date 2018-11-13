@@ -3,10 +3,16 @@ package com.king.tooth.sys.entity.cfg.busi.model.resource.data;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.OperDataTypeConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
 import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 
@@ -27,12 +33,7 @@ public class BusiModelResourceData implements Serializable{
 	/**
 	 * 实际的数据
 	 */
-	private IJson data;
-	
-	/** 表资源对象 */
-	private CfgTable tableResource;
-	/** sql资源对象 */
-	private CfgSql sqlResource;
+	private IJson datas;
 	
 	/**
 	 * 字段编码规则对象集合
@@ -42,8 +43,8 @@ public class BusiModelResourceData implements Serializable{
 	// -----------------------------------------------------------
 	public BusiModelResourceData() {
 	}
-	public BusiModelResourceData(Object dataParentId, IJson ijsonData) {
-		this.data = ijsonData;
+	public BusiModelResourceData(Object dataParentId, IJson datas) {
+		this.datas = datas;
 		this.dataParentId = dataParentId.toString();
 	}
 	
@@ -54,11 +55,11 @@ public class BusiModelResourceData implements Serializable{
 	public void setDataParentId(String dataParentId) {
 		this.dataParentId = dataParentId;
 	}
-	public IJson getData() {
-		return data;
+	public IJson getDatas() {
+		return datas;
 	}
-	public void setData(IJson data) {
-		this.data = data;
+	public void setDatas(IJson datas) {
+		this.datas = datas;
 	}
 	public List<CfgPropCodeRule> getRules() {
 		return rules;
@@ -67,25 +68,84 @@ public class BusiModelResourceData implements Serializable{
 		this.rules = rules;
 	}
 
+	private CfgBusiModelResRelations busiModelResRelations;
+	/** 是否是表资源，如果不是，就是sql资源 */
+	private boolean isTableResource;
+	/** 引用的资源id */
+	private String refResourceId;
+	/** 引用的资源name */
+	private String refResourceName;
+	
 	/**
 	 * 进行业务资源数据验证
-	 * @param table
-	 * @param sql
+	 * @param busiModelResRelations
 	 * @return
 	 */
-	public String doBusiResourceDataValid(CfgTable table, CfgSql sql) {
+	public String doBusiResourceDataValid(CfgBusiModelResRelations busiModelResRelations) {
+		this.busiModelResRelations = busiModelResRelations;
+		CfgTable table = busiModelResRelations.getRefTable();
+		CfgSql sql = busiModelResRelations.getRefSql();
+		
 		if(table != null){
-			tableResource = table;
-			String tableResourceName = tableResource.getResourceName();
-			return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+tableResourceName+"]时，", tableResourceName, TableResourceValidUtil.getTableResourceMetadataInfos(tableResourceName), data, false, true);
+			isTableResource = true;
+			refResourceId = table.getId();
+			refResourceName = table.getResourceName();
+			
+			return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+refResourceName+"]时，", refResourceName, TableResourceValidUtil.getTableResourceMetadataInfos(refResourceName), datas, false, true);
 		}else if(sql != null){
-			sqlResource = sql;
-			return SqlResourceValidUtil.doValidAndSetActualParams(sqlResource, 
-						false, 
-						SqlResourceValidUtil.initActualParamsList(null, data), 
-						SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(sqlResource), 
-						SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(sqlResource));
+			refResourceId = sql.getId();
+			refResourceName = sql.getResourceName();
+			
+			return SqlResourceValidUtil.doValidAndSetActualParams(sql, false, SqlResourceValidUtil.initActualParamsList(null, datas), SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(sql), SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(sql));
 		}
-		throw new NullPointerException("进行业务资源数据验证时，传入的对象[table、sql]都为空，请联系后端系统开发人员");
+		throw new NullPointerException("进行业务资源数据验证时，传入对象[busiModelResRelations的refTable、refSql]都为空，请联系后端系统开发人员");
+	}
+	
+	/**
+	 * 保存业务数据
+	 */
+	public void saveBusiData(){
+		if(datas != null && datas.size() > 0){
+			rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
+			String refParentResourcePropName = busiModelResRelations.getRefParentResourcePropName();
+			Object operDataType = null;
+			Object operDataId = null;
+			
+			JSONObject data = null;
+			for(int i=0; i < datas.size(); i++){
+				data = datas.get(i);
+				data.put(refParentResourcePropName, dataParentId);
+				operDataType = data.get(ResourcePropNameConstants.OPER_DATA_TYPE);
+				
+				if(operDataType == null || OperDataTypeConstants.ADD.equals(operDataType)){
+					PropCodeRuleUtil.setTableResourceFinalCodeVal(data, i, rules);
+					HibernateUtil.saveObject(refResourceName, data, null);
+				}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
+					HibernateUtil.updateObject(refResourceName, data, null, null);
+				}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
+					operDataId = data.get(ResourcePropNameConstants.ID);
+					
+				}
+				
+//				
+//				saveData(requestBody.getRouteBody().getResourceName(), data);
+			}
+			
+			
+			if(isTableResource){
+				
+				
+				
+			}else{
+				
+			}
+		}
+	}
+	
+	/**
+	 * 清空数据
+	 */
+	public void clear() {
+		// TODO Auto-generated method stub
 	}
 }
