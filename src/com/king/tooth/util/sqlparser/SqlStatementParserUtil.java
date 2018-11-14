@@ -103,7 +103,7 @@ public class SqlStatementParserUtil {
 			throw new ArrayIndexOutOfBoundsException("目前系统只支持一次处理一条["+typeMap.get("type")+"]类型的sql脚本语句");
 		}
 		sql.setType(typeMap.get("type"));
-		sql.setConfType(sql.getType());
+		sql.setConfType(typeMap.get("confType"));
 		if(StrUtils.isEmpty(sql.getRequestMethod())){
 			sql.setRequestMethod(typeMap.get("reqMethod"));
 		}
@@ -129,7 +129,7 @@ public class SqlStatementParserUtil {
 	 * @return
 	 */
 	private static Map<String, String> getSqlScriptTypeMap(ESqlStatementType sqlStatementType) {
-		 Map<String, String> typeMap = new HashMap<String, String>(4);
+		 Map<String, String> typeMap = new HashMap<String, String>(5);
 		 typeMap.put("isOtherSqlType", "false");// 不在BuiltinDatabaseData常量中的，其他sql脚本类型
 		 typeMap.put("isUnique", "false");
 		 typeMap.put("reqMethod", ResourceInfoConstants.POST);
@@ -142,12 +142,15 @@ public class SqlStatementParserUtil {
 	        	 break;
 	         case sstupdate:
 	        	 typeMap.put("type", SqlStatementTypeConstants.UPDATE);
+	        	 typeMap.put("confType", SqlStatementTypeConstants.UPDATE);
 	        	 break;
 	         case sstinsert:
 	        	 typeMap.put("type", SqlStatementTypeConstants.INSERT);
+	        	 typeMap.put("confType", SqlStatementTypeConstants.INSERT);
 	        	 break;
 	         case sstdelete:
 	        	 typeMap.put("type", SqlStatementTypeConstants.DELETE);
+	        	 typeMap.put("confType", SqlStatementTypeConstants.DELETE);
 	        	 break;
 	         case sstplsql_createprocedure:
 	        	 typeMap.put("type", SqlStatementTypeConstants.PROCEDURE);

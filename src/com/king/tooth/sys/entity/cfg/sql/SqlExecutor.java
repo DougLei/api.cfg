@@ -60,7 +60,9 @@ public class SqlExecutor implements Serializable{
 					return jsonArray;
 				}
 			}else{
-				return "成功执行名为["+sql.getObjectName()+"]的存储过程";
+				JSONObject json = new JSONObject(1);
+				json.put("execProcedure", "成功执行名为["+sql.getObjectName()+"]的存储过程");
+				return json;
 			}
 		}else{
 			String[] modifySqlArr;

@@ -2,6 +2,7 @@ package test;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 
 public class TestMain {
 	public static void main(String[] args) {
@@ -15,7 +16,7 @@ public class TestMain {
 		d(jr);
 		System.out.println(jr);
 		
-		
+		System.out.println(IJsonUtil.getIJson("dfdfadsf"));
 		
 	}
 	

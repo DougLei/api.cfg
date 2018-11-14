@@ -81,11 +81,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	private CfgSql refSql;
 	
 	/**
-	 * 业务模型的资源数据
-	 * <p>存储实际传入的数据对象</p>
+	 * 业务模型的资源数据集合
+	 * <p>存储实际传入的数据对象集合</p>
 	 */
 	@JSONField(serialize = false)
-	private BusiModelResourceData resourceData;
+	private List<BusiModelResourceData> resourceDataList;
 	
 	/**
 	 * 子资源中关联父资源的属性名
@@ -135,9 +135,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	}
 	public String getRefParentResourcePropId() {
 		return refParentResourcePropId;
-	}
-	public BusiModelResourceData getResourceData() {
-		return resourceData;
 	}
 	public void setRefParentResourcePropId(String refParentResourcePropId) {
 		this.refParentResourcePropId = refParentResourcePropId;
@@ -315,7 +312,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	}
 	
 	public String validResourceData(BusiModelResourceData resourceData) {
-		this.resourceData = resourceData;
+		if(resourceDataList == null || resourceDataList.size() == 0){
+			resourceDataList = new ArrayList<BusiModelResourceData>();
+		}
+		resourceDataList.add(resourceData);
 		return resourceData.doBusiResourceDataValid(this);
 	}
 	
@@ -333,17 +333,24 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	}
 	
 	public void clear(){
-		if(resourceData != null){
-			resourceData.clear();
+		if(resourceDataList != null && resourceDataList.size()>0){
+			for (BusiModelResourceData resourceData : resourceDataList) {
+				resourceData.clear();
+			}
+			resourceDataList.clear();
 		}
 	}
 	
 	/**
 	 * 进行业务数据保存
 	 */
-	public Object doSaveBusiData(){
-		if(resourceData != null){
-			return resourceData.saveBusiData();
+	public List<Object> doSaveBusiDataList(){
+		if(resourceDataList != null && resourceDataList.size()>0){
+			List<Object> resultDatasList = new ArrayList<Object>(resourceDataList.size());
+			for (BusiModelResourceData resourceData : resourceDataList) {
+				resultDatasList.add(resourceData.saveBusiData());
+			}
+			return resultDatasList;
 		}
 		return null;
 	}

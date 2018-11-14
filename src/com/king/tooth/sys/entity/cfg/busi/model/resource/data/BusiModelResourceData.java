@@ -140,6 +140,7 @@ public class BusiModelResourceData implements Serializable{
 	
 	/**
 	 * 保存业务数据
+	 * <p>返回的object 要么是null，要么是JSONObject，要么是JSONArray</p>
 	 */
 	public Object saveBusiData(){
 		// 操作结果对象
@@ -171,7 +172,7 @@ public class BusiModelResourceData implements Serializable{
 					}
 				}
 			}
-			resultDatas = datas;
+			resultDatas = datas.getJson();
 		}else{
 			sqlParameterValues = new ArrayList<List<Object>>(20);
 			refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
