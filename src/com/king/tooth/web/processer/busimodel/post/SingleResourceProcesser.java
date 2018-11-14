@@ -39,7 +39,6 @@ public final class SingleResourceProcesser extends RequestProcesser {
 			JSONArray resultDataJSONArray = new JSONArray(busiModelResRelationsList.size());
 			for (CfgBusiModelResRelations busiModelResRelations : busiModelResRelationsList) {
 				JSONArray subResultDataJSONArray = recursiveDoSaveBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), recursiveLevel+1);
-				JSONArray tmpResultDatasJSONArray = null;
 				
 				List<Object> resultDatasList = busiModelResRelations.doSaveBusiDataList();
 				if(resultDatasList != null && resultDatasList.size() > 0){
@@ -47,18 +46,20 @@ public final class SingleResourceProcesser extends RequestProcesser {
 					Object resultDatas = null;
 					for(int i=0;i<size;i++){
 						resultDatas = resultDatasList.get(i);
-						if(resultDatas instanceof JSONObject){
-							((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray);
-						}else if(resultDatas instanceof JSONArray){
-							tmpResultDatasJSONArray = (JSONArray)resultDatas;
-							if(subResultDataJSONArray != null && i< subResultDataJSONArray.size() && i<tmpResultDatasJSONArray.size()){
-								if(tmpResultDatasJSONArray.get(i) == null){
-									tmpResultDatasJSONArray.add(i, new JSONObject(1));
+						resultDataJSONArray.add(resultDatas);
+						
+						if(resultDatas != null && subResultDataJSONArray != null){
+							if(resultDatas instanceof JSONObject){
+								((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray);
+							}else if(resultDatas instanceof JSONArray){
+								tmpResultDatasJSONArray = (JSONArray)resultDatas;
+								for(int j=0;j<tmpResultDatasJSONArray.size();j++){
+									if( j< subResultDataJSONArray.size()){
+										tmpResultDatasJSONArray.getJSONObject(j).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(j));
+									}
 								}
-								tmpResultDatasJSONArray.getJSONObject(i).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(i));
 							}
 						}
-						resultDataJSONArray.add(resultDatas);
 					}
 				}
 			}
@@ -66,6 +67,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		}
 		return null;
 	}
+	private JSONArray tmpResultDatasJSONArray;
 
 	public String getProcesserName() {
 		return "【Post-BusiModelResource】SingleResourceProcesser";
