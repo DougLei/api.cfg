@@ -120,7 +120,7 @@ public class SysRole extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("角色表");
-		table.setComments("角色表");
+		table.setRemark("角色表");
 		
 		
 		table.setColumns(getColumnList());

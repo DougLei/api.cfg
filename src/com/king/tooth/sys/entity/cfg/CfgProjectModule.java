@@ -196,7 +196,7 @@ public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("项目模块信息表");
-		table.setComments("项目模块信息表");
+		table.setRemark("项目模块信息表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

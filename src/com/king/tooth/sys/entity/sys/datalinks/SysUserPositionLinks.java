@@ -51,7 +51,7 @@ public class SysUserPositionLinks implements Serializable, ITable {
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("人员和职务的关联关系表");
-		table.setComments("人员和职务的关联关系表");
+		table.setRemark("人员和职务的关联关系表");
 		
 		table.setColumns(getColumnList());
 		return table;

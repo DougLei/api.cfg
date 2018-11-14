@@ -386,7 +386,7 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("用户信息表");
-		table.setComments("用户信息表");
+		table.setRemark("用户信息表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

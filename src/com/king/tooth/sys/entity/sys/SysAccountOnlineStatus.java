@@ -424,7 +424,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("账户在线状态信息表");
-		table.setComments("账户在线状态信息表");
+		table.setRemark("账户在线状态信息表");
 		
 		
 		table.setColumns(getColumnList());

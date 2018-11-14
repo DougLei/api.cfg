@@ -213,7 +213,7 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("账户表");
-		table.setComments("账户表");
+		table.setRemark("账户表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

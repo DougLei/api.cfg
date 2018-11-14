@@ -48,7 +48,7 @@ public class CfgProjectTableLinks implements Serializable, ITable {
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("项目和表的关系表");
-		table.setComments("项目和表的关系表");
+		table.setRemark("项目和表的关系表");
 		
 		table.setColumns(getColumnList());
 		return table;

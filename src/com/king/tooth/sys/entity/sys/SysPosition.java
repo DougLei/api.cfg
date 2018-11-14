@@ -96,7 +96,7 @@ public class SysPosition extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("职务表");
-		table.setComments("职务表");
+		table.setRemark("职务表");
 		
 		
 		table.setColumns(getColumnList());

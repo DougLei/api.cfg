@@ -128,7 +128,7 @@ public class SysOrg extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("组织机构表");
-		table.setComments("组织机构表");
+		table.setRemark("组织机构表");
 		
 		
 		table.setColumns(getColumnList());

@@ -286,7 +286,7 @@ public class CfgSqlResultset extends BasicEntity implements IEntity, IEntityProp
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("sql结果集信息表");
-		table.setComments("sql结果集信息表");
+		table.setRemark("sql结果集信息表");
 		
 		table.setColumns(getColumnList());
 		return table;

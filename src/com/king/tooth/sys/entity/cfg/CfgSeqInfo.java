@@ -78,7 +78,7 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("序列信息表");
-		table.setComments("序列信息表");
+		table.setRemark("序列信息表");
 		
 		table.setColumns(getColumnList());
 		return table;

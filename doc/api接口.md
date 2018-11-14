@@ -1397,7 +1397,7 @@
   "name":"",                                            --表的汉字名
   "tableName":"",                                       --表名
   "type":"",                                            --表类型：1:单表、2、表类型/游标类型
-  "comments":""                                         --注释
+  "remark":""                                           --注释
 }
 ```
 
@@ -1420,7 +1420,7 @@
   "name":"",                                            --表的汉字名
   "tableName":"",                                       --表名
   "type":"",                                            --表类型：1:单表、2、表类型/游标类型
-  "comments":""                                         --注释
+  "remark":""                                           --注释
 }
 ```
 
@@ -1582,7 +1582,7 @@
 - 请求体: 
 ```
 {
-  "caption": "",                                        --sql脚本汉字名
+  "name": "",                                           --sql脚本汉字名
   "resourceName": "",                                   --sql脚本资源名称
   "contents": "",                                       --sql脚本内容
   "requestMethod":"",                                   --请求资源的方法,get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none表示都不支持
@@ -1607,7 +1607,7 @@
 ```
 {
   "Id":"",                                              --主键
-  "caption": "",                                        --sql脚本汉字名
+  "name": "",                                           --sql脚本汉字名
   "resourceName": "",                                   --sql脚本资源名称
   "contents": "",                                       --sql脚本内容
   "requestMethod":"",                                   --请求资源的方法,get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，none表示都不支持

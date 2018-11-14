@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.entity.IEntity;
@@ -20,11 +19,6 @@ import com.king.tooth.util.StrUtils;
 @Table
 public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, IEntity{
 	
-	/**
-	 * 资源模型的描述
-	 */
-	private String comments;
-	
 	//-------------------------------------------------------------------------
 	
 	/**
@@ -33,12 +27,6 @@ public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, I
 	@JSONField(serialize = false)
 	private List<CfgBusiModelResRelations> busiModelResRelationsList;
 	
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
 	public List<CfgBusiModelResRelations> getBusiModelResRelationsList() {
 		return busiModelResRelationsList;
 	}
@@ -48,15 +36,11 @@ public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, I
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(5+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(6+7);
 		
+		columns.add(BuiltinObjectInstance.nameColumn);
 		columns.add(BuiltinObjectInstance.resourceNameColumn);
-		
-		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 200);
-		commentsColumn.setName("描述");
-		commentsColumn.setComments("描述");
-		columns.add(commentsColumn);
-		
+		columns.add(BuiltinObjectInstance.remarkColumn);
 		columns.add(BuiltinObjectInstance.isCreatedColumn);
 		columns.add(BuiltinObjectInstance.isEnabledColumn);
 		columns.add(BuiltinObjectInstance.requestMethodColumn);
@@ -67,7 +51,7 @@ public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, I
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("业务模型表");
-		table.setComments("业务模型表");
+		table.setRemark("业务模型表");
 		
 		table.setColumns(getColumnList());
 		return table;

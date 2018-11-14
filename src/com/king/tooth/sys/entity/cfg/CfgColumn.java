@@ -461,7 +461,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("字段数据信息资源对象表");
-		table.setComments("字段数据信息资源对象表");
+		table.setRemark("字段数据信息资源对象表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

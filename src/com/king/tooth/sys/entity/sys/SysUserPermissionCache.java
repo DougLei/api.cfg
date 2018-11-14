@@ -77,7 +77,7 @@ public class SysUserPermissionCache extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("系统用户权限缓存表");
-		table.setComments("系统用户权限缓存表");
+		table.setRemark("系统用户权限缓存表");
 		
 		
 		table.setColumns(getColumnList());

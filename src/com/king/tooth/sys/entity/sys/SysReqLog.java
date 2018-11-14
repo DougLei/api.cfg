@@ -255,7 +255,7 @@ public class SysReqLog extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("请求日志信息表");
-		table.setComments("请求日志信息表");
+		table.setRemark("请求日志信息表");
 		
 		
 		table.setColumns(getColumnList());

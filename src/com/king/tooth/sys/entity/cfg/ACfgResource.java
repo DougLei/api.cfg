@@ -1,6 +1,7 @@
 package com.king.tooth.sys.entity.cfg;
 
 import com.king.tooth.sys.entity.BasicEntity;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 资源抽象类
@@ -8,6 +9,11 @@ import com.king.tooth.sys.entity.BasicEntity;
  */
 @SuppressWarnings("serial")
 public abstract class ACfgResource extends BasicEntity implements ICfgResource{
+	
+	/**
+	 * 汉字描述名称
+	 */
+	private String name;
 	/**
 	 * 资源模型的资源名称
 	 */
@@ -29,7 +35,21 @@ public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 	 * <p>默认值：all</p>
 	 */
 	protected String requestMethod;
+	/**
+	 * 备注
+	 */
+	private String remark;
 	
+	
+	public String getName() {
+		if(StrUtils.isEmpty(name)){
+			name = resourceName;
+		}
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public Integer getIsCreated() {
 		return isCreated;
 	}
@@ -57,6 +77,13 @@ public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 	public void setRequestMethod(String requestMethod) {
 		this.requestMethod = requestMethod;
 	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
 	
 	public CfgResource turnToResource() {
 		CfgResource resource = new CfgResource();

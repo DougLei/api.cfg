@@ -80,7 +80,7 @@ public class TableImpl extends ATableHandler{
 	}
 	
 	protected void analysisTableComments(CfgTable table, boolean isAdd) {
-		if(table.getComments() != null){
+		if(table.getRemark() != null){
 			createCommentSql.append("execute ");
 			if(isAdd){
 				createCommentSql.append("sp_addextendedproperty");
@@ -88,7 +88,7 @@ public class TableImpl extends ATableHandler{
 				createCommentSql.append("sp_updateextendedproperty");
 			}
 			createCommentSql.append(" 'MS_Description','")
-							.append(table.getComments())
+							.append(table.getRemark())
 						    .append("','user','dbo','table','")
 						    .append(table.getTableName())
 						    .append("',null,null; ");

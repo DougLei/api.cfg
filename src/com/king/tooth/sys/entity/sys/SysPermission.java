@@ -191,7 +191,7 @@ public class SysPermission extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("权限信息表");
-		table.setComments("权限信息表");
+		table.setRemark("权限信息表");
 		
 		
 		table.setColumns(getColumnList());

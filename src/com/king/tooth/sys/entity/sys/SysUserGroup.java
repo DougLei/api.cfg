@@ -108,7 +108,7 @@ public class SysUserGroup extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("用户组表");
-		table.setComments("用户组表");
+		table.setRemark("用户组表");
 		
 		
 		table.setColumns(getColumnList());

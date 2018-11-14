@@ -106,7 +106,7 @@ public class CfgResource extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("资源信息表");
-		table.setComments("资源信息表");
+		table.setRemark("资源信息表");
 		table.setColumns(getColumnList());
 		return table;
 	}

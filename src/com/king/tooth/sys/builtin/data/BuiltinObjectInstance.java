@@ -127,11 +127,16 @@ public class BuiltinObjectInstance {
 	
 	// -------------------------------------------------------
 	/** 资源字段对象 */
+	public static final CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 100);
 	public static final CfgColumn resourceNameColumn = new CfgColumn("resource_name", DataTypeConstants.STRING, 60);
 	public static final CfgColumn isCreatedColumn = new CfgColumn("is_created", DataTypeConstants.INTEGER, 1);
 	public static final CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 	public static final CfgColumn requestMethodColumn = new CfgColumn("request_method", DataTypeConstants.STRING, 30);
+	public static final CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 200);
 	static{
+		nameColumn.setName("汉字描述名称");
+		nameColumn.setComments("汉字描述名称");
+		
 		resourceNameColumn.setName("资源名");
 		resourceNameColumn.setComments("资源名");
 		
@@ -146,5 +151,8 @@ public class BuiltinObjectInstance {
 		requestMethodColumn.setName("请求资源的方法");
 		requestMethodColumn.setComments("默认值：all，get/put/post/delete/all/none，多个可用,隔开；all表示支持全部，表示都不支持");
 		requestMethodColumn.setDefaultValue(ResourceInfoConstants.ALL);
+		
+		remarkColumn.setName("备注");
+		remarkColumn.setComments("备注");
 	}
 }

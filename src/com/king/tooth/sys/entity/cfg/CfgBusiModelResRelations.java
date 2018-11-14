@@ -189,7 +189,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("业务模型资源关系表");
-		table.setComments("业务模型资源关系表");
+		table.setRemark("业务模型资源关系表");
 		
 		table.setColumns(getColumnList());
 		return table;

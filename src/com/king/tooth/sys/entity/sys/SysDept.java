@@ -141,7 +141,7 @@ public class SysDept extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("部门表");
-		table.setComments("部门表");
+		table.setRemark("部门表");
 		
 		
 		table.setColumns(getColumnList());

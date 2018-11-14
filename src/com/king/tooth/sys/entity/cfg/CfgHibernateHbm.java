@@ -99,7 +99,7 @@ public class CfgHibernateHbm extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("hibernate的hbm内容表");
-		table.setComments("hibernate的hbm内容表");
+		table.setRemark("hibernate的hbm内容表");
 		
 		table.setColumns(getColumnList());
 		return table;

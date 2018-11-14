@@ -128,7 +128,7 @@ public class SysFileIELog extends BasicEntity implements IEntity{
 		CfgTable table = new CfgTable(toDropTable());
 		table.setResourceName(getEntityName());
 		table.setName("文件导入导出日志表");
-		table.setComments("文件导入导出日志表");
+		table.setRemark("文件导入导出日志表");
 		
 		table.setColumns(getColumnList());
 		return table;

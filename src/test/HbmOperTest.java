@@ -13,7 +13,7 @@ public class HbmOperTest {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>();
 		table.setId("12312");
 		table.setColumns(columns);
-		table.setComments("表注释表注释表注释");
+		table.setRemark("表注释表注释表注释");
 //		table.setTableName("Parent");
 		tabledatas.add(table);
 		

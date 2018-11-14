@@ -175,7 +175,7 @@ public class SysDataDictionary extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("数据字典表");
-		table.setComments("数据字典表");
+		table.setRemark("数据字典表");
 		
 		table.setColumns(getColumnList());
 		return table;

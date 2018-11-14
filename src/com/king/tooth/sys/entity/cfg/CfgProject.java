@@ -100,7 +100,7 @@ public class CfgProject extends BasicEntity implements IEntityPropAnalysis, IEnt
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("项目信息表表");
-		table.setComments("项目信息表表");
+		table.setRemark("项目信息表表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

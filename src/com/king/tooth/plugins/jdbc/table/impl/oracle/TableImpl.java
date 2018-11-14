@@ -80,11 +80,11 @@ public class TableImpl extends ATableHandler{
 	}
 	
 	protected void analysisTableComments(CfgTable table, boolean isAdd) {
-		if(table.getComments() != null){
+		if(table.getRemark() != null){
 			createCommentSql.append("comment on table ")
 							.append(table.getTableName())
 							.append(" is '")
-							.append(table.getComments())
+							.append(table.getRemark())
 							.append("';");
 		}
 	}

@@ -39,10 +39,6 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	 */
 	private String dbType;
 	/**
-	 * sql脚本的标题
-	 */
-	private String caption;
-	/**
 	 * sql脚本类型
 	 * <p>如果有多个sql脚本，以第一个sql脚本的类型为准</p>
 	 */
@@ -68,10 +64,6 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	private String parameterNameRecords;
 	@JSONField(serialize = false)
 	private List<SqlScriptParameterNameRecord> parameterNameRecordList;
-	/**
-	 * 备注
-	 */
-	private String comments;
 	
 	//--------------------------------------------------------
 	
@@ -157,15 +149,6 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	public void setContents(String contents) {
 		this.contents = contents;
 	}
-	public String getCaption() {
-		if(StrUtils.isEmpty(caption)){
-			caption = resourceName;
-		}
-		return caption;
-	}
-	public void setCaption(String caption) {
-		this.caption = caption;
-	}
 	public String getContents() {
 		return contents;
 	}
@@ -199,12 +182,6 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	}
 	public void setSqlParams(List<CfgSqlParameter> sqlParams) {
 		this.sqlParams = sqlParams;
-	}
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
 	}
 	public List<FinalSqlScriptStatement> getFinalSqlScriptList() {
 		return finalSqlScriptList;
@@ -301,11 +278,7 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 		dbTypeColumn.setComments("数据库类型");
 		columns.add(dbTypeColumn);
 		
-		CfgColumn captionColumn = new CfgColumn("caption", DataTypeConstants.STRING, 50);
-		captionColumn.setName("sql脚本的标题");
-		captionColumn.setComments("sql脚本的标题");
-		columns.add(captionColumn);
-		
+		columns.add(BuiltinObjectInstance.nameColumn);
 		columns.add(BuiltinObjectInstance.resourceNameColumn);
 		
 		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.STRING, 80);
@@ -334,11 +307,7 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 		parameterNameRecordsColumn.setComments("sql参数名的记录(json串)：记录第几个sql，都有哪些参数名，程序内部使用，不开放给用户");
 		columns.add(parameterNameRecordsColumn);
 		
-		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 200);
-		commentsColumn.setName("备注");
-		commentsColumn.setComments("备注");
-		columns.add(commentsColumn);
-		
+		columns.add(BuiltinObjectInstance.remarkColumn);
 		columns.add(BuiltinObjectInstance.isCreatedColumn);
 		columns.add(BuiltinObjectInstance.isEnabledColumn);
 		columns.add(BuiltinObjectInstance.requestMethodColumn);
@@ -349,7 +318,7 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("sql脚本信息表");
-		table.setComments("sql脚本信息表");
+		table.setRemark("sql脚本信息表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

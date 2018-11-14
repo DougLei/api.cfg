@@ -239,7 +239,7 @@ public class SysPushMessageInfo extends BasicEntity implements IEntity, Cloneabl
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("推送消息信息表");
-		table.setComments("推送消息信息表");
+		table.setRemark("推送消息信息表");
 		
 		
 		table.setColumns(getColumnList());

@@ -330,7 +330,7 @@ public class SysFile extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("文件表");
-		table.setComments("文件表");
+		table.setRemark("文件表");
 		
 		
 		table.setColumns(getColumnList());

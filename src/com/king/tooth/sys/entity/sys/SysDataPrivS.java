@@ -97,7 +97,7 @@ public class SysDataPrivS extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("数据权限信息表（简单）");
-		table.setComments("数据权限信息表（简单）");
+		table.setRemark("数据权限信息表（简单）");
 		
 		
 		table.setColumns(getColumnList());

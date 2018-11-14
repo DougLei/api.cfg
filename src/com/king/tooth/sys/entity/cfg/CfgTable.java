@@ -21,10 +21,7 @@ import com.king.tooth.util.StrUtils;
 @SuppressWarnings("serial")
 @Table
 public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEntity{
-	/**
-	 * 显示的汉字名称
-	 */
-	private String name;
+
 	/**
 	 * 表名
 	 */
@@ -39,10 +36,6 @@ public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEnti
 	 * <p>默认值:1</p>
 	 */
 	private Integer type;
-	/**
-	 * 注释
-	 */
-	private String comments;
 	/**
 	 * 是否建模
 	 * <p>默认值为0</p>
@@ -82,15 +75,6 @@ public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEnti
 	}
 	
 	//-------------------------------------------------------------------------
-	public String getName() {
-		if(StrUtils.isEmpty(name)){
-			name = resourceName;
-		}
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public String getDbType() {
 		return dbType;
 	}
@@ -118,12 +102,6 @@ public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEnti
 	public void setType(Integer type) {
 		this.type = type;
 	}
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
@@ -150,10 +128,7 @@ public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEnti
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(10+7);
 		
-		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 100);
-		nameColumn.setName("显示的汉字名称");
-		nameColumn.setComments("显示的汉字名称");
-		columns.add(nameColumn);
+		columns.add(BuiltinObjectInstance.nameColumn);
 		
 		CfgColumn tableNameColumn = new CfgColumn("table_name", DataTypeConstants.STRING, 80);
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
@@ -180,11 +155,7 @@ public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEnti
 		typeColumn.setDefaultValue("1");
 		columns.add(typeColumn);
 		
-		CfgColumn commentsColumn = new CfgColumn("comments", DataTypeConstants.STRING, 200);
-		commentsColumn.setName("注释");
-		commentsColumn.setComments("注释");
-		columns.add(commentsColumn);
-		
+		columns.add(BuiltinObjectInstance.remarkColumn);
 		columns.add(BuiltinObjectInstance.isCreatedColumn);
 		
 		CfgColumn isBuildModelColumn = new CfgColumn("is_build_model", DataTypeConstants.INTEGER, 1);
@@ -202,7 +173,7 @@ public class CfgTable extends ACfgResource implements IEntityPropAnalysis, IEnti
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("表信息表");
-		table.setComments("表信息表");
+		table.setRemark("表信息表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

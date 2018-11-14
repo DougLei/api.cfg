@@ -151,7 +151,7 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("属性编码规则表");
-		table.setComments("属性编码规则表");
+		table.setRemark("属性编码规则表");
 		
 		table.setColumns(getColumnList());
 		return table;

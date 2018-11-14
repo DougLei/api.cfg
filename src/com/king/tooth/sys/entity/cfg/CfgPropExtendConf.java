@@ -113,7 +113,7 @@ public class CfgPropExtendConf extends BasicEntity implements IEntity, IEntityPr
 		CfgTable table = new CfgTable(toDropTable());
 		table.setResourceName(getEntityName());
 		table.setName("属性扩展配置信息表");
-		table.setComments("属性扩展配置信息表");
+		table.setRemark("属性扩展配置信息表");
 		
 		table.setColumns(getColumnList());
 		return table;

@@ -143,7 +143,7 @@ public class CfgCodeDataDictionary extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("编码数据字典表");
-		table.setComments("编码数据字典表");
+		table.setRemark("编码数据字典表");
 		
 		table.setColumns(getColumnList());
 		return table;

@@ -399,7 +399,7 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("sql脚本参数信息表");
-		table.setComments("sql脚本参数信息表");
+		table.setRemark("sql脚本参数信息表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());

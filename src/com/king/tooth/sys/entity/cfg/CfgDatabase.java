@@ -205,7 +205,7 @@ public class CfgDatabase extends BasicEntity implements IEntityPropAnalysis, IEn
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("数据库信息表");
-		table.setComments("数据库信息表");
+		table.setRemark("数据库信息表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
