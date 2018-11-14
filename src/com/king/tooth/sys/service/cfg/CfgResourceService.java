@@ -32,7 +32,7 @@ public class CfgResourceService extends AService{
 	 * @param resourceId
 	 */
 	public void deleteCfgResource(String resourceId){
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgResource where refResourceId = ? and projectId = ?", resourceId, CurrentThreadContext.getProjectId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgResource where refResourceId = ? and projectId = ? and customerId=?", resourceId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 	}
 	
 	/**
@@ -68,13 +68,24 @@ public class CfgResourceService extends AService{
 	}
 	
 	/**
-	 * 判断资源是否存在
+	 * 根据关联的资源名，判断资源是否存在
 	 * @param resourceName
 	 * @return
 	 */
-	public boolean resourceIsExists(String resourceName){
+	public boolean resourceIsExistByRefResourceName(String resourceName){
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryResourceIsExistsHql, resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		return count > 0;
 	}
 	private static final String queryResourceIsExistsHql = "select count("+ResourcePropNameConstants.ID+") from CfgResource where resourceName=? and projectId=? and customerId=?";
+	
+	/**
+	 * 根据关联的资源id，判断资源是否存在
+	 * @param resourceId
+	 * @return
+	 */
+	public boolean resourceIsExistByRefResourceId(String resourceId){
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryResourceIsExistsByResourceIdHql, resourceId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		return count > 0;
+	}
+	private static final String queryResourceIsExistsByResourceIdHql = "select count("+ResourcePropNameConstants.ID+") from CfgResource where refResourceId=? and projectId=? and customerId=?";
 }

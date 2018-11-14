@@ -80,16 +80,16 @@ public class CfgSqlService extends AService {
 	
 	/**
 	 * 验证sql脚本资源名是否存在
-	 * @param table
-	 * @return operResult
+	 * @param sqlScript
+	 * @return 
 	 */
 	private String validSqlScriptResourceNameIsExists(CfgSql sqlScript) {
 //		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from CfgSql where resourceName = ? and createUserId = ? and customerId = ?", sqlScript.getResourceName(), CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(), CurrentThreadContext.getCustomerId());
 //		if(count > 0){
 //			return "您已经创建过相同sql脚本资源名["+sqlScript.getResourceName()+"]的数据";
 //		}
-		if(BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).resourceIsExists(sqlScript.getResourceName())){
-			return "系统中已经存在相同的资源名["+sqlScript.getResourceName()+"]的数据，请修sql脚本资源名";
+		if(BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).resourceIsExistByRefResourceName(sqlScript.getResourceName())){
+			return "系统中已经存在相同资源名["+sqlScript.getResourceName()+"]的数据，请修sql脚本资源名";
 		}
 		return null;
 	}

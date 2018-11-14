@@ -3,6 +3,8 @@ package com.king.tooth.sys.code.resource;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.king.tooth.sys.controller.cfg.CfgBusiModelController;
+import com.king.tooth.sys.controller.cfg.CfgBusiModelResRelationsController;
 import com.king.tooth.sys.controller.cfg.CfgColumnController;
 import com.king.tooth.sys.controller.cfg.CfgDatabaseController;
 import com.king.tooth.sys.controller.cfg.CfgProjectController;
@@ -106,6 +108,22 @@ public class CodeResourceMapping {
 		put("/sql_parameter/add/post", CfgSqlParameterController.class, "add");
 		put("/sql_parameter/update/put", CfgSqlParameterController.class, "update");
 		put("/sql_parameter/delete/delete", CfgSqlParameterController.class, "delete");
+		
+		// 业务模型操作
+		put("/CfgBusiModel_post", CfgBusiModelController.class, "add");
+		put("/CfgBusiModel_put", CfgBusiModelController.class, "update");
+		put("/CfgBusiModel_delete", CfgBusiModelController.class, "delete");
+		put("/busi/model/add/post", CfgBusiModelController.class, "add");
+		put("/busi/model/update/put", CfgBusiModelController.class, "update");
+		put("/busi/model/delete/delete", CfgBusiModelController.class, "delete");
+		
+		// 业务模型资源关系操作
+		put("/CfgBusiModelResRelations_post", CfgBusiModelResRelationsController.class, "add");
+		put("/CfgBusiModelResRelations_put", CfgBusiModelResRelationsController.class, "update");
+		put("/CfgBusiModelResRelations_delete", CfgBusiModelResRelationsController.class, "delete");
+		put("/busi/model/resource/relations/add/post", CfgBusiModelResRelationsController.class, "add");
+		put("/busi/model/resource/relations/update/put", CfgBusiModelResRelationsController.class, "update");
+		put("/busi/model/resource/relations/delete/delete", CfgBusiModelResRelationsController.class, "delete");
 		
 		// 用户操作
 		put("/SysUser_post", SysUserController.class, "add");

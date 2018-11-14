@@ -3,7 +3,11 @@ package com.king.tooth.sys.service.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
+import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.service.AService;
@@ -18,8 +22,73 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 @Service
 public class CfgBusiModelService extends AService{
 
+	/**
+	 * 验证业务模型资源名是否存在
+	 * @param busiModel
+	 * @return 
+	 */
+	private String validBusiModelResourceNameIsExists(CfgBusiModel busiModel) {
+		if(BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).resourceIsExistByRefResourceName(busiModel.getResourceName())){
+			return "系统中已经存在相同资源名["+busiModel.getResourceName()+"]的数据，请修改业务模型的资源名";
+		}
+		return null;
+	}
 	
+	/**
+	 * 保存业务模型
+	 * @param busiModel
+	 * @return
+	 */
+	public Object saveBusiModel(CfgBusiModel busiModel) {
+		String operResult = validBusiModelResourceNameIsExists(busiModel);
+		if(operResult == null){
+			JSONObject busiModelJsonObject = HibernateUtil.saveObject(busiModel, null);
+			String busiModelId = busiModelJsonObject.getString(ResourcePropNameConstants.ID);
+			
+			// 因为保存资源数据的时候，需要busiModel对象的id，所以放到最后
+			busiModel.setId(busiModelId);
+			BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).saveCfgResource(busiModel);
+		
+			return busiModelJsonObject;
+		}
+		return operResult;
+	}
 	
+	/**
+	 * 修改业务模型
+	 * @param busiModel
+	 * @return
+	 */
+	public Object updateBusiModel(CfgBusiModel busiModel) {
+		CfgBusiModel oldBusiModel = getObjectById(busiModel.getId(), CfgBusiModel.class);
+		if(oldBusiModel == null){
+			return "没有找到id为["+busiModel.getId()+"]的业务模型对象信息";
+		}
+		String operResult = null;
+		if(!oldBusiModel.getResourceName().equals(busiModel.getResourceName())){
+			operResult = validBusiModelResourceNameIsExists(busiModel);
+		}
+		
+		if(operResult == null){
+			if(busiModel.isUpdateResourceInfo(oldBusiModel)){
+				BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).updateResourceInfo(busiModel.getId(), busiModel.getResourceName(), busiModel.getRequestMethod(), busiModel.getIsEnabled());
+			}
+			return HibernateUtil.updateEntityObject(busiModel, null);
+		}
+		return operResult;
+	}
+
+	/**
+	 * 删除业务模型
+	 * @param busiModelId
+	 * @return
+	 */
+	public Object deleteBusiModel(String busiModelId) {
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgBusiModel where "+ResourcePropNameConstants.ID+" = ?", busiModelId);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgBusiModelResRelations where refBusiModelId = ?", busiModelId);
+		BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(busiModelId);
+		return null;
+	}
 	
 	// -----------------------------------------------------------------------------
 	/**

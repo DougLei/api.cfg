@@ -37,6 +37,9 @@ public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 		this.isCreated = isCreated;
 	}
 	public Integer getIsEnabled() {
+		if(isEnabled == null){
+			isEnabled=1;
+		}
 		return isEnabled;
 	}
 	public void setIsEnabled(Integer isEnabled) {
@@ -59,7 +62,7 @@ public abstract class ACfgResource extends BasicEntity implements ICfgResource{
 		CfgResource resource = new CfgResource();
 		resource.setRefResourceId(id);
 		resource.setResourceName(resourceName);
-		resource.setIsEnabled(isEnabled);
+		resource.setIsEnabled(getIsEnabled());
 		resource.setRequestMethod(requestMethod);
 		return resource;
 	}

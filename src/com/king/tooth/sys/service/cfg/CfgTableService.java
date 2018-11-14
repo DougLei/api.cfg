@@ -39,7 +39,7 @@ public class CfgTableService extends AService {
 //		if(count > 0){
 //			return "您已经创建过相同表名["+table.getTableName()+"]的数据";
 //		}
-		if(BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).resourceIsExists(table.getResourceName())){
+		if(BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).resourceIsExistByRefResourceName(table.getResourceName())){
 			return "系统中已经存在相同的资源名["+table.getResourceName()+"]的数据，请修改表名";
 		}
 		return null;
@@ -148,7 +148,7 @@ public class CfgTableService extends AService {
 			}
 			
 			if(operResult == null){
-				if(table.isUpdateResourceInfo(oldTable)){
+				if(oldTable.getIsBuildModel() == 1 && table.isUpdateResourceInfo(oldTable)){
 					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).updateResourceInfo(table.getId(), table.getResourceName(), table.getRequestMethod(), table.getIsEnabled());
 				}
 				return HibernateUtil.updateEntityObject(table, null);

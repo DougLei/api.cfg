@@ -93,6 +93,7 @@ public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, I
 		String result = validNotNullProps();
 		if(result == null){
 			requestMethod = ResourceInfoConstants.POST;
+			this.isCreated =1;
 		}
 		return result;
 	}
