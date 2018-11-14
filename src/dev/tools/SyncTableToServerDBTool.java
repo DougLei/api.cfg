@@ -9,8 +9,6 @@ import java.sql.Statement;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgBusiModel;
-import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgResource;
@@ -29,8 +27,6 @@ public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new CfgBusiModel().toCreateTable(),
-				new CfgBusiModelResRelations().toCreateTable()
 				);
 	}
 	
@@ -40,6 +36,9 @@ public final class SyncTableToServerDBTool extends AService{
 	 * @param tables
 	 */
 	private static void syncTablesToService(CfgTable... tables){
+		if(tables == null || tables.length == 0){
+			return;
+		}
 		// 服务器数据库对象
 		CfgDatabase serviceDatabaseInstance = new CfgDatabase();
 		// 服务器数据库连接信息

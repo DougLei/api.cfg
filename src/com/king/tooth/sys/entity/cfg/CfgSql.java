@@ -407,16 +407,25 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 					if(result != null){
 						return "["+result+"]错误！存储过程中不能使用[$xxx$]的变量声明方式，请将需要传入的变量写到存储过程的参数列表中";
 					}
-					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this);
+					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this, false);
 				}
 				// 如果是视图，则不用解析参数，只要解析出视图名即可
 				else if(SqlStatementTypeConstants.VIEW.equals(this.type)){ 
-					SqlStatementParserUtil.analysisViewName(this);
+					SqlStatementParserUtil.analysisViewName(this, false);
 				}
 				// 否则是一般sql脚本，解析[$xxx$]的参数
 				else{ 
 					SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this, false);// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
 					this.isCreated = 1;
+				}
+			}else{
+				// 如果是存储过程，则用另一个方法处理，解析出参数
+				if(SqlStatementTypeConstants.PROCEDURE.equals(this.type)){ 
+					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this, true);
+				}
+				// 如果是视图，则不用解析参数，只要解析出视图名即可
+				else if(SqlStatementTypeConstants.VIEW.equals(this.type)){ 
+					SqlStatementParserUtil.analysisViewName(this, true);
 				}
 			}
 			
