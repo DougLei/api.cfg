@@ -75,7 +75,7 @@ public class BusiModelResourceData implements Serializable{
 		try {
 			this.busiModelResRelations = busiModelResRelations;
 			CfgTable refTable = busiModelResRelations.getRefTable();
-			refSql = busiModelResRelations.getRefSql();
+			CfgSql refSql = busiModelResRelations.getRefSqlForValid();
 			
 			String validResult = null;
 			if(refTable != null){
@@ -141,14 +141,6 @@ public class BusiModelResourceData implements Serializable{
 	}
 
 	// -----------------------------------------------------------
-	/** 引用的sql资源 */
-	private CfgSql refSql;
-	/**
-	 * sql语句中的参数值集合
-	 * <p>可能有多个sql语句，所有用集合的集合封装参数</p>
-	 */
-	private List<List<Object>> sqlParameterValues;
-	
 	/**
 	 * 保存业务数据
 	 * <p>返回的object 要么是null，要么是JSONObject，要么是JSONArray</p>
@@ -182,9 +174,20 @@ public class BusiModelResourceData implements Serializable{
 			}
 			resultDatas = datas.getJson();
 		}else{
-			sqlParameterValues = new ArrayList<List<Object>>(20);
+			CfgSql refSql = busiModelResRelations.getRefSqlForExecute();
+			List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>(20);
 			refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
 			resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas, rules);
+			
+			// 清除sql语句中的参数值集合
+			if(sqlParameterValues != null && sqlParameterValues.size() > 0){
+				for(List<Object> list : sqlParameterValues){
+					if(list != null && list.size() > 0){
+						list.clear();
+					}
+				}
+				sqlParameterValues.clear();
+			}
 		}
 		return resultDatas;
 	}
@@ -193,18 +196,6 @@ public class BusiModelResourceData implements Serializable{
 	 * 清空数据
 	 */
 	public void clear() {
-		// 清除sql语句中的参数值集合
-		if(sqlParameterValues != null && sqlParameterValues.size() > 0){
-			for(List<Object> list : sqlParameterValues){
-				if(list != null && list.size() > 0){
-					list.clear();
-				}
-			}
-			sqlParameterValues.clear();
-		}
-		if(refSql != null){
-			refSql.clear();
-		}
 		if(rules != null && rules.size() > 0){
 			rules.clear();
 		}

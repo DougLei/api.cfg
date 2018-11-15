@@ -83,7 +83,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 关联的sql资源对象
 	 */
 	@JSONField(serialize = false)
-	private CfgSql refSql;
+	private List<CfgSql> refSqlList;
 	
 	/**
 	 * 业务模型的资源数据集合
@@ -316,8 +316,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 			}
 			return refTable;
 		}else if(refResourceType == REF_RESOURCE_TYPE_CFG_SQL){
-			if(refSql == null){
+			CfgSql refSql = null;
+			if(refSqlList == null){
+				refSqlList = new ArrayList<CfgSql>();
 				refSql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceById(refResourceId);
+				refSqlList.add(refSql);
 			}
 			return refSql;
 		}
@@ -332,7 +335,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
 			return refTable.getResourceName();
 		}else{
-			return refSql.getResourceName();
+			return refSqlList.get(0).getResourceName();
 		}
 	}
 	
@@ -349,13 +352,40 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		return refTable;
 	}
 	
-	public CfgSql getRefSql() {
+	/**
+	 * 获取引用的sql对象去验证
+	 * @return
+	 */
+	public CfgSql getRefSqlForValid() {
 		setRefResource();
-		if(refSql != null && !refSql.getIncludeAllInfo()){
-			BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
+		CfgSql refSql = null;
+		if(refSqlList != null){
+			if(sqlForValidIndex == 0){
+				refSql = refSqlList.get(sqlForValidIndex++);
+				if(refSql != null && !refSql.getIncludeAllInfo()){
+					BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
+				}
+			}else{
+				refSql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceAllInfoById(refSqlList.get(0).getId());
+				refSqlList.add(refSql);
+			}
 		}
 		return refSql;
 	}
+	private int sqlForValidIndex;
+	
+	/**
+	 * 获取引用的sql对象去执行
+	 * @return
+	 */
+	public CfgSql getRefSqlForExecute() {
+		CfgSql refSql = null;
+		if(refSqlList != null){
+			refSql = refSqlList.get(sqlForExecuteIndex++);
+		}
+		return refSql;
+	}
+	private int sqlForExecuteIndex;
 	
 	public void clear(){
 		if(resourceDataList != null && resourceDataList.size()>0){
