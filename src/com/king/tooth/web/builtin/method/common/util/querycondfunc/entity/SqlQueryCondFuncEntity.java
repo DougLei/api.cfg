@@ -18,7 +18,7 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 		this.propName = propName;
 		this.dataType = dataType;
 		analysisQueryParams(value);
-		modifyPropName(NamingProcessUtil.propNameTurnColumnName(this.propName));
+		modifyPropNameToColumnName();
 	}
 	
 	/**
@@ -81,15 +81,10 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 	}
 	
 	/**
-	 * 是否修改过propName属性的值
-	 * 修改过就不能再修改
+	 * 将属性名转换为列名
+	 * @param columnName
 	 */
-	private boolean isModifiedPropName; 
-	private void modifyPropName(String propName){
-		if(isModifiedPropName){
-			return;
-		}
-		isModifiedPropName = true;
-		this.propName = propName;
+	private void modifyPropNameToColumnName(){
+		this.propName = NamingProcessUtil.propNameTurnColumnName(this.propName);
 	}
 }
