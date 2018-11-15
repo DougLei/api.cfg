@@ -72,6 +72,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 			IJson ijsonData = null;
 			int ijsonDataSize = 0;
 			JSONObject json = null;
+			String refResourceIdPropName = null;
 			Object dataParentIdObj = null;
 			for(int i = 0; i < busiModelResRelationsListSize; i++){
 				busiModelResRelations = busiModelResRelationsList.get(i);
@@ -85,22 +86,20 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 				if(ijsonData == null || (ijsonDataSize = ijsonData.size()) == 0){
 					return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据不能为空";
 				}
+				refResourceIdPropName = busiModelResRelations.getRefResourceIdPropName();
 				
-				// 如果是sql资源，要处理每个对象主键，如果没有就要赋值
-				if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_SQL){
-					for(int j=0;j<ijsonDataSize;j++){
-						json = ijsonData.get(j);
-						dataParentIdObj = json.get(busiModelResRelations.getRefResourceIdPropName());
-						if(StrUtils.isEmpty(dataParentIdObj)){
-							json.put(busiModelResRelations.getRefResourceIdPropName(), ResourceHandlerUtil.getIdentity());
-						}
+				// 处理每个对象主键，如果没有就要赋值
+				for(int j=0;j<ijsonDataSize;j++){
+					json = ijsonData.get(j);
+					if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+						json.put(refResourceIdPropName, ResourceHandlerUtil.getIdentity());
 					}
 				}
 				
 				if(busiModelResRelations.haveSubBusiModelResRelationsList()){
 					for(int j=0;j<ijsonDataSize;j++){
 						json = ijsonData.get(j);
-						dataParentIdObj = json.get(busiModelResRelations.getRefResourceIdPropName());
+						dataParentIdObj = json.get(refResourceIdPropName);
 						validResult = recursiveValidBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), IJsonUtil.getIJson(json.remove(busiModelResRelations.getRefSubResourceKeyName())), dataParentIdObj.toString(), recursiveLevel+1);
 						if(validResult != null){
 							return validResult;

@@ -81,6 +81,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	/**
 	 * 关联的sql资源对象
+	 * <p>每组sql参数，都解析成一个cfgsql对象，他们共享验证的元数据信息</p>
 	 */
 	@JSONField(serialize = false)
 	private List<CfgSql> refSqlList;
@@ -372,6 +373,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		}
 		return refSql;
 	}
+	/** 用来标识，如果该参数值=0，标识取refSqlList第一个sql去验证，后续该值自增1，再做验证，就新创建一个sql对象去做数据验证，并将该对象添加到refSqlList集合中 */
 	private int sqlForValidIndex;
 	
 	/**
@@ -385,7 +387,9 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		}
 		return refSql;
 	}
+	/** 执行sql时，标识依次取refSqlList中的sql去操作 */
 	private int sqlForExecuteIndex;
+	
 	
 	public void clear(){
 		if(resourceDataList != null && resourceDataList.size()>0){
