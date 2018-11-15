@@ -9,7 +9,7 @@ import java.sql.Statement;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.plugins.jdbc.DBLink;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgBusiModel;
+import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgResource;
@@ -28,7 +28,7 @@ public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new CfgBusiModel().toCreateTable()
+				new CfgBusiModelResRelations().toCreateTable()
 				);
 	}
 	
