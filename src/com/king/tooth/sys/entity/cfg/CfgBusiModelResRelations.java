@@ -392,6 +392,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	
 	public void clear(){
+		if(refSqlList != null && refSqlList.size() > 0){
+			for (CfgSql refSql : refSqlList) {
+				refSql.clear();
+			}
+		}
 		if(resourceDataList != null && resourceDataList.size()>0){
 			for (BusiModelResourceData resourceData : resourceDataList) {
 				resourceData.clear();
