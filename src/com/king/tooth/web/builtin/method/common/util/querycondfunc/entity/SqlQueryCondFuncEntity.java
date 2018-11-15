@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinQueryParameters;
 import com.king.tooth.util.NamingProcessUtil;
 
@@ -81,44 +79,6 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 		this.values = processValuesByDataType(result, false);
 		result.clear();
 	}
-	
-	/**
-	 * 处理一些特殊的内容
-	 * 有什么其他，可以自行向里面添加
-	 */
-	private void processSpecialThings() {
-		// 1.如果propName为_ids，则必须把propName改为SystemConstants.ID
-		// key=_ids是客户端请求传递过来的，属于平台内置处理的功能
-		if(this.propName.equals(BuiltinParameterKeys._IDS)){
-			modifyPropName(ResourcePropNameConstants.ID);
-		}
-		
-		// 2.如果propName为_resourceid，则必须把propName改为SystemConstants.ID
-		// 这个key值来自      @see PlatformServlet.processSpecialData()
-		if(this.propName.equals(BuiltinParameterKeys.RESOURCE_ID)){
-			modifyPropName(ResourcePropNameConstants.ID);
-		}
-		
-		// 3.如果ne方法，有多个值，则改为调用!in的方法，这个可以提高效率
-		if(this.methodName.equals("ne") && this.values.length > 1){
-			this.methodName = "in";
-			this.isInversion = true;
-		}
-		
-		// 4.如果eq方法，有多个值，则改为调用in的方法，这个可以提高效率
-		if(this.methodName.equals("eq") && this.values.length > 1){
-			this.methodName = "in";
-		}
-		
-		// 5.如果in方法，但只有一个值，则改为调用eq/ne的方法，这个可以提高效率
-		if(this.methodName.equals("in") && this.values.length == 1){
-			if(isInversion){ // 如果取反
-				this.methodName = "ne";
-			}else{
-				this.methodName = "eq";
-			}
-		}
-	}	
 	
 	/**
 	 * 是否修改过propName属性的值

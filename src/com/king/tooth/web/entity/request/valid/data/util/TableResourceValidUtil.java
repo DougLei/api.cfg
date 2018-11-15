@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.DataTypeConstants;
+import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -121,6 +122,22 @@ public class TableResourceValidUtil {
 			// 验证每个对象的属性，是否存在
 			propKeys = data.keySet();
 			for (String propName : propKeys) {
+				/*
+				 * 验证$operDataType$参数值
+				 * 如果没有值，则不做验证
+				 * 如果有值，则验证，值只能为 add、edit、 delete
+				 */
+				if(ResourcePropNameConstants.OPER_DATA_TYPE.equals(propName)){
+					dataValue = data.get(propName);
+					if(dataValue == null){
+						return desc + "第"+(i+1)+"个对象，$operDataType$的参数值不能为空";
+					}
+					if(!OperDataTypeConstants.ADD.equals(dataValue) && !OperDataTypeConstants.EDIT.equals(dataValue) && !OperDataTypeConstants.DELETE.equals(dataValue)){
+						return desc + "第"+(i+1)+"个对象，$operDataType$的参数值只能为 add、edit、 delete";
+					}
+					continue;
+				}
+				
 				if(validPropUnExists(false, propName, resourceMetadataInfos)){
 					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
 				}

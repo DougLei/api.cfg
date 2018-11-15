@@ -35,7 +35,7 @@ public class ResourceDataVerifier {
 			resourceVerifier = new SqlResourceVerifier(requestBody);
 		}else if(resource.isCodeResource()){
 			resourceVerifier = new CodeResourceVerifier(requestBody);
-		}else if(resource.isBuiltinResource()){
+		}else if(resource.isBusinessModelResource()){
 			resourceVerifier = new BusiModelResourceVerifier(requestBody);
 		}else{
 			return "系统目前只存在[表、sql脚本、代码、业务模型]四种资源类型，本次请求的资源类型为["+requestBody.getResourceInfo().getResourceType()+"]，请联系后台系统开发人员";

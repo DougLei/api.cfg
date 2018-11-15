@@ -54,7 +54,7 @@ public class BusiModelResourceData implements Serializable{
 	public BusiModelResourceData(String busiModelResourceName, Object dataParentId, IJson datas) {
 		this.busiModelResourceName = busiModelResourceName;
 		this.datas = datas;
-		this.dataParentId = dataParentId.toString();
+		this.dataParentId = dataParentId==null?null:dataParentId.toString();
 	}
 	
 	// -----------------------------------------------------------
@@ -75,7 +75,6 @@ public class BusiModelResourceData implements Serializable{
 		try {
 			this.busiModelResRelations = busiModelResRelations;
 			CfgTable refTable = busiModelResRelations.getRefTable();
-			refSql = busiModelResRelations.getRefSql();
 			
 			String validResult = null;
 			if(refTable != null){
@@ -86,6 +85,7 @@ public class BusiModelResourceData implements Serializable{
 				resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refResourceName);
 				validResult = TableResourceValidUtil.validTableResourceMetadata("操作表资源["+refResourceName+"]时，", refResourceName, resourceMetadataInfos, datas, false, true);
 			}else if(refSql != null){
+				refSql = busiModelResRelations.getRefSql();
 				refResourceId = refSql.getId();
 				refResourceName = refSql.getResourceName();
 				
@@ -155,7 +155,7 @@ public class BusiModelResourceData implements Serializable{
 				Object operDataType = null;
 				for(int i=0; i < datas.size(); i++){
 					data = datas.get(i);
-					operDataType = data.get(ResourcePropNameConstants.OPER_DATA_TYPE);
+					operDataType = data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
 					if(operDataType == null){
 						throw new NullPointerException("操作["+busiModelResourceName+"]业务模型资源，其中关联的["+refResourceName+"]表资源数据时，第"+(i+1)+"个数据传入操作类型[$operDataType$]的值为空，请检查");
 					}
@@ -186,7 +186,7 @@ public class BusiModelResourceData implements Serializable{
 	 */
 	public void clear() {
 		// 清除sql语句中的参数值集合
-		if(sqlParameterValues.size() > 0){
+		if(sqlParameterValues != null && sqlParameterValues.size() > 0){
 			for(List<Object> list : sqlParameterValues){
 				if(list != null && list.size() > 0){
 					list.clear();

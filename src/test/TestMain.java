@@ -2,21 +2,12 @@ package test;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 
 public class TestMain {
 	public static void main(String[] args) {
-		
-		JSONArray jr =new JSONArray();
-		jr.add(new JSONObject());
-		jr.getJSONObject(0).put("1", "1");
-		jr.add(new JSONObject());
-		jr.getJSONObject(1).put("2", "2");
-		
-		d(jr);
-		System.out.println(jr);
-		
-		System.out.println(IJsonUtil.getIJson("dfdfadsf"));
+		String[] a= ",ddd".split(",");
+		System.out.println(a[0] == null);
+		System.out.println(a[1]);
 		
 	}
 	
