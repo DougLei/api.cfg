@@ -18,7 +18,7 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 		this.propName = propName;
 		this.dataType = dataType;
 		analysisQueryParams(value);
-		modifyPropName(NamingProcessUtil.propNameTurnColumnName(propName));
+		modifyPropName(NamingProcessUtil.propNameTurnColumnName(this.propName));
 	}
 	
 	/**
