@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.CfgSql;
@@ -131,6 +132,9 @@ public class SqlResourceValidUtil {
 					
 					Set<String> parameterNames = json.keySet();
 					for (String parameterName : parameterNames) {
+						if(ResourcePropNameConstants.OPER_DATA_TYPE.equals(parameterName)){
+							continue;
+						}
 						ssp = new CfgSqlParameter(parameterName, null, false, 0, -1, false, true);
 						ssp.setActualInValue(json.get(parameterName));
 						sqlScriptActualParameters.add(ssp);

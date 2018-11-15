@@ -143,6 +143,14 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		return subBusiModelResRelationsList;
 	}
 	
+	/**
+	 * 是否有业务模型的子资源关系集合
+	 * @return
+	 */
+	public boolean haveSubBusiModelResRelationsList(){
+		return subBusiModelResRelationsList!=null && subBusiModelResRelationsList.size()>0;
+	}
+	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(7+7);

@@ -76,12 +76,12 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 			Object dataParentIdObj = null;
 			for(int i = 0; i < busiModelResRelationsListSize; i++){
 				busiModelResRelations = busiModelResRelationsList.get(i);
-				ijsonData = ijson.getIJson(i);
+				ijsonData = busiModelResRelations.haveSubBusiModelResRelationsList()?ijson.getIJson(i):ijson;
 				if(ijsonData == null || (ijsonDataSize = ijsonData.size()) == 0){
 					return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据不能为空";
 				}
 				
-				if(busiModelResRelations.getSubBusiModelResRelationsList() != null && busiModelResRelations.getSubBusiModelResRelationsList().size() >0){
+				if(busiModelResRelations.haveSubBusiModelResRelationsList()){
 					for(int j=0;j<ijsonDataSize;j++){
 						json = ijsonData.get(j);
 						dataParentIdObj = json.get(ResourcePropNameConstants.ID);
