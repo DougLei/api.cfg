@@ -12,7 +12,6 @@ import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.DateUtil;
-import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -111,7 +110,7 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 			sqlParamsList = new ArrayList<List<CfgSqlParameter>>(actualParamsList.size());
 			
 			for (List<CfgSqlParameter> actualParams : actualParamsList) {
-				sqlParams = cloneSqlParams();
+				sqlParams = sql.cloneSqlParams();
 				sqlParamsList.add(sqlParams);
 				
 				for (CfgSqlParameter ssp : sqlParams) {
@@ -145,24 +144,6 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 		sql.setSqlParamsList(sqlParamsList);
 		return null;
 	}
-	
-	/**
-	 * 克隆sql参数集合
-	 * @param sqlScriptParameterList
-	 * @return
-	 */
-	private List<CfgSqlParameter> cloneSqlParams() {
-		List<CfgSqlParameter> sqlParams = new ArrayList<CfgSqlParameter>(this.sqlParams.size());
-		try {
-			for (CfgSqlParameter sqlParam : this.sqlParams) {
-				sqlParams.add((CfgSqlParameter)sqlParam.clone());
-			}
-		} catch (CloneNotSupportedException e) {
-			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e));
-		}
-		return sqlParams;
-	}
-	
 	
 	/**
 	 * 解析实际传入的参数值，同时进行校验

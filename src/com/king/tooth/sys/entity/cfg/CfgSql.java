@@ -20,6 +20,7 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -499,5 +500,21 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 		CfgResource resource = super.turnToResource();
 		resource.setResourceType(ResourceInfoConstants.SQL);
 		return resource;
+	}
+	
+	/**
+	 * 克隆sql参数集合
+	 * @return
+	 */
+	public List<CfgSqlParameter> cloneSqlParams() {
+		List<CfgSqlParameter> targetSqlParams = new ArrayList<CfgSqlParameter>(sqlParams.size());
+		try {
+			for (CfgSqlParameter sqlParam : sqlParams) {
+				targetSqlParams.add((CfgSqlParameter)sqlParam.clone());
+			}
+		} catch (CloneNotSupportedException e) {
+			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e));
+		}
+		return targetSqlParams;
 	}
 }
