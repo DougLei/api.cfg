@@ -10,7 +10,6 @@ import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.sql.ActParameter;
 import com.king.tooth.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
-import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * sql参数解析工具类
@@ -124,16 +123,7 @@ public class SqlParameterParserUtil {
 		
 		if(!isProcedure){
 			sqlScript.doSetParameterRecordList(parameterNameRecordList);
-			
-			// 保存参数
-			if(sqlScriptParameterList != null && sqlScriptParameterList.size() > 0){
-				String sqlScriptId = sqlScript.getId();
-				for (CfgSqlParameter sqlParam : sqlScriptParameterList) {
-					sqlParam.setSqlScriptId(sqlScriptId);
-					HibernateUtil.saveObject(sqlParam, null);
-				}
-				sqlScriptParameterList.clear();
-			}
+			sqlScript.setSqlParams(sqlScriptParameterList);
 		}
 		return null;
 	}

@@ -104,7 +104,7 @@ public class SqlExecutor implements Serializable{
 		Log4jUtil.debug("【最后执行的sql语句为：{}】", sql);
 		Log4jUtil.debug("【最后执行的sql语句对应的条件值集合为：{}】", sqlParameterValues.size()>0?sqlParameterValues.get(index):null);
 		
-		// 日志记录发出的hql/sql语句
+		// 日志记录执行的sql语句和参数
 		CurrentThreadContext.toReqLogDataAddOperSqlLog(sql, sqlParameterValues.size()>0?sqlParameterValues.get(index):null);
 		return query;
 	}

@@ -79,7 +79,6 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	/**
 	 * 是否解析参数
 	 * <p>在添加或修改的时候使用的判断标识，在修改sql内容时，不想修改参数的话，则这个字段要为0，否则为1</p>
-	 * <p>为1时，会自动解析sql脚本的参数，之前对参数的修改等操作，均被删除</p>
 	 */
 	@JSONField(serialize = false)
 	private int isAnalysisParameters;
@@ -367,36 +366,21 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 			// 解析sql脚本
 			String[] sqlScriptArr = SqlStatementParserUtil.parseSqlScript(this.gsqlParser, this);
 			
-			if(isAnalysisParameters == 1){
-				if(sqlIsExists){
-					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", id);// 删除之前的参数
+			// 如果是存储过程，则用另一个方法处理，解析出参数
+			if(SqlStatementTypeConstants.PROCEDURE.equals(this.type)){ 
+				result = SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this, true);
+				if(result != null){
+					return "["+result+"]错误！存储过程中不能使用[$xxx$]的变量声明方式，请将需要传入的变量写到存储过程的参数列表中";
 				}
-				
-				// 如果是存储过程，则用另一个方法处理，解析出参数
-				if(SqlStatementTypeConstants.PROCEDURE.equals(this.type)){ 
-					result = SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this, true);
-					if(result != null){
-						return "["+result+"]错误！存储过程中不能使用[$xxx$]的变量声明方式，请将需要传入的变量写到存储过程的参数列表中";
-					}
-					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this, false);
-				}
-				// 如果是视图，则不用解析参数，只要解析出视图名即可
-				else if(SqlStatementTypeConstants.VIEW.equals(this.type)){ 
-					SqlStatementParserUtil.analysisViewName(this, false);
-				}
-				// 否则是一般sql脚本，解析[$xxx$]的参数
-				else{ 
-					SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this, false);// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
-				}
-			}else{
-				// 如果是存储过程，则用另一个方法处理，解析出参数
-				if(SqlStatementTypeConstants.PROCEDURE.equals(this.type)){ 
-					SqlStatementParserUtil.analysisProcedureSqlScriptParam(this, true);
-				}
-				// 如果是视图，则不用解析参数，只要解析出视图名即可
-				else if(SqlStatementTypeConstants.VIEW.equals(this.type)){ 
-					SqlStatementParserUtil.analysisViewName(this, true);
-				}
+				SqlStatementParserUtil.analysisProcedureSqlScriptParam(this);
+			}
+			// 如果是视图，则不用解析参数，只要解析出视图名即可
+			else if(SqlStatementTypeConstants.VIEW.equals(this.type)){ 
+				SqlStatementParserUtil.analysisViewName(this);
+			}
+			// 否则是一般sql脚本，解析[$xxx$]的参数
+			else{ 
+				SqlParameterParserUtil.analysisMultiSqlScriptParam(sqlScriptArr, this, false);// 读取内容去解析，获取sql语句中的参数集合 sqlScriptParameterList
 			}
 			
 			// 尝试删除该sql关联的所有结果集信息
@@ -409,8 +393,64 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 			
 			// 如果是存储过程，可能还要保存输入结果集信息
 			SqlStatementParserUtil.saveProcedureTableTypeResultset(this);
+			
+			// 处理sql参数
+			processSqlParameters();
 		}
 		return result;
+	}
+	
+	/**
+	 * 处理sql参数
+	 */
+	private void processSqlParameters() {
+		if(isAnalysisParameters == 0){
+			if(this.sqlParams != null && this.sqlParams.size() > 0){
+				this.sqlParams.clear();
+			}
+		}else{
+			List<CfgSqlParameter> oldSqlParams = HibernateUtil.extendExecuteListQueryByHqlArr(CfgSqlParameter.class, null, null, "from CfgSqlParameter where sqlScriptId = ?", id);
+			if(oldSqlParams == null || oldSqlParams.size() == 0){
+				if(sqlParams != null && sqlParams.size() > 0){
+					for (CfgSqlParameter sqlParam : sqlParams) {
+						sqlParam.setSqlScriptId(id);
+						HibernateUtil.saveObject(sqlParam, null);
+					}
+					sqlParams.clear();
+				}
+			}else{
+				if(sqlParams == null || sqlParams.size() == 0){
+					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", id);// 删除之前的参数
+				}else{
+					CfgSqlParameter sp = null;
+					for (int i = 0; i < sqlParams.size(); i++) {
+						sp = sqlParams.get(i);
+						for (int j = 0; j < oldSqlParams.size(); j++) {
+							if(sp.getName().equals(oldSqlParams.get(j).getName())){
+								sp = oldSqlParams.remove(j--);
+								sp.setOrderCode(sqlParams.remove(i--).getOrderCode());
+								HibernateUtil.updateEntityObject(sp, null);
+								break;
+							}
+						}
+					}
+					
+					if(sqlParams.size()>0){
+						for (CfgSqlParameter sqlParam : sqlParams) {
+							sqlParam.setSqlScriptId(id);
+							HibernateUtil.saveObject(sqlParam, null);
+						}
+						sqlParams.clear();
+					}
+					if(oldSqlParams.size()>0){
+						for (CfgSqlParameter oldSqlParam : oldSqlParams) {
+							HibernateUtil.deleteObject(oldSqlParam, null);
+						}
+						oldSqlParams.clear();
+					}
+				}
+			}
+		}
 	}
 	/**
 	 * 设置sql参数名的记录对象集合

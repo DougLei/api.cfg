@@ -219,8 +219,8 @@ public class HibernateUtil {
 		try {
 			getCurrentThreadSession().save(entityName, data);
 			
-			// 日志记录发出的hql/sql语句
-			CurrentThreadContext.toReqLogDataAddOperSqlLog("insert " + entityName, data);
+			CurrentThreadContext.toReqLogDataAddOperSqlLog("insert " + entityName, data); // 日志记录save的数据
+			
 			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.ADD);
 			Log4jUtil.debug("保存数据成功[{}]", data);
 			return data;
@@ -258,6 +258,8 @@ public class HibernateUtil {
 			String deleteHql = "delete " + entityName + " where " + ResourcePropNameConstants.ID + "=?";
 			executeUpdateByHql(SqlStatementTypeConstants.DELETE, deleteHql, parameters);
 			
+			CurrentThreadContext.toReqLogDataAddOperSqlLog("delete " + entityName, data);// 日志记录delete的数据
+			
 			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.DELETE);
 			Log4jUtil.debug("删除数据成功[{}]", data);
 			return data;
@@ -290,6 +292,8 @@ public class HibernateUtil {
 			String updateHql = installEntityUpdateHql(entity.getEntityName(), updateId, data, parameters);
 			
 			executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql, parameters);
+			
+			CurrentThreadContext.toReqLogDataAddOperSqlLog("update " + entity.getEntityName(), data);// 日志记录update的数据
 			
 			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.EDIT);
 			Log4jUtil.debug("修改数据成功[{}]", data);
@@ -356,6 +360,8 @@ public class HibernateUtil {
 			String updateHql = installUpdateHql(entityName, data, parameters, otherQueryCondHql, otherQueryCondHqlParamValues);
 			
 			executeUpdateByHql(SqlStatementTypeConstants.UPDATE, updateHql, parameters);
+			
+			CurrentThreadContext.toReqLogDataAddOperSqlLog("update " + entityName, data);// 日志记录update的数据
 			
 			data.put(ResourcePropNameConstants.FOCUSED_OPER, data.getString(ResourcePropNameConstants.ID) + "_" + OperDataTypeConstants.EDIT);
 			Log4jUtil.debug("修改数据成功[{}]", data);
@@ -494,10 +500,6 @@ public class HibernateUtil {
 		
 		try {
 			Query query = getCurrentThreadSession().createQuery(modifyHql);
-			
-			// 日志记录发出的hql/sql语句
-			CurrentThreadContext.toReqLogDataAddOperSqlLog(modifyHql, parameters);
-			
 			setParamters(query, parameters);
 			int modifyCount = query.executeUpdate();
 			Log4jUtil.debug("[HibernateUtil.executeUpdateByHql]{}了{}条数据", hqlDes, modifyCount);
@@ -544,10 +546,6 @@ public class HibernateUtil {
 	 */
 	public static List executeListQueryByHql(String rows, String pageNo, String queryHql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createQuery(queryHql);
-		
-		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(queryHql, parameters);
-		
 		setParamters(query, parameters);
 		setPageQuery(query, rows, pageNo);
 		return query.list();
@@ -572,9 +570,6 @@ public class HibernateUtil {
 	 */
 	public static Object executeUniqueQueryByHql(String queryHql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createQuery(queryHql);
-		
-		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(queryHql, parameters);
 		
 		setParamters(query, parameters);
 		return query.uniqueResult();
@@ -701,10 +696,6 @@ public class HibernateUtil {
 	 */
 	public static Object executeUniqueQueryBySql(String querySql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createSQLQuery(querySql);
-		
-		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
-		
 		setParamters(query, parameters);
 		return query.uniqueResult();
 	}
@@ -727,10 +718,6 @@ public class HibernateUtil {
 	 */
 	public static List executeListQueryBySql(String querySql, List<Object> parameters){
 		Query query = getCurrentThreadSession().createSQLQuery(querySql);
-		
-		// 日志记录发出的hql/sql语句
-		CurrentThreadContext.toReqLogDataAddOperSqlLog(querySql, parameters);
-		
 		setParamters(query, parameters);
 		return query.list();
 	}

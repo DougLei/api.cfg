@@ -177,35 +177,19 @@ public class SqlStatementParserUtil {
 	/**
 	 * 解析存储过程参数
 	 * @param sqlScript
-	 * @param onlyAnalyzeProcedureName 是否只解析出存储过程名称
 	 * @return
 	 */
-	public static void analysisProcedureSqlScriptParam(CfgSql sqlScript, boolean onlyAnalyzeProcedureName) {
+	public static void analysisProcedureSqlScriptParam(CfgSql sqlScript) {
 		TCustomSqlStatement sqlStatement = sqlScript.getGsqlParser().sqlstatements.get(0);
 		switch(sqlStatement.sqlstatementtype){
 		    case sstplsql_createprocedure:
-		    	analysisOracleProcedure((TPlsqlCreateProcedure)sqlStatement, sqlScript, onlyAnalyzeProcedureName);
+		    	analysisOracleProcedure((TPlsqlCreateProcedure)sqlStatement, sqlScript);
 		    	break;
 		    case sstmssqlcreateprocedure:
-		    	analysisSqlServerProcedure((TMssqlCreateProcedure)sqlStatement, sqlScript, onlyAnalyzeProcedureName);
+		    	analysisSqlServerProcedure((TMssqlCreateProcedure)sqlStatement, sqlScript);
 		    	break;
 		    default:
 		    	throw new IllegalArgumentException("目前不支持["+sqlStatement.sqlstatementtype+"]类型的存储过程");
-		}
-		if(onlyAnalyzeProcedureName){
-			return;
-		}
-		
-		String sqlScriptId = sqlScript.getId();
-		
-		// 保存参数
-		List<CfgSqlParameter> sqlParams = sqlScript.getSqlParams();
-		if(sqlParams != null && sqlParams.size() > 0){
-			for (CfgSqlParameter sqlParam : sqlParams) {
-				sqlParam.setSqlScriptId(sqlScriptId);
-				HibernateUtil.saveObject(sqlParam, null);
-			}
-			sqlParams.clear();
 		}
 	}
 	
@@ -231,15 +215,10 @@ public class SqlStatementParserUtil {
 	 * 解析oracle存储过程，获得存储过程名和参数集合
 	 * @param procedureSqlStatement
 	 * @param sqlScript
-	 * @param onlyAnalyzeProcedureName
 	 */
-	private static void analysisOracleProcedure(TPlsqlCreateProcedure procedureSqlStatement, CfgSql sqlScript, boolean onlyAnalyzeProcedureName) {
+	private static void analysisOracleProcedure(TPlsqlCreateProcedure procedureSqlStatement, CfgSql sqlScript) {
 		// 解析出存储过程名
 		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
-		if(onlyAnalyzeProcedureName){
-			return;
-		}
-		
 		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
 		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
 		parameterNameRecordList.add(parameterNameRecord);
@@ -301,15 +280,10 @@ public class SqlStatementParserUtil {
 	 * 解析sqlserver存储过程，获得存储过程名和参数集合
 	 * @param procedureSqlStatement
 	 * @param sqlScript
-	 * @param onlyAnalyzeProcedureName
 	 */
-	private static void analysisSqlServerProcedure(TMssqlCreateProcedure procedureSqlStatement, CfgSql sqlScript, boolean onlyAnalyzeProcedureName) {
+	private static void analysisSqlServerProcedure(TMssqlCreateProcedure procedureSqlStatement, CfgSql sqlScript) {
 		// 解析出存储过程名
 		sqlScript.setObjectName(procedureSqlStatement.getProcedureName().toString());
-		if(onlyAnalyzeProcedureName){
-			return;
-		}
-		
 		List<SqlScriptParameterNameRecord> parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(1);
 		SqlScriptParameterNameRecord parameterNameRecord = new SqlScriptParameterNameRecord(0);
 		parameterNameRecordList.add(parameterNameRecord);
@@ -399,14 +373,10 @@ public class SqlStatementParserUtil {
 	/**
 	 * 解析出视图名
 	 * @param sqlScript
-	 * @param onlyAnalyzeViewName 是否只解析出视图名称
 	 */
-	public static void analysisViewName(CfgSql sqlScript, boolean onlyAnalyzeViewName) {
+	public static void analysisViewName(CfgSql sqlScript) {
 		TCustomSqlStatement sqlStatement = sqlScript.getGsqlParser().sqlstatements.get(0);
 		sqlScript.setObjectName(((TCreateViewSqlStatement) sqlStatement).getViewName().toString());
-		if(onlyAnalyzeViewName){
-			return;
-		}
 	}
 	
 	/**

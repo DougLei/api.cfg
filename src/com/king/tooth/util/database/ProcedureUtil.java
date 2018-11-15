@@ -142,7 +142,7 @@ public class ProcedureUtil {
 		procedure.append(")}");
 		Log4jUtil.debug("调用的procedure为：{}", procedure);
 		
-		// 日志记录发出的hql/sql语句
+		// 日志记录执行的存储过程和参数
 		CurrentThreadContext.toReqLogDataAddOperSqlLog(procedure.toString(), sqlParams);
 		
 		return procedure.toString();

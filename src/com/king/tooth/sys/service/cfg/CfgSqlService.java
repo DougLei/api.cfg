@@ -147,15 +147,11 @@ public class CfgSqlService extends AService {
 					DBUtil.createObject(sqlScript);
 					sqlScript.setIsCreated(1);
 				}
-				
 				JSONObject sqlScriptJsonObject = HibernateUtil.saveObject(sqlScript, null);
-				String sqlScriptId = sqlScriptJsonObject.getString(ResourcePropNameConstants.ID);
 				
-				// 因为保存资源数据的时候，需要sqlScript对象的id，所以放到最后
-				sqlScript.setId(sqlScriptId);
 				BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).saveCfgResource(sqlScript);
 			
-				HibernateUtil.saveDataLinks("CfgProjectSqlLinks", projectId, sqlScriptId);
+				HibernateUtil.saveDataLinks("CfgProjectSqlLinks", projectId, sqlScript.getId());
 				return sqlScriptJsonObject;
 			}
 		}

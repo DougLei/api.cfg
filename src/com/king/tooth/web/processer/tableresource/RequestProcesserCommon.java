@@ -63,7 +63,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		Log4jUtil.debug("【最后执行的hql语句为：{}】", hql);
 		Log4jUtil.debug("【最后执行的hql语句对应的条件值集合为：{}】", hqlParameterValues);
 		
-		// 日志记录发出的hql/sql语句
+		// 日志记录执行的hql语句和参数
 		CurrentThreadContext.toReqLogDataAddOperSqlLog(hql, hqlParameterValues);
 		return query;
 	}
@@ -95,7 +95,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 		Log4jUtil.debug("【最后执行的hql语句为：{}】", hql);
 		Log4jUtil.debug("【最后执行的hql语句对应的条件值集合为：{}】", hqlParameterValues);
 		
-		// 日志记录发出的hql/sql语句
+		// 日志记录执行的hql语句和参数
 		CurrentThreadContext.toReqLogDataAddOperSqlLog(hql, hqlParameterValues);
 		return query;
 	}
