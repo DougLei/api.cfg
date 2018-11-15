@@ -422,17 +422,17 @@ public class SqlStatementParserUtil {
 		
 		// 获取sql脚本参数集合
 		List<List<CfgSqlParameter>> sqlParamsList = sqlScript.getSqlParamsList();
-		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
+		boolean sqlScriptHaveParams = (sqlParamsList != null && sqlParamsList.size() > 0);
 		
 		// 初始化最终的sql脚本对象集合
-		List<FinalSqlScriptStatement> finalSqlScriptList = new ArrayList<FinalSqlScriptStatement>(sqlScriptHavaParams?sqlParamsList.size():1);
+		List<FinalSqlScriptStatement> finalSqlScriptList = new ArrayList<FinalSqlScriptStatement>(sqlScriptHaveParams?sqlParamsList.size():1);
 		FinalSqlScriptStatement finalSqlScript;
 		
 		// 获取sql脚本对象，以及sql类型
 		TStatementList sqlStatementList = sqlScript.getGsqlParser().sqlstatements;
 		ESqlStatementType sqlStatementType = sqlStatementList.get(0).sqlstatementtype;
 		
-		if(sqlScriptHavaParams){
+		if(sqlScriptHaveParams){
 			for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
 				finalSqlScript = new FinalSqlScriptStatement();
 				finalSqlScriptList.add(finalSqlScript);

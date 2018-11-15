@@ -20,7 +20,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		JSONArray resultDataJSONArray = recursiveDoSaveBusiModelData(busiModel.getBusiModelResRelationsList(), 1);
 		if(resultDataJSONArray == null){
 			setResponseBody(new ResponseBody("执行业务模型资源["+busiModel.getResourceName()+"]时，没有返回任何结果信息，请联系后端系统开发人员", null));
-		}else if(requestBody.getFormData().size() == 1){
+		}else if(requestBody.getFormData().size() == 1 || busiModel.getBusiModelResRelationsList().size() == 1){
 			setResponseBody(new ResponseBody(null, resultDataJSONArray.get(0)));
 		}else{
 			setResponseBody(new ResponseBody(null, resultDataJSONArray));
@@ -61,6 +61,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 							}
 						}
 					}
+					resultDatasList.clear();
 				}
 			}
 			return resultDataJSONArray;

@@ -90,8 +90,19 @@ public class BusiModelResourceData implements Serializable{
 				refResourceName = refSql.getResourceName();
 				
 				resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql);
-				actualParamsList = SqlResourceValidUtil.initActualParamsList(null, datas);
 				inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
+				
+				// 如果有父数据id，则要将其赋值到datas数据中，最后解析出实际传入的参数值集合
+				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
+				JSONObject data = null;
+				for(int i=0; i < datas.size(); i++){
+					data = datas.get(i);
+					data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);// 并且尝试移除$operDataType$的值
+					if(dataParentId != null){
+						data.put(refParentResourcePropName, dataParentId);
+					}
+				}
+				actualParamsList = SqlResourceValidUtil.initActualParamsList(null, datas);
 				
 				validResult = SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList);
 			}
@@ -146,11 +157,11 @@ public class BusiModelResourceData implements Serializable{
 		// 操作结果对象
 		Object resultDatas = null;
 		
-		String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
 		rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
-		
 		if(isTableResource){
 			if(datas != null && datas.size() > 0){
+				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
+				
 				JSONObject data = null;
 				Object operDataType = null;
 				for(int i=0; i < datas.size(); i++){

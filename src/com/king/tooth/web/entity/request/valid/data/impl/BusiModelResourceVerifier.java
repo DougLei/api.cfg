@@ -3,7 +3,6 @@ package com.king.tooth.web.entity.request.valid.data.impl;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
@@ -76,19 +75,32 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 			Object dataParentIdObj = null;
 			for(int i = 0; i < busiModelResRelationsListSize; i++){
 				busiModelResRelations = busiModelResRelationsList.get(i);
-				ijsonData = busiModelResRelations.haveSubBusiModelResRelationsList()?ijson.getIJson(i):ijson;
+				
+				if(busiModelResRelationsListSize > 1 && busiModelResRelations.haveSubBusiModelResRelationsList()){
+					ijsonData = ijson.getIJson(i);
+				}else{
+					ijsonData = ijson;
+				}
+				
 				if(ijsonData == null || (ijsonDataSize = ijsonData.size()) == 0){
 					return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据不能为空";
+				}
+				
+				// 如果是sql资源，要处理每个对象主键，如果没有就要赋值
+				if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_SQL){
+					for(int j=0;j<ijsonDataSize;j++){
+						json = ijsonData.get(j);
+						dataParentIdObj = json.get(busiModelResRelations.getRefResourceIdPropName());
+						if(StrUtils.isEmpty(dataParentIdObj)){
+							json.put(busiModelResRelations.getRefResourceIdPropName(), ResourceHandlerUtil.getIdentity());
+						}
+					}
 				}
 				
 				if(busiModelResRelations.haveSubBusiModelResRelationsList()){
 					for(int j=0;j<ijsonDataSize;j++){
 						json = ijsonData.get(j);
-						dataParentIdObj = json.get(ResourcePropNameConstants.ID);
-						if(StrUtils.isEmpty(dataParentId)){
-							dataParentIdObj = ResourceHandlerUtil.getIdentity();
-							json.put(ResourcePropNameConstants.ID, dataParentIdObj);
-						}
+						dataParentIdObj = json.get(busiModelResRelations.getRefResourceIdPropName());
 						validResult = recursiveValidBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), IJsonUtil.getIJson(json.remove(busiModelResRelations.getRefSubResourceKeyName())), dataParentIdObj.toString(), recursiveLevel+1);
 						if(validResult != null){
 							return validResult;

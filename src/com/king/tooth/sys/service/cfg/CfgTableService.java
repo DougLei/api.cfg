@@ -122,9 +122,8 @@ public class CfgTableService extends AService {
 	 */
 	public Object updateTable(CfgTable table) {
 		CfgTable oldTable = getObjectById(table.getId(), CfgTable.class);
-		if(oldTable == null){
-			return "没有找到id为["+table.getId()+"]的表对象信息";
-		}
+		table.setIsBuildModel(oldTable.getIsBuildModel());
+		
 		String operResult = null;
 		if(!oldTable.getTableName().equals(table.getTableName())){
 			operResult = validTableNameIsExists(table);
@@ -132,6 +131,7 @@ public class CfgTableService extends AService {
 				table.setIsBuildModel(0);
 				if(StrUtils.isEmpty(oldTable.getOldTableName()) && oldTable.getIsCreated() == 1 && oldTable.getIsBuildModel() == 1){
 					table.setOldTableName(oldTable.getTableName());
+					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(table.getId());// 删除资源
 				}
 			}
 		}
@@ -148,7 +148,7 @@ public class CfgTableService extends AService {
 			}
 			
 			if(operResult == null){
-				if(oldTable.getIsBuildModel() == 1 && table.isUpdateResourceInfo(oldTable)){
+				if(table.getIsBuildModel() == 1 && table.isUpdateResourceInfo(oldTable)){
 					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).updateResourceInfo(table.getId(), table.getResourceName(), table.getRequestMethod(), table.getIsEnabled());
 				}
 				return HibernateUtil.updateEntityObject(table, null);
@@ -211,12 +211,12 @@ public class CfgTableService extends AService {
 			}
 			boolean isNeedInitBasicColumns = false;
 			List<CfgColumn> columns = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumn.class, null, null, "from CfgColumn where tableId =? order by orderCode asc", tableId);
+			table.setColumns(columns);
 			
 			if(table.getType() == CfgTable.SINGLE_TABLE){
 				if(table.getIsCreated() == 0){
 					// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 					deleteTableIds.add(tableId);
-					table.setColumns(columns);
 					// 1、建表
 					dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 				}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
@@ -230,13 +230,10 @@ public class CfgTableService extends AService {
 					if(tableNames.size() == 0){// 如果不存在，则create
 						// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 						deleteTableIds.add(tableId);
-						removeDeleteColumns(columns);
-						table.setColumns(columns);
 						// 1、建表
 						dbTableHandler.createTable(table, true); // 表信息集合，有可能有关系表
 					}else{// 如果存在，则update
 						tableNames.clear();
-						removeDeleteColumns(columns);
 						
 						String oldTableName = table.getOldTableName();
 						if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
@@ -245,10 +242,6 @@ public class CfgTableService extends AService {
 							// 移除hibernate中之前表的缓存
 							HibernateUtil.removeConfig(NamingProcessUtil.tableNameTurnClassName(oldTableName));
 						}
-						
-						// 修改数据库中的列
-						dbTableHandler.modifyColumn(table.getTableName(), columns, true);
-						table.setColumns(columns);
 						isNeedInitBasicColumns = true;
 					}
 				}else{
@@ -268,13 +261,9 @@ public class CfgTableService extends AService {
 				HibernateUtil.appendNewConfig(hbm.getContent());
 			}else if(table.getType() == CfgTable.TABLE_DATATYPE){
 				if(table.getIsCreated() == 0){
-					table.setColumns(columns);
 					dbTableHandler.createTableDataType(table);
 				}else if(table.getIsCreated() == 1 && table.getIsBuildModel() == 0){
 					dbTableHandler.dropTableDataType(table);
-					
-					removeDeleteColumns(columns);
-					table.setColumns(columns);
 					dbTableHandler.createTableDataType(table);
 				}else{
 					return "建模时，表["+table.getTableName()+"]的isCreated="+table.getIsCreated()+"，isBuildModel="+table.getIsBuildModel()+"。请联系系统后端开发人员";
@@ -299,19 +288,6 @@ public class CfgTableService extends AService {
 		JSONObject json = new JSONObject(2);
 		json.put(ResourcePropNameConstants.ID, tableId);
 		return json;
-	}
-	
-	/**
-	 * 移除被删除的列对象
-	 * @param columns
-	 */
-	private void removeDeleteColumns(List<CfgColumn> columns){
-		for (int i=0;i<columns.size() ;i++) {
-			if(columns.get(i).getOperStatus() == CfgColumn.DELETED){
-				columns.remove(i);
-				i--;
-			}
-		}
 	}
 	
 	/**

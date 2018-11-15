@@ -1,11 +1,18 @@
 package com.king.tooth.sys.service.cfg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
+import com.king.tooth.plugins.jdbc.table.DBTableHandler;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.AService;
+import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -48,27 +55,52 @@ public class CfgColumnService extends AService{
 	
 	/**
 	 * 保存列
+	 * @param tableNameBuffer
 	 * @param column
+	 * @param addColumns 
+	 * @param dbTableHandler 
 	 * @return
 	 */
-	public Object saveColumn(CfgColumn column) {
+	public Object saveColumn(StringBuilder tableNameBuffer, CfgColumn column, List<CfgColumn> addColumns, DBTableHandler dbTableHandler) {
 		String operResult = validColumnRefTableIsExists(column);
 		if(operResult == null){
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
-			modifyTableIsBuildModel(column.getTableId(), null, 0);
-			return HibernateUtil.saveObject(column, null);
+			if(tableNameBuffer.length() == 0){
+				tableNameBuffer.append(HibernateUtil.executeUniqueQueryByHqlArr("select tableName from CfgTable where " + ResourcePropNameConstants.ID+"=?", column.getTableId()));
+			}
+			
+			try {
+				column.setOperStatus(CfgColumn.CREATED);
+				dbTableHandler.modifyColumn(tableNameBuffer.toString(), column);
+				addColumns.add(column);
+				
+				// 最后修改表的建模状态为: 未建模
+				modifyTableIsBuildModel(column.getTableId(), null, 0);
+				return HibernateUtil.saveObject(column, null);
+			} catch (Exception e) {
+				operResult = "添加列时出现异常：" + ExceptionUtil.getErrMsg(e);
+				
+				// drop被添加的列
+				if(addColumns != null && addColumns.size() > 0){
+					recorveColumnsOperStatus(dbTableHandler, tableNameBuffer.toString(), addColumns, CfgColumn.DELETED);
+					addColumns.clear();
+				}
+			}
 		}
 		return operResult;
 	}
 
 	/**
 	 * 修改列
+	 * @param tableNameBuffer
 	 * @param column
+	 * @param updateColumns 
+	 * @param dbTableHandler 
 	 * @return
 	 */
-	public Object updateColumn(CfgColumn column) {
+	public Object updateColumn(StringBuilder tableNameBuffer, CfgColumn column, List<CfgColumn> updateColumns, DBTableHandler dbTableHandler) {
 		CfgColumn oldColumn = getObjectById(column.getId(), CfgColumn.class);
 		CfgTable table = getObjectById(column.getTableId(), CfgTable.class);
 		if(table.getIsCreated() == 1){// 表已经建模，不能修改列的类型，以及缩小列的长度
@@ -88,10 +120,28 @@ public class CfgColumnService extends AService{
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
-			if(column.analysisOldColumnInfo(oldColumn)){
-				modifyTableIsBuildModel(column.getTableId(), null, 0);
+			try {
+				if(column.analysisOldColumnInfo(oldColumn)){
+					if(tableNameBuffer.length() == 0){
+						tableNameBuffer.append(HibernateUtil.executeUniqueQueryByHqlArr("select tableName from CfgTable where " + ResourcePropNameConstants.ID+"=?", column.getTableId()));
+					}
+					dbTableHandler.modifyColumn(tableNameBuffer.toString(), column);
+					oldColumn.analysisOldColumnInfo(column);
+					updateColumns.add(oldColumn);
+					
+					// 最后修改表的建模状态为: 未建模
+					modifyTableIsBuildModel(column.getTableId(), null, 0);
+				}
+				return HibernateUtil.updateEntityObject(column, null);
+			} catch (Exception e) {
+				operResult = "修改列时出现异常：" + ExceptionUtil.getErrMsg(e);
+				
+				// 恢复被修改的列
+				if(updateColumns != null && updateColumns.size() > 0){
+					recorveColumnsOperStatus(dbTableHandler, tableNameBuffer.toString(), updateColumns, CfgColumn.MODIFIED);
+					updateColumns.clear();
+				}
 			}
-			return HibernateUtil.updateEntityObject(column, null);
 		}
 		return operResult;
 	}
@@ -102,39 +152,50 @@ public class CfgColumnService extends AService{
 	 * @return
 	 */
 	public String deleteColumn(String columnIds) {
-		String[] idArr = columnIds.split(",");
+		String operResult = null;
+		String firstDeleteColumnId = columnIds.split(",")[0];
+		CfgTable table = getObjectById(getObjectById(firstDeleteColumnId, CfgColumn.class).getTableId(), CfgTable.class);
 		
-		CfgColumn column = getObjectById(idArr[0], CfgColumn.class);
-		CfgTable table = getObjectById(column.getTableId(), CfgTable.class);
-		
-		if(table.getIsCreated() == 0){// 表还没有建模，这里就直接删除
-			deleteDataById("CfgColumn", columnIds);
-		}else if(table.getIsCreated() == 1){// 表已经建模，就修改operStatus的值为2
-			StringBuilder hql = new StringBuilder("update CfgColumn set operStatus="+CfgColumn.DELETED+" where id ");
-			if(idArr.length ==1){
-				hql.append("= '").append(idArr[0]).append("'");
-			}else if(idArr.length > 1){
-				hql.append("in (");
-				for (String columnId : idArr) {
-					hql.append("'").append(columnId).append("',");
+		String tableName = table.getTableName();
+		List<CfgColumn> columns = null;
+		List<CfgColumn> dropedColumns = null;// 记录已经被drop的列
+		DBTableHandler dbTableHandler = null;
+		try {
+			if(table.getIsCreated() == 1){// 表已经建模，要先drop字段
+				String queryHql = "from CfgColumn where " + ResourcePropNameConstants.ID +" in ('" + columnIds.replace(",", "','") + "')";
+				columns = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumn.class, null, null, queryHql);
+				
+				dropedColumns = new ArrayList<CfgColumn>(columns.size());// 记录已经被drop的列
+				dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
+				for (CfgColumn c : columns) {
+					c.setOperStatus(CfgColumn.DELETED);
+					dbTableHandler.modifyColumn(tableName, c);
+					dropedColumns.add(c);
 				}
-				hql.setLength(hql.length()-1);
-				hql.append(")");
-			}else{
-				return "删除数据时，传入的id数据数组长度小于1";
+					
+				// 最后修改表的建模状态为: 未建模
+				modifyTableIsBuildModel(null, firstDeleteColumnId, 0);
 			}
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, hql.toString());
-			hql.setLength(0);
+			// 最后删除信息
+			deleteDataById("CfgColumn", columnIds);
+		} catch (Exception e) {
+			operResult = "删除列时出现异常：" + ExceptionUtil.getErrMsg(e);
 			
-			modifyTableIsBuildModel(null, idArr[0], 0);
-		}else{
-			throw new IllegalArgumentException("删除列时，相关联的表的isCreated字段值异常，值为["+table.getIsCreated()+"]，请联系后台系统开发人员");
+			// 恢复被drop的列
+			if(dropedColumns != null && dropedColumns.size() > 0){
+				recorveColumnsOperStatus(dbTableHandler, tableName, dropedColumns, CfgColumn.CREATED);
+				dropedColumns.clear();
+			}
 		}
-		return null;
+		if(columns != null && columns.size() > 0){
+			columns.clear();
+		}
+		return operResult;
 	}
 	
 	/**
 	 * 修改表是否建模的状态
+	 * <p>并删除对应的资源信息</p>
 	 * @param tableId
 	 * @param columnId
 	 * @param isBuildModel
@@ -144,5 +205,22 @@ public class CfgColumnService extends AService{
 			tableId = getObjectById(columnId, CfgColumn.class).getTableId();
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgTable set isBuildModel = "+isBuildModel+" where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");
+		BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(tableId);// 删除资源
+	}
+	
+	/**
+	 * 恢复列的操作状态
+	 * <p>例如批量添加列，有几个没有添加成功，则将添加成功的也drop</p>
+	 * @param dbTableHandler
+	 * @param columns
+	 * @param columnOperStatus
+	 */
+	private void recorveColumnsOperStatus(DBTableHandler dbTableHandler, String tableName, List<CfgColumn> columns, int columnOperStatus){
+		if(columns != null && columns.size() > 0){
+			for (CfgColumn column : columns) {
+				column.setOperStatus(columnOperStatus);
+			}
+			dbTableHandler.modifyColumns(tableName, columns, false);
+		}
 	}
 }

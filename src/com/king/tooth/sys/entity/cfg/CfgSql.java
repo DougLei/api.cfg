@@ -34,6 +34,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
 @SuppressWarnings("serial")
 @Table
 public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity{
+
 	/**
 	 * 数据库类型
 	 */
@@ -469,6 +470,9 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 		}
 		if(parameterNameRecordMap != null && parameterNameRecordMap.size() > 0){
 			parameterNameRecordMap.clear();
+		}
+		if(sqlParams != null && sqlParams.size() > 0){
+			sqlParams.clear();
 		}
 		if(sqlParamsList != null && sqlParamsList.size() > 0){
 			for (List<CfgSqlParameter> sqlParams : sqlParamsList) {

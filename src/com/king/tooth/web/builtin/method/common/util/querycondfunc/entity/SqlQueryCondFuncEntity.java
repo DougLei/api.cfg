@@ -85,6 +85,6 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 	 * @param columnName
 	 */
 	private void modifyPropNameToColumnName(){
-		this.propName = NamingProcessUtil.propNameTurnColumnName(this.propName);
+		propName = NamingProcessUtil.propNameTurnColumnName(propName);
 	}
 }

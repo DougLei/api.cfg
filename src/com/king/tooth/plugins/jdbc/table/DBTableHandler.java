@@ -292,9 +292,30 @@ public class DBTableHandler {
 	 * 修改列
 	 * @param tableName
 	 * @param columns
+	 */
+	public void modifyColumn(String tableName, CfgColumn column){
+		if(column.getOperStatus() == CfgColumn.UN_CREATED){
+			tableOper.installCreateColumnSql(tableName, column);
+		}else if(column.getOperStatus() == CfgColumn.MODIFIED){
+			tableOper.installModifyColumnSql(tableName, column);
+		}else if(column.getOperStatus() == CfgColumn.DELETED){
+			tableOper.installDeleteColumnSql(tableName, column);
+		}
+		
+		String operColumnSql = tableOper.getOperColumnSql();
+		if(StrUtils.notEmpty(operColumnSql)){
+			String[] ddlSqlArr = operColumnSql.split(";");
+			dblink.executeDDL(ddlSqlArr);
+		}
+	}
+	
+	/**
+	 * 修改列
+	 * @param tableName
+	 * @param columns
 	 * @param removeDeleteColumn 是否从集合中移除被删除的列
 	 */
-	public void modifyColumn(String tableName, List<CfgColumn> columns, boolean removeDeleteColumn){
+	public void modifyColumns(String tableName, List<CfgColumn> columns, boolean removeDeleteColumn){
 		CfgColumn column;
 		for (int i = 0; i < columns.size(); i++) {
 			column = columns.get(i);

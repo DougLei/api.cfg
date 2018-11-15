@@ -384,6 +384,10 @@ public class CfgSqlService extends AService {
 		if(!validSqlIsExistsById(sqlParam.getSqlScriptId())){
 			return "不存在id为["+sqlParam.getSqlScriptId()+"]的sql脚本对象";
 		}
+		getObjectById(sqlParam.getId(), CfgSqlParameter.class);
+		if(sqlParam.getValueFrom() == CfgSqlParameter.SYSTEM_BUILTIN){
+			return "sql参数("+sqlParam.getName()+")值为系统内置，禁止修改任何内容";
+		}
 		return HibernateUtil.updateEntityObject(sqlParam, null);
 	}
 

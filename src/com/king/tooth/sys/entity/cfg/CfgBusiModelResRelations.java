@@ -40,6 +40,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	private String refResourceId;
 	/**
+	 * 关联资源的主键属性名
+	 * <p>默认值为Id，后端取数据主键的时候，根据这个配置值从json对象中取</p>
+	 */
+	private String refResourceIdPropName;
+	/**
 	 * 关联的资源类型
 	 * <p>1.CfgTable、2.CfgSql</p>
 	 */
@@ -112,6 +117,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public void setRefResourceId(String refResourceId) {
 		this.refResourceId = refResourceId;
 	}
+	public String getRefResourceIdPropName() {
+		return refResourceIdPropName;
+	}
+	public void setRefResourceIdPropName(String refResourceIdPropName) {
+		this.refResourceIdPropName = refResourceIdPropName;
+	}
 	public Integer getRefResourceType() {
 		return refResourceType;
 	}
@@ -153,7 +164,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(7+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(8+7);
 		
 		CfgColumn refBusiModelIdColumn = new CfgColumn("ref_busi_model_id", DataTypeConstants.STRING, 32);
 		refBusiModelIdColumn.setName("关联的业务模型id");
@@ -169,6 +180,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		refResourceIdColumn.setName("关联的资源id");
 		refResourceIdColumn.setComments("CfgTable或CfgSql资源的id");
 		columns.add(refResourceIdColumn);
+		
+		CfgColumn refResourceIdPropNameColumn = new CfgColumn("ref_resource_id_prop_name", DataTypeConstants.STRING, 20);
+		refResourceIdPropNameColumn.setName("关联资源的主键属性名");
+		refResourceIdPropNameColumn.setComments("默认值为Id，后端取数据主键的时候，根据这个配置值从json对象中取");
+		refResourceIdPropNameColumn.setDefaultValue(ResourcePropNameConstants.ID);
+		columns.add(refResourceIdPropNameColumn);
 		
 		CfgColumn refResourceTypeColumn = new CfgColumn("ref_resource_type", DataTypeConstants.INTEGER, 1);
 		refResourceTypeColumn.setName("关联的资源类型");
