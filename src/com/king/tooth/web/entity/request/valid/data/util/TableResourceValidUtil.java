@@ -100,9 +100,10 @@ public class TableResourceValidUtil {
 	 * @param ijson
 	 * @param isUpdate 是否是修改，如果是修改，则要验证id属性为空
 	 * @param isValidUniqueInDb 是否在数据库中验证值唯一(如果不是正常的表类型，比如sqlserver的表类型，则无法去验证唯一性)
+	 * @param isBusiModelRefTableResource 是否是业务模型关联的表资源，如果是，则要验证$operDataType$参数值
 	 * @return
 	 */
-	public static String validTableResourceMetadata(String desc, String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos, IJson ijson, boolean isUpdate, boolean isValidUniqueInDb){
+	public static String validTableResourceMetadata(String desc, String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos, IJson ijson, boolean isUpdate, boolean isValidUniqueInDb, boolean isBusiModelRefTableResource){
 		int size = ijson.size();
 		
 		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
@@ -119,25 +120,23 @@ public class TableResourceValidUtil {
 				return desc + "第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 			}
 			
+			// 如果是业务模型挂念的表资源，则要验证$operDataType$参数值，值不能为空，且只能为 add、edit、delete
+			if(isBusiModelRefTableResource){
+				dataValue = data.get(ResourcePropNameConstants.OPER_DATA_TYPE);
+				if(dataValue == null){
+					return desc + "第"+(i+1)+"个对象，$operDataType$的参数值不能为空";
+				}
+				if(!OperDataTypeConstants.ADD.equals(dataValue) && !OperDataTypeConstants.EDIT.equals(dataValue) && !OperDataTypeConstants.DELETE.equals(dataValue)){
+					return desc + "第"+(i+1)+"个对象，$operDataType$的参数值只能为 add、edit、delete";
+				}
+			}
+			
 			// 验证每个对象的属性，是否存在
 			propKeys = data.keySet();
 			for (String propName : propKeys) {
-				/*
-				 * 验证$operDataType$参数值
-				 * 如果没有值，则不做验证
-				 * 如果有值，则验证，值只能为 add、edit、 delete
-				 */
-				if(ResourcePropNameConstants.OPER_DATA_TYPE.equals(propName)){
-					dataValue = data.get(propName);
-					if(dataValue == null){
-						return desc + "第"+(i+1)+"个对象，$operDataType$的参数值不能为空";
-					}
-					if(!OperDataTypeConstants.ADD.equals(dataValue) && !OperDataTypeConstants.EDIT.equals(dataValue) && !OperDataTypeConstants.DELETE.equals(dataValue)){
-						return desc + "第"+(i+1)+"个对象，$operDataType$的参数值只能为 add、edit、 delete";
-					}
+				if(isBusiModelRefTableResource && ResourcePropNameConstants.OPER_DATA_TYPE.equals(propName)){
 					continue;
 				}
-				
 				if(validPropUnExists(false, propName, resourceMetadataInfos)){
 					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
 				}

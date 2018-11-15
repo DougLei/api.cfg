@@ -75,6 +75,7 @@ public class BusiModelResourceData implements Serializable{
 		try {
 			this.busiModelResRelations = busiModelResRelations;
 			CfgTable refTable = busiModelResRelations.getRefTable();
+			refSql = busiModelResRelations.getRefSql();
 			
 			String validResult = null;
 			if(refTable != null){
@@ -83,9 +84,8 @@ public class BusiModelResourceData implements Serializable{
 				refResourceName = refTable.getResourceName();
 				
 				resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refResourceName);
-				validResult = TableResourceValidUtil.validTableResourceMetadata("操作表资源["+refResourceName+"]时，", refResourceName, resourceMetadataInfos, datas, false, true);
+				validResult = TableResourceValidUtil.validTableResourceMetadata("操作业务资源["+busiModelResourceName+"]，关联的表资源["+refResourceName+"]时，", refResourceName, resourceMetadataInfos, datas, false, true, true);
 			}else if(refSql != null){
-				refSql = busiModelResRelations.getRefSql();
 				refResourceId = refSql.getId();
 				refResourceName = refSql.getResourceName();
 				
@@ -156,9 +156,6 @@ public class BusiModelResourceData implements Serializable{
 				for(int i=0; i < datas.size(); i++){
 					data = datas.get(i);
 					operDataType = data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
-					if(operDataType == null){
-						throw new NullPointerException("操作["+busiModelResourceName+"]业务模型资源，其中关联的["+refResourceName+"]表资源数据时，第"+(i+1)+"个数据传入操作类型[$operDataType$]的值为空，请检查");
-					}
 					if(dataParentId != null){
 						data.put(refParentResourcePropName, dataParentId);
 					}

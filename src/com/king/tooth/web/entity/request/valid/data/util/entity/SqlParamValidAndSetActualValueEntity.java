@@ -296,7 +296,7 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 			return desc+"第"+index+"个对象，["+ssp.getName()+"] 参数关联的表类型，没有查询到对应的列的元数据信息集合，请联系后端开发人员";
 		}
 		if(ijson != null && ijson.size() > 0){
-			return TableResourceValidUtil.validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getName()+"] 参数关联的表对象中，", null, inSqlResultSetMetadataInfos, ijson, false, false);
+			return TableResourceValidUtil.validTableResourceMetadata(desc+"操作第"+index+"个对象，["+ssp.getName()+"] 参数关联的表对象中，", null, inSqlResultSetMetadataInfos, ijson, false, false, false);
 		}
 		return null;
 	}

@@ -326,7 +326,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	public CfgSql getRefSql() {
 		setRefResource();
-		if(!refSql.getIncludeAllInfo()){
+		if(refSql != null && !refSql.getIncludeAllInfo()){
 			BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
 		}
 		return refSql;
