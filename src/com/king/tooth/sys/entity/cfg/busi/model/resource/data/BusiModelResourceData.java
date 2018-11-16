@@ -7,6 +7,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
@@ -14,6 +15,7 @@ import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.sql.SqlExecutor;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
@@ -150,7 +152,12 @@ public class BusiModelResourceData implements Serializable{
 					}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
 						HibernateUtil.updateObject(refResourceName, data, null, null);
 					}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
-						HibernateUtil.deleteObject(refResourceName, data);
+						if(busiModelResRelations.getIsCascadeDelete() == 1){
+							recursiveCascadeDeleteSub(data.get(ResourcePropNameConstants.ID), busiModelResRelations.getSubBusiModelResRelationsList());
+						}else{
+							validIsHaveSubDatas(data.get(ResourcePropNameConstants.ID), busiModelResRelations.getSubBusiModelResRelationsList());
+						}
+						HibernateUtil.deleteObject(refResourceName, data);// 删除主表数据
 					}
 				}
 			}
@@ -173,6 +180,58 @@ public class BusiModelResourceData implements Serializable{
 			}
 		}
 		return resultDatas;
+	}
+	
+	/**
+	 * 递归级联删除子表数据
+	 * @param parentDataId
+	 * @param subBusiModelResRelationsList
+	 */
+	@SuppressWarnings({ "unchecked", "unused" })
+	private void recursiveCascadeDeleteSub(Object parentDataId, List<CfgBusiModelResRelations> subBusiModelResRelationsList) {
+		if(StrUtils.notEmpty(parentDataId) && subBusiModelResRelationsList != null && subBusiModelResRelationsList.size() > 0){
+			List<Object> subDataIds = null;
+			for (CfgBusiModelResRelations busiModelResRelations : subBusiModelResRelationsList) {
+				if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_TABLE){
+					subDataIds = HibernateUtil.executeListQueryByHqlArr(null,null, "select "+ResourcePropNameConstants.ID+" from "+busiModelResRelations.getRefResourceName()+" where "+busiModelResRelations.getRefParentResourcePropName()+" = ?", parentDataId);
+					if(subDataIds != null && subDataIds.size() > 0){
+						for (Object subDataId : subDataIds) {
+							recursiveCascadeDeleteSub(subDataId, busiModelResRelations.getSubBusiModelResRelationsList());
+						}
+						
+						deleteHqlBuffer.append("delete ").append(busiModelResRelations.getRefResourceName()).append(" where ").append(ResourcePropNameConstants.ID).append(" in (");
+						for (Object subDataId : subDataIds) {
+							deleteHqlBuffer.append("?,");
+						}
+						deleteHqlBuffer.setLength(deleteHqlBuffer.length()-1);
+						HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.DELETE, deleteHqlBuffer.toString(), subDataIds);
+						
+						subDataIds.clear();
+						deleteHqlBuffer.setLength(0);
+					}
+				}
+			}
+		}
+	}
+	private StringBuilder deleteHqlBuffer = new StringBuilder();
+	
+	/**
+	 * 验证是否有子表数据
+	 * @param parentDataId
+	 * @param busiModelResRelations
+	 */
+	private void validIsHaveSubDatas(Object parentDataId, List<CfgBusiModelResRelations> subBusiModelResRelationsList) {
+		if(subBusiModelResRelationsList != null && subBusiModelResRelationsList.size() > 0){
+			long count = 0;
+			for (CfgBusiModelResRelations busiModelResRelations : subBusiModelResRelationsList) {
+				if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_TABLE){
+					count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from "+busiModelResRelations.getRefResourceName()+" where "+busiModelResRelations.getRefParentResourcePropName()+" = ?", parentDataId);
+					if(count> 0){
+						throw new IllegalArgumentException("删除id=["+parentDataId+"]的["+this.busiModelResRelations.getRefResourceName()+"]资源失败，其下存在"+count+"条["+busiModelResRelations.getRefResourceName()+"}资源数据");
+					}
+				}
+			}
+		}
 	}
 	
 	/**

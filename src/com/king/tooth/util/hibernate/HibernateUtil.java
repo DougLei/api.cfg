@@ -247,7 +247,7 @@ public class HibernateUtil {
 	 * @param data
 	 */
 	public static JSONObject deleteObject(String entityName, JSONObject data){
-		String deleteDataId = data.getString(ResourcePropNameConstants.ID);
+		Object deleteDataId = data.get(ResourcePropNameConstants.ID);
 		if(deleteDataId == null){
 			throw new NullPointerException("要删除的数据id值不能为空");
 		}

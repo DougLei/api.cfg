@@ -157,6 +157,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public List<CfgBusiModelResRelations> getSubBusiModelResRelationsList() {
 		return subBusiModelResRelationsList;
 	}
+	public BusiModelResourceData removeResourceData(int index) {
+		if(resourceDataList != null && index < resourceDataList.size()){
+			return resourceDataList.remove(index);
+		}
+		return null;
+	}
 	
 	/**
 	 * 是否有业务模型的子资源关系集合
@@ -209,7 +215,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		
 		CfgColumn isCascadeDeleteColumn = new CfgColumn("is_cascade_delete", DataTypeConstants.INTEGER, 1);
 		isCascadeDeleteColumn.setName("是否级联删除");
-		isCascadeDeleteColumn.setComments("默认值为0，即删除主表数据时，是否级联删除子表的数据");
+		isCascadeDeleteColumn.setComments("默认值为0，即删除主表数据时，是否级联删除子表的数据，如果不级联删除，则有约束，有子表数据，则不能删除主表数据");
 		isCascadeDeleteColumn.setDefaultValue("0");
 		columns.add(isCascadeDeleteColumn);
 		
@@ -461,9 +467,9 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public List<Object> doOperBusiDataList(){
 		if(resourceDataList != null && resourceDataList.size()>0){
 			List<Object> resultDatasList = new ArrayList<Object>(resourceDataList.size());
-			for (BusiModelResourceData resourceData : resourceDataList) {
-				resultDatasList.add(resourceData.doOperBusiData());
-				resourceData.clear();
+			for(int i=0;i<resourceDataList.size();i++){
+				resultDatasList.add(resourceDataList.get(i).doOperBusiData());
+				resourceDataList.get(i).clear();
 			}
 			return resultDatasList;
 		}
