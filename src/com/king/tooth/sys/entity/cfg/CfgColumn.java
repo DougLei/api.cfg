@@ -197,6 +197,9 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		this.length = length;
 	}
 	public Integer getPrecision() {
+		if(precision == null){
+			precision = 0;
+		}
 		return precision;
 	}
 	public void setPrecision(Integer precision) {
@@ -215,12 +218,18 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		this.isPrimaryKey = isPrimaryKey;
 	}
 	public Integer getIsUnique() {
+		if(isUnique == null){
+			isUnique = 0;
+		}
 		return isUnique;
 	}
 	public void setIsUnique(Integer isUnique) {
 		this.isUnique = isUnique;
 	}
 	public Integer getIsNullabled() {
+		if(isNullabled == null){
+			isNullabled = 1;
+		}
 		return isNullabled;
 	}
 	public void setIsNullabled(Integer isNullabled) {
@@ -306,9 +315,9 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 				this.oldColumnInfo.put("precision", oldColumn.getPrecision());
 			}
 			// 5.记录 (旧的)默认值
-			if((oldColumn.getDefaultValue() != null && !oldColumn.getDefaultValue().equals(this.getDefaultValue())) 
-					|| (this.getDefaultValue() != null && !this.getDefaultValue().equals(oldColumn.getDefaultValue()))){
-				this.oldColumnInfo.put("havaOldDefaultValue", true);
+			if((StrUtils.notEmpty(oldColumn.getDefaultValue()) && !oldColumn.getDefaultValue().equals(this.getDefaultValue())) 
+					|| (StrUtils.notEmpty(this.getDefaultValue()) && !this.getDefaultValue().equals(oldColumn.getDefaultValue()))){
+				this.oldColumnInfo.put("haveOldDefaultValue", true);
 				this.oldColumnInfo.put("defaultValue", oldColumn.getDefaultValue());
 			}
 			// 6.记录 (旧的)是否唯一
@@ -320,14 +329,14 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 				this.oldColumnInfo.put("isNullabled", oldColumn.getIsNullabled());
 			}
 			// 8.记录 (旧的)备注信息
-			if((oldColumn.getComments() != null && !oldColumn.getComments().equals(this.getComments())) 
-					|| (this.getComments() != null && !this.getComments().equals(oldColumn.getComments()))){
-				this.oldColumnInfo.put("havaComments", true);
+			if((StrUtils.notEmpty(oldColumn.getComments()) && !oldColumn.getComments().equals(this.getComments())) 
+					|| (StrUtils.notEmpty(this.getComments()) && !this.getComments().equals(oldColumn.getComments()))){
+				this.oldColumnInfo.put("haveComments", true);
 				this.oldColumnInfo.put("comments", oldColumn.getComments());
 			}
 			if(oldColumnInfo.size() > 0){// 如果有修改记录了，才会标识列的状态被修改，需要用户重新建模；修改了列的备注等信息，是不用重新建模的
-				this.setOperStatus(CfgColumn.MODIFIED);
 				this.oldInfoJson = JsonUtil.toJsonString(oldColumnInfo, false);
+				this.setOperStatus(CfgColumn.MODIFIED);
 				return true;
 			}
 		}

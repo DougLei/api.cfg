@@ -72,7 +72,7 @@ public class CfgColumnService extends AService{
 			}
 			
 			try {
-				column.setOperStatus(CfgColumn.CREATED);
+				column.setOperStatus(CfgColumn.UN_CREATED);
 				dbTableHandler.modifyColumn(tableNameBuffer.toString(), column);
 				addColumns.add(column);
 				
@@ -132,6 +132,7 @@ public class CfgColumnService extends AService{
 					// 最后修改表的建模状态为: 未建模
 					modifyTableIsBuildModel(column.getTableId(), null, 0);
 				}
+				column.setOperStatus(CfgColumn.CREATED);
 				return HibernateUtil.updateEntityObject(column, null);
 			} catch (Exception e) {
 				operResult = "修改列时出现异常：" + ExceptionUtil.getErrMsg(e);

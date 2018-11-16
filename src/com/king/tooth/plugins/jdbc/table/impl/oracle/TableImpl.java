@@ -4,6 +4,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.plugins.jdbc.table.impl.ATableHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.util.StrUtils;
 
 /**
  * oracle创建表操作的实现类
@@ -80,7 +81,7 @@ public class TableImpl extends ATableHandler{
 	}
 	
 	protected void analysisTableComments(CfgTable table, boolean isAdd) {
-		if(table.getRemark() != null){
+		if(StrUtils.notEmpty(table.getRemark())){
 			createCommentSql.append("comment on table ")
 							.append(table.getTableName())
 							.append(" is '")
@@ -90,7 +91,7 @@ public class TableImpl extends ATableHandler{
 	}
 
 	protected void analysisColumnComments(String tableName, CfgColumn column, boolean isAdd, StringBuilder columnSql) {
-		if(column.getComments() != null){
+		if(StrUtils.notEmpty(column.getComments())){
 			columnSql.append("comment on column ")
 					 .append(tableName).append(".").append(column.getColumnName())
 					 .append(" is '")

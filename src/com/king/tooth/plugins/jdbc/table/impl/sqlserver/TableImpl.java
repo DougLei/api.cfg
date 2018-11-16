@@ -8,6 +8,7 @@ import com.king.tooth.constants.database.DatabaseConstraintConstants;
 import com.king.tooth.plugins.jdbc.table.impl.ATableHandler;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.database.DBUtil;
 
 /**
@@ -80,7 +81,7 @@ public class TableImpl extends ATableHandler{
 	}
 	
 	protected void analysisTableComments(CfgTable table, boolean isAdd) {
-		if(table.getRemark() != null){
+		if(StrUtils.notEmpty(table.getRemark())){
 			createCommentSql.append("execute ");
 			if(isAdd){
 				createCommentSql.append("sp_addextendedproperty");
@@ -96,7 +97,7 @@ public class TableImpl extends ATableHandler{
 	}
 
 	protected void analysisColumnComments(String tableName, CfgColumn column, boolean isAdd, StringBuilder columnSql) {
-		if(column.getComments() != null){
+		if(StrUtils.notEmpty(column.getComments())){
 			columnSql.append("execute ");
 			if(isAdd){
 				columnSql.append("sp_addextendedproperty");
@@ -136,7 +137,7 @@ public class TableImpl extends ATableHandler{
 				dropConstraint(tableName, column.getColumnName(), operColumnSql, DatabaseConstraintConstants.UNIQUE);
 			}
 			// 默认值
-			if(oldColumnInfo.get("havaOldDefaultValue") != null && oldColumnInfo.getBoolean("havaOldDefaultValue") && oldColumnInfo.get("defaultValue") != null){ 
+			if(oldColumnInfo.get("haveOldDefaultValue") != null && oldColumnInfo.getBoolean("haveOldDefaultValue") && oldColumnInfo.get("defaultValue") != null){ 
 				dropConstraint(tableName, column.getColumnName(), operColumnSql, DatabaseConstraintConstants.DEFAULT_VALUE);
 			}
 			oldColumnInfo.clear();

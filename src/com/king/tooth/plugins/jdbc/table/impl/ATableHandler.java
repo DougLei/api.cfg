@@ -184,7 +184,7 @@ public abstract class ATableHandler {
 			}
 			
 			// 默认值
-			if(oldColumnInfo.get("havaOldDefaultValue") != null && oldColumnInfo.getBoolean("havaOldDefaultValue")){ 
+			if(oldColumnInfo.get("haveOldDefaultValue") != null && oldColumnInfo.getBoolean("haveOldDefaultValue")){ 
 				// 原来存在默认值约束，则要删除之前的默认值约束
 				if(oldColumnInfo.get("defaultValue") != null){
 					deleteDefaultValueConstraint(tableName, column, operColumnSql);
@@ -197,8 +197,8 @@ public abstract class ATableHandler {
 			}
 			
 			// 注释
-			if(oldColumnInfo.get("havaComments") != null && oldColumnInfo.getBoolean("havaComments")){ 
-				boolean isAdd = oldColumnInfo.get("comments") == null;
+			if(oldColumnInfo.get("haveComments") != null && oldColumnInfo.getBoolean("haveComments")){ 
+				boolean isAdd = StrUtils.isEmpty(oldColumnInfo.get("comments"));
 				analysisColumnComments(tableName, column, isAdd, operColumnSql);
 			}
 			oldColumnInfo.clear();

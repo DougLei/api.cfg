@@ -42,9 +42,9 @@ public abstract class AService {
 		StringBuilder hql = new StringBuilder("delete "+entityName+" where ");
 		hql.append(ResourcePropNameConstants.ID);
 		if(idArr.length ==1){
-			hql.append("= '").append(idArr[0]).append("'");
+			hql.append(" = '").append(idArr[0]).append("'");
 		}else if(idArr.length > 1){
-			hql.append("in (");
+			hql.append(" in (");
 			for (String columnId : idArr) {
 				hql.append("'").append(columnId).append("',");
 			}
