@@ -204,6 +204,7 @@ public class BusiModelResourceData implements Serializable{
 							deleteHqlBuffer.append("?,");
 						}
 						deleteHqlBuffer.setLength(deleteHqlBuffer.length()-1);
+						deleteHqlBuffer.append(")");
 						HibernateUtil.executeUpdateByHql(SqlStatementTypeConstants.DELETE, deleteHqlBuffer.toString(), subDataIds);
 						
 						subDataIds.clear();
