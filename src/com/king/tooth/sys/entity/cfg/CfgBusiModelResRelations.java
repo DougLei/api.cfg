@@ -374,8 +374,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	public CfgTable getRefTable() {
 		setRefResource();
-		if(refTable !=null && resourceMetadataInfos == null){
-			resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refTable.getResourceName());
+		if(refTable !=null){
+			if(resourceMetadataInfos == null){
+				resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refTable.getResourceName());
+			}
 			return refTable;
 		}
 		return null;
