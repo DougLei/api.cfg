@@ -124,12 +124,8 @@ public class TableResourceValidUtil {
 			// 验证每个对象的属性，是否存在
 			propKeys = data.keySet();
 			for (String propName : propKeys) {
-//				if(isBusiModelRefTableResource && ResourcePropNameConstants.OPER_DATA_TYPE.equals(propName)){
-//					continue one;
-//				}
 				if(validPropUnExists(false, propName, resourceMetadataInfos)){
 					continue one;
-//					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
 				}
 			}
 			

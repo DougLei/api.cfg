@@ -3,6 +3,8 @@ package com.king.tooth.web.entity.request.valid.data.impl;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.OperDataTypeConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
@@ -55,7 +57,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private String validPostBusiModelResourceMetadata() {
 		IJson ijson = requestBody.getFormData();
-		recursiveValidBusiModelData(busiModel.getBusiModelResRelationsList(), ijson, null, 1);
+		validResult = recursiveValidBusiModelData(busiModel.getBusiModelResRelationsList(), ijson, null, 1);
 		recursiveClearValidMetadataDatas(busiModel.getBusiModelResRelationsList());
 		return validResult;
 	}
@@ -93,8 +95,18 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 				// 处理每个对象主键，如果没有就要赋值
 				for(int j=0;j<ijsonDataSize;j++){
 					json = ijsonData.get(j);
-					if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+					if(OperDataTypeConstants.ADD.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
 						json.put(refResourceIdPropName, ResourceHandlerUtil.getIdentity());
+					}else if(OperDataTypeConstants.EDIT.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
+						if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要修改的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+						}
+					}else if(OperDataTypeConstants.DELETE.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
+						if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要删除的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+						}
+					}else{
+						return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete";
 					}
 				}
 				
