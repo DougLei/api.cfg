@@ -14,7 +14,6 @@ import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.sql.SqlExecutor;
-import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
@@ -83,14 +82,10 @@ public class BusiModelResourceData implements Serializable{
 				refResourceId = refTable.getId();
 				refResourceName = refTable.getResourceName();
 				
-				resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refResourceName);
-				validResult = TableResourceValidUtil.validTableResourceMetadata("操作业务资源["+busiModelResourceName+"]，关联的表资源["+refResourceName+"]时，", refResourceName, resourceMetadataInfos, datas, false, true, true);
+				validResult = TableResourceValidUtil.validTableResourceMetadata("操作业务资源["+busiModelResourceName+"]，关联的表资源["+refResourceName+"]时，", refResourceName, busiModelResRelations.getResourceMetadataInfos(), datas, false, true, true);
 			}else if(refSql != null){
 				refResourceId = refSql.getId();
 				refResourceName = refSql.getResourceName();
-				
-				resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql);
-				inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
 				
 				// 如果有父数据id，则要将其赋值到datas数据中，最后解析出实际传入的参数值集合
 				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
@@ -104,7 +99,7 @@ public class BusiModelResourceData implements Serializable{
 				}
 				actualParamsList = SqlResourceValidUtil.initActualParamsList(null, datas);
 				
-				validResult = SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, actualParamsList, resourceMetadataInfos, inSqlResultSetMetadataInfoList);
+				validResult = SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, actualParamsList, busiModelResRelations.getResourceMetadataInfos(), busiModelResRelations.getInSqlResultSetMetadataInfoList());
 			}
 			return validResult;
 		} finally{
@@ -112,24 +107,11 @@ public class BusiModelResourceData implements Serializable{
 		}
 	}
 	
-	private List<ResourceMetadataInfo> resourceMetadataInfos;
 	private List<List<CfgSqlParameter>> actualParamsList ;
-	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList ;
 	/**
 	 * 清空验证使用的数据
 	 */
 	private void clearValidData() {
-		if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
-			resourceMetadataInfos.clear();
-		}
-		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
-			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
-				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
-					inSqlResultSetMetadataInfos.clear();
-				}
-			}
-			inSqlResultSetMetadataInfoList.clear();
-		}
 		if(actualParamsList != null && actualParamsList.size() > 0){
 			for (List<CfgSqlParameter> actualParams : actualParamsList) {
 				if(actualParams != null && actualParams.size() > 0){
@@ -179,6 +161,7 @@ public class BusiModelResourceData implements Serializable{
 			refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
 			resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas, rules);
 			
+			refSql.clear();
 			// 清除sql语句中的参数值集合
 			if(sqlParameterValues != null && sqlParameterValues.size() > 0){
 				for(List<Object> list : sqlParameterValues){

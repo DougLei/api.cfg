@@ -55,7 +55,9 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private String validPostBusiModelResourceMetadata() {
 		IJson ijson = requestBody.getFormData();
-		return recursiveValidBusiModelData(busiModel.getBusiModelResRelationsList(), ijson, null, 1);
+		recursiveValidBusiModelData(busiModel.getBusiModelResRelationsList(), ijson, null, 1);
+		recursiveClearValidMetadataDatas(busiModel.getBusiModelResRelationsList());
+		return validResult;
 	}
 	
 	/**
@@ -114,4 +116,17 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 		return validResult;
 	}
 	private String validResult;
+	
+	/**
+	 * 递归清空验证用的元数据信息
+	 * @param busiModelResRelationsList
+	 */
+	private void recursiveClearValidMetadataDatas(List<CfgBusiModelResRelations> busiModelResRelationsList) {
+		if(busiModelResRelationsList != null && busiModelResRelationsList.size() > 0){
+			for (CfgBusiModelResRelations busiModelResRelations : busiModelResRelationsList) {
+				recursiveClearValidMetadataDatas(busiModelResRelations.getSubBusiModelResRelationsList());
+				busiModelResRelations.clearValidMetadataDatas();
+			}
+		}
+	}
 }

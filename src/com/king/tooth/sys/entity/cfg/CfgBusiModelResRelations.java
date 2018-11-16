@@ -12,10 +12,13 @@ import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.cfg.busi.model.resource.data.BusiModelResourceData;
+import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.sys.service.cfg.CfgTableService;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
+import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 
 /**
  * 业务模型资源关系表
@@ -72,19 +75,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	@JSONField(serialize = false)
 	private List<CfgBusiModelResRelations> subBusiModelResRelationsList;
-	
-	/**
-	 * 关联的表资源对象
-	 */
-	@JSONField(serialize = false)
-	private CfgTable refTable;
-	
-	/**
-	 * 关联的sql资源对象
-	 * <p>每组sql参数，都解析成一个cfgsql对象，他们共享验证的元数据信息</p>
-	 */
-	@JSONField(serialize = false)
-	private List<CfgSql> refSqlList;
 	
 	/**
 	 * 业务模型的资源数据集合
@@ -268,6 +258,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	public static final Integer REF_RESOURCE_TYPE_CFG_SQL = 2;
 	
+	// --------------------------------------------------------
 	private void setRefParentResourcePropName() {
 		if(this.refParentResourcePropName == null){
 			Object refParentResourcePropName = null;
@@ -304,6 +295,50 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 			subBusiModelResRelationsList = new ArrayList<CfgBusiModelResRelations>();
 		}
 		subBusiModelResRelationsList.add(busiModelResRelations);
+	}
+	
+	/**
+	 * 关联的表资源对象
+	 */
+	@JSONField(serialize = false)
+	private CfgTable refTable;
+	
+	/**
+	 * 关联的sql资源对象
+	 * <p>每组sql参数，都解析成一个cfgsql对象，他们共享验证的元数据信息</p>
+	 */
+	@JSONField(serialize = false)
+	private List<CfgSql> refSqlList;
+	
+	/** 资源的元数据信息集合 */
+	@JSONField(serialize = false)
+	private List<ResourceMetadataInfo> resourceMetadataInfos;
+	/** sql资源的输入结果集元数据信息集合 */
+	@JSONField(serialize = false)
+	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList;
+	
+	public List<ResourceMetadataInfo> getResourceMetadataInfos() {
+		return resourceMetadataInfos;
+	}
+	public List<List<ResourceMetadataInfo>> getInSqlResultSetMetadataInfoList() {
+		return inSqlResultSetMetadataInfoList;
+	}
+	
+	/**
+	 * 清空验证用的元数据信息
+	 */
+	public void clearValidMetadataDatas(){
+		if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
+			resourceMetadataInfos.clear();
+		}
+		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
+			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
+				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
+					inSqlResultSetMetadataInfos.clear();
+				}
+			}
+			inSqlResultSetMetadataInfoList.clear();
+		}
 	}
 	
 	/**
@@ -350,6 +385,9 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	public CfgTable getRefTable() {
 		setRefResource();
+		if(refTable !=null && resourceMetadataInfos == null){
+			resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refTable.getResourceName());
+		}
 		return refTable;
 	}
 	
@@ -366,6 +404,9 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 				if(refSql != null && !refSql.getIncludeAllInfo()){
 					BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
 				}
+				
+				resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql);
+				inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
 			}else{
 				refSql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceAllInfoById(refSqlList.get(0).getId());
 				refSqlList.add(refSql);
@@ -390,21 +431,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	/** 执行sql时，标识依次取refSqlList中的sql去操作 */
 	private int sqlForExecuteIndex;
 	
-	
-	public void clear(){
-		if(refSqlList != null && refSqlList.size() > 0){
-			for (CfgSql refSql : refSqlList) {
-				refSql.clear();
-			}
-		}
-		if(resourceDataList != null && resourceDataList.size()>0){
-			for (BusiModelResourceData resourceData : resourceDataList) {
-				resourceData.clear();
-			}
-			resourceDataList.clear();
-		}
-	}
-	
 	/**
 	 * 进行业务数据保存
 	 */
@@ -413,6 +439,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 			List<Object> resultDatasList = new ArrayList<Object>(resourceDataList.size());
 			for (BusiModelResourceData resourceData : resourceDataList) {
 				resultDatasList.add(resourceData.saveBusiData());
+				resourceData.clear();
 			}
 			return resultDatasList;
 		}
