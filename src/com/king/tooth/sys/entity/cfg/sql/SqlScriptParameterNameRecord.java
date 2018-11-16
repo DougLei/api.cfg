@@ -1,5 +1,6 @@
 package com.king.tooth.sys.entity.cfg.sql;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,8 @@ import java.util.List;
  * sql脚本参数名的记录对象
  * @author DougLei
  */
-public class SqlScriptParameterNameRecord {
+@SuppressWarnings("serial")
+public class SqlScriptParameterNameRecord implements Serializable{
 	/**
 	 * 第几个sql语句
 	 */

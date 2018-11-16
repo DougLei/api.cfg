@@ -1,21 +1,24 @@
 package test;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestMain {
-	public static void main(String[] args) {
-		String[] a= ",ddd".split(",");
-		System.out.println(a[0] == null);
-		System.out.println(a[1]);
+	public static void main(String[] args) throws CloneNotSupportedException {
 		
-	}
-	
-	public static void d(JSONArray jr){
-		JSONObject j = jr.getJSONObject(0);
-		JSONObject jj = new JSONObject();
-		jj.put("333", 333);
-		j = jj;
-		System.out.println(j);
+		Parent p1 = new Parent();
+		p1.setName("p1");
+		List<String> tels = new ArrayList<String>();
+		tels.add("11111");
+		tels.add("22222");
+		p1.setTels(tels);
+		
+		
+		Parent p2 = (Parent) p1.clone();
+		p2.getTels().remove(1);
+		
+		
+		System.out.println(p1.getTels());
+		System.out.println(p2.getTels());
 	}
 }

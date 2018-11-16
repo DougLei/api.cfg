@@ -94,6 +94,7 @@ public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, I
 	private void recursiveClear(List<CfgBusiModelResRelations> busiModelResRelationsList){
 		if(busiModelResRelationsList != null && busiModelResRelationsList.size() > 0){
 			for (CfgBusiModelResRelations busiModelResRelations : busiModelResRelationsList) {
+				busiModelResRelations.clear();
 				recursiveClear(busiModelResRelations.getSubBusiModelResRelationsList());
 			}
 			busiModelResRelationsList.clear();

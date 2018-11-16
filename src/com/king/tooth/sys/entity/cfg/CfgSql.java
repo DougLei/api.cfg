@@ -34,7 +34,7 @@ import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity{
+public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity, Cloneable{
 
 	/**
 	 * 数据库类型
@@ -163,8 +163,8 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 		int len = ijson.size();
 		this.parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(len);
 		
-		SqlScriptParameterNameRecord spnr;
-		JSONArray jsonArray;
+		SqlScriptParameterNameRecord spnr = null;
+		JSONArray jsonArray = null;
 		for(int i=0;i<len;i++){
 			spnr = new SqlScriptParameterNameRecord(ijson.get(i).getIntValue("sqlIndex"));
 			jsonArray = ijson.get(i).getJSONArray("parameterNames");
@@ -553,8 +553,21 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 				targetSqlParams.add((CfgSqlParameter)sqlParam.clone());
 			}
 		} catch (CloneNotSupportedException e) {
-			throw new IllegalArgumentException(ExceptionUtil.getErrMsg(e));
+			throw new IllegalArgumentException("克隆CfgSqlParameter对象时出现异常："+ExceptionUtil.getErrMsg(e));
 		}
 		return targetSqlParams;
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		CfgSql sql = (CfgSql) super.clone();
+		sql.setIncludeAllInfo(false);
+		sql.setSqlParams(cloneSqlParams());
+		
+		// 克隆parameterNameRecordList
+		if(parameterNameRecordList != null && parameterNameRecordList.size() > 0){
+			sql.parameterNameRecordList = new ArrayList<SqlScriptParameterNameRecord>(parameterNameRecordList.size());
+			sql.parameterNameRecordList.addAll(parameterNameRecordList);
+		}
+		return sql;
 	}
 }

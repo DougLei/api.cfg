@@ -15,6 +15,7 @@ import com.king.tooth.sys.entity.cfg.busi.model.resource.data.BusiModelResourceD
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.king.tooth.sys.service.cfg.CfgSqlService;
 import com.king.tooth.sys.service.cfg.CfgTableService;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
@@ -313,32 +314,20 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	/** 资源的元数据信息集合 */
 	@JSONField(serialize = false)
 	private List<ResourceMetadataInfo> resourceMetadataInfos;
+	
 	/** sql资源的输入结果集元数据信息集合 */
 	@JSONField(serialize = false)
 	private List<List<ResourceMetadataInfo>> inSqlResultSetMetadataInfoList;
+	
+	/** sql资源的参数集合 */
+	@JSONField(serialize = false)
+	private List<CfgSqlParameter> sqlParams;
 	
 	public List<ResourceMetadataInfo> getResourceMetadataInfos() {
 		return resourceMetadataInfos;
 	}
 	public List<List<ResourceMetadataInfo>> getInSqlResultSetMetadataInfoList() {
 		return inSqlResultSetMetadataInfoList;
-	}
-	
-	/**
-	 * 清空验证用的元数据信息
-	 */
-	public void clearValidMetadataDatas(){
-		if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
-			resourceMetadataInfos.clear();
-		}
-		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
-			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
-				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
-					inSqlResultSetMetadataInfos.clear();
-				}
-			}
-			inSqlResultSetMetadataInfoList.clear();
-		}
 	}
 	
 	/**
@@ -387,8 +376,9 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		setRefResource();
 		if(refTable !=null && resourceMetadataInfos == null){
 			resourceMetadataInfos = TableResourceValidUtil.getTableResourceMetadataInfos(refTable.getResourceName());
+			return refTable;
 		}
-		return refTable;
+		return null;
 	}
 	
 	/**
@@ -397,25 +387,39 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	public CfgSql getRefSqlForValid() {
 		setRefResource();
-		CfgSql refSql = null;
 		if(refSqlList != null){
-			if(sqlForValidIndex == 0){
-				refSql = refSqlList.get(sqlForValidIndex++);
+			CfgSql refSql = null;
+			if(isValidFirstSql){
+				isValidFirstSql = false;
+				refSql = refSqlList.get(0);
 				if(refSql != null && !refSql.getIncludeAllInfo()){
 					BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
 				}
 				
+				if(refSql.getSqlParams() != null && refSql.getSqlParams().size()>0){
+					sqlParams = new ArrayList<CfgSqlParameter>(refSql.getSqlParams().size());
+					sqlParams.addAll(refSql.getSqlParams());
+				}
 				resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql);
 				inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
 			}else{
-				refSql = BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).findSqlScriptResourceAllInfoById(refSqlList.get(0).getId());
+				CfgSql basicSql = refSqlList.get(0);
+				if(basicSql.getSqlParams() == null || basicSql.getSqlParams().size() == 0){
+					basicSql.setSqlParams(sqlParams);
+				}
+				try {
+					refSql = (CfgSql) basicSql.clone();
+				} catch (CloneNotSupportedException e) {
+					throw new IllegalArgumentException("克隆CfgSql对象时出现异常："+ExceptionUtil.getErrMsg(e));
+				}
 				refSqlList.add(refSql);
 			}
+			return refSql;
 		}
-		return refSql;
+		return null;
 	}
-	/** 用来标识，如果该参数值=0，标识取refSqlList第一个sql去验证，后续该值自增1，再做验证，就新创建一个sql对象去做数据验证，并将该对象添加到refSqlList集合中 */
-	private int sqlForValidIndex;
+	/** 用来标识，是否验证refSqlList的第一个sql对象，后续再做验证，就新创建一个sql对象去做数据验证，并将该对象添加到refSqlList集合中 */
+	private boolean isValidFirstSql = true;
 	
 	/**
 	 * 获取引用的sql对象去执行
@@ -444,5 +448,34 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 			return resultDatasList;
 		}
 		return null;
+	}
+	
+	/**
+	 * 清空验证用的元数据信息
+	 */
+	public void clearValidMetadataDatas(){
+		if(resourceMetadataInfos != null && resourceMetadataInfos.size() > 0){
+			resourceMetadataInfos.clear();
+		}
+		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
+			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
+				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
+					inSqlResultSetMetadataInfos.clear();
+				}
+			}
+			inSqlResultSetMetadataInfoList.clear();
+		}
+	}
+	
+	/**
+	 * 在最后所有操作完，清除无用的数据信息
+	 */
+	public void clear(){
+		if(sqlParams != null && sqlParams.size()>0){
+			sqlParams.clear();
+		}
+		if(refSqlList != null && refSqlList.size()>0){
+			refSqlList.clear();
+		}
 	}
 }
