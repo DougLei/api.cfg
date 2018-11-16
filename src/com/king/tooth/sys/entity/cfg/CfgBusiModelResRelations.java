@@ -66,9 +66,15 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	private String refParentResourcePropId;
 	
 	/**
+	 * 是否级联删除
+	 * <p>默认值为0，即删除主表数据时，是否级联删除子表的数据</p>
+	 */
+	private Integer isCascadeDelete;
+	/**
 	 * 排序值
 	 */
 	private Integer orderCode;
+	
 	
 	//-------------------------------------------------------------------------
 	/**
@@ -120,6 +126,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	}
 	public void setRefResourceType(Integer refResourceType) {
 		this.refResourceType = refResourceType;
+	}
+	public Integer getIsCascadeDelete() {
+		return isCascadeDelete;
+	}
+	public void setIsCascadeDelete(Integer isCascadeDelete) {
+		this.isCascadeDelete = isCascadeDelete;
 	}
 	public Integer getOrderCode() {
 		return orderCode;
@@ -194,6 +206,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		refParentResourcePropIdColumn.setName("子资源中关联父资源的属性id");
 		refParentResourcePropIdColumn.setComments("指定子资源的哪个属性，存储父资源的id值");
 		columns.add(refParentResourcePropIdColumn);
+		
+		CfgColumn isCascadeDeleteColumn = new CfgColumn("is_cascade_delete", DataTypeConstants.INTEGER, 1);
+		isCascadeDeleteColumn.setName("是否级联删除");
+		isCascadeDeleteColumn.setComments("默认值为0，即删除主表数据时，是否级联删除子表的数据");
+		isCascadeDeleteColumn.setDefaultValue("0");
+		columns.add(isCascadeDeleteColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 3);
 		orderCodeColumn.setName("排序值");
@@ -438,13 +456,13 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	private int sqlForExecuteIndex;
 	
 	/**
-	 * 进行业务数据保存
+	 * 进行业务数据操作
 	 */
-	public List<Object> doSaveBusiDataList(){
+	public List<Object> doOperBusiDataList(){
 		if(resourceDataList != null && resourceDataList.size()>0){
 			List<Object> resultDatasList = new ArrayList<Object>(resourceDataList.size());
 			for (BusiModelResourceData resourceData : resourceDataList) {
-				resultDatasList.add(resourceData.saveBusiData());
+				resultDatasList.add(resourceData.doOperBusiData());
 				resourceData.clear();
 			}
 			return resultDatasList;

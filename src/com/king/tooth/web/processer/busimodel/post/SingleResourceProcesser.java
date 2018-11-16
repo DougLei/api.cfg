@@ -40,7 +40,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 			for (CfgBusiModelResRelations busiModelResRelations : busiModelResRelationsList) {
 				JSONArray subResultDataJSONArray = recursiveDoSaveBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), recursiveLevel+1);
 				
-				List<Object> resultDatasList = busiModelResRelations.doSaveBusiDataList();
+				List<Object> resultDatasList = busiModelResRelations.doOperBusiDataList();
 				if(resultDatasList != null && resultDatasList.size() > 0){
 					int size = resultDatasList.size();
 					Object resultDatas = null;
