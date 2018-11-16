@@ -68,6 +68,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	/**
 	 * 是否级联删除
 	 * <p>默认值为0，即删除主表数据时，是否级联删除子表的数据</p>
+	 * <p>该字段目前只针对表资源有效</p>
 	 */
 	private Integer isCascadeDelete;
 	/**
@@ -215,7 +216,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		
 		CfgColumn isCascadeDeleteColumn = new CfgColumn("is_cascade_delete", DataTypeConstants.INTEGER, 1);
 		isCascadeDeleteColumn.setName("是否级联删除");
-		isCascadeDeleteColumn.setComments("默认值为0，即删除主表数据时，是否级联删除子表的数据，如果不级联删除，则有约束，有子表数据，则不能删除主表数据");
+		isCascadeDeleteColumn.setComments("默认值为0，即删除主表数据时，是否级联删除子表的数据，如果不级联删除，则有约束，有子表数据，则不能删除主表数据，该字段目前只针对表资源有效");
 		isCascadeDeleteColumn.setDefaultValue("0");
 		columns.add(isCascadeDeleteColumn);
 		
