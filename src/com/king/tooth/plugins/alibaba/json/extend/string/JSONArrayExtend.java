@@ -91,4 +91,14 @@ public class JSONArrayExtend implements IJson{
 		}
 		jsonArray.add(json);
 	}
+	
+	public JSONObject remove(int index) {
+		if(index > jsonArray.size()){
+			throw new IndexOutOfBoundsException("要从集合中删除的下标值大于集合的实际长度");
+		}
+		if(index < 0){
+			throw new IndexOutOfBoundsException("要从集合中删除的下标值小于0");
+		}
+		return null;
+	}
 }

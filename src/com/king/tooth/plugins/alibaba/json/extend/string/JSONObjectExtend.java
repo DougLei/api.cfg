@@ -72,4 +72,13 @@ public class JSONObjectExtend implements IJson{
 		}
 		jsonObject = json;
 	}
+	
+	public JSONObject remove(int index) {
+		if(index < 0){
+			throw new IndexOutOfBoundsException("要从集合中删除的下标值小于0");
+		}
+		JSONObject json = jsonObject;
+		jsonObject = null;
+		return json;
+	}
 }

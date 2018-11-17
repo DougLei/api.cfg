@@ -17,4 +17,8 @@ public class OperDataTypeConstants {
 	 * 操作数据的方式: 删除数据
 	 */
 	public final static String DELETE = "delete";
+	/**
+	 * 操作数据的方式: 不对数据进行任何操作
+	 */
+	public final static String NO_OPER = "no_oper";
 }

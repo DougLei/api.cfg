@@ -68,6 +68,13 @@ public interface IJson extends Serializable{
 	void add(JSONObject json);
 	
 	/**
+	 * 删除
+	 * @param index
+	 * @return
+	 */
+	JSONObject remove(int index);
+	
+	/**
 	 * toString
 	 * @return
 	 */

@@ -59,7 +59,13 @@ public class BusiModelResourceData implements Serializable{
 	}
 	
 	// -----------------------------------------------------------
+	public IJson getDatas() {
+		return datas;
+	}
+	
+	// -----------------------------------------------------------
 	private CfgBusiModelResRelations busiModelResRelations;
+
 	/** 是否是表资源，如果不是，就是sql资源 */
 	private boolean isTableResource;
 	/** 引用的资源id */
@@ -193,6 +199,24 @@ public class BusiModelResourceData implements Serializable{
 			List<Object> subDataIds = null;
 			for (CfgBusiModelResRelations busiModelResRelations : subBusiModelResRelationsList) {
 				if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_TABLE){
+					resourceDataList = busiModelResRelations.getResourceDataList();
+					if(resourceDataList != null && resourceDataList.size() >0){
+						for (int i = 0; i < resourceDataList.size(); i++) {
+							tmpDatas = resourceDataList.get(i).getDatas();
+							// 这种写法，会将当前被删除对象的子数据，都直接从集合中删除，减少后续的处理，但是最后也不会将这些数据返回给前端
+							if(tmpDatas != null && tmpDatas.size() > 0 && parentDataId.equals(tmpDatas.get(0).get(busiModelResRelations.getRefParentResourcePropName()))){
+								tmpDatas.clear();
+								resourceDataList.remove(i--);
+							}
+							// 这种写法，会对每条数据进行处理，如果是当前被删除对象的子数据，则会修改该数据的状态为NO_OPER，最终数据也会完整的返回给前端
+//							if(tmpDatas != null && tmpDatas.size() > 0 && parentDataId.equals(tmpDatas.get(0).get(busiModelResRelations.getRefParentResourcePropName()))){
+//								for(int j=0;j<tmpDatas.size();j++){
+//									tmpDatas.get(j).put(ResourcePropNameConstants.OPER_DATA_TYPE, OperDataTypeConstants.NO_OPER);
+//								}
+//							}
+						}
+					}
+					
 					subDataIds = HibernateUtil.executeListQueryByHqlArr(null,null, "select "+ResourcePropNameConstants.ID+" from "+busiModelResRelations.getRefResourceName()+" where "+busiModelResRelations.getRefParentResourcePropName()+" = ?", parentDataId);
 					if(subDataIds != null && subDataIds.size() > 0){
 						for (Object subDataId : subDataIds) {
@@ -215,6 +239,8 @@ public class BusiModelResourceData implements Serializable{
 		}
 	}
 	private StringBuilder deleteHqlBuffer = new StringBuilder();
+	private List<BusiModelResourceData> resourceDataList;
+	private IJson tmpDatas;
 	
 	/**
 	 * 验证是否有子表数据

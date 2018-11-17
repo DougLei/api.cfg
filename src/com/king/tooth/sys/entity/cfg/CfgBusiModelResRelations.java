@@ -158,12 +158,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public List<CfgBusiModelResRelations> getSubBusiModelResRelationsList() {
 		return subBusiModelResRelationsList;
 	}
-	public BusiModelResourceData removeResourceData(int index) {
-		if(resourceDataList != null && index < resourceDataList.size()){
-			return resourceDataList.remove(index);
-		}
-		return null;
+	public List<BusiModelResourceData> getResourceDataList() {
+		return resourceDataList;
 	}
+	
 	
 	/**
 	 * 是否有业务模型的子资源关系集合
