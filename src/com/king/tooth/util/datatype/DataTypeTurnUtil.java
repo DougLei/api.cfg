@@ -13,14 +13,14 @@ public class DataTypeTurnUtil {
 	 * 转换值数据类型
 	 * @param value
 	 * @param targetDataCodeType @see DataTypeConstants
-	 * @param isNullStr 如果value为null，是否返回空字符串
+	 * @param isReturnNullStr 如果value为null，是否返回空字符串<"">
 	 * @param isCodeDateType 是否是代码时间类型，不是代码时间类型，就是sql时间类型，主要区别在于日期的转换，一个是java.util.Date，一个是java.sql.Date
 	 * @param dateIsDetail 日期类型是否是详细，详细包括时分秒
 	 * @return
 	 */
-	public static Object turnValueDataType(Object value, String targetDataCodeType, boolean isNullStr, boolean isCodeDateType, boolean dateIsDetail){
+	public static Object turnValueDataType(Object value, String targetDataCodeType, boolean isReturnNullStr, boolean isCodeDateType, boolean dateIsDetail){
 		if(value == null){
-			if(isNullStr){
+			if(isReturnNullStr){
 				return "";
 			}else{
 				return null;

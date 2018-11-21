@@ -23,7 +23,7 @@ public class FuncExecTimeFilter extends AbstractFilter{
 		chain.doFilter(request, response);
 		
 		long execTime = System.currentTimeMillis() - startTime;
-		if(execTime > 3000){
+		if(execTime > 1000){
 			Log4jUtil.error("*********性能提醒：请求路径：[{}]，执行耗时为 {}ms。",req.getRequestURI(), execTime);
 		}else{
 			Log4jUtil.debug("请求路径：[{}]，执行耗时为 {}ms。",req.getRequestURI(), execTime);

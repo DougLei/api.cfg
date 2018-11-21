@@ -55,36 +55,35 @@ public class CfgColumnService extends AService{
 	
 	/**
 	 * 保存列
-	 * @param tableNameBuffer
+	 * @param table
 	 * @param column
 	 * @param addColumns 
 	 * @param dbTableHandler 
 	 * @return
 	 */
-	public Object saveColumn(StringBuilder tableNameBuffer, CfgColumn column, List<CfgColumn> addColumns, DBTableHandler dbTableHandler) {
+	public Object saveColumn(CfgTable table, CfgColumn column, List<CfgColumn> addColumns, DBTableHandler dbTableHandler) {
 		String operResult = validColumnRefTableIsExists(column);
 		if(operResult == null){
 			operResult = validColumnNameIsExists(column);
 		}
 		if(operResult == null){
-			if(tableNameBuffer.length() == 0){
-				tableNameBuffer.append(HibernateUtil.executeUniqueQueryByHqlArr("select tableName from CfgTable where " + ResourcePropNameConstants.ID+"=?", column.getTableId()));
-			}
-			
+			column.setOperStatus(CfgColumn.UN_CREATED);
 			try {
-				column.setOperStatus(CfgColumn.UN_CREATED);
-				dbTableHandler.modifyColumn(tableNameBuffer.toString(), column);
-				addColumns.add(column);
-				
-				// 最后修改表的建模状态为: 未建模
-				modifyTableIsBuildModel(column.getTableId(), null, 0);
+				if(table.getIsCreated() == 1){
+					dbTableHandler.modifyColumn(table.getTableName(), column);
+					addColumns.add(column);
+					
+					// 最后修改表的建模状态为: 未建模
+					modifyTableIsBuildModel(column.getTableId(), null, 0);
+					column.setOperStatus(CfgColumn.CREATED);
+				}
 				return HibernateUtil.saveObject(column, null);
 			} catch (Exception e) {
 				operResult = "添加列时出现异常：" + ExceptionUtil.getErrMsg(e);
 				
 				// drop被添加的列
-				if(addColumns != null && addColumns.size() > 0){
-					recorveColumnsOperStatus(dbTableHandler, tableNameBuffer.toString(), addColumns, CfgColumn.DELETED);
+				if(table.getIsCreated() == 1 && addColumns != null && addColumns.size() > 0){
+					recorveColumnsOperStatus(dbTableHandler, table.getTableName(), addColumns, CfgColumn.DELETED);
 					addColumns.clear();
 				}
 			}
@@ -94,15 +93,14 @@ public class CfgColumnService extends AService{
 
 	/**
 	 * 修改列
-	 * @param tableNameBuffer
+	 * @param table
 	 * @param column
 	 * @param updateColumns 
 	 * @param dbTableHandler 
 	 * @return
 	 */
-	public Object updateColumn(StringBuilder tableNameBuffer, CfgColumn column, List<CfgColumn> updateColumns, DBTableHandler dbTableHandler) {
+	public Object updateColumn(CfgTable table, CfgColumn column, List<CfgColumn> updateColumns, DBTableHandler dbTableHandler) {
 		CfgColumn oldColumn = getObjectById(column.getId(), CfgColumn.class);
-		CfgTable table = getObjectById(column.getTableId(), CfgTable.class);
 		if(table.getIsCreated() == 1){// 表已经建模，不能修改列的类型，以及缩小列的长度
 			if(!oldColumn.getColumnType().equals(column.getColumnType())){
 				return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]，此操作可能会损失已有数据";
@@ -122,24 +120,25 @@ public class CfgColumnService extends AService{
 		if(operResult == null){
 			try {
 				if(column.analysisOldColumnInfo(oldColumn)){
-					if(tableNameBuffer.length() == 0){
-						tableNameBuffer.append(HibernateUtil.executeUniqueQueryByHqlArr("select tableName from CfgTable where " + ResourcePropNameConstants.ID+"=?", column.getTableId()));
+					if(table.getIsCreated() == 1){
+						dbTableHandler.modifyColumn(table.getTableName(), column);
+						oldColumn.analysisOldColumnInfo(column);
+						updateColumns.add(oldColumn);
+						
+						// 最后修改表的建模状态为: 未建模
+						modifyTableIsBuildModel(column.getTableId(), null, 0);
+						column.setOperStatus(CfgColumn.CREATED);
+					}else{
+						column.getOldColumnInfo().clear();
 					}
-					dbTableHandler.modifyColumn(tableNameBuffer.toString(), column);
-					oldColumn.analysisOldColumnInfo(column);
-					updateColumns.add(oldColumn);
-					
-					// 最后修改表的建模状态为: 未建模
-					modifyTableIsBuildModel(column.getTableId(), null, 0);
 				}
-				column.setOperStatus(CfgColumn.CREATED);
 				return HibernateUtil.updateEntityObject(column, null);
 			} catch (Exception e) {
 				operResult = "修改列时出现异常：" + ExceptionUtil.getErrMsg(e);
 				
 				// 恢复被修改的列
-				if(updateColumns != null && updateColumns.size() > 0){
-					recorveColumnsOperStatus(dbTableHandler, tableNameBuffer.toString(), updateColumns, CfgColumn.MODIFIED);
+				if(table.getIsCreated() == 1 && updateColumns != null && updateColumns.size() > 0){
+					recorveColumnsOperStatus(dbTableHandler, table.getTableName(), updateColumns, CfgColumn.MODIFIED);
 					updateColumns.clear();
 				}
 			}

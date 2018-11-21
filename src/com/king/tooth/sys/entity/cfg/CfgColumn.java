@@ -13,7 +13,6 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.TableResourceMetadataInfo;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ie.IETableResourceMetadataInfo;
-import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.NamingProcessUtil;
 import com.king.tooth.util.ResourceHandlerUtil;
 import com.king.tooth.util.StrUtils;
@@ -89,15 +88,6 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	 */
 	private Integer operStatus;
 	/**
-	 * 旧的信息json串
-	 * <p>如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作</p>
-	 * <p>例如：旧列名，旧默认值等</p>
-	 */
-	private String oldInfoJson;
-	@JSONField(serialize = false)
-	private JSONObject oldColumnInfo;
-	
-	/**
 	 * 是否导入
 	 * <p>默认为1，标识都导入</p>
 	 */
@@ -126,6 +116,13 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	
 	//-------------------------------------------------------------------------
 	/**
+	 * 旧的信息json串
+	 * <p>如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作</p>
+	 * <p>例如：旧列名，旧默认值等</p>
+	 */
+	@JSONField(serialize = false)
+	private JSONObject oldColumnInfo;
+	/**
 	 * 导入导出的扩展配置对象
 	 */
 	@JSONField(serialize = false)
@@ -137,6 +134,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		this(columnName, columnType, length, 1, 1);
 	}
 	private CfgColumn(String columnName, String columnType, Integer length, Integer isImport, Integer isExport) {
+		this.tableId = ResourceInfoConstants.BUILTIN_RESOURCE;
 		this.columnName = columnName.trim().toUpperCase();
 		this.propName = NamingProcessUtil.columnNameTurnPropName(columnName);
 		this.columnType = columnType;
@@ -253,13 +251,6 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	public void setOperStatus(Integer operStatus) {
 		this.operStatus = operStatus;
 	}
-	public String getOldInfoJson() {
-		return oldInfoJson;
-	}
-	public void setOldInfoJson(String oldInfoJson) {
-		this.oldInfoJson = oldInfoJson;
-		this.oldColumnInfo = JsonUtil.parseJsonObject(oldInfoJson);
-	}
 	public JSONObject getOldColumnInfo() {
 		return oldColumnInfo;
 	}
@@ -335,7 +326,6 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 				this.oldColumnInfo.put("comments", oldColumn.getComments());
 			}
 			if(oldColumnInfo.size() > 0){// 如果有修改记录了，才会标识列的状态被修改，需要用户重新建模；修改了列的备注等信息，是不用重新建模的
-				this.oldInfoJson = JsonUtil.toJsonString(oldColumnInfo, false);
 				this.setOperStatus(CfgColumn.MODIFIED);
 				return true;
 			}
@@ -345,7 +335,7 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(20+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(19+7);
 		
 		CfgColumn tableIdColumn = new CfgColumn("table_id", DataTypeConstants.STRING, 32);
 		tableIdColumn.setName("关联的表主键");
@@ -429,11 +419,6 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 		operStatusColumn.setDefaultValue("0");
 		columns.add(operStatusColumn);
 
-		CfgColumn oldInfoJsonColumn = new CfgColumn("old_info_json", DataTypeConstants.STRING, 1000);
-		oldInfoJsonColumn.setName("旧的信息json串");
-		oldInfoJsonColumn.setComments("如果列信息被修改，记录之前的列信息，在重新建模的时候，进行相应的删除操作；例如：旧列名，旧默认值等");
-		columns.add(oldInfoJsonColumn);
-		
 		CfgColumn isImportColumn = new CfgColumn("is_import", DataTypeConstants.INTEGER, 1);
 		isImportColumn.setName("是否导入");
 		isImportColumn.setComments("默认为1，标识都导入");
@@ -487,6 +472,9 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	}
 	
 	public String validNotNullProps() {
+		if(StrUtils.isEmpty(tableId)){
+			return "字段关联的表id不能为空！";
+		}
 		if(StrUtils.isEmpty(columnName)){
 			return "字段名不能为空！";
 		}

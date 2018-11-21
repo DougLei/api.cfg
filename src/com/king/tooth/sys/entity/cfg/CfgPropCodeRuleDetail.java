@@ -139,11 +139,26 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 */
 	private String queryCondColumnId;
 	/**
-	 * 查询条件值的列id
+	 * 查询条件值的属性id
 	 * <p>即当前对象中的某一个属性值作为条件，这个字段，ruleType为5和6，都使用</p>
 	 */
-	private String queryCondValColumnId;
+	private String queryCondValPropId;
+	/**
+	 * 查询条件值的属性来源
+	 * <p>默认值为1，1:CfgColumn、2:CfgSqlParameter，这个字段，ruleType为5和6，都使用</p>
+	 */
+	private Integer queryCondValPropFrom;
 	
+	/**
+	 * 排序列的id
+	 * <p>这个字段，ruleType为5和6，都使用</p>
+	 */
+	private String orderByColumnId;
+	/**
+	 * 排序的方式
+	 * <p>默认值为asc，可为asc、desc，这个字段，ruleType为5和6，都使用</p>
+	 */
+	private String orderByMethod;
 	// ------------------------
 	/**
 	 * 值截取的起始位置
@@ -281,11 +296,29 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	public void setQueryCondColumnId(String queryCondColumnId) {
 		this.queryCondColumnId = queryCondColumnId;
 	}
-	public String getQueryCondValColumnId() {
-		return queryCondValColumnId;
+	public String getQueryCondValPropId() {
+		return queryCondValPropId;
 	}
-	public void setQueryCondValColumnId(String queryCondValColumnId) {
-		this.queryCondValColumnId = queryCondValColumnId;
+	public void setQueryCondValPropId(String queryCondValPropId) {
+		this.queryCondValPropId = queryCondValPropId;
+	}
+	public Integer getQueryCondValPropFrom() {
+		return queryCondValPropFrom;
+	}
+	public void setQueryCondValPropFrom(Integer queryCondValPropFrom) {
+		this.queryCondValPropFrom = queryCondValPropFrom;
+	}
+	public String getOrderByColumnId() {
+		return orderByColumnId;
+	}
+	public void setOrderByColumnId(String orderByColumnId) {
+		this.orderByColumnId = orderByColumnId;
+	}
+	public String getOrderByMethod() {
+		return orderByMethod;
+	}
+	public void setOrderByMethod(String orderByMethod) {
+		this.orderByMethod = orderByMethod;
 	}
 	public Integer getValSubStartIndex() {
 		return valSubStartIndex;
@@ -315,7 +348,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(22+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(25+7);
 		
 		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
@@ -417,10 +450,27 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		queryCondColumnIdColumn.setComments("这个字段，ruleType为5和6，都使用");
 		columns.add(queryCondColumnIdColumn);
 		
-		CfgColumn queryCondValColumnIdColumn = new CfgColumn("query_cond_val_column_id", DataTypeConstants.STRING, 32);
-		queryCondValColumnIdColumn.setName("查询条件值的列id");
-		queryCondValColumnIdColumn.setComments("即当前对象中的某一个属性值作为条件，这个字段，ruleType为5和6，都使用");
-		columns.add(queryCondValColumnIdColumn);
+		CfgColumn queryCondValPropIdColumn = new CfgColumn("query_cond_val_prop_id", DataTypeConstants.STRING, 32);
+		queryCondValPropIdColumn.setName("查询条件值的属性id");
+		queryCondValPropIdColumn.setComments("即当前对象中的某一个属性值作为条件，这个字段，ruleType为5和6，都使用");
+		columns.add(queryCondValPropIdColumn);
+		
+		CfgColumn queryCondValPropFromColumn = new CfgColumn("query_cond_val_prop_from", DataTypeConstants.INTEGER, 1);
+		queryCondValPropFromColumn.setName("查询条件值的属性来源");
+		queryCondValPropFromColumn.setComments("默认值为1，1:CfgColumn、2:CfgSqlParameter，这个字段，ruleType为5和6，都使用");
+		queryCondValPropFromColumn.setDefaultValue("1");
+		columns.add(queryCondValPropFromColumn);
+		
+		CfgColumn orderByColumnIdColumn = new CfgColumn("order_by_column_id", DataTypeConstants.STRING, 32);
+		orderByColumnIdColumn.setName("排序列的id");
+		orderByColumnIdColumn.setComments("这个字段，ruleType为5和6，都使用");
+		columns.add(orderByColumnIdColumn);
+		
+		CfgColumn orderByMethodColumn = new CfgColumn("order_by_method", DataTypeConstants.STRING, 4);
+		orderByMethodColumn.setName("排序的方式");
+		orderByMethodColumn.setComments("默认值为asc，可为asc、desc，这个字段，ruleType为5和6，都使用");
+		orderByMethodColumn.setDefaultValue("asc");
+		columns.add(orderByMethodColumn);
 		
 		CfgColumn valSubStartIndexColumn = new CfgColumn("val_sub_start_index", DataTypeConstants.INTEGER, 3);
 		valSubStartIndexColumn.setName("值截取的起始位置");
@@ -714,28 +764,52 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	
 	/**
-	 * 根据column id，获取对应的column属性名和数据类型
-	 * @param columnId
+	 * 根据属性id，获取对应的column/sqlParam属性名和数据类型
+	 * @param propId
+	 * @param isQueryCondValProp 是否是查询条件值的属性id，如果是，要根据queryCondValPropFrom的值，决定去1:CfgColumn或2:CfgSqlParameter查询对应的数据；不是，就只去CfgColumn查询对应的数据
 	 * @return
 	 */
-	private String[] getColumnInfoById(String columnId){
-		String[] columnInfo = new String[2];
-		Object[] tmpColumnInfo = null;
-		if(ResourcePropNameConstants.ID.equals(columnId)){
-			columnInfo[0] = columnId;
-			columnInfo[1] = DataTypeConstants.STRING;
+	private String[] getPropInfoById(String propId, boolean isQueryCondValPropId){
+		String[] propInfo = new String[2];
+		Object[] tmpPropInfo = null;
+		if(ResourcePropNameConstants.ID.equals(propId)){// 其他基础字段可能不会作为查询条件，所以这里没有处理
+			propInfo[0] = ResourcePropNameConstants.ID;
+			propInfo[1] = DataTypeConstants.STRING;
 		}else{
-			tmpColumnInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(queryColumnInfoIdHql, columnId);
-			if(tmpColumnInfo == null || tmpColumnInfo[0] == null || tmpColumnInfo[1] == null){
-				throw new NullPointerException("在查询字段编码时，没有查询到id为["+columnId+"]的CfgColumn信息");
+			if(isQueryCondValPropId){
+				if(queryCondValPropFrom == 1){
+					tmpPropInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(queryColumnInfoIdHql, propId);
+				}else{
+					tmpPropInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(querySqlParamInfoIdHql, propId);
+				}
+			}else{
+				tmpPropInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(queryColumnInfoIdHql, propId);
 			}
-			columnInfo[0] = tmpColumnInfo[0].toString();
-			columnInfo[1] = tmpColumnInfo[1].toString();
+			if(tmpPropInfo == null || tmpPropInfo[0] == null || tmpPropInfo[1] == null){
+				throw new NullPointerException("在生成字段编码时，没有查询到id为["+propId+"]的属性信息");
+			}
+			
+			propInfo[0] = tmpPropInfo[0].toString();
+			propInfo[1] = tmpPropInfo[1].toString();
 		}
-		return columnInfo;
+		return propInfo;
 	}
-	/** 根据id查询column属性名的hql */
-	private static final String queryColumnInfoIdHql = "select propName,columnType from CfgColumn where " + ResourcePropNameConstants.ID + "=? and operStatus="+CfgColumn.CREATED;
+	/** 根据id查询column属性的hql */
+	private static final String queryColumnInfoIdHql = "select propName,columnType from CfgColumn where " + ResourcePropNameConstants.ID + "=?";
+	/** 根据id查询SqlParameter属性的hql */
+	private static final String querySqlParamInfoIdHql = "select name,dataType from CfgSqlParameter where " + ResourcePropNameConstants.ID + "=?";
+	
+	/**
+	 * 组装order by 语句
+	 * @return
+	 */
+	private String installOrderBy() {
+		if(StrUtils.notEmpty(orderByColumnId)){
+			String[] orderByColumnInfo = getPropInfoById(orderByColumnId, false);
+			return " order by " + orderByColumnInfo[0] + " " + orderByMethod;
+		}
+		return "";
+	}
 	
 	/**
 	 * 获取【5:column(其他列值)】
@@ -746,22 +820,19 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 */
 	@SuppressWarnings("unchecked")
 	private Object getColumnVal(String resourceName, JSONObject currentJsonObject, int valueFrom) {
-		Object value = null;
-		
-		String refColumnPropName = getColumnInfoById(refColumnId)[0];
-		if(valueFrom == 0){ // 0:当前数据
-			value = currentJsonObject.getString(refColumnPropName);
-		}else{
-			Object queryCondValue = currentJsonObject.get(getColumnInfoById(queryCondValColumnId)[0]);
+		Object value = currentJsonObject.get(getPropInfoById(queryCondValPropId, true)[0]);// 0:默认从当前数据中获取值
+		if(valueFrom > 0){
 			if(valueFrom == 2){// 2:其他数据资源对象
 				resourceName = getTableResourceNameById(refTableId);
 			}
-
-			String[] queryCondColumnInfo = getColumnInfoById(queryCondColumnId);
-			List<Object> list = HibernateUtil.executeListQueryByHqlArr(null, null, "select "+refColumnPropName+" from "+resourceName+" where "+queryCondColumnInfo[0]+"=?", DataTypeTurnUtil.turnValueDataType(queryCondValue, queryCondColumnInfo[1], true, true, true));
+			String orderBy = installOrderBy();
+			String[] queryCondColumnInfo = getPropInfoById(queryCondColumnId, false);
+			List<Object> list = HibernateUtil.executeListQueryByHqlArr("1", "1", "select "+getPropInfoById(refColumnId, false)[0]+" from "+resourceName+" where "+queryCondColumnInfo[0]+"=?" + orderBy, DataTypeTurnUtil.turnValueDataType(value, queryCondColumnInfo[1], true, true, true));
 			if(list != null && list.size() > 0){
 				value = list.get(0);
 				list.clear();
+			}else{
+				value = "";
 			}
 		}
 		return value;
@@ -780,7 +851,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		List<Object[]> codeDataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryCodeDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), codeDataDictionaryId);
 		if(codeDataDictionarys != null && codeDataDictionarys.size() > 0){
 			value = getColumnVal(resourceName, currentJsonObject, codeDataDictionaryValFrom);
-			if(value != null){
+			if(StrUtils.notEmpty(value)){
 				String valueStr = value.toString();
 				for (Object[] objects : codeDataDictionarys) {
 					if(objects[0] != null && objects[0].toString().equals(valueStr)){

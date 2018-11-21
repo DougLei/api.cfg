@@ -7,15 +7,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.plugins.jdbc.table.DBTableHandler;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.cfg.CfgColumnService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 字段信息表Controller
@@ -23,6 +26,14 @@ import com.king.tooth.util.StrUtils;
  */
 @Controller
 public class CfgColumnController extends AController{
+	
+	private CfgTable getTableById(String tableId){
+		CfgTable table = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgTable.class, "from CfgTable where " + ResourcePropNameConstants.ID +"=?", tableId);
+		if(table == null){
+			throw new NullPointerException("不存在id值为'"+tableId+"'的CfgTable数据对象");
+		}
+		return table;
+	}
 	
 	/**
 	 * 添加列
@@ -34,12 +45,17 @@ public class CfgColumnController extends AController{
 		List<CfgColumn> columns = getDataInstanceList(ijson, CfgColumn.class, true);
 		analysisResourceProp(columns, false);
 		if(analysisResult == null){
-			DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-			List<CfgColumn> addColumns = new ArrayList<CfgColumn>(columns.size());
-			StringBuilder tableNameBuffer = new StringBuilder();
+			CfgTable table = getTableById(columns.get(0).getTableId());
+			
+			DBTableHandler dbTableHandler = null;
+			List<CfgColumn> addColumns = null;
+			if(table.getIsCreated() == 1){// 表已经建模
+				dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
+				addColumns = new ArrayList<CfgColumn>(columns.size());
+			}
 			
 			for (CfgColumn column : columns) {
-				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).saveColumn(tableNameBuffer, column, addColumns, dbTableHandler);
+				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).saveColumn(table, column, addColumns, dbTableHandler);
 				if(resultObject instanceof String){
 					index++;
 					resultObject = "第"+index+"个CfgColumn对象，" + resultObject;
@@ -47,7 +63,6 @@ public class CfgColumnController extends AController{
 				}
 				resultJsonArray.add(resultObject);
 			}
-			tableNameBuffer.setLength(0);
 		}
 		return getResultObject(columns, null);
 	}
@@ -62,12 +77,17 @@ public class CfgColumnController extends AController{
 		List<CfgColumn> columns = getDataInstanceList(ijson, CfgColumn.class, true);
 		analysisResourceProp(columns, true);
 		if(analysisResult == null){
-			DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-			List<CfgColumn> updateColumns = new ArrayList<CfgColumn>(columns.size());
-			StringBuilder tableNameBuffer = new StringBuilder();
+			CfgTable table = getTableById(columns.get(0).getTableId());
+			
+			DBTableHandler dbTableHandler = null;
+			List<CfgColumn> updateColumns = null;
+			if(table.getIsCreated() == 1){// 表已经建模
+				dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
+				updateColumns = new ArrayList<CfgColumn>(columns.size());
+			}
 			
 			for (CfgColumn column : columns) {
-				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).updateColumn(tableNameBuffer, column, updateColumns, dbTableHandler);
+				resultObject = BuiltinResourceInstance.getInstance("CfgColumnService", CfgColumnService.class).updateColumn(table, column, updateColumns, dbTableHandler);
 				if(resultObject instanceof String){
 					index++;
 					resultObject = "第"+index+"个CfgColumn对象，" + resultObject;
@@ -75,7 +95,6 @@ public class CfgColumnController extends AController{
 				}
 				resultJsonArray.add(resultObject);
 			}
-			tableNameBuffer.setLength(0);
 		}
 		return getResultObject(columns, null);
 	}
