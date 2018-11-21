@@ -254,7 +254,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		if(refResourceType == null || (refResourceType != REF_RESOURCE_TYPE_CFG_TABLE && refResourceType != REF_RESOURCE_TYPE_CFG_SQL)){
 			return "关联的资源类型值不能为空，且值目前只能为[1.CfgTable]或[2.CfgSql]";
 		}
-		if(StrUtils.isEmpty(refParentResourcePropId)){
+		if(StrUtils.notEmpty(parentId) && StrUtils.isEmpty(refParentResourcePropId)){
 			return "子资源中关联父资源的属性id值不能为空";
 		}
 		if(orderCode == null || orderCode < 1){
