@@ -580,24 +580,26 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 			return "";
 		}
 		String valueStr = value.toString();
-		if(valSubEndIndex > 0 && valSubEndIndex <= valueStr.length()){
-			if(valSubStartIndex < 1){
-				valSubStartIndex = 1;
-			}
-			valueStr = valueStr.substring(valSubStartIndex-1, valSubEndIndex);
-		}else if(StrUtils.notEmpty(valSubRegex)){
-			int matchNum = 1;
-			if(valSubMatchNum < 1){
-				valSubMatchNum = matchNum;
-			}
-			Matcher matcher = Pattern.compile(valSubRegex, Pattern.MULTILINE).matcher(valueStr);
-			
-			while(matcher.find()){
-				if(matchNum == valSubMatchNum){
-					valueStr = matcher.group();
-					break;
+		if(valueStr.length() > 0){
+			if(valSubEndIndex > 0 && valSubEndIndex <= valueStr.length()){
+				if(valSubStartIndex < 1){
+					valSubStartIndex = 1;
 				}
-				matchNum++;
+				valueStr = valueStr.substring(valSubStartIndex-1, valSubEndIndex);
+			}else if(StrUtils.notEmpty(valSubRegex)){
+				int matchNum = 1;
+				if(valSubMatchNum < 1){
+					valSubMatchNum = matchNum;
+				}
+				Matcher matcher = Pattern.compile(valSubRegex, Pattern.MULTILINE).matcher(valueStr);
+				
+				while(matcher.find()){
+					if(matchNum == valSubMatchNum){
+						valueStr = matcher.group();
+						break;
+					}
+					matchNum++;
+				}
 			}
 		}
 		return valueStr;
