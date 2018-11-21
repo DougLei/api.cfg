@@ -246,16 +246,16 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(refBusiModelId)){
-			return "关联的业务模型id值不能为空";
+			return "关联的业务模型id(refBusiModelId)值不能为空";
 		}
 		if(StrUtils.isEmpty(refResourceId)){
-			return "关联的资源id值不能为空";
+			return "关联的资源id(refResourceId)值不能为空";
 		}
 		if(refResourceType == null || (refResourceType != REF_RESOURCE_TYPE_CFG_TABLE && refResourceType != REF_RESOURCE_TYPE_CFG_SQL)){
-			return "关联的资源类型值不能为空，且值目前只能为[1.CfgTable]或[2.CfgSql]";
+			return "关联的资源类型(refResourceType)值不能为空，且值目前只能为[1.CfgTable]或[2.CfgSql]";
 		}
 		if(StrUtils.notEmpty(parentId) && StrUtils.isEmpty(refParentResourcePropId)){
-			return "子资源中关联父资源的属性id值不能为空";
+			return "子资源中关联父资源的属性id(refParentResourcePropId)值不能为空";
 		}
 		if(orderCode == null || orderCode < 1){
 			return "排序值不能为空，且必须大于0！";
