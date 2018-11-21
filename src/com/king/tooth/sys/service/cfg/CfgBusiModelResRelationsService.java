@@ -33,13 +33,16 @@ public class CfgBusiModelResRelationsService extends AService{
 			} catch (NullPointerException e) {
 				return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefResourceId()+"]的表资源";
 			}
-			try {
-				CfgColumn column = getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgColumn.class);
-				if(column.getOperStatus() != CfgColumn.CREATED){
-					return "业务模型资源关系中，关联父资源的属性列["+column.getName()+"]为未创建状态，无法实现关联";
+			
+			if(StrUtils.notEmpty(busiModelResRelations.getParentId())){
+				try {
+					CfgColumn column = getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgColumn.class);
+					if(column.getOperStatus() != CfgColumn.CREATED){
+						return "业务模型资源关系中，关联父资源的属性列["+column.getName()+"]为未创建状态，无法实现关联";
+					}
+				} catch (NullPointerException e) {
+					return "业务模型资源关系中，不存在关联父资源的属性列，id为["+busiModelResRelations.getRefParentResourcePropId()+"]";
 				}
-			} catch (NullPointerException e) {
-				return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的列属性";
 			}
 		}else if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_SQL){
 			try {
@@ -47,10 +50,12 @@ public class CfgBusiModelResRelationsService extends AService{
 			} catch (NullPointerException e) {
 				return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefResourceId()+"]的sql资源";
 			}
-			try {
-				getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgSqlParameter.class);
-			} catch (NullPointerException e) {
-				return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的sql参数属性";
+			if(StrUtils.notEmpty(busiModelResRelations.getParentId())){
+				try {
+					getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgSqlParameter.class);
+				} catch (NullPointerException e) {
+					return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的sql参数属性";
+				}
 			}
 		}
 		return null;
