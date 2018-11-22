@@ -66,11 +66,19 @@ public class TableImpl extends ATableHandler{
 			}
 		}else if(length > 0){
 			tmpBuffer.append("(");
-			tmpBuffer.append(length);
-			
-			Integer precision = column.getPrecision();
-			if(precision != null && precision > 0){
-				tmpBuffer.append(",").append(precision);
+			if(DataTypeConstants.DOUBLE.equals(columnType)){
+				if(length > 38){
+					length = 38;
+				}
+				Integer precision = column.getPrecision();
+				if(precision != null && precision > 0){
+					if(precision > length){
+						precision = length;
+					}
+					tmpBuffer.append(",").append(precision);
+				}
+			}else{
+				tmpBuffer.append(length);
 			}
 			tmpBuffer.append(")");
 		}
