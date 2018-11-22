@@ -275,8 +275,8 @@ public class CfgTableService extends AService {
 			// 5、修改表是否创建的状态，以及是否建模的字段值，均改为1，且置空oldTableName字段
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgTable set isCreated=1, isBuildModel =1, oldTableName=null where "+ResourcePropNameConstants.ID+" = ?", tableId);
 			
-			// 6、修改字段状态，其他操作状态的，均改为已创建状态，且置空oldInfoJson字段的值
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgColumn set operStatus=1, oldInfoJson=null where tableId = ?", tableId);
+			// 6、修改字段状态，其他操作状态的，均改为已创建状态
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgColumn set operStatus=1 where tableId = ?", tableId);
 			
 			table.clear();
 		} catch (Exception e) {
@@ -356,8 +356,8 @@ public class CfgTableService extends AService {
 			String tableId = table.getId();
 			// 修改表是否创建的状态，以及是否建模的字段值，均改为0，且置空oldTableName字段
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgTable set isCreated =0, isBuildModel=0, oldTableName=null  where "+ResourcePropNameConstants.ID+" = ?", tableId);
-			// 修改字段状态，其他操作状态的，均改为待创建状态，且置空oldInfoJson字段的值
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgColumn set operStatus=0, oldInfoJson=null where tableId = ?", tableId);
+			// 修改字段状态，其他操作状态的，均改为待创建状态
+			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update CfgColumn set operStatus=0 where tableId = ?", tableId);
 			
 			if(table.getType() == CfgTable.SINGLE_TABLE){
 				// 删除hbm信息
