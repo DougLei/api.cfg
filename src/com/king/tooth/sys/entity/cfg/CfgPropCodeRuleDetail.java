@@ -70,21 +70,32 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	// ------------------------
 	/**
 	 * 序列再次初始化的时机
-	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，这个字段，ruleType为2和3，都使用</p>
+	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4，都使用</p>
 	 * <p>默认值为0</p>
 	 */
 	private Integer seqReinitTime;
 	/**
 	 * 序列的起始值
-	 * <p>默认值是1，这个字段，ruleType为2和3，都使用</p>
+	 * <p>默认值是1，这个字段，ruleType为2、3、4，都使用</p>
 	 */
 	private Integer seqStartVal;
 	/**
 	 * 序列的间隔值
-	 * <p>序列值每次自增的大小，这个字段，ruleType为2和3，都使用</p>
+	 * <p>序列值每次自增的大小，这个字段，ruleType为2、3、4，都使用</p>
 	 * <p>默认值为1</p>
 	 */
 	private Integer seqSkipVal;
+	
+	/**
+	 * 递归序列关联的父列id
+	 * <p>就是表中，实现递归的字段，例如一般都是parent_id</p>
+	 */
+	private String parentColumnId;
+	/**
+	 * 递归序列间的连接符
+	 * <p>默认值为.</p>
+	 */
+	private String recursiveSeqLinkSymbol;
 	
 	/**
 	 * 流水号长度
@@ -162,21 +173,21 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	// ------------------------
 	/**
 	 * 值截取的起始位置
-	 * <p>默认值为0，该配置优先级高于正则表达式</p>
+	 * <p>默认值为0，该配置优先级高于正则表达式，目前只有ruleType为6时才有效</p>
 	 */
 	private Integer valSubStartIndex;
 	/**
 	 * 值截取的结束位置
-	 * <p>默认值为0，该配置优先级高于正则表达式</p>
+	 * <p>默认值为0，该配置优先级高于正则表达式，目前只有ruleType为6时才有效</p>
 	 */
 	private Integer valSubEndIndex;
 	/**
-	 * 值截取的正则表达式
+	 * 值截取的正则表达式，目前只有ruleType为6时才有效
 	 */
 	private String valSubRegex;
 	/**
 	 * 值截取的正则表达式第n次匹配
-	 * <p>默认值为1，取第一次匹配的值</p>
+	 * <p>默认值为1，取第一次匹配的值，目前只有ruleType为6时才有效</p>
 	 */
 	private Integer valSubMatchNum;
 	
@@ -241,6 +252,18 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	}
 	public void setSeqSkipVal(Integer seqSkipVal) {
 		this.seqSkipVal = seqSkipVal;
+	}
+	public String getParentColumnId() {
+		return parentColumnId;
+	}
+	public void setParentColumnId(String parentColumnId) {
+		this.parentColumnId = parentColumnId;
+	}
+	public String getRecursiveSeqLinkSymbol() {
+		return recursiveSeqLinkSymbol;
+	}
+	public void setRecursiveSeqLinkSymbol(String recursiveSeqLinkSymbol) {
+		this.recursiveSeqLinkSymbol = recursiveSeqLinkSymbol;
 	}
 	public Integer getSerialNumLength() {
 		return serialNumLength;
@@ -348,7 +371,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(25+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(28+7);
 		
 		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
@@ -384,21 +407,32 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn seqReinitTimeColumn = new CfgColumn("seq_reinit_time", DataTypeConstants.INTEGER, 1);
 		seqReinitTimeColumn.setName("序列再次初始化的时机");
-		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2和3，都使用");
+		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4，都使用");
 		seqReinitTimeColumn.setDefaultValue("0");
 		columns.add(seqReinitTimeColumn);
 		
 		CfgColumn seqStartValColumn = new CfgColumn("seq_start_val", DataTypeConstants.INTEGER, 8);
 		seqStartValColumn.setName("序列的起始值");
-		seqStartValColumn.setComments("序列的起始值，默认值是1，这个字段，ruleType为2和3，都使用");
+		seqStartValColumn.setComments("序列的起始值，默认值是1，这个字段，ruleType为2、3、4，都使用");
 		seqStartValColumn.setDefaultValue("1");
 		columns.add(seqStartValColumn);
 		
 		CfgColumn seqSkipValColumn = new CfgColumn("seq_skip_val", DataTypeConstants.INTEGER, 4);
 		seqSkipValColumn.setName("序列的间隔值");
-		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1，这个字段，ruleType为2和3，都使用");
+		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1，这个字段，ruleType为2、3、4，都使用");
 		seqSkipValColumn.setDefaultValue("1");
 		columns.add(seqSkipValColumn);
+		
+		CfgColumn parentColumnIdColumn = new CfgColumn("parent_column_id", DataTypeConstants.STRING, 32);
+		parentColumnIdColumn.setName("递归序列关联的父列id");
+		parentColumnIdColumn.setComments("就是表中，实现递归的字段，例如一般都是parent_id");
+		columns.add(parentColumnIdColumn);
+		
+		CfgColumn recursiveSeqLinkSymbolColumn = new CfgColumn("recursive_seq_link_symbol", DataTypeConstants.STRING, 5);
+		recursiveSeqLinkSymbolColumn.setName("递归序列间的连接符");
+		recursiveSeqLinkSymbolColumn.setComments("默认值为.");
+		recursiveSeqLinkSymbolColumn.setDefaultValue(".");
+		columns.add(recursiveSeqLinkSymbolColumn);
 		
 		CfgColumn serialNumLengthColumn = new CfgColumn("serial_num_length", DataTypeConstants.INTEGER, 2);
 		serialNumLengthColumn.setName("流水号长度");
@@ -474,24 +508,24 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn valSubStartIndexColumn = new CfgColumn("val_sub_start_index", DataTypeConstants.INTEGER, 3);
 		valSubStartIndexColumn.setName("值截取的起始位置");
-		valSubStartIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
+		valSubStartIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式，目前只有ruleType为6时才有效");
 		valSubStartIndexColumn.setDefaultValue("0");
 		columns.add(valSubStartIndexColumn);
 		
 		CfgColumn valSubEndIndexColumn = new CfgColumn("val_sub_end_index", DataTypeConstants.INTEGER, 3);
 		valSubEndIndexColumn.setName("值截取的结束位置");
-		valSubEndIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式");
+		valSubEndIndexColumn.setComments("默认值为0，该配置优先级高于正则表达式，目前只有ruleType为6时才有效");
 		valSubEndIndexColumn.setDefaultValue("0");
 		columns.add(valSubEndIndexColumn);
 		
 		CfgColumn valSubRegexColumn = new CfgColumn("val_sub_regex", DataTypeConstants.STRING, 300);
 		valSubRegexColumn.setName("值截取的正则表达式");
-		valSubRegexColumn.setComments("值截取的正则表达式");
+		valSubRegexColumn.setComments("值截取的正则表达式，目前只有ruleType为6时才有效");
 		columns.add(valSubRegexColumn);
 		
 		CfgColumn valSubMatchNumColumn = new CfgColumn("val_sub_match_num", DataTypeConstants.INTEGER, 2);
 		valSubMatchNumColumn.setName("值截取的正则表达式第n次匹配");
-		valSubMatchNumColumn.setComments("默认值为1，取第一次匹配的值");
+		valSubMatchNumColumn.setComments("默认值为1，取第一次匹配的值，目前只有ruleType为6时才有效");
 		valSubMatchNumColumn.setDefaultValue("1");
 		columns.add(valSubMatchNumColumn);
 		
@@ -551,7 +585,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 				value = getDateVal(resourceName, currentJsonObject);
 				break;
 			case 2: // 2:seq(序列)
-				value = getSeqVal(resourceName, currentJsonObject);
+				value = getSeqVal(resourceName, currentJsonObject, null);
 				break;
 			case 3: // 3:recursive_seq(递归序列)
 				value = getRecursiveSeqVal(resourceName, currentJsonObject);
@@ -583,7 +617,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 			return "";
 		}
 		String valueStr = value.toString();
-		if(valueStr.length() > 0){
+		if(ruleType == 6 && valueStr.length() > 0){
 			if(valSubEndIndex > 0 && valSubEndIndex <= valueStr.length()){
 				if(valSubStartIndex < 1){
 					valSubStartIndex = 1;
@@ -636,11 +670,16 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * 获取【2:seq(序列)】
 	 * @param resourceName
 	 * @param currentJsonObject
+	 * @param parentSeqValue 父序列值，实现递归序列，该字段存值例如：1.1，那么该序列的值就为1.1.1、1.1.2等
 	 * @return
 	 */
-	private Object getSeqVal(String resourceName, JSONObject currentJsonObject) {
+	private Object getSeqVal(String resourceName, JSONObject currentJsonObject, String parentSeqValue) {
 		if(seq == null){
-			seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
+			if(StrUtils.isEmpty(parentSeqValue)){
+				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
+			}else{
+				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoByParentSeqValHql, id, parentSeqValue);
+			}
 		}
 		if(seq == null){
 			seq = new CfgSeqInfo();
@@ -656,7 +695,9 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		return seq.getCurrentVal();
 	}
 	/** 查询序列信息hql语句 */
-	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=?";
+	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal is null";
+	/** 查询序列信息hql语句 */
+	private static final String querySeqInfoByParentSeqValHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal=?";
 	
 	/**
 	 * 设置序列重新初始化
@@ -726,9 +767,29 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * @return
 	 */
 	private Object getRecursiveSeqVal(String resourceName, JSONObject currentJsonObject) {
-		// TODO
-		return null;
+		if(StrUtils.isEmpty(parentPropName)){
+			parentPropName = getPropInfoById(parentColumnId, false)[0];
+		}
+		String parentSeqValue = null;
+		Object parentIdValue = currentJsonObject.get(currentJsonObject);
+		if(StrUtils.notEmpty(parentIdValue)){// 不为空，表示是子数据，则要查询出上级数据的编号值
+			parentSeqValue = "";// TODO ....................
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		}
+		return getSeqVal(resourceName, currentJsonObject, parentSeqValue);
 	}
+	private String parentPropName;// 递归序列关联的父列属性名
 	
 	// ------------------------------------------------------------------------------------------
 	/**
@@ -738,7 +799,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * @return
 	 */
 	private Object getSerialNumberVal(String resourceName, JSONObject currentJsonObject) {
-		Object value = getSeqVal(resourceName, currentJsonObject);
+		Object value = getSeqVal(resourceName, currentJsonObject, null);
 		if(value == null){
 			throw new NullPointerException("获取序列值结果为空，请联系后端系统开发人员");
 		}
