@@ -87,15 +87,25 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Integer seqSkipVal;
 	
 	/**
-	 * 递归序列关联的父列id
+	 * 递归序列引用的表id
+	 * <p>如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id</p>
+	 */
+	private String recSeqTableId;
+	/**
+	 * 如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id
+	 * <p>如果是给表资源配，该值默认是当前配置的字段id；如果是给sql参数配置，则是rec_seq_table_id字段存储的表中的某个字段id</p>
+	 */
+	private String recSeqCodeColumnId;
+	/**
+	 * 递归序列引用的父列id
 	 * <p>就是表中，实现递归的字段，例如一般都是parent_id</p>
 	 */
-	private String parentColumnId;
+	private String recSeqParentColumnId;
 	/**
 	 * 递归序列间的连接符
 	 * <p>默认值为.</p>
 	 */
-	private String recursiveSeqLinkSymbol;
+	private String recSeqLinkSymbol;
 	
 	/**
 	 * 流水号长度
@@ -253,17 +263,29 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	public void setSeqSkipVal(Integer seqSkipVal) {
 		this.seqSkipVal = seqSkipVal;
 	}
-	public String getParentColumnId() {
-		return parentColumnId;
+	public String getRecSeqParentColumnId() {
+		return recSeqParentColumnId;
 	}
-	public void setParentColumnId(String parentColumnId) {
-		this.parentColumnId = parentColumnId;
+	public void setRecSeqParentColumnId(String recSeqParentColumnId) {
+		this.recSeqParentColumnId = recSeqParentColumnId;
 	}
-	public String getRecursiveSeqLinkSymbol() {
-		return recursiveSeqLinkSymbol;
+	public String getRecSeqTableId() {
+		return recSeqTableId;
 	}
-	public void setRecursiveSeqLinkSymbol(String recursiveSeqLinkSymbol) {
-		this.recursiveSeqLinkSymbol = recursiveSeqLinkSymbol;
+	public void setRecSeqTableId(String recSeqTableId) {
+		this.recSeqTableId = recSeqTableId;
+	}
+	public String getRecSeqCodeColumnId() {
+		return recSeqCodeColumnId;
+	}
+	public void setRecSeqCodeColumnId(String recSeqCodeColumnId) {
+		this.recSeqCodeColumnId = recSeqCodeColumnId;
+	}
+	public String getRecSeqLinkSymbol() {
+		return recSeqLinkSymbol;
+	}
+	public void setRecSeqLinkSymbol(String recSeqLinkSymbol) {
+		this.recSeqLinkSymbol = recSeqLinkSymbol;
 	}
 	public Integer getSerialNumLength() {
 		return serialNumLength;
@@ -371,7 +393,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(28+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(30+7);
 		
 		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
@@ -423,16 +445,26 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		seqSkipValColumn.setDefaultValue("1");
 		columns.add(seqSkipValColumn);
 		
-		CfgColumn parentColumnIdColumn = new CfgColumn("parent_column_id", DataTypeConstants.STRING, 32);
-		parentColumnIdColumn.setName("递归序列关联的父列id");
-		parentColumnIdColumn.setComments("就是表中，实现递归的字段，例如一般都是parent_id");
-		columns.add(parentColumnIdColumn);
+		CfgColumn recSeqTableIdColumn = new CfgColumn("rec_seq_table_id", DataTypeConstants.STRING, 32);
+		recSeqTableIdColumn.setName("递归序列引用的表id");
+		recSeqTableIdColumn.setComments("如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id");
+		columns.add(recSeqTableIdColumn);
 		
-		CfgColumn recursiveSeqLinkSymbolColumn = new CfgColumn("recursive_seq_link_symbol", DataTypeConstants.STRING, 5);
-		recursiveSeqLinkSymbolColumn.setName("递归序列间的连接符");
-		recursiveSeqLinkSymbolColumn.setComments("默认值为.");
-		recursiveSeqLinkSymbolColumn.setDefaultValue(".");
-		columns.add(recursiveSeqLinkSymbolColumn);
+		CfgColumn recSeqCodeColumnIdColumn = new CfgColumn("rec_seq_code_column_id", DataTypeConstants.STRING, 32);
+		recSeqCodeColumnIdColumn.setName("递归序列引用的编码列id");
+		recSeqCodeColumnIdColumn.setComments("如果是给表资源配，该值默认是当前配置的字段id；如果是给sql参数配置，则是rec_seq_table_id字段存储的表中的某个字段id");
+		columns.add(recSeqCodeColumnIdColumn);
+		
+		CfgColumn recSeqParentColumnIdColumn = new CfgColumn("rec_seq_parent_column_id", DataTypeConstants.STRING, 32);
+		recSeqParentColumnIdColumn.setName("递归序列引用的父列id");
+		recSeqParentColumnIdColumn.setComments("就是表中，实现递归的字段，例如一般都是parent_id");
+		columns.add(recSeqParentColumnIdColumn);
+		
+		CfgColumn recSeqLinkSymbolColumn = new CfgColumn("rec_seq_link_symbol", DataTypeConstants.STRING, 5);
+		recSeqLinkSymbolColumn.setName("递归序列间的连接符");
+		recSeqLinkSymbolColumn.setComments("默认值为.");
+		recSeqLinkSymbolColumn.setDefaultValue(".");
+		columns.add(recSeqLinkSymbolColumn);
 		
 		CfgColumn serialNumLengthColumn = new CfgColumn("serial_num_length", DataTypeConstants.INTEGER, 2);
 		serialNumLengthColumn.setName("流水号长度");
@@ -665,6 +697,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	}
 	
 	// ------------------------------------------------------------------------------------------
+	@JSONField(serialize = false)
 	private CfgSeqInfo seq;// 当前序列信息
 	/**
 	 * 获取【2:seq(序列)】
@@ -692,10 +725,10 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 			setSeqIsReinit(seq);
 			HibernateUtil.updateEntityObject(seq, null);
 		}
-		return seq.getCurrentVal();
+		return seq.getCurrentVal(parentSeqValue, recSeqLinkSymbol);
 	}
 	/** 查询序列信息hql语句 */
-	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal is null";
+	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and (parentSeqVal is null or parentSeqVal = '')";
 	/** 查询序列信息hql语句 */
 	private static final String querySeqInfoByParentSeqValHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal=?";
 	
@@ -767,29 +800,22 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * @return
 	 */
 	private Object getRecursiveSeqVal(String resourceName, JSONObject currentJsonObject) {
-		if(StrUtils.isEmpty(parentPropName)){
-			parentPropName = getPropInfoById(parentColumnId, false)[0];
+		if(StrUtils.isEmpty(recSeqParentPropName)){
+			recSeqParentPropName = getPropInfoById(recSeqParentColumnId, false)[0];
 		}
 		String parentSeqValue = null;
-		Object parentIdValue = currentJsonObject.get(currentJsonObject);
+		Object parentIdValue = currentJsonObject.get(recSeqParentPropName);
 		if(StrUtils.notEmpty(parentIdValue)){// 不为空，表示是子数据，则要查询出上级数据的编号值
-			parentSeqValue = "";// TODO ....................
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+			Object tmpParentSeqValue = 
+					HibernateUtil.executeUniqueQueryByHqlArr("select " + getPropInfoById(recSeqCodeColumnId, false)[0] + " from " + getTableResourceNameById(recSeqTableId) + " where " + ResourcePropNameConstants.ID + "=?", parentIdValue);
+			if(tmpParentSeqValue != null){
+				parentSeqValue = tmpParentSeqValue.toString();
+			}
 		}
 		return getSeqVal(resourceName, currentJsonObject, parentSeqValue);
 	}
-	private String parentPropName;// 递归序列关联的父列属性名
+	@JSONField(serialize = false)
+	private String recSeqParentPropName;// 递归序列引用的父列属性名
 	
 	// ------------------------------------------------------------------------------------------
 	/**

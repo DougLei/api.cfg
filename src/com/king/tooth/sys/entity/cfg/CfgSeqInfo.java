@@ -10,6 +10,7 @@ import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 序列信息表表
@@ -118,5 +119,13 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 		if(result == null){
 		}
 		return result;
+	}
+	
+	public Object getCurrentVal(String parentSeqValue, String recSeqLinkSymbol) {
+		if(StrUtils.isEmpty(parentSeqValue)){
+			return currentVal;
+		}else{
+			return parentSeqValue + recSeqLinkSymbol + currentVal;
+		}
 	}
 }
