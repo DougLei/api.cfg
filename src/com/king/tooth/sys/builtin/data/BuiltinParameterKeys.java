@@ -32,7 +32,8 @@ public class BuiltinParameterKeys {
 	 * 内置的参数
 	 * <p>上面的url:xxx的那些</p>
 	 */
-	public static final String[] BUILTIN_PARAMS = {"_resource_name", 
+	public static final String[] BUILTIN_PARAMS = {
+		"_resource_name", 
 		"_resource_id", 
 		"_parent_resource_name", 
 		"_parent_resource_id"};

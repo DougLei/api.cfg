@@ -57,7 +57,7 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 		Object builtinQuerParamValue;
 		String[] bqpvTmp;
 		for (int i = 0; i < len; i++) {
-			tmpVal = (tmp[i]+"").trim();
+			tmpVal = tmp[i].toString().trim();
 			if(tmpVal.startsWith("'") || tmpVal.startsWith("\"")){
 				tmpVal = tmpVal.substring(1, tmpVal.length()-1);
 			}

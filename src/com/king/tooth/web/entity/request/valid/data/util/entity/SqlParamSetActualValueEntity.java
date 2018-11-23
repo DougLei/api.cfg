@@ -6,7 +6,6 @@ import java.util.List;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
-import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 
 /**
@@ -25,7 +24,6 @@ public class SqlParamSetActualValueEntity implements Serializable{
 	 */
 	protected String getSimpleSqlParameterValue(CfgSqlParameter ssp, Object sqlParameterValue){
 		if(sqlParameterValue == null){
-			Log4jUtil.warn(CfgSqlParameter.class, "getSimpleSqlParameterValue", "在获取简单的sql参数值时，传入的sqlParameterValue参数值为null【目前就是对值加上''】");
 			return "''";
 		}
 		return ssp.getValuePackStart()+sqlParameterValue.toString()+ssp.getValuePackEnd();

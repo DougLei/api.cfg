@@ -3,7 +3,8 @@ package test;
 
 public class TestMain {
 	public static void main(String[] args) throws CloneNotSupportedException {
-		
-		System.out.println("abc".substring(0,3));
+		String[] a = ",abc".split(",");
+		System.out.println(a[0].equals(""));
+		System.out.println(a[1]);
 	}
 }

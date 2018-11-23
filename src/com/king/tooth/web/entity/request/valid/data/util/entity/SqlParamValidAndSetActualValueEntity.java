@@ -176,9 +176,13 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 				if(actualInValue == null){
 					return desc+"必须要传入的参数["+ssp.getName()+"]，请修改调用方式，传入该参数值";
 				}
+				
+				dataValueStr = actualInValue.toString();
+				if(BuiltinQueryParameters.isBuiltinQueryParams(dataValueStr)){
+					actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(dataValueStr);
+				}
+				
 				if(ssp.getIsPlaceholder() == 1){
-					dataValueStr = actualInValue.toString();
-					
 					// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
 					if(DataTypeConstants.DATE.equals(ssp.getDataType())){
 						if(DataTypeValidUtil.isDate(actualInValue)){
@@ -254,7 +258,7 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 		}else if(ssp.getValueFrom() == CfgSqlParameter.AUTO_CODE){
 			// 自动编码的值，在操作的时候再赋值
 		}else{
-			return "valueFrom的值，仅限于：[0(用户输入)、1(系统内置)、2(自动编码)]，请联系后端系统开发人员";
+			return "valueFrom的值，仅限于：[0(用户输入)、1(系统内置)、2(自动编码)]，本次处理的值为["+ssp.getValueFrom()+"]，请联系后端系统开发人员";
 		}
 		ssp.setActualInValue(actualInValue);
 		return null;
