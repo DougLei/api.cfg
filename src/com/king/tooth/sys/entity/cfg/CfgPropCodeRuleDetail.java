@@ -356,6 +356,9 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		this.orderByMethod = orderByMethod;
 	}
 	public Integer getValSubStartIndex() {
+		if(valSubStartIndex < 1){
+			valSubStartIndex = 1;
+		}
 		return valSubStartIndex;
 	}
 	public void setValSubStartIndex(Integer valSubStartIndex) {
@@ -374,6 +377,9 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		this.valSubRegex = valSubRegex;
 	}
 	public Integer getValSubMatchNum() {
+		if(valSubMatchNum < 1){
+			valSubMatchNum = 1;
+		}
 		return valSubMatchNum;
 	}
 	public void setValSubMatchNum(Integer valSubMatchNum) {
