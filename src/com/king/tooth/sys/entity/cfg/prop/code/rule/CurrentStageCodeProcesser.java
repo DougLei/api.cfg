@@ -169,8 +169,12 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @return
 	 */
 	private synchronized Object getDateVal(String resourceName, JSONObject currentJsonObject) {
-		return new SimpleDateFormat(dateFormate).format(new Date());
+		if(dateValFormat == null){
+			dateValFormat = new SimpleDateFormat(dateFormate);
+		}
+		return dateValFormat.format(new Date());
 	}
+	private SimpleDateFormat dateValFormat;
 	
 	// ------------------------------------------------------------------------------------------
 	private CfgSeqInfo seq;// 当前序列信息
@@ -275,13 +279,13 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @return
 	 */
 	private Object getRecursiveSeqVal(String resourceName, JSONObject currentJsonObject) {
-		if(StrUtils.isEmpty(recSeqParentPropName)){
+		if(recSeqParentPropName == null){
 			recSeqParentPropName = getPropInfoById(recSeqParentColumnId, false)[0];
 		}
 		String parentSeqValue = null;
 		Object parentIdValue = currentJsonObject.get(recSeqParentPropName);
 		if(StrUtils.notEmpty(parentIdValue)){// 不为空，表示是子数据，则要查询出上级数据的编号值
-			if(StrUtils.isEmpty(recSeqParentCodeValQueryHql)){
+			if(recSeqParentCodeValQueryHql == null){
 				recSeqParentCodeValQueryHql = "select " + getPropInfoById(recSeqCodeColumnId, false)[0] + " from " + getTableResourceNameById(recSeqTableId) + " where " + ResourcePropNameConstants.ID + "=?";
 			}
 			
@@ -403,14 +407,23 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 */
 	@SuppressWarnings("unchecked")
 	private Object getColumnVal(String resourceName, JSONObject currentJsonObject, int valueFrom) {
-		Object value = currentJsonObject.get(getPropInfoById(queryCondValPropId, true)[0]);// 0:默认从当前数据中获取值
+		if(queryCondValPropName==null){
+			queryCondValPropName = getPropInfoById(queryCondValPropId, true)[0];
+		}
+		
+		Object value = currentJsonObject.get(queryCondValPropName);// 0:默认从当前数据中获取值
 		if(valueFrom > 0){
-			if(valueFrom == 2){// 2:其他数据资源对象
-				resourceName = getTableResourceNameById(refTableId);
+			if(queryCondColumnInfo == null){
+				queryCondColumnInfo = getPropInfoById(queryCondColumnId, false);
 			}
-			String orderBy = installOrderBy();
-			String[] queryCondColumnInfo = getPropInfoById(queryCondColumnId, false);
-			List<Object> list = HibernateUtil.executeListQueryByHqlArr("1", "1", "select "+getPropInfoById(refColumnId, false)[0]+" from "+resourceName+" where "+queryCondColumnInfo[0]+"=?" + orderBy, DataTypeTurnUtil.turnValueDataType(value, queryCondColumnInfo[1], true, true, true));
+			if(queryColumnValueHql == null){
+				if(valueFrom == 2){// 2:其他数据资源对象
+					resourceName = getTableResourceNameById(refTableId);
+				}
+				queryColumnValueHql = "select "+getPropInfoById(refColumnId, false)[0]+" from "+resourceName+" where "+queryCondColumnInfo[0]+"=?" + installOrderBy();
+			}
+			
+			List<Object> list = HibernateUtil.executeListQueryByHqlArr("1", "1", queryColumnValueHql, DataTypeTurnUtil.turnValueDataType(value, queryCondColumnInfo[1], true, true, true));
 			if(list != null && list.size() > 0){
 				value = list.get(0);
 				list.clear();
@@ -420,6 +433,9 @@ public class CurrentStageCodeProcesser implements Serializable{
 		}
 		return value;
 	}
+	private String queryCondValPropName;
+	private String[] queryCondColumnInfo;
+	private String queryColumnValueHql;
 	
 	// ------------------------------------------------------------------------------------------
 	/**
@@ -431,7 +447,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 	@SuppressWarnings("unchecked")
 	private Object getCodeDataDictionaryVal(String resourceName, JSONObject currentJsonObject) {
 		Object value = null;
-		List<Object[]> codeDataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryCodeDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), codeDataDictionaryId);
+		codeDataDictionarys = HibernateUtil.executeListQueryByHqlArr(null, null, queryCodeDataDictionaryHql, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId(), codeDataDictionaryId);
 		if(codeDataDictionarys != null && codeDataDictionarys.size() > 0){
 			value = getColumnVal(resourceName, currentJsonObject, codeDataDictionaryValFrom);
 			if(StrUtils.notEmpty(value)){
@@ -443,12 +459,12 @@ public class CurrentStageCodeProcesser implements Serializable{
 					}
 				}
 			}
-			codeDataDictionarys.clear();
 		}
 		return value;
 	}
 	/** 查询编码数据字典值的hql语句 */
 	private static final String queryCodeDataDictionaryHql = "select propValue, codeValue from CfgCodeDataDictionary where isEnabled=1 and projectId=? and customerId=? and parentId=?";
+	private List<Object[]> codeDataDictionarys;
 	
 	// ------------------------------------------------------------------------------------------
 	/**

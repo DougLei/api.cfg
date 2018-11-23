@@ -1,10 +1,11 @@
 package test;
 
+import com.king.tooth.util.ResourceHandlerUtil;
+
 
 public class TestMain {
 	public static void main(String[] args) throws CloneNotSupportedException {
-		String[] a = ",abc".split(",");
-		System.out.println(a[0].equals(""));
-		System.out.println(a[1]);
+		Object o = ResourceHandlerUtil.getRandom(1000);
+		System.out.println(o.toString());
 	}
 }

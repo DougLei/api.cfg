@@ -386,7 +386,6 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		this.valSubMatchNum = valSubMatchNum;
 	}
 	
-	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(30+7);
