@@ -697,7 +697,6 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	}
 	
 	// ------------------------------------------------------------------------------------------
-	@JSONField(serialize = false)
 	private CfgSeqInfo seq;// 当前序列信息
 	/**
 	 * 获取【2:seq(序列)】
@@ -806,16 +805,20 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		String parentSeqValue = null;
 		Object parentIdValue = currentJsonObject.get(recSeqParentPropName);
 		if(StrUtils.notEmpty(parentIdValue)){// 不为空，表示是子数据，则要查询出上级数据的编号值
-			Object tmpParentSeqValue = 
-					HibernateUtil.executeUniqueQueryByHqlArr("select " + getPropInfoById(recSeqCodeColumnId, false)[0] + " from " + getTableResourceNameById(recSeqTableId) + " where " + ResourcePropNameConstants.ID + "=?", parentIdValue);
-			if(tmpParentSeqValue != null){
-				parentSeqValue = tmpParentSeqValue.toString();
+			if(StrUtils.isEmpty(recSeqParentCodeValQueryHql)){
+				recSeqParentCodeValQueryHql = "select " + getPropInfoById(recSeqCodeColumnId, false)[0] + " from " + getTableResourceNameById(recSeqTableId) + " where " + ResourcePropNameConstants.ID + "=?";
 			}
+			
+			Object tmpParentSeqValue = HibernateUtil.executeUniqueQueryByHqlArr(recSeqParentCodeValQueryHql, parentIdValue);
+			if(tmpParentSeqValue == null){
+				throw new NullPointerException("递归序列查询上级数据的编码值时，查询结果为null，请联系后端系统开发人员");
+			}
+			parentSeqValue = tmpParentSeqValue.toString();
 		}
 		return getSeqVal(resourceName, currentJsonObject, parentSeqValue);
 	}
-	@JSONField(serialize = false)
 	private String recSeqParentPropName;// 递归序列引用的父列属性名
+	private String recSeqParentCodeValQueryHql;// 递归序列的父编码值查询hql
 	
 	// ------------------------------------------------------------------------------------------
 	/**
