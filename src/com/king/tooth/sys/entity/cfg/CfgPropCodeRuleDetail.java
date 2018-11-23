@@ -47,7 +47,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Integer orderCode;
 	/**
 	 * 规则类型
-	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:code_data_dictionary(编码数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0</p>
+	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、5:random(随机数)、6:column(其他列值)、7:code_data_dictionary(编码数据字典值)、8:weekCalendar(周日历，即当前日期是今年第几周)、9:seasonCalendar(季度日历，即当前日期是今年第几季度)</p>
 	 * <p>默认值为0</p>
 	 */
 	private Integer ruleType;
@@ -367,7 +367,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn ruleTypeColumn = new CfgColumn("rule_type", DataTypeConstants.INTEGER, 1);
 		ruleTypeColumn.setName("规则类型");
-		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:serialNumber(流水号)、4:random(随机数)、5:column(其他列值)、6:code_data_dictionary(编码数据字典值)、7:weekCalendar(周日历，即当前日期是今年第几周)、8:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0");
+		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、5:random(随机数)、6:column(其他列值)、7:code_data_dictionary(编码数据字典值)、8:weekCalendar(周日历，即当前日期是今年第几周)、9:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0");
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
@@ -529,11 +529,11 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	/**
 	 * 是否需要锁住
-	 * <p>需要锁住的ruleType包括：2:seq(序列)、3:serialNumber(流水号)</p>
+	 * <p>需要锁住的ruleType包括：2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)</p>
 	 * @return
 	 */
 	public boolean isNeedLock(){
-		return ruleType == 2 || ruleType == 3;
+		return ruleType > 1 || ruleType < 5;
 	}
 	
 	// ------------------------------------------------------------------------------------------------------
@@ -553,22 +553,25 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 			case 2: // 2:seq(序列)
 				value = getSeqVal(resourceName, currentJsonObject);
 				break;
-			case 3: // 3:serialNumber(流水号)
+			case 3: // 3:recursive_seq(递归序列)
+				value = getRecursiveSeqVal(resourceName, currentJsonObject);
+				break;
+			case 4: // 4:serialNumber(流水号)
 				value = getSerialNumberVal(resourceName, currentJsonObject);
 				break;
-			case 4: // 4:random(随机数)
+			case 5: // 5:random(随机数)
 				value = getRandomVal(resourceName, currentJsonObject);
 				break;
-			case 5: // 5:column(其他列值)
+			case 6: // 6:column(其他列值)
 				value = getColumnVal(resourceName, currentJsonObject, columnValFrom);
 				break;
-			case 6: // 6:code_data_dictionary(编码数据字典值)
+			case 7: // 7:code_data_dictionary(编码数据字典值)
 				value = getCodeDataDictionaryVal(resourceName, currentJsonObject);
 				break;
-			case 7: // 7:weekCalendar(周日历，即当前日期是今年第几周)
+			case 8: // 8:weekCalendar(周日历，即当前日期是今年第几周)
 				value = getWeekCalendarVal(resourceName, currentJsonObject);
 				break;
-			case 8: // 8:seasonCalendar(季度日历，即当前日期是今年第几季度)
+			case 9: // 9:seasonCalendar(季度日历，即当前日期是今年第几季度)
 				value = getSeasonCalendarVal(resourceName, currentJsonObject);
 				break;
 			default: // 默认值为0，0:default(默认固定值)
@@ -717,7 +720,19 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取【3:serialNumber(流水号)】
+	 * 获取【3:recursive_seq(递归序列)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	private Object getRecursiveSeqVal(String resourceName, JSONObject currentJsonObject) {
+		// TODO
+		return null;
+	}
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取【4:serialNumber(流水号)】
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @return
@@ -739,7 +754,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取【4:random(随机数)】
+	 * 获取【5:random(随机数)】
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @return
@@ -814,7 +829,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	}
 	
 	/**
-	 * 获取【5:column(其他列值)】
+	 * 获取【6:column(其他列值)】
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @param valueFrom 
@@ -842,7 +857,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取【6:code_data_dictionary(编码数据字典值)】
+	 * 获取【7:code_data_dictionary(编码数据字典值)】
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @return
@@ -871,7 +886,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取【7:weekCalendar(周日历，即当前日期是今年第几周)】
+	 * 获取【8:weekCalendar(周日历，即当前日期是今年第几周)】
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @return
@@ -882,7 +897,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	// ------------------------------------------------------------------------------------------
 	/**
-	 * 获取【8:seasonCalendar(季度日历，即当前日期是今年第几季度)】
+	 * 获取【9:seasonCalendar(季度日历，即当前日期是今年第几季度)】
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @return
