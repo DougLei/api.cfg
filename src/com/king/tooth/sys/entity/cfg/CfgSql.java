@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
@@ -569,5 +570,34 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 			sql.parameterNameRecordList.addAll(parameterNameRecordList);
 		}
 		return sql;
+	}
+	
+	/**
+	 * 获取sql参数集合列表的json对象
+	 * @return
+	 */
+	public Object getSqlParamsListJson() {
+		if(sqlParamsList != null && sqlParamsList.size() > 0){
+			if(sqlParamsList.size() == 1){
+				return analyzeToJson(sqlParamsList.get(0));
+			}else{
+				JSONArray jsonArray = new JSONArray(sqlParamsList.size());
+				for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
+					jsonArray.add(analyzeToJson(sqlParams));
+				}
+				return jsonArray;
+			}
+		}
+		return null;
+	}
+	private JSONObject analyzeToJson(List<CfgSqlParameter> sqlParams){
+		if(sqlParams == null || sqlParams.size() == 0){
+			return null;
+		}
+		JSONObject json = new JSONObject(sqlParams.size());
+		for (CfgSqlParameter sqlParam : sqlParams) {
+			json.put(sqlParam.getName(), sqlParam.getActualInValue());
+		}
+		return json;
 	}
 }

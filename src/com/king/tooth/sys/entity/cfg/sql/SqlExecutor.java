@@ -77,7 +77,7 @@ public class SqlExecutor implements Serializable{
 				}
 			}
 			
-			if(operDataType != null){
+			if(operDataType != null && data != null && data.size() > 0){
 				int size = data.size();
 				JSONObject jsonObject;
 				for(int i=0;i<size;i++){
@@ -87,7 +87,12 @@ public class SqlExecutor implements Serializable{
 					}
 				}
 			}
-			return data.getJson();
+			
+			if(data != null){
+				return data.getJson();
+			}else{
+				return sql.getSqlParamsListJson();
+			}
 		}
 	}
 	
