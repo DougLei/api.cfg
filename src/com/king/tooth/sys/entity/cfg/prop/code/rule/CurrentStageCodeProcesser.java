@@ -487,5 +487,4 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private Object getSeasonCalendarVal(String resourceName, JSONObject currentJsonObject) {
 		return DateUtil.getSeason(new Date(), 1);
 	}
-	
 }
