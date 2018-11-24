@@ -70,6 +70,7 @@ public class TableImpl extends ATableHandler{
 				if(length > 38){
 					length = 38;
 				}
+				tmpBuffer.append(length);
 				Integer precision = column.getPrecision();
 				if(precision != null && precision > 0){
 					if(precision > length){
