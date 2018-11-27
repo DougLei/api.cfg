@@ -10,7 +10,9 @@ import org.quartz.JobExecutionException;
 
 import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.util.DateUtil;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.FileUtil;
+import com.king.tooth.util.Log4jUtil;
 
 /**
  * 备份用户在系统中上传的所有文件的任务
@@ -28,6 +30,7 @@ public class BackupUploadFileJob implements Job, Serializable{
 			try {
 				FileUtil.batchCopyfiles(rootUploadFolder, backupUploadFolder, false);
 			} catch (IOException e) {
+				Log4jUtil.error("系统在备份用户在系统中上传的所有文件时出现异常，请联系系统管理员:{}", ExceptionUtil.getErrMsg(e));
 			}		
 		}
 	}
