@@ -357,6 +357,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 设置引用的资源对象
 	 * @return
 	 */
+	@JSONField(serialize = false)
 	private Object setRefResource() {
 		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
 			if(refTable == null){
@@ -378,6 +379,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 获取引用的资源名
 	 * @return
 	 */
+	@JSONField(serialize = false)
 	public String getRefResourceName() {
 		setRefResource();
 		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
@@ -410,6 +412,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 获取引用的sql对象去验证
 	 * @return
 	 */
+	@JSONField(serialize = false)
 	public CfgSql getRefSqlForValid() {
 		setRefResource();
 		if(refSqlList != null){
@@ -450,6 +453,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 获取引用的sql对象去执行
 	 * @return
 	 */
+	@JSONField(serialize = false)
 	public CfgSql getRefSqlForExecute() {
 		CfgSql refSql = null;
 		if(refSqlList != null){
