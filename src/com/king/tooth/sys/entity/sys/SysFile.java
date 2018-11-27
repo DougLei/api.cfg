@@ -50,7 +50,7 @@ public class SysFile extends BasicEntity implements IEntity{
 	private String savePath;
 	/**
 	 * 文件的url路径
-	 * <p>访问文件的url路径，目前只有图片文件，该字段才有值</p>
+	 * <p>访问文件的url路径，目前只有图片文件，且上传文件的路径为系统默认路径，即保存到服务器项目所在的files/upload目录下，该字段才有值</p>
 	 */
 	private String urlPath;
 	/**
@@ -263,7 +263,7 @@ public class SysFile extends BasicEntity implements IEntity{
 		
 		CfgColumn urlPathColumn = new CfgColumn("url_path", DataTypeConstants.STRING, 1000);
 		urlPathColumn.setName("文件的url路径");
-		urlPathColumn.setComments("访问文件的url路径，目前只有图片文件，该字段才有值");
+		urlPathColumn.setComments("访问文件的url路径，目前只有图片文件，且上传文件的路径为系统默认路径，即保存到服务器项目所在的files/upload目录下，该字段才有值");
 		columns.add(urlPathColumn);
 		
 		CfgColumn saveTypeColumn = new CfgColumn("save_type", DataTypeConstants.STRING, 10);
