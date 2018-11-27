@@ -198,8 +198,14 @@ public class CurrentStageCodeProcesser implements Serializable{
 			seq.setRefPropCodeRuleDetailId(id);
 			seq.setInitDate(new Date());
 			seq.setCurrentVal(seqStartVal);
+			if(StrUtils.notEmpty(parentSeqValue)){
+				seq.setParentSeqVal(parentSeqValue);
+			}
 			HibernateUtil.saveObject(seq, null);
 		}else{
+			if(StrUtils.notEmpty(parentSeqValue)){
+				seq.setParentSeqVal(parentSeqValue);
+			}
 			seq.setCurrentVal(seq.getCurrentVal() + seqSkipVal);
 			setSeqIsReinit(seq);
 			HibernateUtil.updateEntityObject(seq, null);
