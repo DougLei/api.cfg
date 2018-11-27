@@ -41,6 +41,8 @@ public class SysFileConstants {
 	public static final String fileSavePath;
 	/**标识，是否文件上传时，保存文件的路径是系统默认路径，即(项目所在绝对路径/files/upload)*/
 	public static final boolean isDefaultFileSavePath;
+	/** 用户上传所有文件的备份地址，同fileSavePath */
+	public static final String fileBackupPath;
 	/** 系统导入文件时，在服务器上的保存路径，同fileSavePath */
 	public static final String importFileSavePath;
 	/** 系统导入文件的模版，在服务器上的保存路径，同fileSavePath */
@@ -61,6 +63,7 @@ public class SysFileConstants {
 		saveType = ResourceHandlerUtil.initConfValue("file.save.type", SAVE_TYPE_SERVICE);
 		fileSavePath = ResourceHandlerUtil.initConfValue("file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "upload") + File.separator;
 		isDefaultFileSavePath = fileSavePath.startsWith(SysConfig.WEB_SYSTEM_CONTEXT_REALPATH);
+		fileBackupPath = ResourceHandlerUtil.initConfValue("file.backup.path", null);
 		
 		importFileSavePath = ResourceHandlerUtil.initConfValue("import.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "import") + File.separator;
 		importFileTemplateSavePath = ResourceHandlerUtil.initConfValue("import.file.template.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "importTemplate") + File.separator;

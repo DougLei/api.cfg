@@ -237,4 +237,18 @@ public class DateUtil {
 			return formatDate((Date)date);
 		}
 	}
+	
+	// -----------------------------------------------------------------
+	/**
+	 * 获得当前日期是周几
+	 * @return
+	 */
+	public static String getWeekend() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		int w = calendar.get(Calendar.DAY_OF_WEEK)-1;
+		if(w<0){w=0;}
+		return weekDays[w];
+	}
+	private static final String[] weekDays = {"7", "1", "2", "3", "4", "5", "6"};
 }

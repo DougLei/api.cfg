@@ -1,7 +1,10 @@
 package com.king.tooth.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
+
+import org.springframework.util.FileCopyUtils;
 
 /**
  * 文件操作工具类
@@ -46,4 +49,46 @@ public class FileUtil {
 		return false;
 	}
 	private static final String[] imageFileSuffixArr = {"jpg", "jpeg", "png", "gif", "bmp"};
+	
+	
+	/**
+	 * 批量备份文件
+	 * @param sourceFile
+	 * @param targetFile
+	 * @param isDeleteSource
+	 * @throws IOException 
+	 */
+	public static void batchCopyfiles(String sourceFile, String targetFile, boolean isDeleteSource) throws IOException {
+		batchCopyfiles(new File(sourceFile), new File(targetFile), isDeleteSource);
+	}
+	
+	/**
+	 * 批量备份文件
+	 * @param sourceFile
+	 * @param targetFile
+	 * @param isDeleteSource
+	 * @throws IOException 
+	 */
+	public static void batchCopyfiles(File sourceFile, File targetFile, boolean isDeleteSource) throws IOException {
+		if(sourceFile.exists()){
+			if(sourceFile.isDirectory()){
+				File[] files = sourceFile.listFiles();
+				File inTargetFile = null;
+				for (File file : files) {
+					inTargetFile = new File(targetFile.getAbsolutePath() + File.separator + file.getName());
+					batchCopyfiles(file, inTargetFile, isDeleteSource);
+				}
+			}else{
+				targetFileDir = new File(targetFile.getParent());
+				if(!targetFileDir.exists()){
+					targetFileDir.mkdirs();
+				}
+				FileCopyUtils.copy(sourceFile, targetFile);
+			}
+			if(isDeleteSource){
+				sourceFile.delete();
+			}
+		}
+	}
+	private static File targetFileDir = null;
 }
