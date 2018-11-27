@@ -1,9 +1,14 @@
 package com.king.tooth.filter;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
+import com.king.tooth.util.CloseUtil;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 
 /**
@@ -18,9 +23,22 @@ public abstract class AbstractFilter implements Filter{
 	 * @param message
 	 * @param isSuccess
 	 */
-	protected void installFailResponseBody(ServletRequest request, String message){
+	protected ResponseBody installFailResponseBody(ServletRequest request, String message){
 		ResponseBody responseBody = new ResponseBody();
 		responseBody.setMessage(message);
 		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
+		return responseBody;
+	}
+	
+	/**
+	 * 打印结果
+	 * @param resp
+	 * @param responseBody
+	 * @throws IOException 
+	 */
+	protected void printResult(ServletResponse resp, ResponseBody responseBody) throws IOException {
+		PrintWriter out = resp.getWriter();
+		out.write(responseBody.toStrings());
+		CloseUtil.closeIO(out);
 	}
 }

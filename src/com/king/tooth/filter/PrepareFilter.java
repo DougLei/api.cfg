@@ -1,7 +1,6 @@
 package com.king.tooth.filter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.CloseUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -59,7 +57,6 @@ public class PrepareFilter extends AbstractFilter{
 		// 默认是要打印responseBody的
 		request.setAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY, true);
 		try {
-			
 			HibernateUtil.openSessionToCurrentThread();
 			HibernateUtil.beginTransaction();
 			chain.doFilter(req, resp);
@@ -104,18 +101,6 @@ public class PrepareFilter extends AbstractFilter{
 		}
 	}
 	
-	/**
-	 * 打印结果
-	 * @param resp
-	 * @param responseBody
-	 * @throws IOException 
-	 */
-	private void printResult(ServletResponse resp, ResponseBody responseBody) throws IOException {
-		PrintWriter out = resp.getWriter();
-		out.write(responseBody.toStrings());
-		CloseUtil.closeIO(out);
-	}
-
 	public void init(FilterConfig arg0) throws ServletException {
 	}
 }

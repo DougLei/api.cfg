@@ -27,6 +27,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
+import com.king.tooth.cache.SysConfig;
 import com.king.tooth.constants.EncodingConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.constants.SysFileConstants;
@@ -75,7 +76,8 @@ public class SysFileService extends AService{
 				}else if(uploadFileInfo.errMsg != null){
 					return uploadFileInfo.errMsg;
 				}else{
-					String uploadDir = validSaveFileDirIsExists((uploadFileInfo.isImport == 0)?SysFileConstants.BUILD_IN_TYPE_NORMAL:SysFileConstants.BUILD_IN_TYPE_IMPORT);
+					String uploadDir = validSaveFileDirIsExists(uploadFileInfo.getBuildInType());
+					boolean isNormalImportAndSaveToDefaultPath = (uploadFileInfo.isImport == 0 && SysFileConstants.isDefaultFileSavePath);// 是一般上传的文件，且上传文件保存的路径是系统默认路径(在服务器的files/upload文件夹中)
 					filePathList = new ArrayList<String>(uploadFileInfo.count);
 					Map<Integer, SysFile> sysfileMap = new HashMap<Integer, SysFile>(uploadFileInfo.count);
 					SysFile sysFile;
@@ -120,6 +122,10 @@ public class SysFileService extends AService{
 								sysFile.setFileItem(file);
 								if(SysFileConstants.saveToService){
 									sysFile.setSavePath(uploadDir + sysFile.getCode() + "." + sysFile.getSuffix());
+									//是一般上传的文件，且上传文件保存的路径是系统默认路径(在服务器的files/upload文件夹中) ，且是图片类型，则将该图片也保存到服务器上
+									if(isNormalImportAndSaveToDefaultPath && FileUtil.isImage(sysFile.getSuffix())){
+										sysFile.setUrlPath(File.separator + sysFile.getSavePath().replace(SysConfig.WEB_SYSTEM_CONTEXT_REALPATH, ""));
+									}
 									filePathList.add(sysFile.getSavePath());
 								}
 							}
@@ -215,6 +221,19 @@ public class SysFileService extends AService{
 		public int count;// 传递的文件数量
 		public String refDataId;// 文件关联的业务数据id
 		public String batch;// 同一次上传文件批次
+		
+		/**
+		 * 获取内置文件类型
+		 * <p>是导入的文件，还是普通上传的文件</p>
+		 * @return
+		 */
+		public int getBuildInType(){
+			if(isImport == 0){
+				return SysFileConstants.BUILD_IN_TYPE_NORMAL;
+			}else{
+				return SysFileConstants.BUILD_IN_TYPE_IMPORT;
+			}
+		}
 	}
 	// 文件信息
 	private class FileInfo{
@@ -250,13 +269,13 @@ public class SysFileService extends AService{
 	 * @return
 	 * @throws IOException 
 	 */
-	private Object uploadFileToService(Map<Integer, SysFile> sysfileMap) throws IOException {
+	private Object uploadFileToService(Map<Integer, SysFile> sysfileMap) {
 		JSONArray jsonArray = new JSONArray(sysfileMap.size());
 		Set<Integer> keys = sysfileMap.keySet();
 		SysFile sysFile;
 		File file;
-		FileOutputStream fos;
-		InputStream in;
+		FileOutputStream fos = null;
+		InputStream in = null;
 		byte[] b;
 		int len;
 		
@@ -265,15 +284,20 @@ public class SysFileService extends AService{
 			jsonArray.add(HibernateUtil.saveObject(sysFile, null));
 			
 			file = new File(sysFile.getSavePath());
-			fos = new FileOutputStream(file);
-			in = sysFile.getFileItem().getInputStream();
-			
-			b = new byte[1024];
-			while((len = in.read(b)) > 0){
-				fos.write(b, 0, len);
+			try {
+				fos = new FileOutputStream(file);
+				in = sysFile.getFileItem().getInputStream();
+				
+				b = new byte[1024];
+				while((len = in.read(b)) > 0){
+					fos.write(b, 0, len);
+				}
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+			}finally{
+				CloseUtil.closeIO(fos, in);
+				sysFile.getFileItem().delete();// 删除临时文件
 			}
-			CloseUtil.closeIO(fos, in);
-			sysFile.getFileItem().delete();// 删除临时文件
 		}
 		
 		if(jsonArray.size() == 1){

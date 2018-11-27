@@ -31,4 +31,19 @@ public class FileUtil {
 		}
 		return dirPath;
 	}
+	
+	/**
+	 * 是否是图片
+	 * @param fileSuffix 文件后缀
+	 * @return
+	 */
+	public static boolean isImage(String fileSuffix){
+		for (String imageFileSuffix : imageFileSuffixArr) {
+			if(imageFileSuffix.equalsIgnoreCase(fileSuffix)){
+				return true;
+			}
+		}
+		return false;
+	}
+	private static final String[] imageFileSuffixArr = {"jpg", "jpeg", "png", "gif", "bmp"};
 }

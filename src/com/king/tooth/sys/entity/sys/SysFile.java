@@ -45,17 +45,19 @@ public class SysFile extends BasicEntity implements IEntity{
 	private String suffix;
 	/**
 	 * 文件的存储路径
+	 * <p>存储附件的服务器绝对路径</p>
 	 */
 	private String savePath;
+	/**
+	 * 文件的url路径
+	 * <p>访问文件的url路径，目前只有图片文件，该字段才有值</p>
+	 */
+	private String urlPath;
 	/**
 	 * 文件的存储方式
 	 * <p>service:存储在系统服务器上</p>
 	 */
 	private String saveType;
-	/**
-	 * 文件内容
-	 */
-	private String content;
 	/**
 	 * 文件的密级
 	 */
@@ -146,17 +148,17 @@ public class SysFile extends BasicEntity implements IEntity{
 	public void setSavePath(String savePath) {
 		this.savePath = savePath;
 	}
+	public String getUrlPath() {
+		return urlPath;
+	}
+	public void setUrlPath(String urlPath) {
+		this.urlPath = urlPath;
+	}
 	public String getSaveType() {
 		return saveType;
 	}
 	public void setSaveType(String saveType) {
 		this.saveType = saveType;
-	}
-	public String getContent() {
-		return content;
-	}
-	public void setContent(String content) {
-		this.content = content;
 	}
 	public Integer getSecretLevel() {
 		return secretLevel;
@@ -256,19 +258,19 @@ public class SysFile extends BasicEntity implements IEntity{
 		
 		CfgColumn savePathColumn = new CfgColumn("save_path", DataTypeConstants.STRING, 1000);
 		savePathColumn.setName("文件的存储路径");
-		savePathColumn.setComments("文件的存储路径：存储文件的路径");
+		savePathColumn.setComments("存储附件的服务器绝对路径");
 		columns.add(savePathColumn);
+		
+		CfgColumn urlPathColumn = new CfgColumn("url_path", DataTypeConstants.STRING, 1000);
+		urlPathColumn.setName("文件的url路径");
+		urlPathColumn.setComments("访问文件的url路径，目前只有图片文件，该字段才有值");
+		columns.add(urlPathColumn);
 		
 		CfgColumn saveTypeColumn = new CfgColumn("save_type", DataTypeConstants.STRING, 10);
 		saveTypeColumn.setName("文件的存储方式");
 		saveTypeColumn.setComments("文件的存储方式：service:存储在系统服务器上");
 		saveTypeColumn.setDefaultValue(SysFileConstants.SAVE_TYPE_SERVICE);
 		columns.add(saveTypeColumn);
-		
-		CfgColumn contentColumn = new CfgColumn("content", DataTypeConstants.BLOB, 0);
-		contentColumn.setName("文件内容");
-		contentColumn.setComments("文件内容");
-		columns.add(contentColumn);
 		
 		CfgColumn secretLevelColumn = new CfgColumn("secret_level", DataTypeConstants.INTEGER, 1);
 		secretLevelColumn.setName("文件的密级");
