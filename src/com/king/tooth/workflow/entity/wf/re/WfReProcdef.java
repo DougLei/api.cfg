@@ -2,15 +2,16 @@ package com.king.tooth.workflow.entity.wf.re;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
-import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.workflow.entity.WfBasicEntity;
 
 /**
  * 流程定义表
@@ -18,7 +19,7 @@ import com.king.tooth.sys.entity.cfg.CfgTable;
  */
 @SuppressWarnings("serial")
 @Table
-public class WfReProcdef extends BasicEntity implements IEntity, IEntityPropAnalysis{
+public class WfReProcdef extends WfBasicEntity implements IEntity, IEntityPropAnalysis{
 
 	/**
 	 * 关联的部署id

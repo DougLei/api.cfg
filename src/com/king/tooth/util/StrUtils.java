@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.king.tooth.constants.EncodingConstants;
+
 /**
  * 字符串工具类
  * @author DougLei
@@ -134,4 +136,36 @@ public class StrUtils {
 	/** 匹配双字节字符的正则表达式，包括汉字 */
 	private static final Pattern doubleCharPattern = Pattern.compile("[^x00-xff]");
 	// [\u4e00-\u9fa5]  匹配汉字的正则表达式
+	
+	
+	// --------------------------------------------------------------------------------------------------
+	/**
+	 * 根据byte数组，获取字符串内容
+	 * <p>默认为utf-8编码格式</p>
+	 * @param byteArray
+	 * @return
+	 */
+	public static String getStringByByteArray(byte[] byteArray){
+		return getStringByByteArray(byteArray, null);
+	}
+	
+	/**
+	 * 根据byte数组，获取字符串内容
+	 * @param byteArray
+	 * @param encodingConstants
+	 * @return
+	 */
+	public static String getStringByByteArray(byte[] byteArray, String encodingConstants){
+		if(byteArray != null && byteArray.length > 0){
+			try {
+				if(StrUtils.isEmpty(encodingConstants)){
+					encodingConstants = EncodingConstants.UTF_8;
+				}
+				return new String(byteArray, encodingConstants);
+			} catch (UnsupportedEncodingException e) {
+				throw new IllegalArgumentException("在将byte数组转换成"+encodingConstants+"编码格式的字符串时出现异常：" + ExceptionUtil.getErrMsg(e));
+			}
+		}
+		return null;
+	}
 }
