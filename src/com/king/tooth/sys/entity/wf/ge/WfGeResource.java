@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.wf;
+package com.king.tooth.sys.entity.wf.ge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,9 @@ public class WfGeResource extends BasicEntity implements IEntity, IEntityPropAna
 	 */
 	private String name;
 	/**
-	 * 内容
+	 * 二进制内容
 	 */
-	private byte[] contents;
+	private byte[] byteContent;
 	
 	//-------------------------------------------------------------------------
 	public String getRefDeployId() {
@@ -46,16 +46,16 @@ public class WfGeResource extends BasicEntity implements IEntity, IEntityPropAna
 	public void setName(String name) {
 		this.name = name;
 	}
-	public byte[] getContents() {
-		return contents;
+	public byte[] getByteContent() {
+		return byteContent;
 	}
-	public void setContents(byte[] contents) {
-		this.contents = contents;
+	public void setByteContent(byte[] byteContent) {
+		this.byteContent = byteContent;
 	}
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(16);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(3+7);
 		
 		CfgColumn refDeployIdColumn = new CfgColumn("ref_deploy_id", DataTypeConstants.STRING, 32);
 		refDeployIdColumn.setName("关联的部署id");
@@ -67,10 +67,10 @@ public class WfGeResource extends BasicEntity implements IEntity, IEntityPropAna
 		nameColumn.setComments("名称");
 		columns.add(nameColumn);
 		
-		CfgColumn contentsColumn = new CfgColumn("contents", DataTypeConstants.BLOB, 0);
-		contentsColumn.setName("内容");
-		contentsColumn.setComments("内容");
-		columns.add(contentsColumn);
+		CfgColumn byteContentsColumn = new CfgColumn("byte_content", DataTypeConstants.BLOB, 0);
+		byteContentsColumn.setName("二进制内容");
+		byteContentsColumn.setComments("二进制内容");
+		columns.add(byteContentsColumn);
 		
 		return columns;
 	}

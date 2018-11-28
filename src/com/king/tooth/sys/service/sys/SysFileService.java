@@ -124,7 +124,7 @@ public class SysFileService extends AService{
 									sysFile.setSavePath(uploadDir + sysFile.getCode() + "." + sysFile.getSuffix());
 									//是一般上传的文件，且上传文件保存的路径是系统默认路径(在服务器的files/upload文件夹中) ，且是图片类型，则将该图片也保存到服务器上
 									if(isNormalImportAndSaveToDefaultPath && FileUtil.isImage(sysFile.getSuffix())){
-										sysFile.setUrlPath(File.separator + sysFile.getSavePath().replace(SysConfig.WEB_SYSTEM_CONTEXT_REALPATH, ""));
+										sysFile.setUrlPath(sysFile.getSavePath().replace(SysConfig.WEB_SYSTEM_CONTEXT_REALPATH, ""));
 									}
 									filePathList.add(sysFile.getSavePath());
 								}
