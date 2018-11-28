@@ -21,12 +21,6 @@ public class ExceptionUtil {
 		if(isDevelop){
 			e.printStackTrace();
 		}
-//		StringBuilder errMsg = new StringBuilder("系统错误信息为： >>>>>>");
-//		errMsg.append(e.getMessage());
-//		if(e.getCause() != null){
-//			errMsg.append("。").append(e.getCause().getMessage());
-//		}
-//		return errMsg.toString();
 		if(e.getCause() != null){
 			return e.getCause().getMessage();
 		}

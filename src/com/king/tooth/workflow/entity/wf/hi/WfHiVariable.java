@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.wf.ru;
+package com.king.tooth.workflow.entity.wf.hi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,12 @@ import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
- * 流程运行时，参数表
+ * 流程参数历史表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class WfRuVariable extends BasicEntity implements IEntity, IEntityPropAnalysis{
+public class WfHiVariable extends BasicEntity implements IEntity, IEntityPropAnalysis{
 
 	/**
 	 * 关联的流程实例id
@@ -170,8 +170,8 @@ public class WfRuVariable extends BasicEntity implements IEntity, IEntityPropAna
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("流程运行时，参数表");
-		table.setRemark("流程运行时，参数表");
+		table.setName("流程参数历史表");
+		table.setRemark("流程参数历史表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
@@ -179,12 +179,12 @@ public class WfRuVariable extends BasicEntity implements IEntity, IEntityPropAna
 	}
 
 	public String toDropTable() {
-		return "WF_RU_VARIABLE";
+		return "WF_HI_VARIABLE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "WfRuVariable";
+		return "WfHiVariable";
 	}
 	
 	public String validNotNullProps() {

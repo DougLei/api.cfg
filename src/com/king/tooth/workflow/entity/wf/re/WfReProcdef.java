@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.wf.re;
+package com.king.tooth.workflow.entity.wf.re;
 
 import java.util.ArrayList;
 import java.util.List;

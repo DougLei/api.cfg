@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.wf.re;
+package com.king.tooth.workflow.entity.wf.re;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,32 +13,39 @@ import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 
 /**
- * 流程资源表
+ * 流程部署表
  * @author DougLei
  */
 @SuppressWarnings("serial")
 @Table
-public class WfReResource extends BasicEntity implements IEntity, IEntityPropAnalysis{
+public class WfReDeployment extends BasicEntity implements IEntity, IEntityPropAnalysis{
 
 	/**
-	 * 关联的部署id
-	 */
-	private String refDeployId;
-	/**
-	 * 名称
+	 * 部署名称
 	 */
 	private String name;
 	/**
-	 * 二进制内容
+	 * 部署时间
 	 */
-	private byte[] byteContent;
+	private String deployDate;
+	/**
+	 * 备注
+	 */
+	private String remark;
 	
 	//-------------------------------------------------------------------------
-	public String getRefDeployId() {
-		return refDeployId;
+	
+	public String getDeployDate() {
+		return deployDate;
 	}
-	public void setRefDeployId(String refDeployId) {
-		this.refDeployId = refDeployId;
+	public void setDeployDate(String deployDate) {
+		this.deployDate = deployDate;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 	public String getName() {
 		return name;
@@ -46,39 +53,33 @@ public class WfReResource extends BasicEntity implements IEntity, IEntityPropAna
 	public void setName(String name) {
 		this.name = name;
 	}
-	public byte[] getByteContent() {
-		return byteContent;
-	}
-	public void setByteContent(byte[] byteContent) {
-		this.byteContent = byteContent;
-	}
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
 		List<CfgColumn> columns = new ArrayList<CfgColumn>(3+7);
 		
-		CfgColumn refDeployIdColumn = new CfgColumn("ref_deploy_id", DataTypeConstants.STRING, 32);
-		refDeployIdColumn.setName("关联的部署id");
-		refDeployIdColumn.setComments("关联的部署id");
-		columns.add(refDeployIdColumn);
-		
-		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 300);
+		CfgColumn nameColumn = new CfgColumn("name", DataTypeConstants.STRING, 200);
 		nameColumn.setName("名称");
 		nameColumn.setComments("名称");
 		columns.add(nameColumn);
 		
-		CfgColumn byteContentsColumn = new CfgColumn("byte_content", DataTypeConstants.BLOB, 0);
-		byteContentsColumn.setName("二进制内容");
-		byteContentsColumn.setComments("二进制内容");
-		columns.add(byteContentsColumn);
+		CfgColumn deployDateColumn = new CfgColumn("deploy_date", DataTypeConstants.DATE, 0);
+		deployDateColumn.setName("部署时间");
+		deployDateColumn.setComments("部署时间");
+		columns.add(deployDateColumn);
+		
+		CfgColumn remarkColumn = new CfgColumn("remark", DataTypeConstants.STRING, 200);
+		remarkColumn.setName("备注");
+		remarkColumn.setComments("备注");
+		columns.add(remarkColumn);
 		
 		return columns;
 	}
 	
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
-		table.setName("流程资源表");
-		table.setRemark("流程资源表");
+		table.setName("流程部署表");
+		table.setRemark("流程部署表");
 		table.setRequestMethod(ResourceInfoConstants.GET);
 		
 		table.setColumns(getColumnList());
@@ -86,12 +87,12 @@ public class WfReResource extends BasicEntity implements IEntity, IEntityPropAna
 	}
 
 	public String toDropTable() {
-		return "WF_RE_RESOURCE";
+		return "WF_RE_DEPLOYMENT";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "WfReResource";
+		return "WfReDeployment";
 	}
 	
 	public String validNotNullProps() {
