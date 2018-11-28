@@ -1,4 +1,4 @@
-package com.king.tooth.sys.entity.wf.ge;
+package com.king.tooth.sys.entity.wf.re;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.king.tooth.sys.entity.cfg.CfgTable;
  */
 @SuppressWarnings("serial")
 @Table
-public class WfGeResource extends BasicEntity implements IEntity, IEntityPropAnalysis{
+public class WfReResource extends BasicEntity implements IEntity, IEntityPropAnalysis{
 
 	/**
 	 * 关联的部署id
@@ -86,12 +86,12 @@ public class WfGeResource extends BasicEntity implements IEntity, IEntityPropAna
 	}
 
 	public String toDropTable() {
-		return "WF_GE_RESOURCE";
+		return "WF_RE_RESOURCE";
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "WfGeResource";
+		return "WfReResource";
 	}
 	
 	public String validNotNullProps() {
