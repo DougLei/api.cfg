@@ -1,5 +1,7 @@
 package com.king.tooth.workflow.util;
 
+import java.util.List;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -35,60 +37,64 @@ public class ProcessDefUtil {
 	// ------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * 根据元素的名称，或其id属性值，获取对应的Element对象
-	 * <p>如果elementName和elementIdAttrValue都为null，则返回根元素对象</p>
+	 * 根据节点名称，以及节点元素的id属性值，获取对应的节点元素对象
 	 * @param xmlContent
-	 * @param elementName 
+	 * @param elementName
 	 * @param elementIdAttrValue 
 	 * @return
 	 */
-	public static Element getElement(String xmlContent, String elementName, String elementIdAttrValue){
-		return getElement(Dom4jUtil.getDocumentByString(xmlContent), elementName, elementIdAttrValue);
+	public static Element getElementById(String xmlContent, String elementName, String elementIdAttrValue){
+		return getElementById(Dom4jUtil.getDocumentByString(xmlContent), elementName, elementIdAttrValue);
 	}
 	
 	/**
-	 * 根据元素的名称，或其id属性值，获取对应的Element对象
-	 * <p>如果elementName和elementIdAttrValue都为null，则返回根元素对象</p>
-	 * @param xmlContent
-	 * @param elementName 
+	 * 根据节点名称，以及节点元素的id属性值，获取对应的节点元素对象
+	 * @param xmlContentByteArray
+	 * @param elementName
 	 * @param elementIdAttrValue 
 	 * @return
 	 */
-	public static Element getElement(byte[] buf, String elementName, String elementIdAttrValue){
-		return getElement(Dom4jUtil.getDocument(buf), elementName, elementIdAttrValue);
+	public static Element getElementById(byte[] xmlContentByteArray, String elementName, String elementIdAttrValue){
+		return getElementById(Dom4jUtil.getDocument(xmlContentByteArray), elementName, elementIdAttrValue);
 	}
 	
 	/**
-	 * 根据元素的名称，或其id属性值，获取对应的Element对象
-	 * <p>如果elementName和elementIdAttrValue都为null，则返回根元素对象</p>
-	 * @param xmlContent
-	 * @param elementName 
-	 * @param elementIdAttrValue 
+	 * 根据节点名称，以及节点元素的id属性值，获取对应的节点元素对象
+	 * @param document
+	 * @param elementName
+	 * @param elementIdAttrValue
 	 * @return
 	 */
-	public static Element getElement(Document document, String elementName, String elementIdAttrValue){
-		return getElement(document.getRootElement(), elementName, elementIdAttrValue);
-	}
-	
-	/**
-	 * 根据元素的名称，或其id属性值，获取对应的Element对象
-	 * <p>如果elementName和elementIdAttrValue都为null，则返回根元素对象</p>
-	 * @param basicElement
-	 * @param elementName 
-	 * @param elementIdAttrValue 
-	 * @return
-	 */
-	public static Element getElement(Element basicElement, String elementName, String elementIdAttrValue){
-		if(StrUtils.isEmpty(elementName) && StrUtils.isEmpty(elementIdAttrValue)){
-			return basicElement;
+	@SuppressWarnings("unchecked")
+	private static Element getElementById(Document document, String elementName, String elementIdAttrValue){
+		if(StrUtils.isEmpty(elementName)){
+			throw new NullPointerException("在根据节点名称，以及节点元素的id属性值，获取对应的节点元素对象时，传入的elementName值不能为空");
+		}
+		if(StrUtils.isEmpty(elementIdAttrValue)){
+			throw new NullPointerException("在根据节点名称，以及节点元素的id属性值，获取对应的节点元素对象时，传入的elementIdAttrValue值不能为空");
 		}
 		
-		Element element = null;
-		
-		
-		if(element == null){
-			throw new NullPointerException("xml文档中，不存在id属性值为["+elementIdAttrValue+"]的元素，请检查配置");
+		Element rootElement = document.getRootElement();
+		if(!rootElement.hasContent()){
+			throw new NullPointerException("xml文档中，根节点元素["+rootElement.getName()+"]下没有任何数据，请检查配置");
 		}
-		return element;
+		List<Element> elements = rootElement.elements(elementName);
+		if(elements == null || elements.size() == 0){
+			throw new NullPointerException("xml文档中，不存在节点名为["+elementName+"]的数据，请检查配置");
+		}
+		
+		Element targetElement = null;
+		for (Element element : elements) {
+			if(elementIdAttrValue.equals(element.attributeValue("id"))){
+				targetElement = element;
+				break;
+			}
+		}
+		elements.clear();
+		
+		if(targetElement == null){
+			throw new NullPointerException("xml文档中，不存在id属性值为["+elementIdAttrValue+"]的数据，请检查配置");
+		}
+		return targetElement;
 	}
 }

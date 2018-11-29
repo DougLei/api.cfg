@@ -2,16 +2,12 @@ package com.king.tooth.workflow.service.wf;
 
 import java.util.List;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
-
 import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.util.xml.Dom4jUtil;
 import com.king.tooth.workflow.entity.wf.re.WfReProcdef;
 import com.king.tooth.workflow.entity.wf.ru.WfRuExecutioninst;
 import com.king.tooth.workflow.service.WfService;
+import com.king.tooth.workflow.util.ProcessDefUtil;
 
 /**
  * 流程运行Service
@@ -41,23 +37,10 @@ public class WfRunningService extends WfService{
 			processInstance.setExceptionMessage("系统中key值为["+processDefKey+"]的流程，没有查询到对应的配置资源信息，请检查");
 			return processInstance;
 		}
-		String processDefined = StrUtils.getStringByByteArray((byte[])processDefinedContent);
-		
-		// TODO 解析xml
-		
+
+		ProcessDefUtil.getElementById((byte[])processDefinedContent, "", "");
 		
 		return processInstance;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		String str = "<processDesign><process id=\"\" name=\"\" remark=\"哈哈\"></process></processDesign>";
-		Document doc = Dom4jUtil.getDocumentByString(str);
-		
-		Element root = doc.getRootElement();
-		System.out.println(root.getName());
-	 
-		Element processElement = root.element("processd");
-		System.out.println(processElement == null);
 	}
 	
 	/**

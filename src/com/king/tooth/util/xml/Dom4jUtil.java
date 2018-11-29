@@ -69,17 +69,17 @@ public class Dom4jUtil {
 	
 	/**
 	 * 根据byte数组，获取document对象
-	 * @param buf
+	 * @param xmlContentByteArray
 	 * @return
 	 */
-	public static Document getDocument(byte[] buf){
-		if(buf == null || buf.length == 0){
+	public static Document getDocument(byte[] xmlContentByteArray){
+		if(xmlContentByteArray == null || xmlContentByteArray.length == 0){
 			throw new NullPointerException("根据byte数组，获取document对象时，传入的byte数组为空");
 		}
 		Document document = null;
 		InputStream in = null;
 		try {
-			in = new ByteArrayInputStream(buf);
+			in = new ByteArrayInputStream(xmlContentByteArray);
 			SAXReader reader = new SAXReader();
 			document = reader.read(in);
 		} catch (DocumentException e) {
