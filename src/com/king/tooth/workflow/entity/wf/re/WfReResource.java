@@ -36,7 +36,7 @@ public class WfReResource extends WfBasicEntity implements IEntity, IEntityPropA
 	private String name;
 	/**
 	 * 资源文件类型
-	 * <p>0:流程配置资源文件、1:流程配置生成的图片文件...</p>
+	 * <p>0:流程配置资源文件、1:流程图片布局配置资源文件、2:流程配置生成的图片文件</p>
 	 */
 	private String resourceFileType;
 	/**
@@ -93,7 +93,7 @@ public class WfReResource extends WfBasicEntity implements IEntity, IEntityPropA
 		
 		CfgColumn resourceFileTypeColumn = new CfgColumn("resource_file_type", DataTypeConstants.INTEGER, 1);
 		resourceFileTypeColumn.setName("资源文件类型");
-		resourceFileTypeColumn.setComments("0:流程配置资源文件、1:流程配置生成的图片文件...");
+		resourceFileTypeColumn.setComments("0:流程配置资源文件、1:流程图片布局配置资源文件、2:流程配置生成的图片文件");
 		columns.add(resourceFileTypeColumn);
 		
 		CfgColumn byteContentsColumn = new CfgColumn("byte_content", DataTypeConstants.BLOB, 0);

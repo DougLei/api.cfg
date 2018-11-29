@@ -1,5 +1,6 @@
 package com.king.tooth.workflow.service.wf;
 
+import com.king.tooth.workflow.service.WfService;
 
 /**
  * 流程仓库Service

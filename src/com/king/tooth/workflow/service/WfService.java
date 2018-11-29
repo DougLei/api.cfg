@@ -1,4 +1,4 @@
-package com.king.tooth.workflow.service.wf;
+package com.king.tooth.workflow.service;
 
 import com.king.tooth.sys.service.AService;
 
