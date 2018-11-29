@@ -8,6 +8,6 @@
 		<parallelGateway id="" name=""></parallelGateway>
 		<exclusiveGateway id="" name=""></exclusiveGateway>
 		
-		<sequenceFlow id="" sourceRef="" targetRef=""></sequenceFlow>
+		<sequenceFlow id="" sourceRefId="" targetRefId=""></sequenceFlow>
 	</process>
 </procDesign>
