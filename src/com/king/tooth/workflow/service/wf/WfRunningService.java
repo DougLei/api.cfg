@@ -7,7 +7,6 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.workflow.entity.wf.re.WfReProcdef;
 import com.king.tooth.workflow.entity.wf.ru.WfRuExecutioninst;
 import com.king.tooth.workflow.service.WfService;
-import com.king.tooth.workflow.util.ProcessDefUtil;
 
 /**
  * 流程运行Service
@@ -27,7 +26,7 @@ public class WfRunningService extends WfService{
 		List<WfReProcdef> wfReProcdefList = HibernateUtil.extendExecuteListQueryByHqlArr(WfReProcdef.class, "1", "1", "from WfReProcdef where pKey=? and isActivate=1 and projectId=? and customerId=? order by version desc", processDefKey, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(wfReProcdefList == null || wfReProcdefList.size() == 0){
 			processInstance = new WfRuExecutioninst();
-			processInstance.setExceptionMessage("系统中不存在任何已激活状态下，key值为["+processDefKey+"]的流程信息，请检查");
+			processInstance.setExceptionMessage("系统中不存在任何已激活状态，key值为["+processDefKey+"]的流程信息，请检查");
 			return processInstance;
 		}
 		
@@ -38,7 +37,7 @@ public class WfRunningService extends WfService{
 			return processInstance;
 		}
 
-		ProcessDefUtil.getElementById((byte[])processDefinedContent, "", "");
+		getElementById((byte[])processDefinedContent, "", "");
 		
 		return processInstance;
 	}
