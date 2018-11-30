@@ -352,9 +352,7 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	public String analysisResourceProp() {
 		String result = validNotNullProps();
 		if(result == null){
-			boolean sqlIsExists = true;// 用来标识sql是否存在，判断是添加还是修改
 			if(StrUtils.isEmpty(id)){
-				sqlIsExists = false;
 				this.id = ResourceHandlerUtil.getIdentity();
 			}
 			
@@ -385,7 +383,7 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 			}
 			
 			// 尝试删除该sql关联的所有结果集信息
-			if(sqlIsExists && SqlStatementTypeConstants.SELECT.equals(type) || SqlStatementTypeConstants.PROCEDURE.equals(type) || SqlStatementTypeConstants.VIEW.equals(type)){
+			if(SqlStatementTypeConstants.SELECT.equals(type) || SqlStatementTypeConstants.PROCEDURE.equals(type) || SqlStatementTypeConstants.VIEW.equals(type)){
 				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", id);// 删除之前的所有结果集信息(select/存储过程/视图)
 			}
 			
