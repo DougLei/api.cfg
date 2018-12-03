@@ -6,8 +6,10 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.PermissionConstants;
+import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
+import com.king.tooth.sys.entity.IPermissionEntity;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysPermissionPriority;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
@@ -435,5 +437,31 @@ public class SysPermissionService extends AService{
 				}
 			}
 		}
+	}
+	
+	// --------------------------------------------------------------------------------------
+	private void validPermissionCodeInfo(IPermissionEntity permissionEntity){
+		if(StrUtils.isEmpty(permissionEntity.getRefResourceId()) || StrUtils.isEmpty(permissionEntity.getRefResourceCode())){
+			throw new NullPointerException("同步修改权限的Code信息时，关联的资源id和code均不能为空");
+		}
+	}
+	/**
+	 * 同步修改权限code信息
+	 * @param permissionEntity
+	 */
+	public void updatePermissionCodeInfo(IPermissionEntity permissionEntity){
+		validPermissionCodeInfo(permissionEntity);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, 
+				"update SysPermission set refResourceCode=? where refResourceId=?", permissionEntity.getRefResourceCode(), permissionEntity.getRefResourceId());
+	}
+	/**
+	 * 同步修改权限信息
+	 * @param permissionEntity
+	 */
+	public void updatePermissionInfo(IPermissionEntity permissionEntity){
+		validPermissionCodeInfo(permissionEntity);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, 
+				"update SysPermission set refParentResourceId=?, refParentResourceCode=? where (refResourceId=? or refResourceCode=?)", 
+					permissionEntity.getRefParentResourceId(), permissionEntity.getRefParentResourceCode(), permissionEntity.getRefResourceId(), permissionEntity.getRefResourceCode());
 	}
 }

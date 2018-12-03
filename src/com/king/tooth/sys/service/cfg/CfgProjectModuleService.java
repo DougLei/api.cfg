@@ -8,11 +8,13 @@ import java.util.List;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
+import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.CfgProjectModule;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModule;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.permission.SysPermissionExtend;
 import com.king.tooth.sys.service.AService;
+import com.king.tooth.sys.service.sys.SysPermissionService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.hibernate.HibernateUtil;
 
@@ -63,9 +65,13 @@ public class CfgProjectModuleService extends AService {
 		String operResult = null;
 		if(!oldProjectModule.getCode().equals(projectModule.getCode())){
 			operResult = validProjectModuleCodeIsExists(projectModule);
+			BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).updatePermissionCodeInfo(projectModule);
 		}
 		
 		if(operResult == null){
+			if(projectModule.isChangePermissionInfo(oldProjectModule)){
+				BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).updatePermissionInfo(projectModule);
+			}
 			return HibernateUtil.updateEntityObject(projectModule, null);
 		}
 		return operResult;

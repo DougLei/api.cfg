@@ -316,12 +316,12 @@ public class SysFile extends BasicEntity implements IEntity{
 		orderCodeColumn.setDefaultValue("0");
 		columns.add(orderCodeColumn);
 		
-		CfgColumn backup01Column = new CfgColumn("backup01", DataTypeConstants.STRING, 1000);
+		CfgColumn backup01Column = new CfgColumn("backup01", DataTypeConstants.STRING, 200);
 		backup01Column.setName("备用字段01");
 		backup01Column.setComments("备用字段01");
 		columns.add(backup01Column);
 		
-		CfgColumn backup02Column = new CfgColumn("backup02", DataTypeConstants.STRING, 1000);
+		CfgColumn backup02Column = new CfgColumn("backup02", DataTypeConstants.STRING, 500);
 		backup02Column.setName("备用字段02");
 		backup02Column.setComments("备用字段02");
 		columns.add(backup02Column);

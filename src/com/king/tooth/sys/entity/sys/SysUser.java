@@ -112,6 +112,14 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	 * <p>逻辑删除，默认值为0</p>
 	 */
 	private Integer isDelete;
+	/**
+	 * 备用字段01
+	 */
+	private String backup01;
+	/**
+	 * 备用字段02
+	 */
+	private String backup02;
 	
 	// ---------------------------------------------------------------------------
 
@@ -265,10 +273,22 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	public void setIsDelete(Integer isDelete) {
 		this.isDelete = isDelete;
 	}
+	public String getBackup01() {
+		return backup01;
+	}
+	public void setBackup01(String backup01) {
+		this.backup01 = backup01;
+	}
+	public String getBackup02() {
+		return backup02;
+	}
+	public void setBackup02(String backup02) {
+		this.backup02 = backup02;
+	}
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(21+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(23+7);
 		
 		CfgColumn nikeNameColumn = new CfgColumn("nike_name", DataTypeConstants.STRING, 50);
 		nikeNameColumn.setName("昵称");
@@ -379,6 +399,16 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 		isDeleteColumn.setComments("逻辑删除，默认值为0");
 		isDeleteColumn.setDefaultValue("0");
 		columns.add(isDeleteColumn);
+		
+		CfgColumn backup01Column = new CfgColumn("backup01", DataTypeConstants.STRING, 200);
+		backup01Column.setName("备用字段01");
+		backup01Column.setComments("备用字段01");
+		columns.add(backup01Column);
+		
+		CfgColumn backup02Column = new CfgColumn("backup02", DataTypeConstants.STRING, 500);
+		backup02Column.setName("备用字段02");
+		backup02Column.setComments("备用字段02");
+		columns.add(backup02Column);
 		
 		return columns;
 	}

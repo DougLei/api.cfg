@@ -7,10 +7,13 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.BasicEntity;
 import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
+import com.king.tooth.sys.entity.IPermissionEntity;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.hibernate.HibernateUtil;
 
 /**
  * 项目模块信息表
@@ -18,7 +21,7 @@ import com.king.tooth.util.StrUtils;
  */
 @SuppressWarnings("serial")
 @Table
-public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis, IEntity{
+public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis, IEntity, IPermissionEntity{
 	
 	/**
 	 * 关联的项目主键
@@ -220,5 +223,53 @@ public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis
 	
 	public String analysisResourceProp() {
 		return validNotNullProps();
+	}
+	
+	// ----------------------------------------------------------------
+	@JSONField(serialize = false)
+	public String getRefResourceId(){
+		return id;
+	}
+	@JSONField(serialize = false)
+	public String getRefResourceCode(){
+		return code;
+	}
+	@JSONField(serialize = false)
+	public String getRefParentResourceId(){
+		return parentId;
+	}
+	@JSONField(serialize = false)
+	public String getRefParentResourceCode(){
+		if(StrUtils.notEmpty(parentId)){
+			if(parentProjectModule == null){
+				parentProjectModule = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgProjectModule.class, "from CfgProjectModule where "+ResourcePropNameConstants.ID+"=?", parentId);
+			}
+			if(parentProjectModule == null){
+				throw new NullPointerException("模块["+name+"]不存在id为["+parentId+"]的父模块信息");
+			}
+			return parentProjectModule.getCode();
+		}
+		return null;
+	}
+	@JSONField(serialize = false)
+	private CfgProjectModule parentProjectModule;
+
+	/**
+	 * 是否修改了权限信息
+	 * @param oldProjectModule
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isChangePermissionInfo(IPermissionEntity oldProjectModule){
+		if(StrUtils.isEmpty(parentId) && StrUtils.notEmpty(oldProjectModule.getRefParentResourceId())){
+			return true;
+		}
+		if(StrUtils.isEmpty(oldProjectModule.getRefParentResourceId()) && StrUtils.notEmpty(parentId)){
+			return true;
+		}
+		if(parentId != null && oldProjectModule.getRefParentResourceId() != null && !oldProjectModule.getRefParentResourceId().equals(parentId)){
+			return true;
+		}
+		return false;
 	}
 }
