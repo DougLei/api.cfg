@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.springframework.util.Assert;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.PropertiesUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -30,12 +30,12 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	}
 	
 	public void contextInitialized(ServletContextEvent sc) {
-		loadProperties("api.platform.basic.properties", SysConfig.getSystemProperties());
-		String importProperties = SysConfig.getSystemConfig("imports");
+		loadProperties("api.platform.basic.properties", SysContext.getSystemProperties());
+		String importProperties = SysContext.getSystemConfig("imports");
 		if(StrUtils.notEmpty(importProperties)){
 			String[] propertiesArr = importProperties.split(",");
 			for (int i = 0; i < propertiesArr.length; i++) {
-				loadProperties(propertiesArr[i], SysConfig.getSystemProperties());
+				loadProperties(propertiesArr[i], SysContext.getSystemProperties());
 				propertiesArr[i] = null;
 			}
 			propertiesArr = null;
@@ -43,6 +43,6 @@ public class LoadPropertiesFileListener implements ServletContextListener {
 	}
 	
 	public void contextDestroyed(ServletContextEvent sc) {
-		SysConfig.getSystemProperties().clear();
+		SysContext.getSystemProperties().clear();
 	}
 }

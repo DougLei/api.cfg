@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.king.tooth.annotation.Table;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
@@ -295,11 +295,11 @@ public class CfgDatabase extends BasicEntity implements IEntityPropAnalysis, IEn
 		if(result == null){
 			// 验证数据库实例名
 			if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(type)
-					&& SysConfig.getSystemConfig("db.default.ip").equals(ip)
-					&& SysConfig.getSystemConfig("db.default.port").equals(getPort()+"")){
+					&& SysContext.getSystemConfig("db.default.ip").equals(ip)
+					&& SysContext.getSystemConfig("db.default.port").equals(getPort()+"")){
 				// 如果数据库类型是oracle数据库
 				// 如果和jdbc中配置的ip和端口一样，就说明是使用的是当前库，则使用jdbc中配置的oracle数据库实例名
-				this.instanceName = SysConfig.getSystemConfig("db.default.instancename");
+				this.instanceName = SysContext.getSystemConfig("db.default.instancename");
 			}
 			
 			// 创建数据库文件对象

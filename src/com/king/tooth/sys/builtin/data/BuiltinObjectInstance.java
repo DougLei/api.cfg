@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.PermissionConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
@@ -33,13 +33,13 @@ public class BuiltinObjectInstance {
 	 */
 	public transient static final CfgDatabase currentSysBuiltinDatabaseInstance = new CfgDatabase();
 	static{
-		currentSysBuiltinDatabaseInstance.setId(SysConfig.getSystemConfig("current.sys.database.id"));
-		currentSysBuiltinDatabaseInstance.setType(SysConfig.getSystemConfig("jdbc.dbType"));
-		currentSysBuiltinDatabaseInstance.setInstanceName(SysConfig.getSystemConfig("db.default.instancename"));
-		currentSysBuiltinDatabaseInstance.setLoginUserName(SysConfig.getSystemConfig("jdbc.username"));
-		currentSysBuiltinDatabaseInstance.setLoginPassword(SysConfig.getSystemConfig("jdbc.password"));
-		currentSysBuiltinDatabaseInstance.setIp(SysConfig.getSystemConfig("db.default.ip"));
-		currentSysBuiltinDatabaseInstance.setPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
+		currentSysBuiltinDatabaseInstance.setId(SysContext.getSystemConfig("current.sys.database.id"));
+		currentSysBuiltinDatabaseInstance.setType(SysContext.getSystemConfig("jdbc.dbType"));
+		currentSysBuiltinDatabaseInstance.setInstanceName(SysContext.getSystemConfig("db.default.instancename"));
+		currentSysBuiltinDatabaseInstance.setLoginUserName(SysContext.getSystemConfig("jdbc.username"));
+		currentSysBuiltinDatabaseInstance.setLoginPassword(SysContext.getSystemConfig("jdbc.password"));
+		currentSysBuiltinDatabaseInstance.setIp(SysContext.getSystemConfig("db.default.ip"));
+		currentSysBuiltinDatabaseInstance.setPort(Integer.valueOf(SysContext.getSystemConfig("db.default.port")));
 //		currentSysBuiltinDatabaseInstance.setPort(1433);
 	}
 	
@@ -48,7 +48,7 @@ public class BuiltinObjectInstance {
 	 */
 	public transient static final CfgProject currentSysBuiltinProjectInstance = new CfgProject(); 
 	static{
-		currentSysBuiltinProjectInstance.setId(SysConfig.getSystemConfig("current.sys.project.id"));
+		currentSysBuiltinProjectInstance.setId(SysContext.getSystemConfig("current.sys.project.id"));
 	}
 	
 	// -------------------------------------------------------

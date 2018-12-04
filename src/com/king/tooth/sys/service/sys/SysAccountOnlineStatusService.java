@@ -3,7 +3,7 @@ package com.king.tooth.sys.service.sys;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Service;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.service.AService;
@@ -34,7 +34,7 @@ public class SysAccountOnlineStatusService extends AService{
 		
 		// (当前时间-最后操作时间)		只要大于了登录超时时限，就提示登录超时
 		if(((System.currentTimeMillis() - onlineStatus.getLastOperDate().getTime()) > LoginConstants.loginTimeoutDatelimit)){
-			onlineStatus.setMessage("登录超时(超过"+SysConfig.getSystemConfig("login.timeout.datelimit")+"分钟)，请重新登录");
+			onlineStatus.setMessage("登录超时(超过"+SysContext.getSystemConfig("login.timeout.datelimit")+"分钟)，请重新登录");
 			return onlineStatus;
 		}
 		

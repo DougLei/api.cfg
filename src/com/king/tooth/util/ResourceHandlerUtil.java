@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
@@ -261,7 +261,7 @@ public class ResourceHandlerUtil {
 	 * @return
 	 */
 	public static String initConfValue(String configKey, String defaultValue){
-		String confValue = SysConfig.getSystemConfig(configKey);
+		String confValue = SysContext.getSystemConfig(configKey);
 		if(StrUtils.isEmpty(confValue)){
 			confValue = defaultValue;
 		}

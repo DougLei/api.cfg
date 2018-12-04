@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 系统配置信息
+ * 系统上下文
  * <p>后期考虑加入到redis之类的缓存中，目前还不确定，先放到这里</p>
  * @author DougLei
  */
 @SuppressWarnings("serial")
-public class SysConfig implements Serializable{
+public class SysContext implements Serializable{
 	
 	/**
 	 * web系统在磁盘中的根目录

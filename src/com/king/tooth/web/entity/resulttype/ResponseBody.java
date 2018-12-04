@@ -2,7 +2,7 @@ package com.king.tooth.web.entity.resulttype;
 
 import java.io.Serializable;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -75,7 +75,7 @@ public class ResponseBody implements Serializable{
 	 */
 	public String toStrings(){
 		String str = null;
-		if("true".equals(SysConfig.getSystemConfig("output.result.format"))){
+		if("true".equals(SysContext.getSystemConfig("output.result.format"))){
 			str = JsonUtil.toJsonString(this, true);
 		}else{
 			str = JsonUtil.toJsonString(this, false);

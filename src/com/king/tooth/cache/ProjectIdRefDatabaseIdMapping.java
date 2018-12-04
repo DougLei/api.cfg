@@ -48,7 +48,7 @@ public class ProjectIdRefDatabaseIdMapping {
 	 * @param databaseId
 	 */
 	public static void clearMapping(String databaseId) {
-		if(SysConfig.getSystemConfig("current.sys.database.id").equals(databaseId)){
+		if(SysContext.getSystemConfig("current.sys.database.id").equals(databaseId)){
 			throw new IllegalArgumentException("不能移除系统内置的项目/数据库映射");
 		}
 		if(projIdRefDbIdMapping.size() > 0){
@@ -74,7 +74,7 @@ public class ProjectIdRefDatabaseIdMapping {
 	 * @param projectId
 	 */
 	public static void removeMapping(String projectId){
-		if(SysConfig.getSystemConfig("current.sys.project.id").equals(projectId)){
+		if(SysContext.getSystemConfig("current.sys.project.id").equals(projectId)){
 			throw new IllegalArgumentException("不能移除系统内置的项目/数据库映射");
 		}
 		if(StrUtils.isEmpty(projectId)){

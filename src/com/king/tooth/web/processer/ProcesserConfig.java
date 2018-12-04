@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;
@@ -34,7 +34,7 @@ public class ProcesserConfig implements Serializable{
 	 */
 	public static void initResourceProcesserConfig(){
 		if(unInitResourceProcesserConfig){
-			JSONArray jsonArray = JSONArray.parseArray(SysConfig.getSystemConfig("route.processer.adapter.json"));
+			JSONArray jsonArray = JSONArray.parseArray(SysContext.getSystemConfig("route.processer.adapter.json"));
 			List<RouteProcesserAdapter> routeProcesserAdapterList = null;
 			for (int i = 0; i < jsonArray.size(); i++) {
 				routeProcesserAdapterList = jsonArray.getObject(i, RouteProcesserAdapter.class).getRouteProcesserAdapterList();

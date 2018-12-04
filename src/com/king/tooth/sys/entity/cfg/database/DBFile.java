@@ -2,7 +2,7 @@ package com.king.tooth.sys.entity.cfg.database;
 
 import java.io.File;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 
@@ -120,7 +120,7 @@ public class DBFile {
 	
 	public String getFilepath() {
 		if(StrUtils.isEmpty(filepath)){
-			filepath = SysConfig.getSystemConfig("db.default.filepath") + File.separator + name + File.separator;
+			filepath = SysContext.getSystemConfig("db.default.filepath") + File.separator + name + File.separator;
 		}
 		// 拼装数据库文件路径：基础路径/数据库实例名/，并判断该路径下的文件夹是否都存在，不存在则创建
 		File dir = new File(filepath);
@@ -131,37 +131,37 @@ public class DBFile {
 	}
 	public int getSize() {
 		if(size < 1){
-			size = Integer.valueOf(SysConfig.getSystemConfig("db.size"));
+			size = Integer.valueOf(SysContext.getSystemConfig("db.size"));
 		}
 		return size;
 	}
 	public int getFileGrowth() {
 		if(fileGrowth < 1){
-			fileGrowth = Integer.valueOf(SysConfig.getSystemConfig("db.file.growth"));
+			fileGrowth = Integer.valueOf(SysContext.getSystemConfig("db.file.growth"));
 		}
 		return fileGrowth;
 	}
 	public int getMaxSize() {
 		if(maxSize < 0){
-			maxSize = Integer.valueOf(SysConfig.getSystemConfig("db.max.size"));
+			maxSize = Integer.valueOf(SysContext.getSystemConfig("db.max.size"));
 		}
 		return maxSize;
 	}
 	public int getTmpSize() {
 		if(tmpSize < 1){
-			tmpSize = Integer.valueOf(SysConfig.getSystemConfig("db.tmp.size"));
+			tmpSize = Integer.valueOf(SysContext.getSystemConfig("db.tmp.size"));
 		}
 		return tmpSize;
 	}
 	public int getTmpFileGrowth() {
 		if(tmpFileGrowth < 1){
-			tmpFileGrowth = Integer.valueOf(SysConfig.getSystemConfig("db.tmp.file.growth"));
+			tmpFileGrowth = Integer.valueOf(SysContext.getSystemConfig("db.tmp.file.growth"));
 		}
 		return tmpFileGrowth;
 	}
 	public int getTmpMaxSize() {
 		if(tmpMaxSize < 0){
-			tmpMaxSize = Integer.valueOf(SysConfig.getSystemConfig("db.tmp.max.size"));
+			tmpMaxSize = Integer.valueOf(SysContext.getSystemConfig("db.tmp.max.size"));
 		}
 		return tmpMaxSize;
 	}

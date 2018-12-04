@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.plugins.datasource.dynamic.DynamicDataSourceHolder;
 import com.king.tooth.plugins.datasource.dynamic.IDynamicDataSourceHandler;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
@@ -40,27 +40,27 @@ public class DynamicDruidDataSourceHandler implements IDynamicDataSourceHandler 
 		dataSource.setDriverClassName(database.getDriverClass());
 		
 		// @see jdbc.properties
-		String maxActive = SysConfig.getSystemConfig("druid.datasource.maxActive");
+		String maxActive = SysContext.getSystemConfig("druid.datasource.maxActive");
 		if(StrUtils.notEmpty(maxActive)){
 			dataSource.setMaxActive(Integer.valueOf(maxActive));
 		}
-		String minIdle = SysConfig.getSystemConfig("druid.datasource.minIdle");
+		String minIdle = SysContext.getSystemConfig("druid.datasource.minIdle");
 		if(StrUtils.notEmpty(minIdle)){
 			dataSource.setMinIdle(Integer.valueOf(minIdle));
 		}
-		String maxWait = SysConfig.getSystemConfig("druid.datasource.maxWait");
+		String maxWait = SysContext.getSystemConfig("druid.datasource.maxWait");
 		if(StrUtils.notEmpty(maxWait)){
 			dataSource.setMaxWait(Integer.valueOf(maxWait));
 		}
-		String timeBetweenEvictionRunsMillis = SysConfig.getSystemConfig("druid.datasource.timeBetweenEvictionRunsMillis");
+		String timeBetweenEvictionRunsMillis = SysContext.getSystemConfig("druid.datasource.timeBetweenEvictionRunsMillis");
 		if(StrUtils.notEmpty(timeBetweenEvictionRunsMillis)){
 			dataSource.setTimeBetweenEvictionRunsMillis(Integer.valueOf(timeBetweenEvictionRunsMillis));
 		}
-		String poolPreparedStatements = SysConfig.getSystemConfig("druid.datasource.poolPreparedStatements");
+		String poolPreparedStatements = SysContext.getSystemConfig("druid.datasource.poolPreparedStatements");
 		if(StrUtils.notEmpty(poolPreparedStatements)){
 			dataSource.setPoolPreparedStatements(Boolean.valueOf(poolPreparedStatements));
 		}
-		String maxPoolPreparedStatementPerConnectionSize = SysConfig.getSystemConfig("druid.datasource.maxPoolPreparedStatementPerConnectionSize");
+		String maxPoolPreparedStatementPerConnectionSize = SysContext.getSystemConfig("druid.datasource.maxPoolPreparedStatementPerConnectionSize");
 		if(StrUtils.notEmpty(maxPoolPreparedStatementPerConnectionSize)){
 			dataSource.setMaxPoolPreparedStatementPerConnectionSize(Integer.valueOf(maxPoolPreparedStatementPerConnectionSize));
 		}
@@ -75,7 +75,7 @@ public class DynamicDruidDataSourceHandler implements IDynamicDataSourceHandler 
 	}
 
 	public DataSource removeDataSource(String databaseId) {
-		if(SysConfig.getSystemConfig("current.sys.database.id").equals(databaseId)){
+		if(SysContext.getSystemConfig("current.sys.database.id").equals(databaseId)){
 			throw new IllegalArgumentException("不能删除系统内置的数据源");
 		}
 		return dataSourceHolder.removeDataSource(databaseId);

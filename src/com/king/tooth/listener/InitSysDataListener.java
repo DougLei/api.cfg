@@ -8,7 +8,7 @@ import java.io.File;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.plugins.code.code.resource.PluginCodeResourceMapping;
 import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
 import com.king.tooth.sys.code.resource.CodeResourceMapping;
@@ -25,7 +25,7 @@ public class InitSysDataListener implements ServletContextListener {
 
 	public void contextInitialized(ServletContextEvent sc) {
 		// 获取项目在磁盘的根目录
-		SysConfig.WEB_SYSTEM_CONTEXT_REALPATH = sc.getServletContext().getRealPath(File.separator);
+		SysContext.WEB_SYSTEM_CONTEXT_REALPATH = sc.getServletContext().getRealPath(File.separator);
 		
 		// 初始化资源处理器配置
 		ProcesserConfig.initResourceProcesserConfig();
@@ -53,7 +53,7 @@ public class InitSysDataListener implements ServletContextListener {
 	 * 初始化是配置系统核心数据信息
 	 */
 	private void initSysCoreDataInfos() {
-		if("true".equals(SysConfig.getSystemConfig("is.init.baisc.data"))){
+		if("true".equals(SysContext.getSystemConfig("is.init.baisc.data"))){
 			new InitSystemService().firstStart();
 		}else{
 			new InitSystemService().start();
@@ -64,7 +64,7 @@ public class InitSysDataListener implements ServletContextListener {
 	 * 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
 	 */
 	private void initGSqlParser() {
-		String dbType = SysConfig.getSystemConfig("jdbc.dbType");
+		String dbType = SysContext.getSystemConfig("jdbc.dbType");
 		if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType)){
 			new TGSqlParser(EDbVendor.dbvoracle);
 		}else if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(dbType)){

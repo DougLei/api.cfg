@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.util.ResourceHandlerUtil;
@@ -26,7 +26,7 @@ public class HibernateHbmUtil {
 	 */
 	static{
 		HBM_FTL_FILE_PATH = ResourceHandlerUtil.initConfValue("hbm.ftl.file.path", 
-				SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separator + "classes" + File.separator + "hibernateMapping" + File.separator + "template" + File.separator + "hibernate.hbm.xml.ftl");
+				SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separator + "classes" + File.separator + "hibernateMapping" + File.separator + "template" + File.separator + "hibernate.hbm.xml.ftl");
 	}
 	
 	/**

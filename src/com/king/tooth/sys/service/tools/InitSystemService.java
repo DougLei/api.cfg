@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.ProjectIdRefDatabaseIdMapping;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
@@ -235,7 +235,7 @@ public class InitSystemService extends AService{
 		admin.setType(SysAccount.ADMIN);
 		admin.setLoginName("admin");
 		admin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		admin.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
+		admin.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(BuiltinObjectInstance.validDate);
 		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourcePropNameConstants.ID);
 	
@@ -245,7 +245,7 @@ public class InitSystemService extends AService{
 		normal.setType(SysAccount.NORMAL);
 		normal.setLoginName("normal");
 		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		normal.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
+		normal.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
 		normal.setValidDate(BuiltinObjectInstance.validDate);
 		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
@@ -255,7 +255,7 @@ public class InitSystemService extends AService{
 		developer.setType(SysAccount.DEVELOPER);
 		developer.setLoginName("developer");
 		developer.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		developer.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
+		developer.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), developer.getLoginPwdKey()));
 		developer.setValidDate(BuiltinObjectInstance.validDate);
 		HibernateUtil.saveObject(developer, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
@@ -264,12 +264,12 @@ public class InitSystemService extends AService{
 		CfgDatabase appDatabase = new CfgDatabase();
 		appDatabase.setId("05fb6ef9c3ackfccb91b00add666odb9");
 		appDatabase.setDisplayName("运行系统通用数据库(内置)");
-		appDatabase.setType(SysConfig.getSystemConfig("jdbc.dbType"));
+		appDatabase.setType(SysContext.getSystemConfig("jdbc.dbType"));
 		appDatabase.setInstanceName("SmartOneApp");
 		appDatabase.setLoginUserName("SmartOneApp");
-		appDatabase.setLoginPassword(SysConfig.getSystemConfig("db.default.password"));
-		appDatabase.setIp(SysConfig.getSystemConfig("db.default.ip"));
-		appDatabase.setPort(Integer.valueOf(SysConfig.getSystemConfig("db.default.port")));
+		appDatabase.setLoginPassword(SysContext.getSystemConfig("db.default.password"));
+		appDatabase.setIp(SysContext.getSystemConfig("db.default.ip"));
+		appDatabase.setPort(Integer.valueOf(SysContext.getSystemConfig("db.default.port")));
 		appDatabase.analysisResourceProp();
 		HibernateUtil.saveObject(appDatabase, null);
 		
@@ -316,9 +316,9 @@ public class InitSystemService extends AService{
 	 * 修改初始化的配置文件内容
 	 */
 	private void updateInitConfig() {
-		if("false".equals(SysConfig.getSystemConfig("is.develop"))){
+		if("false".equals(SysContext.getSystemConfig("is.develop"))){
 			// 如果不是开发模式的话，在进行了初始化操作后，系统自动去修改api.platform.init.properties配置文件的内容，将true值改为false
-			File file = new File(SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "api.platform.init.properties");
+			File file = new File(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "api.platform.init.properties");
 			FileWriter fw = null;
 			BufferedWriter bw = null;
 			try {
@@ -368,9 +368,9 @@ public class InitSystemService extends AService{
 		// 获取当前系统的CfgHibernateHbm映射文件对象
 		String sql = "select content from cfg_hibernate_hbm where ref_database_id = '"+database.getId()+"' and resource_name = 'CfgHibernateHbm'";
 		String hbmContent = null;
-		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+		if(BuiltinDatabaseData.DB_TYPE_SQLSERVER.equals(SysContext.getSystemConfig("jdbc.dbType"))){
 			hbmContent = ((String) HibernateUtil.executeUniqueQueryBySql(sql, null)).trim();
-		}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(SysConfig.getSystemConfig("jdbc.dbType"))){
+		}else if(BuiltinDatabaseData.DB_TYPE_ORACLE.equals(SysContext.getSystemConfig("jdbc.dbType"))){
 			Clob clob = (Clob) HibernateUtil.executeUniqueQueryBySql(sql, null);
 			if(clob == null){
 				throw new NullPointerException("数据库名为["+database.getDisplayName()+"]，实例名为["+database.getInstanceName()+"]，ip为["+database.getIp()+"]，端口为["+database.getPort()+"]，用户名为["+database.getLoginUserName()+"]，密码为["+database.getLoginPassword()+"]，的数据库中，没有查询到CfgHibernateHbm的hbm文件内容，请检查：[" + sql + "]");

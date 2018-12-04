@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.ReflectUtil;
 
 /**
@@ -39,7 +39,7 @@ public class RouteBodyAnalysis implements Serializable{
 	 */
 	public static void initRouteRuleConfig(){
 		if(unInitRouteRuleConfig){
-			JSONArray jsonArray = JSONArray.parseArray(SysConfig.getSystemConfig("route.rule.json"));
+			JSONArray jsonArray = JSONArray.parseArray(SysContext.getSystemConfig("route.rule.json"));
 			JSONObject tmp = null;
 			for (int i = 0; i < jsonArray.size(); i++) {
 				tmp = jsonArray.getJSONObject(i);

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.DataTypeConstants;
 import com.king.tooth.constants.ResourceInfoConstants;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
@@ -45,7 +45,7 @@ public class BuiltinQueryCondFuncUtil {
 	 */
 	public static void initBuiltinQueryCondFuncConfig(){
 		if(unInitBuiltinQueryCondFuncConfig){
-			JSONArray jsonArray = JSONArray.parseArray(SysConfig.getSystemConfig("builtin.query.cond.methods"));
+			JSONArray jsonArray = JSONArray.parseArray(SysContext.getSystemConfig("builtin.query.cond.methods"));
 			int len = jsonArray.size();
 			JSONObject objTmp = null;
 			Class<AbstractBuiltinQueryCondFunc> clz = null;

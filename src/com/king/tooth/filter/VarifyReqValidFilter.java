@@ -10,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
@@ -86,7 +86,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 	 */
 	private static final String[] ignoreLoginValidUri;
 	static{
-		ignoreLoginValidUri = SysConfig.getSystemConfig("ignore.loginvalid.uri").split(",");
+		ignoreLoginValidUri = SysContext.getSystemConfig("ignore.loginvalid.uri").split(",");
 	}
 	/**
 	 * 是否需要忽略登录验证

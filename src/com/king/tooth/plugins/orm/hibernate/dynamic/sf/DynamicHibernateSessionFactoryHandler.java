@@ -10,7 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.StrUtils;
@@ -45,7 +45,7 @@ public class DynamicHibernateSessionFactoryHandler {
 		if(StrUtils.notEmpty(hibernateDialect)){
 			hibernateProperties.setProperty("hibernate.dialect", hibernateDialect);
 		}else{
-			hibernateProperties.setProperty("hibernate.dialect", SysConfig.getSystemConfig("hibernate.dialect"));
+			hibernateProperties.setProperty("hibernate.dialect", SysContext.getSystemConfig("hibernate.dialect"));
 		}
 		lsfb.setHibernateProperties(hibernateProperties);
 		try {
@@ -62,7 +62,7 @@ public class DynamicHibernateSessionFactoryHandler {
 	 * @return
 	 */
 	public SessionFactoryImpl removeSessionFactory(String databaseId){
-		if(SysConfig.getSystemConfig("current.sys.database.id").equals(databaseId)){
+		if(SysContext.getSystemConfig("current.sys.database.id").equals(databaseId)){
 			throw new IllegalArgumentException("不能删除系统内置的sessionFactory");
 		}
 		return (SessionFactoryImpl) sessionFactoryHolder.removeSessionFactory(databaseId);

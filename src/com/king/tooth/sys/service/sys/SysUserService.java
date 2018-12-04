@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
@@ -56,7 +56,7 @@ public class SysUserService extends AService{
 		account.setLoginName(user.getWorkNo());
 		account.setTel(user.getTel());
 		account.setEmail(user.getEmail());
-		account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+		account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 		HibernateUtil.updateEntityObject(account, null);
 		
 		JSONObject json = new JSONObject(2);
@@ -122,7 +122,7 @@ public class SysUserService extends AService{
 			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
 		}
 		SysAccount account = getObjectById(userId, SysAccount.class);
-		String defaultPassword = CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey());
+		String defaultPassword = CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey());
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", defaultPassword, userId);
 		
 		JSONObject json = new JSONObject(2);
@@ -226,7 +226,7 @@ public class SysUserService extends AService{
 				SysAccount account = new SysAccount();
 				account.setLoginName(user.getWorkNo());
 				account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+				account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
 				account.setValidDate(BuiltinObjectInstance.validDate);
@@ -305,7 +305,7 @@ public class SysUserService extends AService{
 					HibernateUtil.updateEntityObject(account, null);
 				}else{
 					account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-					account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+					account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 					HibernateUtil.saveObject(account, null);
 				}
 			}
@@ -374,7 +374,7 @@ public class SysUserService extends AService{
 				if(user.getIsSyncLoginName() == 1){
 					account.setLoginName(user.getWorkNo());
 				}
-				account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+				account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
 				HibernateUtil.updateEntityObject(account, null);
@@ -385,7 +385,7 @@ public class SysUserService extends AService{
 			// ----
 			account.setLoginName(user.getWorkNo());
 			account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-			account.setLoginPwd(CryptographyUtil.encodeMd5(SysConfig.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+			account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 			account.setTel(user.getTel());
 			account.setEmail(user.getEmail());
 			HibernateUtil.saveObject(account, null);

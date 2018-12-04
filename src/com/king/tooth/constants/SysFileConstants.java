@@ -2,7 +2,7 @@ package com.king.tooth.constants;
 
 import java.io.File;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.ResourceHandlerUtil;
 
 /**
@@ -61,13 +61,13 @@ public class SysFileConstants {
 	 */
 	static{
 		saveType = ResourceHandlerUtil.initConfValue("file.save.type", SAVE_TYPE_SERVICE);
-		fileSavePath = ResourceHandlerUtil.initConfValue("file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "upload") + File.separator;
-		isDefaultFileSavePath = fileSavePath.startsWith(SysConfig.WEB_SYSTEM_CONTEXT_REALPATH);
+		fileSavePath = ResourceHandlerUtil.initConfValue("file.save.path", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "upload") + File.separator;
+		isDefaultFileSavePath = fileSavePath.startsWith(SysContext.WEB_SYSTEM_CONTEXT_REALPATH);
 		fileBackupPath = ResourceHandlerUtil.initConfValue("file.backup.path", null);
 		
-		importFileSavePath = ResourceHandlerUtil.initConfValue("import.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "import") + File.separator;
-		importFileTemplateSavePath = ResourceHandlerUtil.initConfValue("import.file.template.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "importTemplate") + File.separator;
-		exportFileSavePath = ResourceHandlerUtil.initConfValue("export.file.save.path", SysConfig.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "export") + File.separator;
+		importFileSavePath = ResourceHandlerUtil.initConfValue("import.file.save.path", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "import") + File.separator;
+		importFileTemplateSavePath = ResourceHandlerUtil.initConfValue("import.file.template.save.path", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "importTemplate") + File.separator;
+		exportFileSavePath = ResourceHandlerUtil.initConfValue("export.file.save.path", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator + "export") + File.separator;
 		fileMaxSize = Long.valueOf(ResourceHandlerUtil.initConfValue("file.max.size", "10240"));
 		
 		saveToService = SAVE_TYPE_SERVICE.equals(saveType);

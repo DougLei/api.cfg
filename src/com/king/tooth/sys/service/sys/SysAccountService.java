@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.cache.TokenRefProjectIdMapping;
 import com.king.tooth.constants.LoginConstants;
 import com.king.tooth.constants.PermissionConstants;
@@ -420,7 +420,7 @@ public class SysAccountService extends AService{
 		}
 		if(result == null){
 			if(StrUtils.isEmpty(account.getLoginPwd())){
-				account.setLoginPwd(SysConfig.getSystemConfig("account.default.pwd"));
+				account.setLoginPwd(SysContext.getSystemConfig("account.default.pwd"));
 			}
 			account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
 			account.setLoginPwd(CryptographyUtil.encodeMd5(account.getLoginPwd(), account.getLoginPwdKey()));

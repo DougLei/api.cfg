@@ -13,7 +13,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import com.king.tooth.cache.SysConfig;
+import com.king.tooth.cache.SysContext;
 
 
 /**
@@ -35,7 +35,7 @@ public class VerifyCodeUtil {
 	
 	// 初始化验证码的长度，默认为4
 	static{
-		String verifyCodeLength = SysConfig.getSystemConfig("verify.code.length");
+		String verifyCodeLength = SysContext.getSystemConfig("verify.code.length");
 		if(StrUtils.isEmpty(verifyCodeLength)){
 			verifyCodeLength = "4";
 		}
