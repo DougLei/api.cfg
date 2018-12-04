@@ -164,12 +164,24 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 			this.isInversion = true;
 		}
 		
-		// 4.如果eq方法，有多个值，则改为调用in的方法，这个可以提高效率
+		// 4.如果ne方法，且是!，则改为eq方法
+		if(this.methodName.equals("ne") && isInversion){
+			this.methodName = "eq";
+			isInversion = false;
+		}
+		
+		// 5.如果eq方法，有多个值，则改为调用in的方法，这个可以提高效率
 		if(this.methodName.equals("eq") && this.values.length > 1){
 			this.methodName = "in";
 		}
 		
-		// 5.如果in方法，但只有一个值，则改为调用eq/ne的方法，这个可以提高效率
+		// 6.如果eq方法，且是!，则改为ne方法
+		if(this.methodName.equals("eq") && isInversion){
+			this.methodName = "ne";
+			isInversion = false;
+		}
+		
+		// 7.如果in方法，但只有一个值，则改为调用eq/ne的方法，这个可以提高效率
 		if(this.methodName.equals("in") && this.values.length == 1){
 			if(isInversion){ // 如果取反
 				this.methodName = "ne";
@@ -178,7 +190,7 @@ public abstract class AbstractQueryCondFuncEntity implements IQueryCondFuncEntit
 			}
 		}
 		
-		// 6.如果是btn方法，但是传入的值，有一个是null，例如btn(,2)、btn(4,)，则对应的改用le(2)、ge(4)
+		// 8.如果是btn方法，但是传入的值，有一个是null，例如btn(,2)、btn(4,)，则对应的改用le(2)、ge(4)
 		if((this.methodName.equals("btn") || this.methodName.equals("between"))){
 			if(StrUtils.isEmpty(this.values[0])){
 				this.methodName = "le";
