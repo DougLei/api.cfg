@@ -72,7 +72,7 @@ public class PushMessageUtil {
 			}
 		}
 	}
-	private static final String pushMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/single_push";
+	private static final String pushMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/single/push";
 	
 	/**
 	 * 批量给用户推送消息
@@ -119,7 +119,7 @@ public class PushMessageUtil {
 			}
 		}
 	}
-	private static final String batchPushMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch_push";
+	private static final String batchPushMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch/push";
 	
 	/**
 	 * 批量给用户推送个性消息
@@ -141,7 +141,7 @@ public class PushMessageUtil {
 		System.out.println(batchPushIndividualityMessageApi);
 		return null;
 	}
-	private static final String batchPushIndividualityMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch_individuality_push";
+	private static final String batchPushIndividualityMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch_individuality/push";
 	
 	// ---------------------------------------------------------------------------------
 	/**
