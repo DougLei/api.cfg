@@ -103,7 +103,9 @@ public class SqlStatementParserUtil {
 			throw new ArrayIndexOutOfBoundsException("目前系统只支持一次处理一条["+typeMap.get("type")+"]类型的sql脚本语句");
 		}
 		sql.setType(typeMap.get("type"));
-		sql.setConfType(typeMap.get("confType"));
+		if(StrUtils.isEmpty(sql.getConfType())){
+			sql.setConfType(typeMap.get("confType"));
+		}
 		if(StrUtils.isEmpty(sql.getRequestMethod())){
 			sql.setRequestMethod(typeMap.get("reqMethod"));
 		}
