@@ -1,5 +1,7 @@
 package com.king.tooth.constants;
 
+import com.king.tooth.util.StrUtils;
+
 /**
  * 内置的数据类型
  * @author DougLei
@@ -61,6 +63,10 @@ public class DataTypeConstants {
 	 * @return
 	 */
 	public static boolean isLegalDataType(String dataType){
+		if(StrUtils.isEmpty(dataType)){
+			return false;
+		}
+		dataType = dataType.trim().toLowerCase();
 		if(CHAR.equals(dataType) 
 				|| STRING.equals(dataType)
 				|| BOOLEAN.equals(dataType)
