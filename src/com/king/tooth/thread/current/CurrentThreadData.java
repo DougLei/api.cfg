@@ -1,12 +1,19 @@
 package com.king.tooth.thread.current;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.Session;
 
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.reqlog.ReqLogData;
+import com.king.tooth.util.CloseUtil;
+import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.database.DynamicDBUtil;
 
 /**
  * 当前线程的数据对象
@@ -49,7 +56,42 @@ class CurrentThreadData implements Serializable{
 	 * 当前线程的请求日志数据对象
 	 */
 	private ReqLogData reqLogData;
+	/**
+	 * 当前线程中使用到的connection集合
+	 */
+	private List<Connection> connections;
 	
+	/**
+	 * 获取当前线程Connection实例，由调用方管理关闭，或由CurrentThreadContext.clearCurrentThreadData()统一处理
+	 * @return
+	 * @throws SQLException 
+	 */
+	public Connection getConnectionInstance() throws SQLException {
+		if(connections == null){
+			connections = new ArrayList<Connection>(4);
+		}
+		Connection connection = DynamicDBUtil.getDataSource(databaseId).getConnection();
+		connections.add(connection);
+		return connection;
+	}
+	
+	/**
+	 * 关闭connection集合
+	 */
+	public void closeConnections() {
+		if(connections != null && connections.size() > 0){
+			try {
+				for (Connection connection : connections) {
+					if(!connection.isClosed()){
+						CloseUtil.closeDBConn(connection);
+					}
+				}
+			} catch (SQLException e) {
+				throw new IllegalArgumentException("关闭连接时出现异常：" + ExceptionUtil.getErrMsg(e));
+			}
+		}
+	}
+
 	public String getCustomerId() {
 		if(StrUtils.isEmpty(customerId)){
 			return "unknow";

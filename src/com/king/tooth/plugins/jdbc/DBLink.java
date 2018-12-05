@@ -1,7 +1,6 @@
 package com.king.tooth.plugins.jdbc;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -63,8 +62,7 @@ public class DBLink {
 		Statement st = null;
 		String errorDDLSql = null;
 		try {
-			Class.forName(database.getDriverClass());
-			connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
+			connection = CurrentThreadContext.getConnectionInstance();
 			st = connection.createStatement();
 			for (String ds : ddlSqlArr) {
 				if(StrUtils.notEmpty(ds)){
@@ -101,8 +99,7 @@ public class DBLink {
 		Statement st = null;
 		StringBuilder errSql = new StringBuilder();
 		try {
-			Class.forName(database.getDriverClass());
-			connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
+			connection = CurrentThreadContext.getConnectionInstance();
 			for (String us : updateSqlArr) {
 				if(StrUtils.notEmpty(us)){
 					st = connection.createStatement();
@@ -160,8 +157,7 @@ public class DBLink {
 	 * @throws SQLException 
 	 */
 	public Connection getConnection() throws ClassNotFoundException, SQLException{
-		Class.forName(database.getDriverClass());
-		Connection connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
+		Connection connection = CurrentThreadContext.getConnectionInstance();
 		return connection;
 	}
 	

@@ -97,7 +97,7 @@ public class PrepareFilter extends AbstractFilter{
 			if(!"get".equals(CurrentThreadContext.getReqLogData().getReqLog().getMethod())){
 				CurrentThreadContext.getReqLogData().getReqLog().setRespData(responseBody.toStrings());
 			}
-			CurrentThreadContext.updateDatas(true);
+			CurrentThreadContext.updateDatas();
 		}
 	}
 	

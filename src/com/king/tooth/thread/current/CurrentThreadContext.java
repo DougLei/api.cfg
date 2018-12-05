@@ -1,5 +1,8 @@
 package com.king.tooth.thread.current;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.hibernate.Session;
 
 import com.king.tooth.cache.DatabaseInstancesMapping;
@@ -37,6 +40,7 @@ public class CurrentThreadContext {
 	 * 清除当前线程的数据对象
 	 */
 	public static final void clearCurrentThreadData(){
+		currentThreadContext.get().closeConnections();
 		currentThreadContext.remove();
 	}
 	
@@ -178,15 +182,23 @@ public class CurrentThreadContext {
 	 * @return
 	 */
 	public static CfgDatabase getDatabaseInstance() {
-		return  DatabaseInstancesMapping.getDatabasInstance(CurrentThreadContext.getDatabaseId());
+		return DatabaseInstancesMapping.getDatabasInstance(CurrentThreadContext.getDatabaseId());
+	}
+	
+	/**
+	 * 获取当前线程Connection实例，由调用方管理关闭，或由CurrentThreadContext.clearCurrentThreadData()统一处理
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static Connection getConnectionInstance() throws SQLException {
+		return currentThreadContext.get().getConnectionInstance();
 	}
 
 	//-------------------------------------------------------------------
 	/**
 	 * 更新相关数据
-	 * @param isClearCurrentThreadData 是否清空当前线程中的数据
 	 */
-	public static void updateDatas(boolean isClearCurrentThreadData) {
+	public static void updateDatas() {
 		// 修改账户在线状态信息
 		if(CurrentThreadContext.getCurrentAccountOnlineStatus() != null){
 			ThreadPool.execute(new UpdateAccountOnlineStatusThread(HibernateUtil.openNewSession(),
@@ -200,9 +212,7 @@ public class CurrentThreadContext {
 		// 记录日志
 		getReqLogData().recordLogs();
 		
-		// (是否)清除本次请求的线程数据
-		if(isClearCurrentThreadData){
-			clearCurrentThreadData();
-		}
+		// 清除本次请求的线程数据
+		clearCurrentThreadData();
 	}
 }
