@@ -104,7 +104,7 @@ public class SqlStatementParserUtil {
 		}
 		sql.setType(typeMap.get("type"));
 		if(StrUtils.isEmpty(sql.getConfType())){
-			sql.setConfType(typeMap.get("confType"));
+			sql.setConfType(typeMap.get("type"));
 		}
 		if(StrUtils.isEmpty(sql.getRequestMethod())){
 			sql.setRequestMethod(typeMap.get("reqMethod"));
@@ -144,15 +144,12 @@ public class SqlStatementParserUtil {
 	        	 break;
 	         case sstupdate:
 	        	 typeMap.put("type", SqlStatementTypeConstants.UPDATE);
-	        	 typeMap.put("confType", SqlStatementTypeConstants.UPDATE);
 	        	 break;
 	         case sstinsert:
 	        	 typeMap.put("type", SqlStatementTypeConstants.INSERT);
-	        	 typeMap.put("confType", SqlStatementTypeConstants.INSERT);
 	        	 break;
 	         case sstdelete:
 	        	 typeMap.put("type", SqlStatementTypeConstants.DELETE);
-	        	 typeMap.put("confType", SqlStatementTypeConstants.DELETE);
 	        	 break;
 	         case sstplsql_createprocedure:
 	        	 typeMap.put("type", SqlStatementTypeConstants.PROCEDURE);
