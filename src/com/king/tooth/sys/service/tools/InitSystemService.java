@@ -93,7 +93,7 @@ public class InitSystemService extends AService{
 			Log4jUtil.info("系统初始化完成！");
 		} catch (Exception e) {
 			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 	
