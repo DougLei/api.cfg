@@ -27,9 +27,6 @@ public class InitSysDataListener implements ServletContextListener {
 		// 获取项目在磁盘的根目录
 		SysContext.WEB_SYSTEM_CONTEXT_REALPATH = sc.getServletContext().getRealPath(File.separator);
 		
-		// 获取web系统的根地址
-		SysContext.WEB_SYSTEM_ROOT_WEBSITE = sc.getServletContext().getInitParameter("website");
-		
 		// 初始化资源处理器配置
 		ProcesserConfig.initResourceProcesserConfig();
 		

@@ -114,7 +114,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 						}
 					}
 				}
-				validResult = busiModelResRelations.validResourceData(new BusiModelResourceData(requestBody.getToken(), busiModelResourceName, dataParentId, ijsonData));
+				validResult = busiModelResRelations.validResourceData(new BusiModelResourceData(requestBody.getToken(), requestBody.getRequestURL(), busiModelResourceName, dataParentId, ijsonData));
 			}
 		}else if(ijson != null && ijson.size() > 0){
 			return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，不存在任何关联的资源配置，但却传入了数据："+ijson.toString()+"，请检查配置";

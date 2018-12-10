@@ -21,12 +21,6 @@
 			<param-value>classpath:log4j.properties</param-value>
 		</context-param>
 		
-		<!-- 配置当前web系统的根地址 -->
-		<context-param>
-			<param-name>website</param-name>
-			<param-value>http://localhost:8081/api.cfg/</param-value>
-		</context-param>
-		
 <!-- ****************************************************************************************************  -->		
 		
 		<!-- 配置spring的listener，加载其核心组建 -->

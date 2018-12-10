@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
 import com.king.tooth.sys.code.resource.CodeResourceProcesser;
 import com.king.tooth.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
@@ -237,6 +238,12 @@ public class RequestBody implements Serializable{
 	
 	public String getToken(){
 		return request.getHeader("_token");
+	}
+	public String getRequestURL(){
+		if(SysContext.WEB_SYSTEM_ROOT_WEBSITE == null){
+			SysContext.WEB_SYSTEM_ROOT_WEBSITE = request.getRequestURL().toString();
+		}
+		return SysContext.WEB_SYSTEM_ROOT_WEBSITE;
 	}
 	public Map<String, String> getRequestBuiltinParams() {
 		return requestBuiltinParams;

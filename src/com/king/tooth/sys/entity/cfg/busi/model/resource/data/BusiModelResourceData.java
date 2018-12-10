@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
@@ -37,6 +36,7 @@ import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 public class BusiModelResourceData implements Serializable{
 	
 	private Map<String, String> tokenHeader;
+	private String requestURL;
 	/**
 	 * 业务模型资源
 	 */
@@ -59,9 +59,10 @@ public class BusiModelResourceData implements Serializable{
 	// -----------------------------------------------------------
 	public BusiModelResourceData() {
 	}
-	public BusiModelResourceData(String token, String busiModelResourceName, Object dataParentId, IJson datas) {
+	public BusiModelResourceData(String token, String requestURL, String busiModelResourceName, Object dataParentId, IJson datas) {
 		tokenHeader = new HashMap<String, String>(1);
 		tokenHeader.put("_token", token);
+		this.requestURL = requestURL;
 		this.busiModelResourceName = busiModelResourceName;
 		this.datas = datas;
 		this.dataParentId = dataParentId==null?null:dataParentId.toString();
@@ -225,7 +226,7 @@ public class BusiModelResourceData implements Serializable{
 				data.put(refParentResourcePropName, pid);
 			}
 			
-			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(SysContext.WEB_SYSTEM_ROOT_WEBSITE + "common/" + refResourceName, data, tokenHeader));
+			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName, data, tokenHeader));
 			if(StrUtils.notEmpty(tmpData.get("message"))){
 				throw new IllegalArgumentException("业务模型["+busiModelResourceName+"]，获取"+desc+"资源["+refResourceName+"]的查询结果信息时出现异常：" + tmpData.get("message"));
 			}
