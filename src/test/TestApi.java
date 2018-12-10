@@ -21,8 +21,8 @@ public class TestApi {
 	 * @param publishType 发布类型：[publishType = 1：发布/-1：取消发布]
 	 * @return
 	 */
-	private static Map<String, String> getUrlParams(String projectId, String publishDataType, String publishType){
-		Map<String, String> urlParams = new HashMap<String, String>(4);
+	private static Map<String, Object> getUrlParams(String projectId, String publishDataType, String publishType){
+		Map<String, Object> urlParams = new HashMap<String, Object>(4);
 		urlParams.put("projectId", projectId);
 		urlParams.put("publishDataType", publishDataType);
 		urlParams.put("publishType", publishType);

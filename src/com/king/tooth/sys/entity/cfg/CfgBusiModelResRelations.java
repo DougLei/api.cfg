@@ -420,6 +420,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 			if(isValidFirstSql){
 				isValidFirstSql = false;
 				refSql = refSqlList.get(0);
+				if(refSql.isSelectSql()){// 查询语句就不做任何处理
+					return refSql;
+				}
+				
 				if(refSql != null && !refSql.getIncludeAllInfo()){
 					BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
 				}
@@ -432,13 +436,17 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 				inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
 			}else{
 				CfgSql basicSql = refSqlList.get(0);
-				if(basicSql.getSqlParams() == null || basicSql.getSqlParams().size() == 0){
-					basicSql.setSqlParams(sqlParams);
-				}
-				try {
-					refSql = (CfgSql) basicSql.clone();
-				} catch (CloneNotSupportedException e) {
-					throw new IllegalArgumentException("克隆CfgSql对象时出现异常："+ExceptionUtil.getErrMsg(e));
+				if(basicSql.isSelectSql()){// 查询语句就不做任何处理
+					refSql = basicSql;
+				}else{
+					if(basicSql.getSqlParams() == null || basicSql.getSqlParams().size() == 0){
+						basicSql.setSqlParams(sqlParams);
+					}
+					try {
+						refSql = (CfgSql) basicSql.clone();
+					} catch (CloneNotSupportedException e) {
+						throw new IllegalArgumentException("克隆CfgSql对象时出现异常："+ExceptionUtil.getErrMsg(e));
+					}
 				}
 				refSqlList.add(refSql);
 			}
@@ -467,11 +475,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	/**
 	 * 进行业务数据操作
 	 */
-	public List<Object> doOperBusiDataList(){
+	public List<Object> doOperBusiDataList(Object[] pids){
 		if(resourceDataList != null && resourceDataList.size()>0){
 			List<Object> resultDatasList = new ArrayList<Object>(resourceDataList.size());
 			for(int i=0;i<resourceDataList.size();i++){
-				resultDatasList.add(resourceDataList.get(i).doOperBusiData());
+				resultDatasList.add(resourceDataList.get(i).doOperBusiData(pids));
 				resourceDataList.get(i).clear();
 			}
 			return resultDatasList;

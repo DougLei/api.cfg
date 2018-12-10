@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -17,7 +18,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 
 	protected boolean doProcess() {
 		CfgBusiModel busiModel = requestBody.getResourceInfo().getBusiModel();
-		JSONArray resultDataJSONArray = recursiveDoSaveBusiModelData(busiModel.getBusiModelResRelationsList(), 1);
+		JSONArray resultDataJSONArray = recursiveDoProcessBusiModelData(busiModel.getBusiModelResRelationsList(), null);
 		if(resultDataJSONArray == null){
 			setResponseBody(new ResponseBody("执行业务模型资源["+busiModel.getResourceName()+"]时，没有返回任何结果信息，请联系后端系统开发人员", null));
 		}else if(requestBody.getFormData().size() == 1 || busiModel.getBusiModelResRelationsList().size() == 1){
@@ -29,18 +30,17 @@ public final class SingleResourceProcesser extends RequestProcesser {
 	}
 
 	/**
-	 * 递归保存业务模型资源数据
+	 * 递归处理业务模型资源数据
 	 * @param busiModelResRelationsList
-	 * @param recursiveLevel
+	 * @param pids 父id数组，查询的时候用到
 	 * @return
 	 */
-	private JSONArray recursiveDoSaveBusiModelData(List<CfgBusiModelResRelations> busiModelResRelationsList, int recursiveLevel) {
+	private JSONArray recursiveDoProcessBusiModelData(List<CfgBusiModelResRelations> busiModelResRelationsList, Object[] pids) {
 		if(busiModelResRelationsList != null && busiModelResRelationsList.size() > 0){
 			JSONArray resultDataJSONArray = new JSONArray(busiModelResRelationsList.size());
 			for (CfgBusiModelResRelations busiModelResRelations : busiModelResRelationsList) {
-				JSONArray subResultDataJSONArray = recursiveDoSaveBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), recursiveLevel+1);
-				
-				List<Object> resultDatasList = busiModelResRelations.doOperBusiDataList();
+				List<Object> resultDatasList = busiModelResRelations.doOperBusiDataList(pids);
+
 				if(resultDatasList != null && resultDatasList.size() > 0){
 					int size = resultDatasList.size();
 					Object resultDatas = null;
@@ -48,14 +48,28 @@ public final class SingleResourceProcesser extends RequestProcesser {
 						resultDatas = resultDatasList.get(i);
 						resultDataJSONArray.add(resultDatas);
 						
-						if(resultDatas != null && subResultDataJSONArray != null){
+						JSONArray subResultDataJSONArray = null;
+						if(resultDatas != null){
 							if(resultDatas instanceof JSONObject){
-								((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray);
+								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), new Object[]{((JSONObject)resultDatas).get(ResourcePropNameConstants.ID)});
+							
+								if(subResultDataJSONArray != null){
+									((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray);
+								}
 							}else if(resultDatas instanceof JSONArray){
 								tmpResultDatasJSONArray = (JSONArray)resultDatas;
-								for(int j=0;j<tmpResultDatasJSONArray.size();j++){
-									if( j< subResultDataJSONArray.size()){
-										tmpResultDatasJSONArray.getJSONObject(j).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(j));
+								int tmpSize = tmpResultDatasJSONArray.size();
+								Object[] tmpPids = new Object[tmpSize];
+								for(int j=0;j<tmpSize;j++){
+									tmpPids[j] = tmpResultDatasJSONArray.getJSONObject(j).get(ResourcePropNameConstants.ID);
+								}
+								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), tmpPids);
+								
+								if(subResultDataJSONArray != null){
+									for(int j=0;j<tmpResultDatasJSONArray.size();j++){
+										if( j< subResultDataJSONArray.size()){
+											tmpResultDatasJSONArray.getJSONObject(j).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(j));
+										}
 									}
 								}
 							}

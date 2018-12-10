@@ -235,6 +235,9 @@ public class RequestBody implements Serializable{
 		}
 	}
 	
+	public String getToken(){
+		return request.getHeader("_token");
+	}
 	public Map<String, String> getRequestBuiltinParams() {
 		return requestBuiltinParams;
 	}

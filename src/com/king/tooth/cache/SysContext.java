@@ -17,6 +17,11 @@ public class SysContext implements Serializable{
 	 * <p>例如：C:\devlopment\MyTomcat\apache-tomcat-7.0.63\webapps\项目名\</p>
 	 */
 	public transient static String WEB_SYSTEM_CONTEXT_REALPATH;
+	/**
+	 * web系统的根地址
+	 * <p>例如：http://localhost:8080/api.cfg/</p>
+	 */
+	public transient static String WEB_SYSTEM_ROOT_WEBSITE;
 	
 	/**
 	 * 存储系统的参数配置

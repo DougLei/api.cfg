@@ -150,7 +150,7 @@ public class PushMessageUtil {
 	 * @return
 	 */
 	public static String closeSession(String userId){
-		Map<String, String> urlParams = new HashMap<String, String>(1);
+		Map<String, Object> urlParams = new HashMap<String, Object>(1);
 		urlParams.put("clientIdentity", userId);
 		JSONObject json = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(closeSessionApi, urlParams , null));
 		return getPushResultContent(json.getInteger("data"));

@@ -39,16 +39,10 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 	 * @return
 	 */
 	private String doValidCodeResourceMetadata() {
-		if(requestBody.isGetRequest()){
-			return null;
-		}else if(requestBody.isPostRequest()){
+		if(requestBody.isPostRequest()){
 			return validPostBusiModelResourceMetadata();
-		}else if(requestBody.isPutRequest()){
-			return null;
-		}else if(requestBody.isDeleteRequest()){
-			return null;
 		}
-		return "系统只支持[get、post、put、delete]四种请求方式";
+		return "系统只支持[post]一种请求方式";
 	}
 	
 	/**
@@ -120,7 +114,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 						}
 					}
 				}
-				validResult = busiModelResRelations.validResourceData(new BusiModelResourceData(busiModelResourceName, dataParentId, ijsonData));
+				validResult = busiModelResRelations.validResourceData(new BusiModelResourceData(requestBody.getToken(), busiModelResourceName, dataParentId, ijsonData));
 			}
 		}else if(ijson != null && ijson.size() > 0){
 			return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，不存在任何关联的资源配置，但却传入了数据："+ijson.toString()+"，请检查配置";

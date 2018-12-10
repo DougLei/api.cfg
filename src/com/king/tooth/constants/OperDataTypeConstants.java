@@ -18,6 +18,10 @@ public class OperDataTypeConstants {
 	 */
 	public final static String DELETE = "delete";
 	/**
+	 * 操作数据的方式: 查询数据
+	 */
+	public final static String SELECT = "select";
+	/**
 	 * 操作数据的方式: 不对数据进行任何操作
 	 */
 	public final static String NO_OPER = "no_oper";

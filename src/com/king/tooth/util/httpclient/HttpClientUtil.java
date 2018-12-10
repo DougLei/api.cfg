@@ -42,7 +42,7 @@ public class HttpClientUtil {
 	 * @param params
 	 * @return
 	 */
-	private static String dealRequestUrl(String reqUrl, Map<String, String> params) {
+	private static String dealRequestUrl(String reqUrl, Map<String, Object> params) {
 		if(params != null && params.size() >0){
 			StringBuilder url = new StringBuilder(reqUrl);
 			if(!reqUrl.contains("?")){
@@ -51,8 +51,8 @@ public class HttpClientUtil {
 				url.append("&");
 			}
 			
-			Set<Entry<String, String>> se = params.entrySet();
-			for (Entry<String, String> entry : se) {
+			Set<Entry<String, Object>> se = params.entrySet();
+			for (Entry<String, Object> entry : se) {
 				url.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
 			}
 			params.clear();
@@ -133,7 +133,6 @@ public class HttpClientUtil {
 		httpMethodBase.setRequestHeader("Cache-Control", "no-cache");
 	}
 	
-	
 	/**
 	 * 基础的get请求
 	 * @param reqUrl
@@ -141,7 +140,7 @@ public class HttpClientUtil {
 	 * @param headers
 	 * @return
 	 */
-	public static String doGetBasic(String reqUrl, Map<String, String> urlParams, Map<String, String> headers){
+	public static String doGetBasic(String reqUrl, Map<String, Object> urlParams, Map<String, String> headers){
 		reqUrl = dealRequestUrl(reqUrl, urlParams);// 处理请求的url 若有参数，拼装参数到url后
 		HttpClient httpClient = null;
 		GetMethod getMethod = null;
@@ -174,7 +173,7 @@ public class HttpClientUtil {
 	 * @param httpRequestEntity 【解释：post请求时无参数名称的数据对象，例如只提交一个json串，只有值，没有key。这里根据实际情况使用RequestEntity的各个实现类。】
 	 * @return
 	 */
-	public static String doPostBasic(String reqUrl, Map<String, String> urlParams, Map<String, String> formParams, Map<String, String> headers, HttpRequestEntity httpRequestEntity){
+	public static String doPostBasic(String reqUrl, Map<String, Object> urlParams, Map<String, String> formParams, Map<String, String> headers, HttpRequestEntity httpRequestEntity){
 		reqUrl = dealRequestUrl(reqUrl, urlParams);// 处理请求的url 若有参数，拼装参数到url后
 		HttpClient httpClient = null;
 		PostMethod postMethod = null;

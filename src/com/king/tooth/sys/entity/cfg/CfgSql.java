@@ -598,4 +598,13 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 		}
 		return json;
 	}
+	
+	/**
+	 * 是否是select语句
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isSelectSql(){
+		return SqlStatementTypeConstants.SELECT.equals(type);
+	}
 }

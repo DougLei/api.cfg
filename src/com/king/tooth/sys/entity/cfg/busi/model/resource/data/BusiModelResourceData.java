@@ -2,9 +2,13 @@ package com.king.tooth.sys.entity.cfg.busi.model.resource.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
@@ -15,8 +19,10 @@ import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.sql.SqlExecutor;
+import com.king.tooth.util.JsonUtil;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
+import com.king.tooth.util.httpclient.HttpClientUtil;
 import com.king.tooth.util.prop.code.rule.PropCodeRuleUtil;
 import com.king.tooth.web.entity.request.valid.data.util.SqlResourceValidUtil;
 import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
@@ -30,6 +36,7 @@ import com.king.tooth.web.entity.request.valid.data.util.TableResourceValidUtil;
 @SuppressWarnings("serial")
 public class BusiModelResourceData implements Serializable{
 	
+	private Map<String, String> tokenHeader;
 	/**
 	 * 业务模型资源
 	 */
@@ -52,7 +59,9 @@ public class BusiModelResourceData implements Serializable{
 	// -----------------------------------------------------------
 	public BusiModelResourceData() {
 	}
-	public BusiModelResourceData(String busiModelResourceName, Object dataParentId, IJson datas) {
+	public BusiModelResourceData(String token, String busiModelResourceName, Object dataParentId, IJson datas) {
+		tokenHeader = new HashMap<String, String>(1);
+		tokenHeader.put("_token", token);
 		this.busiModelResourceName = busiModelResourceName;
 		this.datas = datas;
 		this.dataParentId = dataParentId==null?null:dataParentId.toString();
@@ -105,8 +114,9 @@ public class BusiModelResourceData implements Serializable{
 						data.put(refParentResourcePropName, dataParentId);
 					}
 				}
-				actualParamsList = SqlResourceValidUtil.initActualParamsList(null, datas);
-				
+				if(!refSql.isSelectSql()){
+					actualParamsList = SqlResourceValidUtil.initActualParamsList(null, datas);
+				}
 				validResult = SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, actualParamsList, busiModelResRelations.getResourceMetadataInfos(), busiModelResRelations.getInSqlResultSetMetadataInfoList());
 			}
 			return validResult;
@@ -134,58 +144,99 @@ public class BusiModelResourceData implements Serializable{
 	/**
 	 * 操作业务数据
 	 * <p>返回的object 要么是null，要么是JSONObject，要么是JSONArray</p>
+	 * @param pids 没有父id的话，传递null
 	 */
-	public Object doOperBusiData(){
+	public Object doOperBusiData(Object[] pids){
+		if(pids == null){// nopid标识是没有父id值的，即pids参数传递了null
+			pids = new String[]{"nopid"};
+		}
+		
 		// 操作结果对象
 		Object resultDatas = null;
 		
-		rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
 		if(isTableResource){
 			if(datas != null && datas.size() > 0){
 				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
 				
-				JSONObject data = null;
-				Object operDataType = null;
-				for(int i=0; i < datas.size(); i++){
-					data = datas.get(i);
-					operDataType = data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
-					if(dataParentId != null){
-						data.put(refParentResourcePropName, dataParentId);
-					}
-					if(OperDataTypeConstants.ADD.equals(operDataType)){
-						PropCodeRuleUtil.setTableResourceFinalCodeVal(data, i, rules);
-						HibernateUtil.saveObject(refResourceName, data, null);
-					}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
-						HibernateUtil.updateObject(refResourceName, data, null, null);
-					}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
-						if(busiModelResRelations.getIsCascadeDelete() == 1){
-							recursiveCascadeDeleteSub(data.get(ResourcePropNameConstants.ID), busiModelResRelations.getSubBusiModelResRelationsList());
-						}else{
-							validIsHaveSubDatas(data.get(ResourcePropNameConstants.ID), busiModelResRelations.getSubBusiModelResRelationsList());
+				Object operDataType = datas.get(0).get(ResourcePropNameConstants.OPER_DATA_TYPE);
+				if(OperDataTypeConstants.SELECT.equals(operDataType)){
+					resultDatas = getQueryResultset(pids, refParentResourcePropName, "表");
+				}else{
+					JSONObject data = null;
+					rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
+					for(int i=0; i < datas.size(); i++){
+						data = datas.get(i);
+						operDataType = data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
+						if(dataParentId != null){
+							data.put(refParentResourcePropName, dataParentId);
 						}
-						HibernateUtil.deleteObject(refResourceName, data);// 删除主表数据
+						if(OperDataTypeConstants.ADD.equals(operDataType)){
+							PropCodeRuleUtil.setTableResourceFinalCodeVal(data, i, rules);
+							HibernateUtil.saveObject(refResourceName, data, null);
+						}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
+							HibernateUtil.updateObject(refResourceName, data, null, null);
+						}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
+							if(busiModelResRelations.getIsCascadeDelete() == 1){
+								recursiveCascadeDeleteSub(data.get(ResourcePropNameConstants.ID), busiModelResRelations.getSubBusiModelResRelationsList());
+							}else{
+								validIsHaveSubDatas(data.get(ResourcePropNameConstants.ID), busiModelResRelations.getSubBusiModelResRelationsList());
+							}
+							HibernateUtil.deleteObject(refResourceName, data);// 删除主表数据
+						}
 					}
 				}
 			}
 			resultDatas = datas.getJson();
 		}else{
 			CfgSql refSql = busiModelResRelations.getRefSqlForExecute();
-			List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>(20);
-			refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
-			resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas, rules);
-			
-			refSql.clear();
-			// 清除sql语句中的参数值集合
-			if(sqlParameterValues != null && sqlParameterValues.size() > 0){
-				for(List<Object> list : sqlParameterValues){
-					if(list != null && list.size() > 0){
-						list.clear();
+			if(refSql.isSelectSql()){
+				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
+				resultDatas = getQueryResultset(pids, refParentResourcePropName, "sql");
+			}else{
+				rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
+				
+				List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>(20);
+				refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
+				resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas, rules);
+				
+				refSql.clear();
+				// 清除sql语句中的参数值集合
+				if(sqlParameterValues != null && sqlParameterValues.size() > 0){
+					for(List<Object> list : sqlParameterValues){
+						if(list != null && list.size() > 0){
+							list.clear();
+						}
 					}
+					sqlParameterValues.clear();
 				}
-				sqlParameterValues.clear();
 			}
 		}
 		return resultDatas;
+	}
+	
+	private Object getQueryResultset(Object[] pids, String refParentResourcePropName, String desc){
+		JSONObject data = datas.get(0);
+		data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
+		
+		JSONObject tmpData = null;
+		JSONArray jsonArray = new JSONArray(pids.length);
+		for (Object pid : pids) {
+			if(!pid.equals("nopid")){
+				data.put(refParentResourcePropName, pid);
+			}
+			
+			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(SysContext.WEB_SYSTEM_ROOT_WEBSITE + "common/" + refResourceName, data, tokenHeader));
+			if(StrUtils.notEmpty(tmpData.get("message"))){
+				throw new IllegalArgumentException("业务模型["+busiModelResourceName+"]，获取"+desc+"资源["+refResourceName+"]的查询结果信息时出现异常：" + tmpData.get("message"));
+			}
+			jsonArray.add(tmpData.get("data"));
+		}
+		
+		if(pids[0].equals("nopid")){
+			return jsonArray.getJSONObject(0);
+		}else{
+			return jsonArray;
+		}
 	}
 	
 	/**
