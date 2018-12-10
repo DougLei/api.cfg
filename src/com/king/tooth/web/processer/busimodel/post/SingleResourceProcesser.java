@@ -54,7 +54,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), new Object[]{((JSONObject)resultDatas).get(ResourcePropNameConstants.ID)});
 							
 								if(subResultDataJSONArray != null){
-									((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray);
+									((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(i));
 								}
 							}else if(resultDatas instanceof JSONArray){
 								tmpResultDatasJSONArray = (JSONArray)resultDatas;

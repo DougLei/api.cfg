@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
@@ -145,13 +144,9 @@ public class BusiModelResourceData implements Serializable{
 	/**
 	 * 操作业务数据
 	 * <p>返回的object 要么是null，要么是JSONObject，要么是JSONArray</p>
-	 * @param pids 没有父id的话，传递null
+	 * @param pid 
 	 */
-	public Object doOperBusiData(Object[] pids){
-		if(pids == null){// nopid标识是没有父id值的，即pids参数传递了null
-			pids = new String[]{"nopid"};
-		}
-		
+	public Object doOperBusiData(Object pid){
 		// 操作结果对象
 		Object resultDatas = null;
 		
@@ -161,7 +156,7 @@ public class BusiModelResourceData implements Serializable{
 				
 				Object operDataType = datas.get(0).get(ResourcePropNameConstants.OPER_DATA_TYPE);
 				if(OperDataTypeConstants.SELECT.equals(operDataType)){
-					resultDatas = getQueryResultset(pids, refParentResourcePropName, "表");
+					resultDatas = getQueryResultset(pid, refParentResourcePropName, "表");
 				}else{
 					JSONObject data = null;
 					rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
@@ -192,7 +187,7 @@ public class BusiModelResourceData implements Serializable{
 			CfgSql refSql = busiModelResRelations.getRefSqlForExecute();
 			if(refSql.isSelectSql()){
 				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
-				resultDatas = getQueryResultset(pids, refParentResourcePropName, "sql");
+				resultDatas = getQueryResultset(pid, refParentResourcePropName, "sql");
 			}else{
 				rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
 				
@@ -215,29 +210,18 @@ public class BusiModelResourceData implements Serializable{
 		return resultDatas;
 	}
 	
-	private Object getQueryResultset(Object[] pids, String refParentResourcePropName, String desc){
+	private Object getQueryResultset(Object pid, String refParentResourcePropName, String desc){
 		JSONObject data = datas.get(0);
 		data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
 		
-		JSONObject tmpData = null;
-		JSONArray jsonArray = new JSONArray(pids.length);
-		for (Object pid : pids) {
-			if(!pid.equals("nopid")){
-				data.put(refParentResourcePropName, pid);
-			}
-			
-			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName, data, tokenHeader));
-			if(StrUtils.notEmpty(tmpData.get("message"))){
-				throw new IllegalArgumentException("业务模型["+busiModelResourceName+"]，获取"+desc+"资源["+refResourceName+"]的查询结果信息时出现异常：" + tmpData.get("message"));
-			}
-			jsonArray.add(tmpData.get("data"));
+		if(pid != null){
+			data.put(refParentResourcePropName, pid);
 		}
-		
-		if(pids[0].equals("nopid")){
-			return jsonArray.getJSONObject(0);
-		}else{
-			return jsonArray;
+		JSONObject tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName, data, tokenHeader));
+		if(StrUtils.notEmpty(tmpData.get("message"))){
+			throw new IllegalArgumentException("业务模型["+busiModelResourceName+"]，获取"+desc+"资源["+refResourceName+"]的查询结果信息时出现异常：" + tmpData.get("message"));
 		}
+		return tmpData.get("data");
 	}
 	
 	/**
