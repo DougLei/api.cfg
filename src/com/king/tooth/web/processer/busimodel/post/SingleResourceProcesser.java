@@ -57,7 +57,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 									((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(i));
 								}
 							}else if(resultDatas instanceof JSONArray){
-								tmpResultDatasJSONArray = (JSONArray)resultDatas;
+								JSONArray tmpResultDatasJSONArray = (JSONArray)resultDatas;
 								int tmpSize = tmpResultDatasJSONArray.size();
 								Object[] tmpPids = new Object[tmpSize];
 								for(int j=0;j<tmpSize;j++){
@@ -82,7 +82,6 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		}
 		return null;
 	}
-	private JSONArray tmpResultDatasJSONArray;
 
 	public String getProcesserName() {
 		return "【Post-BusiModelResource】SingleResourceProcesser";

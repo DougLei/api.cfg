@@ -241,7 +241,7 @@ public class RequestBody implements Serializable{
 	}
 	public String getRequestURL(){
 		if(SysContext.WEB_SYSTEM_ROOT_WEBSITE == null){
-			SysContext.WEB_SYSTEM_ROOT_WEBSITE = request.getRequestURL().toString();
+			SysContext.WEB_SYSTEM_ROOT_WEBSITE = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
 		}
 		return SysContext.WEB_SYSTEM_ROOT_WEBSITE;
 	}

@@ -479,7 +479,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		if(resourceDataList != null && resourceDataList.size()>0){
 			List<Object> resultDatasList = new ArrayList<Object>(resourceDataList.size());
 			for(int i=0;i<resourceDataList.size();i++){
-				resultDatasList.add(resourceDataList.get(i).doOperBusiData((pids != null && pids.length < i)?pids[i]:null));
+				resultDatasList.add(resourceDataList.get(i).doOperBusiData((pids != null && pids.length > i)?pids[i]:null));
 				resourceDataList.get(i).clear();
 			}
 			return resultDatasList;

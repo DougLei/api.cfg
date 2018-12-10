@@ -99,6 +99,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 						if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
 							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要删除的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
 						}
+					}else if(OperDataTypeConstants.SELECT.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
 					}else{
 						return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete";
 					}
@@ -108,7 +109,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 					for(int j=0;j<ijsonDataSize;j++){
 						json = ijsonData.get(j);
 						dataParentIdObj = json.get(refResourceIdPropName);
-						validResult = recursiveValidBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), IJsonUtil.getIJson(json.remove(busiModelResRelations.getRefSubResourceKeyName())), dataParentIdObj.toString(), recursiveLevel+1);
+						validResult = recursiveValidBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), IJsonUtil.getIJson(json.remove(busiModelResRelations.getRefSubResourceKeyName())), dataParentIdObj==null?null:dataParentIdObj.toString(), recursiveLevel+1);
 						if(validResult != null){
 							return validResult;
 						}

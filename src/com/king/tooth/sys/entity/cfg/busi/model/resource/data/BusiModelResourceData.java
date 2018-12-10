@@ -152,7 +152,7 @@ public class BusiModelResourceData implements Serializable{
 		
 		if(isTableResource){
 			if(datas != null && datas.size() > 0){
-				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
+				String refParentResourcePropName = (dataParentId==null && pid==null)?null:busiModelResRelations.getRefParentResourcePropName();
 				
 				Object operDataType = datas.get(0).get(ResourcePropNameConstants.OPER_DATA_TYPE);
 				if(OperDataTypeConstants.SELECT.equals(operDataType)){
@@ -180,9 +180,9 @@ public class BusiModelResourceData implements Serializable{
 							HibernateUtil.deleteObject(refResourceName, data);// 删除主表数据
 						}
 					}
+					resultDatas = datas.getJson();
 				}
 			}
-			resultDatas = datas.getJson();
 		}else{
 			CfgSql refSql = busiModelResRelations.getRefSqlForExecute();
 			if(refSql.isSelectSql()){
