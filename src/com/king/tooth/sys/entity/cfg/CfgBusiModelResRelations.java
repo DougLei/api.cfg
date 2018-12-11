@@ -433,44 +433,41 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	@JSONField(serialize = false)
 	public CfgSql getRefSqlForValid() {
 		setRefResource();
-		if(refSqlList != null){
-			CfgSql refSql = null;
-			if(isValidFirstSql){
-				isValidFirstSql = false;
-				refSql = refSqlList.get(0);
-				if(refSql.isSelectSql()){// 查询语句就不做任何处理
-					return refSql;
-				}
-				
-				if(refSql != null && !refSql.getIncludeAllInfo()){
-					BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
-				}
-				
-				if(refSql.getSqlParams() != null && refSql.getSqlParams().size()>0){
-					sqlParams = new ArrayList<CfgSqlParameter>(refSql.getSqlParams().size());
-					sqlParams.addAll(refSql.getSqlParams());
-				}
-				resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql);
-				inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
-			}else{
-				CfgSql basicSql = refSqlList.get(0);
-				if(basicSql.isSelectSql()){// 查询语句就不做任何处理
-					refSql = basicSql;
-				}else{
-					if(basicSql.getSqlParams() == null || basicSql.getSqlParams().size() == 0){
-						basicSql.setSqlParams(sqlParams);
-					}
-					try {
-						refSql = (CfgSql) basicSql.clone();
-					} catch (CloneNotSupportedException e) {
-						throw new IllegalArgumentException("克隆CfgSql对象时出现异常："+ExceptionUtil.getErrMsg(e));
-					}
-				}
-				refSqlList.add(refSql);
+		CfgSql refSql = null;
+		if(isValidFirstSql){
+			isValidFirstSql = false;
+			refSql = refSqlList.get(0);
+			if(refSql.isSelectSql()){// 查询语句就不做任何处理
+				return refSql;
 			}
-			return refSql;
+			
+			if(refSql != null && !refSql.getIncludeAllInfo()){
+				BuiltinResourceInstance.getInstance("CfgSqlService", CfgSqlService.class).setSqlScriptResourceAllInfo(refSql);
+			}
+			
+			if(refSql.getSqlParams() != null && refSql.getSqlParams().size()>0){
+				sqlParams = new ArrayList<CfgSqlParameter>(refSql.getSqlParams().size());
+				sqlParams.addAll(refSql.getSqlParams());
+			}
+			resourceMetadataInfos = SqlResourceValidUtil.getSqlResourceParamsMetadataInfos(refSql);
+			inSqlResultSetMetadataInfoList = SqlResourceValidUtil.getSqlInResultSetMetadataInfoList(refSql);
+		}else{
+			CfgSql basicSql = refSqlList.get(0);
+			if(basicSql.isSelectSql()){// 查询语句就不做任何处理
+				refSql = basicSql;
+			}else{
+				if(basicSql.getSqlParams() == null || basicSql.getSqlParams().size() == 0){
+					basicSql.setSqlParams(sqlParams);
+				}
+				try {
+					refSql = (CfgSql) basicSql.clone();
+				} catch (CloneNotSupportedException e) {
+					throw new IllegalArgumentException("克隆CfgSql对象时出现异常："+ExceptionUtil.getErrMsg(e));
+				}
+			}
+			refSqlList.add(refSql);
 		}
-		return null;
+		return refSql;
 	}
 	/** 用来标识，是否验证refSqlList的第一个sql对象，后续再做验证，就新创建一个sql对象去做数据验证，并将该对象添加到refSqlList集合中 */
 	private boolean isValidFirstSql = true;
@@ -482,7 +479,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	@JSONField(serialize = false)
 	public CfgSql getRefSqlForExecute() {
 		CfgSql refSql = null;
-		if(refSqlList != null){
+		if(!(refSql = refSqlList.get(0)).isSelectSql()){// 查询语句就不做任何处理
 			refSql = refSqlList.get(sqlForExecuteIndex++);
 		}
 		return refSql;

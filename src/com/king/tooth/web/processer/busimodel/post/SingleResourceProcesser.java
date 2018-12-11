@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
@@ -51,7 +50,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 						JSONArray subResultDataJSONArray = null;
 						if(resultDatas != null){
 							if(resultDatas instanceof JSONObject){
-								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), new Object[]{((JSONObject)resultDatas).get(ResourcePropNameConstants.ID)});
+								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), new Object[]{((JSONObject)resultDatas).get(busiModelResRelations.getRefResourceIdPropName())});
 							
 								if(subResultDataJSONArray != null){
 									((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(i));
@@ -61,7 +60,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 								int tmpSize = tmpResultDatasJSONArray.size();
 								Object[] tmpPids = new Object[tmpSize];
 								for(int j=0;j<tmpSize;j++){
-									tmpPids[j] = tmpResultDatasJSONArray.getJSONObject(j).get(ResourcePropNameConstants.ID);
+									tmpPids[j] = tmpResultDatasJSONArray.getJSONObject(j).get(busiModelResRelations.getRefResourceIdPropName());
 								}
 								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), tmpPids);
 								

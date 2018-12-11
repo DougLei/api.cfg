@@ -200,7 +200,7 @@ public class BusiModelResourceData implements Serializable{
 		}else{
 			CfgSql refSql = busiModelResRelations.getRefSqlForExecute();
 			if(isQueryResource){
-				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
+				String refParentResourcePropName = (dataParentId==null && pid==null)?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
 				resultDatas = getQueryResultset(pid, refParentResourcePropName, "sql");
 			}else{
 				rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
