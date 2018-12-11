@@ -86,6 +86,7 @@ public class BusiModelResourceData implements Serializable{
 	public boolean isQueryResource() {
 		return isQueryResource;
 	}
+	
 	/**
 	 * 进行业务资源数据验证
 	 * @param busiModelResRelations
