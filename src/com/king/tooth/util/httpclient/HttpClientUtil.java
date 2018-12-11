@@ -58,7 +58,7 @@ public class HttpClientUtil {
 			params.clear();
 			url.setLength(url.length()-1);
 			
-			reqUrl = url.toString();
+			reqUrl = url.toString().replace(" ", "%20");
 		}
 		return reqUrl;
 	}
