@@ -2,6 +2,7 @@ package com.king.tooth.plugins.alibaba.json.extend.string;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -79,4 +80,7 @@ public interface IJson extends Serializable{
 	 * @return
 	 */
 	String toString();
+
+	
+	void addAll(JSONArray jsonArray);
 }

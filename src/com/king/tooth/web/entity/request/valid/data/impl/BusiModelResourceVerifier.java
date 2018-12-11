@@ -31,18 +31,18 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 	}
 	
 	public String doValid(){
-		return doValidCodeResourceMetadata();
+		return doValidBusiModelResourceMetadata();
 	}
 	
 	/**
-	 * 验证代码资源的元数据
+	 * 验证业务模型资源的元数据
 	 * @return
 	 */
-	private String doValidCodeResourceMetadata() {
+	private String doValidBusiModelResourceMetadata() {
 		if(requestBody.isPostRequest()){
 			return validPostBusiModelResourceMetadata();
 		}
-		return "系统只支持[post]一种请求方式";
+		return "系统只支持[post]一种请求方式处理业务模型资源";
 	}
 	
 	/**
@@ -72,6 +72,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 			JSONObject json = null;
 			String refResourceIdPropName = null;
 			Object dataParentIdObj = null;
+			Object operDataType = null;
 			for(int i = 0; i < busiModelResRelationsListSize; i++){
 				busiModelResRelations = busiModelResRelationsList.get(i);
 				
@@ -87,21 +88,45 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 				refResourceIdPropName = busiModelResRelations.getRefResourceIdPropName();
 				
 				// 处理每个对象主键，如果没有就要赋值
-				for(int j=0;j<ijsonDataSize;j++){
-					json = ijsonData.get(j);
-					if(OperDataTypeConstants.ADD.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
-						json.put(refResourceIdPropName, ResourceHandlerUtil.getIdentity());
-					}else if(OperDataTypeConstants.EDIT.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
-						if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
-							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要修改的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+				if(busiModelResRelations.getRefTable() != null){
+					for(int j=0;j<ijsonDataSize;j++){
+						json = ijsonData.get(j);
+						operDataType = json.get(ResourcePropNameConstants.OPER_DATA_TYPE);
+						
+						if(OperDataTypeConstants.ADD.equals(operDataType)){
+							json.put(refResourceIdPropName, ResourceHandlerUtil.getIdentity());
+						}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
+							if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+								return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要修改的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+							}
+						}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
+							if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+								return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要删除的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+							}
+						}else if(OperDataTypeConstants.SELECT.equals(operDataType)){
+						}else{
+							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete/select";
 						}
-					}else if(OperDataTypeConstants.DELETE.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
-						if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
-							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要删除的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+					}
+				}else if(busiModelResRelations.getRefSql() != null){
+					for(int j=0;j<ijsonDataSize;j++){
+						json = ijsonData.get(j);
+						json.remove(ResourcePropNameConstants.OPER_DATA_TYPE);// 尝试移除，因为用不上
+						
+						if(busiModelResRelations.getRefSql().isInsertSql()){
+							json.put(refResourceIdPropName, ResourceHandlerUtil.getIdentity());
+						}else if(busiModelResRelations.getRefSql().isUpdateSql()){
+							if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+								return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要修改的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+							}
+						}else if(busiModelResRelations.getRefSql().isDeleteSql()){
+							if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
+								return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要删除的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
+							}
+						}else if(busiModelResRelations.getRefSql().isSelectSql()){
+						}else{
+							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete/select";
 						}
-					}else if(OperDataTypeConstants.SELECT.equals(json.get(ResourcePropNameConstants.OPER_DATA_TYPE))){
-					}else{
-						return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete";
 					}
 				}
 				

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
@@ -81,6 +82,8 @@ public class BusiModelResourceData implements Serializable{
 	private String refResourceId;
 	/** 引用的资源name */
 	private String refResourceName;
+	/**是查询资源*/
+	private boolean isQueryResource;
 	
 	/**
 	 * 进行业务资源数据验证
@@ -99,25 +102,36 @@ public class BusiModelResourceData implements Serializable{
 				refResourceId = refTable.getId();
 				refResourceName = refTable.getResourceName();
 				
-				validResult = TableResourceValidUtil.validTableResourceMetadata("操作业务资源["+busiModelResourceName+"]，关联的表资源["+refResourceName+"]时，", refResourceName, busiModelResRelations.getResourceMetadataInfos(), datas, false, true, true);
+				JSONArray selectDatas = new JSONArray(datas.size());
+				for(int i=0;i<datas.size() ;i++){
+					if(OperDataTypeConstants.SELECT.equals(datas.get(i).get(ResourcePropNameConstants.OPER_DATA_TYPE))){
+						selectDatas.add(datas.remove(i--));
+					}
+				}
+				validResult = TableResourceValidUtil.validTableResourceMetadata("操作业务资源["+busiModelResourceName+"]，关联的表资源["+refResourceName+"]时，", refResourceName, busiModelResRelations.getResourceMetadataInfos(), datas, false, true);
+				if(validResult == null && selectDatas.size() > 0){
+					datas.addAll(selectDatas);
+					selectDatas.clear();
+				}
 			}else if(refSql != null){
 				refResourceId = refSql.getId();
 				refResourceName = refSql.getResourceName();
 				
-				// 如果有父数据id，则要将其赋值到datas数据中，最后解析出实际传入的参数值集合
-				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
-				JSONObject data = null;
-				for(int i=0; i < datas.size(); i++){
-					data = datas.get(i);
-					data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);// 并且尝试移除$operDataType$的值
-					if(dataParentId != null){
-						data.put(refParentResourcePropName, dataParentId);
+				if(!(isQueryResource = refSql.isSelectSql())){
+					// 如果有父数据id，则要将其赋值到datas数据中，最后解析出实际传入的参数值集合
+					String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
+					JSONObject data = null;
+					for(int i=0; i < datas.size(); i++){
+						data = datas.get(i);
+						data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);// 并且尝试移除$operDataType$的值
+						if(dataParentId != null){
+							data.put(refParentResourcePropName, dataParentId);
+						}
 					}
-				}
-				if(!refSql.isSelectSql()){
+					
 					actualParamsList = SqlResourceValidUtil.initActualParamsList(null, datas);
+					validResult = SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, actualParamsList, busiModelResRelations.getResourceMetadataInfos(), busiModelResRelations.getInSqlResultSetMetadataInfoList());
 				}
-				validResult = SqlResourceValidUtil.doValidAndSetActualParams(refSql, false, actualParamsList, busiModelResRelations.getResourceMetadataInfos(), busiModelResRelations.getInSqlResultSetMetadataInfoList());
 			}
 			return validResult;
 		} finally{
@@ -152,10 +166,10 @@ public class BusiModelResourceData implements Serializable{
 		
 		if(isTableResource){
 			if(datas != null && datas.size() > 0){
-				String refParentResourcePropName = (dataParentId==null && pid==null)?null:busiModelResRelations.getRefParentResourcePropName();
+				String refParentResourcePropName = (dataParentId==null && pid==null)?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
 				
 				Object operDataType = datas.get(0).get(ResourcePropNameConstants.OPER_DATA_TYPE);
-				if(OperDataTypeConstants.SELECT.equals(operDataType)){
+				if(operDataType == null || OperDataTypeConstants.SELECT.equals(operDataType)){// operDataType==null的只会在查询的时候出现
 					resultDatas = getQueryResultset(pid, refParentResourcePropName, "表");
 				}else{
 					JSONObject data = null;
@@ -185,8 +199,8 @@ public class BusiModelResourceData implements Serializable{
 			}
 		}else{
 			CfgSql refSql = busiModelResRelations.getRefSqlForExecute();
-			if(refSql.isSelectSql()){
-				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName();
+			if(isQueryResource){
+				String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
 				resultDatas = getQueryResultset(pid, refParentResourcePropName, "sql");
 			}else{
 				rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
@@ -240,7 +254,7 @@ public class BusiModelResourceData implements Serializable{
 						for (int i = 0; i < resourceDataList.size(); i++) {
 							tmpDatas = resourceDataList.get(i).getDatas();
 							// 这种写法，会将当前被删除对象的子数据，都直接从集合中删除，减少后续的处理，但是最后也不会将这些数据返回给前端
-							if(tmpDatas != null && tmpDatas.size() > 0 && parentDataId.equals(tmpDatas.get(0).get(busiModelResRelations.getRefParentResourcePropName()))){
+							if(tmpDatas != null && tmpDatas.size() > 0 && parentDataId.equals(tmpDatas.get(0).get(busiModelResRelations.getRefParentResourcePropName(isQueryResource)))){
 								tmpDatas.clear();
 								resourceDataList.remove(i--);
 							}
@@ -253,7 +267,7 @@ public class BusiModelResourceData implements Serializable{
 						}
 					}
 					
-					subDataIds = HibernateUtil.executeListQueryByHqlArr(null,null, "select "+ResourcePropNameConstants.ID+" from "+busiModelResRelations.getRefResourceName()+" where "+busiModelResRelations.getRefParentResourcePropName()+" = ?", parentDataId);
+					subDataIds = HibernateUtil.executeListQueryByHqlArr(null,null, "select "+ResourcePropNameConstants.ID+" from "+busiModelResRelations.getRefResourceName()+" where "+busiModelResRelations.getRefParentResourcePropName(isQueryResource)+" = ?", parentDataId);
 					if(subDataIds != null && subDataIds.size() > 0){
 						for (Object subDataId : subDataIds) {
 							recursiveCascadeDeleteSub(subDataId, busiModelResRelations.getSubBusiModelResRelationsList());
@@ -288,7 +302,7 @@ public class BusiModelResourceData implements Serializable{
 			long count = 0;
 			for (CfgBusiModelResRelations busiModelResRelations : subBusiModelResRelationsList) {
 				if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_TABLE){
-					count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from "+busiModelResRelations.getRefResourceName()+" where "+busiModelResRelations.getRefParentResourcePropName()+" = ?", parentDataId);
+					count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from "+busiModelResRelations.getRefResourceName()+" where "+busiModelResRelations.getRefParentResourcePropName(isQueryResource)+" = ?", parentDataId);
 					if(count> 0){
 						throw new IllegalArgumentException("删除id=["+parentDataId+"]的["+this.busiModelResRelations.getRefResourceName()+"]资源失败，其下存在"+count+"条["+busiModelResRelations.getRefResourceName()+"}资源数据");
 					}

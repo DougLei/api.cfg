@@ -99,21 +99,19 @@ public class TableResourceValidUtil {
 	 * @param ijson
 	 * @param isUpdate 是否是修改，如果是修改，则要验证id属性为空
 	 * @param isValidUniqueInDb 是否在数据库中验证值唯一(如果不是正常的表类型，比如sqlserver的表类型，则无法去验证唯一性)
-	 * @param isBusiModelRefTableResource 是否是业务模型关联的表资源，如果是，则要验证$operDataType$参数值
 	 * @return
 	 */
-	public static String validTableResourceMetadata(String desc, String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos, IJson ijson, boolean isUpdate, boolean isValidUniqueInDb, boolean isBusiModelRefTableResource){
+	public static String validTableResourceMetadata(String desc, String resourceName, List<ResourceMetadataInfo> resourceMetadataInfos, IJson ijson, boolean isUpdate, boolean isValidUniqueInDb){
 		int size = ijson.size();
 		
 		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(resourceMetadataInfos.size());
 		JSONObject data = null;
 		Object dataIdValue = null;
 		boolean dataValueIsNull;
-		Set<String> propKeys = null;
+//		Set<String> propKeys = null;
 		Object dataValue = null;
 		String validDataIsLegalResult = null;
 		
-		one:
 		for(int i=0;i<size;i++){
 			data = ijson.get(i);
 			dataIdValue = data.get(ResourcePropNameConstants.ID);
@@ -121,13 +119,13 @@ public class TableResourceValidUtil {
 				return desc + "第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 			}
 			
-			// 验证每个对象的属性，是否存在
-			propKeys = data.keySet();
-			for (String propName : propKeys) {
-				if(validPropUnExists(false, propName, resourceMetadataInfos)){
-					continue one;
-				}
-			}
+//			// 验证每个对象的属性，是否存在
+//			propKeys = data.keySet();
+//			for (String propName : propKeys) {
+//				if(validPropUnExists(false, propName, resourceMetadataInfos)){
+//					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
+//				}
+//			}
 			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
 				if(rmi.getIsIgnoreValid() == 1){

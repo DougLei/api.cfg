@@ -283,7 +283,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public static final Integer REF_RESOURCE_TYPE_CFG_SQL = 2;
 	
 	// --------------------------------------------------------
-	private void setRefParentResourcePropName() {
+	private void setRefParentResourcePropName(boolean isQueryResource) {
 		if(this.refParentResourcePropName == null){
 			Object refParentResourcePropName = null;
 			if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
@@ -292,9 +292,16 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 					throw new NullPointerException("在处理业务资源时，关系资源名为["+getRefResourceName()+"]，没有查询到其中有id=["+refParentResourcePropId+"]的列信息");
 				}
 			}else if(refResourceType == REF_RESOURCE_TYPE_CFG_SQL){
-				refParentResourcePropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlParameterPropNameHql, refParentResourcePropId);
-				if(StrUtils.isEmpty(refParentResourcePropName)){
-					throw new NullPointerException("在处理业务资源时，关系资源名为["+getRefResourceName()+"]，没有查询到其中有id=["+refParentResourcePropId+"]的sql参数信息");
+				if(isQueryResource){
+					refParentResourcePropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlResultsetPropNameHql, refParentResourcePropId);
+					if(StrUtils.isEmpty(refParentResourcePropName)){
+						throw new NullPointerException("在处理业务资源时，关系资源名为["+getRefResourceName()+"]，没有查询到其中有id=["+refParentResourcePropId+"]的sql结果集信息");
+					}
+				}else{
+					refParentResourcePropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlParamPropNameHql, refParentResourcePropId);
+					if(StrUtils.isEmpty(refParentResourcePropName)){
+						throw new NullPointerException("在处理业务资源时，关系资源名为["+getRefResourceName()+"]，没有查询到其中有id=["+refParentResourcePropId+"]的sql参数信息");
+					}
 				}
 			}else{
 				throw new IllegalArgumentException("关联的资源类型[refResourceType]值目前只能为[1.CfgTable]或[2.CfgSql]");
@@ -303,10 +310,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		}
 	}
 	private static final String queryColumnPropNameHql = "select propName from CfgColumn where " + ResourcePropNameConstants.ID+"=?";
-	private static final String querySqlParameterPropNameHql = "select name from CfgSqlParameter where " + ResourcePropNameConstants.ID+"=?";
+	private static final String querySqlParamPropNameHql = "select name from CfgSqlParameter where " + ResourcePropNameConstants.ID+"=?";
+	private static final String querySqlResultsetPropNameHql = "select propName from CfgSqlResultset where " + ResourcePropNameConstants.ID+"=?";
 	
-	public String getRefParentResourcePropName() {
-		setRefParentResourcePropName();
+	public String getRefParentResourcePropName(boolean isQueryResource) {
+		setRefParentResourcePropName(isQueryResource);
 		return refParentResourcePropName;
 	}
 	
@@ -413,6 +421,16 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * @return
 	 */
 	@JSONField(serialize = false)
+	public CfgSql getRefSql() {
+		setRefResource();
+		return refSqlList.get(0);
+	}
+	
+	/**
+	 * 获取引用的sql对象去验证
+	 * @return
+	 */
+	@JSONField(serialize = false)
 	public CfgSql getRefSqlForValid() {
 		setRefResource();
 		if(refSqlList != null){
@@ -477,10 +495,21 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	public List<Object> doOperBusiDataList(Object[] pids){
 		if(resourceDataList != null && resourceDataList.size()>0){
-			List<Object> resultDatasList = new ArrayList<Object>(resourceDataList.size());
-			for(int i=0;i<resourceDataList.size();i++){
-				resultDatasList.add(resourceDataList.get(i).doOperBusiData((pids != null && pids.length > i)?pids[i]:null));
-				resourceDataList.get(i).clear();
+			List<Object> resultDatasList = null;
+			if(pids == null){
+				resultDatasList = new ArrayList<Object>(resourceDataList.size());
+				for(int i=0;i<resourceDataList.size();i++){
+					resultDatasList.add(resourceDataList.get(i).doOperBusiData(null));
+					resourceDataList.get(i).clear();
+				}
+			}else{
+				resultDatasList = new ArrayList<Object>(resourceDataList.size() + pids.length);
+				for(int i=0;i<resourceDataList.size();i++){
+					for(Object pid: pids){
+						resultDatasList.add(resourceDataList.get(i).doOperBusiData(pid));
+					}
+					resourceDataList.get(i).clear();
+				}
 			}
 			return resultDatasList;
 		}

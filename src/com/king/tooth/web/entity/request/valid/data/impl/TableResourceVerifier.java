@@ -91,7 +91,7 @@ public class TableResourceVerifier extends AbstractResourceVerifier{
 	 */
 	private String validPostTableResourceMetadata(boolean isUpdate) {
 		IJson ijson = requestBody.getFormData();
-		return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+resourceName+"]时，", resourceName, resourceMetadataInfos, ijson, isUpdate, true, false);
+		return TableResourceValidUtil.validTableResourceMetadata("操作表资源["+resourceName+"]时，", resourceName, resourceMetadataInfos, ijson, isUpdate, true);
 	}
 	
 	/**

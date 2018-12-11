@@ -99,6 +99,12 @@ public class JSONArrayExtend implements IJson{
 		if(index < 0){
 			throw new IndexOutOfBoundsException("要从集合中删除的下标值小于0");
 		}
-		return null;
+		JSONObject json = jsonArray.getJSONObject(index);
+		jsonArray.remove(index);
+		return json;
+	}
+
+	public void addAll(JSONArray jsonArray) {
+		this.jsonArray.addAll(jsonArray);
 	}
 }

@@ -605,6 +605,30 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	 */
 	@JSONField(serialize = false)
 	public boolean isSelectSql(){
-		return SqlStatementTypeConstants.SELECT.equals(type);
+		return SqlStatementTypeConstants.SELECT.equals(confType);
+	}
+	/**
+	 * 是否是insert语句
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isInsertSql(){
+		return SqlStatementTypeConstants.INSERT.equals(confType);
+	}
+	/**
+	 * 是否是update语句
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isUpdateSql(){
+		return SqlStatementTypeConstants.UPDATE.equals(confType);
+	}
+	/**
+	 * 是否是delete语句
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isDeleteSql(){
+		return SqlStatementTypeConstants.DELETE.equals(confType);
 	}
 }
