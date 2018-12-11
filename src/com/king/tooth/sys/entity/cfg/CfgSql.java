@@ -343,6 +343,9 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 		if(StrUtils.isEmpty(contents)){
 			return "sql脚本内容不能为空";
 		}
+		if(StrUtils.isEmpty(confType)){
+			return "业务操作类型(confType)的值不能为空";
+		}
 		if(isEnabled == null){
 			isEnabled = 1;
 		}

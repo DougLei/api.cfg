@@ -90,25 +90,33 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 				
 				// 处理每个对象主键，如果没有就要赋值
 				if(busiModelResRelations.getRefTable() != null){
+					int[] flag = new int[2];
 					for(int j=0;j<ijsonDataSize;j++){
 						json = ijsonData.get(j);
 						operDataType = json.get(ResourcePropNameConstants.OPER_DATA_TYPE);
 						
 						if(OperDataTypeConstants.ADD.equals(operDataType)){
 							json.put(refResourceIdPropName, ResourceHandlerUtil.getIdentity());
+							flag[1] = 2;
 						}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
 							if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
 								return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要修改的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
 							}
+							flag[1] = 2;
 						}else if(OperDataTypeConstants.DELETE.equals(operDataType)){
 							if(StrUtils.isEmpty(json.get(refResourceIdPropName))){
 								return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要删除的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
 							}
+							flag[1] = 2;
 						}else if(OperDataTypeConstants.SELECT.equals(operDataType)){
 							Log4jUtil.debug("不验证查询语句");
+							flag[0] = 1;
 						}else{
 							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete/select";
 						}
+					}
+					if(flag[0]==1 && flag[1]==2){
+						throw new IllegalArgumentException("在业务模型["+resourceName+"]中，系统目前不支持同时操作[增删改]和[查询]表资源数据");
 					}
 				}else if(busiModelResRelations.getRefSql() != null){
 					for(int j=0;j<ijsonDataSize;j++){
@@ -128,7 +136,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 						}else if(busiModelResRelations.getRefSql().isSelectSql()){
 							Log4jUtil.debug("不验证查询语句");
 						}else{
-							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete/select";
+							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为insert/update/delete/select";
 						}
 					}
 				}

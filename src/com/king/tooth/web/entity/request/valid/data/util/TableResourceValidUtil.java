@@ -109,6 +109,7 @@ public class TableResourceValidUtil {
 		Object dataIdValue = null;
 		boolean dataValueIsNull;
 		Set<String> propKeys = null;
+		List<String> unExistsPropNames = null;
 		Object dataValue = null;
 		String validDataIsLegalResult = null;
 		
@@ -119,12 +120,20 @@ public class TableResourceValidUtil {
 				return desc + "第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 			}
 			
+			unExistsPropNames = new ArrayList<String>(data.size());
 			// 验证每个对象的属性，是否存在
 			propKeys = data.keySet();
 			for (String propName : propKeys) {
 				if(validPropUnExists(false, propName, resourceMetadataInfos)){
-					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
+//					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
+					unExistsPropNames.add(propName);
 				}
+			}
+			if(unExistsPropNames.size() > 0){
+				for (String propName : unExistsPropNames) {
+					data.remove(propName);
+				}
+				unExistsPropNames.clear();
 			}
 			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {

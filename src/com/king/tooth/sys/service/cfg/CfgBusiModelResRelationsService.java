@@ -1,6 +1,10 @@
 package com.king.tooth.sys.service.cfg;
 
+import java.util.List;
+
 import com.king.tooth.annotation.Service;
+import com.king.tooth.constants.SqlStatementTypeConstants;
+import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgSql;
@@ -23,7 +27,14 @@ public class CfgBusiModelResRelationsService extends AService{
 	 * @param busiModelResRelations
 	 * @return 
 	 */
+	@SuppressWarnings("unchecked")
 	private String validRefDataIsValid(CfgBusiModelResRelations busiModelResRelations){
+		try {
+			getObjectById(busiModelResRelations.getRefBusiModelId(), CfgBusiModel.class);
+		} catch (Exception e) {
+			return "不存在id为["+busiModelResRelations.getRefBusiModelId()+"]的业务模型资源";
+		}
+		
 		if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_TABLE){
 			try {
 				CfgTable table = getObjectById(busiModelResRelations.getRefResourceId(), CfgTable.class);
@@ -45,11 +56,30 @@ public class CfgBusiModelResRelationsService extends AService{
 				}
 			}
 		}else if(busiModelResRelations.getRefResourceType() == CfgBusiModelResRelations.REF_RESOURCE_TYPE_CFG_SQL){
+			CfgSql sql = null;
 			try {
-				getObjectById(busiModelResRelations.getRefResourceId(), CfgSql.class);
+				sql = getObjectById(busiModelResRelations.getRefResourceId(), CfgSql.class);
 			} catch (NullPointerException e) {
 				return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefResourceId()+"]的sql资源";
 			}
+			
+			int[] flag = new int[2];// 是select的sql，修改第一个值；非select的sql，修改第二个值
+			List<Object> sqlConfTypes = HibernateUtil.executeListQueryBySqlArr("select conf_type from cfg_sql cs left join cfg_busi_model_res_relations cbmrr on (cs.id = cbmrr.ref_resource_id) where cbmrr.ref_busi_model_id = ? and cbmrr.ref_resource_type=2", busiModelResRelations.getRefBusiModelId());
+			if(sqlConfTypes != null && sqlConfTypes.size() > 0){
+				sqlConfTypes.add(sql.getConfType());
+				for (Object sqlConfType : sqlConfTypes) {
+					if(SqlStatementTypeConstants.SELECT.equals(sqlConfType)){
+						flag[0] = 1;
+					}else{
+						flag[1] = 2;
+					}
+				}
+				sqlConfTypes.clear();
+				if(flag[0]==1 && flag[1]==2){
+					throw new IllegalArgumentException("在一个业务模型中，系统目前不支持同时执行[增删改]类型和[查询]类型的sql语句");
+				}
+			}
+			
 			if(StrUtils.notEmpty(busiModelResRelations.getParentId())){
 				try {
 					getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgSqlParameter.class);
