@@ -433,6 +433,9 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	@JSONField(serialize = false)
 	public CfgSql getRefSqlForValid() {
 		setRefResource();
+		if(refSqlList == null){
+			return null;
+		}
 		CfgSql refSql = null;
 		if(isValidFirstSql){
 			isValidFirstSql = false;
@@ -492,7 +495,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	public List<Object> doOperBusiDataList(Object[] pids){
 		if(resourceDataList != null && resourceDataList.size()>0){
-			List<Object> resultDatasList = null;
+			if(!resourceDataList.get(0).isQueryResource()){
+				pids = null;
+			}
+			List<Object> resultDatasList=null;
 			if(pids == null){
 				resultDatasList = new ArrayList<Object>(resourceDataList.size());
 				for(int i=0;i<resourceDataList.size();i++){
@@ -500,7 +506,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 					resourceDataList.get(i).clear();
 				}
 			}else{
-				resultDatasList = new ArrayList<Object>(resourceDataList.size() + pids.length);
+				resultDatasList = new ArrayList<Object>(resourceDataList.size()+pids.length);
 				for(int i=0;i<resourceDataList.size();i++){
 					for(Object pid: pids){
 						resultDatasList.add(resourceDataList.get(i).doOperBusiData(pid));

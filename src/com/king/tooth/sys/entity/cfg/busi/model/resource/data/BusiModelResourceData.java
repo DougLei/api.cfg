@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
@@ -84,7 +83,9 @@ public class BusiModelResourceData implements Serializable{
 	private String refResourceName;
 	/**是查询资源*/
 	private boolean isQueryResource;
-	
+	public boolean isQueryResource() {
+		return isQueryResource;
+	}
 	/**
 	 * 进行业务资源数据验证
 	 * @param busiModelResRelations
@@ -102,16 +103,8 @@ public class BusiModelResourceData implements Serializable{
 				refResourceId = refTable.getId();
 				refResourceName = refTable.getResourceName();
 				
-				JSONArray selectDatas = new JSONArray(datas.size());
-				for(int i=0;i<datas.size() ;i++){
-					if(OperDataTypeConstants.SELECT.equals(datas.get(i).get(ResourcePropNameConstants.OPER_DATA_TYPE))){
-						selectDatas.add(datas.remove(i--));
-					}
-				}
-				validResult = TableResourceValidUtil.validTableResourceMetadata("操作业务资源["+busiModelResourceName+"]，关联的表资源["+refResourceName+"]时，", refResourceName, busiModelResRelations.getResourceMetadataInfos(), datas, false, true);
-				if(validResult == null && selectDatas.size() > 0){
-					datas.addAll(selectDatas);
-					selectDatas.clear();
+				if(!(isQueryResource = OperDataTypeConstants.SELECT.equals(datas.get(0).get(ResourcePropNameConstants.OPER_DATA_TYPE)))){
+					validResult = TableResourceValidUtil.validTableResourceMetadata("操作业务资源["+busiModelResourceName+"]，关联的表资源["+refResourceName+"]时，", refResourceName, busiModelResRelations.getResourceMetadataInfos(), datas, false, true);
 				}
 			}else if(refSql != null){
 				refResourceId = refSql.getId();

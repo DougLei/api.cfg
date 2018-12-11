@@ -108,7 +108,7 @@ public class TableResourceValidUtil {
 		JSONObject data = null;
 		Object dataIdValue = null;
 		boolean dataValueIsNull;
-//		Set<String> propKeys = null;
+		Set<String> propKeys = null;
 		Object dataValue = null;
 		String validDataIsLegalResult = null;
 		
@@ -119,13 +119,13 @@ public class TableResourceValidUtil {
 				return desc + "第"+(i+1)+"个对象，"+ResourcePropNameConstants.ID+"(主键)属性值不能为空";
 			}
 			
-//			// 验证每个对象的属性，是否存在
-//			propKeys = data.keySet();
-//			for (String propName : propKeys) {
-//				if(validPropUnExists(false, propName, resourceMetadataInfos)){
-//					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
-//				}
-//			}
+			// 验证每个对象的属性，是否存在
+			propKeys = data.keySet();
+			for (String propName : propKeys) {
+				if(validPropUnExists(false, propName, resourceMetadataInfos)){
+					return desc + "第"+(i+1)+"个对象，不存在名为["+propName+"]的属性";
+				}
+			}
 			
 			for (ResourceMetadataInfo rmi : resourceMetadataInfos) {
 				if(rmi.getIsIgnoreValid() == 1){
@@ -219,6 +219,9 @@ public class TableResourceValidUtil {
 	 * @return
 	 */
 	public static boolean validPropUnExists(boolean validBuiltinParams, String propName, List<ResourceMetadataInfo> resourceMetadataInfos){
+		if(propName.startsWith("$") && propName.endsWith("$")){
+			return false;
+		}
 		if(validBuiltinParams){
 			for (String builtinParams : BuiltinParameterKeys.BUILTIN_PARAMS) { // 内置的参数不做是否存在的验证，因为肯定不存在，是后台使用的一些参数
 				if(propName.equals(builtinParams)){
