@@ -50,7 +50,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 						JSONArray subResultDataJSONArray = null;
 						if(resultDatas != null){
 							if(resultDatas instanceof JSONObject){
-								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), new Object[]{((JSONObject)resultDatas).get(busiModelResRelations.getRefResourceIdPropName())});
+								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), busiModelResRelations.isQueryResource()?new Object[]{((JSONObject)resultDatas).get(busiModelResRelations.getRefResourceIdPropName())}:null);
 							
 								if(subResultDataJSONArray != null){
 									((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(i));
@@ -58,9 +58,13 @@ public final class SingleResourceProcesser extends RequestProcesser {
 							}else if(resultDatas instanceof JSONArray){
 								JSONArray tmpResultDatasJSONArray = (JSONArray)resultDatas;
 								int tmpSize = tmpResultDatasJSONArray.size();
-								Object[] tmpPids = new Object[tmpSize];
-								for(int j=0;j<tmpSize;j++){
-									tmpPids[j] = tmpResultDatasJSONArray.getJSONObject(j).get(busiModelResRelations.getRefResourceIdPropName());
+								
+								Object[] tmpPids = null;
+								if(busiModelResRelations.isQueryResource()){
+									tmpPids = new Object[tmpSize];
+									for(int j=0;j<tmpSize;j++){
+										tmpPids[j] = tmpResultDatasJSONArray.getJSONObject(j).get(busiModelResRelations.getRefResourceIdPropName());
+									}
 								}
 								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), tmpPids);
 								

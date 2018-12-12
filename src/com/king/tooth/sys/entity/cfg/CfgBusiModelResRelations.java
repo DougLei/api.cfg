@@ -495,9 +495,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	public List<Object> doOperBusiDataList(Object[] pids){
 		if(resourceDataList != null && resourceDataList.size()>0){
-			if(!resourceDataList.get(0).isQueryResource()){
-				pids = null;
-			}
 			List<Object> resultDatasList=null;
 			if(pids == null){
 				resultDatasList = new ArrayList<Object>(resourceDataList.size());
@@ -517,6 +514,13 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 			return resultDatasList;
 		}
 		return null;
+	}
+	
+	public boolean isQueryResource(){
+		if(resourceDataList != null && resourceDataList.size()>0){
+			return resourceDataList.get(0).isQueryResource();
+		}
+		return false;
 	}
 	
 	/**
