@@ -41,7 +41,7 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	private Integer refPropType;
 	/**
 	 * 是否有效
-	 * <p>默认值为1</p>
+	 * <p>默认值为0</p>
 	 */
 	private Integer isEnabled;
 	/**
@@ -130,8 +130,8 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 		
 		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");
-		isEnabledColumn.setComments("默认值为1");
-		isEnabledColumn.setDefaultValue("1");
+		isEnabledColumn.setComments("默认值为0");
+		isEnabledColumn.setDefaultValue("0");
 		columns.add(isEnabledColumn);
 		
 		CfgColumn orderCodeColumn = new CfgColumn("order_code", DataTypeConstants.INTEGER, 4);
