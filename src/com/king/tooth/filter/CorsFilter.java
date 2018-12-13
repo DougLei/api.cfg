@@ -40,10 +40,10 @@ public class CorsFilter extends AbstractFilter{
 		
 		String requestMethod = request.getMethod();
 		if("options".equalsIgnoreCase(requestMethod)){
-			Log4jUtil.debug("来自ip地址为{}的客户端发起跨域请求", clientIp);
+			Log4jUtil.info("来自ip地址为{}的客户端发起跨域请求", clientIp);
 			return;
 		}
-		Log4jUtil.debug("来自ip地址为{}的客户端发起的{}请求", clientIp, requestMethod);
+		Log4jUtil.info("来自ip地址为{}的客户端发起的{}请求", clientIp, requestMethod);
 		chain.doFilter(req, resp);
 	}
 }
