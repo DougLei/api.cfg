@@ -22,8 +22,7 @@ public abstract class AService {
 			throw new NullPointerException("根据id，查询获取对应的数据对象时，传入的id值不能为空！");
 		}
 		
-		String className = clazz.toString();
-		className = className.substring(className.lastIndexOf(".")+1);
+		String className = clazz.getSimpleName();
 		T t = HibernateUtil.extendExecuteUniqueQueryByHqlArr(clazz, "from "+className +" where " + ResourcePropNameConstants.ID +"=?", id);
 		if(t == null){
 			throw new NullPointerException("不存在id值为'"+id+"'的"+className+"数据对象");
