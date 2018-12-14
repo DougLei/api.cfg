@@ -109,7 +109,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 							}
 							flag[1] = 2;
 						}else if(OperDataTypeConstants.SELECT.equals(operDataType)){
-							Log4jUtil.debug("不验证查询语句");
+							Log4jUtil.info("不验证查询语句");
 							flag[0] = 1;
 						}else{
 							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为add/edit/delete/select";
@@ -134,7 +134,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 								return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要删除的，第"+(j+1)+"个数据的"+refResourceIdPropName+"参数值不能为空";
 							}
 						}else if(busiModelResRelations.getRefSql().isSelectSql()){
-							Log4jUtil.debug("不验证查询语句");
+							Log4jUtil.info("不验证查询语句");
 						}else{
 							return "业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，第"+(j+1)+"个数据的$operDataType$参数值不能为空，且值只能为insert/update/delete/select";
 						}

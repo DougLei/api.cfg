@@ -100,4 +100,5 @@ public class CfgBusiModel extends ACfgResource implements IEntityPropAnalysis, I
 			busiModelResRelationsList.clear();
 		}
 	}
+	
 }

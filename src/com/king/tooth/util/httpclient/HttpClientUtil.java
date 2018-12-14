@@ -55,7 +55,6 @@ public class HttpClientUtil {
 			for (Entry<String, Object> entry : se) {
 				url.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
 			}
-			params.clear();
 			url.setLength(url.length()-1);
 			
 			reqUrl = url.toString().replace(" ", "%20");

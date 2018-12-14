@@ -225,7 +225,15 @@ public class BusiModelResourceData implements Serializable{
 		if(pid != null){
 			data.put(refParentResourcePropName, pid);
 		}
-		JSONObject tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName, data, tokenHeader));
+		JSONObject tmpData = null;
+		if(StrUtils.notEmpty(data.get(busiModelResRelations.getRefResourceIdPropName()))){
+			String id = data.remove(busiModelResRelations.getRefResourceIdPropName()).toString();
+			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName + "/" + id, data, tokenHeader));
+			data.put(busiModelResRelations.getRefResourceIdPropName(), id);
+		}else{
+			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName, data, tokenHeader));
+		}
+		
 		if(StrUtils.notEmpty(tmpData.get("message"))){
 			throw new IllegalArgumentException("业务模型["+busiModelResourceName+"]，获取"+desc+"资源["+refResourceName+"]的查询结果信息时出现异常：" + tmpData.get("message"));
 		}
