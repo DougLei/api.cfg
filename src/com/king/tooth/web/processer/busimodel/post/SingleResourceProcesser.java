@@ -20,9 +20,7 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		JSONArray resultDataJSONArray = recursiveDoProcessBusiModelData(busiModel.getBusiModelResRelationsList(), null);
 		if(resultDataJSONArray == null){
 			setResponseBody(new ResponseBody("执行业务模型资源["+busiModel.getResourceName()+"]时，没有返回任何结果信息，请联系后端系统开发人员", null));
-		}
-		
-		if(requestBody.getFormData().size() == 1 || busiModel.getBusiModelResRelationsList().size() == 1){
+		}else if(requestBody.getFormData().size() == 1 || busiModel.getBusiModelResRelationsList().size() == 1){
 			setResponseBody(new ResponseBody(null, resultDataJSONArray.get(0)));
 		}else{
 			setResponseBody(new ResponseBody(null, resultDataJSONArray));
