@@ -24,7 +24,7 @@ public class SimpleImagePreviewFilter extends AbstractFilter{
 		if(requestURI.startsWith("/files")){// files为上传文件时，保存到服务器中的根目录，即默认保存路径的根目录名称
 			String fileSuffix = requestURI.substring(requestURI.lastIndexOf(".")+1);
 			if(!FileUtil.isImage(fileSuffix) && !FileUtil.isFileFormat(fileSuffix, "json")){
-				printResult(response, installFailResponseBody(req, "系统只支持预览图片格式的文件"));
+				printResult(response, installFailResponseBody(req, "系统只支持预览图片格式或json格式的文件"));
 				return;
 			}
 		}
