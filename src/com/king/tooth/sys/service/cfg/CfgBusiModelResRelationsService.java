@@ -9,6 +9,7 @@ import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.util.StrUtils;
@@ -81,10 +82,18 @@ public class CfgBusiModelResRelationsService extends AService{
 			}
 			
 			if(StrUtils.notEmpty(busiModelResRelations.getParentId())){
-				try {
-					getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgSqlParameter.class);
-				} catch (NullPointerException e) {
-					return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的sql参数属性";
+				if(sql.isSelectSql()){
+					try {
+						getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgSqlResultset.class);
+					} catch (NullPointerException e) {
+						return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的sql参数属性";
+					}
+				}else{
+					try {
+						getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgSqlParameter.class);
+					} catch (NullPointerException e) {
+						return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的sql参数属性";
+					}
 				}
 			}
 		}
