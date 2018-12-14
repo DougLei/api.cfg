@@ -41,15 +41,27 @@ public class FileUtil {
 	 * @return
 	 */
 	public static boolean isImage(String fileSuffix){
-		for (String imageFileSuffix : imageFileSuffixArr) {
-			if(imageFileSuffix.equalsIgnoreCase(fileSuffix)){
+		return isFileFormat(fileSuffix, imageFileSuffixArr);
+	}
+	private static final String[] imageFileSuffixArr = {"jpg", "jpeg", "png", "gif", "bmp"};
+	
+	/**
+	 * 是否是指定的文件格式
+	 * @param fileSuffix
+	 * @param suffixes
+	 * @return
+	 */
+	public static boolean isFileFormat(String fileSuffix, String... suffixes) {
+		if(suffixes == null || suffixes.length == 0){
+			throw new NullPointerException("指定的文件后缀不能为空");
+		}
+		for (String suffix : suffixes) {
+			if(suffix.equalsIgnoreCase(fileSuffix)){
 				return true;
 			}
 		}
 		return false;
 	}
-	private static final String[] imageFileSuffixArr = {"jpg", "jpeg", "png", "gif", "bmp"};
-	
 	
 	/**
 	 * 批量备份文件
