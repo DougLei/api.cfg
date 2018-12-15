@@ -34,7 +34,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 														 .insert(0, sqlScriptResource.getFinalSqlScriptList().get(0).getFinalCteSql())
 														 .append(getFromSql()).toString();
 		
-		Query query = createRecursiveQuery(queryMethodSql + firstRecursiveQuerySql, firstRecursiveQueryParams);
+		Query query = createRecursiveQuery(queryMethodSql + firstRecursiveQuerySql + builtinSortMethodProcesser.getSql(), firstRecursiveQueryParams);
 		PageResultEntity pageResultEntity = loadRecursiveQueryPageResultEntity(query, "select count(1) " + firstRecursiveQuerySql, firstRecursiveQueryParams);
 		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
 
