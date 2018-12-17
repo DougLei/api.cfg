@@ -516,6 +516,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		return null;
 	}
 	
+	@JSONField(serialize = false)
 	public boolean isQueryResource(){
 		if(resourceDataList != null && resourceDataList.size()>0){
 			return resourceDataList.get(0).isQueryResource();
