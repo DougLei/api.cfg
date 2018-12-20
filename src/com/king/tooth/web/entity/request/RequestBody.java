@@ -192,10 +192,10 @@ public class RequestBody implements Serializable{
 	}
 	
 	/**
-	 * 整合所有url参数的键值对集合
+	 * 获取所有url参数的键值对集合
 	 * @return
 	 */
-	public Map<String, String> installAllUrlParams() {
+	public Map<String, String> getAllUrlParams() {
 		Map<String, String> urlParams = new HashMap<String, String>(requestBuiltinParams.size() + requestResourceParams.size() + requestParentResourceParams.size());
 		urlParams.putAll(requestBuiltinParams);
 		urlParams.putAll(requestResourceParams);

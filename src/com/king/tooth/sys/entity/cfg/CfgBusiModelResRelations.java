@@ -47,7 +47,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 * 关联资源的主键属性名
 	 * <p>默认值为Id，后端取数据主键的时候，根据这个配置值从json对象中取</p>
 	 */
-	private String refResourceIdPropName;
+	private String idPropName;
 	/**
 	 * 关联的资源类型
 	 * <p>1.CfgTable、2.CfgSql</p>
@@ -55,10 +55,10 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	private Integer refResourceType;
 	
 	/**
-	 * 主资源中关联子资源的key名
-	 * <p>默认值为children，这个是在主资源对象中，用指定的key值存储子资源对象数组</p>
+	 * 关联资源的key名
+	 * <p>默认值为关联资源的资源名</p>
 	 */
-	private String refSubResourceKeyName;
+	private String refResourceKeyName;
 	/**
 	 * 子资源中关联父资源的属性id
 	 * <p>指定子资源的哪个属性，存储父资源的id值</p>
@@ -98,6 +98,9 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	@JSONField(serialize = false)
 	private String refParentResourcePropName;
 	
+	@JSONField(serialize = false)
+	private Boolean isQueryResource;
+	
 	public String getParentId() {
 		return parentId;
 	}
@@ -115,12 +118,6 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	}
 	public void setRefResourceId(String refResourceId) {
 		this.refResourceId = refResourceId;
-	}
-	public String getRefResourceIdPropName() {
-		return refResourceIdPropName;
-	}
-	public void setRefResourceIdPropName(String refResourceIdPropName) {
-		this.refResourceIdPropName = refResourceIdPropName;
 	}
 	public Integer getRefResourceType() {
 		return refResourceType;
@@ -140,11 +137,17 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	public void setOrderCode(Integer orderCode) {
 		this.orderCode = orderCode;
 	}
-	public String getRefSubResourceKeyName() {
-		return refSubResourceKeyName;
+	public String getIdPropName() {
+		return idPropName;
 	}
-	public void setRefSubResourceKeyName(String refSubResourceKeyName) {
-		this.refSubResourceKeyName = refSubResourceKeyName;
+	public void setIdPropName(String idPropName) {
+		this.idPropName = idPropName;
+	}
+	public String getRefResourceKeyName() {
+		return refResourceKeyName;
+	}
+	public void setRefResourceKeyName(String refResourceKeyName) {
+		this.refResourceKeyName = refResourceKeyName;
 	}
 	public void setSubBusiModelResRelationsList(List<CfgBusiModelResRelations> subBusiModelResRelationsList) {
 		this.subBusiModelResRelationsList = subBusiModelResRelationsList;
@@ -190,22 +193,21 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		refResourceIdColumn.setComments("CfgTable或CfgSql资源的id");
 		columns.add(refResourceIdColumn);
 		
-		CfgColumn refResourceIdPropNameColumn = new CfgColumn("ref_resource_id_prop_name", DataTypeConstants.STRING, 20);
-		refResourceIdPropNameColumn.setName("关联资源的主键属性名");
-		refResourceIdPropNameColumn.setComments("默认值为Id，后端取数据主键的时候，根据这个配置值从json对象中取");
-		refResourceIdPropNameColumn.setDefaultValue(ResourcePropNameConstants.ID);
-		columns.add(refResourceIdPropNameColumn);
+		CfgColumn idPropNameColumn = new CfgColumn("id_prop_name", DataTypeConstants.STRING, 20);
+		idPropNameColumn.setName("关联资源的主键属性名");
+		idPropNameColumn.setComments("默认值为"+ResourcePropNameConstants.ID+"，后端取数据主键的时候，根据这个配置值从json对象中取");
+		idPropNameColumn.setDefaultValue(ResourcePropNameConstants.ID);
+		columns.add(idPropNameColumn);
 		
 		CfgColumn refResourceTypeColumn = new CfgColumn("ref_resource_type", DataTypeConstants.INTEGER, 1);
 		refResourceTypeColumn.setName("关联的资源类型");
 		refResourceTypeColumn.setComments("1.CfgTable、2.CfgSql");
 		columns.add(refResourceTypeColumn);
 		
-		CfgColumn refSubResourceKeyNameColumn = new CfgColumn("ref_sub_resource_key_name", DataTypeConstants.STRING, 60);
-		refSubResourceKeyNameColumn.setName("主资源中关联子资源的key名");
-		refSubResourceKeyNameColumn.setComments("默认值为children，这个是在主资源对象中，用指定的key值存储子资源对象数组");
-		refSubResourceKeyNameColumn.setDefaultValue("children");
-		columns.add(refSubResourceKeyNameColumn);
+		CfgColumn refResourceKeyNameColumn = new CfgColumn("ref_resource_key_name", DataTypeConstants.STRING, 60);
+		refResourceKeyNameColumn.setName("主资源中关联子资源的key名");
+		refResourceKeyNameColumn.setComments("默认值为关联资源的资源名");
+		columns.add(refResourceKeyNameColumn);
 		
 		CfgColumn refParentResourcePropIdColumn = new CfgColumn("ref_parent_resource_prop_id", DataTypeConstants.STRING, 32);
 		refParentResourcePropIdColumn.setName("子资源中关联父资源的属性id");
@@ -270,6 +272,13 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		return result;
 	}
 	
+	public boolean isTableResource(){
+		return refResourceType == REF_RESOURCE_TYPE_CFG_TABLE;
+	}
+	public boolean isSqlResource(){
+		return refResourceType == REF_RESOURCE_TYPE_CFG_SQL;
+	}
+	
 	// --------------------------------------------------------
 	/**
 	 * 关联的资源类型
@@ -286,12 +295,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	private void setRefParentResourcePropName(boolean isQueryResource) {
 		if(this.refParentResourcePropName == null){
 			Object refParentResourcePropName = null;
-			if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
+			if(isTableResource()){
 				refParentResourcePropName = HibernateUtil.executeUniqueQueryByHqlArr(queryColumnPropNameHql, refParentResourcePropId);
 				if(StrUtils.isEmpty(refParentResourcePropName)){
 					throw new NullPointerException("在处理业务资源时，关系资源名为["+getRefResourceName()+"]，没有查询到其中有id=["+refParentResourcePropId+"]的列信息");
 				}
-			}else if(refResourceType == REF_RESOURCE_TYPE_CFG_SQL){
+			}else if(isSqlResource()){
 				if(isQueryResource){
 					refParentResourcePropName = HibernateUtil.executeUniqueQueryByHqlArr(querySqlResultsetPropNameHql, refParentResourcePropId);
 					if(StrUtils.isEmpty(refParentResourcePropName)){
@@ -367,12 +376,12 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	 */
 	@JSONField(serialize = false)
 	private Object setRefResource() {
-		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
+		if(isTableResource()){
 			if(refTable == null){
 				refTable = BuiltinResourceInstance.getInstance("CfgTableService", CfgTableService.class).findTableResourceById(refResourceId);
 			}
 			return refTable;
-		}else if(refResourceType == REF_RESOURCE_TYPE_CFG_SQL){
+		}else if(isSqlResource()){
 			CfgSql refSql = null;
 			if(refSqlList == null){
 				refSqlList = new ArrayList<CfgSql>();
@@ -390,7 +399,7 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	@JSONField(serialize = false)
 	public String getRefResourceName() {
 		setRefResource();
-		if(refResourceType == REF_RESOURCE_TYPE_CFG_TABLE){
+		if(isTableResource()){
 			return refTable.getResourceName();
 		}else{
 			return refSqlList.get(0).getResourceName();
@@ -493,35 +502,25 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 	/**
 	 * 进行业务数据操作
 	 */
-	public List<Object> doOperBusiDataList(Object[] pids){
+	public Object doOperBusiDataList(Object queryConditionPID){
 		if(resourceDataList != null && resourceDataList.size()>0){
-			List<Object> resultDatasList=null;
-			if(pids == null){
-				resultDatasList = new ArrayList<Object>(resourceDataList.size());
-				for(int i=0;i<resourceDataList.size();i++){
-					resultDatasList.add(resourceDataList.get(i).doOperBusiData(null));
-					resourceDataList.get(i).clear();
-				}
-			}else{
-				resultDatasList = new ArrayList<Object>(resourceDataList.size()+pids.length);
-				for(int i=0;i<resourceDataList.size();i++){
-					for(Object pid: pids){
-						resultDatasList.add(resourceDataList.get(i).doOperBusiData(pid));
-					}
-					resourceDataList.get(i).clear();
-				}
+			if(isQueryResource == null){
+				isQueryResource = resourceDataList.get(0).isQueryResource();
 			}
-			return resultDatasList;
+			
+			BusiModelResourceData data = null;
+			if(isQueryResource){
+				data = resourceDataList.get(0);
+			}else{
+				data = resourceDataList.remove(0);
+			}
+			try {
+				return data.doOperBusiData(queryConditionPID);
+			} finally {
+				data.clear();
+			}
 		}
 		return null;
-	}
-	
-	@JSONField(serialize = false)
-	public boolean isQueryResource(){
-		if(resourceDataList != null && resourceDataList.size()>0){
-			return resourceDataList.get(0).isQueryResource();
-		}
-		return false;
 	}
 	
 	/**

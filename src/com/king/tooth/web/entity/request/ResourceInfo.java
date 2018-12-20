@@ -78,16 +78,16 @@ public class ResourceInfo {
 			}
 			// 如果是业务模型资源，则要去查询相关的信息
 			else if(ResourceInfoConstants.BUSINESS_MODEL == resourceType){
-				if(!"post".equals(requestMethod)){
-					throw new IllegalArgumentException("系统目前只支持通过[post]方式的请求，调用业务模型资源");
+				if(!"get".equals(requestMethod) && !"post".equals(requestMethod)){
+					throw new IllegalArgumentException("系统目前只支持通过[get、post]方式的请求，调用业务模型资源");
 				}
 				busiModel = BuiltinResourceInstance.getInstance("CfgBusiModelService", CfgBusiModelService.class).findBusiModel(reqResource.getRefResourceId());
 			}
 			
 			// 如果请求包括父资源，则验证父资源是否可以调用
 			if(StrUtils.notEmpty(routeBody.getParentResourceName())){
-				if(!"get".equals(requestMethod)){
-					throw new IllegalArgumentException("系统目前只支持[get]方式的请求，调用资源的[主子/递归]");
+				if(!"get".equals(requestMethod) && resourceType != ResourceInfoConstants.TABLE){
+					throw new IllegalArgumentException("系统目前只支持[get]方式的请求，调用表资源的[主子/递归]");
 				}
 				if(resourceType == ResourceInfoConstants.BUSINESS_MODEL){
 					throw new IllegalArgumentException("系统目前不支持[主子/递归]方式调用业务模型资源");

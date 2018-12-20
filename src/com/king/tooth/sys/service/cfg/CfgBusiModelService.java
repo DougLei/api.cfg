@@ -125,7 +125,7 @@ public class CfgBusiModelService extends AService{
 				busiModelResRelations = tmpBusiModelResRelationsList.remove(i);
 				setSubBusiModelResRelations(busiModelResRelations, tmpBusiModelResRelationsList);
 				busiModelResRelationsList.add(busiModelResRelations);
-				i = 0;
+				i = -1;
 			}
 		}
 		

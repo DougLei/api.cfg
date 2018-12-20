@@ -17,73 +17,73 @@ public final class SingleResourceProcesser extends RequestProcesser {
 
 	protected boolean doProcess() {
 		CfgBusiModel busiModel = requestBody.getResourceInfo().getBusiModel();
-		JSONArray resultDataJSONArray = recursiveDoProcessBusiModelData(busiModel.getBusiModelResRelationsList(), null);
-		if(resultDataJSONArray == null){
+		JSONArray array = doProcessBusiModelRootData(busiModel.getBusiModelResRelationsList());
+		if(array == null){
 			setResponseBody(new ResponseBody("执行业务模型资源["+busiModel.getResourceName()+"]时，没有返回任何结果信息，请联系后端系统开发人员", null));
-		}else if(requestBody.getFormData().size() == 1 || busiModel.getBusiModelResRelationsList().size() == 1){
-			setResponseBody(new ResponseBody(null, resultDataJSONArray.get(0)));
+		}else if(busiModel.getBusiModelResRelationsList().size() == 1){
+			setResponseBody(new ResponseBody(null, array.get(0)));
 		}else{
-			setResponseBody(new ResponseBody(null, resultDataJSONArray));
+			setResponseBody(new ResponseBody(null, array));
 		}
 		return true;
 	}
 
 	/**
-	 * 递归处理业务模型资源数据
-	 * @param busiModelResRelationsList
-	 * @param pids 父id数组，查询的时候用到
+	 * 处理业务模型资源根数据
+	 * @param rootList
 	 * @return
 	 */
-	private JSONArray recursiveDoProcessBusiModelData(List<CfgBusiModelResRelations> busiModelResRelationsList, Object[] pids) {
-		if(busiModelResRelationsList != null && busiModelResRelationsList.size() > 0){
-			JSONArray resultDataJSONArray = new JSONArray(busiModelResRelationsList.size());
-			for (CfgBusiModelResRelations busiModelResRelations : busiModelResRelationsList) {
-				List<Object> resultDatasList = busiModelResRelations.doOperBusiDataList(pids);
-
-				if(resultDatasList != null && resultDatasList.size() > 0){
-					int size = resultDatasList.size();
-					Object resultDatas = null;
-					for(int i=0;i<size;i++){
-						resultDatas = resultDatasList.get(i);
-						resultDataJSONArray.add(resultDatas);
-						
-						JSONArray subResultDataJSONArray = null;
-						if(resultDatas != null){
-							if(resultDatas instanceof JSONObject){
-								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), busiModelResRelations.isQueryResource()?new Object[]{((JSONObject)resultDatas).get(busiModelResRelations.getRefResourceIdPropName())}:null);
-							
-								if(subResultDataJSONArray != null){
-									((JSONObject)resultDatas).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(i));
-								}
-							}else if(resultDatas instanceof JSONArray){
-								JSONArray tmpResultDatasJSONArray = (JSONArray)resultDatas;
-								int tmpSize = tmpResultDatasJSONArray.size();
-								
-								Object[] tmpPids = null;
-								if(busiModelResRelations.isQueryResource()){
-									tmpPids = new Object[tmpSize];
-									for(int j=0;j<tmpSize;j++){
-										tmpPids[j] = tmpResultDatasJSONArray.getJSONObject(j).get(busiModelResRelations.getRefResourceIdPropName());
-									}
-								}
-								subResultDataJSONArray = recursiveDoProcessBusiModelData(busiModelResRelations.getSubBusiModelResRelationsList(), tmpPids);
-								
-								if(subResultDataJSONArray != null){
-									for(int j=0;j<tmpResultDatasJSONArray.size();j++){
-										if( j< subResultDataJSONArray.size()){
-											tmpResultDatasJSONArray.getJSONObject(j).put(busiModelResRelations.getRefSubResourceKeyName(), subResultDataJSONArray.get(j));
-										}
-									}
-								}
-							}
+	private JSONArray doProcessBusiModelRootData(List<CfgBusiModelResRelations> rootList) {
+		JSONArray array = new JSONArray(rootList.size());
+		
+		for (CfgBusiModelResRelations busiModelResRelations : rootList) {
+			Object data = busiModelResRelations.doOperBusiDataList(null);
+			array.add(data);
+			
+			if(data != null && busiModelResRelations.haveSubBusiModelResRelationsList()){
+				if(data instanceof JSONObject){
+					JSONObject json = (JSONObject) data;
+					for(CfgBusiModelResRelations sub: busiModelResRelations.getSubBusiModelResRelationsList()){
+						recursiveDoProcessBusiModelData(json, sub, json.get(busiModelResRelations.getIdPropName()));
+					}
+				}else{
+					JSONArray jarray = (JSONArray) data;
+					for(int j=0;j<jarray.size();j++){
+						for(CfgBusiModelResRelations sub: busiModelResRelations.getSubBusiModelResRelationsList()){
+							recursiveDoProcessBusiModelData(jarray.getJSONObject(j), sub , jarray.getJSONObject(j).get(busiModelResRelations.getIdPropName()));
 						}
 					}
-					resultDatasList.clear();
 				}
 			}
-			return resultDataJSONArray;
 		}
-		return null;
+		return array;
+	}
+	
+	/**
+	 * 递归处理业务模型资源根数据
+	 * @param parentJson
+	 * @param busiModelResRelations
+	 * @param queryConditionPID
+	 */
+	private void recursiveDoProcessBusiModelData(JSONObject parentJson, CfgBusiModelResRelations busiModelResRelations, Object queryConditionPID) {
+		Object data = busiModelResRelations.doOperBusiDataList(queryConditionPID);
+		parentJson.put(busiModelResRelations.getRefResourceKeyName(), data);
+		
+		if(data != null && busiModelResRelations.haveSubBusiModelResRelationsList()){
+			if(data instanceof JSONObject){
+				JSONObject json = (JSONObject) data;
+				for(CfgBusiModelResRelations sub: busiModelResRelations.getSubBusiModelResRelationsList()){
+					recursiveDoProcessBusiModelData(json, sub, json.get(busiModelResRelations.getIdPropName()));
+				}
+			}else{
+				JSONArray jarray = (JSONArray) data;
+				for(int j=0;j<jarray.size();j++){
+					for(CfgBusiModelResRelations sub: busiModelResRelations.getSubBusiModelResRelationsList()){
+						recursiveDoProcessBusiModelData(jarray.getJSONObject(j), sub , jarray.getJSONObject(j).get(busiModelResRelations.getIdPropName()));
+					}
+				}
+			}
+		}
 	}
 
 	public String getProcesserName() {

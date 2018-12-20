@@ -42,6 +42,9 @@ public class CfgBusiModelResRelationsService extends AService{
 				if(table.getIsBuildModel() == 0){
 					return "业务模型资源关系中，关联的表资源["+table.getName()+"]还未建模";
 				}
+				if(StrUtils.isEmpty(busiModelResRelations.getRefResourceKeyName())){
+					busiModelResRelations.setRefResourceKeyName(table.getResourceName());
+				}
 			} catch (NullPointerException e) {
 				return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefResourceId()+"]的表资源";
 			}
@@ -60,6 +63,9 @@ public class CfgBusiModelResRelationsService extends AService{
 			CfgSql sql = null;
 			try {
 				sql = getObjectById(busiModelResRelations.getRefResourceId(), CfgSql.class);
+				if(StrUtils.isEmpty(busiModelResRelations.getRefResourceKeyName())){
+					busiModelResRelations.setRefResourceKeyName(sql.getResourceName());
+				}
 			} catch (NullPointerException e) {
 				return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefResourceId()+"]的sql资源";
 			}

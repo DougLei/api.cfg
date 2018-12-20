@@ -1,11 +1,22 @@
 package test;
 
-import com.king.tooth.util.ResourceHandlerUtil;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class TestMain {
 	public static void main(String[] args) throws CloneNotSupportedException {
-		Object o = ResourceHandlerUtil.getRandom(1000);
-		System.out.println(o.toString());
+		Map<String, String> s = new HashMap<String, String>();
+		s.put("1", "1111111");
+		
+		
+		Map<String, Object> s1 = new HashMap<String, Object>(s);
+		
+		System.out.println(s);
+		System.out.println(s1);
+		s.clear();
+		System.out.println(s);
+		System.out.println(s1);
+		
 	}
 }

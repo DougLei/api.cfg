@@ -44,7 +44,7 @@ public class BusiModelResourceData implements Serializable{
 	 * 数据的父级id
 	 * <p>如果是根，则该值为null</p>
 	 */
-	private String dataParentId;
+	private String parentId;
 	/**
 	 * 实际的数据
 	 */
@@ -58,13 +58,13 @@ public class BusiModelResourceData implements Serializable{
 	// -----------------------------------------------------------
 	public BusiModelResourceData() {
 	}
-	public BusiModelResourceData(String token, String requestURL, String busiModelResourceName, Object dataParentId, IJson datas) {
+	public BusiModelResourceData(String token, String requestURL, String busiModelResourceName, Object parentId, IJson datas) {
 		tokenHeader = new HashMap<String, String>(1);
 		tokenHeader.put("_token", token);
 		this.requestURL = requestURL;
 		this.busiModelResourceName = busiModelResourceName;
 		this.datas = datas;
-		this.dataParentId = dataParentId==null?null:dataParentId.toString();
+		this.parentId = parentId==null?null:parentId.toString();
 	}
 	
 	// -----------------------------------------------------------
@@ -113,13 +113,13 @@ public class BusiModelResourceData implements Serializable{
 				
 				if(!(isQueryResource = refSql.isSelectSql())){
 					// 如果有父数据id，则要将其赋值到datas数据中，最后解析出实际传入的参数值集合
-					String refParentResourcePropName = dataParentId==null?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
+					String refParentResourcePropName = parentId==null?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
 					JSONObject data = null;
 					for(int i=0; i < datas.size(); i++){
 						data = datas.get(i);
 						data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);// 并且尝试移除$operDataType$的值
-						if(dataParentId != null){
-							data.put(refParentResourcePropName, dataParentId);
+						if(parentId != null){
+							data.put(refParentResourcePropName, parentId);
 						}
 					}
 					
@@ -152,27 +152,27 @@ public class BusiModelResourceData implements Serializable{
 	/**
 	 * 操作业务数据
 	 * <p>返回的object 要么是null，要么是JSONObject，要么是JSONArray</p>
-	 * @param pid 
+	 * @param queryConditionPID 
 	 */
-	public Object doOperBusiData(Object pid){
+	public Object doOperBusiData(Object queryConditionPID){
 		// 操作结果对象
 		Object resultDatas = null;
 		
 		if(isTableResource){
 			if(datas != null && datas.size() > 0){
-				String refParentResourcePropName = (dataParentId==null && pid==null)?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
+				String refParentResourcePropName = (parentId==null && queryConditionPID==null)?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
 				
 				Object operDataType = datas.get(0).get(ResourcePropNameConstants.OPER_DATA_TYPE);
 				if(operDataType == null || OperDataTypeConstants.SELECT.equals(operDataType)){// operDataType==null的只会在查询的时候出现
-					resultDatas = getQueryResultset(pid, refParentResourcePropName, "表");
+					resultDatas = getQueryResultset(queryConditionPID, refParentResourcePropName, "表");
 				}else{
 					JSONObject data = null;
 					rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
 					for(int i=0; i < datas.size(); i++){
 						data = datas.get(i);
 						operDataType = data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
-						if(dataParentId != null){
-							data.put(refParentResourcePropName, dataParentId);
+						if(parentId != null){
+							data.put(refParentResourcePropName, parentId);
 						}
 						if(OperDataTypeConstants.ADD.equals(operDataType)){
 							PropCodeRuleUtil.setTableResourceFinalCodeVal(data, i, rules);
@@ -194,8 +194,8 @@ public class BusiModelResourceData implements Serializable{
 		}else{
 			CfgSql refSql = busiModelResRelations.getRefSqlForExecute();
 			if(isQueryResource){
-				String refParentResourcePropName = (dataParentId==null && pid==null)?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
-				resultDatas = getQueryResultset(pid, refParentResourcePropName, "sql");
+				String refParentResourcePropName = (parentId==null && queryConditionPID==null)?null:busiModelResRelations.getRefParentResourcePropName(isQueryResource);
+				resultDatas = getQueryResultset(queryConditionPID, refParentResourcePropName, "sql");
 			}else{
 				rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
 				
@@ -218,18 +218,18 @@ public class BusiModelResourceData implements Serializable{
 		return resultDatas;
 	}
 	
-	private Object getQueryResultset(Object pid, String refParentResourcePropName, String desc){
+	private Object getQueryResultset(Object queryConditionPID, String refParentResourcePropName, String desc){
 		JSONObject data = datas.get(0);
 		data.remove(ResourcePropNameConstants.OPER_DATA_TYPE);
 		
-		if(pid != null){
-			data.put(refParentResourcePropName, pid);
+		if(queryConditionPID != null){
+			data.put(refParentResourcePropName, queryConditionPID);
 		}
 		JSONObject tmpData = null;
-		if(StrUtils.notEmpty(data.get(busiModelResRelations.getRefResourceIdPropName()))){
-			String id = data.remove(busiModelResRelations.getRefResourceIdPropName()).toString();
+		if(StrUtils.notEmpty(data.get(busiModelResRelations.getIdPropName()))){
+			String id = data.remove(busiModelResRelations.getIdPropName()).toString();
 			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName + "/" + id, data, tokenHeader));
-			data.put(busiModelResRelations.getRefResourceIdPropName(), id);
+			data.put(busiModelResRelations.getIdPropName(), id);
 		}else{
 			tmpData = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + refResourceName, data, tokenHeader));
 		}

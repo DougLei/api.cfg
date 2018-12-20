@@ -151,8 +151,12 @@ public class ReqDataPreProcesserFilter extends AbstractFilter{
 		Map<String, String> builtinParams = null;
 		if(urlParams.size() > 0){
 			builtinParams = new HashMap<String, String>(urlParams.size());
+			String builtinParamValue = null;
 			for (String bufp : BuiltinParameterKeys.BUILTIN_URL_FUNC_PARAMS) {
-				builtinParams.put(bufp, urlParams.remove(bufp));
+				builtinParamValue = urlParams.remove(bufp);
+				if(StrUtils.notEmpty(builtinParamValue)){
+					builtinParams.put(bufp, builtinParamValue);
+				}
 			}
 		}else{
 			builtinParams = new HashMap<String, String>(1);
