@@ -39,12 +39,19 @@ public class BackupUploadFileJob implements Job, Serializable{
 			fileBak(SysFileConstants.fileSavePath, SysFileConstants.fileBackupPath + File.separator + "bak" + DateUtil.getWeekend() + File.separator);
 		}
 		
-		
-		
+		// 备份其他文件
 		String source = ResourceHandlerUtil.initConfValue("other.file.source.dir", null);
 		String target = ResourceHandlerUtil.initConfValue("other.file.bak.target.dir", null);
 		if(StrUtils.notEmpty(source) && StrUtils.notEmpty(target)){
-			fileBak(source, target);
+			String[] sources = source.split(",");
+			String[] targets = target.split(",");
+			int length = sources.length;
+			if(length > targets.length){
+				length = targets.length;
+			}
+			for(int i=0;i<length;i++){
+				fileBak(sources[i], targets[i]);
+			}
 		}
 	}
 	
