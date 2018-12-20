@@ -13,6 +13,8 @@ import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.ExceptionUtil;
 import com.king.tooth.util.FileUtil;
 import com.king.tooth.util.Log4jUtil;
+import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 备份用户在系统中上传的所有文件的任务
@@ -31,7 +33,30 @@ public class BackupUploadFileJob implements Job, Serializable{
 				FileUtil.batchCopyfiles(rootUploadFolder, backupUploadFolder, false);
 			} catch (IOException e) {
 				Log4jUtil.error("系统在备份用户在系统中上传的所有文件时出现异常，请联系系统管理员:{}", ExceptionUtil.getErrMsg(e));
-			}		
+			}	
+			
+			
+			fileBak(SysFileConstants.fileSavePath, SysFileConstants.fileBackupPath + File.separator + "bak" + DateUtil.getWeekend() + File.separator);
 		}
+		
+		
+		
+		String source = ResourceHandlerUtil.initConfValue("other.file.source.dir", null);
+		String target = ResourceHandlerUtil.initConfValue("other.file.bak.target.dir", null);
+		if(StrUtils.notEmpty(source) && StrUtils.notEmpty(target)){
+			fileBak(source, target);
+		}
+	}
+	
+	private void fileBak(String source, String target){
+		// 用户上传的所有文件的根目录
+		File rootUploadFolder = new File(source);
+		// 备份的目标地址：例如E:\\devTools\\backup\\bak周几\\
+		File backupUploadFolder = new File(target);
+		try {
+			FileUtil.batchCopyfiles(rootUploadFolder, backupUploadFolder, false);
+		} catch (IOException e) {
+			Log4jUtil.error("系统在备份文件时出现异常，请联系系统管理员:{}", ExceptionUtil.getErrMsg(e));
+		}		
 	}
 }

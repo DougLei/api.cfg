@@ -1,22 +1,15 @@
 package test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+
+import org.springframework.util.FileCopyUtils;
 
 
 public class TestMain {
-	public static void main(String[] args) throws CloneNotSupportedException {
-		Map<String, String> s = new HashMap<String, String>();
-		s.put("1", "1111111");
-		
-		
-		Map<String, Object> s1 = new HashMap<String, Object>(s);
-		
-		System.out.println(s);
-		System.out.println(s1);
-		s.clear();
-		System.out.println(s);
-		System.out.println(s1);
-		
+	public static void main(String[] args) throws CloneNotSupportedException, IOException {
+		File sourceFile = new File("C:\\Users\\StoneKing\\Desktop\\修改业务建模子表的字段名.txt");
+		File targetFile = new File("C:\\Users\\StoneKing\\Desktop\\bbbb.txt");
+		FileCopyUtils.copy(sourceFile, targetFile);
 	}
 }
