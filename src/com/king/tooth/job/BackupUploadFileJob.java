@@ -26,17 +26,10 @@ public class BackupUploadFileJob implements Job, Serializable{
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		if(SysFileConstants.saveToService && SysFileConstants.fileBackupPath != null){
 			// 用户上传的所有文件的根目录
-			File rootUploadFolder = new File(SysFileConstants.fileSavePath);
+			String sourceUploadFile = SysFileConstants.fileSavePath;
 			// 备份的目标地址：例如E:\\devTools\\backup\\bak周几\\
-			File backupUploadFolder = new File(SysFileConstants.fileBackupPath + File.separator + "bak" + DateUtil.getWeekend() + File.separator);
-			try {
-				FileUtil.batchCopyfiles(rootUploadFolder, backupUploadFolder, false);
-			} catch (IOException e) {
-				Log4jUtil.error("系统在备份用户在系统中上传的所有文件时出现异常，请联系系统管理员:{}", ExceptionUtil.getErrMsg(e));
-			}	
-			
-			
-			fileBak(SysFileConstants.fileSavePath, SysFileConstants.fileBackupPath + File.separator + "bak" + DateUtil.getWeekend() + File.separator);
+			String targetUploadFile = SysFileConstants.fileBackupPath + File.separator + "bak" + DateUtil.getWeekend() + File.separator;
+			fileBak(sourceUploadFile, targetUploadFile);
 		}
 		
 		bakOther();
