@@ -148,7 +148,7 @@ public class CfgBusiModelService extends AService{
 		CfgBusiModelResRelations busiModelResRelations = null;
 		
 		for(int i=0;i<busiModelResRelationsList.size();i++){
-			if(busiModelResRelationsList.get(i).getParentId().equals(subParentId)){
+			if(subParentId.equals(busiModelResRelationsList.get(i).getParentId())){
 				busiModelResRelations = busiModelResRelationsList.remove(i);
 				setSubBusiModelResRelations(busiModelResRelations, busiModelResRelationsList);
 				pBusiModelResRelations.addSubBusiModelResRelations(busiModelResRelations);
