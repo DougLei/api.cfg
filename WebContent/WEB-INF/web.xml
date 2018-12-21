@@ -71,13 +71,13 @@
 			<url-pattern>/*</url-pattern>
 		</filter-mapping>
 		
-		<!-- 配置(简单)图片预览的过滤器，实现前端可通过http://ip:port/projectName/xxx的url格式访问图片 -->
+		<!-- 配置(简单)文件预览的过滤器，实现前端可通过http://ip:port/projectName/xxx的url格式访问相关文件 -->
 		<filter>
-			<filter-name>simpleImagePreviewFilter</filter-name>
-			<filter-class>com.king.tooth.filter.SimpleImagePreviewFilter</filter-class>
+			<filter-name>simpleFilePreviewFilter</filter-name>
+			<filter-class>com.king.tooth.filter.SimpleFilePreviewFilter</filter-class>
 		</filter>
 		<filter-mapping>
-			<filter-name>simpleImagePreviewFilter</filter-name>
+			<filter-name>simpleFilePreviewFilter</filter-name>
 			<url-pattern>/files/*</url-pattern><!-- files为上传文件时，保存到服务器中的根目录，即默认保存路径的根目录名称 -->
 		</filter-mapping>
 		

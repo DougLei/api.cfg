@@ -65,15 +65,16 @@ public class DatabaseTest extends Parent{
 	}
 	
 	private static void executeSqlTest() throws ClassNotFoundException, SQLException{
-		String sql = getSql();
+		String[] sqls = getSql().split(";");
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SmartOneCfg", "sa", "123_abc");
 
 		Statement s = conn.createStatement();
 		System.out.println("1222");
-		s.execute(sql);
-		System.out.println("1");
 		
+		for(String sql : sqls){
+			System.out.println(s.executeUpdate(sql));
+		}
 	}
 
 	private static String getSql() {
@@ -118,7 +119,7 @@ public class DatabaseTest extends Parent{
 		sqls += "   C.COLUMN_ID AS PARENT_ID\n"; 
 		sqls += "  FROM dbo.SYS_COLS_DETAILS AS C),\n"; 
 		sqls += "   A AS (\n"; 
-		sqls += "  SELECT ID,NAME,PARENT_ID FROM cte WHERE ID= '15tYYOyzkzgwYP7snHsm2xPc7oOlVpdE'\n"; 
+		sqls += "  SELECT ID,NAME,PARENT_ID FROM cte WHERE ID= '1'\n"; 
 		sqls += "  UNION ALL\n"; 
 		sqls += "  SELECT cte.ID, cte.NAME, cte.PARENT_ID FROM cte\n"; 
 		sqls += "  INNER JOIN A ON cte.PARENT_ID = A.ID\n"; 
@@ -127,9 +128,9 @@ public class DatabaseTest extends Parent{
 		sqls += "          ( ID ) \n"; 
 		sqls += "  SELECT ID FROM A\n"; 
 		sqls += "  DELETE FROM dbo.SYS_COLS_DETAILS WHERE\n"; 
-		sqls += "  ID IN(SELECT ID FROM @layouttemple);\n"; 
+		sqls += "  ID IN(SELECT ID FROM @layouttemple)\n"; 
 		sqls += "  DELETE FROM dbo.SYS_ROWS_COLS WHERE\n"; 
-		sqls += "  ID IN(SELECT ID FROM @layouttemple);\n"; 
+		sqls += "  ID IN(SELECT ID FROM @layouttemple)\n"; 
 		return sqls;
 	}
 }
