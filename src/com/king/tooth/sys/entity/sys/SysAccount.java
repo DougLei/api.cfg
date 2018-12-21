@@ -45,6 +45,10 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 	 */
 	private String email;
 	/**
+	 * 工号
+	 */
+	private String workNo;
+	/**
 	 * 账户类型
 	 * 		1.管理员
 	 * 		2.普通账户
@@ -124,6 +128,12 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	public String getWorkNo() {
+		return workNo;
+	}
+	public void setWorkNo(String workNo) {
+		this.workNo = workNo;
+	}
 	public Integer getType() {
 		return type;
 	}
@@ -157,7 +167,7 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(16);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(10+7);
 		
 		CfgColumn loginNameColumn = new CfgColumn("login_name", DataTypeConstants.STRING, 30);
 		loginNameColumn.setName("登录名");
@@ -183,6 +193,12 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 		emailColumn.setName("邮箱");
 		emailColumn.setComments("邮箱");
 		columns.add(emailColumn);
+		
+		CfgColumn workNoColumn = new CfgColumn("work_no", DataTypeConstants.STRING, 64);
+		workNoColumn.setName("工号");
+		workNoColumn.setComments("工号");
+		workNoColumn.setIsNullabled(0);
+		columns.add(workNoColumn);
 
 		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("账户类型");

@@ -106,8 +106,20 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	 * <p>配置系统使用</p>
 	 */
 	private String confProjectId;
+	
+	/**
+	 * 登陆类型
+	 * <p>0：用户名密码登陆、1：刷卡登陆</p>
+	 */
+	private int loginType = -1;
 
 	//-------------------------------------------------------------------------
+	public SysAccountOnlineStatus() {
+	}
+	public SysAccountOnlineStatus(String message) {
+		this.isError = 1;
+		this.message = message;
+	}
 
 	/**
 	 * 是否修改账户在线状态信息
@@ -321,6 +333,14 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	public void setRoleIds(List<Object> roleIds) {
 		this.roleIds = roleIds;
 	}
+	public int getLoginType() {
+		return loginType;
+	}
+	public void setLoginType(int loginType) {
+		if(this.loginType == -1){
+			this.loginType = loginType;
+		}
+	}
 	public boolean getIsExistsUserObj() {
 		return isExistsUserObj;
 	}
@@ -330,7 +350,7 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(24);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(18+7);
 		
 		CfgColumn accountIdColumn = new CfgColumn("account_id", DataTypeConstants.STRING, 32);
 		accountIdColumn.setName("当前账户id");
@@ -418,6 +438,11 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 		confProjectIdColumn.setComments("配置的项目id：配置系统使用");
 		columns.add(confProjectIdColumn);
 		
+		CfgColumn loginTypeColumn = new CfgColumn("login_type", DataTypeConstants.INTEGER, 1);
+		loginTypeColumn.setName("登陆类型");
+		loginTypeColumn.setComments("0：用户名密码登陆、1：刷卡登陆");
+		columns.add(loginTypeColumn);
+		
 		return columns;
 	}
 	
@@ -463,5 +488,16 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	@JSONField(serialize = false)
 	public boolean isDeveloper(){
 		return (accountType == 3);
+	}
+	
+	/**0：用户名密码登陆*/
+	public SysAccountOnlineStatus loginByUserNameAndPassword(){
+		this.setLoginType(0);
+		return this;
+	}
+	/**1：刷卡登陆*/
+	public SysAccountOnlineStatus loginByCard(){
+		this.setLoginType(1);
+		return this;
 	}
 }

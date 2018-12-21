@@ -12,6 +12,7 @@ import com.king.tooth.sys.controller.cfg.CfgProjectModuleController;
 import com.king.tooth.sys.controller.cfg.CfgSqlController;
 import com.king.tooth.sys.controller.cfg.CfgSqlParameterController;
 import com.king.tooth.sys.controller.cfg.CfgTableController;
+import com.king.tooth.sys.controller.sys.SysAccountCardController;
 import com.king.tooth.sys.controller.sys.SysAccountController;
 import com.king.tooth.sys.controller.sys.SysExcelController;
 import com.king.tooth.sys.controller.sys.SysPermissionController;
@@ -140,6 +141,14 @@ public class CodeResourceMapping {
 		put("/account/add/post", SysAccountController.class, "add");
 		put("/account/update/put", SysAccountController.class, "update");
 		put("/account/delete/delete", SysAccountController.class, "delete");
+		
+		// 账户卡操作
+		put("/SysAccountCard_post", SysAccountCardController.class, "add");
+		put("/SysAccountCard_put", SysAccountCardController.class, "update");
+		put("/SysAccountCard_delete", SysAccountCardController.class, "delete");
+		put("/account/card/add/post", SysAccountCardController.class, "add");
+		put("/account/card/update/put", SysAccountCardController.class, "update");
+		put("/account/card/delete/delete", SysAccountCardController.class, "delete");
 	}
 	
 	/**
@@ -172,6 +181,9 @@ public class CodeResourceMapping {
 		// 账户操作
 		put("/login/post", SysAccountController.class, "login");
 		put("/login_out/post", SysAccountController.class, "loginOut");
+		
+		// 账户卡操作
+		put("/card/login/post", SysAccountCardController.class, "login");
 		
 		// 权限操作
 		put("/permission/get", SysPermissionController.class, "calcPermissionByCode");

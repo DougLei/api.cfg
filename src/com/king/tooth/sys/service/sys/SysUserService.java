@@ -7,7 +7,6 @@ import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
 import com.king.tooth.sys.entity.sys.SysUser;
@@ -223,15 +222,8 @@ public class SysUserService extends AService{
 		}
 		if(result == null){
 			if(user.getIsCreateAccount() == 1){
-				SysAccount account = new SysAccount();
-				account.setLoginName(user.getWorkNo());
-				account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-				account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
-				account.setTel(user.getTel());
-				account.setEmail(user.getEmail());
-				account.setValidDate(BuiltinObjectInstance.validDate);
-				String accountId = HibernateUtil.saveObject(account, null).getString(ResourcePropNameConstants.ID);
-				user.setId(accountId);
+				JSONObject account = (JSONObject)operAccount(user, false);
+				user.setId(account.getString(ResourcePropNameConstants.ID));
 			}
 			JSONObject userJsonObject = HibernateUtil.saveObject(user, null);
 			String userId = userJsonObject.getString(ResourcePropNameConstants.ID);
@@ -268,46 +260,19 @@ public class SysUserService extends AService{
 	public Object updateUser(SysUser user){
 		SysUser oldUser = getObjectById(user.getId(), SysUser.class);
 		
-		String accountId = user.getId();
-		boolean accountIsExists = accountIsExists(accountId);
-		boolean isCreateAccount = (user.getIsCreateAccount()==1);// 标识是否创建/修改账户信息
-		SysAccount account = null;
-		if(isCreateAccount){
-			if(accountIsExists){
-				account = getObjectById(accountId, SysAccount.class);
-			}else{
-				account = new SysAccount(accountId);
-			}
-		}
-		
 		String result = null;
 		if(!oldUser.getWorkNo().equals(user.getWorkNo())){
 			result = validWorkNoIsExists(user);
-			if(result == null && isCreateAccount && user.getIsSyncLoginName() == 1){
-				account.setLoginName(user.getWorkNo());
-			}
 		}
 		if(result == null && (StrUtils.notEmpty(oldUser.getEmail()) && !oldUser.getEmail().equals(user.getEmail())) || (StrUtils.isEmpty(oldUser.getEmail()) && StrUtils.notEmpty(user.getEmail()))){
 			result = validEmailIsExists(user);
-			if(result == null && isCreateAccount){
-				account.setEmail(user.getEmail());
-			}
 		}
 		if(result == null && (StrUtils.notEmpty(oldUser.getTel()) && !oldUser.getTel().equals(user.getTel())) || (StrUtils.isEmpty(oldUser.getTel()) && StrUtils.notEmpty(user.getTel()))){
 			result = validTelIsExists(user);
-			if(result == null && isCreateAccount){
-				account.setTel(user.getTel());
-			}
 		}
 		if(result == null){
-			if(isCreateAccount){
-				if(accountIsExists){
-					HibernateUtil.updateEntityObject(account, null);
-				}else{
-					account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-					account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
-					HibernateUtil.saveObject(account, null);
-				}
+			if(user.getIsCreateAccount()==1){
+				operAccount(user, false);
 			}
 			JSONObject userJsonObject = HibernateUtil.updateEntityObject(user, null);
 			String userId = oldUser.getId();
@@ -358,25 +323,45 @@ public class SysUserService extends AService{
 	/**
 	 * 开通账户
 	 * @param user
+	 * @param isLoadUser
 	 * @return
 	 */
 	public Object openAccount(SysUser user) {
-		user = getObjectById(user.getId(), SysUser.class);
+		return operAccount(user, true);
+	}
+	
+	/**
+	 * 操作账户
+	 * @param originUser
+	 * @param isLoadUser
+	 * @return
+	 */
+	private Object operAccount(SysUser originUser, boolean isLoadUser) {
+		SysUser user = originUser;
+		if(isLoadUser){
+			user = getObjectById(originUser.getId(), SysUser.class);
+			user.setIsSyncLoginName(originUser.getIsSyncLoginName());
+		}
 		
 		if(accountIsExists(user.getId())){
 			SysAccount account = getObjectById(user.getId(), SysAccount.class);
-			if(account.getIsDelete() == 0){
+			
+			if(isLoadUser && account.getIsDelete() == 0){
 				return "用户["+user.getName()+"]已经存在账户，禁止重复开通账户";
-			}else if(account.getIsDelete() == 1){
-				account.setIsDelete(0);
+			}else{
+				// 之前被删除了账户，这里要重置密码
+				if(isLoadUser && account.getIsDelete() == 1){
+					account.setIsDelete(0);
+					account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
+				}
+				
 				account.setLastUpdateDate(new Date());
-				// ----
 				if(user.getIsSyncLoginName() == 1){
 					account.setLoginName(user.getWorkNo());
 				}
-				account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
+				account.setWorkNo(user.getWorkNo());
 				HibernateUtil.updateEntityObject(account, null);
 			}
 		}else{
@@ -388,6 +373,7 @@ public class SysUserService extends AService{
 			account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 			account.setTel(user.getTel());
 			account.setEmail(user.getEmail());
+			account.setWorkNo(user.getWorkNo());
 			HibernateUtil.saveObject(account, null);
 		}
 		

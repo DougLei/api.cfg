@@ -92,7 +92,7 @@ public class CfgBusiModelResRelationsService extends AService{
 					try {
 						getObjectById(busiModelResRelations.getRefParentResourcePropId(), CfgSqlResultset.class);
 					} catch (NullPointerException e) {
-						return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的sql参数属性";
+						return "业务模型资源关系中，不存在id为["+busiModelResRelations.getRefParentResourcePropId()+"]的sql结果集属性";
 					}
 				}else{
 					try {

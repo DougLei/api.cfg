@@ -59,18 +59,48 @@ public class SysAccountService extends AService{
 	
 	//-----------------------------------------------------------------------------------------------
 	/**
-	 * 登录
+	 * 用户名密码登录
 	 * <p>创建或修改一个账户在线状态对象</p>
 	 * @param loginIp
 	 * @param accountName
 	 * @param password
 	 * @return
 	 */
-	public SysAccountOnlineStatus login(String loginIp, String accountName, String password){
+	public SysAccountOnlineStatus loginByUsernameAndPwd(String loginIp, String accountName, String password){
+		if(password.equals(loingByCardOfPassword)){
+			return new SysAccountOnlineStatus("用户名密码登陆时，禁止调用刷卡登陆的密码");
+		}
+		return commonLogin(loginIp, accountName, password);
+	}
+	
+	/**
+	 * 刷卡登录
+	 * <p>创建或修改一个账户在线状态对象</p>
+	 * @param loginIp
+	 * @param accountName
+	 * @return
+	 */
+	public SysAccountOnlineStatus loginByCard(String loginIp, String accountName){
+		if(StrUtils.isEmpty(accountName)){
+			return new SysAccountOnlineStatus("刷卡登陆时，获取账户名为空");
+		}
+		return commonLogin(loginIp, accountName, loingByCardOfPassword);
+	}
+	private static final String loingByCardOfPassword = "ad791d1940bd788b0fdada53bad6bc74";
+	
+	/**
+	 * 通用的登陆
+	 * @param loginIp
+	 * @param accountName
+	 * @param password
+	 * @return
+	 */
+	private SysAccountOnlineStatus commonLogin(String loginIp, String accountName, String password){
 		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
 		accountOnlineStatus.setIsDoLogin(true);
-		
 		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
+		
+		setLoginType(accountOnlineStatus, password);
 		if(accountOnlineStatus.getIsSave()){
 			HibernateUtil.saveObject(accountOnlineStatus, accountOnlineStatus.getLoginIp() + ":请求登录");
 		}else{
@@ -79,6 +109,16 @@ public class SysAccountService extends AService{
 		return accountOnlineStatus;
 	}
 	
+	/**记录登陆类型*/
+	private void setLoginType(SysAccountOnlineStatus accountOnlineStatus, String password) {
+		if("ad791d1940bd788b0fdada53bad6bc74".equals(password)){
+			accountOnlineStatus.loginByCard();
+		}else{
+			accountOnlineStatus.loginByUserNameAndPassword();
+		}
+	}
+
+
 	/**
 	 * 获取指定账户的在线状态对象信息
 	 * @param accountName
@@ -101,8 +141,8 @@ public class SysAccountService extends AService{
 			return accountOnlineStatus;
 		}
 		
-		String queryAccountHql = "from SysAccount where (loginName = ? or tel = ? or email = ?) and customerId = ? and isDelete=0";
-		SysAccount loginAccount = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccount.class, queryAccountHql, accountName, accountName, accountName, CurrentThreadContext.getCustomerId());
+		String queryAccountHql = "from SysAccount where (loginName = ? or tel = ? or email = ? or workNo = ?) and customerId = ? and isDelete=0";
+		SysAccount loginAccount = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccount.class, queryAccountHql, accountName, accountName, accountName, accountName, CurrentThreadContext.getCustomerId());
 		
 		if(loginAccount == null){
 			accountOnlineStatus.setMessage("账号或密码错误，请重新输入");
@@ -116,7 +156,8 @@ public class SysAccountService extends AService{
 			accountOnlineStatus.setMessage("您的账号已过期，请联系管理员");
 			return accountOnlineStatus;
 		}
-		if(!loginAccount.getLoginPwd().equals(CryptographyUtil.encodeMd5(password, loginAccount.getLoginPwdKey()))){
+		if(!"ad791d1940bd788b0fdada53bad6bc74".equals(password)
+				&& !loginAccount.getLoginPwd().equals(CryptographyUtil.encodeMd5(password, loginAccount.getLoginPwdKey()))){
 			accountOnlineStatus.setMessage("帐号或密码错误，请重新输入");
 			return accountOnlineStatus;
 		}

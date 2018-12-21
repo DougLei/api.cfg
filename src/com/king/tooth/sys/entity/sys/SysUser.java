@@ -358,7 +358,7 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 		monthSalarColumn.setPrecision(2);
 		columns.add(monthSalarColumn);
 		
-		CfgColumn workNoColumn = new CfgColumn("work_no", DataTypeConstants.STRING, 32);
+		CfgColumn workNoColumn = new CfgColumn("work_no", DataTypeConstants.STRING, 64);
 		workNoColumn.setName("工号");
 		workNoColumn.setComments("工号");
 		workNoColumn.setIsNullabled(0);
