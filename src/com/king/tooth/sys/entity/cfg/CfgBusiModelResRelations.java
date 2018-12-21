@@ -272,9 +272,11 @@ public class CfgBusiModelResRelations extends BasicEntity implements IEntityProp
 		return result;
 	}
 	
+	@JSONField(serialize = false)
 	public boolean isTableResource(){
 		return refResourceType == REF_RESOURCE_TYPE_CFG_TABLE;
 	}
+	@JSONField(serialize = false)
 	public boolean isSqlResource(){
 		return refResourceType == REF_RESOURCE_TYPE_CFG_SQL;
 	}
