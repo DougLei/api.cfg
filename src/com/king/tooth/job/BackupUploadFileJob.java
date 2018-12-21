@@ -56,9 +56,9 @@ public class BackupUploadFileJob implements Job, Serializable{
 	}
 	
 	private void fileBak(String source, String target){
-		// 用户上传的所有文件的根目录
+		// 文件的根目录
 		File rootUploadFolder = new File(source);
-		// 备份的目标地址：例如E:\\devTools\\backup\\bak周几\\
+		// 备份的目标地址
 		File backupUploadFolder = new File(target);
 		try {
 			FileUtil.batchCopyfiles(rootUploadFolder, backupUploadFolder, false);
