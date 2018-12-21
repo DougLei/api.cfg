@@ -39,16 +39,35 @@ public class BackupUploadFileJob implements Job, Serializable{
 			fileBak(SysFileConstants.fileSavePath, SysFileConstants.fileBackupPath + File.separator + "bak" + DateUtil.getWeekend() + File.separator);
 		}
 		
-		// 备份其他文件
-		String source = ResourceHandlerUtil.initConfValue("other.file.source.dir", null);
-		String target = ResourceHandlerUtil.initConfValue("other.file.bak.target.dir", null);
-		if(StrUtils.notEmpty(source) && StrUtils.notEmpty(target)){
-			String[] sources = source.split(",");
-			String[] targets = target.split(",");
-			int length = sources.length;
-			if(length > targets.length){
-				length = targets.length;
+		bakOther();
+	}
+	
+	private static Boolean isBakOther;
+	private static String[] sources;
+	private static String[] targets;
+	private static int length;
+	/**备份其他文件*/
+	private void bakOther() {
+		if(isBakOther == null){
+			String source = ResourceHandlerUtil.initConfValue("other.file.source.dir", null);
+			String target = ResourceHandlerUtil.initConfValue("other.file.bak.target.dir", null);
+			
+			if(StrUtils.notEmpty(source) && StrUtils.notEmpty(target)){
+				sources = source.split(",");
+				targets = target.split(",");
+				length = sources.length;
+				if(length > targets.length){
+					length = targets.length;
+				}
+				if(length > 0){
+					isBakOther = true;
+				}
 			}
+		}
+		if(isBakOther == null){
+			isBakOther = false;
+		}
+		if(isBakOther){
 			for(int i=0;i<length;i++){
 				fileBak(sources[i], targets[i]);
 			}
