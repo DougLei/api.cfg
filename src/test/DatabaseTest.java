@@ -3,6 +3,7 @@ package test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 
 
@@ -40,11 +41,11 @@ public class DatabaseTest extends Parent{
 //			System.out.println("不存在！！！！！");
 			
 			
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
-			System.out.println(conn);
+//			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
+//			System.out.println(conn);
 			
-			
+			executeSqlTest();
 			
 //			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 //			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.252:1433;DatabaseName=SmartOneCfg", "sa", "root");
@@ -61,5 +62,74 @@ public class DatabaseTest extends Parent{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static void executeSqlTest() throws ClassNotFoundException, SQLException{
+		String sql = getSql();
+		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SmartOneCfg", "sa", "123_abc");
+
+		Statement s = conn.createStatement();
+		System.out.println("1222");
+		s.execute(sql);
+		System.out.println("1");
+		
+	}
+
+	private static String getSql() {
+		String sqls = "";
+		sqls += "  DECLARE @layouttemple TABLE\n"; 
+		sqls += "  (\n"; 
+		sqls += "   ID varchar(32)\n"; 
+		sqls += "  );\n"; 
+		sqls += "  WITH cte(ID,NAME,PARENT_ID)\n"; 
+		sqls += "  AS (\n"; 
+		sqls += "  SELECT \n"; 
+		sqls += "   R1.ID,\n"; 
+		sqls += "   R1.NAME,\n"; 
+		sqls += "   R1.PARENT_ID\n"; 
+		sqls += "  FROM dbo.SYS_ROWS_COLS AS R1\n"; 
+		sqls += "  WHERE R1.BS='rows'\n"; 
+		sqls += "  UNION ALL\n"; 
+		sqls += "  SELECT \n"; 
+		sqls += "   R2.ID,\n"; 
+		sqls += "   R2.NAME,\n"; 
+		sqls += "   R2.PARENT_ID\n"; 
+		sqls += "  FROM dbo.SYS_ROWS_COLS AS R2\n"; 
+		sqls += "  WHERE R2.BS='row'\n"; 
+		sqls += "  UNION ALL\n"; 
+		sqls += "  SELECT \n"; 
+		sqls += "   R3.ID,\n"; 
+		sqls += "   R3.NAME,\n"; 
+		sqls += "   R3.PARENT_ID\n"; 
+		sqls += "  FROM dbo.SYS_ROWS_COLS AS R3\n"; 
+		sqls += "  WHERE R3.BS='columns'\n"; 
+		sqls += "  UNION ALL\n"; 
+		sqls += "  SELECT \n"; 
+		sqls += "   R4.ID,\n"; 
+		sqls += "   R4.NAME,\n"; 
+		sqls += "   R4.PARENT_ID\n"; 
+		sqls += "  FROM dbo.SYS_ROWS_COLS AS R4\n"; 
+		sqls += "  WHERE R4.BS='column'\n"; 
+		sqls += "  UNION ALL\n"; 
+		sqls += "  SELECT \n"; 
+		sqls += "   C.ID,\n"; 
+		sqls += "   C.TITLE AS NAME,\n"; 
+		sqls += "   C.COLUMN_ID AS PARENT_ID\n"; 
+		sqls += "  FROM dbo.SYS_COLS_DETAILS AS C),\n"; 
+		sqls += "   A AS (\n"; 
+		sqls += "  SELECT ID,NAME,PARENT_ID FROM cte WHERE ID= '15tYYOyzkzgwYP7snHsm2xPc7oOlVpdE'\n"; 
+		sqls += "  UNION ALL\n"; 
+		sqls += "  SELECT cte.ID, cte.NAME, cte.PARENT_ID FROM cte\n"; 
+		sqls += "  INNER JOIN A ON cte.PARENT_ID = A.ID\n"; 
+		sqls += "  )\n"; 
+		sqls += "  INSERT INTO @layouttemple\n"; 
+		sqls += "          ( ID ) \n"; 
+		sqls += "  SELECT ID FROM A\n"; 
+		sqls += "  DELETE FROM dbo.SYS_COLS_DETAILS WHERE\n"; 
+		sqls += "  ID IN(SELECT ID FROM @layouttemple);\n"; 
+		sqls += "  DELETE FROM dbo.SYS_ROWS_COLS WHERE\n"; 
+		sqls += "  ID IN(SELECT ID FROM @layouttemple);\n"; 
+		return sqls;
 	}
 }
