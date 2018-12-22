@@ -184,6 +184,8 @@ public class CodeResourceMapping {
 		
 		// 账户卡操作
 		put("/card/login/post", SysAccountCardController.class, "login");
+		put("/card/user/relation/add/post", SysAccountCardController.class, "addCardAndUserRelation");
+		put("/card/user/relation/cancel/post", SysAccountCardController.class, "cancelCardAndUserRelation");
 		
 		// 权限操作
 		put("/permission/get", SysPermissionController.class, "calcPermissionByCode");

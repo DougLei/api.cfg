@@ -57,4 +57,8 @@ public class CfgProjectSqlLinks implements Serializable, ITable {
 	public String toDropTable() {
 		return "CFG_PROJECT_SQL_LINKS";
 	}
+
+	public String getTableResourceName() {
+		return "CfgProjectSqlLinks";
+	}
 }

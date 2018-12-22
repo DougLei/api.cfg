@@ -93,4 +93,14 @@ public abstract class BasicEntity implements Serializable, ITable{
 	public void setCustomerId(String customerId) {
 		this.customerId = customerId;
 	}
+	
+	public String getTableResourceName(){
+		return getEntityName();
+	}
+	
+	/**
+	 * 获取实体名
+	 * @return
+	 */
+	protected abstract String getEntityName();
 }

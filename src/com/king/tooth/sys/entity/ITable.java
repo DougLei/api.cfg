@@ -30,4 +30,10 @@ public interface ITable {
 	 * @return
 	 */
 	List<CfgColumn> getColumnList();
+	
+	/**
+	 * 获取表资源名
+	 * @return
+	 */
+	String getTableResourceName();
 }

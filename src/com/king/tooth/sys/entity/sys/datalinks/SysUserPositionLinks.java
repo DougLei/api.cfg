@@ -60,4 +60,8 @@ public class SysUserPositionLinks implements Serializable, ITable {
 	public String toDropTable() {
 		return "SYS_USER_POSITION_LINKS";
 	}
+
+	public String getTableResourceName() {
+		return "SysUserPositionLinks";
+	}
 }

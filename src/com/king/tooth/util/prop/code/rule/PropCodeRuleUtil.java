@@ -6,8 +6,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
+import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.thread.current.CurrentThreadContext;
+import com.king.tooth.util.CryptographyUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.web.entity.request.ResourcePropCodeRule;
 
@@ -140,4 +143,26 @@ public class PropCodeRuleUtil {
 	public static void removePropCodeRuleLock(String codeRuleId){
 		PropCodeRuleLockMapping.propCodeRuleLockMapping.remove(codeRuleId);
 	}
+	
+	// ----------------------------------------------------------------
+	/**
+	 * 处理内置表资源的编码规则值
+	 * @param builtinTableResource
+	 * @return 返回附上规则值的JsonObject实例
+	 */
+	public static IJson processBuiltinTableResourceCodeRuleValue(ITable builtinTableResource){
+		if(builtinTableResource == null){
+			throw new NullPointerException("处理内置表资源的编码规则值是，传入的内置表资源对象不能为空");
+		}
+		IJson tmp = IJsonUtil.getIJson(builtinTableResource);
+		List<CfgPropCodeRule> rules = PropCodeRuleUtil.analyzeRules(CryptographyUtil.encodeMd5(builtinTableResource.getTableResourceName()), builtinTableResource.getTableResourceName(), tmp);
+		if(rules == null || rules.size() == 0){
+			throw new NullPointerException("没有给"+builtinTableResource.getTableResourceName()+"资源中配置任何编码生成规则");
+		}
+		for(int i=0;i<tmp.size();i++){
+			PropCodeRuleUtil.setTableResourceFinalCodeVal(tmp.get(i), i, rules);
+		}
+		return tmp;
+	}
+	
 }

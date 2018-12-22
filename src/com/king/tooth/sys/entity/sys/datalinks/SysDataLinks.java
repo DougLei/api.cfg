@@ -69,4 +69,8 @@ public class SysDataLinks implements Serializable, ITable {
 	public String toDropTable() {
 		return "SYS_DATA_LINKS";
 	}
+
+	public String getTableResourceName() {
+		return "SysDataLinks";
+	}
 }

@@ -15,6 +15,7 @@ import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.entity.sys.SysAccountCard;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysReqLog;
+import com.king.tooth.sys.entity.sys.accountcard.AccountCardAndUserRelation;
 import com.king.tooth.sys.service.sys.SysAccountCardService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.JsonUtil;
@@ -123,5 +124,51 @@ public class SysAccountCardController extends AController{
 		}
 		processResultObject(BuiltinParameterKeys._IDS, accountCardIds);
 		return getResultObject(null, null);
+	}
+	
+	/**
+	 * 关联账户卡和用户的关系
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object addCardAndUserRelation(HttpServletRequest request, IJson ijson){
+		List<AccountCardAndUserRelation> acurs = getDataInstanceList(ijson, AccountCardAndUserRelation.class, true);
+		analysisResourceProp(acurs, false);
+		if(analysisResult == null){
+			for (AccountCardAndUserRelation acur : acurs) {
+				resultObject = BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).addCardAndUserRelation(acur);
+				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个AccountCardAndUserRelation对象，" + resultObject;
+					break;
+				}
+				resultJsonArray.add(resultObject);
+			}
+		}
+		return getResultObject(acurs, null);
+	}
+	
+	/**
+	 * 取消关联账户卡和用户的关系
+	 * <p>请求方式：POST</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object cancelCardAndUserRelation(HttpServletRequest request, IJson ijson){
+		List<AccountCardAndUserRelation> acurs = getDataInstanceList(ijson, AccountCardAndUserRelation.class, true);
+		analysisResourceProp(acurs, false);
+		if(analysisResult == null){
+			for (AccountCardAndUserRelation acur : acurs) {
+				resultObject = BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).cancelCardAndUserRelation(acur);
+				if(resultObject instanceof String){
+					index++;
+					resultObject = "第"+index+"个AccountCardAndUserRelation对象，" + resultObject;
+					break;
+				}
+				resultJsonArray.add(resultObject);
+			}
+		}
+		return getResultObject(acurs, null);
 	}
 }

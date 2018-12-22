@@ -64,4 +64,8 @@ public class SysUserDeptLinks implements Serializable, ITable {
 	public String toDropTable() {
 		return "SYS_USER_DEPT_LINKS";
 	}
+
+	public String getTableResourceName() {
+		return "SysUserDeptLinks";
+	}
 }

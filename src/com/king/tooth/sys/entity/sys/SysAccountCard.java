@@ -12,6 +12,7 @@ import com.king.tooth.sys.entity.IEntity;
 import com.king.tooth.sys.entity.IEntityPropAnalysis;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 账户卡表
@@ -37,6 +38,11 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 	 * <p>逻辑删除，默认值为0</p>
 	 */
 	private int isDelete;
+	/**
+	 * 卡号来源
+	 * <p>默认值为0，0:用户输入，1:自动生成</p>
+	 */
+	private int cardNoFrom;
 	
 	//-------------------------------------------------------------------------
 	
@@ -58,10 +64,21 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 	public void setIsDelete(int isDelete) {
 		this.isDelete = isDelete;
 	}
+	public int getCardNoFrom() {
+		return cardNoFrom;
+	}
+	public void setCardNoFrom(int cardNoFrom) {
+		this.cardNoFrom = cardNoFrom;
+	}
+	@JSONField(serialize = false)
+	public boolean getIsInputCardNo() {
+		return cardNoFrom == 0;
+	}
+	
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(3+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(4+7);
 		
 		CfgColumn cardNoColumn = new CfgColumn("card_no", DataTypeConstants.STRING, 64);
 		cardNoColumn.setName("卡号");
@@ -79,6 +96,12 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 		isDeleteColumn.setComments("逻辑删除，默认值为0");
 		isDeleteColumn.setDefaultValue("0");
 		columns.add(isDeleteColumn);
+		
+		CfgColumn cardNoFromColumn = new CfgColumn("card_no_from", DataTypeConstants.INTEGER, 1);
+		cardNoFromColumn.setName("卡号来源");
+		cardNoFromColumn.setComments("默认值为0，0:用户输入，1:自动生成");
+		cardNoFromColumn.setDefaultValue("0");
+		columns.add(cardNoFromColumn);
 		
 		return columns;
 	}
@@ -105,6 +128,12 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 	public String validNotNullProps() {
 		if(status != 1 && status != 2){
 			return "状态值目前只支持1和2";
+		}
+		if(cardNoFrom != 0 && cardNoFrom != 1){
+			return "卡号来源值目前只支持0(用户输入，默认值)和1(自动生成)";
+		}
+		if(getIsInputCardNo() && StrUtils.isEmpty(cardNo)){
+			return "卡号不能为空";
 		}
 		return null;
 	}

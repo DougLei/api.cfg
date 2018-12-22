@@ -60,4 +60,8 @@ public class SysUserRoleLinks implements Serializable, ITable {
 	public String toDropTable() {
 		return "SYS_USER_ROLE_LINKS";
 	}
+
+	public String getTableResourceName() {
+		return "SysUserRoleLinks";
+	}
 }
