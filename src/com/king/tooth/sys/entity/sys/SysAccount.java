@@ -197,7 +197,6 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 		CfgColumn workNoColumn = new CfgColumn("work_no", DataTypeConstants.STRING, 64);
 		workNoColumn.setName("工号");
 		workNoColumn.setComments("工号");
-		workNoColumn.setIsNullabled(0);
 		columns.add(workNoColumn);
 
 		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 1);
