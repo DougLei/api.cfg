@@ -1,6 +1,9 @@
 package com.king.tooth.sys.builtin.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.king.tooth.sys.controller.cfg.CfgBusiModelController;
@@ -20,23 +23,24 @@ import com.king.tooth.sys.controller.sys.SysPermissionController;
 import com.king.tooth.sys.controller.sys.SysPushMessageInfoController;
 import com.king.tooth.sys.controller.sys.SysUserController;
 import com.king.tooth.sys.controller.tools.SystemToolsController;
+import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgBusiModel;
 import com.king.tooth.sys.entity.cfg.CfgBusiModelResRelations;
 import com.king.tooth.sys.entity.cfg.CfgCodeDataDictionary;
 import com.king.tooth.sys.entity.cfg.CfgColumn;
 import com.king.tooth.sys.entity.cfg.CfgDatabase;
 import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
+import com.king.tooth.sys.entity.cfg.CfgProject;
+import com.king.tooth.sys.entity.cfg.CfgProjectModule;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRuleDetail;
 import com.king.tooth.sys.entity.cfg.CfgPropExtendConf;
 import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.CfgSeqInfo;
-import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
-import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.cfg.CfgProject;
-import com.king.tooth.sys.entity.cfg.CfgProjectModule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
+import com.king.tooth.sys.entity.cfg.CfgSqlResultset;
+import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectSqlLinks;
 import com.king.tooth.sys.entity.cfg.datalinks.CfgProjectTableLinks;
 import com.king.tooth.sys.entity.sys.SysAccount;
@@ -61,6 +65,7 @@ import com.king.tooth.sys.entity.sys.SysUserGroupDetail;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
 import com.king.tooth.sys.entity.sys.datalinks.SysDataLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserDeptLinks;
+import com.king.tooth.sys.entity.sys.datalinks.SysUserPositionLinks;
 import com.king.tooth.sys.entity.sys.datalinks.SysUserRoleLinks;
 import com.king.tooth.sys.service.cfg.CfgBusiModelResRelationsService;
 import com.king.tooth.sys.service.cfg.CfgBusiModelService;
@@ -172,7 +177,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysDataLinks", new SysDataLinks());
 		instanceCache.put("SysUserRoleLinks", new SysUserRoleLinks());
 		instanceCache.put("SysUserDeptLinks", new SysUserDeptLinks());
-		instanceCache.put("SysUserPositionLinks", new SysUserDeptLinks());
+		instanceCache.put("SysUserPositionLinks", new SysUserPositionLinks());
 		instanceCache.put("SysFileIELog", new SysFileIELog());
 	}
 	
@@ -194,4 +199,20 @@ public class BuiltinResourceInstance {
 	public static <T> T getInstance(String name, Class<T> clz){
 		return (T) instanceCache.get(name);
 	}
+	
+	/**
+	 * 获得所有tables
+	 * @return
+	 */
+	public static List<CfgTable> getTables(){
+		List<CfgTable> tables = new ArrayList<CfgTable>(tableCount);
+		Collection<Object> instances = instanceCache.values();
+		for (Object object : instances) {
+			if(object instanceof ITable){
+				tables.add(((ITable)object).toCreateTable());
+			}
+		}
+		return tables;
+	}
+	private static final int tableCount = 43;
 }
