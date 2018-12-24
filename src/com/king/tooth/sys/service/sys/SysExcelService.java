@@ -64,7 +64,7 @@ public class SysExcelService extends AService{
 	 */
 	private Object createExcelFile(Workbook workbook, String fileName, String suffix, String fileId, int buildInType){
 		String fileCode = FileUtil.getFileCode();
-		String excelFileSavePath = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).validSaveFileDirIsExists(buildInType)+fileCode+"."+suffix;
+		String excelFileSavePath = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).validSaveFileDirIsExists(buildInType, null)+fileCode+"."+suffix;
 		FileOutputStream fo = null;
 		try {
 			fo = new FileOutputStream(excelFileSavePath);

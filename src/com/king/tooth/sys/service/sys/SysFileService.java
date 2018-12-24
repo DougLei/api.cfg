@@ -51,6 +51,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 @Service
 public class SysFileService extends AService{
 	
+	private final static List<String> uploadTargetDirPaths = new ArrayList<String>();
 	/**
 	 * 上传文件
 	 * @param request
@@ -76,7 +77,7 @@ public class SysFileService extends AService{
 				}else if(uploadFileInfo.errMsg != null){
 					return uploadFileInfo.errMsg;
 				}else{
-					String uploadDir = validSaveFileDirIsExists(uploadFileInfo.getBuildInType());
+					String uploadDir = validSaveFileDirIsExists(uploadFileInfo.getBuildInType(), uploadFileInfo.uploadTargetDir);
 					boolean isNormalImportAndSaveToDefaultPath = (uploadFileInfo.isImport == 0 && SysFileConstants.isDefaultFileSavePath);// 是一般上传的文件，且上传文件保存的路径是系统默认路径(在服务器的files/upload文件夹中)
 					filePathList = new ArrayList<String>(uploadFileInfo.count);
 					Map<Integer, SysFile> sysfileMap = new HashMap<Integer, SysFile>(uploadFileInfo.count);
@@ -121,9 +122,13 @@ public class SysFileService extends AService{
 								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase());
 								sysFile.setFileItem(file);
 								if(SysFileConstants.saveToService){
-									sysFile.setSavePath(uploadDir + sysFile.getCode() + "." + sysFile.getSuffix());
-									//是一般上传的文件，且上传文件保存的路径是系统默认路径(在服务器的files/upload文件夹中) ，且是图片类型，则将该图片也保存到服务器上
-									if(isNormalImportAndSaveToDefaultPath && FileUtil.isImage(sysFile.getSuffix())){
+									if(StrUtils.isEmpty(uploadFileInfo.uploadTargetDir)){
+										sysFile.setSavePath(uploadDir + sysFile.getCode() + "." + sysFile.getSuffix());
+									}else{
+										sysFile.setSavePath(uploadDir + fileName);
+									}
+									// 是一般上传的文件，且上传文件保存的路径是系统默认路径(在服务器的files/upload文件夹中) ，且是前端要求的上传文件后，可以直接通过url访问文件的后缀
+									if(isNormalImportAndSaveToDefaultPath && FileUtil.isFileFormat(sysFile.getSuffix(), SysContext.getSystemConfig("web.front.end.file.suffix").split(","))){
 										sysFile.setUrlPath(sysFile.getSavePath().replace(SysContext.WEB_SYSTEM_CONTEXT_REALPATH, ""));
 									}
 									filePathList.add(sysFile.getSavePath());
@@ -184,6 +189,10 @@ public class SysFileService extends AService{
 					}
 					fileList.remove(i--);
 				}
+				if("uploadTargetDir".equals(fi.getFieldName())){
+					uploadFileInfo.uploadTargetDir = fileValue;
+					fileList.remove(i--);
+				}
 			}
 		}
 		
@@ -221,6 +230,7 @@ public class SysFileService extends AService{
 		public int count;// 传递的文件数量
 		public String refDataId;// 文件关联的业务数据id
 		public String batch;// 同一次上传文件批次
+		public String uploadTargetDir;// 上传到的目标目录，如果传入了该值，则文件会上传到指定的目录下，而非默认的文件上传目录
 		
 		/**
 		 * 获取内置文件类型
@@ -282,7 +292,6 @@ public class SysFileService extends AService{
 		for (Integer key : keys) {
 			sysFile = sysfileMap.get(key);
 			jsonArray.add(HibernateUtil.saveObject(sysFile, null));
-			
 			file = new File(sysFile.getSavePath());
 			try {
 				fos = new FileOutputStream(file);
@@ -444,24 +453,39 @@ public class SysFileService extends AService{
 	 * 验证保存文件的目录是否存在
 	 * <p>如果不存在，则创建</p>
 	 * @param buildInType  
+	 * @param uploadTargetDir  
 	 * @return 
 	 */
-	public String validSaveFileDirIsExists(int buildInType) {
+	public String validSaveFileDirIsExists(int buildInType, String uploadTargetDir) {
 		if(SysFileConstants.SAVE_TYPE_SERVICE.equals(SysFileConstants.saveType)){
 			String saveFileDir;
-			if(buildInType == SysFileConstants.BUILD_IN_TYPE_NORMAL){
-				saveFileDir = SysFileConstants.fileSavePath + DateUtil.formatDate(new Date()) + File.separator;
-			}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_IMPORT){
-				saveFileDir = SysFileConstants.importFileSavePath + DateUtil.formatDate(new Date()) + File.separator;
-			}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE){
-				saveFileDir = SysFileConstants.importFileTemplateSavePath + DateUtil.formatDate(new Date()) + File.separator;
-			}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_EXPORT){
-				saveFileDir = SysFileConstants.exportFileSavePath + DateUtil.formatDate(new Date()) + File.separator;
+			
+			if(StrUtils.isEmpty(uploadTargetDir)){
+				if(buildInType == SysFileConstants.BUILD_IN_TYPE_NORMAL){
+					saveFileDir = SysFileConstants.fileSavePath + DateUtil.formatDate(new Date()) + File.separator;
+				}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_IMPORT){
+					saveFileDir = SysFileConstants.importFileSavePath + DateUtil.formatDate(new Date()) + File.separator;
+				}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_IMPORT_TEMPLATE){
+					saveFileDir = SysFileConstants.importFileTemplateSavePath + DateUtil.formatDate(new Date()) + File.separator;
+				}else if(buildInType == SysFileConstants.BUILD_IN_TYPE_EXPORT){
+					saveFileDir = SysFileConstants.exportFileSavePath + DateUtil.formatDate(new Date()) + File.separator;
+				}else{
+					throw new IllegalArgumentException("系统目前上传文件的内置类型buildInType，值只包括[1,2,3,4]");
+				}
 			}else{
-				throw new IllegalArgumentException("系统目前上传文件的内置类型buildInType，值只包括[1,2,3,4]");
+				if(uploadTargetDirBasePath == null){
+					uploadTargetDirBasePath = SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "files" + File.separator;
+				}
+				saveFileDir = uploadTargetDirBasePath + uploadTargetDir + File.separator;
 			}
+			
+			if(uploadTargetDirPaths.contains(saveFileDir)){
+				return saveFileDir;
+			}
+			uploadTargetDirPaths.add(saveFileDir);
 			return FileUtil.validSaveFileDirIsExists(saveFileDir);
 		}
 		throw new IllegalArgumentException("系统目前只支持在服务器上保存文件的方式");
 	}
+	private static String uploadTargetDirBasePath; 
 }

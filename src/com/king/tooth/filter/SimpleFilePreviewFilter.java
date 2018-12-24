@@ -9,6 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import com.king.tooth.cache.SysContext;
 import com.king.tooth.util.FileUtil;
 
 /**
@@ -23,8 +24,8 @@ public class SimpleFilePreviewFilter extends AbstractFilter{
 		String requestURI = req.getServletPath();
 		if(requestURI.startsWith("/files")){// files为上传文件时，保存到服务器中的根目录，即默认保存路径的根目录名称
 			String fileSuffix = requestURI.substring(requestURI.lastIndexOf(".")+1);
-			if(!FileUtil.isImage(fileSuffix) && !FileUtil.isFileFormat(fileSuffix, "json", "grf")){
-				printResult(response, installFailResponseBody(req, "系统目前只支持预览 [图片格式、json格式、grf格式] 的文件"));
+			if(!FileUtil.isFileFormat(fileSuffix, SysContext.getSystemConfig("web.front.end.file.suffix").split(","))){
+				printResult(response, installFailResponseBody(req, "系统目前只支持预览 ["+SysContext.getSystemConfig("web.front.end.file.suffix")+"] 的文件"));
 				return;
 			}
 		}
