@@ -94,6 +94,7 @@ public abstract class BasicEntity implements Serializable, ITable{
 		this.customerId = customerId;
 	}
 	
+	@JSONField(serialize = false)
 	public String getTableResourceName(){
 		return getEntityName();
 	}
