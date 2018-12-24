@@ -51,7 +51,7 @@ import com.king.tooth.util.hibernate.HibernateUtil;
 @Service
 public class SysFileService extends AService{
 	
-	private final static List<String> uploadTargetDirPaths = new ArrayList<String>();
+	private final static List<String> uploadTargetDirPathCache = new ArrayList<String>();
 	/**
 	 * 上传文件
 	 * @param request
@@ -479,10 +479,10 @@ public class SysFileService extends AService{
 				saveFileDir = uploadTargetDirBasePath + uploadTargetDir + File.separator;
 			}
 			
-			if(uploadTargetDirPaths.contains(saveFileDir)){
+			if(uploadTargetDirPathCache.contains(saveFileDir)){
 				return saveFileDir;
 			}
-			uploadTargetDirPaths.add(saveFileDir);
+			uploadTargetDirPathCache.add(saveFileDir);
 			return FileUtil.validSaveFileDirIsExists(saveFileDir);
 		}
 		throw new IllegalArgumentException("系统目前只支持在服务器上保存文件的方式");
