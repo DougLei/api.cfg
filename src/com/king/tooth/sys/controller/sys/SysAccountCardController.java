@@ -114,14 +114,7 @@ public class SysAccountCardController extends AController{
 		if(StrUtils.isEmpty(accountCardIds)){
 			return "要删除的账户卡id不能为空";
 		}
-		
-		String[] accountCardIdArr = accountCardIds.split(",");
-		for (String accountCardId : accountCardIdArr) {
-			resultObject = BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).deleteAccountCard(accountCardId);
-			if(resultObject != null){
-				break;
-			}
-		}
+		resultObject = BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).deleteAccountCard(accountCardIds);
 		processResultObject(BuiltinParameterKeys._IDS, accountCardIds);
 		return getResultObject(null, null);
 	}

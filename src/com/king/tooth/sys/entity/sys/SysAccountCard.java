@@ -34,15 +34,15 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 	 */
 	private int status = 1;
 	/**
-	 * 是否被删除
-	 * <p>逻辑删除，默认值为0</p>
-	 */
-	private int isDelete;
-	/**
 	 * 卡号来源
 	 * <p>默认值为0，0:用户输入，1:自动生成</p>
 	 */
 	private int cardNoFrom;
+	/**
+	 * 是否绑定用户
+	 * <p>默认是0</p>
+	 */
+	private int isBind;
 	
 	//-------------------------------------------------------------------------
 	
@@ -58,18 +58,19 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public int getIsDelete() {
-		return isDelete;
-	}
-	public void setIsDelete(int isDelete) {
-		this.isDelete = isDelete;
-	}
 	public int getCardNoFrom() {
 		return cardNoFrom;
 	}
 	public void setCardNoFrom(int cardNoFrom) {
 		this.cardNoFrom = cardNoFrom;
 	}
+	public int getIsBind() {
+		return isBind;
+	}
+	public void setIsBind(int isBind) {
+		this.isBind = isBind;
+	}
+	
 	@JSONField(serialize = false)
 	public boolean getIsInputCardNo() {
 		return cardNoFrom == 0;
@@ -91,17 +92,17 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 		statusColumn.setDefaultValue("1");
 		columns.add(statusColumn);
 		
-		CfgColumn isDeleteColumn = new CfgColumn("is_delete", DataTypeConstants.INTEGER, 1);
-		isDeleteColumn.setName("是否被删除");
-		isDeleteColumn.setComments("逻辑删除，默认值为0");
-		isDeleteColumn.setDefaultValue("0");
-		columns.add(isDeleteColumn);
-		
 		CfgColumn cardNoFromColumn = new CfgColumn("card_no_from", DataTypeConstants.INTEGER, 1);
 		cardNoFromColumn.setName("卡号来源");
 		cardNoFromColumn.setComments("默认值为0，0:用户输入，1:自动生成");
 		cardNoFromColumn.setDefaultValue("0");
 		columns.add(cardNoFromColumn);
+		
+		CfgColumn isBindColumn = new CfgColumn("is_bind", DataTypeConstants.INTEGER, 1);
+		isBindColumn.setName("是否绑定用户");
+		isBindColumn.setComments("默认是0");
+		isBindColumn.setDefaultValue("0");
+		columns.add(isBindColumn);
 		
 		return columns;
 	}

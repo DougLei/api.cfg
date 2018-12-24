@@ -14,7 +14,6 @@ import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
 import com.king.tooth.sys.entity.cfg.CfgResource;
 import com.king.tooth.sys.entity.cfg.CfgTable;
 import com.king.tooth.sys.entity.sys.SysAccountCard;
-import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.CloseUtil;
@@ -29,8 +28,7 @@ public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new SysAccountCard().toCreateTable(),
-				new SysAccountOnlineStatus().toCreateTable()
+				new SysAccountCard().toCreateTable()
 				);
 	}
 	

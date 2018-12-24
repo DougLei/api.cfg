@@ -1,7 +1,5 @@
 package com.king.tooth.sys.service.sys;
 
-import java.util.Date;
-
 import com.king.tooth.annotation.Service;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
@@ -38,7 +36,7 @@ public class SysAccountCardService extends AService{
 		}
 		
 		SysAccountCard accountCard = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountCard.class, "from SysAccountCard where cardNo=? and customerId=?", originAccountCard.getCardNo(), CurrentThreadContext.getCustomerId());
-		if(accountCard == null || accountCard.getIsDelete() == 1){
+		if(accountCard == null){
 			return new SysAccountOnlineStatus("不存在卡号为["+originAccountCard.getCardNo()+"]的信息");
 		}
 		if(accountCard.getStatus() == 2){
@@ -65,12 +63,9 @@ public class SysAccountCardService extends AService{
 			if(user != null){
 				SysAccountCard oldAccountCard = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccountCard.class, "from SysAccountCard where " + ResourcePropNameConstants.ID +"=?", accountCard.getId());
 				if(oldAccountCard != null){
-					if(oldAccountCard.getIsDelete() == 0){
-						return "用户["+user.getName()+"]已经存在卡记录，无法重复添加";
-					}
-					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccountCard set isDelete=0, status=1 where "+ResourcePropNameConstants.ID+"=?" , accountCard.getId());
-					return JsonUtil.toJsonObject(oldAccountCard);
+					return "用户["+user.getName()+"]已经存在卡号["+oldAccountCard.getCardNo()+"]，无法重复添加";
 				}
+				accountCard.setIsBind(1);
 			}
 		}
 		
@@ -99,8 +94,7 @@ public class SysAccountCardService extends AService{
 	}
 
 	public Object deleteAccountCard(String accountCardId) {
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccountCard set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), accountCardId);
-		return null;
+		return deleteDataById("SysAccountCard", accountCardId);
 	}
 
 	public Object addCardAndUserRelation(AccountCardAndUserRelation acur) {
@@ -113,7 +107,7 @@ public class SysAccountCardService extends AService{
 			return "卡号为["+cardNo+"]的卡，已经和用户["+user.getName()+"]有关联，无法重复关联";
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, 
-				"update SysAccountCard set "+ResourcePropNameConstants.ID+"=? where " + ResourcePropNameConstants.ID+"=?", 
+				"update SysAccountCard set isBind=1, "+ResourcePropNameConstants.ID+"=? where " + ResourcePropNameConstants.ID+"=?", 
 				acur.getUserId(), acur.getAccountCardId());
 		return JsonUtil.toJsonObject(acur);
 	}
@@ -123,7 +117,7 @@ public class SysAccountCardService extends AService{
 			return "取消账户卡和用户的关系时，传入的账户卡id应该和用户id值一致";
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, 
-				"update SysAccountCard set "+ResourcePropNameConstants.ID+"=? where " + ResourcePropNameConstants.ID+"=?", 
+				"update SysAccountCard set isBind=0, "+ResourcePropNameConstants.ID+"=? where " + ResourcePropNameConstants.ID+"=?", 
 				ResourceHandlerUtil.getIdentity(), acur.getAccountCardId());
 		return JsonUtil.toJsonObject(acur);
 	}
