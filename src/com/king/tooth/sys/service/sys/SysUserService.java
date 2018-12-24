@@ -370,7 +370,6 @@ public class SysUserService extends AService{
 					account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				}
 				
-				account.setLastUpdateDate(new Date());
 				if(user.getIsSyncLoginName() == 1){
 					account.setLoginName(user.getWorkNo());
 				}
@@ -407,7 +406,6 @@ public class SysUserService extends AService{
 				return "用户["+user.getName()+"]不存在账户，无法关闭";
 			}else if(account.getIsDelete() == 0){
 				account.setIsDelete(1);
-				account.setLastUpdateDate(new Date());
 				HibernateUtil.updateEntityObject(account, null);
 			}
 		}else{
