@@ -419,10 +419,8 @@ public class SysUserService extends AService{
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysUser set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
 		
 		// 删除账户
-		if(accountIsExists(userId)){
-			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
-			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteTokenInfoByAccountId(userId);
-		}
+		BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteAccount(userId);
+		
 		// 删除所属的部门
 		if(StrUtils.notEmpty(user.getDeptId())){
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserDeptLinks where leftId = ?", userId);

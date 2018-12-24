@@ -505,6 +505,7 @@ public class SysAccountService extends AService{
 	 */
 	public Object deleteAccount(String accountId) {
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where " + ResourcePropNameConstants.ID+"=? and customerId=?", new Date(), accountId, CurrentThreadContext.getCustomerId());
+		BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).deleteAccountCard(accountId);
 		deleteTokenInfoByAccountId(accountId);
 		return null;
 	}
@@ -514,7 +515,7 @@ public class SysAccountService extends AService{
 	 * @param accountId
 	 */
 	@SuppressWarnings("unchecked")
-	public void deleteTokenInfoByAccountId(String accountId) {
+	private void deleteTokenInfoByAccountId(String accountId) {
 		List<Object> tokens = HibernateUtil.executeListQueryByHqlArr(null, null, "select token from SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
 		if(tokens != null && tokens.size() > 0){
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysAccountOnlineStatus where accountId=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
