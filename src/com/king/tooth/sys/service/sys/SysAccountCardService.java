@@ -92,6 +92,14 @@ public class SysAccountCardService extends AService{
 		}
 		return HibernateUtil.updateEntityObject(accountCard, null);
 	}
+	
+	/**修改账户卡的状态*/
+	public Object updateAccountCardStatus(SysAccountCard accountCard){
+		if(accountCard.getStatus() != 1 && accountCard.getStatus() != 2){
+			return "状态值目前只支持1(启用)和2(禁用)";
+		}
+		return HibernateUtil.updateEntityObject(accountCard, null);
+	}
 
 	public Object deleteAccountCard(String accountCardId) {
 		return deleteDataById("SysAccountCard", accountCardId);

@@ -46,6 +46,13 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 	
 	//-------------------------------------------------------------------------
 	
+	public SysAccountCard() {
+	}
+	public SysAccountCard(String id, int status) {
+		this.id = id;
+		this.status = status;
+	}
+	
 	public String getCardNo() {
 		return cardNo;
 	}
@@ -128,7 +135,7 @@ public class SysAccountCard extends BasicEntity implements IEntity, IEntityPropA
 	
 	public String validNotNullProps() {
 		if(status != 1 && status != 2){
-			return "状态值目前只支持1和2";
+			return "状态值目前只支持1(启用)和2(禁用)";
 		}
 		if(cardNoFrom != 0 && cardNoFrom != 1){
 			return "卡号来源值目前只支持0(用户输入，默认值)和1(自动生成)";

@@ -16,6 +16,7 @@ import com.king.tooth.sys.builtin.data.BuiltinObjectInstance;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.cfg.projectmodule.ProjectModuleExtend;
 import com.king.tooth.sys.entity.sys.SysAccount;
+import com.king.tooth.sys.entity.sys.SysAccountCard;
 import com.king.tooth.sys.entity.sys.SysAccountOnlineStatus;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.entity.sys.SysUserPermissionCache;
@@ -493,6 +494,9 @@ public class SysAccountService extends AService{
 			result = validTelIsExists(account.getTel());
 		}
 		if(result == null){
+			if(oldAccount.getStatus() != account.getStatus()){
+				BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).updateAccountCardStatus(new SysAccountCard(account.getId(), account.getStatus()));
+			}
 			return HibernateUtil.updateEntityObject(account, null);
 		}
 		return result;
