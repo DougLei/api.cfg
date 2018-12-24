@@ -29,6 +29,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.annotation.Service;
 import com.king.tooth.cache.SysContext;
 import com.king.tooth.constants.EncodingConstants;
+import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.constants.SysFileConstants;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
@@ -346,7 +347,8 @@ public class SysFileService extends AService{
 		Object[] fileIdArr = fileIds.split(",");
 		List<SysFile> sysFileList = new ArrayList<SysFile>(fileIdArr.length);
 		try {
-			StringBuffer updateDownloadCountHql = new StringBuffer("update SysFile set downloadCount = downloadCount+1 where id in (");
+			StringBuffer updateDownloadCountHql = new StringBuffer("update SysFile set downloadCount = downloadCount+1 where ");
+			updateDownloadCountHql.append(ResourcePropNameConstants.ID).append(" in(");
 			for (Object fileId : fileIdArr) {
 				sysFileList.add(getObjectById(fileId.toString(), SysFile.class));
 				updateDownloadCountHql.append("?,");
