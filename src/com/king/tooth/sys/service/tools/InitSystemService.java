@@ -269,7 +269,9 @@ public class InitSystemService extends AService{
 			// 先加载当前系统数据库的所有hbm映射文件
 			loadCurrentSysDatabaseHbms();
 			// 清空用户在线数据表
-			HibernateUtil.executeUpdateBySql(SqlStatementTypeConstants.DELETE, "truncate table sys_account_online_status", null);
+			if(SysContext.getSystemConfig("db.default.ip").equals("localhost")){
+				HibernateUtil.executeUpdateBySql(SqlStatementTypeConstants.DELETE, "truncate table sys_account_online_status", null);
+			}
 		} catch (Exception e) {
 			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
