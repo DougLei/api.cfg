@@ -104,6 +104,9 @@ public class SysAccountCardService extends AService{
 	}
 
 	public Object addCardAndUserRelation(AccountCardAndUserRelation acur) {
+		if(acur.isSame()){
+			return "增加账户卡和用户的关系时，传入的账户卡id和用户id值应该不一致";
+		}
 		SysUser user = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUser.class, "from SysUser where " + ResourcePropNameConstants.ID +"=?", acur.getAccountCardId());
 		if(user != null){
 			Object cardNo = HibernateUtil.executeUniqueQueryByHqlArr("select cardNo from SysAccountCard where " + ResourcePropNameConstants.ID +"=?", acur.getAccountCardId());
@@ -116,7 +119,7 @@ public class SysAccountCardService extends AService{
 	}
 
 	public Object cancelCardAndUserRelation(AccountCardAndUserRelation acur) {
-		if(!acur.getUserId().equals(acur.getAccountCardId())){
+		if(!acur.isSame()){
 			return "取消账户卡和用户的关系时，传入的账户卡id应该和用户id值一致";
 		}
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, 

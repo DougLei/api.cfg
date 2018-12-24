@@ -23,6 +23,9 @@ public class AccountCardAndUserRelation implements IEntityPropAnalysis{
 		this.userId = userId;
 	}
 	
+	public boolean isSame(){
+		return accountCardId.equals(userId);
+	}
 	
 	public String validNotNullProps() {
 		if(StrUtils.isEmpty(accountCardId)){
