@@ -142,14 +142,14 @@ public class SysUserService extends AService{
 		String workNo = user.getWorkNo();
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where workNo=? and customerId=? and isDelete=0", workNo, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where workNo=? and customerId=?", workNo, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在工号为["+workNo+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的loginName,workNo
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where (loginName=? or workNo=?) and customerId=? and isDelete=0", workNo, workNo, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where (loginName=? or workNo=?) and customerId=?", workNo, workNo, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在[登录名/工号]为["+workNo+"]的账户";
 			}
@@ -169,14 +169,14 @@ public class SysUserService extends AService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where email=? and customerId=? and isDelete=0", email, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where email=? and customerId=?", email, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的email
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=? and isDelete=0", email, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=?", email, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在邮箱为["+email+"]的账户";
 			}
@@ -196,14 +196,14 @@ public class SysUserService extends AService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where tel=? and customerId=? and isDelete=0", tel, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where tel=? and customerId=?", tel, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的用户";
 		}
 		
 		// 如果同时创建账户，则要去账户表中去判断，是否有重名的tel
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=? and isDelete=0", tel, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, currentCustomerId);
 			if(count > 0){
 				return "系统已经存在手机号为["+tel+"]的账户";
 			}
