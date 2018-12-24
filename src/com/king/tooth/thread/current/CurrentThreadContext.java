@@ -191,6 +191,7 @@ public class CurrentThreadContext {
 	 * @throws SQLException 
 	 */
 	public static Connection getConnectionInstance() throws SQLException {
+		setCurrentThreadData();
 		return currentThreadContext.get().getConnectionInstance();
 	}
 

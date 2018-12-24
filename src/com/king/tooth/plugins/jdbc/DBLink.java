@@ -1,6 +1,7 @@
 package com.king.tooth.plugins.jdbc;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
@@ -23,19 +24,31 @@ public class DBLink {
 	 * 数据库
 	 */
 	private CfgDatabase database;
+	private boolean connectionFromCurrentThread;
 	
 	private boolean isOracle;
 	private boolean isSqlServer;
 	
 	/**
 	 * 根据动态数据库对象，获取dblink实例
+	 * <p>连接从当前线程中获取</p>
 	 * @param sessionFactory 
 	 */
 	public DBLink(CfgDatabase database){
+		this(database, true);
+	}
+	
+	/**
+	 * 根据动态数据库对象，获取dblink实例
+	 * @param sessionFactory 
+	 * @param connectionFromCurrentThread 连接是否从当前线程中获取 
+	 */
+	public DBLink(CfgDatabase database, boolean connectionFromCurrentThread){
 		if(database == null){
 			throw new NullPointerException("创建DBLink实例时，传入的database对象不能为空");
 		}
 		this.database = database;
+		this.connectionFromCurrentThread = connectionFromCurrentThread;
 		
 		String dbType = database.getType();
 		isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(dbType);
@@ -62,7 +75,7 @@ public class DBLink {
 		Statement st = null;
 		String errorDDLSql = null;
 		try {
-			connection = CurrentThreadContext.getConnectionInstance();
+			connection = getConnection();
 			st = connection.createStatement();
 			for (String ds : ddlSqlArr) {
 				if(StrUtils.notEmpty(ds)){
@@ -99,7 +112,7 @@ public class DBLink {
 		Statement st = null;
 		StringBuilder errSql = new StringBuilder();
 		try {
-			connection = CurrentThreadContext.getConnectionInstance();
+			connection = getConnection();
 			for (String us : updateSqlArr) {
 				if(StrUtils.notEmpty(us)){
 					st = connection.createStatement();
@@ -157,7 +170,13 @@ public class DBLink {
 	 * @throws SQLException 
 	 */
 	public Connection getConnection() throws ClassNotFoundException, SQLException{
-		Connection connection = CurrentThreadContext.getConnectionInstance();
+		Connection connection = null;
+		if(connectionFromCurrentThread){
+			connection = CurrentThreadContext.getConnectionInstance();
+		}else{
+			Class.forName(database.getDriverClass());
+			connection = DriverManager.getConnection(database.getUrl(), database.getLoginUserName(), database.getLoginPassword());
+		}
 		return connection;
 	}
 	

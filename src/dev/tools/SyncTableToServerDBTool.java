@@ -54,9 +54,9 @@ public final class SyncTableToServerDBTool extends AService{
 		serviceDatabaseInstance.setPort(1433);
 		
 		// 数据库表处理对象【根据服务器数据库对象获取】
-		DBTableHandler dbTableHandler = new DBTableHandler(serviceDatabaseInstance);
+		DBTableHandler dbTableHandler = new DBTableHandler(serviceDatabaseInstance, false);
 		// 数据库数据处理对象【根据服务器数据库对象获取】
-		DBLink dblink = new DBLink(serviceDatabaseInstance);
+		DBLink dblink = new DBLink(serviceDatabaseInstance, false);
 		
 		Connection conn = null;
 		Statement st = null;

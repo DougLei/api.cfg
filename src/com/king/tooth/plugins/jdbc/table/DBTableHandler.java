@@ -37,11 +37,20 @@ public class DBTableHandler {
 	private ATableHandler tableOper;
 	
 	/**
-	 * 构造函数
+	 * 
+	 * 连接从当前线程中获取
 	 * @param database 数据库对象 
 	 */
 	public DBTableHandler(CfgDatabase database){
-		dblink = new DBLink(database);
+		this(database, true);
+	}
+	/**
+	 * 
+	 * @param database 数据库对象 
+	 * @param connectionFromCurrentThread 连接是否从当前线程中获取 
+	 */
+	public DBTableHandler(CfgDatabase database, boolean connectionFromCurrentThread){
+		dblink = new DBLink(database, connectionFromCurrentThread);
 		newAbstractCreateTableInstance();
 	}
 	
