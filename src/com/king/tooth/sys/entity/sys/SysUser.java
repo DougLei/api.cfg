@@ -68,9 +68,9 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	private Date employedDate;
 	/**
 	 * 人员状态
-	 * <p>0:其他(默认)、1.在职、2.离职、3.休假</p>
+	 * <p>默认值为1，1.在职、2.离职、3.休假，4.其他</p>
 	 */
-	private Integer userStatus;
+	private Integer status;
 	/**
 	 * 月薪
 	 */
@@ -201,11 +201,11 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	public void setEmployedDate(Date employedDate) {
 		this.employedDate = employedDate;
 	}
-	public Integer getUserStatus() {
-		return userStatus;
+	public Integer getStatus() {
+		return status;
 	}
-	public void setUserStatus(Integer userStatus) {
-		this.userStatus = userStatus;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 	public String getMonthSalar() {
 		return monthSalar;
@@ -346,11 +346,11 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 		employedDateColumn.setComments("入职时间");
 		columns.add(employedDateColumn);
 		
-		CfgColumn userStatusColumn = new CfgColumn("user_status", DataTypeConstants.INTEGER, 1);
-		userStatusColumn.setName("人员状态");
-		userStatusColumn.setComments("人员状态:0:其他(默认)、1.在职、2.离职、3.休假");
-		userStatusColumn.setDefaultValue("0");
-		columns.add(userStatusColumn);
+		CfgColumn statusColumn = new CfgColumn("status", DataTypeConstants.INTEGER, 1);
+		statusColumn.setName("人员状态");
+		statusColumn.setComments("默认值为1，1.在职、2.离职、3.休假，4.其他");
+		statusColumn.setDefaultValue("1");
+		columns.add(statusColumn);
 		
 		CfgColumn monthSalarColumn = new CfgColumn("month_salar", DataTypeConstants.DOUBLE, 10);
 		monthSalarColumn.setName("月薪");
@@ -441,6 +441,19 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	
 	public String analysisResourceProp() {
 		return validNotNullProps();
+	}
+	
+	/**
+	 * 获取用户状态
+	 * @return 1启用，2禁用
+	 */
+	@JSONField(serialize = false)
+	public int getUserStatus(){
+		if(status == 1){
+			return 1;
+		}else{
+			return 2;
+		}
 	}
 	
 	@JSONField(serialize = false)

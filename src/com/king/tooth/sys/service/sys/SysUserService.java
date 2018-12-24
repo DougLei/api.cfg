@@ -9,6 +9,7 @@ import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.entity.sys.SysAccount;
+import com.king.tooth.sys.entity.sys.SysAccountCard;
 import com.king.tooth.sys.entity.sys.SysUser;
 import com.king.tooth.sys.service.AService;
 import com.king.tooth.thread.current.CurrentThreadContext;
@@ -274,6 +275,11 @@ public class SysUserService extends AService{
 			if(user.getIsCreateAccount()==1){
 				operAccount(user, false);
 			}
+			
+			if(user.getUserStatus() != oldUser.getUserStatus()){
+				BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).updateAccountCardStatus(new SysAccountCard(user.getId(), user.getUserStatus()));
+			}
+			
 			JSONObject userJsonObject = HibernateUtil.updateEntityObject(user, null);
 			String userId = oldUser.getId();
 			
