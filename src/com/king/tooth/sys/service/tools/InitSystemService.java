@@ -269,7 +269,7 @@ public class InitSystemService extends AService{
 			// 先加载当前系统数据库的所有hbm映射文件
 			loadCurrentSysDatabaseHbms();
 			// 清空用户在线数据表
-			if(SysContext.getSystemConfig("db.default.ip").equals("localhost")){
+			if(SysContext.getSystemConfig("db.default.ip").equals("localhost") && SysContext.getSystemConfig("is.develop").equals("true")){
 				HibernateUtil.executeUpdateBySql(SqlStatementTypeConstants.DELETE, "truncate table sys_account_online_status", null);
 			}
 		} catch (Exception e) {

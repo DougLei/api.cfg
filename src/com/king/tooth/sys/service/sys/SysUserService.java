@@ -35,6 +35,9 @@ public class SysUserService extends AService{
 	 * @return
 	 */
 	private boolean accountIsExists(String id){
+		if(StrUtils.isEmpty(id)){
+			return false;
+		}
 		Object obj = HibernateUtil.executeUniqueQueryByHqlArr("select "+ResourcePropNameConstants.ID+" from SysAccount where " + ResourcePropNameConstants.ID +"=?", id);
 		if(obj == null){
 			return false;
@@ -222,7 +225,6 @@ public class SysUserService extends AService{
 			result = validTelIsExists(user);
 		}
 		if(result == null){
-			user.setId(ResourceHandlerUtil.getIdentity());
 			if(user.getIsCreateAccount() == 1){
 				JSONObject account = (JSONObject)operAccount(user, false);
 				user.setId(account.getString(ResourcePropNameConstants.ID));
@@ -334,7 +336,13 @@ public class SysUserService extends AService{
 	 * @return
 	 */
 	public Object openAccount(SysUser user) {
-		return operAccount(user, true);
+		Object object = operAccount(user, true);
+		if(object instanceof String){
+			return object;
+		}
+		JSONObject jsonObject = new JSONObject(2);
+		jsonObject.put(ResourcePropNameConstants.ID, user.getId());
+		return jsonObject;
 	}
 	
 	/**
@@ -369,7 +377,7 @@ public class SysUserService extends AService{
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
 				account.setWorkNo(user.getWorkNo());
-				HibernateUtil.updateEntityObject(account, null);
+				return HibernateUtil.updateEntityObject(account, null);
 			}
 		}else{
 			SysAccount account = new SysAccount();
@@ -381,12 +389,8 @@ public class SysUserService extends AService{
 			account.setTel(user.getTel());
 			account.setEmail(user.getEmail());
 			account.setWorkNo(user.getWorkNo());
-			HibernateUtil.saveObject(account, null);
+			return HibernateUtil.saveObject(account, null);
 		}
-		
-		JSONObject jsonObject = new JSONObject(2);
-		jsonObject.put(ResourcePropNameConstants.ID, user.getId());
-		return jsonObject;
 	}
 	
 	/**
