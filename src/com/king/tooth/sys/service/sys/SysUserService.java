@@ -35,6 +35,9 @@ public class SysUserService extends AService{
 	 * @return
 	 */
 	private boolean accountIsExists(String id){
+		if(StrUtils.isEmpty(id)){
+			return false;
+		}
 		Object obj = HibernateUtil.executeUniqueQueryByHqlArr("select "+ResourcePropNameConstants.ID+" from SysAccount where " + ResourcePropNameConstants.ID +"=?", id);
 		if(obj == null){
 			return false;
@@ -144,11 +147,11 @@ public class SysUserService extends AService{
 			return "系统已经存在工号为["+workNo+"]的用户";
 		}
 		
-		// 如果同时创建账户，则要去账户表中去判断，是否有重名的loginName
+		// 如果同时创建账户，则要去账户表中去判断，是否有重名的loginName,workNo
 		if(user.getIsCreateAccount() == 1){
-			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=? and isDelete=0", workNo, currentCustomerId);
+			count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where (loginName=? or workNo=?) and customerId=? and isDelete=0", workNo, workNo, currentCustomerId);
 			if(count > 0){
-				return "系统已经存在登录名为["+workNo+"]的账户";
+				return "系统已经存在[登录名/工号]为["+workNo+"]的账户";
 			}
 		}
 		return null;
