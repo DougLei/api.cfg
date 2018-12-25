@@ -1,8 +1,9 @@
 package com.king.tooth.web.builtin.method.common.pager;
 
 import java.io.Serializable;
-import com.king.tooth.util.Log4jUtil;
+
 import com.king.tooth.util.StrUtils;
+import com.king.tooth.util.datatype.DataTypeValidUtil;
 
 /**
  * 分页查询的参数对象
@@ -57,50 +58,34 @@ public class PageQueryEntity implements Serializable{
 		setRows(rows);
 	}
 	private void setLimit(String limit) {
-		if(StrUtils.notEmpty(limit)){
-			try {
-				this.limit = Math.abs(Integer.parseInt(limit.trim()));
-				if(this.limit == 0){
-					this.limit = 1;
-				}
-			} catch (NumberFormatException e) {
-				Log4jUtil.debug("[PageQueryEntity.setLimit]方法在将字符串转换成整型时，转换的值为'{}'，结果出现了异常信息:{}", limit, e.getMessage());
+		if(StrUtils.notEmpty(limit) && DataTypeValidUtil.isInteger(limit)){
+			this.limit = Math.abs(Integer.parseInt(limit.trim()));
+			if(this.limit == 0){
+				this.limit = 1;
 			}
 		}
 	}
 	private void setStart(String start) {
-		if(StrUtils.notEmpty(start)){
-			try {
-				this.start = Integer.parseInt(start.trim());
-				if(this.start < 0){
-					this.start = 0;
-				}
-			} catch (NumberFormatException e) {
-				Log4jUtil.debug("[PageQueryEntity.setStart]方法在将字符串转换成整型时，转换的值为'{}'，结果出现了异常信息:{}", start, e.getMessage());
+		if(StrUtils.notEmpty(start) && DataTypeValidUtil.isInteger(start)){
+			this.start = Integer.parseInt(start.trim());
+			if(this.start < 0){
+				this.start = 0;
 			}
 		}
 	}
 	private void setRows(String rows) {
-		if(StrUtils.notEmpty(rows)){
-			try {
-				this.rows = Math.abs(Integer.parseInt(rows.trim()));
-				if(this.rows == 0){
-					this.rows = 1;
-				}
-			} catch (NumberFormatException e) {
-				Log4jUtil.debug("[PageQueryEntity.setRows]方法在将字符串转换成整型时，转换的值为'{}'，结果出现了异常信息:{}", rows, e.getMessage());
+		if(StrUtils.notEmpty(rows) && DataTypeValidUtil.isInteger(rows)){
+			this.rows = Math.abs(Integer.parseInt(rows.trim()));
+			if(this.rows == 0){
+				this.rows = 1;
 			}
 		}
 	}
 	private void setPage(String page) {
-		if(StrUtils.notEmpty(page)){
-			try {
-				this.page = Math.abs(Integer.parseInt(page.trim()));
-				if(this.page == 0){
-					this.page = 1;
-				}
-			} catch (NumberFormatException e) {
-				Log4jUtil.debug("[PageQueryEntity.setPage]方法在将字符串转换成整型时，转换的值为'{}'，结果出现了异常信息:{}", page, e.getMessage());
+		if(StrUtils.notEmpty(page) && DataTypeValidUtil.isInteger(page)){
+			this.page = Math.abs(Integer.parseInt(page.trim()));
+			if(this.page == 0){
+				this.page = 1;
 			}
 		}
 	}
@@ -111,6 +96,10 @@ public class PageQueryEntity implements Serializable{
 	 */
 	private void checkUseLimitStart(){
 		if(limit > 0 && start >= 0){
+			if(start%limit != 0){
+				/** @see getPageNum() */
+				throw new IllegalArgumentException("分页查询时，_start参数值，必须能整除_limit的参数值");
+			}
 			this.useLimitStart = true;
 		}
 	}
