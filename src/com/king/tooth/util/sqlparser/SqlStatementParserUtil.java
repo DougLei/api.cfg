@@ -506,9 +506,10 @@ public class SqlStatementParserUtil {
 				sqlScriptFinalStatement.setFinalSelectSqlScript(sqlScript);
 				return;
 			}
-			String finalCteSql = "with "+selectSqlStatement.getCteList().toString() + " ";
+			String tmpCteSql = selectSqlStatement.getCteList().toString();
+			String finalCteSql = "with "+ tmpCteSql + " ";
 			sqlScriptFinalStatement.setFinalCteSql(finalCteSql);
-			sqlScriptFinalStatement.setFinalSelectSqlScript(sqlScript.substring(sqlScript.indexOf(finalCteSql) + finalCteSql.length()));
+			sqlScriptFinalStatement.setFinalSelectSqlScript(sqlScript.substring(sqlScript.indexOf(tmpCteSql) + tmpCteSql.length()));
 		}
 	}
 	
