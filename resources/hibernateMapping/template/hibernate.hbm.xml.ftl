@@ -21,7 +21,7 @@
 						type="org.hibernate.types.sqlserver.Integer"
 					<#elseif column.columnType == "double">
 						type="org.hibernate.types.sqlserver.Double"
-					<#elseif column.columnType == "double">
+					<#elseif column.columnType == "blob">
 						type="binary"
 					<#else>
 						type="string"
