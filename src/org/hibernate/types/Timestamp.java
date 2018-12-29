@@ -1,7 +1,6 @@
-package org.hibernate.types.sqlserver;
+package org.hibernate.types;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,14 +10,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
+import com.king.tooth.util.DateUtil;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 自定义的double类型
+ * 自定义的timestamp类型
  * @author DougLei
  */
-public class Double implements UserType{
-	private static final int[] SQL_TYPES = {Types.DECIMAL};
+public class Timestamp implements UserType{
+	private static final int[] SQL_TYPES = {Types.TIMESTAMP};
 	
 	public int[] sqlTypes() {
 		return SQL_TYPES;
@@ -26,7 +26,7 @@ public class Double implements UserType{
 
 	@SuppressWarnings("rawtypes")
 	public Class returnedClass() {
-		return java.lang.Double.class;
+		return String.class;
 	}
 
 	public boolean equals(Object x, Object y) throws HibernateException {
@@ -41,11 +41,7 @@ public class Double implements UserType{
 	 * 数据读取时被调用
 	 */
 	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
-		Object obj = rs.getObject(names[0]);
-		if(obj == null){
-			return null;
-		}
-		return BigDecimal.valueOf(java.lang.Double.valueOf(obj.toString()));
+		return rs.getObject(names[0]);
 	}
 
 	/**
@@ -53,9 +49,15 @@ public class Double implements UserType{
 	 */
 	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
 		if(StrUtils.notEmpty(value)){
-			st.setBigDecimal(index, new BigDecimal(value.toString()));
+			if(value instanceof String){
+				st.setTimestamp(index, DateUtil.parseSqlTimestamp(value.toString()));
+			}else if(value instanceof Long){
+				st.setTimestamp(index, new java.sql.Timestamp(Long.valueOf(value.toString())));
+			}else{
+				st.setTimestamp(index, DateUtil.parseSqlTimestamp((java.util.Date)value));
+			}
 		}else{
-			st.setNull(index, Types.DECIMAL);
+			st.setNull(index, Types.TIMESTAMP);
 		}
 	}
 

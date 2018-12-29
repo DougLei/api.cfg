@@ -1,4 +1,4 @@
-package org.hibernate.types.sqlserver;
+package org.hibernate.types;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -13,11 +13,11 @@ import org.hibernate.usertype.UserType;
 import com.king.tooth.util.StrUtils;
 
 /**
- * 自定义的boolean类型
+ * 自定义的integer类型
  * @author DougLei
  */
-public class Boolean implements UserType{
-	private static final int[] SQL_TYPES = {Types.CHAR};
+public class Integer implements UserType{
+	private static final int[] SQL_TYPES = {Types.INTEGER};
 	
 	public int[] sqlTypes() {
 		return SQL_TYPES;
@@ -25,7 +25,7 @@ public class Boolean implements UserType{
 
 	@SuppressWarnings("rawtypes")
 	public Class returnedClass() {
-		return java.lang.Boolean.class;
+		return java.lang.Integer.class;
 	}
 
 	public boolean equals(Object x, Object y) throws HibernateException {
@@ -42,13 +42,9 @@ public class Boolean implements UserType{
 	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
 		Object obj = rs.getObject(names[0]);
 		if(obj == null){
-			return false;
+			return null;
 		}
-		if(obj.toString().equals("1")){
-			return true;
-		}else{
-			return false;
-		}
+		return java.lang.Integer.valueOf(obj.toString());
 	}
 
 	/**
@@ -56,13 +52,9 @@ public class Boolean implements UserType{
 	 */
 	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
 		if(StrUtils.notEmpty(value)){
-			if(value.toString().equals("true")){
-				st.setString(index, "1");
-			}else{
-				st.setString(index, "0");
-			}
+			st.setInt(index, java.lang.Integer.valueOf(value.toString()));
 		}else{
-			st.setNull(index, Types.CHAR);
+			st.setNull(index, Types.INTEGER);
 		}
 	}
 

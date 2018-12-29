@@ -14,13 +14,13 @@
 			<#if column.propName?lower_case != "id">
 				<property name="${column.propName}" column="${column.columnName}" 
 					<#if column.columnType == "date">
-						type="org.hibernate.types.sqlserver.Timestamp"
+						type="org.hibernate.types.Timestamp"
 					<#elseif column.columnType == "boolean">
-						type="org.hibernate.types.sqlserver.Boolean"
+						type="org.hibernate.types.Boolean"
 					<#elseif column.columnType == "integer">
-						type="org.hibernate.types.sqlserver.Integer"
+						type="org.hibernate.types.Integer"
 					<#elseif column.columnType == "double">
-						type="org.hibernate.types.sqlserver.Double"
+						type="org.hibernate.types.Double"
 					<#elseif column.columnType == "blob">
 						type="binary"
 					<#else>
