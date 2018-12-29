@@ -53,7 +53,9 @@ public class HttpClientUtil {
 			
 			Set<Entry<String, Object>> se = params.entrySet();
 			for (Entry<String, Object> entry : se) {
-				url.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+				if(entry.getValue() != null){
+					url.append(entry.getKey()).append("=").append(entry.getValue().toString()).append("&");
+				}
 			}
 			url.setLength(url.length()-1);
 			

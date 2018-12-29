@@ -1,15 +1,12 @@
 package test;
 
-import java.io.IOException;
-
 
 public class TestMain {
-	public static void main(String[] args) throws CloneNotSupportedException, IOException, ClassNotFoundException {
+	public static void main(String[] args) throws Exception {
+
+		Object a = null;
+		System.out.println(a+"");
 		
-		int start = 13;
-		int limit = 10;
-		System.out.println(start%limit != 0);
-		
-		
+		System.out.println('\0');
 	}
 }
