@@ -130,6 +130,9 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 	
 	public CfgColumn() {
 	}
+	public CfgColumn(String columnName) {
+		this.columnName = columnName;
+	}
 	public CfgColumn(String columnName, String columnType, Integer length) {
 		this(columnName, columnType, length, 1, 1);
 	}
@@ -306,10 +309,10 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 				this.oldColumnInfo.put("precision", oldColumn.getPrecision());
 			}
 			// 5.记录 (旧的)默认值
-			if((StrUtils.notEmpty(oldColumn.getDefaultValue()) && !oldColumn.getDefaultValue().equals(this.getDefaultValue())) 
-					|| (StrUtils.notEmpty(this.getDefaultValue()) && !this.getDefaultValue().equals(oldColumn.getDefaultValue()))){
-				this.oldColumnInfo.put("haveOldDefaultValue", true);
-				this.oldColumnInfo.put("defaultValue", oldColumn.getDefaultValue());
+			if((oldColumn.getDefaultValue() != null && !oldColumn.getDefaultValue().equals(this.getDefaultValue())) 
+					|| (this.getDefaultValue() != null && !this.getDefaultValue().equals(oldColumn.getDefaultValue()))){
+				this.oldColumnInfo.put("updateDefaultValue", true);
+				this.oldColumnInfo.put("oldDefaultValue", oldColumn.getDefaultValue());
 			}
 			// 6.记录 (旧的)是否唯一
 			if(oldColumn.getIsUnique() != this.getIsUnique()){
@@ -322,8 +325,8 @@ public class CfgColumn extends BasicEntity implements IEntity, IEntityPropAnalys
 			// 8.记录 (旧的)备注信息
 			if((StrUtils.notEmpty(oldColumn.getComments()) && !oldColumn.getComments().equals(this.getComments())) 
 					|| (StrUtils.notEmpty(this.getComments()) && !this.getComments().equals(oldColumn.getComments()))){
-				this.oldColumnInfo.put("haveComments", true);
-				this.oldColumnInfo.put("comments", oldColumn.getComments());
+				this.oldColumnInfo.put("updateComments", true);
+				this.oldColumnInfo.put("oldComments", oldColumn.getComments());
 			}
 			if(oldColumnInfo.size() > 0){// 如果有修改记录了，才会标识列的状态被修改，需要用户重新建模；修改了列的备注等信息，是不用重新建模的
 				this.setOperStatus(CfgColumn.MODIFIED);

@@ -124,14 +124,16 @@ public class TableImpl extends ATableHandler{
 	}
 
 	protected void addDefaultValueConstraint(String tableName, CfgColumn column, StringBuilder operColumnSql) {
-		operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
-				 	 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.DEFAULT_VALUE));
-		if(DataTypeConstants.STRING.equals(column.getColumnType())){
-			operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
-		}else{
-			operColumnSql.append(" default ").append(column.getDefaultValue());
+		if(column.getDefaultValue() != null ){
+			operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+					 	 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.DEFAULT_VALUE));
+			if(DataTypeConstants.STRING.equals(column.getColumnType())){
+				operColumnSql.append(" default '").append(column.getDefaultValue()).append("'");
+			}else{
+				operColumnSql.append(" default ").append(column.getDefaultValue());
+			}
+			operColumnSql.append(" for ").append(column.getColumnName()).append(";");
 		}
-		operColumnSql.append(" for ").append(column.getColumnName()).append(";");
 	}
 
 	protected void deleteDefaultValueConstraint(String tableName, CfgColumn column, StringBuilder operColumnSql) {

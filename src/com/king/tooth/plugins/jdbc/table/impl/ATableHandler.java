@@ -104,9 +104,9 @@ public abstract class ATableHandler {
 							 .append(" primary key (").append(column.getColumnName()).append(")")
 					         .append(";");
 			}
-			if(StrUtils.notEmpty(column.getDefaultValue())){
-				addDefaultValueConstraint(tableName, column, operColumnSql);
-			}
+			
+			addDefaultValueConstraint(tableName, column, operColumnSql);
+			
 			if(column.getIsUnique() != null && column.isTableUnique()){
 				operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
 							 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.UNIQUE))
@@ -151,9 +151,10 @@ public abstract class ATableHandler {
 		JSONObject oldColumnInfo = column.getOldColumnInfo();
 		if(oldColumnInfo != null){
 			
-			// 列名
-			if(oldColumnInfo.get("columnName") != null){ 
-				reColumnName(tableName, oldColumnInfo.getString("columnName"), column.getColumnName());
+			String oldColumnName = null; // 如果修改了列名，关联的各种约束名也要调整 [删除之前的约束，添加新的约束]
+			if(oldColumnInfo.get("columnName") != null){
+				oldColumnName = oldColumnInfo.getString("columnName");
+				reColumnName(tableName, oldColumnName, column.getColumnName());
 			}
 			
 			// 字段数据类型，字段长度，数据精度，是否可为空
@@ -170,35 +171,50 @@ public abstract class ATableHandler {
 				operColumnSql.append(";");
 			}
 			
-			// 是否唯一
-			if(oldColumnInfo.get("isUnique") != null){ 
+			// 是否修改了 [是否唯一] 约束
+			if(oldColumnInfo.get("isUnique") == null){ 
+				if(oldColumnName != null && column.getIsUnique() == 1){
+					dropConstraint(tableName, oldColumnName, operColumnSql, DatabaseConstraintConstants.UNIQUE);
+					addUniqueConstraint(tableName, column.getColumnName(), operColumnSql);
+				}
+			}else{
 				Integer isUnique = column.getIsUnique();
 				if(isUnique == 0){
-					dropConstraint(tableName, column.getColumnName(), operColumnSql, DatabaseConstraintConstants.UNIQUE);
+					if(oldColumnName == null){
+						dropConstraint(tableName, column.getColumnName(), operColumnSql, DatabaseConstraintConstants.UNIQUE);
+					}else{
+						dropConstraint(tableName, oldColumnName, operColumnSql, DatabaseConstraintConstants.UNIQUE);
+					}
 				}else if(isUnique == 1){
-					operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
-								 .append(DBUtil.getConstraintName(tableName, column.getColumnName(), DatabaseConstraintConstants.UNIQUE))
-								 .append(" unique(").append(column.getColumnName()).append(")")
-					             .append(";");
+					addUniqueConstraint(tableName, column.getColumnName(), operColumnSql);
 				}
 			}
 			
-			// 默认值
-			if(oldColumnInfo.get("haveOldDefaultValue") != null && oldColumnInfo.getBoolean("haveOldDefaultValue")){ 
+			// 是否修改了 [默认值] 约束
+			if(oldColumnInfo.get("updateDefaultValue") != null){ 
 				// 原来存在默认值约束，则要删除之前的默认值约束
-				if(oldColumnInfo.get("defaultValue") != null){
-					deleteDefaultValueConstraint(tableName, column, operColumnSql);
+				if(oldColumnInfo.get("oldDefaultValue") != null){
+					if(oldColumnName == null){
+						deleteDefaultValueConstraint(tableName, column, operColumnSql);
+					}else{
+						deleteDefaultValueConstraint(tableName, new CfgColumn(oldColumnName), operColumnSql);
+					}
 				}
 				
 				// 如果存在新的默认值约束，则就添加
 				if(column.getDefaultValue() != null){
 					addDefaultValueConstraint(tableName, column, operColumnSql);
 				}
+			}else{
+				if(oldColumnName != null && column.getDefaultValue() != null){
+					deleteDefaultValueConstraint(tableName, new CfgColumn(oldColumnName), operColumnSql);
+					addDefaultValueConstraint(tableName, column, operColumnSql);
+				}
 			}
 			
 			// 注释
-			if(oldColumnInfo.get("haveComments") != null && oldColumnInfo.getBoolean("haveComments")){ 
-				boolean isAdd = StrUtils.isEmpty(oldColumnInfo.get("comments"));
+			if(oldColumnInfo.get("updateComments") != null){ 
+				boolean isAdd = StrUtils.isEmpty(oldColumnInfo.get("oldComments"));
 				analysisColumnComments(tableName, column, isAdd, operColumnSql);
 			}
 			oldColumnInfo.clear();
@@ -227,6 +243,19 @@ public abstract class ATableHandler {
 					 .append(" drop constraint ")
 					 .append(DBUtil.getConstraintName(tableName, columnName, constraintType))
 					 .append(";");
+	}
+	
+	/**
+	 * 添加唯一约束
+	 * @param tableName
+	 * @param columnName
+	 * @param operColumnSql
+	 */
+	protected void addUniqueConstraint(String tableName, String columnName, StringBuilder operColumnSql){
+		operColumnSql.append("alter table ").append(tableName).append(" add constraint ")
+					 .append(DBUtil.getConstraintName(tableName, columnName, DatabaseConstraintConstants.UNIQUE))
+					 .append(" unique(").append(columnName).append(")")
+				     .append(";");
 	}
 	
 	/**
