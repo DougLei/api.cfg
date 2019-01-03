@@ -1,17 +1,20 @@
 package test.sqlparser.gsp;
 
 import gudusoft.gsqlparser.EDbVendor;
+import gudusoft.gsqlparser.ETableSource;
 import gudusoft.gsqlparser.TGSqlParser;
 import gudusoft.gsqlparser.TStatementList;
 import gudusoft.gsqlparser.nodes.TCTE;
 import gudusoft.gsqlparser.nodes.TCTEList;
 import gudusoft.gsqlparser.nodes.TOrderBy;
 import gudusoft.gsqlparser.nodes.TOrderByItemList;
+import gudusoft.gsqlparser.nodes.TTable;
+import gudusoft.gsqlparser.nodes.TTableList;
 import gudusoft.gsqlparser.stmt.TSelectSqlStatement;
 
 public class Test5 {
 	public static void main(String[] args) {
-		String sql = "with  a   as (select top 1 * from student order by d  . name desc, size),    b    as(select * from b  order by d asc)   select *,name from Student,DevToolController s left join classes c on s.id=c.id and c.sex = $sex$ and d=1 right join classesr c on (s.id=c.id and c.sex = $sex$) inner join classesr c on (s.id=c.id and c.sex = $sex$) where name = $name$ and test.id = student.id order by test desc";
+		String sql = "select * from user u";
 		EDbVendor dbDialect = EDbVendor.dbvmssql;
 		TGSqlParser parser = new TGSqlParser(dbDialect);
 		parser.sqltext = sql;
@@ -39,12 +42,21 @@ public class Test5 {
 					}
 					
 				}
-				System.out.println(cteList);
 			}
-			System.out.println("************************************************************");
 			
-			System.out.println(selectSqlStatement.getOrderbyClause());
-//			System.out.println(selectSqlStatement.getLeftStmt().getResultColumnList());
+			System.out.println(selectSqlStatement.getTables() == null);
+			System.out.println(selectSqlStatement.getTables() );
+			
+			TTableList tables = selectSqlStatement.getTables();
+			TTable table = null;
+			for(int i=0;i<tables.size();i++){
+				table = tables.getTable(i);
+				if(table.getTableType() == ETableSource.subquery){
+					System.out.println(table.getSubquery().getTables());
+				}
+			}
+			
+			
 		}
 		
 		
