@@ -14,7 +14,7 @@ import gudusoft.gsqlparser.stmt.TSelectSqlStatement;
 
 public class Test5 {
 	public static void main(String[] args) {
-		String sql = "select * from user u";
+		String sql = "select * from (select * from subQuery) d left join (select * from leftjoinSubQuery) p on (d.id = p.id)";
 		EDbVendor dbDialect = EDbVendor.dbvmssql;
 		TGSqlParser parser = new TGSqlParser(dbDialect);
 		parser.sqltext = sql;
@@ -44,18 +44,24 @@ public class Test5 {
 				}
 			}
 			
-			System.out.println(selectSqlStatement.getTables() == null);
-			System.out.println(selectSqlStatement.getTables() );
+//			System.out.println(selectSqlStatement.getTables() );
+//			TJoinList joins = selectSqlStatement.joins;
+//			TJoin join = null;
+//			for(int i=0;i<joins.size();i++){
+//				join = joins.getJoin(i);
+//				System.out.println(join);
+//			}
 			
+			
+//			System.out.println(selectSqlStatement.getTables() );
 			TTableList tables = selectSqlStatement.getTables();
 			TTable table = null;
 			for(int i=0;i<tables.size();i++){
 				table = tables.getTable(i);
 				if(table.getTableType() == ETableSource.subquery){
-					System.out.println(table.getSubquery().getTables());
+					System.out.println(table.getSubquery());
 				}
 			}
-			
 			
 		}
 		
