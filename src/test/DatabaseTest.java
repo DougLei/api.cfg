@@ -70,7 +70,7 @@ public class DatabaseTest extends Parent{
 		Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SmartOneCfg", "sa", "123_abc");
 		PreparedStatement ps = conn.prepareStatement(getSql());
 		
-		int index = 1;
+//		int index = 1;
 //		ps.setString(index++, "a661e25ac5c040bba127ca08d4941f85");
 //		ps.setString(index++, "485e20eda7bf4068bf9aafbbb3b55090");
 //		ps.setString(index++, "923ff78943d1413db5f3a2850b18f1cf");
