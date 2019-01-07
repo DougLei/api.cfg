@@ -28,6 +28,7 @@ import com.king.tooth.util.StrUtils;
 import com.king.tooth.util.hibernate.HibernateUtil;
 import com.king.tooth.util.sqlparser.SqlParameterParserUtil;
 import com.king.tooth.util.sqlparser.SqlStatementParserUtil;
+import com.king.tooth.web.entity.request.valid.data.util.entity.SqlParamSetActualValueEntity;
 
 /**
  * sql脚本信息表
@@ -466,11 +467,18 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	}
 	/**
 	 * 解析出最终要操作的sql语句
-	 * @param sqlScriptResource
 	 * @param sqlParameterValues
 	 */
-	public void analysisFinalSqlScript(CfgSql sqlScriptResource, List<List<Object>> sqlParameterValues) {
-		this.finalSqlScriptList = SqlStatementParserUtil.getFinalSqlScriptList(sqlScriptResource, sqlParameterValues);
+	public void analysisFinalSqlScript(List<List<Object>> sqlParameterValues) {
+		if(rules != null && rules.size() > 0){
+			new SqlParamSetActualValueEntity().setFinalCodeVals(this, rules);
+		}
+		this.finalSqlScriptList = SqlStatementParserUtil.getFinalSqlScriptList(this, sqlParameterValues);
+	}
+	
+	private List<CfgPropCodeRule> rules;
+	public void setRules(List<CfgPropCodeRule> rules){
+		this.rules = rules;
 	}
 	
 	public Map<Integer, List<String>> getParameterNameRecordMap() {

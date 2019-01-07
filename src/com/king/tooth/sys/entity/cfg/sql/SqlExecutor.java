@@ -11,13 +11,11 @@ import com.king.tooth.constants.OperDataTypeConstants;
 import com.king.tooth.constants.ResourcePropNameConstants;
 import com.king.tooth.constants.SqlStatementTypeConstants;
 import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.util.database.ProcedureUtil;
 import com.king.tooth.util.hibernate.HibernateUtil;
-import com.king.tooth.web.entity.request.valid.data.util.entity.SqlParamSetActualValueEntity;
 
 /**
  * sql执行者
@@ -33,14 +31,12 @@ public class SqlExecutor implements Serializable{
 	 * <p>增删改</p>
 	 * @param sql
 	 * @param data
-	 * @param rules
 	 * @return
 	 */
-	public Object doExecuteModifySql(CfgSql sql, List<List<Object>> sqlParameterValues, IJson data, List<CfgPropCodeRule> rules){
+	public Object doExecuteModifySql(CfgSql sql, List<List<Object>> sqlParameterValues, IJson data){
 		this.sqlParameterValues = sqlParameterValues;
 		
 		List<FinalSqlScriptStatement> finalSqlScriptList = sql.getFinalSqlScriptList();
-		new SqlParamSetActualValueEntity().setFinalCodeVals(sql, rules);
 		
 		String operDataType = null;
 		if(SqlStatementTypeConstants.INSERT.equals(sql.getConfType())){

@@ -193,7 +193,7 @@ public class SysAccountService extends AService{
 		
 		if(loginUser == null){
 			accountOnlineStatus.setAccountName(accountName);
-			accountOnlineStatus.setUserId("unknow");
+			accountOnlineStatus.setUserId(accountOnlineStatus.getId());
 			accountOnlineStatus.setPositionId("unknow");
 			accountOnlineStatus.setDeptId("unknow");
 			accountOnlineStatus.setOrgId("unknow");

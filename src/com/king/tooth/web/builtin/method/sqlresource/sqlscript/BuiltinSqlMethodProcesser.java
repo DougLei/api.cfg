@@ -1,5 +1,8 @@
 package com.king.tooth.web.builtin.method.sqlresource.sqlscript;
 
+import java.util.List;
+
+import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.util.Log4jUtil;
 import com.king.tooth.web.builtin.method.BuiltinMethodProcesserType;
@@ -26,11 +29,22 @@ public class BuiltinSqlMethodProcesser extends AbstractSqlResourceBuiltinMethodP
 	}
 	
 	protected void execAnalysisParam() {
-		reqSql.analysisFinalSqlScript(reqSql, sqlParameterValues);
+		reqSql.analysisFinalSqlScript(sqlParameterValues);
 	}
 
 	/**
 	 * 获取sql脚本资源
+	 * <p>非get请求方式</p>
+	 * @return
+	 */
+	public CfgSql getReqSql(List<CfgPropCodeRule> rules) {
+		reqSql.setRules(rules);
+		return getReqSql();
+	}
+	
+	/**
+	 * 获取sql脚本资源
+	 * <p>get请求方式</p>
 	 * @return
 	 */
 	public CfgSql getReqSql() {

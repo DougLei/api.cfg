@@ -85,7 +85,7 @@ public class RequestProcesserCommon extends CommonProcesser{
 	protected final void doModifyProcess(){
 		List<CfgPropCodeRule> rules = requestBody.getResourcePropCodeRule() == null?null:requestBody.getResourcePropCodeRule().getRules();
 		setResponseBody(new ResponseBody(null, 
-				new SqlExecutor().doExecuteModifySql(builtinSqlScriptMethodProcesser.getReqSql(), sqlParameterValues, requestBody.getFormData(), rules)));
+				new SqlExecutor().doExecuteModifySql(builtinSqlScriptMethodProcesser.getReqSql(rules), sqlParameterValues, requestBody.getFormData())));
 	}
 	
 	/**

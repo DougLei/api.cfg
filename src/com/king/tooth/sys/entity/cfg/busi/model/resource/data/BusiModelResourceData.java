@@ -198,10 +198,11 @@ public class BusiModelResourceData implements Serializable{
 				resultDatas = getQueryResultset(queryConditionPID, refParentResourcePropName, "sql");
 			}else{
 				rules = PropCodeRuleUtil.analyzeRules(refResourceId, refResourceName, datas);
+				refSql.setRules(rules);
 				
 				List<List<Object>> sqlParameterValues = new ArrayList<List<Object>>(20);
-				refSql.analysisFinalSqlScript(refSql, sqlParameterValues);
-				resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas, rules);
+				refSql.analysisFinalSqlScript(sqlParameterValues);
+				resultDatas = new SqlExecutor().doExecuteModifySql(refSql, sqlParameterValues, datas);
 				
 				refSql.clear();
 				// 清除sql语句中的参数值集合

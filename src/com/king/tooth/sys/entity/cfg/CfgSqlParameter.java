@@ -478,5 +478,5 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	 * 参数来源
 	 * <p>2.自动编码</p>
 	 */
-	public static final Integer AUTO_CODE = 1;
+	public static final Integer AUTO_CODE = 2;
 }
