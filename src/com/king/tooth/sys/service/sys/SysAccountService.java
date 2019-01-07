@@ -68,7 +68,7 @@ public class SysAccountService extends AService{
 	 * @return
 	 */
 	public SysAccountOnlineStatus loginByUsernameAndPwd(String loginIp, String accountName, String password){
-		if(password.equals(loingByCardOfPassword)){
+		if(loingByCardOfPassword.equals(password)){
 			return new SysAccountOnlineStatus("用户名密码登陆时，禁止调用刷卡登陆的密码");
 		}
 		return commonLogin(loginIp, accountName, password);
