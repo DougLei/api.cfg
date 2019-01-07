@@ -376,19 +376,17 @@ public class SysUserService extends AService{
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
 				account.setWorkNo(user.getWorkNo());
-				return HibernateUtil.updateEntityObject(account, null);
+				return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).updateAccount(account);
 			}
 		}else{
 			SysAccount account = new SysAccount();
 			account.setId(user.getId());
 			// ----
 			account.setLoginName(user.getWorkNo());
-			account.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-			account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 			account.setTel(user.getTel());
 			account.setEmail(user.getEmail());
 			account.setWorkNo(user.getWorkNo());
-			return HibernateUtil.saveObject(account, null);
+			return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).saveAccount(account);
 		}
 	}
 	

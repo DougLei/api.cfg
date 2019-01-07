@@ -153,7 +153,7 @@ public class SysAccountService extends AService{
 			accountOnlineStatus.setMessage("您的账号已被禁用，请联系管理员");
 			return accountOnlineStatus;
 		}
-		if((loginAccount.getValidDate().getTime() - System.currentTimeMillis()) < 0){
+		if(loginAccount.getValidDate() == null || (loginAccount.getValidDate().getTime() - System.currentTimeMillis()) < 0){
 			accountOnlineStatus.setMessage("您的账号已过期，请联系管理员");
 			return accountOnlineStatus;
 		}
