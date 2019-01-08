@@ -47,7 +47,6 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private String refColumnId;
 	private String queryCondColumnId;
 	private String queryCondValPropId;
-	private int queryCondValPropFrom;
 	private String orderByColumnId;
 	private String orderByMethod;
 	private int valSubStartIndex;
@@ -82,7 +81,6 @@ public class CurrentStageCodeProcesser implements Serializable{
 		refColumnId = propCodeRuleDetail.getRefColumnId();
 		queryCondColumnId = propCodeRuleDetail.getQueryCondColumnId();
 		queryCondValPropId = propCodeRuleDetail.getQueryCondValPropId();
-		queryCondValPropFrom = propCodeRuleDetail.getQueryCondValPropFrom();
 		orderByColumnId = propCodeRuleDetail.getOrderByColumnId();
 		orderByMethod = propCodeRuleDetail.getOrderByMethod();
 		valSubStartIndex = propCodeRuleDetail.getValSubStartIndex();
@@ -376,7 +374,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 			propInfo[1] = DataTypeConstants.STRING;
 		}else{
 			if(isQueryCondValPropId){
-				if(queryCondValPropFrom == 1){
+				if(refPropType == 1){
 					tmpPropInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(queryColumnInfoIdHql, propId);
 				}else{
 					tmpPropInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(querySqlParamInfoIdHql, propId);

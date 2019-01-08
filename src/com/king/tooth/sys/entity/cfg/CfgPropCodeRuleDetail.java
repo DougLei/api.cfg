@@ -154,11 +154,6 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * <p>即当前对象中的某一个属性值作为条件，这个字段，ruleType为5和6，都使用</p>
 	 */
 	private String queryCondValPropId;
-	/**
-	 * 查询条件值的属性来源
-	 * <p>默认值为1，1:CfgColumn、2:CfgSqlParameter，这个字段，ruleType为5和6，都使用</p>
-	 */
-	private Integer queryCondValPropFrom;
 	
 	/**
 	 * 排序列的id
@@ -337,12 +332,6 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	public void setQueryCondValPropId(String queryCondValPropId) {
 		this.queryCondValPropId = queryCondValPropId;
 	}
-	public Integer getQueryCondValPropFrom() {
-		return queryCondValPropFrom;
-	}
-	public void setQueryCondValPropFrom(Integer queryCondValPropFrom) {
-		this.queryCondValPropFrom = queryCondValPropFrom;
-	}
 	public String getOrderByColumnId() {
 		return orderByColumnId;
 	}
@@ -388,7 +377,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(30+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(29+7);
 		
 		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
@@ -515,12 +504,6 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		queryCondValPropIdColumn.setName("查询条件值的属性id");
 		queryCondValPropIdColumn.setComments("即当前对象中的某一个属性值作为条件，这个字段，ruleType为5和6，都使用");
 		columns.add(queryCondValPropIdColumn);
-		
-		CfgColumn queryCondValPropFromColumn = new CfgColumn("query_cond_val_prop_from", DataTypeConstants.INTEGER, 1);
-		queryCondValPropFromColumn.setName("查询条件值的属性来源");
-		queryCondValPropFromColumn.setComments("默认值为1，1:CfgColumn、2:CfgSqlParameter，这个字段，ruleType为5和6，都使用");
-		queryCondValPropFromColumn.setDefaultValue("1");
-		columns.add(queryCondValPropFromColumn);
 		
 		CfgColumn orderByColumnIdColumn = new CfgColumn("order_by_column_id", DataTypeConstants.STRING, 32);
 		orderByColumnIdColumn.setName("排序列的id");
