@@ -606,13 +606,25 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private CurrentStageCodeProcesser cscp;
 	
 	/**
+	 * 关联的属性类型
+	 * <p>1:column(列)、2:sqlparam(sql参数)</p>
+	 */
+	@JSONField(serialize = false)
+	private int refPropType;
+	public int getRefPropType() {
+		return refPropType;
+	}
+	
+	/**
 	 * 得到当前段的编码值
 	 * @param resourceName 当前对象资源名
+	 * @param refPropType 关联的属性类型，1:column(列)、2:sqlparam(sql参数)
 	 * @param currentJsonObject 当前对象的json对象，获取当前段的值的时候，可能会用到当前对象的数据
 	 * @return
 	 */
-	public String getCurrentStageCodeVal(String resourceName, JSONObject currentJsonObject) {
+	public String getCurrentStageCodeVal(String resourceName, int refPropType, JSONObject currentJsonObject) {
 		if(cscp == null){
+			this.refPropType = refPropType;
 			cscp = new CurrentStageCodeProcesser(this);
 		}
 		return cscp.getCodeVal(resourceName, currentJsonObject);

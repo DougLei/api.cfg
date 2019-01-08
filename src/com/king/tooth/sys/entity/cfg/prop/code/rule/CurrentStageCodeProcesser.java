@@ -54,6 +54,11 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private int valSubEndIndex;
 	private String valSubRegex;
 	private int valSubMatchNum;
+	/**
+	 * 关联的属性类型
+	 * <p>1:column(列)、2:sqlparam(sql参数)</p>
+	 */
+	private int refPropType;
 	
 	public CurrentStageCodeProcesser(CfgPropCodeRuleDetail propCodeRuleDetail) {
 		id = propCodeRuleDetail.getId();                        
@@ -84,6 +89,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 		valSubEndIndex = propCodeRuleDetail.getValSubEndIndex();
 		valSubRegex = propCodeRuleDetail.getValSubRegex();
 		valSubMatchNum = propCodeRuleDetail.getValSubMatchNum();
+		refPropType = propCodeRuleDetail.getRefPropType();
 	}
 	
 	/**
@@ -423,7 +429,10 @@ public class CurrentStageCodeProcesser implements Serializable{
 				queryCondColumnInfo = getPropInfoById(queryCondColumnId, false);
 			}
 			if(queryColumnValueHql == null){
-				if(valueFrom == 2){// 2:其他数据资源对象
+				if(refPropType == 2 || valueFrom == 2){
+					// 两种情况根据refTableId查询resourceName
+					// 1.是sql参数的时候
+					// 2.是引用其他数据资源对象的时候
 					resourceName = getTableResourceNameById(refTableId);
 				}
 				queryColumnValueHql = "select "+getPropInfoById(refColumnId, false)[0]+" from "+resourceName+" where "+queryCondColumnInfo[0]+"=?" + installOrderBy();

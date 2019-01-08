@@ -254,7 +254,7 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 						if(i>0){
 							finalCodeValBuffer.append(ruleDetails.get(i-1).getLinkNextSymbol());
 						}
-						finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal(resourceName, currentJsonObject));
+						finalCodeValBuffer.append(ruleDetails.get(i).getCurrentStageCodeVal(resourceName, refPropType, currentJsonObject));
 					}
 					this.finalCodeVals.add(finalCodeValBuffer.toString());
 					finalCodeValBuffer.setLength(0);
