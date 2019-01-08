@@ -130,7 +130,7 @@ public class SysFileService extends AService{
 									}
 									// 是一般上传的文件，且上传文件保存的路径是系统默认路径(在服务器的files/upload文件夹中) ，且是前端要求的上传文件后，可以直接通过url访问文件的后缀
 									if(isNormalImportAndSaveToDefaultPath && FileUtil.isFileFormat(sysFile.getSuffix(), SysContext.getSystemConfig("web.front.end.file.suffix").split(","))){
-										sysFile.setUrlPath(sysFile.getSavePath().replace(SysContext.WEB_SYSTEM_CONTEXT_REALPATH, ""));
+										sysFile.setUrlPath(sysFile.getSavePath().replace(SysContext.WEB_SYSTEM_CONTEXT_REALPATH, "").replace(File.separator, "/"));
 									}
 									filePathList.add(sysFile.getSavePath());
 								}
