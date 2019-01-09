@@ -85,7 +85,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 				Object operDataType = json.get(ResourcePropNameConstants.OPER_DATA_TYPE);
 				
 				if(OperDataTypeConstants.ADD.equals(operDataType)){
-					json.put(idPropName, ResourceHandlerUtil.getIdentity());
+					json.put(idPropName, ResourceHandlerUtil.getIdentity());// 业务建模保存数据时，添加数据无论如何，都用后端生成id **********
 					flag[1] = 2;
 				}else if(OperDataTypeConstants.EDIT.equals(operDataType)){
 					if(StrUtils.isEmpty(json.get(idPropName))){
@@ -113,7 +113,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 				json.remove(ResourcePropNameConstants.OPER_DATA_TYPE);// 尝试移除，因为用不上
 				
 				if(busiModelResRelations.getRefSql().isInsertSql()){
-					json.put(idPropName, ResourceHandlerUtil.getIdentity());
+					json.put(idPropName, ResourceHandlerUtil.getIdentity());// 业务建模保存数据时，添加数据无论如何，都用后端生成id **********
 				}else if(busiModelResRelations.getRefSql().isUpdateSql()){
 					if(StrUtils.isEmpty(json.get(idPropName))){
 						throw new NullPointerException("业务模型["+resourceName+"]中，关联的第"+recursiveLevel+"层级，sql资源名为["+busiModelResRelations.getRefResourceName()+"]的数据集合中，要修改的，第"+(j+1)+"个数据的"+idPropName+"参数值不能为空");
