@@ -2,6 +2,7 @@ package com.king.tooth.sys.builtin.data;
 
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.ResourceHandlerUtil;
+import com.king.tooth.util.StrUtils;
 
 /**
  * 系统内置的查询参数
@@ -119,7 +120,11 @@ public class BuiltinQueryParameters {
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName();
 		}
 		if(currentUserId.equals(parameterName)){
-			return CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
+			String currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
+			if(StrUtils.isEmpty(currentUserId)){
+				currentUserId = CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId();
+			}
+			return currentUserId;
 		}
 		if(currentOrgId.equals(parameterName)){
 			return CurrentThreadContext.getCurrentAccountOnlineStatus().getOrgId();
