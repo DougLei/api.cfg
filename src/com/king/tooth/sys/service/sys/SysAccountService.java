@@ -97,7 +97,7 @@ public class SysAccountService extends AService{
 	 * @return
 	 */
 	private SysAccountOnlineStatus commonLogin(String loginIp, String accountName, String password){
-		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnLineStatus(loginIp, accountName, password);
+		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnlineStatus(loginIp, accountName, password);
 		accountOnlineStatus.setIsDoLogin(true);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		
@@ -126,7 +126,7 @@ public class SysAccountService extends AService{
 	 * @param password
 	 * @return
 	 */
-	private SysAccountOnlineStatus getAccountOfOnLineStatus(String loginIp, String accountName, String password){
+	private SysAccountOnlineStatus getAccountOfOnlineStatus(String loginIp, String accountName, String password){
 		SysAccountOnlineStatus accountOnlineStatus = findAccountOnlineStatus(loginIp, accountName);
 		
 		if(accountOnlineStatus.getTryLoginTimes() > LoginConstants.tryLoginTimes){
@@ -193,7 +193,7 @@ public class SysAccountService extends AService{
 		
 		if(loginUser == null){
 			accountOnlineStatus.setAccountName(accountName);
-			accountOnlineStatus.setUserId(accountOnlineStatus.getId());
+			accountOnlineStatus.setUserId(accountId);
 			accountOnlineStatus.setPositionId("unknow");
 			accountOnlineStatus.setDeptId("unknow");
 			accountOnlineStatus.setOrgId("unknow");
@@ -228,7 +228,7 @@ public class SysAccountService extends AService{
 			
 			// 获取用户所属的组织id
 //			List<Object> orgIds = new ArrayList<Object>(10);
-			accountOnlineStatus.setOrgId("暂不支持");
+			accountOnlineStatus.setOrgId("unknow");
 //			accountOnlineStatus.setOrgIds(orgIds);
 		}
 	}
