@@ -18,7 +18,7 @@
 	</bean>
 	
 	<!-- 配置动态sessionFactory持有者对象 -->
-	<bean id="dynamicSessionFactoryHolder" class="com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHolder">
+	<bean id="dynamicSessionFactoryHolder" class="com.api.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHolder">
 		<property name="sessionFactorys">
 			<map key-type="java.lang.String">
 				<entry key="${current.sys.database.id}" value-ref="sessionFactory"></entry>
@@ -27,7 +27,7 @@
 	</bean>
 	
 	<!-- 配置动态的hibernate sessionFactory操作者对象 -->
-	<bean id="dynamicHibernateSessionFactoryHandler" class="com.king.tooth.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler">
+	<bean id="dynamicHibernateSessionFactoryHandler" class="com.api.plugins.orm.hibernate.dynamic.sf.DynamicHibernateSessionFactoryHandler">
 		<property name="sessionFactoryHolder" ref="dynamicSessionFactoryHolder"></property>
 	</bean>
 </beans>

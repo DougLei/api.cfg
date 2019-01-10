@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.king.tooth.util.PoiExcelUtil;
+import com.api.util.PoiExcelUtil;
 
 public class ExportExcel2 {
 	public static void main(String[] args) throws IOException {

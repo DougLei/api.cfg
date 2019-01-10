@@ -11,7 +11,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
-import com.king.tooth.util.StrUtils;
+import com.api.util.StrUtils;
 
 /**
  * 自定义的double类型

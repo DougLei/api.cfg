@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.api.sys.entity.cfg.CfgColumn;
+import com.api.sys.entity.cfg.CfgTable;
 
 import freemarker.template.Template;
 
@@ -24,7 +24,7 @@ public class FreemarkerTest {
 		
 //		Template t = cfg.getTemplate("C:\\devlopment\\GitRepository\\api_platform\\resources\\hello.ftl");
 //		Map dataModel = new HashMap();
-//		dataModel.put("classPath", "com.king.tooth");
+//		dataModel.put("classPath", "com.api");
 //		dataModel.put("className", "DevToolController");
 //		t.process(dataModel , new OutputStreamWriter(System.out));
 		

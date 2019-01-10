@@ -3,7 +3,7 @@ package test;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tooth.util.httpclient.HttpClientUtil;
+import com.api.util.httpclient.HttpClientUtil;
 
 public class TestApi {
 	public static void main(String[] args) {

@@ -1,7 +1,7 @@
 package test;
 
-import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.hibernate.HibernateUtil;
+import com.api.thread.current.CurrentThreadContext;
+import com.api.util.hibernate.HibernateUtil;
 
 public class HibernateTest {
 

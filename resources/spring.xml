@@ -18,7 +18,7 @@
 	</bean>
    	
    	<!-- spring容器启动时，将applicationContext注入到该类的属性中 -->
-   	<bean id="springContextHelper" class="com.king.tooth.util.SpringContextHelper" scope="singleton"></bean>
+   	<bean id="springContextHelper" class="com.api.util.SpringContextHelper" scope="singleton"></bean>
    	
    	
     <!-- 引入整合其他框架的配置文件 -->

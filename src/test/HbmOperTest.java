@@ -3,8 +3,8 @@ package test;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tooth.sys.entity.cfg.CfgColumn;
-import com.king.tooth.sys.entity.cfg.CfgTable;
+import com.api.sys.entity.cfg.CfgColumn;
+import com.api.sys.entity.cfg.CfgTable;
 
 public class HbmOperTest {
 	public static void main(String[] args) {

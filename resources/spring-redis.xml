@@ -38,13 +38,13 @@
    	</bean>
    	
    	<!-- 配置redis的常用操作管理类 -->
-   	<bean id="basicRedisOps" class="com.king.tooth.plugins.redis.BasicRedisHandler"></bean>
+   	<bean id="basicRedisOps" class="com.api.plugins.redis.BasicRedisHandler"></bean>
   
    	<!-- 配置redis的常用操作管理类的默认实现 -->
-   	<bean id="defaultRedisOps" class="com.king.tooth.plugins.redis.DefaultRedisHandler"></bean>
+   	<bean id="defaultRedisOps" class="com.api.plugins.redis.DefaultRedisHandler"></bean>
    	
    	<!-- 配置redis的常用操作工具类 -->
-   	<bean id="redisHandlerUtil" class="com.king.tooth.util.redis.RedisHandlerUtil">
+   	<bean id="redisHandlerUtil" class="com.api.util.redis.RedisHandlerUtil">
    		<property name="defaultRedisOps" ref="defaultRedisOps"></property>
    	</bean>
 </beans>

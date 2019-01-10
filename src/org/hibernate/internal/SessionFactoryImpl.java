@@ -133,9 +133,9 @@ import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
 import org.jboss.logging.Logger;
 
-import com.king.tooth.sys.builtin.data.BuiltinDatabaseData;
-import com.king.tooth.util.Log4jUtil;
-import com.king.tooth.util.StrUtils;
+import com.api.sys.builtin.data.BuiltinDatabaseData;
+import com.api.util.Log4jUtil;
+import com.api.util.StrUtils;
 
 /**
  * 给hibernate的sessionFactoryImpl类增加appendNewConfig(..)方法

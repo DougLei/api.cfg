@@ -30,13 +30,13 @@
 		
 		<!-- 系统初始化 -->
 		<listener>
-			<listener-class>com.king.tooth.listener.LoadPropertiesFileListener</listener-class>
+			<listener-class>com.api.listener.LoadPropertiesFileListener</listener-class>
 		</listener>
 		<listener>
-			<listener-class>com.king.tooth.listener.InitSysDataListener</listener-class>
+			<listener-class>com.api.listener.InitSysDataListener</listener-class>
 		</listener>
 		<listener>
-			<listener-class>com.king.tooth.listener.InitSysJobListener</listener-class>
+			<listener-class>com.api.listener.InitSysJobListener</listener-class>
 		</listener>
 		
 <!-- ****************************************************************************************************  -->		
@@ -44,7 +44,7 @@
 		<!-- 配置跨域请求过滤器，解决跨域请求问题 -->
 		<filter>
 			<filter-name>corsFilter</filter-name>
-			<filter-class>com.king.tooth.filter.CorsFilter</filter-class>
+			<filter-class>com.api.filter.CorsFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>corsFilter</filter-name>
@@ -54,7 +54,7 @@
 		<!-- 配置记录方法执行时间过滤器，用作性能监控 -->
 		<filter>
 			<filter-name>funcExecTimeFilter</filter-name>
-			<filter-class>com.king.tooth.filter.FuncExecTimeFilter</filter-class>
+			<filter-class>com.api.filter.FuncExecTimeFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>funcExecTimeFilter</filter-name>
@@ -64,7 +64,7 @@
 		<!-- 配置字符编码过滤器 -->
 		<filter>
 			<filter-name>encodingFilter</filter-name>
-			<filter-class>com.king.tooth.filter.EncodingFilter</filter-class>
+			<filter-class>com.api.filter.EncodingFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>encodingFilter</filter-name>
@@ -74,7 +74,7 @@
 		<!-- 配置(简单)文件预览的过滤器，实现前端可通过http://ip:port/projectName/xxx的url格式访问相关文件 -->
 		<filter>
 			<filter-name>simpleFilePreviewFilter</filter-name>
-			<filter-class>com.king.tooth.filter.SimpleFilePreviewFilter</filter-class>
+			<filter-class>com.api.filter.SimpleFilePreviewFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>simpleFilePreviewFilter</filter-name>
@@ -84,7 +84,7 @@
 		<!-- 配置预处理的过滤器 -->
 		<filter>
 			<filter-name>prepareFilter</filter-name>
-			<filter-class>com.king.tooth.filter.PrepareFilter</filter-class>
+			<filter-class>com.api.filter.PrepareFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>prepareFilter</filter-name>
@@ -98,7 +98,7 @@
 		<!-- 配置创建请求日志实例的过滤器 -->
 		<filter>
 			<filter-name>createReqLogInstanceFilter</filter-name>
-			<filter-class>com.king.tooth.filter.CreateReqLogInstanceFilter</filter-class>
+			<filter-class>com.api.filter.CreateReqLogInstanceFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>createReqLogInstanceFilter</filter-name>
@@ -112,7 +112,7 @@
 		<!-- 配置验证请求是否有效的过滤器 -->
 		<filter>
 			<filter-name>varifyReqValidFilter</filter-name>
-			<filter-class>com.king.tooth.filter.VarifyReqValidFilter</filter-class>
+			<filter-class>com.api.filter.VarifyReqValidFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>varifyReqValidFilter</filter-name>
@@ -126,7 +126,7 @@
 		<!-- 配置请求数据的预处理过滤器 -->
 		<filter>
 			<filter-name>reqDataPreProcesserFilter</filter-name>
-			<filter-class>com.king.tooth.filter.ReqDataPreProcesserFilter</filter-class>
+			<filter-class>com.api.filter.ReqDataPreProcesserFilter</filter-class>
 		</filter>
 		<filter-mapping>
 			<filter-name>reqDataPreProcesserFilter</filter-name>
@@ -138,7 +138,7 @@
 		<!-- 名为common的servlet通用控制器 -->
 		<servlet>
 			<servlet-name>commonServlet</servlet-name>
-			<servlet-class>com.king.tooth.web.servlet.CommonServlet</servlet-class>
+			<servlet-class>com.api.web.servlet.CommonServlet</servlet-class>
 		</servlet>
 		<servlet-mapping>
 			<servlet-name>commonServlet</servlet-name>
@@ -148,7 +148,7 @@
 		<!-- 名为uploadFileServlet的，上传文件的servlet控制器 -->
 		<servlet>
 			<servlet-name>fileServlet</servlet-name>
-			<servlet-class>com.king.tooth.web.servlet.FileServlet</servlet-class>
+			<servlet-class>com.api.web.servlet.FileServlet</servlet-class>
 		</servlet>
 		<servlet-mapping>
 			<servlet-name>fileServlet</servlet-name>

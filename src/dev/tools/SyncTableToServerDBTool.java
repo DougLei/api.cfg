@@ -6,19 +6,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.king.tooth.constants.ResourceInfoConstants;
-import com.king.tooth.plugins.jdbc.DBLink;
-import com.king.tooth.plugins.jdbc.table.DBTableHandler;
-import com.king.tooth.sys.entity.cfg.CfgDatabase;
-import com.king.tooth.sys.entity.cfg.CfgHibernateHbm;
-import com.king.tooth.sys.entity.cfg.CfgResource;
-import com.king.tooth.sys.entity.cfg.CfgTable;
-import com.king.tooth.sys.entity.sys.SysAccountCard;
-import com.king.tooth.sys.service.AService;
-import com.king.tooth.thread.current.CurrentThreadContext;
-import com.king.tooth.util.CloseUtil;
-import com.king.tooth.util.ResourceHandlerUtil;
-import com.king.tooth.util.hibernate.HibernateHbmUtil;
+import com.api.constants.ResourceInfoConstants;
+import com.api.plugins.jdbc.DBLink;
+import com.api.plugins.jdbc.table.DBTableHandler;
+import com.api.sys.entity.cfg.CfgDatabase;
+import com.api.sys.entity.cfg.CfgHibernateHbm;
+import com.api.sys.entity.cfg.CfgResource;
+import com.api.sys.entity.cfg.CfgTable;
+import com.api.sys.entity.sys.SysAccountCard;
+import com.api.sys.service.AService;
+import com.api.thread.current.CurrentThreadContext;
+import com.api.util.CloseUtil;
+import com.api.util.ResourceHandlerUtil;
+import com.api.util.hibernate.HibernateHbmUtil;
 
 /**
  * 同步表到服务器数据库的工具类

@@ -1,6 +1,6 @@
 package test.sqlparser.gsp;
 
-import com.king.tooth.util.StrUtils;
+import com.api.util.StrUtils;
 
 import gudusoft.gsqlparser.EDbVendor;
 import gudusoft.gsqlparser.TGSqlParser;
