@@ -5,8 +5,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.alibaba.fastjson.JSONObject;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
+import com.king.tooth.plugins.ijson.IJson;
+import com.king.tooth.plugins.ijson.IJsonUtil;
 import com.king.tooth.sys.entity.ITable;
 import com.king.tooth.sys.entity.cfg.CfgPropCodeRule;
 import com.king.tooth.thread.current.CurrentThreadContext;

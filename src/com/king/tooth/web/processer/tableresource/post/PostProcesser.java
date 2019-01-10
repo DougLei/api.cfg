@@ -1,6 +1,6 @@
 package com.king.tooth.web.processer.tableresource.post;
 
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.ijson.IJson;
 import com.king.tooth.web.entity.resulttype.ResponseBody;
 import com.king.tooth.web.processer.tableresource.RequestProcesser;
 

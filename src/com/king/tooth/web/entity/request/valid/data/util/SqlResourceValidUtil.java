@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.king.tooth.constants.SqlStatementTypeConstants;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.ijson.IJson;
 import com.king.tooth.sys.entity.cfg.CfgSql;
 import com.king.tooth.sys.entity.cfg.CfgSqlParameter;
 import com.king.tooth.sys.entity.cfg.CfgSqlResultset;

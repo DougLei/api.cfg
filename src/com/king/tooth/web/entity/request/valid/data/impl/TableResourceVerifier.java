@@ -2,7 +2,7 @@ package com.king.tooth.web.entity.request.valid.data.impl;
 
 import java.util.Set;
 
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.ijson.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.util.StrUtils;
 import com.king.tooth.web.entity.request.RequestBody;

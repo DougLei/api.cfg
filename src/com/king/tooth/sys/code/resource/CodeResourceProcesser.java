@@ -2,7 +2,7 @@ package com.king.tooth.sys.code.resource;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.ijson.IJson;
 import com.king.tooth.util.Log4jUtil;
 
 /**

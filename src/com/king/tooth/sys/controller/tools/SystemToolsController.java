@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.annotation.Controller;
 import com.king.tooth.annotation.RequestMapping;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
+import com.king.tooth.plugins.ijson.IJson;
 import com.king.tooth.sys.builtin.data.BuiltinResourceInstance;
 import com.king.tooth.sys.controller.AController;
 import com.king.tooth.sys.service.tools.SystemToolsService;

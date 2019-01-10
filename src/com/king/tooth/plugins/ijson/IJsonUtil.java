@@ -1,4 +1,4 @@
-package com.king.tooth.plugins.alibaba.json.extend.string;
+package com.king.tooth.plugins.ijson;
 
 import java.io.Serializable;
 

@@ -14,8 +14,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import com.king.tooth.constants.ResourcePropNameConstants;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJson;
-import com.king.tooth.plugins.alibaba.json.extend.string.IJsonUtil;
+import com.king.tooth.plugins.ijson.IJson;
+import com.king.tooth.plugins.ijson.IJsonUtil;
 import com.king.tooth.sys.builtin.data.BuiltinParameterKeys;
 import com.king.tooth.thread.current.CurrentThreadContext;
 import com.king.tooth.util.HttpHelperUtil;
