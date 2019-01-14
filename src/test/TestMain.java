@@ -12,7 +12,6 @@ public class TestMain {
 		System.out.println('\0');
 		
 		
-		ExpressionResolver e = new ExpressionResolver();
-		System.out.println(e.resolve("1+2"));
+		System.out.println(ExpressionResolver.resolve("1+2"));
 	}
 }
