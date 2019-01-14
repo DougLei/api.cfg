@@ -1,6 +1,5 @@
 package test;
 
-import com.expression.ExpressionResolver;
 
 
 public class TestMain {
@@ -12,6 +11,5 @@ public class TestMain {
 		System.out.println('\0');
 		
 		
-		System.out.println(ExpressionResolver.resolve("1+2"));
 	}
 }
