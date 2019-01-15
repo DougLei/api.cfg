@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.api.sys.builtin.data.BuiltinQueryParameters;
+import com.api.sys.builtin.data.BuiltinParameters;
 import com.api.util.NamingProcessUtil;
 
 /**
@@ -62,8 +62,8 @@ public class SqlQueryCondFuncEntity extends AbstractQueryCondFuncEntity implemen
 				tmpVal = tmpVal.substring(1, tmpVal.length()-1);
 			}
 			
-			if(BuiltinQueryParameters.isBuiltinQueryParams(tmpVal)){
-				builtinQuerParamValue = BuiltinQueryParameters.getBuiltinQueryParamValue(tmpVal);
+			if(BuiltinParameters.isBuiltinParams(tmpVal)){
+				builtinQuerParamValue = BuiltinParameters.getBuiltinQueryParamValue(tmpVal);
 				if(builtinQuerParamValue instanceof String){
 					bqpvTmp = ((String)builtinQuerParamValue).split(",");
 					for (String bt : bqpvTmp) {

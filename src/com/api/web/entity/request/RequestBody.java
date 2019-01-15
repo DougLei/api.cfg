@@ -4,11 +4,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.api.cache.SysContext;
 import com.api.plugins.ijson.IJson;
+import com.api.sys.builtin.data.BuiltinParameters;
 import com.api.sys.code.resource.CodeResourceProcesser;
 import com.api.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
 import com.api.util.StrUtils;
@@ -269,7 +272,27 @@ public class RequestBody implements Serializable{
 		}
 		return formData.toString();
 	}
+	private boolean processBuiltinParams;// 是否已经处理过内置参数
+	private void processBuiltinParams(){
+		if(!processBuiltinParams){
+			processBuiltinParams = true;
+			if(formData != null && formData.size() > 0){
+				JSONObject json = null;
+				Set<String> keys = null;
+				for(int i=0;i<formData.size();i++){
+					json = formData.get(i);
+					keys = json.keySet();
+					for (String key : keys) {
+						if(json.get(key) instanceof String && BuiltinParameters.isBuiltinParams(json.getString(key))){
+							json.put(key, BuiltinParameters.getBuiltinQueryParamValue(json.getString(key)));
+						}
+					}
+				}
+			}
+		}
+	}
 	public IJson getFormData() {
+		processBuiltinParams();
 		return formData;
 	}
 	public void setFormData(IJson formData) {

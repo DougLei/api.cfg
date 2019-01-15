@@ -16,19 +16,10 @@ public abstract class PutProcesser extends RequestProcesser {
 	protected IJson json;
 	
 	/**
-	 * 初始化内置的函数属性对象
-	 * 方便子类使用
-	 */
-	private void initBuiltinMethods(){
-		builtinQueryCondMethodProcesser = builtinTableResourceBMProcesser.getQuerycondProcesser();
-	}
-	
-	/**
 	 * 处理请求
 	 */
 	public final boolean doProcess() {
 		json = requestBody.getFormData();
-		initBuiltinMethods();
 		
 		boolean isKeepOn = doPutProcess();
 		return isKeepOn;

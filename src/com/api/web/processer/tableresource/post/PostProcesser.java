@@ -16,19 +16,10 @@ public abstract class PostProcesser extends RequestProcesser {
 	protected IJson json;
 	
 	/**
-	 * 初始化内置的函数属性对象
-	 * 方便子类使用
-	 */
-	private void initBuiltinMethods(){
-		builtinParentsubQueryMethodProcesser = builtinTableResourceBMProcesser.getParentsubQueryMethodProcesser();
-	}
-	
-	/**
 	 * 处理请求
 	 */
 	public final boolean doProcess() {
 		json = requestBody.getFormData();
-		initBuiltinMethods();
 		
 		boolean isKeepOn = doPostProcess();
 		return isKeepOn;

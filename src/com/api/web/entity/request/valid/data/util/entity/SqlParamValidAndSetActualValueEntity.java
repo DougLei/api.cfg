@@ -7,7 +7,7 @@ import java.util.List;
 import com.api.constants.DataTypeConstants;
 import com.api.plugins.ijson.IJson;
 import com.api.plugins.ijson.IJsonUtil;
-import com.api.sys.builtin.data.BuiltinQueryParameters;
+import com.api.sys.builtin.data.BuiltinParameters;
 import com.api.sys.entity.cfg.CfgSql;
 import com.api.sys.entity.cfg.CfgSqlParameter;
 import com.api.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
@@ -178,8 +178,8 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 				}
 				
 				dataValueStr = actualInValue.toString();
-				if(BuiltinQueryParameters.isBuiltinQueryParams(dataValueStr)){
-					actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(dataValueStr);
+				if(BuiltinParameters.isBuiltinParams(dataValueStr)){
+					actualInValue = BuiltinParameters.getBuiltinQueryParamValue(dataValueStr);
 				}
 				
 				if(ssp.getIsPlaceholder() == 1){
@@ -248,7 +248,7 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 				}
 			}
 		}else if(ssp.getValueFrom() == CfgSqlParameter.SYSTEM_BUILTIN){
-			actualInValue = BuiltinQueryParameters.getBuiltinQueryParamValue(ssp.getName());
+			actualInValue = BuiltinParameters.getBuiltinQueryParamValue(ssp.getName());
 			if(actualInValue == null){
 				return desc+"内置参数["+ssp.getName()+"]的值为空，请联系后端系统开发人员";
 			}

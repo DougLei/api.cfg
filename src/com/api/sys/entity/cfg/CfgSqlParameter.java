@@ -9,7 +9,7 @@ import com.api.constants.DataTypeConstants;
 import com.api.constants.ResourceInfoConstants;
 import com.api.constants.database.OracleDataTypeConstants;
 import com.api.constants.database.SQLServerDataTypeConstants;
-import com.api.sys.builtin.data.BuiltinQueryParameters;
+import com.api.sys.builtin.data.BuiltinParameters;
 import com.api.sys.entity.BasicEntity;
 import com.api.sys.entity.IEntity;
 import com.api.sys.entity.IEntityPropAnalysis;
@@ -193,7 +193,7 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	}
 	public Object getActualInValue() {
 		// 如果是id，则每次的id值都要不一样
-		if(valueFrom == 1 && BuiltinQueryParameters.isBuiltinIdParameter(name)){
+		if(valueFrom == 1 && BuiltinParameters.isBuiltinIdParameter(name)){
 			return ResourceHandlerUtil.getIdentity();
 		}
 		return actualInValue;
@@ -442,7 +442,7 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 				dataType = DataTypeConstants.STRING;
 			}
 			
-			if(BuiltinQueryParameters.isBuiltinQueryParams(name)){
+			if(BuiltinParameters.isBuiltinParams(name)){
 				valueFrom = 1;
 			}
 			

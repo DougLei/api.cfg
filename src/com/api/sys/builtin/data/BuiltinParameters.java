@@ -5,10 +5,10 @@ import com.api.util.ResourceHandlerUtil;
 import com.api.util.StrUtils;
 
 /**
- * 系统内置的查询参数
+ * 系统内置的参数
  * @author DougLei
  */
-public class BuiltinQueryParameters {
+public class BuiltinParameters {
 	
 	/**
 	 * 主键
@@ -72,7 +72,7 @@ public class BuiltinQueryParameters {
 	 * @param parameterName
 	 * @return
 	 */
-	public static boolean isBuiltinQueryParams(String parameterName) {
+	public static boolean isBuiltinParams(String parameterName) {
 		if(id.equals(parameterName)
 				|| currentDate.equals(parameterName)
 				|| currentSqlDate.equals(parameterName)
