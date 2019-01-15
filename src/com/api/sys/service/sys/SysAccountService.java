@@ -407,10 +407,25 @@ public class SysAccountService extends AService{
 	 * @param loginName
 	 * @return 
 	 */
-	private String validWorkNoIsExists(String loginName) {
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where (loginName=? or workNo=?) and customerId=?", loginName, loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+	private String validLoginNameIsExists(String loginName) {
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where loginName=? and customerId=?", loginName, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
 		if(count > 0){
 			return "系统已经存在登录名为["+loginName+"]的账户";
+		}
+		return null;
+	}
+	
+	/**
+	 * 验证工号是否已经存在
+	 * @param workNo
+	 * @return 
+	 */
+	private String validWorkNoIsExists(String workNo) {
+		if(StrUtils.notEmpty(workNo)){
+			long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where workNo=? and customerId=?", workNo, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+			if(count > 0){
+				return "系统已经存在登录名为["+workNo+"]的工号";
+			}
 		}
 		return null;
 	}
@@ -421,12 +436,11 @@ public class SysAccountService extends AService{
 	 * @return 
 	 */
 	private String validEmailIsExists(String email) {
-		if(StrUtils.isEmpty(email)){
-			return null;
-		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
-		if(count > 0){
-			return "系统已经存在邮箱为["+email+"]的账户";
+		if(StrUtils.notEmpty(email)){
+			long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where email=? and customerId=?", email, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+			if(count > 0){
+				return "系统已经存在邮箱为["+email+"]的账户";
+			}
 		}
 		return null;
 	}
@@ -437,12 +451,11 @@ public class SysAccountService extends AService{
 	 * @return 
 	 */
 	private String validTelIsExists(String tel) {
-		if(StrUtils.isEmpty(tel)){
-			return null;
-		}
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
-		if(count > 0){
-			return "系统已经存在手机号为["+tel+"]的账户";
+		if(StrUtils.notEmpty(tel)){
+			long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysAccount where tel=? and customerId=?", tel, CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId());
+			if(count > 0){
+				return "系统已经存在手机号为["+tel+"]的账户";
+			}
 		}
 		return null;
 	}
@@ -453,12 +466,15 @@ public class SysAccountService extends AService{
 	 * @return
 	 */
 	public Object saveAccount(SysAccount account) {
-		String result = validWorkNoIsExists(account.getLoginName());
+		String result = validLoginNameIsExists(account.getLoginName());
 		if(result == null){
 			result = validEmailIsExists(account.getEmail());
 		}
 		if(result == null){
 			result = validTelIsExists(account.getTel());
+		}
+		if(result == null){
+			result = validWorkNoIsExists(account.getWorkNo());
 		}
 		if(result == null){
 			if(StrUtils.isEmpty(account.getLoginPwd())){
@@ -485,7 +501,7 @@ public class SysAccountService extends AService{
 		SysAccount oldAccount = getObjectById(account.getId(), SysAccount.class);
 		String result = null;
 		if(!oldAccount.getLoginName().equals(account.getLoginName())){
-			result = validWorkNoIsExists(account.getLoginName());
+			result = validLoginNameIsExists(account.getLoginName());
 		}
 		if(result == null && (StrUtils.notEmpty(oldAccount.getEmail()) && !oldAccount.getEmail().equals(account.getEmail())) || (StrUtils.isEmpty(oldAccount.getEmail()) && StrUtils.notEmpty(account.getEmail()))){
 			result = validEmailIsExists(account.getEmail());
@@ -493,8 +509,11 @@ public class SysAccountService extends AService{
 		if(result == null && (StrUtils.notEmpty(oldAccount.getTel()) && !oldAccount.getTel().equals(account.getTel())) || (StrUtils.isEmpty(oldAccount.getTel()) && StrUtils.notEmpty(account.getTel()))){
 			result = validTelIsExists(account.getTel());
 		}
+		if(result == null && (StrUtils.notEmpty(oldAccount.getWorkNo()) && !oldAccount.getWorkNo().equals(account.getWorkNo())) || (StrUtils.isEmpty(oldAccount.getWorkNo()) && StrUtils.notEmpty(account.getWorkNo()))){
+			result = validWorkNoIsExists(account.getWorkNo());
+		}
 		if(result == null){
-			if(oldAccount.getStatus() != account.getStatus()){
+			if(account.getStatus() != null && oldAccount.getStatus() != account.getStatus()){
 				BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).updateAccountCardStatus(new SysAccountCard(account.getId(), account.getStatus()));
 			}
 			return HibernateUtil.updateEntityObject(account, null);
