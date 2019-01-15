@@ -1,15 +1,28 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.api.sys.entity.sys.SysUser;
+
 
 
 public class TestMain {
 	public static void main(String[] args) throws Exception {
 
-		Object a = null;
-		System.out.println(a+"");
+		List<Object> s = new ArrayList<Object>();
+		s.add(new SysUser());
+		s.add(new SysUser());
+		s.add(new SysUser());
+		s.add(new SysUser());
+		s.add(new SysUser());
 		
-		System.out.println('\0');
-		
+		for (int i=0;i<s.size();i++) {
+			System.out.println(i);
+			s.remove(i);
+			s.add(i, (i+1));
+		}
+		System.out.println(s);
 		
 	}
 }

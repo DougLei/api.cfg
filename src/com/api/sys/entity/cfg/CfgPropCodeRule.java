@@ -40,6 +40,12 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	 */
 	private Integer refPropType;
 	/**
+	 * 引用规则的属性id
+	 * <p>例如两个sql语句对同一个表进行新增操作，其中一个参数P配置了规则，另一个只需要指定其中的某个参数与参数P进行关联即可</p>
+	 * <p>这个要求两个sql语句中，相同作用的参数名必须完全一致</p>
+	 */
+	private String refId;
+	/**
 	 * 是否有效
 	 * <p>默认值为0</p>
 	 */
@@ -86,6 +92,12 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 	public void setRefPropType(Integer refPropType) {
 		this.refPropType = refPropType;
 	}
+	public String getRefId() {
+		return refId;
+	}
+	public void setRefId(String refId) {
+		this.refId = refId;
+	}
 	public Integer getIsEnabled() {
 		return isEnabled;
 	}
@@ -111,7 +123,7 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(6+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(7+7);
 		
 		CfgColumn refResourceIdColumn = new CfgColumn("ref_resource_id", DataTypeConstants.STRING, 32);
 		refResourceIdColumn.setName("关联规则的资源id");
@@ -127,6 +139,11 @@ public class CfgPropCodeRule extends BasicEntity implements IEntity, IEntityProp
 		refPropTypeColumn.setName("关联的属性类型");
 		refPropTypeColumn.setComments("1:column(列)、2:sqlparam(sql参数)");
 		columns.add(refPropTypeColumn);
+		
+		CfgColumn refIdColumn = new CfgColumn("ref_id", DataTypeConstants.STRING, 32);
+		refIdColumn.setName("引用规则的属性id");
+		refIdColumn.setComments("例如两个sql语句对同一个表进行新增操作，其中一个参数P配置了规则，另一个只需要指定其中的某个参数与参数P进行关联即可，这个要求两个sql语句中，相同作用的参数名必须完全一致");
+		columns.add(refIdColumn);
 		
 		CfgColumn isEnabledColumn = new CfgColumn("is_enabled", DataTypeConstants.INTEGER, 1);
 		isEnabledColumn.setName("是否有效");

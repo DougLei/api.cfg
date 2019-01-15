@@ -11,6 +11,7 @@ import com.api.sys.entity.ITable;
 import com.api.sys.entity.cfg.CfgPropCodeRule;
 import com.api.thread.current.CurrentThreadContext;
 import com.api.util.CryptographyUtil;
+import com.api.util.StrUtils;
 import com.api.util.hibernate.HibernateUtil;
 import com.api.web.entity.request.ResourcePropCodeRule;
 
@@ -46,6 +47,13 @@ public class PropCodeRuleUtil {
 			}
 		}
 		
+		for(int i=0;i<rules.size();i++){
+			if(StrUtils.notEmpty(rules.get(i).getRefId())){
+				rules.remove(i);
+				rules.add(i, HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgPropCodeRule.class, querySinglePropCodeRuleHql, rules.get(i).getRefId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+			}
+		}
+		
 		for (CfgPropCodeRule rule : rules) {
 			rule.doProcessFinalCodeVal(ijson, resourceName);
 		}
@@ -53,6 +61,7 @@ public class PropCodeRuleUtil {
 	}
 	/** 查询属性编码规则集合的hql */
 	private static final String queryPropCodeRuleHql = "from CfgPropCodeRule where refResourceId=? and isEnabled=1 and projectId=? and customerId=? order by orderCode asc";
+	private static final String querySinglePropCodeRuleHql = "from CfgPropCodeRule where refPropId=? and isEnabled=1 and projectId=? and customerId=?";
 	
 	// ----------------------------------------------------------------
 	/**
