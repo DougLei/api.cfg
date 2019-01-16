@@ -20,6 +20,7 @@ public abstract class PutProcesser extends RequestProcesser {
 	 */
 	public final boolean doProcess() {
 		json = requestBody.getFormData();
+		builtinQueryCondMethodProcesser = builtinTableResourceBMProcesser.getQuerycondProcesser();
 		
 		boolean isKeepOn = doPutProcess();
 		return isKeepOn;
