@@ -755,6 +755,6 @@ public class HibernateUtil {
 	 */
 	public static void executeUpdateBySqlArr(String sqlDes, String modifySql, Object... parameterArr){
 		List<Object> parameters = processParameterArr(parameterArr);
-		executeUpdateByHql(sqlDes, modifySql, parameters);
+		executeUpdateBySql(sqlDes, modifySql, parameters);
 	}
 }

@@ -25,6 +25,7 @@ import com.api.sys.service.AService;
 import com.api.sys.service.cfg.CfgProjectModuleService;
 import com.api.thread.current.CurrentThreadContext;
 import com.api.util.CryptographyUtil;
+import com.api.util.ExceptionUtil;
 import com.api.util.Log4jUtil;
 import com.api.util.ResourceHandlerUtil;
 import com.api.util.StrUtils;
@@ -564,10 +565,15 @@ public class SysAccountService extends AService{
 		BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).deleteAccountCard(accountId);
 		deleteTokenInfoByAccountId(accountId);
 		
-		// 
-		List<Object> allTableNames = HibernateUtil.executeListQueryBySqlArr("select table_name from cfg_table where customer_id = ?", CurrentThreadContext.getCustomerId());
-		for(Object tableName: allTableNames){
-			HibernateUtil.executeUpdateBySqlArr(SqlStatementTypeConstants.DELETE, "delete "+tableName+" where create_user_id = '"+accountId+"'");
+		List<String> allTableNames = HibernateUtil.executeListQueryBySqlArr("select table_name from cfg_table where is_created=1 and is_build_model=1 and customer_id = ?", CurrentThreadContext.getCustomerId());
+		for(String tableName: allTableNames){
+			if(!tableName.endsWith("_LINKS")){
+				try {
+					HibernateUtil.executeUpdateBySqlArr(SqlStatementTypeConstants.DELETE, "delete "+tableName+" where create_user_id = '"+accountId+"'");
+				} catch (Exception e) {
+					Log4jUtil.error("删除账户时，删除表[{}]中createUserId为[{}]的数据时出现异常: {}", tableName, accountId, ExceptionUtil.getErrMsg(e));
+				}
+			}
 		}
 		return null;
 	}
