@@ -47,10 +47,12 @@ public class PropCodeRuleUtil {
 			}
 		}
 		
+		CfgPropCodeRule tmpRule = null;
 		for(int i=0;i<rules.size();i++){
-			if(StrUtils.notEmpty(rules.get(i).getRefId())){
+			tmpRule = rules.get(i);
+			if(StrUtils.notEmpty(tmpRule.getRefId())){
 				rules.remove(i);
-				rules.add(i, HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgPropCodeRule.class, querySinglePropCodeRuleHql, rules.get(i).getRefId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
+				rules.add(i, HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgPropCodeRule.class, querySinglePropCodeRuleHql, tmpRule.getRefId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId()));
 			}
 		}
 		
