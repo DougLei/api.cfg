@@ -144,4 +144,30 @@ public class SysAccountController extends AController{
 		processResultObject(BuiltinParameterKeys._IDS, accountIds);
 		return getResultObject(null, null);
 	}
+	
+	/**
+	 * 物理删除账户
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object physicalDelete(HttpServletRequest request, IJson ijson){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isUserAdministrator()){
+			return "只有用户管理账户，才能进行物理删除账户的操作";
+		}
+		String accountIds = request.getParameter(BuiltinParameterKeys._IDS);
+		if(StrUtils.isEmpty(accountIds)){
+			return "要删除的账户id不能为空";
+		}
+		
+		String[] accountIdArr = accountIds.split(",");
+		for (String accountId : accountIdArr) {
+			resultObject = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).physicalDeleteAccount(accountId);
+			if(resultObject != null){
+				break;
+			}
+		}
+		processResultObject(BuiltinParameterKeys._IDS, accountIds);
+		return getResultObject(null, null);
+	}
 }

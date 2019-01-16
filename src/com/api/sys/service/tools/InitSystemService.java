@@ -161,17 +161,17 @@ public class InitSystemService extends AService{
 		admin.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
 		admin.setValidDate(BuiltinObjectInstance.validDate);
 		String adminAccountId = HibernateUtil.saveObject(admin, null).getString(ResourcePropNameConstants.ID);
-	
-		// 添加普通账户【2.普通账户】
-		SysAccount normal = new SysAccount();
-		normal.setId("59c2c378b845447d8f675ef29b55cb63");/* 同上原因 */
-		normal.setType(SysAccount.NORMAL);
-		normal.setLoginName("normal");
-		normal.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
-		normal.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), normal.getLoginPwdKey()));
-		normal.setValidDate(BuiltinObjectInstance.validDate);
-		String normalAccountId = HibernateUtil.saveObject(normal, adminAccountId).getString(ResourcePropNameConstants.ID);
 		
+		// 添加用户管理账户【2.用户管理账户】，可以对系统用户和账户进行物理删除
+		SysAccount userAdmin = new SysAccount();
+		userAdmin.setId("62414f34367147729595cf815d33fe3f");/* 同上原因 */
+		userAdmin.setType(SysAccount.ADMIN);
+		userAdmin.setLoginName("user_admin");
+		userAdmin.setLoginPwdKey(ResourceHandlerUtil.getLoginPwdKey());
+		userAdmin.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), admin.getLoginPwdKey()));
+		userAdmin.setValidDate(BuiltinObjectInstance.validDate);
+		HibernateUtil.saveObject(userAdmin, adminAccountId).getString(ResourcePropNameConstants.ID);
+	
 		// 添加平台开发账户【3.平台开发账户】
 		SysAccount developer = new SysAccount();
 		developer.setId("93d02915eb764d978e3cae6987b5fc7a");/* 同上原因 */
@@ -194,7 +194,7 @@ public class InitSystemService extends AService{
 		appDatabase.setIp(SysContext.getSystemConfig("db.default.ip"));
 		appDatabase.setPort(Integer.valueOf(SysContext.getSystemConfig("db.default.port")));
 		appDatabase.analysisResourceProp();
-		HibernateUtil.saveObject(appDatabase, null);
+		HibernateUtil.saveObject(appDatabase, adminAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 添加项目信息【运行平台数据库中的一个项目】
@@ -204,7 +204,7 @@ public class InitSystemService extends AService{
 		project.setName("自动化配置项目(内置)");
 		project.setCode("AutoConfigProj");
 		project.analysisResourceProp();
-		HibernateUtil.saveObject(project, normalAccountId);
+		HibernateUtil.saveObject(project, adminAccountId);
 		
 		//----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// 根据表创建hbm文件，并将其加入到CfgHibernateHbm表中

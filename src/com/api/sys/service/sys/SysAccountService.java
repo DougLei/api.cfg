@@ -466,6 +466,11 @@ public class SysAccountService extends AService{
 	 * @return
 	 */
 	public Object saveAccount(SysAccount account) {
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(account.getId());
+		if(ba != null){
+			return "不能对内置账户["+ba+"]进行添加操作";
+		}
+		
 		String result = validLoginNameIsExists(account.getLoginName());
 		if(result == null){
 			result = validEmailIsExists(account.getEmail());
@@ -498,6 +503,11 @@ public class SysAccountService extends AService{
 	 * @return
 	 */
 	public Object updateAccount(SysAccount account) {
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(account.getId());
+		if(ba != null){
+			return "不能对内置账户["+ba+"]进行修改操作";
+		}
+		
 		SysAccount oldAccount = getObjectById(account.getId(), SysAccount.class);
 		String result = null;
 		if(!oldAccount.getLoginName().equals(account.getLoginName())){
@@ -527,9 +537,38 @@ public class SysAccountService extends AService{
 	 * @return
 	 */
 	public Object deleteAccount(String accountId) {
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(accountId);
+		if(ba != null){
+			return "不能对内置账户["+ba+"]进行删除操作";
+		}
+		
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where " + ResourcePropNameConstants.ID+"=? and customerId=?", new Date(), accountId, CurrentThreadContext.getCustomerId());
 		BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).deleteAccountCard(accountId);
 		deleteTokenInfoByAccountId(accountId);
+		return null;
+	}
+	
+	/**
+	 * 物理删除账户
+	 * @param accountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Object physicalDeleteAccount(String accountId) {
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(accountId);
+		if(ba != null){
+			return "不能对内置账户["+ba+"]进行删除操作";
+		}
+		
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysAccount where " + ResourcePropNameConstants.ID+"=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
+		BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).deleteAccountCard(accountId);
+		deleteTokenInfoByAccountId(accountId);
+		
+		// 
+		List<Object> allTableNames = HibernateUtil.executeListQueryBySqlArr("select table_name from cfg_table where customer_id = ?", CurrentThreadContext.getCustomerId());
+		for(Object tableName: allTableNames){
+			HibernateUtil.executeUpdateBySqlArr(SqlStatementTypeConstants.DELETE, "delete "+tableName+" where create_user_id = '"+accountId+"'");
+		}
 		return null;
 	}
 

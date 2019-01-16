@@ -12,6 +12,7 @@ import com.api.sys.entity.IEntity;
 import com.api.sys.entity.cfg.CfgColumn;
 import com.api.sys.entity.cfg.CfgTable;
 import com.api.sys.entity.cfg.projectmodule.ProjectModuleExtend;
+import com.api.util.StrUtils;
 
 /**
  * 账户在线状态信息表
@@ -474,6 +475,15 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 		return (accountType == 1);
 	}
 	/**
+	 * 是否是用户管理账户
+	 * <p>可以对系统用户和账户进行物理删除</p>
+	 * @return
+	 */
+	@JSONField(serialize = false)
+	public boolean isUserAdministrator(){
+		return "62414f34367147729595cf815d33fe3f".equals(accountId) && isAdministrator(); 
+	}
+	/**
 	 * 是否是普通账户
 	 * @return
 	 */
@@ -499,5 +509,27 @@ public class SysAccountOnlineStatus extends BasicEntity implements IEntity{
 	public SysAccountOnlineStatus loginByCard(){
 		this.setLoginType(1);
 		return this;
+	}
+	
+	/**
+	 * 是否是内置账户
+	 * @param accountId
+	 * @return 如果是，返回内置的账户名
+	 */
+	@JSONField(serialize = false)
+	public String isBuiltinAccount(String accountId){
+		if(StrUtils.isEmpty(accountId)){
+			return null;
+		}
+		if("16ed21bd7a7a41f5bea2ebaa258908cf".equals(accountId)){
+			return "admin";
+		}
+		if("62414f34367147729595cf815d33fe3f".equals(accountId)){
+			return "user_admin";
+		}
+		if("93d02915eb764d978e3cae6987b5fc7a".equals(accountId)){
+			return "developer";
+		}
+		return null;
 	}
 }

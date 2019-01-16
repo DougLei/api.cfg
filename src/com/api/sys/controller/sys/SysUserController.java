@@ -15,6 +15,7 @@ import com.api.sys.builtin.data.BuiltinResourceInstance;
 import com.api.sys.controller.AController;
 import com.api.sys.entity.sys.SysUser;
 import com.api.sys.service.sys.SysUserService;
+import com.api.thread.current.CurrentThreadContext;
 import com.api.util.StrUtils;
 
 /**
@@ -85,6 +86,32 @@ public class SysUserController extends AController{
 		String[] userIdArr = userIds.split(",");
 		for (String userId : userIdArr) {
 			resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).deleteUser(userId);
+			if(resultObject != null){
+				break;
+			}
+		}
+		processResultObject(BuiltinParameterKeys._IDS, userIds);
+		return getResultObject(null, null);
+	}
+	
+	/**
+	 * 物理删除用户
+	 * <p>请求方式：DELETE</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object physicalDelete(HttpServletRequest request, IJson ijson){
+		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isUserAdministrator()){
+			return "只有用户管理账户，才能进行物理删除用户的操作";
+		}
+		String userIds = request.getParameter(BuiltinParameterKeys._IDS);
+		if(StrUtils.isEmpty(userIds)){
+			return "要删除的用户id不能为空";
+		}
+		
+		String[] userIdArr = userIds.split(",");
+		for (String userId : userIdArr) {
+			resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).physicalDelete(userId);
 			if(resultObject != null){
 				break;
 			}

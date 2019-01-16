@@ -172,11 +172,15 @@ public class CodeResourceMapping {
 		put("/project/sql/relation/cancel/post", CfgSqlController.class, "cancelProjSqlScriptRelation");
 		
 		// 用户操作
+		put("/user/physical_delete/delete", SysUserController.class, "physicalDelete");
 		put("/user/account/open/post", SysUserController.class, "openAccount");
 		put("/user/account/close/post", SysUserController.class, "closeAccount");
 		put("/user/account/reset/put", SysUserController.class, "resetAccount");
 		put("/user/account/pwd/update/put", SysUserController.class, "updatePassword");
 		put("/user/account/pwd/reset/put", SysUserController.class, "resetPassword");
+		
+		// 账户操作
+		put("/account/physical_delete/delete", SysAccountController.class, "physicalDelete");
 		
 		// 账户操作
 		put("/login/post", SysAccountController.class, "login");

@@ -217,6 +217,11 @@ public class SysUserService extends AService{
 	 * @return
 	 */
 	public Object saveUser(SysUser user){
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(user.getId());
+		if(ba != null){
+			return "不能对内置用户["+ba+"]进行添加操作";
+		}
+		
 		String result = validWorkNoIsExists(user);
 		if(result == null){
 			result = validEmailIsExists(user);
@@ -262,6 +267,11 @@ public class SysUserService extends AService{
 	 * @return
 	 */
 	public Object updateUser(SysUser user){
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(user.getId());
+		if(ba != null){
+			return "不能对内置用户["+ba+"]进行修改操作";
+		}
+		
 		SysUser oldUser = getObjectById(user.getId(), SysUser.class);
 		
 		String result = null;
@@ -358,6 +368,11 @@ public class SysUserService extends AService{
 			user.setIsSyncLoginName(originUser.getIsSyncLoginName());
 		}
 		
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(user.getId());
+		if(ba != null){
+			return "不能对内置用户["+ba+"]进行操作";
+		}
+		
 		if(accountIsExists(user.getId())){
 			SysAccount account = getObjectById(user.getId(), SysAccount.class);
 			
@@ -396,6 +411,11 @@ public class SysUserService extends AService{
 	 * @return
 	 */
 	public Object closeAccount(SysUser user) {
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(user.getId());
+		if(ba != null){
+			return "不能对内置用户["+ba+"]进行操作";
+		}
+		
 		user = getObjectById(user.getId(), SysUser.class);
 		
 		if(accountIsExists(user.getId())){
@@ -421,13 +441,54 @@ public class SysUserService extends AService{
 	 * @return
 	 */
 	public String deleteUser(String userId) {
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(userId);
+		if(ba != null){
+			return "不能对内置用户["+ba+"]进行删除操作";
+		}
+		
 		SysUser user = getObjectById(userId, SysUser.class);
 		// 删除用户
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysUser set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
 		
 		// 删除账户
-		BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteAccount(userId);
+		if(accountIsExists(userId)){
+			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteAccount(userId);
+		}
 		
+		commonDeleteOper(user, userId);
+		return null;
+	}
+	
+	/**
+	 * 物理删除用户
+	 * @param userId
+	 * @return
+	 */
+	public String physicalDelete(String userId) {
+		String ba = CurrentThreadContext.getCurrentAccountOnlineStatus().isBuiltinAccount(userId);
+		if(ba != null){
+			return "不能对内置用户["+ba+"]进行删除操作";
+		}
+		
+		SysUser user = getObjectById(userId, SysUser.class);
+		// 删除用户
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUser where "+ResourcePropNameConstants.ID+" = ?", userId);
+		
+		// 删除账户
+		if(accountIsExists(userId)){
+			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).physicalDeleteAccount(userId);
+		}
+		
+		commonDeleteOper(user, userId);
+		return null;
+	}
+	
+	/**
+	 * 通用的删除
+	 * @param user
+	 * @param userId
+	 */
+	private void commonDeleteOper(SysUser user, String userId){
 		// 删除所属的部门
 		if(StrUtils.notEmpty(user.getDeptId())){
 			HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserDeptLinks where leftId = ?", userId);
@@ -440,6 +501,5 @@ public class SysUserService extends AService{
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserRoleLinks where leftId = ?", userId);
 		// 删除所属的用户组
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserGroupDetail where userId = ?", userId);
-		return null;
 	}
 }
