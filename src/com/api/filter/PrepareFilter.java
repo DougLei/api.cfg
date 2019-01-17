@@ -37,23 +37,25 @@ public class PrepareFilter extends AbstractFilter{
 		HttpServletRequest request = (HttpServletRequest) req;
 		String token = request.getHeader("_token");
 		String projectId;
-		ResponseBody responseBody = null;
 		if(StrUtils.isEmpty(token)){
 			// TODO 这里暂时写成固定值，这个是配置系统的项目id
-			projectId = "90621e37b806o6fe8538c5eb782901bb";
+			projectId = request.getHeader("projectId");
+			if(StrUtils.isEmpty(projectId)){
+				projectId = "90621e37b806o6fe8538c5eb782901bb";
+			}
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
 			if(StrUtils.isEmpty(projectId)){
-				responseBody = new ResponseBody("token无效，请先登录", null);
-				printResult(resp, responseBody);
+				printResult(resp, new ResponseBody("token无效，请先登录", null));
 				return;
 			}
 		}
 		
 		CurrentThreadContext.setProjectId(projectId);
-		// TODO customerId写成 unknow
+		// TODO customerId暂时写成 unknow
 		CurrentThreadContext.setCustomerId("unknow");
 		
+		ResponseBody responseBody = null;
 		// 默认是要打印responseBody的
 		request.setAttribute(BuiltinParameterKeys._IS_PRINT_RESPONSEBODY, true);
 		try {

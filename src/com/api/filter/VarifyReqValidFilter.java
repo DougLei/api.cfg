@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.api.cache.SysContext;
 import com.api.cache.TokenRefProjectIdMapping;
+import com.api.sys.builtin.data.BuiltinResourceInstance;
 import com.api.sys.entity.sys.SysAccount;
 import com.api.sys.entity.sys.SysAccountOnlineStatus;
 import com.api.sys.service.sys.SysAccountOnlineStatusService;
@@ -63,8 +64,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 			return onlineStatus.getMessage();
 		}
 		
-		SysAccountService accountService = new SysAccountService();
-		SysAccount currentAccount = accountService.validAccountOfStatus(onlineStatus.getAccountId());
+		SysAccount currentAccount = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).validAccountOfStatus(onlineStatus.getAccountId());
 		if(currentAccount.getMessage() != null){
 			return currentAccount.getMessage();
 		}
