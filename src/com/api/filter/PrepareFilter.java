@@ -49,6 +49,7 @@ public class PrepareFilter extends AbstractFilter{
 				printResult(resp, new ResponseBody("token无效，请先登录", null));
 				return;
 			}
+			projectId = "90621e37b806o6fe8538c5eb782901bb";// TODO 这块是为了处理触摸屏操作时projectId查询条件不一致的问题，临时解决
 		}
 		
 		CurrentThreadContext.setProjectId(projectId);
