@@ -36,7 +36,7 @@ public class CorsFilter extends AbstractFilter{
 		response.setHeader("Access-Control-Allow-Origin", "*");  
 		response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");  
 		response.setHeader("Access-Control-Max-Age", "3600");  
-		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, _token"); 
+		response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, _token, _projectId"); // TODO _projectId临时添加，适应触摸屏
 		
 		String requestMethod = request.getMethod();
 		if("options".equalsIgnoreCase(requestMethod)){
