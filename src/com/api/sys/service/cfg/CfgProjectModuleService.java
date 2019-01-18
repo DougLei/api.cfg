@@ -16,6 +16,7 @@ import com.api.sys.entity.sys.permission.SysPermissionExtend;
 import com.api.sys.service.AService;
 import com.api.sys.service.sys.SysPermissionService;
 import com.api.thread.current.CurrentThreadContext;
+import com.api.util.StrUtils;
 import com.api.util.hibernate.HibernateUtil;
 
 /**
@@ -48,7 +49,10 @@ public class CfgProjectModuleService extends AService {
 	public Object saveProjectModule(CfgProjectModule projectModule) {
 		String operResult = validProjectModuleCodeIsExists(projectModule);
 		if(operResult == null){
-			projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
+			// TODO 临时标记
+			if(StrUtils.isEmpty(projectModule.getRefProjectId())){
+				projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
+			}
 			return HibernateUtil.saveObject(projectModule, null);
 		}
 		return operResult;
