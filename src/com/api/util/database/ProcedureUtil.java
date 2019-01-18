@@ -27,6 +27,7 @@ import com.api.util.JsonUtil;
 import com.api.util.Log4jUtil;
 import com.api.util.StrUtils;
 import com.api.util.datatype.DataTypeTurnUtil;
+import com.api.util.hibernate.HibernateUtil;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 
@@ -44,7 +45,7 @@ public class ProcedureUtil {
 	 * @return
 	 */
 	public static JSONArray executeProcedureOnDataFocused(CfgSql sqlScript, String operDataType, IJson ijson) {
-		JSONArray jsonArray = executeProcedure(sqlScript);
+		JSONArray jsonArray = executeProcedure(sqlScript, ijson);
 		if(operDataType != null && ijson != null && ijson.size() > 0){
 			int size = ijson.size();
 			Object focusedDataId = null;
@@ -67,9 +68,10 @@ public class ProcedureUtil {
 	/**
 	 * 执行存储过程
 	 * @param sqlScript
+	 * @param ijson
 	 * @return
 	 */
-	public static JSONArray executeProcedure(CfgSql sqlScript) {
+	public static JSONArray executeProcedure(CfgSql sqlScript, IJson ijson) {
 		JSONArray jsonArray = null;
 		
 		boolean isOracle = BuiltinDatabaseData.DB_TYPE_ORACLE.equals(sqlScript.getDbType());
@@ -83,6 +85,8 @@ public class ProcedureUtil {
 		List<List<CfgSqlParameter>> sqlParamsList = sqlScript.getSqlParamsList();
 		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
 		
+		boolean isRecordResultset = isRecordResultset(ijson);
+		
 		String procedureName = sqlScript.getObjectName();
 		String callProcedure = null;
 		JSONObject json = null;
@@ -93,7 +97,7 @@ public class ProcedureUtil {
 			int count = 1;
 			for (List<CfgSqlParameter> sqlParams : sqlParamsList) {
 				json = new JSONObject(10);
-				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, sqlScriptType, inSqlResultSets, outSqlResultSetsList, sqlParams, callProcedure, json);
+				execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, sqlScriptType, inSqlResultSets, outSqlResultSetsList, sqlParams, callProcedure, json, isRecordResultset);
 				jsonArray.add(json);
 				
 				Log4jUtil.debug("第{}次执行procedure名为：{}", count, procedureName);
@@ -104,7 +108,7 @@ public class ProcedureUtil {
 			jsonArray = new JSONArray(1);
 			callProcedure = callProcedure(procedureName, null);
 			json = new JSONObject(10);
-			execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, sqlScriptType, inSqlResultSets, outSqlResultSetsList, null, callProcedure, json);
+			execProcedure(procedureName, sqlScriptHavaParams, isOracle, isSqlServer, sqlScriptId, sqlScriptType, inSqlResultSets, outSqlResultSetsList, null, callProcedure, json, isRecordResultset);
 			jsonArray.add(json);
 			
 			Log4jUtil.debug("执行procedure名为：{}", procedureName);
@@ -148,6 +152,24 @@ public class ProcedureUtil {
 	}
 	
 	/**
+	 * 是否记录存储过程返回的结果集元数据信息
+	 * @param ijson
+	 * @return
+	 */
+	private static boolean isRecordResultset(IJson ijson) {
+		if(ijson != null && ijson.size() > 0){
+			JSONObject json = null;
+			for(int i=0;i<ijson.size();i++){
+				json = ijson.get(i);
+				if(json.get(ResourcePropNameConstants.RECORD_RESULTSET) != null && json.getString(ResourcePropNameConstants.RECORD_RESULTSET).equals("true")){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * 执行存储过程
 	 * <p>输出参数，返回结果，按顺序存储到json中</p>
 	 * @param procedureName 
@@ -161,8 +183,9 @@ public class ProcedureUtil {
 	 * @param sqlParams
 	 * @param callProcedure
 	 * @param json
+	 * @param isRecordResultset
 	 */
-	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final String sqlScriptType, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<CfgSqlParameter> sqlParams, final String callProcedure, final JSONObject json){
+	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final String sqlScriptType, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<CfgSqlParameter> sqlParams, final String callProcedure, final JSONObject json, final boolean isRecordResultset){
 		new DBLink(CurrentThreadContext.getDatabaseInstance()).doExecute(new IExecute() {
 			private int inSqlResultsetIndex = 0;
 			
@@ -393,7 +416,9 @@ public class ProcedureUtil {
 						}else if(isOracle){
 							csr.setSqlParameterId(sqlParameterId);
 						}
-//						HibernateUtil.saveObject(csr, null);// 保存结果集信息
+						if(isRecordResultset){
+							HibernateUtil.saveObject(csr, null);// 保存结果集信息
+						}
 						sqlResultSets.add(csr);
 					}
 					outSqlResultSetsList.add(sqlResultSets);

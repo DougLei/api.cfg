@@ -32,4 +32,9 @@ public class ResourcePropNameConstants {
 	 * 标识从前端传递的数据对象，所属资源的资源名(的key)
 	 */
 	public static final String DATA_REF_RESOURCENAME = "$refResourceName$";
+	
+	/**
+	 * 标识是否记录存储过程返回的结果集元数据信息
+	 */
+	public static final String RECORD_RESULTSET = "$recordResultset$";
 }
