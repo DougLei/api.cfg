@@ -17,6 +17,8 @@ import com.api.util.hibernate.HibernateUtil;
 @Service
 public class CfgResourceService extends AService{
 	
+	// TODO 临时为了解决触摸屏查询资源时，因为ProjectId不一样，查不到资源的问题，将所有project=?的条件去掉
+	
 	/**
 	 * 保存资源信息
 	 * <p>***保存的时候，确保传进来iresource的id有值***</p>
@@ -32,7 +34,8 @@ public class CfgResourceService extends AService{
 	 * @param resourceId
 	 */
 	public void deleteCfgResource(String resourceId){
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgResource where refResourceId = ? and projectId = ? and customerId=?", resourceId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgResource where refResourceId = ? and customerId=?", resourceId, CurrentThreadContext.getCustomerId());
+//		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgResource where refResourceId = ? and projectId = ? and customerId=?", resourceId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 	}
 	
 	/**
@@ -45,7 +48,8 @@ public class CfgResourceService extends AService{
 			throw new NullPointerException("请求的资源名不能为空");
 		}
 		
-		CfgResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgResource.class, "from CfgResource where resourceName = ? and projectId = ? and customerId = ?", resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		CfgResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgResource.class, "from CfgResource where resourceName = ? and customerId = ?", resourceName, CurrentThreadContext.getCustomerId());
+//		CfgResource resource = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgResource.class, "from CfgResource where resourceName = ? and projectId = ? and customerId = ?", resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		if(resource == null){
 			throw new IllegalArgumentException("不存在资源名为["+resourceName+"]的资源");
 		}
@@ -76,16 +80,6 @@ public class CfgResourceService extends AService{
 		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryResourceIsExistsHql, resourceName, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		return count > 0;
 	}
-	private static final String queryResourceIsExistsHql = "select count("+ResourcePropNameConstants.ID+") from CfgResource where resourceName=? and projectId=? and customerId=?";
-	
-	/**
-	 * 根据关联的资源id，判断资源是否存在
-	 * @param resourceId
-	 * @return
-	 */
-	public boolean resourceIsExistByRefResourceId(String resourceId){
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(queryResourceIsExistsByResourceIdHql, resourceId, CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		return count > 0;
-	}
-	private static final String queryResourceIsExistsByResourceIdHql = "select count("+ResourcePropNameConstants.ID+") from CfgResource where refResourceId=? and projectId=? and customerId=?";
+	private static final String queryResourceIsExistsHql = "select count("+ResourcePropNameConstants.ID+") from CfgResource where resourceName=? and customerId=?";
+//	private static final String queryResourceIsExistsHql = "select count("+ResourcePropNameConstants.ID+") from CfgResource where resourceName=? and projectId=? and customerId=?";
 }
