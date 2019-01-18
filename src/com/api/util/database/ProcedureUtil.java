@@ -27,7 +27,6 @@ import com.api.util.JsonUtil;
 import com.api.util.Log4jUtil;
 import com.api.util.StrUtils;
 import com.api.util.datatype.DataTypeTurnUtil;
-import com.api.util.hibernate.HibernateUtil;
 import com.microsoft.sqlserver.jdbc.SQLServerCallableStatement;
 import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 
@@ -79,7 +78,7 @@ public class ProcedureUtil {
 		String sqlScriptType = sqlScript.getType();
 		
 		List<CfgSqlResultset> inSqlResultSets = sqlScript.getInSqlResultsets()==null?new ArrayList<CfgSqlResultset>(5):sqlScript.getInSqlResultsets();
-		List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>(5):sqlScript.getOutSqlResultsetsList();
+		List<List<CfgSqlResultset>> outSqlResultSetsList = sqlScript.getOutSqlResultsetsList()==null?new ArrayList<List<CfgSqlResultset>>():sqlScript.getOutSqlResultsetsList();
 		
 		List<List<CfgSqlParameter>> sqlParamsList = sqlScript.getSqlParamsList();
 		boolean sqlScriptHavaParams = (sqlParamsList != null && sqlParamsList.size() > 0);
@@ -394,7 +393,7 @@ public class ProcedureUtil {
 						}else if(isOracle){
 							csr.setSqlParameterId(sqlParameterId);
 						}
-						HibernateUtil.saveObject(csr, null);// 保存结果集信息
+//						HibernateUtil.saveObject(csr, null);// 保存结果集信息
 						sqlResultSets.add(csr);
 					}
 					outSqlResultSetsList.add(sqlResultSets);
