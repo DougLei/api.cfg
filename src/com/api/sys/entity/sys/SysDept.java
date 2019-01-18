@@ -49,6 +49,11 @@ public class SysDept extends BasicEntity implements IEntity{
 	 * <p>部门类型，例如班组，科室等</p>
 	 */
 	private Integer type;
+	/**
+	 * 是否被删除
+	 * <p>逻辑删除，默认值为0</p>
+	 */
+	private Integer isDelete;
 
 	// ---------------------------------------------------------------------------
 	
@@ -95,10 +100,16 @@ public class SysDept extends BasicEntity implements IEntity{
 	public void setType(Integer type) {
 		this.type = type;
 	}
+	public Integer getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Integer isDelete) {
+		this.isDelete = isDelete;
+	}
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(14);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(15);
 		
 		CfgColumn orgIdColumn = new CfgColumn("org_id", DataTypeConstants.STRING, 32);
 		orgIdColumn.setName("所属组织主键");
@@ -135,6 +146,12 @@ public class SysDept extends BasicEntity implements IEntity{
 		typeColumn.setComments("部门类型，例如班组，科室等");
 		columns.add(typeColumn);
 		
+		CfgColumn isDeleteColumn = new CfgColumn("is_delete", DataTypeConstants.INTEGER, 1);
+		isDeleteColumn.setName("是否被删除");
+		isDeleteColumn.setComments("逻辑删除，默认值为0");
+		isDeleteColumn.setDefaultValue("0");
+		columns.add(isDeleteColumn);
+		
 		return columns;
 	}
 	
@@ -142,7 +159,6 @@ public class SysDept extends BasicEntity implements IEntity{
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("部门表");
 		table.setRemark("部门表");
-		
 		
 		table.setColumns(getColumnList());
 		return table;
