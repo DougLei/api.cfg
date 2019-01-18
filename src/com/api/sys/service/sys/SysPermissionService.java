@@ -326,14 +326,14 @@ public class SysPermissionService extends AService{
 		}
 	}
 	// --------------------------------------------------------------------------------------
-	private static final String queryUserPermissionCacheHql = "from SysUserPermissionCache where userId = ? and customerId =?";
+	private static final String queryUserPermissionCacheHql = "from SysUserPermissionCache where userId = ? and projectId=? and customerId =?";
 	/**
 	 * 获取用户的权限缓存对象
 	 * @param accountOnlineStatus
 	 * @return
 	 */
 	public SysUserPermissionCache getSysUserPermissionCache(SysAccountOnlineStatus accountOnlineStatus){
-		SysUserPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUserPermissionCache.class, queryUserPermissionCacheHql, accountOnlineStatus.getUserId(), CurrentThreadContext.getCustomerId());
+		SysUserPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUserPermissionCache.class, queryUserPermissionCacheHql, accountOnlineStatus.getUserId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
 		
 		SysPermissionExtend permission = null;
 		if(sapc == null){

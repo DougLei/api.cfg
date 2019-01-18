@@ -71,6 +71,11 @@ public class InitSystemService extends AService{
 		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
 				BuiltinObjectInstance.currentSysBuiltinProjectInstance.getId(), 
 				BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());
+		
+		// TODO 临时添加，为了适应触摸屏系统，7fe971700f21d3a796d2017398812dcf为cfg_project中id=7fe971700f21d3a796d2017398812dcf的数据
+		ProjectIdRefDatabaseIdMapping.setProjRefDbMapping(
+				"7fe971700f21d3a796d2017398812dcf", 
+				BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());
 	}
 	
 	/**
