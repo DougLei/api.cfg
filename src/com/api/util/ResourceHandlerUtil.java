@@ -94,7 +94,9 @@ public class ResourceHandlerUtil {
 	 * @param shortDesc 简短描述操作：当没有当前account时，例如注册；如果有account，则该参数传入null即可；这个由具体调用的地方决定如何传值
 	 */
 	public static void initBasicPropValsForSave(String entityName, Map<String, Object> data, String shortDesc) {
-		data.put("projectId", CurrentThreadContext.getProjectId());
+		if(StrUtils.isEmpty(data.get("projectId"))){
+			data.put("projectId", CurrentThreadContext.getProjectId());
+		}
 		data.put("customerId", CurrentThreadContext.getCustomerId());
 		
 		// 当没有id值的时候，再赋予id值

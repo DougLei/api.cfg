@@ -39,10 +39,7 @@ public class PrepareFilter extends AbstractFilter{
 		String projectId;
 		if(StrUtils.isEmpty(token)){
 			// TODO 这里暂时写成固定值，这个是配置系统的项目id
-			projectId = request.getHeader("projectId");
-			if(StrUtils.isEmpty(projectId)){
-				projectId = "90621e37b806o6fe8538c5eb782901bb";
-			}
+			projectId = "90621e37b806o6fe8538c5eb782901bb";
 		}else{
 			projectId = TokenRefProjectIdMapping.getProjectId(token);
 			if(StrUtils.isEmpty(projectId)){
