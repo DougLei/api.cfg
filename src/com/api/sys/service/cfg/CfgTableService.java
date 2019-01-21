@@ -225,8 +225,11 @@ public class CfgTableService extends AService {
 					// 删除资源
 					BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).deleteCfgResource(table.getId());
 					
+					String oldTableName = table.getOldTableName();
+					String tableName = StrUtils.isEmpty(oldTableName)?table.getTableName():oldTableName;
+					
 					// 判断该表是否存在
-					List<String> tableNames = dbTableHandler.filterTable(true, table.getTableName());
+					List<String> tableNames = dbTableHandler.filterTable(true, tableName);
 					if(tableNames.size() == 0){// 如果不存在，则create
 						// 只记录创建了表的id，修改表的id不能记录，否则如果抛出异常，会将修改表也一并drop掉，不安全
 						deleteTableIds.add(tableId);
@@ -235,7 +238,6 @@ public class CfgTableService extends AService {
 					}else{// 如果存在，则update
 						tableNames.clear();
 						
-						String oldTableName = table.getOldTableName();
 						if(StrUtils.notEmpty(oldTableName)){// 说明修改了表名
 							// 修改表名
 							dbTableHandler.reTableName(table.getTableName(), oldTableName);
