@@ -101,7 +101,7 @@ public class CfgColumnService extends AService{
 	 */
 	public Object updateColumn(CfgTable table, CfgColumn column, List<CfgColumn> updateColumns, DBTableHandler dbTableHandler) {
 		CfgColumn oldColumn = getObjectById(column.getId(), CfgColumn.class);
-		if(table.getIsCreated() == 1 && column.getOperStatus() == CfgColumn.CREATED){// 表已经建模，同时列也已经被创建，则不能修改列的类型，以及缩小列的长度
+		if(table.getIsCreated() == 1){// 表已经建模，则不能修改列的类型，以及缩小列的长度
 			if(!oldColumn.getColumnType().equals(column.getColumnType())){
 				return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]，此操作可能会损失已有数据";
 			}
