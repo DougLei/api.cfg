@@ -33,8 +33,11 @@ public class CfgProjectModuleService extends AService {
 	 * @return operResult
 	 */
 	private String validProjectModuleCodeIsExists(CfgProjectModule projectModule) {
-		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProjectModule where code = ? and refProjectId = ?";
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), CurrentThreadContext.getProjectId());// TODO 临时改为
+		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProjectModule where code = ?";
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode());
+		
+		// 临时不要refProjectId条件
+//		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProjectModule where code = ? and refProjectId = ?";
 //		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), CurrentThreadContext.getConfProjectId());
 		if(count > 0){
 			return "编码为["+projectModule.getCode()+"]的模块信息已存在";
