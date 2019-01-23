@@ -53,10 +53,17 @@ public class CfgProjectModuleService extends AService {
 	public Object saveProjectModule(CfgProjectModule projectModule) {
 		String operResult = validProjectModuleCodeIsExists(projectModule);
 		if(operResult == null){
-			// TODO 临时标记
+			// TODO 临时修改refProjectId
 			if(StrUtils.isEmpty(projectModule.getRefProjectId())){
 				projectModule.setRefProjectId(CurrentThreadContext.getConfProjectId());
 			}
+			// TODO 临时修改projectId
+			if(StrUtils.notEmpty(projectModule.getProjectId())){
+				if("7fe971700f21d3a796d2017398812dcd".equals(projectModule.getProjectId())){// 这个是pc端项目的id，改为默认的o1bb id值
+					projectModule.setProjectId("90621e37b806o6fe8538c5eb782901bb");
+				}
+			}
+			
 			return HibernateUtil.saveObject(projectModule, null);
 		}
 		return operResult;
