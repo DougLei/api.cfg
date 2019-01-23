@@ -464,4 +464,25 @@ public class SysPermissionService extends AService{
 				"update SysPermission set refParentResourceId=?, refParentResourceCode=? where (refResourceId=? or refResourceCode=?)", 
 					permissionEntity.getRefParentResourceId(), permissionEntity.getRefParentResourceCode(), permissionEntity.getRefResourceId(), permissionEntity.getRefResourceCode());
 	}
+
+	/**
+	 * 根据引用的资源id，删除对应的权限信息
+	 * @param refResourceId
+	 */
+	public void deletePermissionInfoByResourceId(String refResourceId) {
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, 
+				"delete SysPermission where refResourceId=?", refResourceId);
+	}
+	
+	/**
+	 * 删除权限的缓存信息
+	 * @param refResourceId
+	 */
+	public void deletePermissionCache() {
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, 
+				"delete SysUserPermissionCache");// 临时不要条件
+//		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, 
+//				"delete SysUserPermissionCache where projectId=? and customerId=?", 
+//				CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+	}
 }

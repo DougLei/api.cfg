@@ -34,7 +34,8 @@ public class CfgProjectModuleService extends AService {
 	 */
 	private String validProjectModuleCodeIsExists(CfgProjectModule projectModule) {
 		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProjectModule where code = ? and refProjectId = ?";
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), CurrentThreadContext.getConfProjectId());
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), CurrentThreadContext.getProjectId());// TODO 临时改为
+//		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModule.getCode(), CurrentThreadContext.getConfProjectId());
 		if(count > 0){
 			return "编码为["+projectModule.getCode()+"]的模块信息已存在";
 		}
@@ -87,9 +88,21 @@ public class CfgProjectModuleService extends AService {
 	 * @return
 	 */
 	public String deleteProjectModule(String projectModuleId) {
-		getObjectById(projectModuleId, CfgProjectModule.class);
+		CfgProjectModule module = getObjectById(projectModuleId, CfgProjectModule.class);
 		
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProjectModule where "+ResourcePropNameConstants.ID+" = '"+projectModuleId+"'");
+		// 判断有没有子模块，如果有子模块，不能删除
+		String hql = "select count("+ResourcePropNameConstants.ID+") from CfgProjectModule where parentId = ?";
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr(hql, projectModuleId);
+		if(count > 0){
+			return "["+module.getName()+"]模块存在"+count+"条子模块，无法直接删除，请先删除所有子模块";
+		}
+		
+		// 删除模块信息
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgProjectModule where "+ResourcePropNameConstants.ID+" = ?", projectModuleId);
+		// 删除权限信息
+		BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).deletePermissionInfoByResourceId(projectModuleId);
+		// 删除权限缓存信息
+		BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).deletePermissionCache();
 		return null;
 	}
 	
@@ -139,8 +152,10 @@ public class CfgProjectModuleService extends AService {
 	public List<ProjectModuleExtend> getProjectModulesByPermission(SysPermissionExtend permission) {
 		List<SysPermissionExtend> permissions = permission.getChildren();
 		List<ProjectModuleExtend> modules = new ArrayList<ProjectModuleExtend>(permissions.size());
+		
+		ProjectModuleExtend ex = null;
 		for (SysPermissionExtend sysPermissionExtend : permissions) {
-			ProjectModuleExtend ex = getProjectModuleByPermission(sysPermissionExtend);
+			ex = getProjectModuleByPermission(sysPermissionExtend);
 			if(ex == null){
 				continue;
 			}
