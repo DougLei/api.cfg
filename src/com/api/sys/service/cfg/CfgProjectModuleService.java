@@ -140,7 +140,11 @@ public class CfgProjectModuleService extends AService {
 		List<SysPermissionExtend> permissions = permission.getChildren();
 		List<ProjectModuleExtend> modules = new ArrayList<ProjectModuleExtend>(permissions.size());
 		for (SysPermissionExtend sysPermissionExtend : permissions) {
-			modules.add(getProjectModuleByPermission(sysPermissionExtend));
+			ProjectModuleExtend ex = getProjectModuleByPermission(sysPermissionExtend);
+			if(ex == null){
+				continue;
+			}
+			modules.add(ex);
 		}
 		sortProjectModules(modules, true);
 		return modules;
