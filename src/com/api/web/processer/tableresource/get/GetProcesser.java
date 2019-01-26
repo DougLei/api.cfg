@@ -148,7 +148,6 @@ public abstract class GetProcesser extends RequestProcesser {
 					int size = addFocusedIds.size();
 					for (int i=0;i<size;i++) {
 						hql.append("?,");
-						dataList.remove(dataList.size()-1).clear();// 挤掉最后的数据
 					}
 					hql.setLength(hql.length()-1);
 					hql.append(")");
@@ -166,6 +165,9 @@ public abstract class GetProcesser extends RequestProcesser {
 				}
 				
 				if(addDataList != null && addDataList.size() > 0){
+					for(int i=0;i<addDataList.size();i++){
+						dataList.remove(dataList.size()-1).clear();// 挤掉最后的数据
+					}
 					dataList.addAll(0, addDataList);
 				}
 			}

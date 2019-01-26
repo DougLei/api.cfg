@@ -220,7 +220,6 @@ public abstract class GetProcesser extends RequestProcesser{
 					for (Object fid : addFocusedIds) {
 						coreSqlParams.add(fid);
 						coreSqlBuffer.append("?,");
-						list.remove(list.size()-1);// 挤掉最后的数据
 					}
 					coreSqlBuffer.setLength(coreSqlBuffer.length()-1);
 					coreSqlBuffer.append(")");
@@ -236,6 +235,9 @@ public abstract class GetProcesser extends RequestProcesser{
 				}
 				
 				if(addList != null && addList.size() > 0){
+					for(int i=0;i<addList.size();i++){
+						list.remove(list.size()-1);// 挤掉最后的数据
+					}
 					list.addAll(0, addList);
 				}
 			}
