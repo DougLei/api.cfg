@@ -166,6 +166,9 @@ public abstract class GetProcesser extends RequestProcesser {
 				
 				if(addDataList != null && addDataList.size() > 0){
 					for(int i=0;i<addDataList.size();i++){
+						if(dataList.size() == 0){
+							break;
+						}
 						dataList.remove(dataList.size()-1).clear();// 挤掉最后的数据
 					}
 					dataList.addAll(0, addDataList);
