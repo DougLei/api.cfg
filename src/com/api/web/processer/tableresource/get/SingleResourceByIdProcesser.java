@@ -27,13 +27,12 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		doProcessSubListQuery(dataList);
 		
 		Map<String, Object> data = null;
-		if(dataList == null || dataList.size() == 0){
-			throw new NullPointerException("getById查询数据，没有查询到数据");
+		if(dataList != null && dataList.size() > 0){
+			if(dataList.size() > 1){
+				throw new NullPointerException("getById查询数据，查询到了多条数据");
+			}
+			data = dataList.get(0);
 		}
-		if(dataList.size() > 1){
-			throw new NullPointerException("getById查询数据，查询到了多条数据");
-		}
-		data = dataList.get(0);
 		
 		installResponseBodySimple(null, data);
 		return true;
