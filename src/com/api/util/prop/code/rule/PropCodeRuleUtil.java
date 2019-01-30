@@ -124,7 +124,7 @@ public class PropCodeRuleUtil {
 			return null;
 		}
 		for (CfgPropCodeRule rule : rules) {
-			if(rule.getRefPropName().equals(sqlParamName)){
+			if(rule.getRefPropName().equalsIgnoreCase(sqlParamName)){
 				return rule.getFinalCodeVal(paramIndex);
 			}
 		}
