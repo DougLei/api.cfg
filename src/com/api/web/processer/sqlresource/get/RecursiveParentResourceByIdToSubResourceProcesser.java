@@ -36,7 +36,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 		
 		Query query = createRecursiveQuery(queryMethodSql + firstRecursiveQuerySql + builtinSortMethodProcesser.getSql(), firstRecursiveQueryParams);
 		PageResultEntity pageResultEntity = loadRecursiveQueryPageResultEntity(query, "select count(1) " + firstRecursiveQuerySql, firstRecursiveQueryParams);
-		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
+		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0), pageResultEntity);
 
 		if(builtinRecursiveMethodProcesser.getIsRecursive() && (builtinRecursiveMethodProcesser.getDeepLevel() > 1 || builtinRecursiveMethodProcesser.getDeepLevel() == -1)){
 			if(builtinQueryCondMethodProcesser.getSql().length() > 0){
@@ -52,7 +52,7 @@ public final class RecursiveParentResourceByIdToSubResourceProcesser extends Rec
 				spv.add("tmp");
 				sqlParameterValues.add(spv);
 			}
-			recursiveQuery(dataList, recursiveQuerySql, builtinRecursiveMethodProcesser.getDeepLevel(), sqlScriptResource.getOutSqlResultsetsList().get(0));
+			recursiveQuery(dataList, recursiveQuerySql, builtinRecursiveMethodProcesser.getDeepLevel(), sqlScriptResource.getOutSqlResultsetsList().get(0), pageResultEntity);
 		}
 		firstRecursiveQueryParams.clear();
 		

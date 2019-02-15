@@ -33,7 +33,7 @@ public final class SingleResourceProcesser extends GetProcesser{
 		if(isCreateExportFile(builtinCreateExportFileMethodProcesser, pageResultEntity, query)){
 			return true;
 		}
-		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0));
+		List<Map<String, Object>> dataList = executeQuery(query, sqlScriptResource.getOutSqlResultsetsList().get(0), pageResultEntity);
 		dataList = doProcessDataCollection(dataList);
 		installResponseBodyForQueryDataList(null, dataList, pageResultEntity);
 		return true;

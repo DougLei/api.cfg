@@ -136,7 +136,7 @@ public abstract class GetProcesser extends RequestProcesser {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final List<Map<String, Object>> executeQuery(Query query){
+	protected final List<Map<String, Object>> executeQuery(Query query, PageResultEntity pageResultEntity){
 		List<Map<String, Object>> dataList = query.list();
 		if(builtinFocusedIdMethodProcesser.getIsUsed()){
 			List<Object> addFocusedIds = builtinFocusedIdMethodProcesser.getAddFocusedIds();
@@ -164,7 +164,7 @@ public abstract class GetProcesser extends RequestProcesser {
 					}
 				}
 				
-				if(addDataList != null && addDataList.size() > 0){
+				if(pageResultEntity != null && pageResultEntity.getPageSize() == dataList.size() && addDataList != null && addDataList.size() > 0){
 					for(int i=0;i<addDataList.size();i++){
 						if(dataList.size() == 0){
 							break;

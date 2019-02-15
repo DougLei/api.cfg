@@ -24,7 +24,7 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 	 * @param deepLevel 递归查询的钻取深度
 	 * @param sqlResultsets 
 	 */
-	protected final void recursiveQuery(List<Map<String, Object>> dataList, String recursiveQuerySql, int deepLevel, List<CfgSqlResultset> sqlResultsets) {
+	protected final void recursiveQuery(List<Map<String, Object>> dataList, String recursiveQuerySql, int deepLevel, List<CfgSqlResultset> sqlResultsets, PageResultEntity pageResultEntity) {
 		deepLevel--; // 自减递归查询的深度
 		if(deepLevel == 0){ // 判断是否到了要求递归查询的钻取深度，如果达到了则停止递归查询，return
 			return;
@@ -40,13 +40,13 @@ public abstract class RecursiveQueryProcesser extends GetProcesser{
 				
 				// 执行查询
 				recursiveQuery = createQuery(0, recursiveQuerySql);
-				recursiveQueryDataList = executeQuery(recursiveQuery, sqlResultsets);
+				recursiveQueryDataList = executeQuery(recursiveQuery, sqlResultsets, pageResultEntity);
 				
 				// 将查询的子结果集合存储起来
 				map.put("children", recursiveQueryDataList);
 				
 				// 再进行递归查询
-				recursiveQuery(recursiveQueryDataList, recursiveQuerySql, deepLevel, sqlResultsets);
+				recursiveQuery(recursiveQueryDataList, recursiveQuerySql, deepLevel, sqlResultsets, pageResultEntity);
 			}
 		}
 	}

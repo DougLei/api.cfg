@@ -206,7 +206,7 @@ public abstract class GetProcesser extends RequestProcesser{
 	 * @param sqlResultset
 	 * @return
 	 */
-	protected final List<Map<String, Object>> executeQuery(Query query, List<CfgSqlResultset> sqlResultset) {
+	protected final List<Map<String, Object>> executeQuery(Query query, List<CfgSqlResultset> sqlResultset, PageResultEntity pageResultEntity) {
 		List list = query.list();
 		if(builtinFocusedIdMethodProcesser.getIsUsed()){
 			List<Object> addFocusedIds = builtinFocusedIdMethodProcesser.getAddFocusedIds();
@@ -234,7 +234,7 @@ public abstract class GetProcesser extends RequestProcesser{
 					}
 				}
 				
-				if(addList != null && addList.size() > 0){
+				if(pageResultEntity != null && pageResultEntity.getPageSize() == list.size() && addList != null && addList.size() > 0){
 					for(int i=0;i<addList.size();i++){
 						if(list.size() == 0){
 							break;

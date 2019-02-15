@@ -27,7 +27,7 @@ public final class ParentResourceByIdToSubResourceProcesser extends GetProcesser
 		
 		PageResultEntity pageResultEntity = loadPageResultEntity(query);
 		
-		List<Map<String, Object>> dataList = executeQuery(query);// 查询
+		List<Map<String, Object>> dataList = executeQuery(query, pageResultEntity);// 查询
 		dataList = doProcessDataCollection(dataList);
 		doProcessSubListQuery(dataList);
 		installResponseBodyForQueryDataList(null, dataList, pageResultEntity);
