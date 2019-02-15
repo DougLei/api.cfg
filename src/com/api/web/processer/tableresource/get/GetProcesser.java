@@ -164,14 +164,16 @@ public abstract class GetProcesser extends RequestProcesser {
 					}
 				}
 				
-				if(pageResultEntity != null && pageResultEntity.getPageSize() == dataList.size() && addDataList != null && addDataList.size() > 0){
-					for(int i=0;i<addDataList.size();i++){
-						if(dataList.size() == 0){
-							break;
-						}
-						dataList.remove(dataList.size()-1).clear();// 挤掉最后的数据
-					}
+				if(addDataList != null && addDataList.size() > 0){
 					dataList.addAll(0, addDataList);
+					if(pageResultEntity != null && pageResultEntity.getPageSize() < dataList.size()){
+						for(int i=0;i<dataList.size();i++){
+							if(pageResultEntity.getPageSize() == dataList.size()){
+								break;
+							}
+							dataList.remove(dataList.size()-1);// 挤掉最后的数据
+						}
+					}
 				}
 			}
 		}
