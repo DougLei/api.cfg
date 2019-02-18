@@ -136,6 +136,8 @@ public final class SingleResourceProcesser extends RequestProcesser {
 				sb.setLength(sb.length() - 1);
 				specialUrlParamKeys = sb.toString().split(",");
 			}
+		}else{
+			specialUrlParams = new HashMap<String, Object>(1);
 		}
 	}
 	
