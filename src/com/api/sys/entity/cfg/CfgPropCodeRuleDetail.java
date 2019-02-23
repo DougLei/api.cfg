@@ -37,7 +37,19 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Integer orderCode;
 	/**
 	 * 规则类型
-	 * <p>0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、5:random(随机数)、6:column(其他列值)、7:code_data_dictionary(编码数据字典值)、8:weekCalendar(周日历，即当前日期是今年第几周)、9:seasonCalendar(季度日历，即当前日期是今年第几季度)</p>
+	 * <pre>
+		0:default(默认固定值)
+		1:date(日期)
+		2:seq(序列)
+		3:recursive_seq(递归序列)
+		4:serialNumber(流水号)
+		5:random(随机数)
+		6:column(其他列值)
+		7:code_data_dictionary(编码数据字典值)
+		8:weekCalendar(周日历，即当前日期是今年第几周)
+		9:seasonCalendar(季度日历，即当前日期是今年第几季度)
+		10:columnGroup_seq(字段组合序列)
+	*  </pre>
 	 * <p>默认值为0</p>
 	 */
 	private Integer ruleType;
@@ -396,7 +408,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn ruleTypeColumn = new CfgColumn("rule_type", DataTypeConstants.INTEGER, 1);
 		ruleTypeColumn.setName("规则类型");
-		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、5:random(随机数)、6:column(其他列值)、7:code_data_dictionary(编码数据字典值)、8:weekCalendar(周日历，即当前日期是今年第几周)、9:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0");
+		ruleTypeColumn.setComments("0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、5:random(随机数)、6:column(其他列值)、7:code_data_dictionary(编码数据字典值)、8:weekCalendar(周日历，即当前日期是今年第几周)、9:seasonCalendar(季度日历，即当前日期是今年第几季度)，默认值为0、10:columnGroup_seq(字段组合序列)");
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
@@ -573,11 +585,11 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	/**
 	 * 是否需要锁住
-	 * <p>需要锁住的ruleType包括：2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)</p>
+	 * <p>需要锁住的ruleType包括：2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、10:columnGroup_seq(字段组合序列)</p>
 	 * @return
 	 */
 	public boolean isNeedLock(){
-		return ruleType > 1 && ruleType < 5;
+		return (ruleType > 1 && ruleType < 5) || ruleType == 10;
 	}
 	
 	// ------------------------------------------------------------------------------------------------------

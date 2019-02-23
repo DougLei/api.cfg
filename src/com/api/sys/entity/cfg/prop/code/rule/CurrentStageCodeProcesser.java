@@ -126,6 +126,9 @@ public class CurrentStageCodeProcesser implements Serializable{
 			case 9: // 9:seasonCalendar(季度日历，即当前日期是今年第几季度)
 				value = getSeasonCalendarVal(resourceName, currentJsonObject);
 				break;
+			case 10: // 10:columnGroup_seq(字段组合序列)
+				value = getColumnGroupSeqVal(resourceName, currentJsonObject);
+				break;
 			default: // 默认值为0，0:default(默认固定值)
 				value = getDefaultVal(resourceName, currentJsonObject);
 				break;
@@ -309,6 +312,18 @@ public class CurrentStageCodeProcesser implements Serializable{
 	}
 	private String recSeqParentPropName;// 递归序列引用的父列属性名
 	private String recSeqParentCodeValQueryHql;// 递归序列的父编码值查询hql
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取【10:columnGroup_seq(字段组合序列)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	private Object getColumnGroupSeqVal(String resourceName, JSONObject currentJsonObject) {
+		// TODO 字段组合序列
+		return null;
+	}
 	
 	// ------------------------------------------------------------------------------------------
 	/**
