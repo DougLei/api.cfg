@@ -37,6 +37,11 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	 * <p>实现递归序列，该字段存值例如：1.1，那么该序列的值就为1.1.1、1.1.2等</p>
 	 */
 	private String parentSeqVal;
+	/**
+	 * 字段组值
+	 * <p>实现根据列值的不同，从1开始重新生成序列值</p>
+	 */
+	private String columnGroupValue;
 	
 	//-------------------------------------------------------------------------
 
@@ -64,10 +69,16 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	public void setParentSeqVal(String parentSeqVal) {
 		this.parentSeqVal = parentSeqVal;
 	}
+	public String getColumnGroupValue() {
+		return columnGroupValue;
+	}
+	public void setColumnGroupValue(String columnGroupValue) {
+		this.columnGroupValue = columnGroupValue;
+	}
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(4+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(5+7);
 		
 		CfgColumn refPropCodeRuleDetailIdColumn = new CfgColumn("ref_prop_code_rule_detail_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleDetailIdColumn.setName("关联的属性编码规则明细id");
@@ -88,6 +99,11 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 		parentSeqValColumn.setName("父序列值");
 		parentSeqValColumn.setComments("实现递归序列，该字段存值例如：1.1，那么该序列的值就为1.1.1、1.1.2等");
 		columns.add(parentSeqValColumn);
+		
+		CfgColumn columnGroupValueColumn = new CfgColumn("column_group_value", DataTypeConstants.STRING, 80);
+		columnGroupValueColumn.setName("字段组值");
+		columnGroupValueColumn.setComments("实现根据列值的不同，从1开始重新生成序列值");
+		columns.add(columnGroupValueColumn);
 		
 		return columns;
 	}

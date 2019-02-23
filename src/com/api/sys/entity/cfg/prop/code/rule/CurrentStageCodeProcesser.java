@@ -103,7 +103,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 				value = getDateVal(resourceName, currentJsonObject);
 				break;
 			case 2: // 2:seq(序列)
-				value = getSeqVal(resourceName, currentJsonObject, null);
+				value = getSeqVal(resourceName, currentJsonObject, null, null);
 				break;
 			case 3: // 3:recursive_seq(递归序列)
 				value = getRecursiveSeqVal(resourceName, currentJsonObject);
@@ -190,14 +190,17 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @param parentSeqValue 父序列值，实现递归序列，该字段存值例如：1.1，那么该序列的值就为1.1.1、1.1.2等
+	 * @param columnGroupValue 多个列值组合，用来判断是否需要开启新的序列值
 	 * @return
 	 */
-	private Object getSeqVal(String resourceName, JSONObject currentJsonObject, String parentSeqValue) {
+	private Object getSeqVal(String resourceName, JSONObject currentJsonObject, String parentSeqValue, String columnGroupValue) {
 		if(seq == null){
-			if(StrUtils.isEmpty(parentSeqValue)){
-				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
-			}else{
+			if(StrUtils.notEmpty(parentSeqValue)){
 				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoByParentSeqValHql, id, parentSeqValue);
+			}if(StrUtils.notEmpty(columnGroupValue)){
+				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoByColumnGroupValueHql, id, columnGroupValue);
+			}else{
+				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
 			}
 		}
 		if(seq == null){
@@ -223,6 +226,8 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and (parentSeqVal is null or parentSeqVal = '')";
 	/** 查询序列信息hql语句 */
 	private static final String querySeqInfoByParentSeqValHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal=?";
+	/** 查询序列信息hql语句 */
+	private static final String querySeqInfoByColumnGroupValueHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and columnGroupValue=?";
 	
 	/**
 	 * 设置序列重新初始化
@@ -308,7 +313,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 			}
 			parentSeqValue = tmpParentSeqValue.toString();
 		}
-		return getSeqVal(resourceName, currentJsonObject, parentSeqValue);
+		return getSeqVal(resourceName, currentJsonObject, parentSeqValue, null);
 	}
 	private String recSeqParentPropName;// 递归序列引用的父列属性名
 	private String recSeqParentCodeValQueryHql;// 递归序列的父编码值查询hql
@@ -322,7 +327,14 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 */
 	private Object getColumnGroupSeqVal(String resourceName, JSONObject currentJsonObject) {
 		// TODO 字段组合序列
-		return null;
+		
+		
+		
+		
+		
+		
+		String columnGroupValue = null;
+		return getSeqVal(resourceName, currentJsonObject, null, columnGroupValue);
 	}
 	
 	// ------------------------------------------------------------------------------------------
@@ -333,7 +345,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @return
 	 */
 	private Object getSerialNumberVal(String resourceName, JSONObject currentJsonObject) {
-		Object value = getSeqVal(resourceName, currentJsonObject, null);
+		Object value = getSeqVal(resourceName, currentJsonObject, null, null);
 		if(value == null){
 			throw new NullPointerException("获取序列值结果为空，请联系后端系统开发人员");
 		}
@@ -345,7 +357,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 		}
 		return valueStr;
 	}
-	private static final String zeros = "00000000000000000000";
+	private static final String zeros = "0000000000000000000000000";
 	
 	// ------------------------------------------------------------------------------------------
 	/**
