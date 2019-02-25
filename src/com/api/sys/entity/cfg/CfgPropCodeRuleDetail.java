@@ -72,18 +72,18 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	// ------------------------
 	/**
 	 * 序列再次初始化的时机
-	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4，都使用</p>
+	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4、10都使用</p>
 	 * <p>默认值为0</p>
 	 */
 	private Integer seqReinitTime;
 	/**
 	 * 序列的起始值
-	 * <p>默认值是1，这个字段，ruleType为2、3、4，都使用</p>
+	 * <p>默认值是1，这个字段，ruleType为2、3、4、10都使用</p>
 	 */
 	private Integer seqStartVal;
 	/**
 	 * 序列的间隔值
-	 * <p>序列值每次自增的大小，这个字段，ruleType为2、3、4，都使用</p>
+	 * <p>序列值每次自增的大小，这个字段，ruleType为2、3、4、10都使用</p>
 	 * <p>默认值为1</p>
 	 */
 	private Integer seqSkipVal;
@@ -119,6 +119,12 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * <p>默认值为1，即如果实际值不满足长度的，是否用0补全前面的空位</p>
 	 */
 	private Integer serialNumIsAutoFillnull;
+	
+	/**
+	 * 属性组序列属性id
+	 * <p>多个用,分割</p>
+	 */
+	private String propGroupSeqPropIds;
 	
 	// ------------------------
 	/**
@@ -296,6 +302,12 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	public void setSerialNumIsAutoFillnull(Integer serialNumIsAutoFillnull) {
 		this.serialNumIsAutoFillnull = serialNumIsAutoFillnull;
 	}
+	public String getPropGroupSeqPropIds() {
+		return propGroupSeqPropIds;
+	}
+	public void setPropGroupSeqPropIds(String propGroupSeqPropIds) {
+		this.propGroupSeqPropIds = propGroupSeqPropIds;
+	}
 	public Integer getRandomSeedVal() {
 		return randomSeedVal;
 	}
@@ -389,7 +401,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(29+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(30+7);
 		
 		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
@@ -425,19 +437,19 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn seqReinitTimeColumn = new CfgColumn("seq_reinit_time", DataTypeConstants.INTEGER, 1);
 		seqReinitTimeColumn.setName("序列再次初始化的时机");
-		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4，都使用");
+		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4、10都使用");
 		seqReinitTimeColumn.setDefaultValue("0");
 		columns.add(seqReinitTimeColumn);
 		
 		CfgColumn seqStartValColumn = new CfgColumn("seq_start_val", DataTypeConstants.INTEGER, 8);
 		seqStartValColumn.setName("序列的起始值");
-		seqStartValColumn.setComments("序列的起始值，默认值是1，这个字段，ruleType为2、3、4，都使用");
+		seqStartValColumn.setComments("序列的起始值，默认值是1，这个字段，ruleType为2、3、4、10都使用");
 		seqStartValColumn.setDefaultValue("1");
 		columns.add(seqStartValColumn);
 		
 		CfgColumn seqSkipValColumn = new CfgColumn("seq_skip_val", DataTypeConstants.INTEGER, 4);
 		seqSkipValColumn.setName("序列的间隔值");
-		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1，这个字段，ruleType为2、3、4，都使用");
+		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1，这个字段，ruleType为2、3、4、10都使用");
 		seqSkipValColumn.setDefaultValue("1");
 		columns.add(seqSkipValColumn);
 		
@@ -473,6 +485,11 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		serialNumIsAutoFillnullColumn.setComments("默认值为1，即如果实际值不满足长度的，是否用0补全前面的空位");
 		serialNumIsAutoFillnullColumn.setDefaultValue("1");
 		columns.add(serialNumIsAutoFillnullColumn);
+		
+		CfgColumn propGroupSeqPropIdsColumn = new CfgColumn("prop_group_seq_prop_ids", DataTypeConstants.STRING, 300);
+		propGroupSeqPropIdsColumn.setName("属性组序列属性id");
+		propGroupSeqPropIdsColumn.setComments("多个用,分割");
+		columns.add(propGroupSeqPropIdsColumn);
 		
 		CfgColumn randomSeedValColumn = new CfgColumn("random_seed_val", DataTypeConstants.INTEGER, 10);
 		randomSeedValColumn.setName("随机数种子的值");

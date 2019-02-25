@@ -39,6 +39,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private String recSeqLinkSymbol;
 	private int serialNumLength;
 	private int serialNumIsAutoFillnull;
+	private String propGroupSeqPropIds;
 	private int randomSeedVal;
 	private int columnValFrom;
 	private int codeDataDictionaryValFrom;
@@ -73,6 +74,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 		recSeqLinkSymbol = propCodeRuleDetail.getRecSeqLinkSymbol();
 		serialNumLength = propCodeRuleDetail.getSerialNumLength();
 		serialNumIsAutoFillnull = propCodeRuleDetail.getSerialNumIsAutoFillnull();
+		propGroupSeqPropIds = propCodeRuleDetail.getPropGroupSeqPropIds();
 		randomSeedVal = propCodeRuleDetail.getRandomSeedVal();
 		columnValFrom = propCodeRuleDetail.getColumnValFrom();
 		codeDataDictionaryValFrom = propCodeRuleDetail.getCodeDataDictionaryValFrom();
@@ -190,15 +192,15 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @param resourceName
 	 * @param currentJsonObject
 	 * @param parentSeqValue 父序列值，实现递归序列，该字段存值例如：1.1，那么该序列的值就为1.1.1、1.1.2等
-	 * @param columnGroupValue 多个列值组合，用来判断是否需要开启新的序列值
+	 * @param propGroupValue 多个属性值组合，用来判断是否需要开启新的序列值
 	 * @return
 	 */
-	private Object getSeqVal(String resourceName, JSONObject currentJsonObject, String parentSeqValue, String columnGroupValue) {
+	private Object getSeqVal(String resourceName, JSONObject currentJsonObject, String parentSeqValue, String propGroupValue) {
 		if(seq == null){
 			if(StrUtils.notEmpty(parentSeqValue)){
 				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoByParentSeqValHql, id, parentSeqValue);
-			}if(StrUtils.notEmpty(columnGroupValue)){
-				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoByColumnGroupValueHql, id, columnGroupValue);
+			}if(StrUtils.notEmpty(propGroupValue)){
+				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoByPropGroupValueHql, id, propGroupValue);
 			}else{
 				seq = HibernateUtil.extendExecuteUniqueQueryByHqlArr(CfgSeqInfo.class, querySeqInfoHql, id);
 			}
@@ -210,6 +212,9 @@ public class CurrentStageCodeProcesser implements Serializable{
 			seq.setCurrentVal(seqStartVal);
 			if(StrUtils.notEmpty(parentSeqValue)){
 				seq.setParentSeqVal(parentSeqValue);
+			}
+			if(StrUtils.notEmpty(propGroupValue)){
+				seq.setPropGroupValue(propGroupValue);
 			}
 			HibernateUtil.saveObject(seq, null);
 		}else{
@@ -226,8 +231,8 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and (parentSeqVal is null or parentSeqVal = '')";
 	/** 查询序列信息hql语句 */
 	private static final String querySeqInfoByParentSeqValHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal=?";
-	/** 查询序列信息hql语句 */
-	private static final String querySeqInfoByColumnGroupValueHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and columnGroupValue=?";
+	/** 查询属性组值hql语句 */
+	private static final String querySeqInfoByPropGroupValueHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and propGroupValue=?";
 	
 	/**
 	 * 设置序列重新初始化
@@ -325,17 +330,41 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @param currentJsonObject
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private Object getColumnGroupSeqVal(String resourceName, JSONObject currentJsonObject) {
-		// TODO 字段组合序列
+		Object[] propIds = propGroupSeqPropIds.split(",");
+		int length = propIds.length;
+		StringBuilder queryHql = new StringBuilder(length * 36);
+		queryHql.append("where ").append(ResourcePropNameConstants.ID).append(" in (");
+		for(int i=0;i< length;i++){
+			queryHql.append("?");
+			if(i < length-1){
+				queryHql.append(",");
+			}else{
+				queryHql.append(")");
+			}
+		}
 		
+		if(refPropType == 1){
+			queryHql.insert(0, propGroupSeqColumnPropNameQueryHql);
+		}else{
+			queryHql.insert(0, propGroupSeqSqlParameterNameQueryHql);
+		}
 		
-		
-		
-		
-		
-		String columnGroupValue = null;
-		return getSeqVal(resourceName, currentJsonObject, null, columnGroupValue);
+		List<String> propNameList = HibernateUtil.executeListQueryByHqlArr(null, null, queryHql.toString(), propIds);
+		StringBuilder columnGroupValue = new StringBuilder(length * 10);
+		for (int i = 0; i < propNameList.size(); i++) {
+			columnGroupValue.append(currentJsonObject.get(propNameList.get(i)));
+			if(i < propNameList.size()-1){
+				columnGroupValue.append(",");
+			}
+		}
+		return getSeqVal(resourceName, currentJsonObject, null, columnGroupValue.toString());
 	}
+	/** 属性组序列规则时，查询列属性名的hql */
+	private static final String propGroupSeqColumnPropNameQueryHql = "select propName from CfgColumn ";
+	/** 属性组序列规则时，查询sql参数属性名的hql */
+	private static final String propGroupSeqSqlParameterNameQueryHql = "select name from CfgSqlParameter ";
 	
 	// ------------------------------------------------------------------------------------------
 	/**

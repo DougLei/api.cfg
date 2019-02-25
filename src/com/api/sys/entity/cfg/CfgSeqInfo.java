@@ -38,10 +38,10 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	 */
 	private String parentSeqVal;
 	/**
-	 * 字段组值
-	 * <p>实现根据列值的不同，从1开始重新生成序列值</p>
+	 * 属性组值
+	 * <p>实现根据属性值的不同，从1开始重新生成序列值</p>
 	 */
-	private String columnGroupValue;
+	private String propGroupValue;
 	
 	//-------------------------------------------------------------------------
 
@@ -69,11 +69,11 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 	public void setParentSeqVal(String parentSeqVal) {
 		this.parentSeqVal = parentSeqVal;
 	}
-	public String getColumnGroupValue() {
-		return columnGroupValue;
+	public String getPropGroupValue() {
+		return propGroupValue;
 	}
-	public void setColumnGroupValue(String columnGroupValue) {
-		this.columnGroupValue = columnGroupValue;
+	public void setPropGroupValue(String propGroupValue) {
+		this.propGroupValue = propGroupValue;
 	}
 	
 	@JSONField(serialize = false)
@@ -100,10 +100,10 @@ public class CfgSeqInfo extends BasicEntity implements IEntity, IEntityPropAnaly
 		parentSeqValColumn.setComments("实现递归序列，该字段存值例如：1.1，那么该序列的值就为1.1.1、1.1.2等");
 		columns.add(parentSeqValColumn);
 		
-		CfgColumn columnGroupValueColumn = new CfgColumn("column_group_value", DataTypeConstants.STRING, 80);
-		columnGroupValueColumn.setName("字段组值");
-		columnGroupValueColumn.setComments("实现根据列值的不同，从1开始重新生成序列值");
-		columns.add(columnGroupValueColumn);
+		CfgColumn propGroupValueColumn = new CfgColumn("prop_group_value", DataTypeConstants.STRING, 100);
+		propGroupValueColumn.setName("属性组值");
+		propGroupValueColumn.setComments("实现根据属性值的不同，从1开始重新生成序列值");
+		columns.add(propGroupValueColumn);
 		
 		return columns;
 	}
