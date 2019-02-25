@@ -2,6 +2,7 @@ package com.api.sys.entity.cfg.prop.code.rule;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -39,6 +40,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private String recSeqLinkSymbol;
 	private int serialNumLength;
 	private int serialNumIsAutoFillnull;
+	private String propGroupSeqPropNames;
 	private String propGroupSeqPropIds;
 	private int randomSeedVal;
 	private int columnValFrom;
@@ -74,6 +76,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 		recSeqLinkSymbol = propCodeRuleDetail.getRecSeqLinkSymbol();
 		serialNumLength = propCodeRuleDetail.getSerialNumLength();
 		serialNumIsAutoFillnull = propCodeRuleDetail.getSerialNumIsAutoFillnull();
+		propGroupSeqPropNames = propCodeRuleDetail.getPropGroupSeqPropNames();
 		propGroupSeqPropIds = propCodeRuleDetail.getPropGroupSeqPropIds();
 		randomSeedVal = propCodeRuleDetail.getRandomSeedVal();
 		columnValFrom = propCodeRuleDetail.getColumnValFrom();
@@ -332,27 +335,35 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 */
 	@SuppressWarnings("unchecked")
 	private Object getColumnGroupSeqVal(String resourceName, JSONObject currentJsonObject) {
-		Object[] propIds = propGroupSeqPropIds.split(",");
-		int length = propIds.length;
-		StringBuilder queryHql = new StringBuilder(length * 36);
-		queryHql.append("where ").append(ResourcePropNameConstants.ID).append(" in (");
-		for(int i=0;i< length;i++){
-			queryHql.append("?");
-			if(i < length-1){
-				queryHql.append(",");
+		List<String> propNameList = null;
+		if(StrUtils.isEmpty(propGroupSeqPropNames)){
+			Object[] propIds = propGroupSeqPropIds.split(",");
+			int length = propIds.length;
+			StringBuilder queryHql = new StringBuilder(length * 36);
+			queryHql.append("where ").append(ResourcePropNameConstants.ID).append(" in (");
+			for(int i=0;i< length;i++){
+				queryHql.append("?");
+				if(i < length-1){
+					queryHql.append(",");
+				}else{
+					queryHql.append(")");
+				}
+			}
+			
+			if(refPropType == 1){
+				queryHql.insert(0, propGroupSeqColumnPropNameQueryHql);
 			}else{
-				queryHql.append(")");
+				queryHql.insert(0, propGroupSeqSqlParameterNameQueryHql);
+			}
+			propNameList = HibernateUtil.executeListQueryByHqlArr(null, null, queryHql.toString(), propIds);
+		}else{
+			String[] tmp = propGroupSeqPropNames.split(",");
+			propNameList = new ArrayList<String>(tmp.length);
+			for (String t : tmp) {
+				propNameList.add(t.trim());
 			}
 		}
-		
-		if(refPropType == 1){
-			queryHql.insert(0, propGroupSeqColumnPropNameQueryHql);
-		}else{
-			queryHql.insert(0, propGroupSeqSqlParameterNameQueryHql);
-		}
-		
-		List<String> propNameList = HibernateUtil.executeListQueryByHqlArr(null, null, queryHql.toString(), propIds);
-		StringBuilder columnGroupValue = new StringBuilder(length * 10);
+		StringBuilder columnGroupValue = new StringBuilder(propNameList.size() * 10);
 		for (int i = 0; i < propNameList.size(); i++) {
 			columnGroupValue.append(currentJsonObject.get(propNameList.get(i)));
 			if(i < propNameList.size()-1){

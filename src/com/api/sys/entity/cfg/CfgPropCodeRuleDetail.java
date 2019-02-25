@@ -121,6 +121,11 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	private Integer serialNumIsAutoFillnull;
 	
 	/**
+	 * 属性组序列属性名
+	 * <p>多个用,分割，优先级高于prop_group_seq_prop_ids</p>
+	 */
+	private String propGroupSeqPropNames;
+	/**
 	 * 属性组序列属性id
 	 * <p>多个用,分割</p>
 	 */
@@ -302,6 +307,12 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	public void setSerialNumIsAutoFillnull(Integer serialNumIsAutoFillnull) {
 		this.serialNumIsAutoFillnull = serialNumIsAutoFillnull;
 	}
+	public String getPropGroupSeqPropNames() {
+		return propGroupSeqPropNames;
+	}
+	public void setPropGroupSeqPropNames(String propGroupSeqPropNames) {
+		this.propGroupSeqPropNames = propGroupSeqPropNames;
+	}
 	public String getPropGroupSeqPropIds() {
 		return propGroupSeqPropIds;
 	}
@@ -401,7 +412,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(30+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(31+7);
 		
 		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
@@ -485,6 +496,11 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		serialNumIsAutoFillnullColumn.setComments("默认值为1，即如果实际值不满足长度的，是否用0补全前面的空位");
 		serialNumIsAutoFillnullColumn.setDefaultValue("1");
 		columns.add(serialNumIsAutoFillnullColumn);
+		
+		CfgColumn propGroupSeqPropNamesColumn = new CfgColumn("prop_group_seq_prop_names", DataTypeConstants.STRING, 150);
+		propGroupSeqPropNamesColumn.setName("属性组序列属性名");
+		propGroupSeqPropNamesColumn.setComments("多个用,分割，优先级高于prop_group_seq_prop_ids");
+		columns.add(propGroupSeqPropNamesColumn);
 		
 		CfgColumn propGroupSeqPropIdsColumn = new CfgColumn("prop_group_seq_prop_ids", DataTypeConstants.STRING, 300);
 		propGroupSeqPropIdsColumn.setName("属性组序列属性id");
