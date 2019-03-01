@@ -50,7 +50,8 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		9:seasonCalendar(季度日历，即当前日期是今年第几季度)
 		10:columnGroup_seq(字段组合序列)
 		11:columnGroup_rec_seq(字段组合-递归-序列)
-	*  </pre>
+		12:main_sub_rec_seq(主子[-递归]-序列)
+	 *  </pre>
 	 * <p>默认值为0</p>
 	 */
 	private Integer ruleType;
@@ -73,40 +74,40 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	// ------------------------
 	/**
 	 * 序列再次初始化的时机
-	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4、10、11都使用</p>
+	 * <p>0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4、10、11、12都使用</p>
 	 * <p>默认值为0</p>
 	 */
 	private Integer seqReinitTime;
 	/**
 	 * 序列的起始值
-	 * <p>默认值是1，这个字段，ruleType为2、3、4、10、11都使用</p>
+	 * <p>默认值是1，这个字段，ruleType为2、3、4、10、11、12都使用</p>
 	 */
 	private Integer seqStartVal;
 	/**
 	 * 序列的间隔值
-	 * <p>序列值每次自增的大小，这个字段，ruleType为2、3、4、10、11都使用</p>
+	 * <p>序列值每次自增的大小，这个字段，ruleType为2、3、4、10、11、12都使用</p>
 	 * <p>默认值为1</p>
 	 */
 	private Integer seqSkipVal;
 	
 	/**
 	 * 递归序列引用的表id
-	 * <p>如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id，ruleType为11的使用到该字段</p>
+	 * <p>如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id，ruleType为11、12的使用到该字段</p>
 	 */
 	private String recSeqTableId;
 	/**
 	 * 如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id
-	 * <p>如果是给表资源配，该值默认是当前配置的字段id；如果是给sql参数配置，则是rec_seq_table_id字段存储的表中的某个字段id，ruleType为11的使用到该字段</p>
+	 * <p>如果是给表资源配，该值默认是当前配置的字段id；如果是给sql参数配置，则是rec_seq_table_id字段存储的表中的某个字段id，ruleType为11、12的使用到该字段</p>
 	 */
 	private String recSeqCodeColumnId;
 	/**
 	 * 递归序列引用的父列id
-	 * <p>就是表中，实现递归的字段，例如一般都是parent_id<，ruleType为11的使用到该字段/p>
+	 * <p>就是表中，实现递归的字段，例如一般都是parent_id<，ruleType为11、12的使用到该字段/p>
 	 */
 	private String recSeqParentColumnId;
 	/**
 	 * 递归序列间的连接符
-	 * <p>默认值为.，ruleType为11的使用到该字段</p>
+	 * <p>默认值为.，ruleType为11、12的使用到该字段</p>
 	 */
 	private String recSeqLinkSymbol;
 	
@@ -131,6 +132,30 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	 * <p>多个用,分割，ruleType为11的使用到该字段</p>
 	 */
 	private String propGroupSeqPropIds;
+	
+	/**
+	 * 主表id
+	 * <p>select [mainTableCodeColumnId] from [mainTableId] where [mainTableCondColumnId] = [subTableCondValPropId] order by [orderByColumnId] [orderByMethod]</p>
+	 */
+	private String mainTableId;
+	/**
+	 * 主表编码列id
+	 */
+	private String mainTableCodeColumnId;
+	/**
+	 * 主表条件列id
+	 * <p>默认为id</p>
+	 */
+	private String mainTableCondColumnId;
+	/**
+	 * 子表条件值属性id
+	 */
+	private String subTableCondValPropId;
+	/**
+	 * 主子序列值连接符
+	 * <p>默认值为.</p>
+	 */
+	private String mainSubSeqLinkSymbol;
 	
 	// ------------------------
 	/**
@@ -181,12 +206,12 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	/**
 	 * 排序列的id
-	 * <p>这个字段，ruleType为5和6，都使用</p>
+	 * <p>这个字段，ruleType为5和6、12，都使用</p>
 	 */
 	private String orderByColumnId;
 	/**
 	 * 排序的方式
-	 * <p>默认值为asc，可为asc、desc，这个字段，ruleType为5和6，都使用</p>
+	 * <p>默认值为asc，可为asc、desc，这个字段，ruleType为5和6、12，都使用</p>
 	 */
 	private String orderByMethod;
 	// ------------------------
@@ -320,6 +345,36 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	public void setPropGroupSeqPropIds(String propGroupSeqPropIds) {
 		this.propGroupSeqPropIds = propGroupSeqPropIds;
 	}
+	public String getMainTableId() {
+		return mainTableId;
+	}
+	public void setMainTableId(String mainTableId) {
+		this.mainTableId = mainTableId;
+	}
+	public String getMainTableCodeColumnId() {
+		return mainTableCodeColumnId;
+	}
+	public void setMainTableCodeColumnId(String mainTableCodeColumnId) {
+		this.mainTableCodeColumnId = mainTableCodeColumnId;
+	}
+	public String getMainTableCondColumnId() {
+		return mainTableCondColumnId;
+	}
+	public void setMainTableCondColumnId(String mainTableCondColumnId) {
+		this.mainTableCondColumnId = mainTableCondColumnId;
+	}
+	public String getSubTableCondValPropId() {
+		return subTableCondValPropId;
+	}
+	public void setSubTableCondValPropId(String subTableCondValPropId) {
+		this.subTableCondValPropId = subTableCondValPropId;
+	}
+	public String getMainSubSeqLinkSymbol() {
+		return mainSubSeqLinkSymbol;
+	}
+	public void setMainSubSeqLinkSymbol(String mainSubSeqLinkSymbol) {
+		this.mainSubSeqLinkSymbol = mainSubSeqLinkSymbol;
+	}
 	public Integer getRandomSeedVal() {
 		return randomSeedVal;
 	}
@@ -413,7 +468,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(31+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(36+7);
 		
 		CfgColumn refPropCodeRuleIdColumn = new CfgColumn("ref_prop_code_rule_id", DataTypeConstants.STRING, 32);
 		refPropCodeRuleIdColumn.setName("关联的属性编码规则id");
@@ -432,7 +487,7 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn ruleTypeColumn = new CfgColumn("rule_type", DataTypeConstants.INTEGER, 1);
 		ruleTypeColumn.setName("规则类型");
-		ruleTypeColumn.setComments("默认值为0，0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、5:random(随机数)、6:column(其他列值)、7:code_data_dictionary(编码数据字典值)、8:weekCalendar(周日历，即当前日期是今年第几周)、9:seasonCalendar(季度日历，即当前日期是今年第几季度)、10:columnGroup_seq(字段组合序列)、11:columnGroup_rec_seq(字段组合-递归-序列)");
+		ruleTypeColumn.setComments("默认值为0，0:default(默认固定值)、1:date(日期)、2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、5:random(随机数)、6:column(其他列值)、7:code_data_dictionary(编码数据字典值)、8:weekCalendar(周日历，即当前日期是今年第几周)、9:seasonCalendar(季度日历，即当前日期是今年第几季度)、10:columnGroup_seq(字段组合序列)、11:columnGroup_rec_seq(字段组合-递归-序列)、12:main_sub_rec_seq(主子[-递归]-序列)");
 		ruleTypeColumn.setDefaultValue("0");
 		columns.add(ruleTypeColumn);
 		
@@ -449,40 +504,40 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn seqReinitTimeColumn = new CfgColumn("seq_reinit_time", DataTypeConstants.INTEGER, 1);
 		seqReinitTimeColumn.setName("序列再次初始化的时机");
-		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4、10、11都使用");
+		seqReinitTimeColumn.setComments("0:none(不重新初始化)、1:hour(每小时)、2:day(每天)、3:month(每月)、4:year(每年)、5:week(每周)、6:quarter(每季度)，默认值为0，这个字段，ruleType为2、3、4、10、11、12都使用");
 		seqReinitTimeColumn.setDefaultValue("0");
 		columns.add(seqReinitTimeColumn);
 		
 		CfgColumn seqStartValColumn = new CfgColumn("seq_start_val", DataTypeConstants.INTEGER, 8);
 		seqStartValColumn.setName("序列的起始值");
-		seqStartValColumn.setComments("序列的起始值，默认值是1，这个字段，ruleType为2、3、4、10、11都使用");
+		seqStartValColumn.setComments("序列的起始值，默认值是1，这个字段，ruleType为2、3、4、10、11、12都使用");
 		seqStartValColumn.setDefaultValue("1");
 		columns.add(seqStartValColumn);
 		
 		CfgColumn seqSkipValColumn = new CfgColumn("seq_skip_val", DataTypeConstants.INTEGER, 4);
 		seqSkipValColumn.setName("序列的间隔值");
-		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1，这个字段，ruleType为2、3、4、10、11都使用");
+		seqSkipValColumn.setComments("序列值每次自增的大小，默认值为1，这个字段，ruleType为2、3、4、10、11、12都使用");
 		seqSkipValColumn.setDefaultValue("1");
 		columns.add(seqSkipValColumn);
 		
 		CfgColumn recSeqTableIdColumn = new CfgColumn("rec_seq_table_id", DataTypeConstants.STRING, 32);
 		recSeqTableIdColumn.setName("递归序列引用的表id");
-		recSeqTableIdColumn.setComments("如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id，ruleType为11的使用到该字段");
+		recSeqTableIdColumn.setComments("如果是给表资源配，该值默认是当前配置字段所属的表id；如果是给sql参数配置，该值是用户选择的一张表id，ruleType为11、12的使用到该字段");
 		columns.add(recSeqTableIdColumn);
 		
 		CfgColumn recSeqCodeColumnIdColumn = new CfgColumn("rec_seq_code_column_id", DataTypeConstants.STRING, 32);
 		recSeqCodeColumnIdColumn.setName("递归序列引用的编码列id");
-		recSeqCodeColumnIdColumn.setComments("如果是给表资源配，该值默认是当前配置的字段id；如果是给sql参数配置，则是rec_seq_table_id字段存储的表中的某个字段id，ruleType为11的使用到该字段");
+		recSeqCodeColumnIdColumn.setComments("如果是给表资源配，该值默认是当前配置的字段id；如果是给sql参数配置，则是rec_seq_table_id字段存储的表中的某个字段id，ruleType为11、12的使用到该字段");
 		columns.add(recSeqCodeColumnIdColumn);
 		
 		CfgColumn recSeqParentColumnIdColumn = new CfgColumn("rec_seq_parent_column_id", DataTypeConstants.STRING, 32);
 		recSeqParentColumnIdColumn.setName("递归序列引用的父列id");
-		recSeqParentColumnIdColumn.setComments("就是表中，实现递归的字段，例如一般都是parent_id，ruleType为11的使用到该字段");
+		recSeqParentColumnIdColumn.setComments("就是表中，实现递归的字段，例如一般都是parent_id，ruleType为11、12的使用到该字段");
 		columns.add(recSeqParentColumnIdColumn);
 		
 		CfgColumn recSeqLinkSymbolColumn = new CfgColumn("rec_seq_link_symbol", DataTypeConstants.STRING, 5);
 		recSeqLinkSymbolColumn.setName("递归序列间的连接符");
-		recSeqLinkSymbolColumn.setComments("默认值为.，ruleType为11的使用到该字段");
+		recSeqLinkSymbolColumn.setComments("默认值为.，ruleType为11、12的使用到该字段");
 		recSeqLinkSymbolColumn.setDefaultValue(".");
 		columns.add(recSeqLinkSymbolColumn);
 		
@@ -507,6 +562,33 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		propGroupSeqPropIdsColumn.setName("属性组序列属性id");
 		propGroupSeqPropIdsColumn.setComments("多个用,分割，ruleType为11的使用到该字段");
 		columns.add(propGroupSeqPropIdsColumn);
+		
+		CfgColumn mainTableIdColumn = new CfgColumn("main_table_id", DataTypeConstants.STRING, 32);
+		mainTableIdColumn.setName("主表id");
+		mainTableIdColumn.setComments("select [mainTableCodeColumnId] from [mainTableId] where [mainTableCondColumnId] = [subTableCondValPropId] order by [orderByColumnId] [orderByMethod]");
+		columns.add(mainTableIdColumn);
+		
+		CfgColumn mainTableCodeColumnIdColumn = new CfgColumn("main_table_code_column_id", DataTypeConstants.STRING, 32);
+		mainTableCodeColumnIdColumn.setName("主表编码列id");
+		mainTableCodeColumnIdColumn.setComments("主表编码列id");
+		columns.add(mainTableCodeColumnIdColumn);
+		
+		CfgColumn mainTableCondColumnIdColumn = new CfgColumn("main_table_cond_column_id", DataTypeConstants.STRING, 32);
+		mainTableCondColumnIdColumn.setName("主表条件列id");
+		mainTableCondColumnIdColumn.setComments("默认为id");
+		mainTableCondColumnIdColumn.setDefaultValue("id");
+		columns.add(mainTableCondColumnIdColumn);
+		
+		CfgColumn subTableCondValPropIdColumn = new CfgColumn("sub_table_cond_val_prop_id", DataTypeConstants.STRING, 32);
+		subTableCondValPropIdColumn.setName("子表条件值属性id");
+		subTableCondValPropIdColumn.setComments("子表条件值属性id");
+		columns.add(subTableCondValPropIdColumn);
+		
+		CfgColumn mainSubSeqLinkSymbolColumn = new CfgColumn("main_sub_seq_link_symbol", DataTypeConstants.STRING, 5);
+		mainSubSeqLinkSymbolColumn.setName("主子序列值连接符");
+		mainSubSeqLinkSymbolColumn.setComments("默认值为.");
+		mainSubSeqLinkSymbolColumn.setDefaultValue(".");
+		columns.add(mainSubSeqLinkSymbolColumn);
 		
 		CfgColumn randomSeedValColumn = new CfgColumn("random_seed_val", DataTypeConstants.INTEGER, 10);
 		randomSeedValColumn.setName("随机数种子的值");
@@ -553,12 +635,12 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 		
 		CfgColumn orderByColumnIdColumn = new CfgColumn("order_by_column_id", DataTypeConstants.STRING, 32);
 		orderByColumnIdColumn.setName("排序列的id");
-		orderByColumnIdColumn.setComments("这个字段，ruleType为5和6，都使用");
+		orderByColumnIdColumn.setComments("这个字段，ruleType为5和6、12，都使用");
 		columns.add(orderByColumnIdColumn);
 		
 		CfgColumn orderByMethodColumn = new CfgColumn("order_by_method", DataTypeConstants.STRING, 4);
 		orderByMethodColumn.setName("排序的方式");
-		orderByMethodColumn.setComments("默认值为asc，可为asc、desc，这个字段，ruleType为5和6，都使用");
+		orderByMethodColumn.setComments("默认值为asc，可为asc、desc，这个字段，ruleType为5和6、12，都使用");
 		orderByMethodColumn.setDefaultValue("asc");
 		columns.add(orderByMethodColumn);
 		
@@ -619,11 +701,11 @@ public class CfgPropCodeRuleDetail extends BasicEntity implements IEntity, IEnti
 	
 	/**
 	 * 是否需要锁住
-	 * <p>需要锁住的ruleType包括：2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、10:columnGroup_seq(字段组合序列)、11:columnGroup_rec_seq(字段组合-递归-序列)</p>
+	 * <p>需要锁住的ruleType包括：2:seq(序列)、3:recursive_seq(递归序列)、4:serialNumber(流水号)、10:columnGroup_seq(字段组合序列)、11:columnGroup_rec_seq(字段组合-递归-序列)、12:main_sub_rec_seq(主子[-递归]-序列)</p>
 	 * @return
 	 */
 	public boolean isNeedLock(){
-		return (ruleType > 1 && ruleType < 5) || (ruleType > 9 && ruleType < 12);
+		return (ruleType > 1 && ruleType < 5) || (ruleType > 9 && ruleType < 13);
 	}
 	
 	// ------------------------------------------------------------------------------------------------------

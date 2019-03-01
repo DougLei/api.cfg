@@ -42,6 +42,11 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private int serialNumIsAutoFillnull;
 	private String propGroupSeqPropNames;
 	private String propGroupSeqPropIds;
+	private String mainTableId;
+	private String mainTableCodeColumnId;
+	private String mainTableCondColumnId;
+	private String subTableCondValPropId;
+	private String mainSubSeqLinkSymbol;
 	private int randomSeedVal;
 	private int columnValFrom;
 	private int codeDataDictionaryValFrom;
@@ -78,6 +83,11 @@ public class CurrentStageCodeProcesser implements Serializable{
 		serialNumIsAutoFillnull = propCodeRuleDetail.getSerialNumIsAutoFillnull();
 		propGroupSeqPropNames = propCodeRuleDetail.getPropGroupSeqPropNames();
 		propGroupSeqPropIds = propCodeRuleDetail.getPropGroupSeqPropIds();
+		mainTableId = propCodeRuleDetail.getMainTableId();
+		mainTableCodeColumnId = propCodeRuleDetail.getMainTableCodeColumnId();
+		mainTableCondColumnId = propCodeRuleDetail.getMainTableCondColumnId();
+		subTableCondValPropId = propCodeRuleDetail.getSubTableCondValPropId();
+		mainSubSeqLinkSymbol= propCodeRuleDetail.getMainSubSeqLinkSymbol();
 		randomSeedVal = propCodeRuleDetail.getRandomSeedVal();
 		columnValFrom = propCodeRuleDetail.getColumnValFrom();
 		codeDataDictionaryValFrom = propCodeRuleDetail.getCodeDataDictionaryValFrom();
@@ -137,6 +147,9 @@ public class CurrentStageCodeProcesser implements Serializable{
 			case 11: // 11:columnGroup_rec_seq(字段组合-递归-序列)
 				value = getColumnGroupRecSeqVal(resourceName, currentJsonObject);
 				break;
+			case 12: // 12:main_sub_rec_seq(主子[-递归]-序列)
+				value = getMainSubRecSeqVal(resourceName, currentJsonObject);
+				break;
 			default: // 默认值为0，0:default(默认固定值)
 				value = getDefaultVal(resourceName, currentJsonObject);
 				break;
@@ -164,7 +177,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 		}
 		return valueStr;
 	}
-	
+
 	// ------------------------------------------------------------------------------------------
 	/**
 	 * 获取【0:default(默认固定值)】
@@ -315,11 +328,8 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @return
 	 */
 	private Object getRecursiveSeqVal(String resourceName, JSONObject currentJsonObject, String propGroupValue) {
-		if(recSeqParentPropName == null){
-			recSeqParentPropName = getPropInfoById(recSeqParentColumnId, false)[0];
-		}
+		Object parentIdValue = getParentIdValue(currentJsonObject);
 		String parentSeqValue = null;
-		Object parentIdValue = currentJsonObject.get(recSeqParentPropName);
 		if(StrUtils.notEmpty(parentIdValue)){// 不为空，表示是子数据，则要查询出上级数据的编号值
 			if(recSeqParentCodeValQueryHql == null){
 				recSeqParentCodeValQueryHql = "select " + getPropInfoById(recSeqCodeColumnId, false)[0] + " from " + getTableResourceNameById(recSeqTableId) + " where " + ResourcePropNameConstants.ID + "=?";
@@ -332,6 +342,15 @@ public class CurrentStageCodeProcesser implements Serializable{
 			parentSeqValue = tmpParentSeqValue.toString();
 		}
 		return getSeqVal(resourceName, currentJsonObject, parentSeqValue, propGroupValue);
+	}
+	private Object getParentIdValue(JSONObject currentJsonObject){
+		if(StrUtils.isEmpty(recSeqParentColumnId)){
+			return null;
+		}
+		if(recSeqParentPropName == null){
+			recSeqParentPropName = getPropInfoById(recSeqParentColumnId, false)[0];
+		}
+		return currentJsonObject.get(recSeqParentPropName);
 	}
 	private String recSeqParentPropName;// 递归序列引用的父列属性名
 	private String recSeqParentCodeValQueryHql;// 递归序列的父编码值查询hql
@@ -400,16 +419,54 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * @return
 	 */
 	private Object getColumnGroupRecSeqVal(String resourceName, JSONObject currentJsonObject) {
-		if(recSeqParentPropName == null){
-			recSeqParentPropName = getPropInfoById(recSeqParentColumnId, false)[0];
-		}
-		Object parentIdValue = currentJsonObject.get(recSeqParentPropName);
+		Object parentIdValue = getParentIdValue(currentJsonObject);
 		if(StrUtils.isEmpty(parentIdValue)){// 如果为空，则证明是顶级数据，则要根据字段组合值，决定序列值
 			return getColumnGroupSeqVal(resourceName, currentJsonObject);
 		}else{// 不为空，表示是子数据，则要查询出上级数据的编号值，实现递归序列值
 			return getRecursiveSeqVal(resourceName, currentJsonObject, getColumnGroupValue(currentJsonObject));
 		}
 	}
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取【12:main_sub_rec_seq(主子[-递归]-序列)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private Object getMainSubRecSeqVal(String resourceName, JSONObject currentJsonObject) {
+		Object seqValue = getRecursiveSeqVal(resourceName, currentJsonObject, null);
+		
+		// 查询主表的编码值
+		if(queryMainTableCodeValueHql == null){
+			String mainTableCodeColumnName = getPropInfoById(mainTableCodeColumnId, false)[0];
+			String mainTableName = getTableResourceNameById(mainTableId);
+			String mainTableCondColumnName = getPropInfoById(mainTableCondColumnId, false)[0];
+			queryMainTableCodeValueHql = "select " + mainTableCodeColumnName +" from "+mainTableName +" where " +mainTableCondColumnName+" =? " + installOrderBy();
+		}
+		
+		// 从当前对象中获取查询的条件值
+		if(subTableCondValProp == null){
+			subTableCondValProp = getPropInfoById(subTableCondValPropId, true);	
+		}
+		Object condValue = currentJsonObject.get(subTableCondValProp[0]);
+		
+		// 查询主表的编码值
+		String mainCodeValue = null;
+		List<String> list = HibernateUtil.executeListQueryByHqlArr("1", "1", queryMainTableCodeValueHql, DataTypeTurnUtil.turnValueDataType(condValue, subTableCondValProp[1], true, true, true));
+		if(list != null && list.size() > 0){
+			mainCodeValue = list.get(0);
+			list.clear();
+		}
+		if(StrUtils.isEmpty(mainCodeValue)){
+			throw new NullPointerException("没有查询到id为["+subTableCondValProp[0]+"]的主表数据信息，自动生成 [主子[-递归]-序列] 失败");
+		}
+		return mainCodeValue + mainSubSeqLinkSymbol + seqValue;
+	}
+	private String queryMainTableCodeValueHql;
+	private String[] subTableCondValProp;
+	
 	
 	// ------------------------------------------------------------------------------------------
 	/**
@@ -465,12 +522,12 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 * 根据属性id，获取对应的column/sqlParam属性名和数据类型
 	 * @param propId
 	 * @param isQueryCondValProp 是否是查询条件值的属性id，如果是，要根据queryCondValPropFrom的值，决定去1:CfgColumn或2:CfgSqlParameter查询对应的数据；不是，就只去CfgColumn查询对应的数据
-	 * @return
+	 * @return [0]属性名  [1]数据类型
 	 */
 	private String[] getPropInfoById(String propId, boolean isQueryCondValPropId){
 		String[] propInfo = new String[2];
 		Object[] tmpPropInfo = null;
-		if(ResourcePropNameConstants.ID.equals(propId)){// 其他基础字段可能不会作为查询条件，所以这里没有处理
+		if(ResourcePropNameConstants.ID.equalsIgnoreCase(propId)){// 其他基础字段可能不会作为查询条件，所以这里没有处理
 			propInfo[0] = ResourcePropNameConstants.ID;
 			propInfo[1] = DataTypeConstants.STRING;
 		}else{
@@ -484,7 +541,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 				tmpPropInfo = (Object[]) HibernateUtil.executeUniqueQueryByHqlArr(queryColumnInfoIdHql, propId);
 			}
 			if(tmpPropInfo == null || tmpPropInfo[0] == null || tmpPropInfo[1] == null){
-				throw new NullPointerException("在生成字段编码时，没有查询到id为["+propId+"]的属性信息");
+				throw new NullPointerException("在生成字段编码时，没有查询到id为["+propId+"]的"+((refPropType==1)?"列":"sql参数")+"信息");
 			}
 			
 			propInfo[0] = tmpPropInfo[0].toString();
@@ -503,11 +560,14 @@ public class CurrentStageCodeProcesser implements Serializable{
 	 */
 	private String installOrderBy() {
 		if(StrUtils.notEmpty(orderByColumnId)){
-			String[] orderByColumnInfo = getPropInfoById(orderByColumnId, false);
-			return " order by " + orderByColumnInfo[0] + " " + orderByMethod;
+			if(orderByColumnName == null){
+				orderByColumnName = getPropInfoById(orderByColumnId, false)[0];
+			}
+			return " order by " + orderByColumnName + " " + orderByMethod;
 		}
 		return "";
 	}
+	private String orderByColumnName;
 	
 	/**
 	 * 获取【6:column(其他列值)】

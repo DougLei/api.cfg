@@ -12,7 +12,7 @@ public class DataTypeTurnUtil {
 	/**
 	 * 转换值数据类型
 	 * @param value
-	 * @param targetDataCodeType @see WorkflowBasicInfoConstants
+	 * @param targetDataCodeType 
 	 * @param isReturnNullStr 如果value为null，是否返回空字符串<"">
 	 * @param isCodeDateType 是否是代码时间类型，不是代码时间类型，就是sql时间类型，主要区别在于日期的转换，一个是java.util.Date，一个是java.sql.Date
 	 * @param dateIsDetail 日期类型是否是详细，详细包括时分秒
