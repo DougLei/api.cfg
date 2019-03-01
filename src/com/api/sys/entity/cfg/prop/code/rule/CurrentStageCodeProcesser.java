@@ -238,13 +238,13 @@ public class CurrentStageCodeProcesser implements Serializable{
 		return seq.getCurrentVal(parentSeqValue, recSeqLinkSymbol);
 	}
 	/** 查询序列信息hql语句 */
-	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and (parentSeqVal is null or parentSeqVal = '')";
+	private static final String querySeqInfoHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and (parentSeqVal is null or parentSeqVal = '')  and (propGroupValue is null or propGroupValue = '')";
 	/** 查询父级序列信息hql语句 */
-	private static final String querySeqInfoByParentSeqValHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal=?";
+	private static final String querySeqInfoByParentSeqValHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal=? and (propGroupValue is null or propGroupValue = '')";
 	/** 查询属性组值hql语句 */
-	private static final String querySeqInfoByPropGroupValueHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and propGroupValue=?";
+	private static final String querySeqInfoByPropGroupValueHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and propGroupValue=? and (parentSeqVal is null or parentSeqVal = '')";
 	/** 查询属性组值 和 父级序列值hql语句 */
-	private static final String querySeqInfoByPropGroupAndParentSeqValueHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and propGroupValue=? and parentSeqVal=?";
+	private static final String querySeqInfoByPropGroupAndParentSeqValueHql = "from CfgSeqInfo where refPropCodeRuleDetailId=? and parentSeqVal=? and propGroupValue=?";
 	
 	/**
 	 * 设置序列重新初始化
