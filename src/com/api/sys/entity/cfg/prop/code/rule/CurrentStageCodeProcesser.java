@@ -134,6 +134,9 @@ public class CurrentStageCodeProcesser implements Serializable{
 			case 10: // 10:columnGroup_seq(字段组合序列)
 				value = getColumnGroupSeqVal(resourceName, currentJsonObject);
 				break;
+			case 11: // 11:columnGroup_rec_seq(字段组合-递归-序列)
+				value = getColumnGroupRecSeqVal(resourceName, currentJsonObject);
+				break;
 			default: // 默认值为0，0:default(默认固定值)
 				value = getDefaultVal(resourceName, currentJsonObject);
 				break;
@@ -376,6 +379,26 @@ public class CurrentStageCodeProcesser implements Serializable{
 	private static final String propGroupSeqColumnPropNameQueryHql = "select propName from CfgColumn ";
 	/** 属性组序列规则时，查询sql参数属性名的hql */
 	private static final String propGroupSeqSqlParameterNameQueryHql = "select name from CfgSqlParameter ";
+	
+	// ------------------------------------------------------------------------------------------
+	/**
+	 * 获取【11:columnGroup_rec_seq(字段组合-递归-序列)】
+	 * @param resourceName
+	 * @param currentJsonObject
+	 * @return
+	 */
+	private Object getColumnGroupRecSeqVal(String resourceName, JSONObject currentJsonObject) {
+		// TODO
+		if(recSeqParentPropName == null){
+			recSeqParentPropName = getPropInfoById(recSeqParentColumnId, false)[0];
+		}
+		Object parentIdValue = currentJsonObject.get(recSeqParentPropName);
+		if(StrUtils.isEmpty(parentIdValue)){// 如果为空，则证明是顶级数据，则要根据字段组合值，决定序列值
+			return getColumnGroupSeqVal(resourceName, currentJsonObject);
+		}else{// 不为空，表示是子数据，则要查询出上级数据的编号值，实现递归序列值
+			return getRecursiveSeqVal(resourceName, currentJsonObject);
+		}
+	}
 	
 	// ------------------------------------------------------------------------------------------
 	/**
