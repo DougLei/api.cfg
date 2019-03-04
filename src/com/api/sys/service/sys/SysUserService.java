@@ -234,8 +234,7 @@ public class SysUserService extends AService{
 				JSONObject account = (JSONObject)operAccount(user, false);
 				user.setId(account.getString(ResourcePropNameConstants.ID));
 			}
-			JSONObject userJsonObject = HibernateUtil.saveObject(user, null);
-			String userId = userJsonObject.getString(ResourcePropNameConstants.ID);
+			String userId = ResourceHandlerUtil.getIdentity();
 			
 			// 保存部门
 			if(StrUtils.isEmpty(user.getDeptId())){
@@ -264,6 +263,8 @@ public class SysUserService extends AService{
 				HibernateUtil.saveObject(sysUserRoleLinks, urLink, null);
 			}
 			
+			user.setId(userId);
+			JSONObject userJsonObject = HibernateUtil.saveObject(user, null);
 			return userJsonObject;
 		}
 		return result;
