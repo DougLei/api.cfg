@@ -230,11 +230,15 @@ public class SysUserService extends AService{
 			result = validTelIsExists(user);
 		}
 		if(result == null){
+			String userId = null;
 			if(user.getIsCreateAccount() == 1){
 				JSONObject account = (JSONObject)operAccount(user, false);
 				user.setId(account.getString(ResourcePropNameConstants.ID));
+				userId = user.getId();
 			}
-			String userId = ResourceHandlerUtil.getIdentity();
+			if(userId == null){
+				userId = ResourceHandlerUtil.getIdentity();
+			}
 			
 			// 保存部门
 			if(StrUtils.isEmpty(user.getDeptId())){
