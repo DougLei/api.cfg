@@ -142,7 +142,7 @@ public abstract class AController {
 			}
 			return result;
 			
-			// TODO 暂时注释，使用上方的方式
+			// TODO TODO 暂时注释，使用上面的code
 //			return resultObject;
 		}
 		
