@@ -188,7 +188,8 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 						if(DataTypeValidUtil.isDate(actualInValue)){
 							actualInValue = DateUtil.parseSqlTimestamp(dataValueStr);
 						}else{
-							return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
+							return desc+"第"+index+"行数据，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
+//							return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";// TODO 暂时注释，使用上面一行code
 						}
 					}else{
 						if(isGetRequest){// get请求，值都是string类型，需要进行转换
@@ -196,35 +197,43 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 								if(DataTypeValidUtil.isInteger(dataValueStr)){
 									actualInValue = Integer.valueOf(dataValueStr);
 									if(rmi.getLength() != -1 && dataValueStr.length() > rmi.getLength()){
-										return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+										return desc+"第"+index+"行数据，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+//										return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";// TODO 暂时注释，使用上面一行code
 									}
 								}else{
-									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
+									return desc+"第"+index+"行数据，["+rmi.getDescName()+"] 的值不合法，应为整数类型";
+//									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为整数类型";// TODO 暂时注释，使用上面一行code
 								}
 							}else if(DataTypeConstants.DOUBLE.equals(ssp.getDataType())){
 								if(DataTypeValidUtil.isNumber(dataValueStr)){
 									actualInValue = BigDecimal.valueOf(Double.valueOf(dataValueStr));
 									if(rmi.getLength() != -1 && (dataValueStr.length()-1) > rmi.getLength()){
-										return desc+"第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
+										return desc+"第"+index+"行数据，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";
+//										return desc+"第"+index+"个对象，["+rmi.getDescName()+"]的值长度，大于实际配置的长度("+rmi.getLength()+")";// TODO 暂时注释，使用上面一行code
 									}
 									if(rmi.getPrecision() != -1 && dataValueStr.indexOf(".")!=-1 &&  dataValueStr.substring(dataValueStr.indexOf(".")+1).length() > rmi.getPrecision()){
-										return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
+										return desc+"第"+index+"行数据，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";
+//										return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值精度，大于实际配置的精度("+rmi.getPrecision()+")";// TODO 暂时注释，使用上面一行code
 									}
 								}else{
-									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";
+									return desc+"第"+index+"行数据，["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";
+//									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为浮点类型[或数字类型]";// TODO 暂时注释，使用上面一行code
 								}
 							}else if(DataTypeConstants.BOOLEAN.equals(ssp.getDataType())){
 								if(DataTypeValidUtil.isBoolean(dataValueStr)){
 									actualInValue = ("true".equals(dataValueStr))? "1":"0";
 								}else{
-									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
+									return desc+"第"+index+"行数据，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";
+//									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为布尔值类型";// TODO 暂时注释，使用上面一行code
 								}
 							}else if(DataTypeConstants.STRING.equals(ssp.getDataType())){
 								if(rmi.getLength() != -1 && StrUtils.calcStrLength(dataValueStr) > rmi.getLength()){
-									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+									return desc+"第"+index+"行数据，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";
+//									return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值长度，大于实际配置的长度("+rmi.getLength()+")";// TODO 暂时注释，使用上面一行code
 								}
 							}else{
-								return desc+"第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+ssp.getDataType()+"]数据类型，请联系后端开发人员";
+								return desc+"第"+index+"行数据，["+rmi.getDescName()+"]，系统目前不支持["+ssp.getDataType()+"]数据类型，请联系开发人员";
+//								return desc+"第"+index+"个对象，["+rmi.getDescName()+"]，系统目前不支持["+ssp.getDataType()+"]数据类型，请联系后端开发人员";// TODO 暂时注释，使用上面一行code
 							}
 						}else{// 否则就是post请求，直接判断，不需要转换
 							if(ssp.getIsTableType() == 1){
@@ -237,7 +246,8 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 							}else{
 								validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(actualInValue, rmi);
 								if(validDataIsLegalResult != null){
-									return desc + "第"+index+"个对象，" + validDataIsLegalResult;
+									return "第"+index+"行数据，" + validDataIsLegalResult;
+//									return desc + "第"+index+"个对象，" + validDataIsLegalResult;// TODO 暂时注释，使用上面一行code
 								}
 								return null;
 							}

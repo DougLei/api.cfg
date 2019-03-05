@@ -145,7 +145,8 @@ public class TableResourceValidUtil {
 				
 				// 验证不能为空
 				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
-					return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值不能为空";
+					return "第"+(i+1)+"行数据，["+rmi.getDescName()+"] 的值不能为空";
+//					return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值不能为空";// TODO 暂时注释，使用上面一行code
 				}
 				
 				if(!dataValueIsNull){
@@ -155,14 +156,16 @@ public class TableResourceValidUtil {
 					}
 					validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(dataValue, rmi);
 					if(validDataIsLegalResult != null){
-						return desc + "第"+(i+1)+"个对象，" + validDataIsLegalResult;
+						return "第"+(i+1)+"行数据，" + validDataIsLegalResult;
+//						return desc + "第"+(i+1)+"个对象，" + validDataIsLegalResult;// TODO 暂时注释，使用上面一行code
 					}
 					
 					// 验证唯一约束
 					if(!rmi.isUnUnique()){
 						uniqueConstraintProps.add(rmi);
 						if(isValidUniqueInDb && validDataIsExists(resourceName, rmi, dataValue, isUpdate, dataIdValue)){
-							return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
+							return "第"+(i+1)+"行数据，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";
+//							return desc + "第"+(i+1)+"个对象，["+rmi.getDescName()+"] 的值["+dataValue+"]已经存在，不能重复添加";// TODO 暂时注释，使用上面一行code
 						}
 					}
 				}
@@ -177,7 +180,8 @@ public class TableResourceValidUtil {
 					if(StrUtils.notEmpty(dataValue)){
 						for(int j=i+1;j<size;j++){
 							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
-								return desc + "第"+(i+1)+"个对象和第"+(j+1)+"个对象，["+uniqueConstraintProp.getDescName()+"] 的值重复，操作失败";
+								return "第"+(i+1)+"行数据和第"+(j+1)+"行数据，["+uniqueConstraintProp.getDescName()+"] 的值重复，操作失败";
+//								return desc + "第"+(i+1)+"个对象和第"+(j+1)+"个对象，["+uniqueConstraintProp.getDescName()+"] 的值重复，操作失败";// TODO 暂时注释，使用上面一行code
 							}
 						}
 					}
