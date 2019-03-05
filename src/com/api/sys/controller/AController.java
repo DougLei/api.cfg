@@ -135,7 +135,15 @@ public abstract class AController {
 			return analysisResult;
 		}
 		if(resultObject instanceof String){
-			return resultObject;
+			String result = resultObject.toString();
+			result = result.substring(result.indexOf("，")+1);
+			if(ijsonIsArray){
+				result = "第"+index+"行数据，" + result;
+			}
+			return result;
+			
+			// TODO 暂时注释，使用上方的方式
+//			return resultObject;
 		}
 		
 		if(operDataType != null){
