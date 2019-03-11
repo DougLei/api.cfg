@@ -178,15 +178,14 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 				}
 				
 				dataValueStr = actualInValue.toString();
-				if(BuiltinParameters.isBuiltinParams(dataValueStr)){
-					actualInValue = BuiltinParameters.getBuiltinQueryParamValue(dataValueStr);
-				}
 				
 				if(ssp.getIsPlaceholder() == 1){
 					// 无论是什么类型的请求，日期类型都是string类型，都要进行转换
 					if(DataTypeConstants.DATE.equals(ssp.getDataType())){
 						if(DataTypeValidUtil.isDate(actualInValue)){
-							actualInValue = DateUtil.parseSqlTimestamp(dataValueStr);
+							if(actualInValue instanceof String){// 只有字符串类型的时间，才需要转换，否则直接使用即可
+								actualInValue = DateUtil.parseSqlTimestamp(dataValueStr);
+							}
 						}else{
 							return "第"+index+"行数据，["+rmi.getDescName()+"] 的值不合法，应为日期类型";
 //							return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 的值不合法，应为日期类型";// TODO 暂时注释，使用上面一行code
