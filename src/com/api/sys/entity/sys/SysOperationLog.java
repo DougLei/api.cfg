@@ -14,6 +14,7 @@ import com.api.sys.entity.cfg.CfgTable;
 
 /**
  * 操作日志信息表
+ * <p>前端提出的操作日志表</p>
  * @author DougLei
  */
 @SuppressWarnings("serial")
@@ -142,7 +143,7 @@ public class SysOperationLog extends BasicEntity implements IEntity{
 	public CfgTable toCreateTable() {
 		CfgTable table = new CfgTable(toDropTable());
 		table.setName("操作日志信息表");
-		table.setRemark("操作日志信息表");
+		table.setRemark("前端提出的操作日志表");
 		
 		table.setColumns(getColumnList());
 		return table;

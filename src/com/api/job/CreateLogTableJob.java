@@ -53,7 +53,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			List<CfgTable> logTables = new ArrayList<CfgTable>(logTableSize);
 			logTables.add(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable());
 			logTables.add(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
-			logTables.add(BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).toCreateTable());
+			logTables.add(BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).toCreateTable());// 前端提出的操作日志表
 			
 			DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 			try {
