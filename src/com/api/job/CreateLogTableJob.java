@@ -17,6 +17,7 @@ import com.api.sys.entity.cfg.CfgHibernateHbm;
 import com.api.sys.entity.cfg.CfgResource;
 import com.api.sys.entity.cfg.CfgTable;
 import com.api.sys.entity.sys.SysOperSqlLog;
+import com.api.sys.entity.sys.SysOperationLog;
 import com.api.sys.entity.sys.SysReqLog;
 import com.api.sys.service.cfg.CfgTableService;
 import com.api.thread.current.CurrentThreadContext;
@@ -32,7 +33,7 @@ import com.api.util.hibernate.HibernateUtil;
  */
 @SuppressWarnings("serial")
 public class CreateLogTableJob implements Job, Serializable{
-	private static final int logTableSize = 2;
+	private static final int logTableSize = 3;
 	
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		Log4jUtil.info(CreateLogTableJob.class, "execute", "执行创建log信息表的任务，任务的cron表达式为：0 0 0 * * ?");
@@ -52,6 +53,7 @@ public class CreateLogTableJob implements Job, Serializable{
 			List<CfgTable> logTables = new ArrayList<CfgTable>(logTableSize);
 			logTables.add(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable());
 			logTables.add(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
+			logTables.add(BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).toCreateTable());
 			
 			DBTableHandler dbTableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
 			try {

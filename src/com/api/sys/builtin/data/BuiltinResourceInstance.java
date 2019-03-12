@@ -52,6 +52,7 @@ import com.api.sys.entity.sys.SysDept;
 import com.api.sys.entity.sys.SysFile;
 import com.api.sys.entity.sys.SysFileIELog;
 import com.api.sys.entity.sys.SysOperSqlLog;
+import com.api.sys.entity.sys.SysOperationLog;
 import com.api.sys.entity.sys.SysOrg;
 import com.api.sys.entity.sys.SysPermission;
 import com.api.sys.entity.sys.SysPermissionPriority;
@@ -169,6 +170,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("SysPermissionPriority", new SysPermissionPriority());
 		instanceCache.put("SysReqLog", new SysReqLog());
 		instanceCache.put("SysOperSqlLog", new SysOperSqlLog());
+		instanceCache.put("SysOperationLog", new SysOperationLog());
 		instanceCache.put("SysFile", new SysFile());
 		instanceCache.put("SysUserGroup", new SysUserGroup());
 		instanceCache.put("SysUserGroupDetail", new SysUserGroupDetail());
