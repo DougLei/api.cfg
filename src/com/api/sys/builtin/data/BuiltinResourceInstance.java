@@ -189,7 +189,14 @@ public class BuiltinResourceInstance {
 	 * @return
 	 */
 	public static Object getInstance(String name){
-		return instanceCache.get(name);
+		Object obj = instanceCache.get(name);
+		if(obj == null){
+			obj = instanceCache.get(name.substring(0, name.length() - 6));
+		}
+		if(obj == null){
+			throw new NullPointerException("没有在实例缓存中查询到name=["+name+"]的资源实例，请联系后端系统开发人员");
+		}
+		return obj;
 	}
 	/**
 	 * 获得实例
@@ -199,7 +206,7 @@ public class BuiltinResourceInstance {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getInstance(String name, Class<T> clz){
-		return (T) instanceCache.get(name);
+		return (T) getInstance(name);
 	}
 	
 	/**
@@ -216,5 +223,5 @@ public class BuiltinResourceInstance {
 		}
 		return tables;
 	}
-	private static final int tableCount = 43;
+	private static final int tableCount = 50;
 }
