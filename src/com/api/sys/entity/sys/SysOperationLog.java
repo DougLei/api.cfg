@@ -112,7 +112,7 @@ public class SysOperationLog extends BasicEntity implements IEntity{
 		FUNC_IDColumn.setComments("FUNC_ID");
 		columns.add(FUNC_IDColumn);
 		
-		CfgColumn DESCRIPTIONColumn = new CfgColumn("DESCRIPTION", DataTypeConstants.STRING, 500);
+		CfgColumn DESCRIPTIONColumn = new CfgColumn("DESCRIPTION", DataTypeConstants.CLOB, 0);
 		DESCRIPTIONColumn.setName("DESCRIPTION");
 		DESCRIPTIONColumn.setComments("DESCRIPTION");
 		columns.add(DESCRIPTIONColumn);
