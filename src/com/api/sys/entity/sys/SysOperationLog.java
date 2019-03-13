@@ -132,7 +132,7 @@ public class SysOperationLog extends BasicEntity implements IEntity{
 		USER_IDColumn.setComments("USER_ID");
 		columns.add(USER_IDColumn);
 		
-		CfgColumn USER_IPColumn = new CfgColumn("USER_IP", DataTypeConstants.STRING, 13);
+		CfgColumn USER_IPColumn = new CfgColumn("USER_IP", DataTypeConstants.STRING, 20);
 		USER_IPColumn.setName("USER_IP");
 		USER_IPColumn.setComments("USER_IP");
 		columns.add(USER_IPColumn);
