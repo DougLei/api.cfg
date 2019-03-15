@@ -97,15 +97,12 @@ public abstract class AIEFile {
 		if(resource.isTableResource()){
 			obj = getIETableResourceMetadataInfos(resource, isImport);
 		}else if(resource.isSqlResource()){
-			if(isImport == 1){
-				return "系统目前只支持查询表资源的导入元数据信息";
-			}
-			obj = getIESqlExportMetadataInfos(resource);
+			obj = getIESqlExportMetadataInfos(resource, isImport);
 		}else{
-			return "系统目前只支持表资源的导入、导出操作，以及sql资源的导出操作";
+			return "系统目前只支持表资源的导入、导出操作，以及sql资源的导入、导出操作";
 		}
 		if(obj == null){
-			return "[AIEFile.getIEResourceMetadataInfos()]中的obj参数值为null，请联系后端系统开发人员";
+			return ((isImport==1)?"导入":"导出") + "数据时，没有查询到资源["+resourceName+"]的元数据信息，请联系后端系统开发人员";
 		}
 		if(obj instanceof String){
 			return obj;
@@ -182,21 +179,34 @@ public abstract class AIEFile {
 	/**
 	 * 获取sql语句导出的元数据信息集合
 	 * @param resource
+	 * @param isImport 
 	 * @return
 	 */
-	private Object getIESqlExportMetadataInfos(CfgResource resource) {
+	private Object getIESqlExportMetadataInfos(CfgResource resource, int isImport) {
 		String resourceId = resource.getRefResourceId();
 		Object sqlType = HibernateUtil.executeUniqueQueryByHqlArr("select type from CfgSql where "+ResourcePropNameConstants.ID+"=?", resourceId);
 		if(sqlType == null){
 			return "没有查询到名为["+resource.getResourceName()+"]的sql资源，请联系后台系统开发人员";
 		}
-		if(!sqlType.equals(SqlStatementTypeConstants.SELECT)){
-			return"系统只支持查询select类型的sql语句，配置的导出元数据信息";
+		String hql = null;
+		if(isImport == 1){
+			if(sqlType.equals(SqlStatementTypeConstants.SELECT)){
+				return"导出时，系统只支持select类型的sql语句";
+			}
+			hql = querySqlExportMetadataInfosHql;
 		}
-		return HibernateUtil.extendExecuteListQueryByHqlArr(IEResourceMetadataInfo.class, null, null, querySqlExportMetadataInfosHql, resourceId);
+		if(isImport == 0){
+			if(sqlType.equals(SqlStatementTypeConstants.INSERT) || sqlType.equals(SqlStatementTypeConstants.PROCEDURE)){
+				return"导出时，系统只支持insert类型或procedure类型的sql语句";
+			}
+			hql = querySqlImportMetadataInfosHql;
+		}
+		return HibernateUtil.extendExecuteListQueryByHqlArr(IEResourceMetadataInfo.class, null, null, hql, resourceId);
 	}
 	/** 查询sql资源配置的导出元数据信息集合的hql */
 	private static final String querySqlExportMetadataInfosHql = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
+	/** 查询sql资源配置的导入元数据信息集合的hql */
+	private static final String querySqlImportMetadataInfosHql = "select new map("+ResourcePropNameConstants.ID+" as id,name as columnName,name as propName, remark as descName, dataType as dataType, length as length, precision as precision, isNullabled as isNullabled) from CfgSqlParameter where sqlScriptId=? order by orderCode asc";
 	
 	// -------------------------------------------------------------------------------
 	/**

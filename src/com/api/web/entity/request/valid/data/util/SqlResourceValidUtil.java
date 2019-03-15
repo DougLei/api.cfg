@@ -38,7 +38,7 @@ public class SqlResourceValidUtil {
 						sqlParam.getLength(),
 						sqlParam.getPrecision(),
 						0, // sql脚本参数不需要唯一约束
-						0, // sql脚本参数不能为空
+						sqlParam.getIsNullabled(),
 						0, // 不能忽略检查
 						sqlParam.getName(),
 						sqlParam.getRemark()));
