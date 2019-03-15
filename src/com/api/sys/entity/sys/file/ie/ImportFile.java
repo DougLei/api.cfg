@@ -22,7 +22,7 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 
 	/**
 	 * 一次批量导入的数量
-	 * <p>例如文件中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为300条，如果值为-1，则一次全部导入</p>
+	 * <p>例如文件中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为500条，如果值为-1，则一次全部导入</p>
 	 */
 	private int batchImportCount;
 	/**
@@ -43,6 +43,9 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 		return importFile;
 	}
 	public void setBatchImportCount(int batchImportCount) {
+		if(batchImportCount < -1 || batchImportCount == 0 || batchImportCount > 500){
+			batchImportCount = 500;
+		}
 		this.batchImportCount = batchImportCount;
 	}
 	public int getBatchImportCount() {
@@ -92,26 +95,39 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 		return "ImportFile";
 	}
 	
+	// -------------------------------------------------
 	/**
-	 * 计算一次批量导入的数据数量
-	 * @param rowCount
-	 * @return
+	 * 要导入的数据总数量
 	 */
-	public int calcBatchImportCount(int rowCount){
-		if(batchImportCount == 0 || batchImportCount < -1){
-			batchImportCount = 300;
-		}else if(batchImportCount == -1){
-			batchImportCount = rowCount;
+	@JSONField(serialize = false)
+	private int importTotalCount;
+	public void setImportTotalCount(int importTotalCount){
+		this.importTotalCount = importTotalCount;
+		if(batchImportCount == -1){
+			batchImportCount = importTotalCount;
+			loopCount = 1;
+		}else{
+			loopCount = importTotalCount/batchImportCount +1;
 		}
-		return batchImportCount;
+	}
+	
+	@JSONField(serialize = false)
+	private int loopCount;
+	@JSONField(serialize = false)
+	private int currentLoopCount;
+	public boolean hasMoreImport() {
+		return (++currentLoopCount) <= loopCount;
 	}
 	
 	/**
-	 * 是否一次性全部导入
+	 * 获取当前循环的size
 	 * @return
 	 */
-	@JSONField(serialize = false)
-	public boolean isAllImportByOnce(){
-		return batchImportCount == -1;
+	public int getCurrentLoopSize() {
+		if(currentLoopCount < loopCount){
+			return currentLoopCount * batchImportCount;
+		}else{
+			return importTotalCount;
+		}
 	}
 }

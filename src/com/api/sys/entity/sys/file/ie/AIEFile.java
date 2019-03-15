@@ -44,6 +44,26 @@ public abstract class AIEFile {
 		this.resourceName = resourceName;
 	}
 	
+	/**
+	 * 要操作的资源类型
+	 */
+	private int resourceType;
+	/**
+	 * 是否是表资源
+	 * @return
+	 */
+	public boolean isTableResource(){
+		return resourceType == ResourceInfoConstants.TABLE;
+	}
+	/**
+	 * 是否是sql资源
+	 * @return
+	 */
+	public boolean isSqlResource(){
+		return resourceType == ResourceInfoConstants.SQL;
+	}
+	
+	
 	@JSONField(serialize = false)
 	public String getId(){
 		return null;
@@ -95,8 +115,10 @@ public abstract class AIEFile {
 		
 		Object obj = null;
 		if(resource.isTableResource()){
+			resourceType = ResourceInfoConstants.TABLE;
 			obj = getIETableResourceMetadataInfos(resource, isImport);
 		}else if(resource.isSqlResource()){
+			resourceType = ResourceInfoConstants.SQL;
 			obj = getIESqlExportMetadataInfos(resource, isImport);
 		}else{
 			return "系统目前只支持表资源的导入、导出操作，以及sql资源的导入、导出操作";

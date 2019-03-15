@@ -102,55 +102,55 @@ public class SysExcelService extends AService{
 			return wb;
 		}
 		Workbook workbook = (Workbook) wb;
-		
-		int rowCount = 0;// 行数
 		Sheet sheet = workbook.getSheetAt(0);
-		rowCount = sheet.getLastRowNum()+1;
 		if(sheet.getRow(1) != null){
+			int rowCount = sheet.getLastRowNum()+1; // 行数
+			importFile.setImportTotalCount(rowCount);
+			
 			String resourceName = importFile.getResourceName();
 			
-			String desc = "导入excel文件["+file.getActName()+"]，";
 			List<IEResourceMetadataInfo> ieResourceMetadataInfos = importFile.getIeResourceMetadataInfos();
-			int ieResourceMetadataInfoCount = ieResourceMetadataInfos.size();
-			IJson ijson = new JSONArrayExtend(rowCount-1);;
-			JSONObject json = null;
-			String validResult = null;
-			
 			IEResourceMetadataInfo rmi = null;
+			int ieResourceMetadataInfoCount = ieResourceMetadataInfos.size();
+			
+			IJson ijson = new JSONArrayExtend(importFile.getBatchImportCount());
+			JSONObject json = null;
+			
+			String importResult = null;
+			
 			Row row = null;// excel行对象
 			short columnCount = 0; // 列数
 			
-			int i, j, index=0;
-			for(i=1;i<rowCount;i++){
-				row = sheet.getRow(i);
-				if(row != null){
-					columnCount = sheet.getRow(i).getLastCellNum();
-//					if(columnCount != (ieResourceMetadataInfoCount + importFile.getResourceMetadataInfoOfConfExtendCount())){
-//						return "第"+(i+1)+"行数据的列数量("+columnCount+"个)不等于资源["+resourceName+"]配置的导入字段数量("+ieResourceMetadataInfos.size()+"个)，系统无法匹配，请调整系统字段配置，或excel中的列";
-//					}
-					
-					json = new JSONObject(ieResourceMetadataInfoCount);
-					ijson.add(json);
-					for (j=0; j<columnCount; j++) {
-						if(index > ieResourceMetadataInfoCount){
-							break;
+			int rowIndex = 1, cellIndex, index;
+			while(importFile.hasMoreImport()){
+				for(; rowIndex <= importFile.getCurrentLoopSize(); rowIndex++){
+					row = sheet.getRow(rowIndex);
+					if(row != null){
+						columnCount = row.getLastCellNum();
+						
+						json = new JSONObject(ieResourceMetadataInfoCount);
+						ijson.add(json);
+						
+						for (cellIndex=0, index=0; cellIndex<columnCount; cellIndex++) {
+							if(index > ieResourceMetadataInfoCount){
+								break;
+							}
+							rmi = ieResourceMetadataInfos.get(index++);
+							if(rmi.getIeConfExtend() != null){
+								cellIndex++;
+							}
+							json.put(rmi.getPropName(), getCellValue(row.getCell(cellIndex)));
 						}
-						rmi = ieResourceMetadataInfos.get(index++);
-						if(rmi.getIeConfExtend() != null){
-							j++;
-						}
-						json.put(rmi.getPropName(), getCellValue(row.getCell(j)));
 					}
-					index=0;
+				}
+				importResult = importDatas("导入excel文件["+file.getActName()+"]，", resourceName, ijson, ieResourceMetadataInfos, importFile, request);
+				if(importResult != null){
+					return importResult;
 				}
 			}
-			validResult = validImportDatas(desc , resourceName, ijson, ieResourceMetadataInfos);
-			if(validResult != null){
-				return validResult;
-			}
-			Object saveResult = saveImportDatas(resourceName, ijson, importFile.getExtendParamMap(), request);
-			if(saveResult != null){
-				return saveResult;
+			importResult = importDatas("导入excel文件["+file.getActName()+"]，", resourceName, ijson, ieResourceMetadataInfos, importFile, request);
+			if(importResult != null){
+				return importResult;
 			}
 		}
 		return importFile;
@@ -173,6 +173,28 @@ public class SysExcelService extends AService{
 	}
 
 	/**
+	 * 导入数据
+	 * @param desc
+	 * @param resourceName
+	 * @param ijson
+	 * @param ieResourceMetadataInfos
+	 * @param importFile
+	 * @param request
+	 * @return
+	 */
+	private String importDatas(String desc, String resourceName, IJson ijson, List<IEResourceMetadataInfo> ieResourceMetadataInfos, ImportFile importFile, HttpServletRequest request) {
+		String result = validImportDatas(desc , resourceName, ijson, ieResourceMetadataInfos, importFile);
+		if(result != null){
+			return result;
+		}
+		result = saveImportDatas(resourceName, ijson, importFile.getExtendParamMap(), request, importFile);
+		if(result != null){
+			return result;
+		}
+		return null;
+	}
+	
+	/**
 	 * 验证导入的数据
 	 * @param desc
 	 * @param resourceName
@@ -180,68 +202,77 @@ public class SysExcelService extends AService{
 	 * @param ieResourceMetadataInfos 
 	 * @return
 	 */
-	private String validImportDatas(String desc, String resourceName, IJson ijson, List<IEResourceMetadataInfo> ieResourceMetadataInfos) {
+	private String validImportDatas(String desc, String resourceName, IJson ijson, List<IEResourceMetadataInfo> ieResourceMetadataInfos, ImportFile importFile) {
 		int size = ijson.size();
+		int rowIndex = 1;
+		int cellIndex =1;
 		
-		int columnIndex =1;
-		Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(ieResourceMetadataInfos.size());
-		JSONObject data = null;
-		boolean dataValueIsNull;
-		Object dataValue = null;
-		String validDataIsLegalResult = null;
-		for(int i=0;i<size;i++){
-			data = ijson.get(i);
-			data.get(ResourcePropNameConstants.ID);
-			
-			for (IEResourceMetadataInfo rmi : ieResourceMetadataInfos) {
-				if(rmi.getIsIgnoreValid() == 1){
-					continue;
-				}
-				dataValue = data.get(rmi.getPropName());
-				dataValueIsNull = StrUtils.isEmpty(dataValue);
+		if(importFile.isTableResource()){
+			int i;
+			Set<ResourceMetadataInfo> uniqueConstraintProps = new HashSet<ResourceMetadataInfo>(ieResourceMetadataInfos.size());
+			JSONObject data = null;
+			boolean dataValueIsNull;
+			Object dataValue = null;
+			String validDataIsLegalResult = null;
+			for(cellIndex=1, i=0;i<size;i++){
+				data = ijson.get(i);
+				data.get(ResourcePropNameConstants.ID);
 				
-				// 验证不能为空
-				if(rmi.getIsNullabled() == 0 && dataValueIsNull){
-					return desc + "第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值不能为空";
-				}
-				
-				if(!dataValueIsNull){
-					validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(dataValue, rmi);
-					if(validDataIsLegalResult != null){
-						return desc+"第"+(i+2)+"行，第"+columnIndex+"列" + validDataIsLegalResult;
+				for (IEResourceMetadataInfo rmi : ieResourceMetadataInfos) {
+					if(rmi.getIsIgnoreValid() == 1){
+						continue;
+					}
+					dataValue = data.get(rmi.getPropName());
+					dataValueIsNull = StrUtils.isEmpty(dataValue);
+					
+					// 验证不能为空
+					if(rmi.getIsNullabled() == 0 && dataValueIsNull){
+						return desc + "第"+rowIndex+"行，第"+cellIndex+"列["+rmi.getDescName()+"]的数据值不能为空";
 					}
 					
-					// 验证唯一约束
-					if(rmi.getIsUnique() == 1){
-						uniqueConstraintProps.add(rmi);
-						if(validDataIsExists(resourceName, rmi, dataValue)){
-							return desc+"第"+(i+2)+"行，第"+columnIndex+"列["+rmi.getDescName()+"]的数据值已经存在，不能重复添加";
+					if(!dataValueIsNull){
+						validDataIsLegalResult = ResourceHandlerUtil.validDataIsLegal(dataValue, rmi);
+						if(validDataIsLegalResult != null){
+							return desc+"第"+rowIndex+"行，第"+cellIndex+"列" + validDataIsLegalResult;
+						}
+						
+						// 验证唯一约束
+						if(rmi.getIsUnique() == 1){
+							uniqueConstraintProps.add(rmi);
+							if(validDataIsExists(resourceName, rmi, dataValue)){
+								return desc+"第"+rowIndex+"行，第"+cellIndex+"列["+rmi.getDescName()+"]的数据值已经存在，不能重复添加";
+							}
 						}
 					}
+					cellIndex++;
 				}
-				columnIndex++;
 			}
-			columnIndex=1;
-		}
-		
-		// 验证一次提交的数组中，是否有重复的值，违反了唯一约束
-		if(size > 1 && uniqueConstraintProps.size()>0){
-			for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
-				for(int i=0;i<size-1;i++){
-					dataValue = ijson.get(i).get(uniqueConstraintProp.getPropName());
-					if(StrUtils.notEmpty(dataValue)){
-						for(int j=i+1;j<size;j++){
-							if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
-								return desc+"第"+(i+2)+"行和第"+(j+2)+"行的，第"+columnIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
+			
+			// 验证一次提交的数组中，是否有重复的值，违反了唯一约束 // TODO 没有办法做唯一性验证，因为是分批次的数据处理
+			if(size > 1 && uniqueConstraintProps.size()>0){
+				for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
+					for(int i=0;i<size-1;i++){
+						dataValue = ijson.get(i).get(uniqueConstraintProp.getPropName());
+						if(StrUtils.notEmpty(dataValue)){
+							for(int j=i+1;j<size;j++){
+								if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
+									return desc+"第"+rowIndex+"行和第"+(j+2)+"行的，第"+cellIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-		
-		if(uniqueConstraintProps.size() > 0){
-			uniqueConstraintProps.clear();
+			
+			if(uniqueConstraintProps.size() > 0){
+				uniqueConstraintProps.clear();
+			}
+		}else if(importFile.isSqlResource()){
+			// TODO 验证sql
+			
+			
+		}else{
+			return "导入数据时，只支持表资源或sql资源的导入前数据验证";
 		}
 		return null;
 	}
@@ -264,8 +295,9 @@ public class SysExcelService extends AService{
 	 * @param ijson
 	 * @param extendParamMap 
 	 * @param request 
+	 * @return
 	 */
-	private Object saveImportDatas(String resourceName, IJson ijson, Map<String, Object> extendParamMap, HttpServletRequest request) {
+	private String saveImportDatas(String resourceName, IJson ijson, Map<String, Object> extendParamMap, HttpServletRequest request, ImportFile importFile) {
 		int size = ijson.size();
 		if(size > 0){
 			String codeResourceKey = CodeResourceProcesser.getImportDataCodeResourceKey(resourceName);
@@ -283,11 +315,23 @@ public class SysExcelService extends AService{
 				}
 				Object result = CodeResourceProcesser.invokeCodeResource(codeResourceKey, request, ijson);
 				if(result instanceof String){
-					return result;
+					return result.toString();
 				}
 			}else{
-				for(int i =0;i<size;i++){
-					HibernateUtil.saveObject(resourceName, ijson.get(i), null);
+				if(importFile.isTableResource()){
+					for(int i =0;i<size;i++){
+						HibernateUtil.saveObject(resourceName, ijson.get(i), null);
+					}
+				}else if(importFile.isSqlResource()){
+					for(int i =0;i<size;i++){
+						// TODO 保存sql语句
+						
+						
+						
+						
+					}
+				}else{
+					return "导入数据时，只支持表资源或sql资源的导入操作";
 				}
 			}
 		}
