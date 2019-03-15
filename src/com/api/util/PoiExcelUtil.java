@@ -96,6 +96,14 @@ public class PoiExcelUtil {
 	}
 	
 	// -----------------------------------------------------------------
+	public static boolean isXls(Workbook workbook){
+		return workbook instanceof HSSFWorkbook;
+	}
+	public static boolean isXlsx(Workbook workbook){
+		return workbook instanceof XSSFWorkbook;
+	}
+	
+	// -----------------------------------------------------------------
 	/**
 	 * 计算下标值
 	 * <p>如果下标小于0，则修改值为0</p>
@@ -192,7 +200,11 @@ public class PoiExcelUtil {
 		if(titleCell == null){
 			throw new NullPointerException("要添加样式的标题单元格对象[titleCell]不能为空");
 		}
-		titleCell.setCellStyle(titleCellStyle);
+		if(isXls(workbook)){
+			titleCell.setCellStyle(titleCellStyle_xls);
+		}else{
+			titleCell.setCellStyle(titleCellStyle_xlsx);
+		}
 		
 		// 合并单元格
 		sheet.addMergedRegion(new CellRangeAddress(calcIndex(mergeFirstRow), calcIndex(mergeLastRow), calcIndex(mergeFirstCol), calcIndex(mergeLastCol)));
@@ -203,24 +215,43 @@ public class PoiExcelUtil {
 	 * @param workbook
 	 */
 	private static void initTitleCellStyle(Workbook workbook) {
-		if(titleCellStyle == null){
-			titleCellStyle = workbook.createCellStyle();
-			titleCellStyle.setAlignment(CellStyle.ALIGN_CENTER);// 左右居中
-			titleCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);// 上下居中
-		}
-		if(titleCellFont == null){
-			titleCellFont = workbook.createFont();
-			titleCellFont.setFontName("宋体");// 设置字体书法
-			titleCellFont.setBoldweight(Font.BOLDWEIGHT_BOLD);// 设置字体是否加粗
-			titleCellFont.setFontHeightInPoints((short)20);// 设置字体大小
-			
-			titleCellStyle.setFont(titleCellFont);// 将字体添加到样式中
+		if(isXls(workbook)){
+			if(titleCellFont_xls == null){
+				titleCellFont_xls = getTitleCellFont(workbook);
+			}
+			if(titleCellStyle_xls == null){
+				titleCellStyle_xls = getTitleCellStyle(workbook, titleCellFont_xls);
+			}
+		}else{
+			if(titleCellFont_xlsx == null){
+				titleCellFont_xlsx = getTitleCellFont(workbook);
+			}
+			if(titleCellStyle_xlsx == null){
+				titleCellStyle_xlsx = getTitleCellStyle(workbook, titleCellFont_xlsx);
+			}
 		}
 	}
+	private static Font getTitleCellFont(Workbook workbook) {
+		Font titleCellFont = workbook.createFont();
+		titleCellFont.setFontName("宋体");// 设置字体书法
+		titleCellFont.setBoldweight(Font.BOLDWEIGHT_BOLD);// 设置字体是否加粗
+		titleCellFont.setFontHeightInPoints((short)20);// 设置字体大小
+		return titleCellFont;
+	}
+	private static CellStyle getTitleCellStyle(Workbook workbook, Font titleCellFont) {
+		CellStyle titleCellStyle = workbook.createCellStyle();
+		titleCellStyle.setAlignment(CellStyle.ALIGN_CENTER);// 左右居中
+		titleCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);// 上下居中
+		
+		titleCellStyle.setFont(titleCellFont);
+		return titleCellStyle;
+	}
 	/** 标题单元格的样式 */
-	private static CellStyle titleCellStyle;
+	private static CellStyle titleCellStyle_xls;
+	private static CellStyle titleCellStyle_xlsx;
 	/** 标题单元格的字体 */
-	private static Font titleCellFont;
+	private static Font titleCellFont_xls;
+	private static Font titleCellFont_xlsx;
 	
 	// ----------
 	/**
@@ -234,37 +265,63 @@ public class PoiExcelUtil {
 		if(headCell == null){
 			throw new NullPointerException("要添加样式的头单元格对象[headCell]不能为空");
 		}
-		headCell.setCellStyle(headCellStyle);
+		CellStyle cellStyle = workbook.createCellStyle();
+		if(isXls(workbook)){
+			cellStyle.cloneStyleFrom(headCellStyle_xls);
+		}else{
+			cellStyle.cloneStyleFrom(headCellStyle_xlsx);
+		}
+		headCell.setCellStyle(cellStyle);
 		return headCell;
 	}
 	/**
 	 * 初始化头单元格样式
+	 * @param suffix
 	 * @param workbook
 	 */
 	private static void initHeadCellStyle(Workbook workbook) {
-		if(headCellStyle == null){
-			headCellStyle = workbook.createCellStyle();
-			headCellStyle.setAlignment(CellStyle.ALIGN_CENTER);// 左右居中
-			headCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);// 上下居中
-			
-			headCellStyle.setBorderTop(CellStyle.BORDER_THIN);// 上边框
-			headCellStyle.setBorderBottom(CellStyle.BORDER_THIN);// 下边框
-			headCellStyle.setBorderLeft(CellStyle.BORDER_THIN);// 左边框
-			headCellStyle.setBorderRight(CellStyle.BORDER_THIN);// 右边框
-		}
-		if(headCellFont == null){
-			headCellFont = workbook.createFont();
-			headCellFont.setFontName("宋体");// 设置字体书法
-			headCellFont.setBoldweight(Font.BOLDWEIGHT_BOLD);// 设置字体是否加粗
-			headCellFont.setFontHeightInPoints((short)10);// 设置字体大小
-			
-			headCellStyle.setFont(headCellFont);// 将字体添加到样式中
+		if(isXls(workbook)){
+			if(headCellFont_xls == null){
+				headCellFont_xls = getHeadCellFont(workbook);
+			}
+			if(headCellStyle_xls == null){
+				headCellStyle_xls = getHeadCellStyle(workbook, headCellFont_xls);
+			}
+		}else{
+			if(headCellFont_xlsx == null){
+				headCellFont_xlsx = getHeadCellFont(workbook);
+			}
+			if(headCellStyle_xlsx == null){
+				headCellStyle_xlsx = getHeadCellStyle(workbook, headCellFont_xlsx);
+			}
 		}
 	}
+	private static Font getHeadCellFont(Workbook workbook) {
+		Font headCellFont = workbook.createFont();
+		headCellFont.setFontName("宋体");// 设置字体书法
+		headCellFont.setBoldweight(Font.BOLDWEIGHT_BOLD);// 设置字体是否加粗
+		headCellFont.setFontHeightInPoints((short)10);// 设置字体大小
+		return headCellFont;
+	}
+	private static CellStyle getHeadCellStyle(Workbook workbook, Font headCellFont) {
+		CellStyle headCellStyle = workbook.createCellStyle();
+		headCellStyle.setAlignment(CellStyle.ALIGN_CENTER);// 左右居中
+		headCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);// 上下居中
+		
+		headCellStyle.setBorderTop(CellStyle.BORDER_THIN);// 上边框
+		headCellStyle.setBorderBottom(CellStyle.BORDER_THIN);// 下边框
+		headCellStyle.setBorderLeft(CellStyle.BORDER_THIN);// 左边框
+		headCellStyle.setBorderRight(CellStyle.BORDER_THIN);// 右边框
+		
+		headCellStyle.setFont(headCellFont);// 将字体添加到样式中
+		return headCellStyle;
+	}
 	/** 头单元格的样式 */
-	private static CellStyle headCellStyle;
+	private static CellStyle headCellStyle_xls;
+	private static CellStyle headCellStyle_xlsx;
 	/** 头单元格的字体 */
-	private static Font headCellFont;
+	private static Font headCellFont_xls;
+	private static Font headCellFont_xlsx;
 	
 	// ----------
 	/**

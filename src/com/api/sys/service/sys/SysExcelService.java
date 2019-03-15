@@ -345,6 +345,11 @@ public class SysExcelService extends AService{
 			rmi = ieResourceMetadataInfos.get(i);
 			PoiExcelUtil.setHeadCellStyle(workbook, setCellValue(headRow.createCell(cellIndex++), rmi.getDescName()));
 			
+			// 如果是日期类型，则要修改单元格的格式为yyyy-MM-dd HH:mm:ss
+			if(DataTypeConstants.DATE.equals(rmi.getDataType())){
+				
+			}
+			
 			propExtendConf = rmi.getIeConfExtend();
 			if(propExtendConf != null){
 				propExtendConfQueryData = new PropExtendConfQueryData(propExtendConf, importFileTemplate.getQueryPropExtendConfDataParam(rmi.getPropName()));
