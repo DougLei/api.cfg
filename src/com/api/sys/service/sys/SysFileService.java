@@ -67,6 +67,7 @@ public class SysFileService extends AService{
 		ServletFileUpload servletUpload = new ServletFileUpload(factory);
 		servletUpload.setHeaderEncoding(EncodingConstants.UTF_8);// 设置头的编码格式
 		
+		
 		List<FileItem> fileList = null;
 		List<String> filePathList = null;// 记录文件在服务器上的路径，如果上传出现错误，要删除已经上传的数据
 		try {
@@ -106,11 +107,11 @@ public class SysFileService extends AService{
 							if(file.getFieldName().startsWith("secretLevel_") && StrUtils.notEmpty(file.getString()) && DataTypeValidUtil.isInteger(file.getString())){
 								sysFile.setSecretLevel(Integer.valueOf(file.getString()));
 							}else if(file.getFieldName().startsWith("remark_") && StrUtils.notEmpty(file.getString())){
-								sysFile.setRemark(file.getString());
+								sysFile.setRemark(getFormFieldStrValue(file.getString()));
 							}else if(file.getFieldName().startsWith("backup01_") && StrUtils.notEmpty(file.getString())){
-								sysFile.setBackup01(file.getString());
+								sysFile.setBackup01(getFormFieldStrValue(file.getString()));
 							}else if(file.getFieldName().startsWith("backup02_") && StrUtils.notEmpty(file.getString())){
-								sysFile.setBackup02(file.getString());
+								sysFile.setBackup02(getFormFieldStrValue(file.getString()));
 							}else if(file.getFieldName().startsWith("orderCode_") && StrUtils.notEmpty(file.getString()) && DataTypeValidUtil.isInteger(file.getString())){
 								sysFile.setOrderCode(Integer.valueOf(file.getString()));
 							}
@@ -162,7 +163,10 @@ public class SysFileService extends AService{
 			}
 		}
 	}
-	
+	private String getFormFieldStrValue(String formFieldStrValue) {
+		return StrUtils.turnStrEncoding(formFieldStrValue, EncodingConstants.ISO8859_1, EncodingConstants.UTF_8);
+	}
+
 	// 验证上传的文件是否为空
 	private UploadFileInfo uploadFileIsEmpty(List<FileItem> fileList) throws UnsupportedEncodingException{
 		JSONObject logJsonObject = new JSONObject(fileList.size());

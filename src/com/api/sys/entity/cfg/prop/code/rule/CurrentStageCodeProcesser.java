@@ -239,7 +239,7 @@ public class CurrentStageCodeProcesser implements Serializable{
 			if(StrUtils.notEmpty(propGroupValue)){
 				seq.setPropGroupValue(propGroupValue);
 			}
-			HibernateUtil.saveObject(seq, null);
+			seq.setId(HibernateUtil.saveObject(seq, null).getString(ResourcePropNameConstants.ID));
 		}else{
 			if(StrUtils.notEmpty(parentSeqValue)){
 				seq.setParentSeqVal(parentSeqValue);
