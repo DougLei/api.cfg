@@ -70,7 +70,7 @@ public class DataTypeValidUtil {
 			}
 			
 			String valStr = val.toString();
-			if("true".equals(valStr) || "false".equals(valStr)){
+			if("true".equalsIgnoreCase(valStr) || "false".equalsIgnoreCase(valStr)){
 				return true;
 			}
 		}
