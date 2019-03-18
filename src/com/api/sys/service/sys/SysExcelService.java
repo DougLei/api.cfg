@@ -249,20 +249,20 @@ public class SysExcelService extends AService{
 			}
 			
 			// 验证一次提交的数组中，是否有重复的值，违反了唯一约束 // TODO 没有办法做唯一性验证，因为是分批次的数据处理
-			if(size > 1 && uniqueConstraintProps.size()>0){
-				for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
-					for(int i=0;i<size-1;i++){
-						dataValue = ijson.get(i).get(uniqueConstraintProp.getPropName());
-						if(StrUtils.notEmpty(dataValue)){
-							for(int j=i+1;j<size;j++){
-								if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
-									return desc+"第"+rowIndex+"行和第"+(j+2)+"行的，第"+cellIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
-								}
-							}
-						}
-					}
-				}
-			}
+//			if(size > 1 && uniqueConstraintProps.size()>0){
+//				for (ResourceMetadataInfo uniqueConstraintProp : uniqueConstraintProps) {
+//					for(int i=0;i<size-1;i++){
+//						dataValue = ijson.get(i).get(uniqueConstraintProp.getPropName());
+//						if(StrUtils.notEmpty(dataValue)){
+//							for(int j=i+1;j<size;j++){
+//								if(dataValue.equals(ijson.get(j).get(uniqueConstraintProp.getPropName()))){
+//									return desc+"第"+rowIndex+"行和第"+(j+2)+"行的，第"+cellIndex+"列数据["+uniqueConstraintProp.getDescName()+"]值重复，导入失败";
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
 			
 			if(uniqueConstraintProps.size() > 0){
 				uniqueConstraintProps.clear();
