@@ -24,7 +24,7 @@ public class ImportFile extends AIEFile implements Serializable, IEntityPropAnal
 	 * 一次批量导入的数量
 	 * <p>例如文件中有1000条数据，系统会为了性能，分批次导入，这个参数决定一次导入多少条，默认为500条，如果值为-1，则一次全部导入</p>
 	 */
-	private int batchImportCount;
+	private int batchImportCount=500;
 	/**
 	 * 扩展参数map集合
 	 * <p>保存特殊数据的时候用到，比如保存用户的时候，可能要传入立即创建账户的参数isCreateAccount=1</p>

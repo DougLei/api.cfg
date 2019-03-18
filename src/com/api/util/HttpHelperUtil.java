@@ -6,6 +6,7 @@ import java.io.Reader;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.api.cache.SysContext;
 import com.api.constants.EncodingConstants;
 
 /**
@@ -53,5 +54,17 @@ public class HttpHelperUtil {
 			CloseUtil.closeIO(br, reader);
 		}
 		return formData;
+	}
+	
+	/**
+	 * 获取请求的url
+	 * @param request
+	 * @return
+	 */
+	public static String getRequestURL(HttpServletRequest request){
+		if(SysContext.WEB_SYSTEM_ROOT_WEBSITE == null){
+			SysContext.WEB_SYSTEM_ROOT_WEBSITE = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+		}
+		return SysContext.WEB_SYSTEM_ROOT_WEBSITE;
 	}
 }

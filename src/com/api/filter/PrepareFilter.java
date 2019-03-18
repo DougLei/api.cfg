@@ -81,7 +81,7 @@ public class PrepareFilter extends AbstractFilter{
 				printResult(resp, responseBody);
 			}
 		} catch (Exception err) {
-			String errMsg = request.getAttribute(BuiltinParameterKeys._CLIENT_IP) + "-" + ExceptionUtil.getErrMsg(err);
+			String errMsg = ExceptionUtil.getErrMsg(err);
 			Log4jUtil.error("请求[{}]：处理出现异常，异常信息为: {}", request.getRequestURI(), errMsg);
 			HibernateUtil.rollbackTransaction();
 			responseBody = new ResponseBody(errMsg, null);

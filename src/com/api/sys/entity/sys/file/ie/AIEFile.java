@@ -212,23 +212,23 @@ public abstract class AIEFile {
 		}
 		String hql = null;
 		if(isImport == 1){
-			if(sqlType.equals(SqlStatementTypeConstants.SELECT)){
-				return"导出时，系统只支持select类型的sql语句";
-			}
-			hql = querySqlExportMetadataInfosHql;
-		}
-		if(isImport == 0){
-			if(sqlType.equals(SqlStatementTypeConstants.INSERT) || sqlType.equals(SqlStatementTypeConstants.PROCEDURE)){
-				return"导出时，系统只支持insert类型或procedure类型的sql语句";
+			if(!sqlType.equals(SqlStatementTypeConstants.PROCEDURE)){
+				return "导入时，系统只支持procedure类型的sql语句";
 			}
 			hql = querySqlImportMetadataInfosHql;
 		}
+		if(isImport == 0){
+			if(!sqlType.equals(SqlStatementTypeConstants.SELECT)){
+				return "导出时，系统只支持select类型的sql语句";
+			}
+			hql = querySqlExportMetadataInfosHql;
+		}
 		return HibernateUtil.extendExecuteListQueryByHqlArr(IEResourceMetadataInfo.class, null, null, hql, resourceId);
 	}
-	/** 查询sql资源配置的导出元数据信息集合的hql */
-	private static final String querySqlExportMetadataInfosHql = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
 	/** 查询sql资源配置的导入元数据信息集合的hql */
 	private static final String querySqlImportMetadataInfosHql = "select new map("+ResourcePropNameConstants.ID+" as id,name as columnName,name as propName, remark as descName, dataType as dataType, length as length, precision as precision, isNullabled as isNullabled) from CfgSqlParameter where sqlScriptId=? order by orderCode asc";
+	/** 查询sql资源配置的导出元数据信息集合的hql */
+	private static final String querySqlExportMetadataInfosHql = "select new map("+ResourcePropNameConstants.ID+" as id,columnName as columnName,propName as propName, descName as descName) from CfgSqlResultset where sqlScriptId=? and isExport=1 order by exportOrderCode asc";
 	
 	// -------------------------------------------------------------------------------
 	/**

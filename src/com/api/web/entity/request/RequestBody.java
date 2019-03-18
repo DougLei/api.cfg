@@ -9,11 +9,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSONObject;
-import com.api.cache.SysContext;
 import com.api.plugins.ijson.IJson;
 import com.api.sys.builtin.data.BuiltinParameters;
 import com.api.sys.code.resource.CodeResourceProcesser;
 import com.api.sys.entity.tools.resource.metadatainfo.ResourceMetadataInfo;
+import com.api.util.HttpHelperUtil;
 import com.api.util.StrUtils;
 import com.api.web.entity.request.valid.data.ResourceDataVerifier;
 import com.api.web.servlet.route.RouteBody;
@@ -243,10 +243,7 @@ public class RequestBody implements Serializable{
 		return request.getHeader("_token");
 	}
 	public String getRequestURL(){
-		if(SysContext.WEB_SYSTEM_ROOT_WEBSITE == null){
-			SysContext.WEB_SYSTEM_ROOT_WEBSITE = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
-		}
-		return SysContext.WEB_SYSTEM_ROOT_WEBSITE;
+		return HttpHelperUtil.getRequestURL(request);
 	}
 	public Map<String, String> getRequestBuiltinParams() {
 		return requestBuiltinParams;
