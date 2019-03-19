@@ -116,7 +116,7 @@ public class SysExcelService extends AService{
 			IEResourceMetadataInfo rmi = null;
 			int ieResourceMetadataInfoCount = ieResourceMetadataInfos.size();
 			
-			IJson ijson = new JSONArrayExtend(importFile.getBatchImportCount());
+			IJson ijson = null;
 			JSONObject json = null;
 			
 			String importResult = null;
@@ -126,6 +126,7 @@ public class SysExcelService extends AService{
 			
 			int rowIndex = 1, cellIndex, index;
 			while(importFile.hasMoreImport()){
+				ijson = new JSONArrayExtend(importFile.getBatchImportCount());
 				for(; rowIndex <= importFile.getCurrentLoopSize(); rowIndex++){
 					row = sheet.getRow(rowIndex);
 					if(row != null){
@@ -195,7 +196,7 @@ public class SysExcelService extends AService{
 		if(result != null){
 			return result;
 		}
-		ijson.clear();
+//		ijson.clear();
 		return null;
 	}
 	
@@ -228,8 +229,11 @@ public class SysExcelService extends AService{
 					if(rmi.getIsIgnoreValid() == 1){
 						continue;
 					}
-					dataValue = data.get(rmi.getPropName());
-					dataValueIsNull = StrUtils.isEmpty(dataValue);
+					dataValue = isNullValue(data.get(rmi.getPropName()));
+					dataValueIsNull = (dataValue==null);
+					if(dataValueIsNull){
+						data.remove(rmi.getPropName());
+					}
 					
 					// 验证不能为空
 					if(rmi.getIsNullabled() == 0 && dataValueIsNull){
@@ -254,6 +258,13 @@ public class SysExcelService extends AService{
 		return null;
 	}
 	
+	private Object isNullValue(Object value) {
+		if(StrUtils.notEmpty(value) && !value.toString().trim().equalsIgnoreCase("null")){
+			return value;
+		}
+		return null;
+	}
+
 	/**
 	 * 保存导入的数据
 	 * @param resourceName
