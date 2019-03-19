@@ -124,7 +124,7 @@ public class SysFileService extends AService{
 								sysFile.setActName(fileName);
 								sysFile.setSizes(file.getSize()+"");
 								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase());
-								if(uploadFileInfo.isImport == 1 && isSupportFileSuffix(sysFile.getSuffix())){
+								if(uploadFileInfo.isImport == 1 && !isSupportFileSuffix(sysFile.getSuffix())){
 									return "系统不支持后缀为["+sysFile.getSuffix()+"]的导入文件，系统支持的导入文件后缀包括：" +Arrays.toString(AIEFile.supportFileSuffixArray);
 								}
 								sysFile.setFileItem(file);
