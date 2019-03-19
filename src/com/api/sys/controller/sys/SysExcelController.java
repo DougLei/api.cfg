@@ -25,6 +25,7 @@ import com.api.thread.operdb.file.ie.log.RecordFileIELogThread;
 import com.api.thread.pool.ThreadPool;
 import com.api.util.JsonUtil;
 import com.api.util.ResourceHandlerUtil;
+import com.api.util.StrUtils;
 import com.api.util.hibernate.HibernateUtil;
 import com.api.web.entity.resulttype.PageResultEntity;
 
@@ -62,10 +63,16 @@ public class SysExcelController extends AController{
 			excelIELogs = new ArrayList<SysFileIELog>(importFiles.size());
 			
 			SysFileIELog excelIELog = null;
+			String importResourceName = importFiles.get(0).getResourceName();
+			if(StrUtils.isEmpty(importResourceName)){
+				analysisResult = "导入excel时，调用的资源名不能为空";
+			}
 			for (ImportFile importFile : importFiles) {
+				if(StrUtils.isEmpty(importFile.getResourceName())){
+					importFile.setResourceName(importResourceName);
+				}
 				excelIELog = new SysFileIELog(ResourceInfoConstants.FILE_IMPORT, importFile.getFileId(), JsonUtil.toJsonString(importFile, false));
 				excelIELogs.add(excelIELog);
-				
 				resultObject = BuiltinResourceInstance.getInstance("SysExcelService", SysExcelService.class).importExcel(request, importFile);
 				if(resultObject instanceof String){
 					excelIELog.recordResult(resultObject.toString());
