@@ -161,7 +161,7 @@ public class SqlParamValidAndSetActualValueEntity extends SqlParamSetActualValue
 			return desc+"第"+index+"个对象，["+rmi.getDescName()+"] 参数，配置的数据类型("+ssp.getDataType()+")和实际加载的数据类型("+rmi.getDataType()+")不一致，请联系后端系统开发人员";
 		}
 		
-		if(rmi.getIsNullabled() == 1){
+		if(rmi != null && rmi.getIsNullabled() == 1){
 			return null;
 		}
 		if(ssp.getValueFrom() == CfgSqlParameter.USER_INPUT){
