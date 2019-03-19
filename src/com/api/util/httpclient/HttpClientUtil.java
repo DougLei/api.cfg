@@ -1,8 +1,11 @@
 package com.api.util.httpclient;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.Set;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -22,6 +26,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import com.api.cache.SysContext;
 import com.api.constants.EncodingConstants;
+import com.api.util.CloseUtil;
 import com.api.util.ExceptionUtil;
 import com.api.util.Log4jUtil;
 import com.api.util.httpclient.requestentity.HttpMultipartRequestEntity;
@@ -135,6 +140,32 @@ public class HttpClientUtil {
 	}
 	
 	/**
+	 * 获取响应体的string值
+	 * @param method
+	 * @return
+	 * @throws IOException
+	 */
+	private static String getResponseBodyAsString(HttpMethod method) throws IOException{
+		InputStream in = null;
+		InputStreamReader inReader = null;
+		BufferedReader reader = null;
+		try {
+			in = method.getResponseBodyAsStream();
+			inReader = new InputStreamReader(in);
+			reader = new BufferedReader(inReader);
+			
+			StringBuilder sb = new StringBuilder();
+			String str = null;
+			while((str=reader.readLine()) != null){
+				sb.append(str);
+			}
+			return sb.toString();
+		} finally{
+			CloseUtil.closeIO(reader, inReader, in);
+		}
+	}
+	
+	/**
 	 * 基础的get请求
 	 * @param reqUrl
 	 * @param params
@@ -152,7 +183,7 @@ public class HttpClientUtil {
 			setConfig(httpClient, getMethod);// 设置相关的配置信息
 			int status = httpClient.executeMethod(getMethod);// 执行
 			Log4jUtil.debug("[HttpClientUtil.doGet]方法调用接口\"{}\"的结果为\"{}\"", reqUrl, status);
-			return getMethod.getResponseBodyAsString();
+			return getResponseBodyAsString(getMethod);
 		} catch (HttpException e) {
 			Log4jUtil.debug("[HttpClientUtil.doGet]方法出现异常：{}", e.getMessage());
 		} catch (IOException e) {
@@ -189,7 +220,7 @@ public class HttpClientUtil {
 			
 			int status = httpClient.executeMethod(postMethod);// 执行
 			Log4jUtil.debug("[HttpClientUtil.doPost]方法调用接口\"{}\"的结果为\"{}\"", reqUrl, status);
-			return postMethod.getResponseBodyAsString();
+			return getResponseBodyAsString(postMethod);
 		} catch (HttpException e) {
 			errMsg = ExceptionUtil.getErrMsg(e);
 			Log4jUtil.debug("[HttpClientUtil.doPostBasic]方法出现异常：{}", errMsg);

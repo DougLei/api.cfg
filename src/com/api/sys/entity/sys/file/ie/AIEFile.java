@@ -99,7 +99,7 @@ public abstract class AIEFile {
 		return false;
 	}
 	/** 系统目前支持的文件后缀 */
-	protected static final String[] supportFileSuffixArray = {"xls", "xlsx"};
+	public static final String[] supportFileSuffixArray = {"xls", "xlsx"};
 	
 	/**
 	 * 获得要[导入/导出]的资源，元数据信息集合

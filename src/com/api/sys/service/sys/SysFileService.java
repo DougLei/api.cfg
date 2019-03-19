@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import com.api.constants.SqlStatementTypeConstants;
 import com.api.constants.SysFileConstants;
 import com.api.sys.builtin.data.BuiltinParameterKeys;
 import com.api.sys.entity.sys.SysFile;
+import com.api.sys.entity.sys.file.ie.AIEFile;
 import com.api.sys.service.AService;
 import com.api.thread.current.CurrentThreadContext;
 import com.api.util.CloseUtil;
@@ -122,6 +124,9 @@ public class SysFileService extends AService{
 								sysFile.setActName(fileName);
 								sysFile.setSizes(file.getSize()+"");
 								sysFile.setSuffix(fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase());
+								if(uploadFileInfo.isImport == 1 && isSupportFileSuffix(sysFile.getSuffix())){
+									return "系统不支持后缀为["+sysFile.getSuffix()+"]的导入文件，系统支持的导入文件后缀包括：" +Arrays.toString(AIEFile.supportFileSuffixArray);
+								}
 								sysFile.setFileItem(file);
 								if(SysFileConstants.saveToService){
 									if(StrUtils.isEmpty(uploadFileInfo.uploadTargetDir)){
@@ -165,6 +170,19 @@ public class SysFileService extends AService{
 	}
 	private String getFormFieldStrValue(String formFieldStrValue) {
 		return StrUtils.turnStrEncoding(formFieldStrValue, EncodingConstants.ISO8859_1, EncodingConstants.UTF_8);
+	}
+	/**
+	 * 是否是支持的文件后缀
+	 * @param fileSuffix
+	 * @return
+	 */
+	private boolean isSupportFileSuffix(String fileSuffix){
+		for (String supportFileSuffix : AIEFile.supportFileSuffixArray) {
+			if(supportFileSuffix.equals(fileSuffix)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// 验证上传的文件是否为空
