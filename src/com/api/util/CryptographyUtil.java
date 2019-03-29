@@ -29,7 +29,7 @@ public class CryptographyUtil {
 	
 	/**
 	 * md5加密算法【加盐】
-	 * 将原密码和指定的salt组合加密，防止[md5加密后，可能通过暴力碰撞破解]
+	 * <p>将原密码和指定的salt组合加密，防止[md5加密后，可能通过暴力碰撞破解]</p>
 	 * @param str
 	 * @param salt
 	 * @return
