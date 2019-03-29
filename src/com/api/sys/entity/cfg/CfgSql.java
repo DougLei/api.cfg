@@ -17,10 +17,12 @@ import com.api.constants.SqlStatementTypeConstants;
 import com.api.plugins.ijson.IJson;
 import com.api.plugins.ijson.IJsonUtil;
 import com.api.sys.builtin.data.BuiltinObjectInstance;
+import com.api.sys.builtin.data.BuiltinResourceInstance;
 import com.api.sys.entity.IEntity;
 import com.api.sys.entity.IEntityPropAnalysis;
 import com.api.sys.entity.cfg.sql.FinalSqlScriptStatement;
 import com.api.sys.entity.cfg.sql.SqlScriptParameterNameRecord;
+import com.api.sys.service.cfg.CfgPropCodeRuleService;
 import com.api.util.ExceptionUtil;
 import com.api.util.JsonUtil;
 import com.api.util.ResourceHandlerUtil;
@@ -398,7 +400,7 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 			SqlStatementParserUtil.saveProcedureTableTypeResultset(this);
 			
 			// 处理sql参数
-			processSqlParameters();
+			result = processSqlParameters();
 		}
 		return result;
 	}
@@ -406,14 +408,15 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 	/**
 	 * 处理sql参数
 	 */
-	private void processSqlParameters() {
+	private String processSqlParameters() {
+		String result = null;
 		if(isAnalysisParameters == 0){
 			if(this.sqlParams != null && this.sqlParams.size() > 0){
 				this.sqlParams.clear();
 			}
 		}else{
 			List<CfgSqlParameter> oldSqlParams = HibernateUtil.extendExecuteListQueryByHqlArr(CfgSqlParameter.class, null, null, "from CfgSqlParameter where sqlScriptId = ?", id);
-			if(oldSqlParams == null || oldSqlParams.size() == 0){
+			if(oldSqlParams == null || oldSqlParams.size() == 0){ // 之前没有参数
 				if(sqlParams != null && sqlParams.size() > 0){
 					for (CfgSqlParameter sqlParam : sqlParams) {
 						sqlParam.setSqlScriptId(id);
@@ -423,6 +426,13 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 				}
 			}else{
 				if(sqlParams == null || sqlParams.size() == 0){
+					// 尝试删除编码规则信息
+					for(CfgSqlParameter oldSqlParam: oldSqlParams){
+						result = BuiltinResourceInstance.getInstance("CfgPropCodeRuleService", CfgPropCodeRuleService.class).deletePropCodeRule(ResourceInfoConstants.SQL, id, oldSqlParam.getId());
+						if(result != null){
+							return result + "，请先删除引用，再取消该sql参数";
+						}
+					}
 					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", id);// 删除之前的参数
 				}else{
 					CfgSqlParameter sp = null;
@@ -447,6 +457,12 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 					}
 					if(oldSqlParams.size()>0){
 						for (CfgSqlParameter oldSqlParam : oldSqlParams) {
+							// 尝试删除编码规则信息
+							result = BuiltinResourceInstance.getInstance("CfgPropCodeRuleService", CfgPropCodeRuleService.class).deletePropCodeRule(ResourceInfoConstants.SQL, id, oldSqlParam.getId());
+							if(result != null){
+								return result + "，请先删除引用，再取消该sql参数";
+							}
+							// 在删除之前的sql参数信息
 							HibernateUtil.deleteObject(oldSqlParam, null);
 						}
 						oldSqlParams.clear();
@@ -454,6 +470,7 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 				}
 			}
 		}
+		return null;
 	}
 	/**
 	 * 设置sql参数名的记录对象集合

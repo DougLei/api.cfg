@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.api.annotation.Service;
+import com.api.constants.ResourceInfoConstants;
 import com.api.constants.ResourcePropNameConstants;
 import com.api.constants.SqlStatementTypeConstants;
 import com.api.plugins.jdbc.table.DBTableHandler;
@@ -161,6 +162,14 @@ public class CfgColumnService extends AService{
 		List<CfgColumn> dropedColumns = null;// 记录已经被drop的列
 		DBTableHandler dbTableHandler = null;
 		try {
+			// 尝试删除编码规则信息
+			for (String columnId : columnIds.split(",")) {
+				operResult = BuiltinResourceInstance.getInstance("CfgPropCodeRuleService", CfgPropCodeRuleService.class).deletePropCodeRule(ResourceInfoConstants.TABLE, table.getId(), columnId);
+				if(operResult != null){
+					return operResult + "，请先删除引用，再删除该列";
+				}
+			}
+			
 			if(table.getIsCreated() == 1){// 表已经建模，要先drop字段
 				String queryHql = "from CfgColumn where " + ResourcePropNameConstants.ID +" in ('" + columnIds.replace(",", "','") + "')";
 				columns = HibernateUtil.extendExecuteListQueryByHqlArr(CfgColumn.class, null, null, queryHql);

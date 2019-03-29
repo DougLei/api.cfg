@@ -74,6 +74,7 @@ import com.api.sys.service.cfg.CfgColumnService;
 import com.api.sys.service.cfg.CfgDatabaseService;
 import com.api.sys.service.cfg.CfgProjectModuleService;
 import com.api.sys.service.cfg.CfgProjectService;
+import com.api.sys.service.cfg.CfgPropCodeRuleService;
 import com.api.sys.service.cfg.CfgPropExtendConfService;
 import com.api.sys.service.cfg.CfgResourceService;
 import com.api.sys.service.cfg.CfgSqlService;
@@ -136,6 +137,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("CfgPropExtendConfService", new CfgPropExtendConfService());
 		instanceCache.put("CfgBusiModelService", new CfgBusiModelService());
 		instanceCache.put("CfgBusiModelResRelationsService", new CfgBusiModelResRelationsService());
+		instanceCache.put("CfgPropCodeRuleService", new CfgPropCodeRuleService());
 		
 		instanceCache.put("CfgDatabase", new CfgDatabase());
 		instanceCache.put("CfgTable", new CfgTable());

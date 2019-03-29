@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.api.annotation.Service;
+import com.api.constants.ResourceInfoConstants;
 import com.api.constants.ResourcePropNameConstants;
 import com.api.constants.SqlStatementTypeConstants;
 import com.api.plugins.jdbc.table.DBTableHandler;
@@ -186,6 +187,13 @@ public class CfgTableService extends AService {
 			List<Object> projNames = HibernateUtil.executeListQueryByHql(null, null, hql.toString(), projectIds);
 			projectIds.clear();
 			return "该表关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
+		}
+		
+		// 尝试删除编码规则信息
+		String result = null;
+		result = BuiltinResourceInstance.getInstance("CfgPropCodeRuleService", CfgPropCodeRuleService.class).deletePropCodeRule(ResourceInfoConstants.TABLE, tableId);
+		if(result != null){
+			return result + "，请先删除引用，再删除该表";
 		}
 		
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgTable where "+ResourcePropNameConstants.ID+" = '"+tableId+"'");

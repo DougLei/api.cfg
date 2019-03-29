@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.api.annotation.Service;
+import com.api.constants.ResourceInfoConstants;
 import com.api.constants.ResourcePropNameConstants;
 import com.api.constants.SqlStatementTypeConstants;
 import com.api.plugins.ijson.IJson;
@@ -225,6 +226,14 @@ public class CfgSqlService extends AService {
 			projectIds.clear();
 			return "该sql脚本关联多个项目，无法删除，请先取消和其他项目的关联，关联的项目包括：" + projNames;
 		}
+		
+		// 尝试删除编码规则信息
+		String result = null;
+		result = BuiltinResourceInstance.getInstance("CfgPropCodeRuleService", CfgPropCodeRuleService.class).deletePropCodeRule(ResourceInfoConstants.SQL, sqlScriptId);
+		if(result != null){
+			return result + "，请先删除引用，再删除该sql资源";
+		}
+		
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSql where "+ResourcePropNameConstants.ID+" = ?", sql.getId());
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", sql.getId());
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlResultset where sqlScriptId = ?", sql.getId());
