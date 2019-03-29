@@ -86,8 +86,8 @@ public class CfgPropCodeRuleService extends AService{
 			List<Object[]> referenceRuleIds = HibernateUtil.executeListQueryBySqlArr(
 					"select ref_resource_id, ref_prop_id, ref_prop_type from cfg_prop_code_rule where id in (" +
 					"	select ref_prop_code_rule_id from cfg_prop_code_rule_detail where rec_seq_table_id=? or main_table_id=? or ref_table_id=?" +
-					")", 
-					refResourceId, refResourceId, refResourceId);
+					") and ref_resource_id != ?", 
+					refResourceId, refResourceId, refResourceId, refResourceId);
 			String isReferenced = isReferenced(referenceRuleIds);
 			if(isReferenced != null){
 				return isReferenced;
@@ -136,19 +136,21 @@ public class CfgPropCodeRuleService extends AService{
 		List<Object[]> referenceRuleIds = HibernateUtil.executeListQueryBySqlArr(
 				"select ref_resource_id, ref_prop_id, ref_prop_type from cfg_prop_code_rule where id in (" +
 				"	select ref_prop_code_rule_id from cfg_prop_code_rule_detail where rec_seq_code_column_id =? or rec_seq_parent_column_id =? or prop_group_seq_prop_ids like ? or main_table_code_column_id =? or main_table_cond_column_id =? or sub_table_cond_val_prop_id =? or ref_column_id =? or query_cond_column_id =? or query_cond_val_prop_id =? or order_by_column_id =? or " +
-				")", 
-				refPropId, refPropId, "%"+refPropId+"%", refPropId, refPropId, refPropId, refPropId, refPropId, refPropId, refPropId);
+				") and ref_prop_id !=?", 
+				refPropId, refPropId, "%"+refPropId+"%", refPropId, refPropId, refPropId, refPropId, refPropId, refPropId, refPropId, refPropId);
 		String isReferenced = isReferenced(referenceRuleIds);
 		if(isReferenced != null){
 			return isReferenced;
 		}
 		
 		// 接着判断该属性规则是否被其他规则引用
-		referenceRuleIds = HibernateUtil.executeListQueryBySqlArr(
-				"select ref_resource_id, ref_prop_id, ref_prop_type from cfg_prop_code_rule where ref_id=?", ids[0]);
-		isReferenced = isReferenced(referenceRuleIds);
-		if(isReferenced != null){
-			return isReferenced + "(通过ref_id)";
+		if(!isTableResource(resourceType)){
+			referenceRuleIds = HibernateUtil.executeListQueryBySqlArr(
+					"select ref_resource_id, ref_prop_id, ref_prop_type from cfg_prop_code_rule where ref_id=? and id !=?", ids[0], ids[0]);
+			isReferenced = isReferenced(referenceRuleIds);
+			if(isReferenced != null){
+				return isReferenced + "(通过ref_id)";
+			}
 		}
 		
 		doDeletePropCodeRule(ids[0], ids[1], ids[2]);
