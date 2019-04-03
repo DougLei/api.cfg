@@ -55,6 +55,9 @@ public abstract class BasicEntity implements Serializable, ITable{
 		this.id = id;
 	}
 	public String getProjectId() {
+		if(StrUtils.isEmpty(projectId)){
+			projectId = "90621e37b806o6fe8538c5eb782901bb";
+		}
 		return projectId;
 	}
 	public void setProjectId(String projectId) {

@@ -135,7 +135,7 @@ public class CfgPropCodeRuleService extends AService{
 		// 再判断属性是否被其他规则占用
 		List<Object[]> referenceRuleIds = HibernateUtil.executeListQueryBySqlArr(
 				"select ref_resource_id, ref_prop_id, ref_prop_type from cfg_prop_code_rule where id in (" +
-				"	select ref_prop_code_rule_id from cfg_prop_code_rule_detail where rec_seq_code_column_id =? or rec_seq_parent_column_id =? or prop_group_seq_prop_ids like ? or main_table_code_column_id =? or main_table_cond_column_id =? or sub_table_cond_val_prop_id =? or ref_column_id =? or query_cond_column_id =? or query_cond_val_prop_id =? or order_by_column_id =? or " +
+				"	select ref_prop_code_rule_id from cfg_prop_code_rule_detail where rec_seq_code_column_id =? or rec_seq_parent_column_id =? or prop_group_seq_prop_ids like ? or main_table_code_column_id =? or main_table_cond_column_id =? or sub_table_cond_val_prop_id =? or ref_column_id =? or query_cond_column_id =? or query_cond_val_prop_id =? or order_by_column_id =? " +
 				") and ref_prop_id !=?", 
 				refPropId, refPropId, "%"+refPropId+"%", refPropId, refPropId, refPropId, refPropId, refPropId, refPropId, refPropId, refPropId);
 		String isReferenced = isReferenced(referenceRuleIds);
