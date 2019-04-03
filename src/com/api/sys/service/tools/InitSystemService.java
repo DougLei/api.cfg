@@ -27,9 +27,9 @@ import com.api.sys.entity.cfg.CfgResource;
 import com.api.sys.entity.cfg.CfgTable;
 import com.api.sys.entity.sys.SysAccount;
 import com.api.sys.entity.sys.SysOperSqlLog;
+import com.api.sys.entity.sys.SysOperationLog;
 import com.api.sys.entity.sys.SysReqLog;
 import com.api.sys.service.AService;
-import com.api.sys.service.cfg.CfgResourceService;
 import com.api.thread.current.CurrentThreadContext;
 import com.api.util.CloseUtil;
 import com.api.util.CryptographyUtil;
@@ -271,11 +271,19 @@ public class InitSystemService extends AService{
 		Log4jUtil.info("start..........");
 		processCurrentSysOfPorjDatabaseRelation();// 处理本系统和本数据库的关系
 		try {
+			CurrentThreadContext.setDatabaseId(BuiltinObjectInstance.currentSysBuiltinDatabaseInstance.getId());
+			
+			HibernateUtil.openSessionToCurrentThread();
+			HibernateUtil.beginTransaction();
+			
 			// 先加载当前系统数据库的所有hbm映射文件
 			loadCurrentSysDatabaseHbms();
 			// 清空用户在线数据表
 			HibernateUtil.executeUpdateBySql(SqlStatementTypeConstants.DELETE, "truncate table sys_account_online_status", null);
+			
+			HibernateUtil.commitTransaction();
 		} catch (Exception e) {
+			HibernateUtil.rollbackTransaction();
 			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
 		} finally{
@@ -292,7 +300,6 @@ public class InitSystemService extends AService{
 	private void loadCurrentSysDatabaseHbms() throws SQLException, IOException {
 		CfgDatabase database = BuiltinObjectInstance.currentSysBuiltinDatabaseInstance;
 		
-		CurrentThreadContext.setDatabaseId(database.getId());
 		// 获取当前系统的CfgHibernateHbm映射文件对象
 		String sql = "select content from cfg_hibernate_hbm where ref_database_id = '"+database.getId()+"' and resource_name = 'CfgHibernateHbm'";
 		String hbmContent = null;
@@ -345,12 +352,12 @@ public class InitSystemService extends AService{
 	/**
 	 * 初始化日志表
 	 * <p>如果不存在日志表，则要创建</p>
-	 * <p>这个要判断4个东西，reqLog表、reqLog的hbm、operSqlLog表、operSqlLog的hbm</p>
+	 * <p>这个要判断6个东西，reqLog表、reqLog的hbm、operSqlLog表、operSqlLog的hbm、reqOperationLog表、reqOperationLog的hbm</p>
 	 */
 	private void initLogTables() {
 		// 判断是否存在日志表table
 		DBTableHandler tableHandler = new DBTableHandler(CurrentThreadContext.getDatabaseInstance());
-		List<String> logTableNames = tableHandler.filterTable(false, BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable(), BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable());
+		List<String> logTableNames = tableHandler.filterTable(false, BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toDropTable(), BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable(), BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).toDropTable());
 		if(logTableNames != null && logTableNames.size() > 0){
 			// 不存在，则create
 			for (String logTableName : logTableNames) {
@@ -358,6 +365,8 @@ public class InitSystemService extends AService{
 					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysReqLog", SysReqLog.class).toCreateTable(), true);
 				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toDropTable())){
 					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable(), true);
+				}else if(logTableName.equals(BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).toDropTable())){
+					tableHandler.createTable(BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).toCreateTable(), true);
 				}
 			}
 		}
@@ -369,6 +378,9 @@ public class InitSystemService extends AService{
 		if(!HibernateUtil.hbmConfigIsExists(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).getEntityName())){
 			createHbm(BuiltinResourceInstance.getInstance("SysOperSqlLog", SysOperSqlLog.class).toCreateTable());
 		}
+		if(!HibernateUtil.hbmConfigIsExists(BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).getEntityName())){
+			createHbm(BuiltinResourceInstance.getInstance("SysOperationLog", SysOperationLog.class).toCreateTable());
+		}
 	}
 	
 	/**
@@ -378,12 +390,15 @@ public class InitSystemService extends AService{
 	private void createHbm(CfgTable table){
 		// 插入hbm
 		CfgHibernateHbm hbm = new CfgHibernateHbm(table); 
+		hbm.setRefTableId(ResourceInfoConstants.BUILTIN_RESOURCE);
 		hbm.setRefDatabaseId(CurrentThreadContext.getDatabaseId());
 		hbm.setContent(HibernateHbmUtil.createHbmMappingContent(table, true));
 		HibernateUtil.saveObject(hbm, null);
 		
 		// 插入资源数据
-		BuiltinResourceInstance.getInstance("CfgResourceService", CfgResourceService.class).saveCfgResource(table);
+		CfgResource resource = table.turnToResource();
+		resource.setRefResourceId(ResourceInfoConstants.BUILTIN_RESOURCE);
+		HibernateUtil.saveObject(resource, null);
 		
 		// 将hbm配置内容，加入到sessionFactory中
 		HibernateUtil.appendNewConfig(hbm.getContent());
