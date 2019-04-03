@@ -23,18 +23,20 @@ SELECT * FROM [DBMES].[数据库名].[dbo].[表名]
 -- 同步 cfg_project_module数据
 -- 模块code，多个用,分割
 select * from cfg_project_module where code in (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 
 /*
 
-delete SMC_SERVICE.SmartOneCfg.dbo.cfg_project_module where code in (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+delete SMC_SERVICE.SmartOneCfg.dbo.cfg_project_module where id in (
+select id from cfg_project_module where code in (
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
+)
 )
 
 insert into SMC_SERVICE.SmartOneCfg.dbo.cfg_project_module
 select * from cfg_project_module where code in (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 
 */
@@ -45,7 +47,7 @@ select * from cfg_project_module where code in (
 select * from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 
@@ -54,7 +56,7 @@ select id from cfg_project_module where code in
 delete SMC_SERVICE.SmartOneCfg.dbo.sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 
@@ -62,7 +64,7 @@ insert into SMC_SERVICE.SmartOneCfg.dbo.sys_data_links
 select * from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 
@@ -75,7 +77,7 @@ select * from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -86,7 +88,7 @@ delete SMC_SERVICE.SmartOneCfg.dbo.cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -96,7 +98,7 @@ select * from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -111,7 +113,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -124,7 +126,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -136,7 +138,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -152,7 +154,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -165,7 +167,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -177,7 +179,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -194,7 +196,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -208,7 +210,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -221,7 +223,7 @@ select id from cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 )
@@ -233,11 +235,11 @@ select id from cfg_project_module where code in
 -- 同步存储过程，将存储过程在被同步的数据库中执行
 -- 模块code，多个用,分割
 -- 查询出的contents值，拿到目标数据库中执行create procedure或alter procedure操作
-select name, resource_name, contents, type from SMC_SERVICE.SmartOneCfg.dbo.cfg_sql where id in (
+select name, resource_name, replace(cast(contents as varchar(max)), 'CREATE PROCEDURE ', 'ALTER PROCEDURE '), type from SMC_SERVICE.SmartOneCfg.dbo.cfg_sql where id in (
 select right_id from sys_data_links where left_id in (
 select id from cfg_project_module where code in 
 (
-'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF'
+'MPM_PRODUCTDETAILS','MPM_PF_R','MPM_BPF', 'MPM_PF_J'
 )
 )
 ) and type = 'procedure'
