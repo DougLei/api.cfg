@@ -24,7 +24,7 @@ import com.api.web.entity.resulttype.ResponseBody;
 public class FileServlet extends HttpServlet{
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.EXCEL);// 标识日志的类型为excel
+		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.FILE);// 标识日志的类型为文件操作
 		
 		ResponseBody responseBody = null;
 		if(SysFileConstants.saveToService){

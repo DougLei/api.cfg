@@ -2,6 +2,7 @@ package com.api.web.servlet.route;
 
 import java.io.Serializable;
 
+import com.api.constants.ResourceInfoConstants;
 import com.api.thread.current.CurrentThreadContext;
 import com.api.util.StrUtils;
 
@@ -72,6 +73,7 @@ public class RouteBody implements Serializable{
 	}
 	public void setIsCode(boolean isCode) {
 		this.isCode = isCode;
+		CurrentThreadContext.getReqLogData().getReqLog().setType(ResourceInfoConstants.CODE);// 标识为代码资源
 	}
 	public String getCodeUri() {
 		return codeUri;

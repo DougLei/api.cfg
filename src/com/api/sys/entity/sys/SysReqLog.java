@@ -29,7 +29,7 @@ public class SysReqLog extends BasicEntity implements IEntity{
 	
 	/**
 	 * 请求类型
-	 * <p>1：login、2：loginOut、3：sql、4：file、5、excel...</p>
+	 * <p>-2：退出,-1：登录,1：表资源,2：sql资源,3：代码资源,4：业务模型资源,5：文件操作</p>
 	 */
 	private Integer type;
 	/**
@@ -178,7 +178,7 @@ public class SysReqLog extends BasicEntity implements IEntity{
 		
 		CfgColumn typeColumn = new CfgColumn("type", DataTypeConstants.INTEGER, 1);
 		typeColumn.setName("请求类型");
-		typeColumn.setComments("1：login、2：loginOut、3：sql、4：file...");
+		typeColumn.setComments("-2：退出,-1：登录,1：表资源,2：sql资源,3：代码资源,4：业务模型资源,5：文件操作");
 		typeColumn.setDefaultValue("3");
 		typeColumn.setOrderCode(1);
 		columns.add(typeColumn);
@@ -307,9 +307,7 @@ public class SysReqLog extends BasicEntity implements IEntity{
 		return DateUtil.formatDate(currentDate, ymSdf);
 	}
 	
-	public static final Integer LOGIN = 1;
-	public static final Integer LOGIN_OUT = 2;
-	public static final Integer SQL = 3;
-	public static final Integer FILE = 4;
-	public static final Integer EXCEL = 5;
+	public static final Integer LOGIN = -1;
+	public static final Integer LOGIN_OUT = -2;
+	public static final Integer FILE = 5;
 }
