@@ -150,11 +150,13 @@ public class SysOperationLog extends BasicEntity implements IEntity{
 	}
 
 	public String toDropTable() {
-		return "SYS_OPERATION_LOG" + "_" + SysReqLog.yyyyMM;
+		return "SYS_OPERATION_LOG";
+//		return "SYS_OPERATION_LOG" + "_" + SysReqLog.yyyyMM;
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysOperationLog" + SysReqLog.yyyyMM;
+		return "SysOperationLog";
+//		return "SysOperationLog" + SysReqLog.yyyyMM;
 	}
 }

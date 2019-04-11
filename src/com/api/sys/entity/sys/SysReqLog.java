@@ -1,6 +1,5 @@
 package com.api.sys.entity.sys;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,6 @@ import com.api.sys.entity.BasicEntity;
 import com.api.sys.entity.IEntity;
 import com.api.sys.entity.cfg.CfgColumn;
 import com.api.sys.entity.cfg.CfgTable;
-import com.api.util.DateUtil;
 import com.api.util.JsonUtil;
 import com.api.util.ResourceHandlerUtil;
 
@@ -263,12 +261,14 @@ public class SysReqLog extends BasicEntity implements IEntity{
 	}
 
 	public String toDropTable() {
-		return "SYS_REQ_LOG" +"_"+ yyyyMM;
+		return "SYS_REQ_LOG";
+//		return "SYS_REQ_LOG" +"_"+ yyyyMM;
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysReqLog" + yyyyMM;
+		return "SysReqLog";
+//		return "SysReqLog" + yyyyMM;
 	}
 	
 	/**
@@ -288,24 +288,24 @@ public class SysReqLog extends BasicEntity implements IEntity{
 	}
 	
 	// ------------------------------------------------------------------------------------
-	/**
-	 * 格式化日期中的年月
-	 */
-	private transient static final SimpleDateFormat ymSdf = new SimpleDateFormat("yyyyMM");
+//	/**
+//	 * 格式化日期中的年月
+//	 */
+//	private transient static final SimpleDateFormat ymSdf = new SimpleDateFormat("yyyyMM");
 	
-	/**
-	 * 日志表的年月后缀
-	 */
-	public static String yyyyMM = getYearMonth(new Date());
+//	/**
+//	 * 日志表的年月后缀
+//	 */
+//	public static String yyyyMM = getYearMonth(new Date());
 	
-	/**
-	 * 获取日期中的年月
-	 * @param currentDate
-	 * @return
-	 */
-	public static String getYearMonth(Date currentDate){
-		return DateUtil.formatDate(currentDate, ymSdf);
-	}
+//	/**
+//	 * 获取日期中的年月
+//	 * @param currentDate
+//	 * @return
+//	 */
+//	public static String getYearMonth(Date currentDate){
+//		return DateUtil.formatDate(currentDate, ymSdf);
+//	}
 	
 	public static final Integer LOGIN = -1;
 	public static final Integer LOGIN_OUT = -2;

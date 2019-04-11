@@ -13,7 +13,9 @@ import com.api.sys.entity.cfg.CfgDatabase;
 import com.api.sys.entity.cfg.CfgHibernateHbm;
 import com.api.sys.entity.cfg.CfgResource;
 import com.api.sys.entity.cfg.CfgTable;
-import com.api.sys.entity.sys.SysAccountCard;
+import com.api.sys.entity.sys.SysOperSqlLog;
+import com.api.sys.entity.sys.SysOperationLog;
+import com.api.sys.entity.sys.SysReqLog;
 import com.api.sys.service.AService;
 import com.api.thread.current.CurrentThreadContext;
 import com.api.util.CloseUtil;
@@ -28,7 +30,9 @@ public final class SyncTableToServerDBTool extends AService{
 	
 	public static void main(String[] args) {
 		syncTablesToService(
-				new SysAccountCard().toCreateTable()
+				new SysReqLog().toCreateTable(),
+				new SysOperSqlLog().toCreateTable(),
+				new SysOperationLog().toCreateTable()
 				);
 	}
 	

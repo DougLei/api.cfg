@@ -100,17 +100,18 @@ public class SysOperSqlLog extends BasicEntity implements IEntity{
 		table.setName("操作sql日志信息表");
 		table.setRemark("操作sql日志信息表");
 		
-		
 		table.setColumns(getColumnList());
 		return table;
 	}
 
 	public String toDropTable() {
-		return "SYS_OPER_SQL_LOG" + "_" + SysReqLog.yyyyMM;
+		return "SYS_OPER_SQL_LOG";
+//		return "SYS_OPER_SQL_LOG" + "_" + SysReqLog.yyyyMM;
 	}
 
 	@JSONField(serialize = false)
 	public String getEntityName() {
-		return "SysOperSqlLog" + SysReqLog.yyyyMM;
+		return "SysOperSqlLog";
+//		return "SysOperSqlLog" + SysReqLog.yyyyMM;
 	}
 }
