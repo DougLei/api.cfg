@@ -333,8 +333,12 @@ public class SysPermissionService extends AService{
 	 * @return
 	 */
 	public SysUserPermissionCache getSysUserPermissionCache(SysAccountOnlineStatus accountOnlineStatus){
-		SysUserPermissionCache sapc = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysUserPermissionCache.class, queryUserPermissionCacheHql, accountOnlineStatus.getUserId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		List<SysUserPermissionCache> list = HibernateUtil.extendExecuteListQueryByHqlArr(SysUserPermissionCache.class, null, null, queryUserPermissionCacheHql, accountOnlineStatus.getUserId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+		if(list != null && list.size() > 1){
+			throw new IllegalArgumentException("id为["+accountOnlineStatus.getUserId()+"]的用户，SysUserPermissionCache缓存数据重复，请删除该用的权限缓存，再登录系统");
+		}
 		
+		SysUserPermissionCache sapc = (list == null)?null:list.get(0);
 		SysPermissionExtend permission = null;
 		if(sapc == null){
 			permission = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).findAccountOfPermissions(accountOnlineStatus);
