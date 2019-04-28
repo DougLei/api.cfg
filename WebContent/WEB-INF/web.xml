@@ -94,6 +94,10 @@
 			<filter-name>prepareFilter</filter-name>
 			<url-pattern>/file/*</url-pattern>
 		</filter-mapping>
+		<filter-mapping>
+			<filter-name>prepareFilter</filter-name>
+			<url-pattern>/screenShot/*</url-pattern>
+		</filter-mapping>
 		
 		<!-- 配置创建请求日志实例的过滤器 -->
 		<filter>
@@ -107,6 +111,10 @@
 		<filter-mapping>
 			<filter-name>createReqLogInstanceFilter</filter-name>
 			<url-pattern>/file/*</url-pattern>
+		</filter-mapping>
+		<filter-mapping>
+			<filter-name>createReqLogInstanceFilter</filter-name>
+			<url-pattern>/screenShot/*</url-pattern>
 		</filter-mapping>
 		
 		<!-- 配置验证请求是否有效的过滤器 -->
@@ -153,6 +161,16 @@
 		<servlet-mapping>
 			<servlet-name>fileServlet</servlet-name>
 			<url-pattern>/file/*</url-pattern>
+		</servlet-mapping>
+		
+		<!-- 名为screenShotUploadServlet的，上传截图的servlet控制器 -->
+		<servlet>
+			<servlet-name>screenShotUploadServlet</servlet-name>
+			<servlet-class>com.api.web.servlet.ScreenShotUploadServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>screenShotUploadServlet</servlet-name>
+			<url-pattern>/screenShot/*</url-pattern>
 		</servlet-mapping>
 		
 <!-- ****************************************************************************************************  -->		
