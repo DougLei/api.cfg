@@ -88,6 +88,12 @@ public class CfgColumnService extends AService{
 					addColumns.clear();
 				}
 			}
+		}else{
+			// drop被添加的列
+			if(table.getIsCreated() == 1 && addColumns != null && addColumns.size() > 0){
+				recorveColumnsOperStatus(dbTableHandler, table.getTableName(), addColumns, CfgColumn.DELETED);
+				addColumns.clear();
+			}
 		}
 		return operResult;
 	}
@@ -101,25 +107,25 @@ public class CfgColumnService extends AService{
 	 * @return
 	 */
 	public Object updateColumn(CfgTable table, CfgColumn column, List<CfgColumn> updateColumns, DBTableHandler dbTableHandler) {
-		CfgColumn oldColumn = getObjectById(column.getId(), CfgColumn.class);
-		if(table.getIsCreated() == 1){// 表已经建模，则不能修改列的类型，以及缩小列的长度
-			if(!oldColumn.getColumnType().equals(column.getColumnType())){
-				return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]，此操作可能会损失已有数据";
-			}
-			if(oldColumn.getLength()> column.getLength()){
-				return "系统不允许修改["+column.getColumnName()+"]字段的数据长度[从"+oldColumn.getLength()+"降低到"+column.getLength()+"]，此操作可能会损失实际数据的精度";
-			}
-		}
-		
 		String operResult = null;
-		if(operResult == null){
-			operResult = validColumnRefTableIsExists(column);
-		}
-		if(!oldColumn.getColumnName().equals(column.getColumnName())){
-			operResult = validColumnNameIsExists(column);
-		}
-		if(operResult == null){
-			try {
+		try {
+			CfgColumn oldColumn = getObjectById(column.getId(), CfgColumn.class);
+			if(table.getIsCreated() == 1){// 表已经建模，则不能修改列的类型，以及缩小列的长度
+				if(!oldColumn.getColumnType().equals(column.getColumnType())){
+					return "系统不允许修改["+column.getColumnName()+"]字段的数据类型[从"+oldColumn.getColumnType()+"到"+column.getColumnType()+"]，此操作可能会损失已有数据";
+				}
+				if(oldColumn.getLength()> column.getLength()){
+					return "系统不允许修改["+column.getColumnName()+"]字段的数据长度[从"+oldColumn.getLength()+"降低到"+column.getLength()+"]，此操作可能会损失实际数据的精度";
+				}
+			}
+			
+			if(operResult == null){
+				operResult = validColumnRefTableIsExists(column);
+			}
+			if(!oldColumn.getColumnName().equals(column.getColumnName())){
+				operResult = validColumnNameIsExists(column);
+			}
+			if(operResult == null){
 				if(column.analysisOldColumnInfo(oldColumn)){
 					if(table.getIsCreated() == 1){
 						dbTableHandler.modifyColumn(table.getTableName(), column);
@@ -134,14 +140,14 @@ public class CfgColumnService extends AService{
 					}
 				}
 				return HibernateUtil.updateEntityObject(column, null);
-			} catch (Exception e) {
-				operResult = "修改列时出现异常：" + ExceptionUtil.getErrMsg(e);
-				
-				// 恢复被修改的列
-				if(table.getIsCreated() == 1 && updateColumns != null && updateColumns.size() > 0){
-					recorveColumnsOperStatus(dbTableHandler, table.getTableName(), updateColumns, CfgColumn.MODIFIED);
-					updateColumns.clear();
-				}
+			}
+		} catch (Exception e) {
+			operResult = "修改列时出现异常：" + ExceptionUtil.getErrMsg(e);
+		} finally{
+			// 恢复被修改的列
+			if(operResult != null && table.getIsCreated() == 1 && updateColumns != null && updateColumns.size() > 0){
+				recorveColumnsOperStatus(dbTableHandler, table.getTableName(), updateColumns, CfgColumn.MODIFIED);
+				updateColumns.clear();
 			}
 		}
 		return operResult;
@@ -189,9 +195,9 @@ public class CfgColumnService extends AService{
 			deleteDataById("CfgColumn", columnIds);
 		} catch (Exception e) {
 			operResult = "删除列时出现异常：" + ExceptionUtil.getErrMsg(e);
-			
+		} finally{
 			// 恢复被drop的列
-			if(dropedColumns != null && dropedColumns.size() > 0){
+			if(operResult != null && table.getIsCreated() == 1 && dropedColumns != null && dropedColumns.size() > 0){ 
 				recorveColumnsOperStatus(dbTableHandler, tableName, dropedColumns, CfgColumn.CREATED);
 				dropedColumns.clear();
 			}

@@ -149,6 +149,7 @@ public class SysFileService extends AService{
 				return "没有获得要操作的任何数据[fileList is null]";
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			if(SysFileConstants.saveToService && filePathList != null && filePathList.size() > 0){
 				File tf;
 				for (String fp : filePathList) {
