@@ -310,4 +310,5 @@ public class SysReqLog extends BasicEntity implements IEntity{
 	public static final Integer LOGIN = -1;
 	public static final Integer LOGIN_OUT = -2;
 	public static final Integer FILE = 5;
+	public static final Integer TOOLS = 6;
 }

@@ -3,7 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
-		<!-- 加载顺序：content-param -> listener -> filter -> servlet -->
+		<!-- 加载顺序：context-param -> listener -> filter -> servlet -->
 
 <!-- ****************************************************************************************************  -->		
 		
@@ -98,6 +98,10 @@
 			<filter-name>prepareFilter</filter-name>
 			<url-pattern>/screenShot/*</url-pattern>
 		</filter-mapping>
+		<filter-mapping>
+			<filter-name>prepareFilter</filter-name>
+			<url-pattern>/utils/*</url-pattern>
+		</filter-mapping>
 		
 		<!-- 配置创建请求日志实例的过滤器 -->
 		<filter>
@@ -115,6 +119,10 @@
 		<filter-mapping>
 			<filter-name>createReqLogInstanceFilter</filter-name>
 			<url-pattern>/screenShot/*</url-pattern>
+		</filter-mapping>
+		<filter-mapping>
+			<filter-name>createReqLogInstanceFilter</filter-name>
+			<url-pattern>/utils/*</url-pattern>
 		</filter-mapping>
 		
 		<!-- 配置验证请求是否有效的过滤器 -->
@@ -171,6 +179,16 @@
 		<servlet-mapping>
 			<servlet-name>screenShotUploadServlet</servlet-name>
 			<url-pattern>/screenShot/*</url-pattern>
+		</servlet-mapping>
+		
+		<!-- 名为ToolsServlet的，工具类控制器 -->
+		<servlet>
+			<servlet-name>utilsServlet</servlet-name>
+			<servlet-class>com.api.web.servlet.UtilsServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>utilsServlet</servlet-name>
+			<url-pattern>/utils/*</url-pattern>
 		</servlet-mapping>
 		
 <!-- ****************************************************************************************************  -->		

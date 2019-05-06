@@ -1308,7 +1308,11 @@
 ```
 {
   "fileId":"",                                          --要导入的excel文件id
-  "resourceName":"SysUser"                              --要导入的资源名
+  "resourceName":"SysUser",                             --要导入的资源名
+  "extProperties":{
+	"xxName":"xxValue",
+	...
+  }
 }
 ```
 

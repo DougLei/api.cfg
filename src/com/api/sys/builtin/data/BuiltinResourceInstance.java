@@ -23,6 +23,7 @@ import com.api.sys.controller.sys.SysPermissionController;
 import com.api.sys.controller.sys.SysPushMessageInfoController;
 import com.api.sys.controller.sys.SysUserController;
 import com.api.sys.controller.tools.SystemToolsController;
+import com.api.sys.controller.tools.UtilsController;
 import com.api.sys.entity.ITable;
 import com.api.sys.entity.cfg.CfgBusiModel;
 import com.api.sys.entity.cfg.CfgBusiModelResRelations;
@@ -117,6 +118,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("CfgPropExtendConfController", new CfgPropExtendConfController());
 		instanceCache.put("CfgBusiModelController", new CfgBusiModelController());
 		instanceCache.put("CfgBusiModelResRelationsController", new CfgBusiModelResRelationsController());
+		instanceCache.put("UtilsController", new UtilsController());
 		
 		instanceCache.put("CfgTableService", new CfgTableService());
 		instanceCache.put("CfgColumnService", new CfgColumnService());
