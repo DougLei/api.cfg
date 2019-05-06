@@ -38,7 +38,7 @@ public class UtilsServlet extends HttpServlet implements Serializable{
 			}
 			
 			if(result == null){
-				responseBody = new ResponseBody("操作文件结果信息为null，请联系系统开发人员", null);
+				responseBody = new ResponseBody("操作结果信息为null，请联系系统开发人员", null);
 			}else if(result instanceof String){
 				responseBody = new ResponseBody(result.toString(), null);
 			}else{
