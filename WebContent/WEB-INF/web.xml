@@ -183,6 +183,15 @@
 			<url-pattern>/utils/*</url-pattern>
 		</servlet-mapping>
 		
+		<servlet>
+			<servlet-name>openServlet</servlet-name>
+			<servlet-class>com.api.web.servlet.OpenServlet</servlet-class>
+		</servlet>
+		<servlet-mapping>
+			<servlet-name>openServlet</servlet-name>
+			<url-pattern>/open/*</url-pattern>
+		</servlet-mapping>
+		
 <!-- ****************************************************************************************************  -->		
 
 </web-app>
