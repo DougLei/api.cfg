@@ -98,10 +98,6 @@
 			<filter-name>prepareFilter</filter-name>
 			<url-pattern>/screenShot/*</url-pattern>
 		</filter-mapping>
-		<filter-mapping>
-			<filter-name>prepareFilter</filter-name>
-			<url-pattern>/utils/*</url-pattern>
-		</filter-mapping>
 		
 		<!-- 配置创建请求日志实例的过滤器 -->
 		<filter>
@@ -119,10 +115,6 @@
 		<filter-mapping>
 			<filter-name>createReqLogInstanceFilter</filter-name>
 			<url-pattern>/screenShot/*</url-pattern>
-		</filter-mapping>
-		<filter-mapping>
-			<filter-name>createReqLogInstanceFilter</filter-name>
-			<url-pattern>/utils/*</url-pattern>
 		</filter-mapping>
 		
 		<!-- 配置验证请求是否有效的过滤器 -->
