@@ -1,7 +1,6 @@
 package com.api.web.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 
 import javax.servlet.ServletException;
@@ -11,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.api.sys.builtin.data.BuiltinParameterKeys;
 import com.api.sys.code.resource.CodeResourceProcesser;
-import com.api.util.CloseUtil;
 import com.api.web.entity.request.RequestBody;
 import com.api.web.entity.resulttype.ResponseBody;
 import com.api.web.processer.IRequestProcesser;
@@ -40,8 +38,6 @@ public class OpenServlet extends HttpServlet implements Serializable{
 			IRequestProcesser process = ProcesserConfig.getProcess(requestBody);// 获取处理器
 			responseBody = process.doRequestProcess();
 		}
-		PrintWriter out = response.getWriter();
-		out.write(responseBody.toStrings());
-		CloseUtil.closeIO(out);
+		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
 	}
 }

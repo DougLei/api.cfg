@@ -1,7 +1,6 @@
 package com.api.web.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 
 import javax.servlet.ServletException;
@@ -9,9 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.api.sys.builtin.data.BuiltinParameterKeys;
 import com.api.sys.builtin.data.BuiltinResourceInstance;
 import com.api.sys.controller.tools.UtilsController;
-import com.api.util.CloseUtil;
 import com.api.web.entity.resulttype.ResponseBody;
 
 /**
@@ -44,9 +43,6 @@ public class UtilsServlet extends HttpServlet implements Serializable{
 		}else{
 			responseBody = new ResponseBody("系统不支持请求的资源", null);
 		}
-		
-		PrintWriter out = response.getWriter();
-		out.write(responseBody.toStrings());
-		CloseUtil.closeIO(out);
+		request.setAttribute(BuiltinParameterKeys._RESPONSE_BODY_KEY, responseBody);
 	}
 }
