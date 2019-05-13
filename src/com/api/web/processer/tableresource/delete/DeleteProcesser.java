@@ -3,6 +3,8 @@ package com.api.web.processer.tableresource.delete;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.api.constants.OperDataTypeConstants;
+import com.api.constants.ResourcePropNameConstants;
 import com.api.sys.builtin.data.BuiltinParameterKeys;
 import com.api.web.entity.resulttype.ResponseBody;
 import com.api.web.processer.tableresource.RequestProcesser;
@@ -52,8 +54,10 @@ public abstract class DeleteProcesser extends RequestProcesser {
 	 * @param deleteIds
 	 */
 	protected final void installResponseBodyForDeleteData(String message, List<Object> deleteIds){
-		JSONObject json = new JSONObject(1);
-		json.put(BuiltinParameterKeys._IDS, deleteIds.toString().replace("[", "").replace("]", ""));
+		JSONObject json = new JSONObject(2);
+		String ids = deleteIds.toString().replace("[", "").replace("]", "");
+		json.put(BuiltinParameterKeys._IDS, ids);
+		json.put(ResourcePropNameConstants.FOCUSED_OPER, ids.replace(",", "_"+OperDataTypeConstants.DELETE+",") + "_" +OperDataTypeConstants.DELETE);
 		setResponseBody(new ResponseBody(message, json));
 	}
 }
