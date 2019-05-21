@@ -9,6 +9,7 @@ import com.api.util.datatype.DataTypeValidUtil;
 import com.api.web.builtin.method.common.create.exportfile.BuiltinCreateExportFileMethodProcesser;
 import com.api.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.api.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
+import com.api.web.builtin.method.common.toobject.TurnToObjectProcesser;
 
 /**
  * 公共抽象的内置函数的处理器对外接口
@@ -48,6 +49,8 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 	 * 内置分页函数处理器实例
 	 */
 	protected BuiltinPagerMethodProcesser pagerProcesser;
+	
+	protected TurnToObjectProcesser turnToObjectProcesser;
 	
 	/**
 	 * 内置聚焦函数处理器实例
@@ -113,6 +116,11 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 		}
 	}
 	
+	public void setTurnToObjectProcesser(Map<String, String> requestBuiltinParams) {
+		String turnToObject = requestBuiltinParams.remove("_turnToObject");
+		this.turnToObjectProcesser = new TurnToObjectProcesser(turnToObject);
+	}
+	
 	public BuiltinFocusedIdMethodProcesser getFocusedIdProcesser() {
 		if(focusedIdProcesser == null){
 			focusedIdProcesser = new BuiltinFocusedIdMethodProcesser();
@@ -130,5 +138,11 @@ public abstract class AbstractCommonBuiltinBMProcesser {
 			createExportFileProcesser = new BuiltinCreateExportFileMethodProcesser();
 		}
 		return createExportFileProcesser;
+	}
+	public TurnToObjectProcesser getTurnToObjectProcesser() {
+		if(turnToObjectProcesser == null){
+			turnToObjectProcesser = new TurnToObjectProcesser();
+		}
+		return turnToObjectProcesser;
 	}
 }

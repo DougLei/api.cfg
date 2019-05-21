@@ -49,6 +49,7 @@ public class BuiltinSqlResourceBMProcesser extends AbstractCommonBuiltinBMProces
 	private void analysisRequestUrlParams(List<List<Object>> sqlParameterValues) {
 		// 内置聚焦函数处理器实例
 		setFocusedIdProcesser(requestBuiltinParams);
+		setTurnToObjectProcesser(requestBuiltinParams);
 		// 内置创建导出文件的函数处理器
 		setCreateExportFileProcesser(requestBuiltinParams);
 		// 内置分页函数处理器实例

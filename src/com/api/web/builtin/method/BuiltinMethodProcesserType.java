@@ -55,4 +55,9 @@ public final class BuiltinMethodProcesserType {
 	 * 创建导出文件的函数处理器
 	 */
 	public static final int EXPORT_FILE = 10;
+	
+	/**
+	 * 
+	 */
+	public static final int TURN_TO_OBJECT = 11;
 }

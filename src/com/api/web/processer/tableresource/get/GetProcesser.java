@@ -11,6 +11,7 @@ import com.api.util.hibernate.HibernateUtil;
 import com.api.web.builtin.method.common.create.exportfile.BuiltinCreateExportFileMethodProcesser;
 import com.api.web.builtin.method.common.focusedid.BuiltinFocusedIdMethodProcesser;
 import com.api.web.builtin.method.common.pager.BuiltinPagerMethodProcesser;
+import com.api.web.builtin.method.common.toobject.TurnToObjectProcesser;
 import com.api.web.builtin.method.tableresource.query.BuiltinQueryMethodProcesser;
 import com.api.web.builtin.method.tableresource.recursive.BuiltinRecursiveMethodProcesser;
 import com.api.web.builtin.method.tableresource.sort.BuiltinSortMethodProcesser;
@@ -52,6 +53,7 @@ public abstract class GetProcesser extends RequestProcesser {
 	 * 生成导出文件
 	 */
 	protected BuiltinCreateExportFileMethodProcesser builtinCreateExportFileMethodProcesser;
+	protected TurnToObjectProcesser turnToObjectProcesser;
 	
 	/**
 	 * 处理请求
@@ -76,6 +78,7 @@ public abstract class GetProcesser extends RequestProcesser {
 		builtinParentsubQueryMethodProcesser = builtinTableResourceBMProcesser.getParentsubQueryMethodProcesser();
 		builtinSublistMethodProcesser = builtinTableResourceBMProcesser.getSublistMethodProcesser();
 		builtinCreateExportFileMethodProcesser = builtinTableResourceBMProcesser.getCreateExportFileProcesser();
+		turnToObjectProcesser = builtinTableResourceBMProcesser.getTurnToObjectProcesser();
 	}
 	
 	/**

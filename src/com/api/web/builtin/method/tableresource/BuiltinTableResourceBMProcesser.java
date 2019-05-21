@@ -53,6 +53,7 @@ public class BuiltinTableResourceBMProcesser extends AbstractCommonBuiltinBMProc
 	private void analysisRequestUrlParams(List<Object> hqlParameterValues) {
 		// 内置聚焦函数处理器实例
 		setFocusedIdProcesser(requestBuiltinParams);
+		setTurnToObjectProcesser(requestBuiltinParams);
 		// 内置创建导出文件的函数处理器
 		setCreateExportFileProcesser(requestBuiltinParams);
 		// 内置分页函数处理器实例

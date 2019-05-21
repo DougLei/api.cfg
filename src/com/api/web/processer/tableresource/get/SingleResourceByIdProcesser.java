@@ -28,7 +28,7 @@ public final class SingleResourceByIdProcesser extends GetProcesser {
 		
 		Map<String, Object> data = null;
 		if(dataList != null && dataList.size() > 0){
-			if(dataList.size() > 1){
+			if(dataList.size() > 1 && !turnToObjectProcesser.isTurnToObject()){
 				throw new NullPointerException("getById查询数据，查询到了多条数据");
 			}
 			data = dataList.get(0);
