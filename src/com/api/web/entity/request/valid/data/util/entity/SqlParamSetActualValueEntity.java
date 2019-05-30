@@ -44,7 +44,7 @@ public class SqlParamSetActualValueEntity implements Serializable{
 					if(sqlParams != null && sqlParams.size() > 0){
 						for (CfgSqlParameter ssp : sqlParams) {
 							if(ssp.getValueFrom() == CfgSqlParameter.AUTO_CODE){
-								finalCodeVal = PropCodeRuleUtil.getSqlResourceFinalCodeVal(ssp.getName(), codeValIndex++, rules);
+								finalCodeVal = PropCodeRuleUtil.getSqlResourceFinalCodeVal(ssp.getName(), codeValIndex, rules);
 								if(finalCodeVal == null){
 									throw new NullPointerException("操作sql资源["+sql.getResourceName()+"]时，获取自动编码参数["+ssp.getName()+"]的值为空，请联系后端系统开发人员");
 								}
@@ -54,7 +54,7 @@ public class SqlParamSetActualValueEntity implements Serializable{
 								ssp.setActualInValue(finalCodeVal);
 							}
 						}
-						codeValIndex = 0;
+						codeValIndex++;
 					}
 				}
 			}
