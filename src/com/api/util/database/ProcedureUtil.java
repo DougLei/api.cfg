@@ -48,15 +48,15 @@ public class ProcedureUtil {
 		JSONArray jsonArray = executeProcedure(sqlScript, ijson);
 		if(operDataType != null && ijson != null && ijson.size() > 0){
 			int size = ijson.size();
-			Object focusedDataId = null;
+			String focusedDataId = null;
 			for(int i=0;i<size;i++){
-				focusedDataId = ijson.get(i).get(ResourcePropNameConstants.ID);
+				focusedDataId = ijson.get(i).getString(ResourcePropNameConstants.ID);
 				if(StrUtils.notEmpty(focusedDataId)){
-					if(jsonArray == null){
-						jsonArray = new JSONArray(size);
-					}
 					if(jsonArray.get(i) == null){
 						jsonArray.add(new JSONObject(1));
+					}
+					if(focusedDataId.contains(",")){
+						focusedDataId = focusedDataId.replace(",", "_"+operDataType+",");
 					}
 					jsonArray.getJSONObject(i).put(ResourcePropNameConstants.FOCUSED_OPER, focusedDataId + "_" + operDataType);
 				}
