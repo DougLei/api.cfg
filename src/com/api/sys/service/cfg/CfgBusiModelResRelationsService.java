@@ -112,11 +112,11 @@ public class CfgBusiModelResRelationsService extends AService{
 	 * @return 
 	 */
 	private String validIsRecursiveRelationOfBusiModelResRelations(CfgBusiModelResRelations busiModelResRelations) {
-		if(StrUtils.notEmpty(busiModelResRelations.getParentId())){
-			if(getObjectById(busiModelResRelations.getParentId(), CfgBusiModelResRelations.class).getRefResourceId().equals(busiModelResRelations.getRefResourceId())){
-				return "在创建业务模型资源时，系统目前不支持构建递归层级的关系";
-			}
-		}
+//		if(StrUtils.notEmpty(busiModelResRelations.getParentId())){
+//			if(getObjectById(busiModelResRelations.getParentId(), CfgBusiModelResRelations.class).getRefResourceId().equals(busiModelResRelations.getRefResourceId())){
+//				return "在创建业务模型资源时，系统目前不支持构建递归层级的关系";
+//			}
+//		}
 		return null;
 	}
 	
