@@ -190,7 +190,7 @@ public class BusiModelResourceVerifier extends AbstractResourceVerifier{
 				for(CfgBusiModelResRelations sub: busiModelRelation.getSubBusiModelResRelationsList()){
 					subIJson = IJsonUtil.getIJson(ijson.get(i).remove(sub.getRefResourceKeyName()));
 					if(subIJson != null && subIJson.size() > 0){
-						validResult = recursiveValidBusiModelData(sub, subIJson, ijson.get(i).get(busiModelRelation.getIdPropName()), (level+1));
+						validResult = recursiveValidBusiModelData(sub, subIJson, sub.getRefResourceId().equals(busiModelRelation.getRefResourceId())?parentId:ijson.get(i).get(busiModelRelation.getIdPropName()), (level+1));
 						if(validResult != null){
 							return validResult;
 						}
