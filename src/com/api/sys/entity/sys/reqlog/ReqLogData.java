@@ -36,15 +36,15 @@ public class ReqLogData implements Serializable{
 			Log4jUtil.error("[ReqLogData.recordLogs()]时，reqLog对象为空，请检查系统逻辑");
 			return;
 		}
-		if(CurrentThreadContext.getCurrentAccountOnlineStatus() == null){
-			Log4jUtil.error("[ReqLogData.recordLogs()]时，CurrentThreadContext.getCurrentAccountOnlineStatus()对象为空，请检查系统逻辑");
-			return;
-		}
+//		if(CurrentThreadContext.getCurrentAccountOnlineStatus() == null){
+//			Log4jUtil.error("[ReqLogData.recordLogs()]时，CurrentThreadContext.getCurrentAccountOnlineStatus()对象为空，请检查系统逻辑");
+//			return;
+//		}
 		// 新线程保存日志数据
 		ThreadPool.execute(new RecordLogThread(HibernateUtil.openNewSession(),
 				reqLog,
-				CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
-				CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
+				CurrentThreadContext.getCurrentAccountOnlineStatus() == null ? "未登录":CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
+				CurrentThreadContext.getCurrentAccountOnlineStatus() == null ? "未登录":CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
 				CurrentThreadContext.getProjectId(),
 				CurrentThreadContext.getCustomerId()));
 	}

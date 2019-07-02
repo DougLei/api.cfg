@@ -134,7 +134,7 @@ public class StrUtils {
 		return len;
 	}
 	/** 匹配双字节字符的正则表达式，包括汉字 */
-	private static final Pattern doubleCharPattern = Pattern.compile("[^x00-xff]");
+	private static final Pattern doubleCharPattern = Pattern.compile("[\u4e00-\u9fa5]");
 	// [\u4e00-\u9fa5]  匹配汉字的正则表达式
 	
 	
