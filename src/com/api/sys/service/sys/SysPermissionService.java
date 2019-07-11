@@ -326,19 +326,21 @@ public class SysPermissionService extends AService{
 		}
 	}
 	// --------------------------------------------------------------------------------------
-	private static final String queryUserPermissionCacheHql = "from SysUserPermissionCache where userId = ? and projectId=? and customerId =?";
+//	private static final String queryUserPermissionCacheHql = "from SysUserPermissionCache where userId = ? and projectId=? and customerId =?";
 	/**
 	 * 获取用户的权限缓存对象
 	 * @param accountOnlineStatus
 	 * @return
 	 */
 	public SysUserPermissionCache getSysUserPermissionCache(SysAccountOnlineStatus accountOnlineStatus){
-		List<SysUserPermissionCache> list = HibernateUtil.extendExecuteListQueryByHqlArr(SysUserPermissionCache.class, null, null, queryUserPermissionCacheHql, accountOnlineStatus.getUserId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
-		if(list != null && list.size() > 1){
-			throw new IllegalArgumentException("id为["+accountOnlineStatus.getUserId()+"]的用户，SysUserPermissionCache缓存数据重复，请删除该用的权限缓存，再登录系统");
-		}
+		// TODO 禁用权限缓存功能
+//		List<SysUserPermissionCache> list = HibernateUtil.extendExecuteListQueryByHqlArr(SysUserPermissionCache.class, null, null, queryUserPermissionCacheHql, accountOnlineStatus.getUserId(), CurrentThreadContext.getProjectId(), CurrentThreadContext.getCustomerId());
+//		if(list != null && list.size() > 1){
+//			throw new IllegalArgumentException("id为["+accountOnlineStatus.getUserId()+"]的用户，SysUserPermissionCache缓存数据重复，请删除该用的权限缓存，再登录系统");
+//		}
 		
-		SysUserPermissionCache sapc = (list == null)?null:list.get(0);
+//		SysUserPermissionCache sapc = (list == null)?null:list.get(0);
+		SysUserPermissionCache sapc = null;
 		SysPermissionExtend permission = null;
 		if(sapc == null){
 			permission = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).findAccountOfPermissions(accountOnlineStatus);
@@ -346,15 +348,16 @@ public class SysPermissionService extends AService{
 			sapc = new SysUserPermissionCache();
 			sapc.setUserId(accountOnlineStatus.getUserId());
 			sapc.setPermission(JsonUtil.toJsonString(permission, false));
-			HibernateUtil.saveObject(sapc, null);
-		}else if(StrUtils.isEmpty(sapc.getPermission())){
-			permission = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).findAccountOfPermissions(accountOnlineStatus);
-			
-			sapc.setPermission(JsonUtil.toJsonString(permission, false));
-			HibernateUtil.updateEntityObject(sapc, null);
-		}else{
-			permission = JsonUtil.parseObject(sapc.getPermission(), SysPermissionExtend.class);
+//			HibernateUtil.saveObject(sapc, null);
 		}
+//		else if(StrUtils.isEmpty(sapc.getPermission())){
+//			permission = BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).findAccountOfPermissions(accountOnlineStatus);
+//			
+//			sapc.setPermission(JsonUtil.toJsonString(permission, false));
+//			HibernateUtil.updateEntityObject(sapc, null);
+//		}else{
+//			permission = JsonUtil.parseObject(sapc.getPermission(), SysPermissionExtend.class);
+//		}
 		
 		sapc.setPermissionObject(permission);
 		return sapc;
