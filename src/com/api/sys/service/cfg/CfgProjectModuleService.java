@@ -87,6 +87,7 @@ public class CfgProjectModuleService extends AService {
 			if(projectModule.isChangePermissionInfo(oldProjectModule)){
 				BuiltinResourceInstance.getInstance("SysPermissionService", SysPermissionService.class).updatePermissionInfo(projectModule);
 			}
+			projectModule.setProjectId(oldProjectModule.getProjectId());
 			return HibernateUtil.updateEntityObject(projectModule, null);
 		}
 		return operResult;
