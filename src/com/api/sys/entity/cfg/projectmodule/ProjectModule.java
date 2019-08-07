@@ -13,6 +13,7 @@ public class ProjectModule implements Serializable, Comparable<ProjectModule>{
 	private String id;
 	private String text;
 	private String link;
+	private String appUrl;
 	private String icon;
 	private boolean hide;
 	private int orderCode;
@@ -25,6 +26,12 @@ public class ProjectModule implements Serializable, Comparable<ProjectModule>{
 	}
 	public String getLink() {
 		return link;
+	}
+	public String getAppUrl() {
+		return appUrl;
+	}
+	public void setAppUrl(String appUrl) {
+		this.appUrl = appUrl;
 	}
 	public String getIcon() {
 		return icon;
