@@ -46,6 +46,10 @@ public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis
 	 */
 	private String url;
 	/**
+	 * appUrl
+	 */
+	private String appUrl;
+	/**
 	 * 模块图标
 	 */
 	private String icon;
@@ -104,6 +108,12 @@ public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	public String getAppUrl() {
+		return appUrl;
+	}
+	public void setAppUrl(String appUrl) {
+		this.appUrl = appUrl;
+	}
 	public String getIcon() {
 		return icon;
 	}
@@ -137,7 +147,7 @@ public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(10+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(11+7);
 		
 		CfgColumn refProjectIdColumn = new CfgColumn("ref_project_id", DataTypeConstants.STRING, 32);
 		refProjectIdColumn.setName("关联的项目主键");
@@ -165,6 +175,11 @@ public class CfgProjectModule extends BasicEntity implements IEntityPropAnalysis
 		urlColumn.setName("url");
 		urlColumn.setComments("url");
 		columns.add(urlColumn);
+		
+		CfgColumn appUrlColumn = new CfgColumn("app_url", DataTypeConstants.STRING, 60);
+		appUrlColumn.setName("appUrl");
+		appUrlColumn.setComments("appUrl");
+		columns.add(appUrlColumn);
 		
 		CfgColumn iconColumn = new CfgColumn("icon", DataTypeConstants.STRING, 30);
 		iconColumn.setName("模块图标");
