@@ -119,7 +119,7 @@ public class CfgProjectModuleService extends AService {
 	
 	//--------------------------------------------------------------------------------------------------------
 	/** 查询模块集合的selectHql语句的select头 */
-	private static final String queryModulesSelectHqlHead = "select new map(" + ResourcePropNameConstants.ID + " as id, name as text, url as link, icon as icon, isEnabled as hide, orderCode as orderCode) ";
+	private static final String queryModulesSelectHqlHead = "select new map(" + ResourcePropNameConstants.ID + " as id, name as text, url as link, appUrl, icon as icon, isEnabled as hide, orderCode as orderCode) ";
 	
 	/**
 	 * 获取当前项目所有有效的模块信息
