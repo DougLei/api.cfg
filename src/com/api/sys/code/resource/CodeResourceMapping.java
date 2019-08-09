@@ -187,6 +187,7 @@ public class CodeResourceMapping {
 		put("/login_out/post", SysAccountController.class, "loginOut");
 		
 		// 账户卡操作
+		put("/login2/post", SysAccountCardController.class, "loginById");
 		put("/card/login/post", SysAccountCardController.class, "login");
 		put("/card/user/relation/add/post", SysAccountCardController.class, "addCardAndUserRelation");
 		put("/card/user/relation/cancel/post", SysAccountCardController.class, "cancelCardAndUserRelation");

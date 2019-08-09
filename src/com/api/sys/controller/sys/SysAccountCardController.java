@@ -36,6 +36,34 @@ public class SysAccountCardController extends AController{
 	 * @return
 	 */
 	@RequestMapping
+	public Object loginById(HttpServletRequest request, IJson ijson){
+		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.LOGIN);// 标识为登陆日志
+		
+		SysAccountCard accountCard = JsonUtil.toJavaObject(ijson.get(0), SysAccountCard.class);
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).loginById(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), accountCard);
+		
+		if(accountOnlineStatus.getIsError() == 1){
+			resultObject = accountOnlineStatus.getMessage();
+		}else{
+			// 登录成功时，记录token和项目id的关系
+			TokenRefProjectIdMapping.setTokenRefProjMapping(accountOnlineStatus.getToken(), CurrentThreadContext.getProjectId());
+			
+			// 将(模块)权限信息组装到结果json中
+			JSONObject json = JsonUtil.toJsonObject(accountOnlineStatus);
+			json.put("modules", accountOnlineStatus.getProjectModules());
+			resultObject = json;
+		}
+		return getResultObject(null, null);
+	}
+	
+	/**
+	 * 登录
+	 * <p>请求方式：POST</p>
+	 * @param request
+	 * @param json
+	 * @return
+	 */
+	@RequestMapping
 	public Object login(HttpServletRequest request, IJson ijson){
 		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.LOGIN);// 标识为登陆日志
 		

@@ -23,7 +23,18 @@ import com.api.util.prop.code.rule.PropCodeRuleUtil;
  */
 @Service
 public class SysAccountCardService extends AService{
-
+	
+	/**
+	 * 刷卡登陆
+	 * @param string
+	 * @param accountCard
+	 * @return
+	 */
+	public SysAccountOnlineStatus loginById(String clientIp, SysAccountCard originAccountCard) {
+		SysAccount account = getObjectById(originAccountCard.getId(), SysAccount.class);
+		return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginByCard(clientIp, account.getLoginName());
+	}
+	
 	/**
 	 * 刷卡登陆
 	 * @param string
