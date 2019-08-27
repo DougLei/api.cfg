@@ -5,9 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.api.annotation.Controller;
 import com.api.annotation.RequestMapping;
 import com.api.plugins.ijson.IJson;
+import com.api.socket.SocketClient;
 import com.api.sys.builtin.data.BuiltinResourceInstance;
 import com.api.sys.controller.AController;
 import com.api.sys.service.tools.SystemToolsService;
+import com.api.util.JsonUtil;
 import com.api.util.StrUtils;
 
 /**
@@ -49,5 +51,42 @@ public class SystemToolsController extends AController{
 		
 		resultObject = BuiltinResourceInstance.getInstance("SystemToolsService", SystemToolsService.class).getResourceInfo(name);
 		return getResultObject(null, null);
+	}
+	
+
+	/**
+	 * socket消息
+	 * @return
+	 */
+	public Object socket(HttpServletRequest request, IJson ijson){
+		SocketInfo info = JsonUtil.toJavaObject(ijson.get(0), SocketInfo.class);
+		new SocketClient(info.getHost(), info.getPort()).sendMessage(info.getMessage());
+		resultObject = info;
+		return getResultObject(null, null);
+	}
+}
+
+class SocketInfo {
+	private String host;
+	private int port;
+	private String message;
+	
+	public String getHost() {
+		return host;
+	}
+	public void setHost(String host) {
+		this.host = host;
+	}
+	public int getPort() {
+		return port;
+	}
+	public void setPort(int port) {
+		this.port = port;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

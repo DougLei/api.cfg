@@ -198,6 +198,7 @@ public class CodeResourceMapping {
 		// 工具接口
 		put("/hibernate/classmetadata/monitor/get", SystemToolsController.class, "monitorHibernateClassMetadata");// 监听hibernate类元数据
 		put("/resource/info/search/get", SystemToolsController.class, "getResourceInfo");// 获取指定资源信息
+		put("/socket/post", SystemToolsController.class, "socket");// 
 		
 		// 消息接口
 		put("/message/push/post", SysPushMessageInfoController.class, "pushMessage");// 消息推送
