@@ -36,6 +36,7 @@ public class SocketClient {
 				writer.flush();
 			} catch (IOException e) {
 				logger.error("socket连接发送消息时出现异常: {}", ExceptionUtil.getErrMsg(e));
+				order = null;
 			} finally {
 				close();
 			}
