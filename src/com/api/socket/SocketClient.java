@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.api.util.ExceptionUtil;
-import com.api.util.StrUtils;
 
 // http://localhost:8080/api.cfg/common/socket
 // {"host":"192.168.1.252","port":504, "message":"start"}
@@ -27,20 +26,21 @@ public class SocketClient {
 		this.serverPort = serverPort;
 	}
 	
-	public void sendMessage(String message) {
-		if(StrUtils.isEmpty(message)) {
-			return;
+	public char[] sendMessage(String message) {
+		char[] order = SocketOrderContext.getHexOrder(message);
+		if(order != null) {
+			try {
+				socket = new Socket(serverHost, serverPort);
+				writer = new OutputStreamWriter(socket.getOutputStream());
+				writer.write(order);
+				writer.flush();
+			} catch (IOException e) {
+				logger.error("socket连接发送消息时出现异常: {}", ExceptionUtil.getErrMsg(e));
+			} finally {
+				close();
+			}
 		}
-		try {
-			socket = new Socket(serverHost, serverPort);
-			writer = new OutputStreamWriter(socket.getOutputStream());
-			writer.write(SocketOrderContext.getHexOrder(message));
-			writer.flush();
-		} catch (IOException e) {
-			logger.error("socket连接发送消息时出现异常: {}", ExceptionUtil.getErrMsg(e));
-		} finally {
-			close();
-		}
+		return order;
 	}
 	
 	private void close() {

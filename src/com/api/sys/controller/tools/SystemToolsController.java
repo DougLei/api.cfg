@@ -60,8 +60,11 @@ public class SystemToolsController extends AController{
 	 */
 	public Object socket(HttpServletRequest request, IJson ijson){
 		SocketInfo info = JsonUtil.toJavaObject(ijson.get(0), SocketInfo.class);
-		new SocketClient(info.getHost(), info.getPort()).sendMessage(info.getMessage());
-		resultObject = info;
+		if(new SocketClient(info.getHost(), info.getPort()).sendMessage(info.getMessage()) == null){
+			resultObject = "目前不支持["+info.getMessage()+"]指令";
+		}else{
+			resultObject = info;
+		}
 		return getResultObject(null, null);
 	}
 }
