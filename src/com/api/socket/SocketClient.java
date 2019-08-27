@@ -12,6 +12,7 @@ import com.api.util.StrUtils;
 
 // http://localhost:8080/api.cfg/common/socket
 // {"host":"192.168.1.252","port":504, "message":"start"}
+// post
 public class SocketClient {
 	private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
 	
@@ -33,7 +34,7 @@ public class SocketClient {
 		try {
 			socket = new Socket(serverHost, serverPort);
 			writer = new OutputStreamWriter(socket.getOutputStream());
-			writer.write(new char[] {0x63, 0x6c, 0x6f, 0x73, 0x65});
+			writer.write(SocketOrderContext.getHexOrder(message));
 			writer.flush();
 		} catch (IOException e) {
 			logger.error("socket连接发送消息时出现异常: {}", ExceptionUtil.getErrMsg(e));
@@ -64,17 +65,5 @@ public class SocketClient {
 	public static void main(String[] args) {
 		SocketClient client = new SocketClient("192.168.1.252", 504);
 		client.sendMessage("close");
-		
-//		System.out.println(Integer.toHexString('c'));
-//		System.out.println(Integer.toHexString('l'));
-//		System.out.println(Integer.toHexString('o'));
-//		System.out.println(Integer.toHexString('s'));
-//		System.out.println(Integer.toHexString('e'));
-//		System.out.println(new String(new char[] {0x63, 0x6c, 0x6f, 0x73, 0x65}));
-//		System.out.println('c'+0);
-//		System.out.println(Integer.toBinaryString('c'));
-		System.out.println(Integer.valueOf(Integer.valueOf('c')+"", 16));
-		System.out.println(Integer.toHexString('c'));
-		System.out.println(0x99);
 	}
 }
