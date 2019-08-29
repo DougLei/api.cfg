@@ -3,6 +3,7 @@ package com.api.socket;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class SocketClient {
 		if(order != null) {
 			try {
 				socket = new Socket(serverHost, serverPort);
-				writer = new OutputStreamWriter(socket.getOutputStream());
+				writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.ISO_8859_1);
 				writer.write(order);
 				writer.flush();
 			} catch (IOException e) {
