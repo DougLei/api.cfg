@@ -1,6 +1,5 @@
 package test;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -29,23 +28,16 @@ public class DatabaseTest extends Parent{
 			
 			
 			
-//			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-//			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
-//			PreparedStatement pst = conn.prepareStatement("select count(1) from  sysobjects where id = object_id(?) and type = 'U'");
-//			pst.setString(1, "Com_sQL_sCript".toLowerCase());
-//			ResultSet rs = pst.executeQuery();
-//			if(rs.next() && (rs.getInt(1) > 0)){
-//				System.out.println("存在");
-//				return;
-//			}
-//			System.out.println("不存在！！！！！");
-			
+			System.out.println("1");
+			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SmartOneCfg", "sa", "123_abc");
+			System.out.println("2");
+			System.out.println(conn);
 			
 //			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 //			Connection conn = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=SmartOneCfg", "sa", "root");
 //			System.out.println(conn);
 			
-			executeSqlTest();
+//			executeSqlTest();
 			
 //			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 //			Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.252:1433;DatabaseName=SmartOneCfg", "sa", "root");
@@ -57,27 +49,25 @@ public class DatabaseTest extends Parent{
 //			st.close();
 //			conn.close();
 //			System.out.println("ok");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+		}  catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private static void executeSqlTest() throws ClassNotFoundException, SQLException{
-		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SmartOneCfg", "sa", "123_abc");
-		CallableStatement cs = conn.prepareCall(getSql());
-		cs.setString(1, "a14eb744147346a1b46cc0174504548a");
-		cs.setString(2, "1");
-		
-		cs.execute();
-		System.out.println(111);
-		
-	}
+//	private static void executeSqlTest() throws ClassNotFoundException, SQLException{
+//		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//		Connection conn = DriverManager.getConnection("jdbc:sqlserver://192.168.1.111:1433;DatabaseName=SmartOneCfg", "sa", "123_abc");
+//		CallableStatement cs = conn.prepareCall(getSql());
+//		cs.setString(1, "a14eb744147346a1b46cc0174504548a");
+//		cs.setString(2, "1");
+//		
+//		cs.execute();
+//		System.out.println(111);
+//		
+//	}
 	
-	private static String getSql(){
-		String sqls = "{call UpdatePPElement(?,?)}";
-		return sqls;
-	}
+//	private static String getSql(){
+//		String sqls = "{call UpdatePPElement(?,?)}";
+//		return sqls;
+//	}
 }

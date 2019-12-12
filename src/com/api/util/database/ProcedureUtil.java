@@ -366,11 +366,12 @@ public class ProcedureUtil {
 			private void putSqlServerDataSet(CallableStatement cs, ResultSet rs) throws SQLException {
 				int outSqlResultsetIndex = 0;
 				rs = cs.getResultSet();
-				while(rs != null){
-					processResultSetList(rs, outSqlResultsetIndex, null, null);
-					json.put(outSqlResultSetsList.get(outSqlResultsetIndex).get(0).getName(outSqlResultsetIndex), sqlQueryResultToMap(rs, outSqlResultSetsList.get(outSqlResultsetIndex)));
-					outSqlResultsetIndex++;
-					
+				while(rs != null || cs.getUpdateCount() > -1){
+					if(rs != null){
+						processResultSetList(rs, outSqlResultsetIndex, null, null);
+						json.put(outSqlResultSetsList.get(outSqlResultsetIndex).get(0).getName(outSqlResultsetIndex), sqlQueryResultToMap(rs, outSqlResultSetsList.get(outSqlResultsetIndex)));
+						outSqlResultsetIndex++;
+					}
 					cs.getMoreResults();
 					rs = cs.getResultSet();
 				}
