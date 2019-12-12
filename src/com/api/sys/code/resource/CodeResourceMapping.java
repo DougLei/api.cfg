@@ -208,6 +208,9 @@ public class CodeResourceMapping {
 		// excel操作接口
 		put("/excel/import/post", SysExcelController.class, "importExcel");// 导入excel
 		put("/excel/import_template/create/post", SysExcelController.class, "createImportExcelTemplate");// 生成excel导入模版
+		
+		// soap
+		put("/soap/read/get", SystemToolsController.class, "soapRead");// soap read
 	}
 	
 	/**

@@ -1,15 +1,18 @@
 package com.api.sys.controller.tools;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.api.annotation.Controller;
 import com.api.annotation.RequestMapping;
 import com.api.plugins.ijson.IJson;
-import com.api.socket.SocketClient;
+import com.api.soap.OPCData;
+import com.api.soap.SOAPClient;
 import com.api.sys.builtin.data.BuiltinResourceInstance;
 import com.api.sys.controller.AController;
 import com.api.sys.service.tools.SystemToolsService;
-import com.api.util.JsonUtil;
 import com.api.util.StrUtils;
 
 /**
@@ -53,43 +56,28 @@ public class SystemToolsController extends AController{
 		return getResultObject(null, null);
 	}
 	
-
 	/**
-	 * socket消息
+	 * 
+	 * @param request
+	 * @param ijson
 	 * @return
 	 */
-	public Object socket(HttpServletRequest request, IJson ijson){
-		SocketInfo info = JsonUtil.toJavaObject(ijson.get(0), SocketInfo.class);
-		if(new SocketClient(info.getHost(), info.getPort()).sendMessage(info.getMessage()) == null){
-			resultObject = "目前不支持["+info.getMessage()+"]指令";
-		}else{
-			resultObject = info;
+	@RequestMapping
+	public Object soapRead(HttpServletRequest request, IJson ijson){
+		String param = request.getParameter("param");
+		if(StrUtils.isEmpty(param)){
+			return "执行soap的url参数[param]的值不能为空";
 		}
-		return getResultObject(null, null);
-	}
-}
-
-class SocketInfo {
-	private String host;
-	private int port;
-	private String message;
-	
-	public String getHost() {
-		return host;
-	}
-	public void setHost(String host) {
-		this.host = host;
-	}
-	public int getPort() {
-		return port;
-	}
-	public void setPort(int port) {
-		this.port = port;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
+		
+		String[] params = param.split(",");
+		List<OPCData> list = new ArrayList<>(params.length);
+		for (String p : params) {
+			list.add(new OPCData(p));
+		}
+		try {
+			return SOAPClient.instance().read(list);
+		} catch (Exception e) {
+			return "执行soap时出现异常:" + e;
+		}
 	}
 }
