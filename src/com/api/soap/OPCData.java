@@ -1,5 +1,7 @@
 package com.api.soap;
 
+import com.api.util.datatype.DataTypeValidUtil;
+
 /**
  * 用于视图的数据结构
  * 
@@ -13,6 +15,7 @@ public class OPCData {
 
 	/** OPC值 */
 	private String OPCValue = "";
+	private String OPCValueDataType;
 
 	/** OPC 值更新时间 */
 	private String OPCTime = "";
@@ -50,9 +53,22 @@ public class OPCData {
 	 * @param oPCValue the oPCValue to set
 	 */
 	public void setOPCValue(String oPCValue) {
-		OPCValue = oPCValue; 
+		OPCValue = oPCValue;
+		if(DataTypeValidUtil.isNumber(OPCValue)){
+			OPCValueDataType="number";
+		}else if(DataTypeValidUtil.isBoolean(OPCValue)){
+			OPCValueDataType="boolean";
+		}else{
+			OPCValueDataType="string";
+		}
 	}
 
+	public String getOPCValueDataType() {
+		return OPCValueDataType;
+	}
+	public void setOPCValueDataType(String oPCValueDataType) {
+		OPCValueDataType = oPCValueDataType;
+	}
 	/**
 	 * @return OPC 值更新时间
 	 */

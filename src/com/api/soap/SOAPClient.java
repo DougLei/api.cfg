@@ -26,7 +26,6 @@ import org.opcfoundation.webservices.xmlda._1.ReadRequestItemList;
 import org.opcfoundation.webservices.xmlda._1.ReadResponse;
 import org.w3c.dom.NodeList;
 
-import com.alibaba.fastjson.JSONObject;
 import com.api.cache.SysContext;
 
 /**
@@ -45,11 +44,7 @@ public class SOAPClient {
 		return client;
 	}
 	
-	public String read(List<OPCData> opcDataList) throws SOAPException, IOException, JAXBException {
-		if (opcDataList == null) {
-			throw new NullPointerException("opcDataList can not be null");
-		}
-
+	public Object read(List<OPCData> opcDataList) throws SOAPException, IOException, JAXBException {
 		// 创建消息对象
 		// ===========================================
 		SOAPMessage message = MessageFactory.newInstance().createMessage();
@@ -117,12 +112,10 @@ public class SOAPClient {
 				opcdata.setOPCTime(v.getTimestamp().toString().replace('T', ' '));
 			}
 		}
-
-		try {
-			return JSONObject.toJSONString(opcDataList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		
+		if(opcDataList.size() > 1){
+			return opcDataList;
 		}
+		return opcDataList.get(0);
 	}
 }
