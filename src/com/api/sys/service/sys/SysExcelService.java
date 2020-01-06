@@ -152,10 +152,6 @@ public class SysExcelService extends AService{
 					return importResult;
 				}
 			}
-			importResult = importDatas("导入excel文件["+file.getActName()+"]，", rowIndex, resourceName, ijson, ieResourceMetadataInfos, importFile, request);
-			if(importResult != null){
-				return importResult;
-			}
 		}
 		return importFile;
 	}
