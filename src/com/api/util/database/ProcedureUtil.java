@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.api.constants.ResourcePropNameConstants;
 import com.api.plugins.ijson.IJson;
+import com.api.plugins.ijson.IJsonUtil;
 import com.api.plugins.jdbc.DBLink;
 import com.api.plugins.jdbc.IExecute;
 import com.api.sys.builtin.data.BuiltinDatabaseData;
@@ -186,7 +187,7 @@ public class ProcedureUtil {
 	 * @param isRecordResultset
 	 */
 	private static void execProcedure(final String procedureName, final boolean sqlScriptHavaParams, final boolean isOracle, final boolean isSqlServer, final String sqlScriptId, final String sqlScriptType, final List<CfgSqlResultset> inSqlResultSets, final List<List<CfgSqlResultset>> outSqlResultSetsList, final List<CfgSqlParameter> sqlParams, final String callProcedure, final JSONObject json, final boolean isRecordResultset){
-		new DBLink(CurrentThreadContext.getDatabaseInstance()).doExecute(new IExecute() {
+		new DBLink(CurrentThreadContext.getDatabaseInstance(), false).doExecute(new IExecute() {
 			private int inSqlResultsetIndex = 0;
 			
 			public void execute(Connection connection) throws SQLException {
@@ -272,7 +273,7 @@ public class ProcedureUtil {
 					}
 					
 					if(actualInValue != null){
-						IJson ijson = (IJson) actualInValue;
+						IJson ijson = IJsonUtil.getIJson(actualInValue);
 						int arrLength = ijson.size();
 						if(arrLength > 0){
 							int objLength = inSqlResultSetMetadataInfos.size();
