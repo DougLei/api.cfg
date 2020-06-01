@@ -245,6 +245,16 @@ public class RequestBody implements Serializable{
 	public String getRequestURL(){
 		return HttpHelperUtil.getRequestURL(request);
 	}
+	public String getScheme() {
+		return HttpHelperUtil.getScheme(request);
+	}
+	public int getServerPort() {
+		return HttpHelperUtil.getServerPort(request);
+	}
+	public String getContextPath() {
+		return HttpHelperUtil.getContextPath(request);
+	}
+	
 	public Map<String, String> getRequestBuiltinParams() {
 		return requestBuiltinParams;
 	}
