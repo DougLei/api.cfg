@@ -24,7 +24,6 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		return "【Get-BusiModelResource】SingleResourceProcesser";
 	}
 
-	private String requestURL;
 	private Map<String, String> headers = new HashMap<String, String>(1);
 	private int totalSize = 0;
 	private Map<String, Object> generalUrlParams;// 记录通用的url参数
@@ -42,8 +41,10 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		try {
 			for(int i=0;i<size;i++){
 				Map<String, Object> params = paramsHandler(busiModelResRelationsList.get(i).getRefResourceKeyName());
-				resultJson = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestURL + "/common/" + busiModelResRelationsList.get(i).getRefResourceName(), params, headers));
-				if(resultJson.getBooleanValue("isSuccess")){
+				resultJson = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestBody.getScheme() + "://localhost:" + requestBody.getServerPort() + requestBody.getContextPath() + "/common/" + busiModelResRelationsList.get(i).getRefResourceName(), params, headers));
+				if(resultJson == null){
+					json.put(busiModelResRelationsList.get(i).getRefResourceKeyName(), "网络连接超时, 未获取到数据");
+				}else if(resultJson.getBooleanValue("isSuccess")){
 					json.put(busiModelResRelationsList.get(i).getRefResourceKeyName(), resultJson.remove("data"));
 				}else{
 					setResponseBody(new ResponseBody(exceptionDesc + resultJson.getString("message"), null));
@@ -102,7 +103,6 @@ public final class SingleResourceProcesser extends RequestProcesser {
 	}
 
 	private void init(){
-		requestURL = requestBody.getRequestURL();
 		headers.put("_token", requestBody.getToken());
 		
 		prepareParams();

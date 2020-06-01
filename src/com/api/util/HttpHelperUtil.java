@@ -67,4 +67,17 @@ public class HttpHelperUtil {
 		}
 		return SysContext.WEB_SYSTEM_ROOT_WEBSITE;
 	}
+	
+	public static String getScheme(HttpServletRequest request){
+		return request.getScheme();
+	}
+	public static String getServerName(HttpServletRequest request){
+		return request.getServerName();
+	}
+	public static int getServerPort(HttpServletRequest request){
+		return request.getServerPort();
+	}
+	public static String getContextPath(HttpServletRequest request){
+		return request.getContextPath();
+	}
 }

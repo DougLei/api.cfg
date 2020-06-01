@@ -45,14 +45,14 @@ public class SqlResourceVerifier extends AbstractResourceVerifier{
 	
 	public void clearValidData(){
 		super.clearValidData();
-		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
-			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
-				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
-					inSqlResultSetMetadataInfos.clear();
-				}
-			}
-			inSqlResultSetMetadataInfoList.clear();
-		}
+//		if(inSqlResultSetMetadataInfoList != null && inSqlResultSetMetadataInfoList.size() > 0){
+//			for (List<ResourceMetadataInfo> inSqlResultSetMetadataInfos : inSqlResultSetMetadataInfoList) {
+//				if(inSqlResultSetMetadataInfos != null && inSqlResultSetMetadataInfos.size() > 0){
+//					inSqlResultSetMetadataInfos.clear();
+//				}
+//			}
+//			inSqlResultSetMetadataInfoList.clear();
+//		}
 		
 		if(!SqlStatementTypeConstants.SELECT.equals(sql.getType())){// select语句不清空的原因是，后续还要使用元数据信息中的数据类型，对值进行数据类型转换操作
 			if(outSqlResultSetMetadataInfos != null && outSqlResultSetMetadataInfos.size() > 0){
