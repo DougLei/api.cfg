@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.douglei.mini.license.client.AutoLicenseValidator;
+
 /**
  * 系统上下文
  * <p>后期考虑加入到redis之类的缓存中，目前还不确定，先放到这里</p>
@@ -27,6 +29,11 @@ public class SysContext implements Serializable{
 	 * 存储系统的参数配置
 	 */
 	private transient static final Map<String, String> SYSTEM_PROPERTIES = new HashMap<String, String>();
+	
+	/**
+	 * 收取亲文件验证器
+	 */
+	public static AutoLicenseValidator licenseValidator; 
 	
 	/**
 	 * 获取系统的配置信息集合
@@ -53,5 +60,13 @@ public class SysContext implements Serializable{
 	 */
 	public static void setSystemConfig(String key, String value){
 		SYSTEM_PROPERTIES.put(key, value);
+	}
+
+	/**
+	 * 获取授权文件验证器
+	 * @return
+	 */
+	public static AutoLicenseValidator getLicenseValidator() {
+		return licenseValidator;
 	}
 }

@@ -26,7 +26,7 @@ public class QuartzUtil implements Serializable{
 	/**
 	 * 调度器工厂对象
 	 */
-	private transient static final SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+	public static final SchedulerFactory schedulerFactory = new StdSchedulerFactory();
 	
 	/**
 	 * 存储调度器集合

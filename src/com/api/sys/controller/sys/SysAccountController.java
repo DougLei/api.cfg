@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.shiro.codec.Base64;
-
 import com.alibaba.fastjson.JSONObject;
 import com.api.annotation.Controller;
 import com.api.annotation.RequestMapping;
@@ -41,7 +39,8 @@ public class SysAccountController extends AController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.LOGIN);// 标识为登陆日志
 		
 		SysAccount account = JsonUtil.toJavaObject(ijson.get(0), SysAccount.class);
-		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginByUsernameAndPwd(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), Base64.decodeToString(account.getLoginPwd()));
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginByUsernameAndPwd(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), account.getLoginPwd());
+//		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginByUsernameAndPwd(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), account.getLoginName(), Base64.decodeToString(account.getLoginPwd()));
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();
 		}else{
