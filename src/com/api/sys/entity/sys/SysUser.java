@@ -121,6 +121,11 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	 */
 	private String backup02;
 	
+	/**
+	 * 证书
+	 */
+	private String cert;
+	
 	// ---------------------------------------------------------------------------
 
 	/**
@@ -285,10 +290,16 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	public void setBackup02(String backup02) {
 		this.backup02 = backup02;
 	}
+	public String getCert() {
+		return cert;
+	}
+	public void setCert(String cert) {
+		this.cert = cert;
+	}
 	
 	@JSONField(serialize = false)
 	public List<CfgColumn> getColumnList() {
-		List<CfgColumn> columns = new ArrayList<CfgColumn>(23+7);
+		List<CfgColumn> columns = new ArrayList<CfgColumn>(24+7);
 		
 		CfgColumn nikeNameColumn = new CfgColumn("nike_name", DataTypeConstants.STRING, 50);
 		nikeNameColumn.setName("昵称");
@@ -409,6 +420,11 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 		backup02Column.setName("备用字段02");
 		backup02Column.setComments("备用字段02");
 		columns.add(backup02Column);
+
+		CfgColumn certColumn = new CfgColumn("cert", DataTypeConstants.STRING, 3000);
+		certColumn.setName("CA证书");
+		certColumn.setComments("CA证书");
+		columns.add(certColumn);
 		
 		return columns;
 	}

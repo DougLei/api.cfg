@@ -188,6 +188,7 @@ public class CodeResourceMapping {
 		
 		// 账户卡操作
 		put("/login2/post", SysAccountCardController.class, "loginById");
+		put("/loginByCert/post", SysAccountCardController.class, "loginByCert");
 		put("/card/login/post", SysAccountCardController.class, "login");
 		put("/card/user/relation/add/post", SysAccountCardController.class, "addCardAndUserRelation");
 		put("/card/user/relation/cancel/post", SysAccountCardController.class, "cancelCardAndUserRelation");

@@ -25,6 +25,20 @@ import com.api.util.prop.code.rule.PropCodeRuleUtil;
 public class SysAccountCardService extends AService{
 	
 	/**
+	 * 证书登陆
+	 * @param string
+	 * @param cert
+	 * @return
+	 */
+	public SysAccountOnlineStatus loginByCert(String clientIp, String cert) {
+		Object loginName =  HibernateUtil.executeUniqueQueryByHqlArr("select loginName from SysAccount where Id in( select Id from SysUser where cert=?)", cert);
+		if(loginName == null){
+			return new SysAccountOnlineStatus("CA登陆时，获取的用户信息为空，请确认当前CA正确");
+		}
+		return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginByCard(clientIp, loginName.toString());
+	}
+	
+	/**
 	 * 刷卡登陆
 	 * @param string
 	 * @param accountCard
