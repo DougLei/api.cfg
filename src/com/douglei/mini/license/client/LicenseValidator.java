@@ -20,6 +20,8 @@ class LicenseValidator {
 	protected ValidationResult verifyFirst() {
 		ValidationResult result = licenseFile.signature.verify(publicKey, licenseFile.getContentDigest());
 		if(result == null)
+			result = licenseFile.start.verify();
+		if(result == null)
 			result = verify();
 		return result;
 	}

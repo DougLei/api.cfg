@@ -8,12 +8,14 @@ import com.douglei.mini.license.client.property.ExpiredProperty;
 import com.douglei.mini.license.client.property.IpProperty;
 import com.douglei.mini.license.client.property.MacProperty;
 import com.douglei.mini.license.client.property.SignatureProperty;
+import com.douglei.mini.license.client.property.StartProperty;
 
 /**
  * 授权文件实例
  * @author DougLei
  */
 public class LicenseFile {
+	protected StartProperty start;
 	protected ExpiredProperty expired;
 	protected IpProperty ip;
 	protected MacProperty mac ;
@@ -25,6 +27,7 @@ public class LicenseFile {
 	 */
 	protected byte[] getContentDigest() {
 		StringBuilder content = new StringBuilder(500);
+		content.append(start.getContent());
 		content.append(expired.getContent());
 		if(ip != null)
 			content.append(ip.getContent());
@@ -46,9 +49,12 @@ public class LicenseFile {
 	 * @throws ParseException 
 	 */
 	void setContent(String content) throws ParseException {
-		int equalSignIndex = getEqualSignIndex(content);
+		int equalSignIndex = content.indexOf("=");
 		String value = content.substring(equalSignIndex+1);
 		switch(content.substring(0, equalSignIndex)) {
+			case "start":
+				start = new StartProperty(value);
+				break;
 			case "expired":
 				expired = new ExpiredProperty(value);
 				break;
@@ -63,14 +69,5 @@ public class LicenseFile {
 				break;
 		}
 		
-	}
-	// 获取等号的下标, 用以拆分key和value
-	private int getEqualSignIndex(String content) {
-		for(int i=0;i<content.length();i++) {
-			if(content.charAt(i) == '=') {
-				return i;
-			}
-		}
-		return -1;
 	}
 }
