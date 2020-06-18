@@ -436,13 +436,16 @@ public class CfgSql extends ACfgResource implements IEntityPropAnalysis, IEntity
 					HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete CfgSqlParameter where sqlScriptId = ?", id);// 删除之前的参数
 				}else{
 					CfgSqlParameter sp = null;
+					CfgSqlParameter osp = null;
 					for (int i = 0; i < sqlParams.size(); i++) {
 						sp = sqlParams.get(i);
 						for (int j = 0; j < oldSqlParams.size(); j++) {
 							if(sp.getName().equals(oldSqlParams.get(j).getName())){
-								sp = oldSqlParams.remove(j--);
-								sp.setOrderCode(sqlParams.remove(i--).getOrderCode());
-								HibernateUtil.updateEntityObject(sp, null);
+								osp = oldSqlParams.remove(j--);
+								osp.setOrderCode(sp.getOrderCode());
+								osp.setInOut(sp.getInOut());
+								sqlParams.remove(i--);
+								HibernateUtil.updateEntityObject(osp, null);
 								break;
 							}
 						}
