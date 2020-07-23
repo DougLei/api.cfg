@@ -340,7 +340,7 @@ public class SysUserService extends AService{
 			}
 			
 			// 可能修改角色
-			long count = (long) HibernateUtil.executeUniqueQueryBySqlArr("select count(1) from sys_user_role_links where left_id=?", userId);
+			int count = (Integer) HibernateUtil.executeUniqueQueryBySqlArr("select count(1) from sys_user_role_links where left_id=?", userId);
 			if(count > 0){ // 之前有角色
 				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserRoleLinks where leftId = ?", userId); // 先删除之前的角色
 			}
@@ -349,18 +349,6 @@ public class SysUserService extends AService{
 				String[] roleIds = user.getRoleId().split(",");
 				for (String roleId : roleIds) {
 					HibernateUtil.saveObject(sysUserRoleLinks, ResourceHandlerUtil.getDataLinksObject(userId, roleId, index++, null, null), null);
-				}
-			}
-			
-			
-			if(!oldUser.getRoleId().equals(user.getRoleId())){
-				if(!oldUser.getRoleId().equals("NONE")){
-					HibernateUtil.deleteDataLinks(sysUserRoleLinks, userId, oldUser.getRoleId());
-				}
-				if(!user.getRoleId().equals("NONE")){
-					JSONObject urLink = ResourceHandlerUtil.getDataLinksObject(userId, user.getRoleId(), 1, null, null);
-					urLink.put("isMain", "1");
-					HibernateUtil.saveObject(sysUserRoleLinks, urLink, null);
 				}
 			}
 			return userJsonObject;
