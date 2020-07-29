@@ -140,6 +140,12 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	@JSONField(serialize = false)
 	private int isSyncLoginName;
 	
+	@JSONField(serialize = false)
+	private String stationname; // 16厂需要的字段, 岗位资质
+	@JSONField(serialize = false)
+	private Date stationdate; // 16厂需要的字段, 岗位资质有效期
+	
+	
 	public String getNikeName() {
 		return nikeName;
 	}
@@ -295,6 +301,18 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	}
 	public void setCert(String cert) {
 		this.cert = cert;
+	}
+	public String getStationname() {
+		return stationname;
+	}
+	public void setStationname(String stationname) {
+		this.stationname = stationname;
+	}
+	public Date getStationdate() {
+		return stationdate;
+	}
+	public void setStationdate(Date stationdate) {
+		this.stationdate = stationdate;
 	}
 	
 	@JSONField(serialize = false)

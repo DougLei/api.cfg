@@ -17,6 +17,7 @@ import com.api.util.CryptographyUtil;
 import com.api.util.ResourceHandlerUtil;
 import com.api.util.StrUtils;
 import com.api.util.hibernate.HibernateUtil;
+import com.douglei.tools.utils.IdentityUtil;
 
 /**
  * 人员信息表Service
@@ -265,6 +266,12 @@ public class SysUserService extends AService{
 				for (String roleId : roleIds) {
 					HibernateUtil.saveObject(sysUserRoleLinks, ResourceHandlerUtil.getDataLinksObject(userId, roleId, index++, null, null), null);
 				}
+				user.setRoleId(null);
+			}
+			
+			// 保存资质, 16厂需求
+			if(StrUtils.notEmpty(user.getStationname()) && user.getStationdate() != null){
+				HibernateUtil.executeUpdateBySqlArr("插入资质(16厂需求)", "insert into MDM_PERSONALEXTEND(ID,PERSONALID,STATIONNAME,STATIONDATE) values(?,?,?,?)", IdentityUtil.get32UUID(), userId, user.getStationname(), user.getStationdate());
 			}
 			
 			user.setId(userId);
@@ -306,8 +313,11 @@ public class SysUserService extends AService{
 				BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).updateAccountCardStatus(new SysAccountCard(user.getId(), user.getUserStatus()));
 			}
 			
-			JSONObject userJsonObject = HibernateUtil.updateEntityObject(user, null);
+			
 			String userId = oldUser.getId();
+			String roleId = user.getRoleId();
+			user.setRoleId(null);
+			JSONObject userJsonObject = HibernateUtil.updateEntityObject(user, null);
 			
 			// 可能修改部门
 			if(StrUtils.isEmpty(user.getDeptId())){
@@ -344,13 +354,22 @@ public class SysUserService extends AService{
 			if(count > 0){ // 之前有角色
 				HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserRoleLinks where leftId = ?", userId); // 先删除之前的角色
 			}
-			if(StrUtils.notEmpty(user.getRoleId())){ // 这次有角色, 则重新添加角色
+			if(StrUtils.notEmpty(roleId)){ // 这次有角色, 则重新添加角色
 				int index = 1;
-				String[] roleIds = user.getRoleId().split(",");
-				for (String roleId : roleIds) {
-					HibernateUtil.saveObject(sysUserRoleLinks, ResourceHandlerUtil.getDataLinksObject(userId, roleId, index++, null, null), null);
+				String[] roleIds = roleId.split(",");
+				for (String roleId_ : roleIds) {
+					HibernateUtil.saveObject(sysUserRoleLinks, ResourceHandlerUtil.getDataLinksObject(userId, roleId_, index++, null, null), null);
 				}
 			}
+			
+			
+			// 修改资质, 16厂需求
+			if(StrUtils.notEmpty(user.getStationname()) && user.getStationdate() != null){
+				HibernateUtil.executeUpdateBySqlArr("删除资质(16厂需求)", "delete MDM_PERSONALEXTEND where PERSONALID=?", userId);
+				HibernateUtil.executeUpdateBySqlArr("插入资质(16厂需求)", "insert into MDM_PERSONALEXTEND(ID,PERSONALID,STATIONNAME,STATIONDATE) values(?,?,?,?)", IdentityUtil.get32UUID(), userId, user.getStationname(), user.getStationdate());
+			}
+			
+			
 			return userJsonObject;
 		}
 		return result;

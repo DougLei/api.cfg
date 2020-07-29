@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.api.sys.builtin.data.BuiltinParameterKeys;
 import com.api.sys.entity.cfg.CfgBusiModelResRelations;
@@ -38,18 +39,28 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		int size = busiModelResRelationsList.size();
 		JSONObject json = new JSONObject(size);
 		JSONObject resultJson = null;
+		CfgBusiModelResRelations relations;
+		JSONArray result = null;
+		Map<String, Object> params;
 		try {
 			for(int i=0;i<size;i++){
-				Map<String, Object> params = paramsHandler(busiModelResRelationsList.get(i).getRefResourceKeyName());
-				resultJson = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestBody.getScheme() + "://localhost:" + requestBody.getServerPort() + requestBody.getContextPath() + "/common/" + busiModelResRelationsList.get(i).getRefResourceName(), params, headers));
+				relations = busiModelResRelationsList.get(i);
+				params = paramsHandler(relations.getRefResourceKeyName());
+				resultJson = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestBody.getScheme() + "://localhost:" + requestBody.getServerPort() + requestBody.getContextPath() + "/common/" + relations.getRefResourceName(), params, headers));
 				if(resultJson == null){
-					json.put(busiModelResRelationsList.get(i).getRefResourceKeyName(), "网络连接超时, 未获取到数据");
+					json.put(relations.getRefResourceKeyName(), "网络连接超时, 未获取到数据");
 				}else if(resultJson.getBooleanValue("isSuccess")){
-					json.put(busiModelResRelationsList.get(i).getRefResourceKeyName(), resultJson.remove("data"));
+					result =  (JSONArray) resultJson.remove("data");
+					json.put(relations.getRefResourceKeyName(), result);
 				}else{
 					setResponseBody(new ResponseBody(exceptionDesc + resultJson.getString("message"), null));
 					return false;
 				}
+				
+				if(!recursiveQuery(relations.getIdPropName(), result, relations.getSubBusiModelResRelationsList())){
+					return false;
+				}
+				result = null;
 			}
 			setResponseBody(new ResponseBody(null, json));
 		} catch (Exception e) {
@@ -59,6 +70,42 @@ public final class SingleResourceProcesser extends RequestProcesser {
 		return true;
 	}
 	
+	
+	private boolean recursiveQuery(String idPropName, JSONArray parentResult, List<CfgBusiModelResRelations> subBusiModelResRelationsList) {
+		if(parentResult != null && parentResult.size() > 0 && subBusiModelResRelationsList != null && subBusiModelResRelationsList.size() > 0){
+			String pid;
+			JSONObject parentJson;
+			JSONArray result = null;
+			Map<String, Object> params;
+			JSONObject resultJson = null;
+			for(int i=0;i<parentResult.size();i++){
+				parentJson = parentResult.getJSONObject(i);
+				pid = parentJson.getString(idPropName);
+				for (CfgBusiModelResRelations sub : subBusiModelResRelationsList) {
+					params = paramsHandler(sub.getRefResourceKeyName());
+					params.put(sub.getRefParentResourcePropName(true), pid);
+					resultJson = JsonUtil.parseJsonObject(HttpClientUtil.doGetBasic(requestBody.getScheme() + "://localhost:" + requestBody.getServerPort() + requestBody.getContextPath() + "/common/" + sub.getRefResourceName(), params, headers));
+					
+					if(resultJson == null){
+						parentJson.put(sub.getRefResourceKeyName(), "网络连接超时, 未获取到数据");
+					}else if(resultJson.getBooleanValue("isSuccess")){
+						result =  (JSONArray) resultJson.remove("data");
+						parentJson.put(sub.getRefResourceKeyName(), result);
+					}else{
+						setResponseBody(new ResponseBody(exceptionDesc + resultJson.getString("message"), null));
+						return false;
+					}
+					
+					if(!recursiveQuery(sub.getIdPropName(), result, sub.getSubBusiModelResRelationsList())){
+						return false;
+					}
+					result = null;
+				}
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * 处理参数
 	 * @param resourceKeyName
