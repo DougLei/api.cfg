@@ -123,7 +123,7 @@ public class SysUserService extends AService{
 	 */
 	public Object resetPassword(String userId) {
 		if(!accountIsExists(userId)){
-			return "该用户不存在账户信息，无法修改密码，或先创建关联的账户信息";
+			return "该用户不存在账户信息，无法修改密码，请先创建关联的账户信息";
 		}
 		SysAccount account = getObjectById(userId, SysAccount.class);
 		String defaultPassword = CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey());
@@ -143,7 +143,7 @@ public class SysUserService extends AService{
 		String workNo = user.getWorkNo();
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where workNo=? and customerId=?", workNo, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where workNo=? and customerId=? and isDelete=0", workNo, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在工号为["+workNo+"]的用户";
 		}
@@ -170,7 +170,7 @@ public class SysUserService extends AService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where email=? and customerId=?", email, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where email=? and customerId=? and isDelete=0", email, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在邮箱为["+email+"]的用户";
 		}
@@ -197,7 +197,7 @@ public class SysUserService extends AService{
 		}
 		String currentCustomerId = CurrentThreadContext.getCurrentAccountOnlineStatus().getCustomerId();
 		
-		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where tel=? and customerId=?", tel, currentCustomerId);
+		long count = (long) HibernateUtil.executeUniqueQueryByHqlArr("select count("+ResourcePropNameConstants.ID+") from SysUser where tel=? and customerId=? and isDelete=0", tel, currentCustomerId);
 		if(count > 0){
 			return "系统已经存在手机号为["+tel+"]的用户";
 		}
@@ -271,7 +271,10 @@ public class SysUserService extends AService{
 			
 			// 保存资质, 16厂需求
 			if(StrUtils.notEmpty(user.getStationname()) && user.getStationdate() != null){
-				HibernateUtil.executeUpdateBySqlArr("插入资质(16厂需求)", "insert into MDM_PERSONALEXTEND(ID,PERSONALID,STATIONNAME,STATIONDATE) values(?,?,?,?)", IdentityUtil.get32UUID(), userId, user.getStationname(), user.getStationdate());
+				String[] stationnames = user.getStationname().split(",");
+				for (String sn : stationnames) {
+					HibernateUtil.executeUpdateBySqlArr("插入资质(16厂需求)", "insert into MDM_PERSONALEXTEND(ID,PERSONALID,STATIONNAME,STATIONDATE) values(?,?,?,?)", IdentityUtil.get32UUID(), userId, sn, user.getStationdate());
+				}
 			}
 			
 			user.setId(userId);
@@ -312,7 +315,6 @@ public class SysUserService extends AService{
 			if(user.getUserStatus() != oldUser.getUserStatus()){
 				BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).updateAccountCardStatus(new SysAccountCard(user.getId(), user.getUserStatus()));
 			}
-			
 			
 			String userId = oldUser.getId();
 			String roleId = user.getRoleId();
@@ -364,11 +366,13 @@ public class SysUserService extends AService{
 			
 			
 			// 修改资质, 16厂需求
+			HibernateUtil.executeUpdateBySqlArr("删除资质(16厂需求)", "delete MDM_PERSONALEXTEND where PERSONALID=?", userId); // 先删除资质
 			if(StrUtils.notEmpty(user.getStationname()) && user.getStationdate() != null){
-				HibernateUtil.executeUpdateBySqlArr("删除资质(16厂需求)", "delete MDM_PERSONALEXTEND where PERSONALID=?", userId);
-				HibernateUtil.executeUpdateBySqlArr("插入资质(16厂需求)", "insert into MDM_PERSONALEXTEND(ID,PERSONALID,STATIONNAME,STATIONDATE) values(?,?,?,?)", IdentityUtil.get32UUID(), userId, user.getStationname(), user.getStationdate());
+				String[] stationnames = user.getStationname().split(",");
+				for (String sn : stationnames) {
+					HibernateUtil.executeUpdateBySqlArr("插入资质(16厂需求)", "insert into MDM_PERSONALEXTEND(ID,PERSONALID,STATIONNAME,STATIONDATE) values(?,?,?,?)", IdentityUtil.get32UUID(), userId, sn, user.getStationdate());
+				}
 			}
-			
 			
 			return userJsonObject;
 		}
@@ -482,7 +486,7 @@ public class SysUserService extends AService{
 			return "不能对内置用户["+ba+"]进行删除操作";
 		}
 		
-		SysUser user = getObjectById(userId, SysUser.class);
+//		SysUser user = getObjectById(userId, SysUser.class);
 		// 删除用户
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysUser set isDelete=1, lastUpdateDate=? where "+ResourcePropNameConstants.ID+" = ?", new Date(), userId);
 		
@@ -491,7 +495,7 @@ public class SysUserService extends AService{
 			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteAccount(userId);
 		}
 		
-		commonDeleteOper(user, userId);
+//		commonDeleteOper(user, userId);
 		return null;
 	}
 	

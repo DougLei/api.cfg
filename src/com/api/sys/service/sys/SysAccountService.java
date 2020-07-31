@@ -546,7 +546,7 @@ public class SysAccountService extends AService{
 			return "不能对内置账户["+ba+"]进行删除操作";
 		}
 		
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set isDelete=1, lastUpdateDate=? where " + ResourcePropNameConstants.ID+"=? and customerId=?", new Date(), accountId, CurrentThreadContext.getCustomerId());
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "delete SysAccount where " + ResourcePropNameConstants.ID+"=? and customerId=?", accountId, CurrentThreadContext.getCustomerId());
 		BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).deleteAccountCard(accountId);
 		deleteTokenInfoByAccountId(accountId);
 		return null;

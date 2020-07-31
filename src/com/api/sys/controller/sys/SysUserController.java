@@ -15,7 +15,6 @@ import com.api.sys.builtin.data.BuiltinResourceInstance;
 import com.api.sys.controller.AController;
 import com.api.sys.entity.sys.SysUser;
 import com.api.sys.service.sys.SysUserService;
-import com.api.thread.current.CurrentThreadContext;
 import com.api.util.StrUtils;
 
 /**
@@ -101,9 +100,9 @@ public class SysUserController extends AController{
 	 */
 	@RequestMapping
 	public Object physicalDelete(HttpServletRequest request, IJson ijson){
-		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isUserAdministrator()){
-			return "只有用户管理账户，才能进行物理删除用户的操作";
-		}
+//		if(!CurrentThreadContext.getCurrentAccountOnlineStatus().isUserAdministrator()){
+//			return "只有用户管理账户，才能进行物理删除用户的操作";
+//		}
 		String userIds = request.getParameter(BuiltinParameterKeys._IDS);
 		if(StrUtils.isEmpty(userIds)){
 			return "要删除的用户id不能为空";

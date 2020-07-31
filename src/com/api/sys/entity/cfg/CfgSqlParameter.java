@@ -148,6 +148,7 @@ public class CfgSqlParameter extends BasicEntity implements IEntity, IEntityProp
 	 * @return
 	 */
 	private String turnDbDataTypeToCodeDataType(String dbDataType) {
+		dbDataType = dbDataType.trim();
 		if(OracleDataTypeConstants.VARCHAR2.equals(dbDataType)){
 			return DataTypeConstants.STRING;
 		}else if(OracleDataTypeConstants.CHAR.equals(dbDataType)){
