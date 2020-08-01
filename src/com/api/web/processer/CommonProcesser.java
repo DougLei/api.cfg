@@ -71,7 +71,8 @@ public abstract class CommonProcesser {
 	 * @param dataList
 	 * @param pageResultEntity
 	 */
-	protected final void installResponseBodyForQueryDataList(String message, List<Map<String, Object>> dataList, PageResultEntity pageResultEntity){
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected final void installResponseBodyForQueryDataList(String message, List dataList, PageResultEntity pageResultEntity){
 		Object data = dataList;
 		if(pageResultEntity != null){
 			// 分页查询，要先将结果集存储到pageResultEntity中，再把pageResultEntity存储到responseBody中
