@@ -58,7 +58,7 @@ public class VarifyReqValidFilter extends AbstractFilter{
 			return "请先登录";
 		}
 		
-		SysAccountOnlineStatusService accountOnlineStatusService = new SysAccountOnlineStatusService();
+		SysAccountOnlineStatusService accountOnlineStatusService = BuiltinResourceInstance.getInstance("SysAccountOnlineStatusService", SysAccountOnlineStatusService.class);
 		SysAccountOnlineStatus onlineStatus = accountOnlineStatusService.validAccountOfOnLineStatus(request, token);
 		if(onlineStatus.getMessage() != null){
 			return onlineStatus.getMessage();

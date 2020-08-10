@@ -73,6 +73,15 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 	 */
 	private Integer isDelete;
 	
+	/**
+	 * 密码有效期, null值或小于1的值标识没有限制
+	 */
+	private Integer pwdExpired;
+	/**
+	 * 最后一次修改密码的时间
+	 */
+	private Date lastUpdatePwdDate;
+	
 	//-------------------------------------------------------------------------
 	
 	/**
@@ -158,6 +167,18 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 	public void setIsDelete(Integer isDelete) {
 		this.isDelete = isDelete;
 	}
+	public Integer getPwdExpired() {
+		return pwdExpired;
+	}
+	public void setPwdExpired(Integer pwdExpired) {
+		this.pwdExpired = pwdExpired;
+	}
+	public Date getLastUpdatePwdDate() {
+		return lastUpdatePwdDate;
+	}
+	public void setLastUpdatePwdDate(Date lastUpdatePwdDate) {
+		this.lastUpdatePwdDate = lastUpdatePwdDate;
+	}
 	
 	public SysAccount(String id) {
 		this.id = id;
@@ -221,6 +242,17 @@ public class SysAccount extends BasicEntity implements IEntity, IEntityPropAnaly
 		isDeleteColumn.setComments("逻辑删除，默认值为0");
 		isDeleteColumn.setDefaultValue("0");
 		columns.add(isDeleteColumn);
+		
+		CfgColumn pwdExpiredColumn = new CfgColumn("pwd_expired", DataTypeConstants.INTEGER, 1);
+		pwdExpiredColumn.setName("密码有效期");
+		pwdExpiredColumn.setComments("null值或小于1的值标识没有限制");
+		pwdExpiredColumn.setDefaultValue("0");
+		columns.add(pwdExpiredColumn);
+		
+		CfgColumn lastUpdatePwdDateColumn = new CfgColumn("last_update_pwd_date", DataTypeConstants.DATE, 0);
+		lastUpdatePwdDateColumn.setName("最后一次修改密码的时间");
+		lastUpdatePwdDateColumn.setComments("最后一次修改密码的时间");
+		columns.add(lastUpdatePwdDateColumn);
 		
 		return columns;
 	}

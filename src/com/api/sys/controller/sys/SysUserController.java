@@ -187,6 +187,30 @@ public class SysUserController extends AController{
 	}
 	
 	/**
+	 * 修改当前用户关联账户的登录密码
+	 * <p>请求方式：PUT</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object updatePasswordSelf(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
+		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updatePasswordSelf(request.getHeader("_token"), jsonObject);
+		return getResultObject(null, OperDataTypeConstants.EDIT);
+	}
+	
+	/**
+	 * 不登录修改用户关联账户的登录密码
+	 * <p>请求方式：PUT</p>
+	 * @return
+	 */
+	@RequestMapping
+	public Object updatePasswordSelfNoLogin(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
+		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updatePasswordSelfNoLogin(jsonObject);
+		return getResultObject(null, OperDataTypeConstants.EDIT);
+	}
+	
+	/**
 	 * 重置用户关联账户的登陆密码
 	 * <p>请求方式：PUT</p>
 	 * @return

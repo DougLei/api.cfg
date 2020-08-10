@@ -177,6 +177,8 @@ public class CodeResourceMapping {
 		put("/user/account/close/post", SysUserController.class, "closeAccount");
 		put("/user/account/reset/put", SysUserController.class, "resetAccount");
 		put("/user/account/pwd/update/put", SysUserController.class, "updatePassword");
+		put("/user/account/pwd/updateSelf/put", SysUserController.class, "updatePasswordSelf");
+		put("/user/account/pwd/updateSelfNoLogin/put", SysUserController.class, "updatePasswordSelfNoLogin");
 		put("/user/account/pwd/reset/put", SysUserController.class, "resetPassword");
 		
 		// 账户操作

@@ -30,7 +30,6 @@ import com.api.util.Log4jUtil;
 import com.api.util.ResourceHandlerUtil;
 import com.api.util.StrUtils;
 import com.api.util.hibernate.HibernateUtil;
-import com.api.util.websocket.pushmessage.PushMessageUtil;
 
 /**
  * 账户表Service
@@ -75,7 +74,7 @@ public class SysAccountService extends AService{
 		if(loingByCardOfPassword.equals(password)){
 			return new SysAccountOnlineStatus("用户名密码登陆时，禁止调用刷卡登陆的密码");
 		}
-		return commonLogin(loginIp, accountName, password);
+		return commonLogin(loginIp, accountName, password, true);
 	}
 	
 	/**
@@ -89,7 +88,7 @@ public class SysAccountService extends AService{
 		if(StrUtils.isEmpty(accountName)){
 			return new SysAccountOnlineStatus("刷卡登陆时，获取账户名为空");
 		}
-		return commonLogin(loginIp, accountName, loingByCardOfPassword);
+		return commonLogin(loginIp, accountName, loingByCardOfPassword, false);
 	}
 	private static final String loingByCardOfPassword = "ad791d1940bd788b0fdada53bad6bc74";
 	
@@ -98,10 +97,11 @@ public class SysAccountService extends AService{
 	 * @param loginIp
 	 * @param accountName
 	 * @param password
+	 * @param validatePwdExpired 是否验证密码是否过期
 	 * @return
 	 */
-	private SysAccountOnlineStatus commonLogin(String loginIp, String accountName, String password){
-		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnlineStatus(loginIp, accountName, password);
+	private SysAccountOnlineStatus commonLogin(String loginIp, String accountName, String password, boolean validatePwdExpired){
+		SysAccountOnlineStatus accountOnlineStatus = getAccountOfOnlineStatus(loginIp, accountName, password, validatePwdExpired);
 		accountOnlineStatus.setIsDoLogin(true);
 		CurrentThreadContext.setCurrentAccountOnlineStatus(accountOnlineStatus);// 记录当前账户在线对象到当前线程中
 		
@@ -123,14 +123,14 @@ public class SysAccountService extends AService{
 		}
 	}
 
-
 	/**
 	 * 获取指定账户的在线状态对象信息
 	 * @param accountName
 	 * @param password
+	 * @param validatePwdExpired 是否验证密码是否过期
 	 * @return
 	 */
-	private SysAccountOnlineStatus getAccountOfOnlineStatus(String loginIp, String accountName, String password){
+	private SysAccountOnlineStatus getAccountOfOnlineStatus(String loginIp, String accountName, String password, boolean validatePwdExpired){
 		SysAccountOnlineStatus accountOnlineStatus = findAccountOnlineStatus(loginIp, accountName);
 		
 		if(accountOnlineStatus.getTryLoginTimes() > LoginConstants.tryLoginTimes){
@@ -166,6 +166,15 @@ public class SysAccountService extends AService{
 			accountOnlineStatus.setMessage("帐号或密码错误，请重新输入");
 			return accountOnlineStatus;
 		}
+		
+		// 证明密码有期限
+		if(validatePwdExpired && loginAccount.getPwdExpired() != null && loginAccount.getPwdExpired() > 0){
+			if((System.currentTimeMillis() - loginAccount.getLastUpdatePwdDate().getTime())/(1000*60*60*24) > loginAccount.getPwdExpired()){
+				accountOnlineStatus.setMessage("PwdExpired");
+				return accountOnlineStatus;
+			}
+		}
+		
 		accountOnlineStatus.setAccountType(loginAccount.getType());
 		
 		// 处理账户和用户的关系
@@ -398,10 +407,10 @@ public class SysAccountService extends AService{
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
 		
-		// 断开与websocket连接
-		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
-		String result = PushMessageUtil.closeSession(userId);
-		Log4jUtil.info("id为[{}]，名为[{}]的用户，断开与消息推送系统(websocket)的连接结果为:{}", userId, CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName(), result);
+		// TODO 断开与websocket连接, 目前关闭这个操作
+//		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
+//		String result = PushMessageUtil.closeSession(userId);
+//		Log4jUtil.info("id为[{}]，名为[{}]的用户，断开与消息推送系统(websocket)的连接结果为:{}", userId, CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName(), result);
 	}
 	
 	//-----------------------------------------------------------------------------------------------

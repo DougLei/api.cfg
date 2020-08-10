@@ -108,11 +108,108 @@ public class SysUserService extends AService{
 		if(newPassword.equals(account.getLoginPwd())){
 			return "新密码不能和旧密码相同";
 		}
-		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=? where "+ ResourcePropNameConstants.ID +"=?", newPassword, userIdStr);
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=?, lastUpdatePwdDate=? where "+ ResourcePropNameConstants.ID +"=?", newPassword, new Date(), userIdStr);
 		
-		JSONObject json = new JSONObject(3);
+		JSONObject json = new JSONObject(4);
 		json.put(ResourcePropNameConstants.ID, userIdStr);
 		json.put("password", newPassword);
+		return json;
+	}
+	
+	
+	/**
+	 * 修改当前用户关联账户的登录密码
+	 * @param token
+	 * @param jsonObject
+	 * @return
+	 */
+	public Object updatePasswordSelf(String token, JSONObject jsonObject){
+		Object oldPassword = jsonObject.get("oldPassword");
+		if(StrUtils.isEmpty(oldPassword)){
+			return "旧密码不能为空";
+		}
+		Object password = jsonObject.get("password");
+		if(StrUtils.isEmpty(password)){
+			return "新密码不能为空";
+		}
+		Object confirmPassword = jsonObject.get("confirmPassword");
+		if(StrUtils.isEmpty(confirmPassword)){
+			return "确认密码不能为空";
+		}
+		if(!password.equals(confirmPassword)){
+			return "两次新密码不一致";
+		}
+		
+		String userIdStr = BuiltinResourceInstance.getInstance("SysAccountOnlineStatusService", SysAccountOnlineStatusService.class).getAccountIdByTokenForLog(token).toString();
+
+		SysAccount account = getObjectById(userIdStr, SysAccount.class);
+		if(!CryptographyUtil.encodeMd5(oldPassword.toString(), account.getLoginPwdKey()).equals(account.getLoginPwd())){
+			return "旧密码错误";
+		}
+		
+		String newPassword = CryptographyUtil.encodeMd5(password.toString(), account.getLoginPwdKey());
+		if(newPassword.equals(account.getLoginPwd())){
+			return "新密码不能和旧密码相同";
+		}
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=?, lastUpdatePwdDate=? where "+ ResourcePropNameConstants.ID +"=?", newPassword, new Date(), userIdStr);
+		
+		boolean loginOut = jsonObject.getBooleanValue("loginOut");
+		if(loginOut){
+			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginOut(token);
+		}
+		
+		JSONObject json = new JSONObject(4);
+		json.put(ResourcePropNameConstants.ID, userIdStr);
+		json.put("loginOut", loginOut);
+		return json;
+	}
+	
+	
+	/**
+	 * 不登录修改用户关联账户的登录密码
+	 * @param jsonObject
+	 * @return
+	 */
+	public Object updatePasswordSelfNoLogin(JSONObject jsonObject){
+		Object loginName = jsonObject.get("loginName");
+		Object loginPwd = jsonObject.get("loginPwd");
+		if(StrUtils.isEmpty(loginName) || StrUtils.isEmpty(loginPwd)){
+			return "帐号或密码不能为空";
+		}
+		
+		String queryAccountHql = "from SysAccount where (loginName = ? or tel = ? or email = ? or workNo = ?) and customerId = ? and isDelete=0";
+		SysAccount account = HibernateUtil.extendExecuteUniqueQueryByHqlArr(SysAccount.class, queryAccountHql, loginName, loginName, loginName, loginName, CurrentThreadContext.getCustomerId());
+		if(account == null || !account.getLoginPwd().equals(CryptographyUtil.encodeMd5(loginPwd.toString(), account.getLoginPwdKey()))){
+			return "账号或密码错误，请重新输入";
+		}
+		if(account.getStatus() == 2){
+			return "您的账号已被禁用，请联系管理员";
+		}
+		if(account.getValidDate() == null || (account.getValidDate().getTime() - System.currentTimeMillis()) < 0){
+			return "您的账号已过期，请联系管理员";
+		}
+		
+		Object password = jsonObject.get("password");
+		if(StrUtils.isEmpty(password)){
+			return "新密码不能为空";
+		}
+		Object confirmPassword = jsonObject.get("confirmPassword");
+		if(StrUtils.isEmpty(confirmPassword)){
+			return "确认密码不能为空";
+		}
+		if(!password.equals(confirmPassword)){
+			return "两次新密码不一致";
+		}
+		
+		String newPassword = CryptographyUtil.encodeMd5(password.toString(), account.getLoginPwdKey());
+		if(newPassword.equals(account.getLoginPwd())){
+			return "新密码不能和旧密码相同";
+		}
+		
+		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.UPDATE, "update SysAccount set loginPwd=?, lastUpdatePwdDate=? where "+ ResourcePropNameConstants.ID +"=?", newPassword, new Date(), account.getId());
+		
+		JSONObject json = new JSONObject(2);
+		json.put("loginName", loginName);
 		return json;
 	}
 	
@@ -364,9 +461,11 @@ public class SysUserService extends AService{
 				}
 			}
 			
-			
 			// 修改资质, 16厂需求
-			HibernateUtil.executeUpdateBySqlArr("删除资质(16厂需求)", "delete MDM_PERSONALEXTEND where PERSONALID=?", userId); // 先删除资质
+			try {
+				HibernateUtil.executeUpdateBySqlArr("删除资质(16厂需求)", "delete MDM_PERSONALEXTEND where PERSONALID=?", userId); // 先删除资质
+			} catch (Exception e) {
+			}
 			if(StrUtils.notEmpty(user.getStationname()) && user.getStationdate() != null){
 				String[] stationnames = user.getStationname().split(",");
 				for (String sn : stationnames) {
@@ -424,10 +523,11 @@ public class SysUserService extends AService{
 					account.setIsDelete(0);
 					account.setLoginPwd(CryptographyUtil.encodeMd5(SysContext.getSystemConfig("account.default.pwd"), account.getLoginPwdKey()));
 				}
-				
 				if(user.getIsSyncLoginName() == 1){
 					account.setLoginName(user.getWorkNo());
 				}
+				if(user.getPwdExpired() != null)
+					account.setPwdExpired(user.getPwdExpired());
 				account.setTel(user.getTel());
 				account.setEmail(user.getEmail());
 				account.setWorkNo(user.getWorkNo());
@@ -435,6 +535,8 @@ public class SysUserService extends AService{
 			}
 		}else{
 			SysAccount account = new SysAccount();
+			if(user.getPwdExpired() != null)
+				account.setPwdExpired(user.getPwdExpired());
 			account.setId(user.getId());
 			// ----
 			account.setLoginName(user.getWorkNo());
