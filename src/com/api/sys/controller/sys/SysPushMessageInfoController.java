@@ -14,12 +14,8 @@ import com.api.sys.controller.AController;
 import com.api.sys.entity.sys.SysPushMessageInfo;
 import com.api.sys.entity.sys.pushmessage.PushMessage;
 import com.api.sys.service.sys.SysPushMessageInfoService;
-import com.api.thread.current.CurrentThreadContext;
-import com.api.thread.operdb.websocket.pushmessage.PushMessageThread;
-import com.api.thread.pool.ThreadPool;
-import com.api.util.ResourceHandlerUtil;
 import com.api.util.StrUtils;
-import com.api.util.hibernate.HibernateUtil;
+import com.api.util.websocket.pushmessage.PushMessageUtil;
 
 /**
  * 推送消息信息表Controller
@@ -40,15 +36,11 @@ public class SysPushMessageInfoController extends AController{
 		List<PushMessage> pushMessages = getDataInstanceList(ijson, PushMessage.class, false);
 		analysisResourceProp(pushMessages, false);
 		if(analysisResult == null){
-			String batchNum = ResourceHandlerUtil.getBatchNum();
-			// 启动推送消息的线程
-			ThreadPool.execute(new PushMessageThread(HibernateUtil.openNewSession(),
-					HibernateUtil.openNewSession(),
-					pushMessages,
-					CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountId(),
-					CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId(),
-					CurrentThreadContext.getProjectId(),
-					CurrentThreadContext.getCustomerId(), batchNum));
+//			String batchNum = ResourceHandlerUtil.getBatchNum();
+			
+			PushMessage pushMessage = pushMessages.get(0);
+			PushMessageUtil.pushMessage(pushMessage.getToUserId(), pushMessage.getMessage());
+			
 			resultObject = ijson.getJson();
 		}
 		return getResultObject(pushMessages, null);

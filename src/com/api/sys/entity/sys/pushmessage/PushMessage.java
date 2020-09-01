@@ -33,7 +33,7 @@ public class PushMessage implements IEntityPropAnalysis{
 	 * <p>不能为空</p>
 	 * <p>0:直接推送，即直接将消息原原本本推送给客户端</p>
 	 */
-	private Integer sendType;
+	private Integer sendType = 0;
 	/**
 	 * 推送的消息内容
 	 */

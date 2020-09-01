@@ -30,6 +30,7 @@ import com.api.util.Log4jUtil;
 import com.api.util.ResourceHandlerUtil;
 import com.api.util.StrUtils;
 import com.api.util.hibernate.HibernateUtil;
+import com.api.util.websocket.pushmessage.PushMessageUtil;
 
 /**
  * 账户表Service
@@ -407,10 +408,10 @@ public class SysAccountService extends AService{
 		// 移除传递的token和对应项目id的映射缓存
 		TokenRefProjectIdMapping.removeMapping(token);
 		
-		// TODO 断开与websocket连接, 目前关闭这个操作
-//		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
-//		String result = PushMessageUtil.closeSession(userId);
-//		Log4jUtil.info("id为[{}]，名为[{}]的用户，断开与消息推送系统(websocket)的连接结果为:{}", userId, CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName(), result);
+//		 TODO 断开与websocket连接, 目前关闭这个操作
+		String userId = CurrentThreadContext.getCurrentAccountOnlineStatus().getUserId();
+		String result = PushMessageUtil.closeSession(userId);
+		Log4jUtil.info("id为[{}]，名为[{}]的用户，断开与消息推送系统(websocket)的连接结果为:{}", userId, CurrentThreadContext.getCurrentAccountOnlineStatus().getAccountName(), result);
 	}
 	
 	//-----------------------------------------------------------------------------------------------

@@ -28,7 +28,7 @@ public class PushMessageUtil {
 	 */
 	private static final String WEB_PUSH_MESSAGE_ROOT_API;
 	static{
-		WEB_PUSH_MESSAGE_ROOT_API = ResourceHandlerUtil.initConfValue("web.pushmessage.root.api", "http://localhost:8091/api.push.message/common/message");
+		WEB_PUSH_MESSAGE_ROOT_API = ResourceHandlerUtil.initConfValue("web.pushmessage.root.api", "http://localhost:8080/api.push.message/common/message");
 		HEADERS.put("customerToken", CryptographyUtil.encodeMd5(
 				ResourceHandlerUtil.initConfValue("web.pushmessage.api.customer.username", "SmartOne"), 
 				ResourceHandlerUtil.initConfValue("web.pushmessage.api.customer.password", "1QaZ2wSx,.")));
@@ -121,27 +121,27 @@ public class PushMessageUtil {
 	}
 	private static final String batchPushMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch/push";
 	
-	/**
-	 * 批量给用户推送个性消息
-	 * <p>即一个用户一个消息，如果对应不上，则抛出异常</p>
-	 * @param messages
-	 * @param targetUserIds
-	 * @return
-	 */
-	public static Integer[] batchPushIndividualityMessage(String[] targetUserIds, String[] messages){
-		if(targetUserIds == null || targetUserIds.length == 0){
-			throw new NullPointerException("接收推送消息的用户id不能为空");
-		}
-		if(messages == null || messages.length == 0){
-			throw new NullPointerException("推送的消息不能为空");
-		}
-		if(targetUserIds.length != messages.length){
-			throw new IllegalArgumentException("推送个性消息时，接收的用户数量和信息数量不等");
-		}
-		System.out.println(batchPushIndividualityMessageApi);
-		return null;
-	}
-	private static final String batchPushIndividualityMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch_individuality/push";
+//	/**
+//	 * 批量给用户推送个性消息
+//	 * <p>即一个用户一个消息，如果对应不上，则抛出异常</p>
+//	 * @param messages
+//	 * @param targetUserIds
+//	 * @return
+//	 */
+//	public static Integer[] batchPushIndividualityMessage(String[] targetUserIds, String[] messages){
+//		if(targetUserIds == null || targetUserIds.length == 0){
+//			throw new NullPointerException("接收推送消息的用户id不能为空");
+//		}
+//		if(messages == null || messages.length == 0){
+//			throw new NullPointerException("推送的消息不能为空");
+//		}
+//		if(targetUserIds.length != messages.length){
+//			throw new IllegalArgumentException("推送个性消息时，接收的用户数量和信息数量不等");
+//		}
+//		System.out.println(batchPushIndividualityMessageApi);
+//		return null;
+//	}
+//	private static final String batchPushIndividualityMessageApi = WEB_PUSH_MESSAGE_ROOT_API + "/batch_individuality/push";
 	
 	// ---------------------------------------------------------------------------------
 	/**
