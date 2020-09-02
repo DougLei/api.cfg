@@ -11,6 +11,7 @@ import com.api.constants.EncodingConstants;
 import com.api.constants.SysFileConstants;
 import com.api.sys.builtin.data.BuiltinParameterKeys;
 import com.api.sys.builtin.data.BuiltinResourceInstance;
+import com.api.sys.controller.sys.SysFaceController;
 import com.api.sys.entity.sys.SysReqLog;
 import com.api.sys.service.sys.SysFileService;
 import com.api.thread.current.CurrentThreadContext;
@@ -49,6 +50,10 @@ public class FileServlet extends HttpServlet{
 				// 删除
 				else if("delete".equals(method) && "delete".equals(uri[3])){
 					result = BuiltinResourceInstance.getInstance("SysFileService", SysFileService.class).delete(request);
+				}
+				// 删除
+				else if("post".equals(method) && "loginByFace".equals(uri[3])){
+					result = BuiltinResourceInstance.getInstance("SysFaceController", SysFaceController.class).loginByFace(request);
 				}
 				// 暂不支持
 				else{

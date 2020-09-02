@@ -8,20 +8,27 @@ import java.io.File;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.api.cache.FaceEngineContext;
 import com.api.cache.SysContext;
 import com.api.plugins.code.code.resource.PluginCodeResourceMapping;
 import com.api.sys.builtin.data.BuiltinDatabaseData;
 import com.api.sys.code.resource.CodeResourceMapping;
 import com.api.sys.service.tools.InitSystemService;
+import com.api.util.hibernate.HibernateUtil;
 import com.api.web.builtin.method.common.util.querycondfunc.BuiltinQueryCondFuncUtil;
 import com.api.web.processer.ProcesserConfig;
 import com.api.web.servlet.route.RouteBodyAnalysis;
+import com.arcsoft.face.FaceEngine;
 
 /**
  * 初始化系统数据Listener
  * @author DougLei
  */
 public class InitSysDataListener implements ServletContextListener {
+	private static final Logger logger = LoggerFactory.getLogger(InitSysDataListener.class);
 
 	public void contextInitialized(ServletContextEvent sc) {
 		// 获取项目在磁盘的根目录
@@ -47,6 +54,9 @@ public class InitSysDataListener implements ServletContextListener {
 		
 		// 因为gsql第一次加载很慢，所以放到系统启动时，进行初次加载
 		initGSqlParser();
+		
+		// 初始化刷脸登录的引擎
+		initFaceEngine();
 	}
 	
 	/**
@@ -72,6 +82,23 @@ public class InitSysDataListener implements ServletContextListener {
 		}else{
 			throw new IllegalArgumentException("目前系统不支持 ["+dbType+"]类型的数据库sql脚本解析");
 		}
+	}
+	
+	/**
+	 * 初始化刷脸登录的引擎
+	 */
+	private void initFaceEngine() {
+		try {
+			logger.info("先从tomcat的目录上, 加载FaceEngine: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "ddl" + File.separatorChar + "face");
+			FaceEngineContext.setFaceEngine(new FaceEngine(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "ddl" + File.separatorChar + "face"));
+		} catch (Throwable e) {
+			logger.info("这个是eclipse中测试用, 使用project路径加载FaceEngine: D:\\workspace3\\api.cfg\\resources\\dll\\face");
+			FaceEngineContext.setFaceEngine(new FaceEngine("D:\\workspace3\\api.cfg\\resources\\dll\\face"));
+		} finally {
+			HibernateUtil.closeCurrentThreadSession();
+		}
+		FaceEngineContext.similarScore = Float.parseFloat(SysContext.getSystemConfig("face.similar.score"));
+        logger.info("成功加载FaceEngine, 设置的相似度阈值为: {}", FaceEngineContext.similarScore);
 	}
 
 	public void contextDestroyed(ServletContextEvent sc) {

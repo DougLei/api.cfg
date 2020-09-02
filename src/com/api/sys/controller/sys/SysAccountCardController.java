@@ -68,7 +68,7 @@ public class SysAccountCardController extends AController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.LOGIN);// 标识为登陆日志
 		
 		SysAccountCard accountCard = JsonUtil.toJavaObject(ijson.get(0), SysAccountCard.class);
-		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).loginById(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), accountCard);
+		SysAccountOnlineStatus accountOnlineStatus = BuiltinResourceInstance.getInstance("SysAccountCardService", SysAccountCardService.class).loginById(request.getAttribute(BuiltinParameterKeys._CLIENT_IP).toString(), accountCard.getId());
 		
 		if(accountOnlineStatus.getIsError() == 1){
 			resultObject = accountOnlineStatus.getMessage();

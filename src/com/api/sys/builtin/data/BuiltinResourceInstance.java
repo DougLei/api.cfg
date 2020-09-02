@@ -19,6 +19,7 @@ import com.api.sys.controller.cfg.CfgTableController;
 import com.api.sys.controller.sys.SysAccountCardController;
 import com.api.sys.controller.sys.SysAccountController;
 import com.api.sys.controller.sys.SysExcelController;
+import com.api.sys.controller.sys.SysFaceController;
 import com.api.sys.controller.sys.SysPermissionController;
 import com.api.sys.controller.sys.SysPushMessageInfoController;
 import com.api.sys.controller.sys.SysUserController;
@@ -99,7 +100,7 @@ public class BuiltinResourceInstance {
 	/**
 	 * 类实例的map缓存
 	 */
-	private static final Map<String, Object> instanceCache = new HashMap<String, Object>(70); 
+	private static final Map<String, Object> instanceCache = new HashMap<String, Object>(64); 
 	static{
 		instanceCache.put("CfgDatabaseController", new CfgDatabaseController());
 		instanceCache.put("CfgProjectController", new CfgProjectController());
@@ -109,6 +110,7 @@ public class BuiltinResourceInstance {
 		instanceCache.put("CfgSqlController", new CfgSqlController());
 		instanceCache.put("CfgSqlParameterController", new CfgSqlParameterController());
 		instanceCache.put("SysAccountController", new SysAccountController());
+		instanceCache.put("SysFaceController", new SysFaceController());
 		instanceCache.put("SysAccountCardController", new SysAccountCardController());
 		instanceCache.put("SysUserController", new SysUserController());
 		instanceCache.put("SysPermissionController", new SysPermissionController());

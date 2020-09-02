@@ -224,4 +224,15 @@ public class SysUserController extends AController{
 		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).resetPassword(jsonObject.getString(ResourcePropNameConstants.ID));
 		return getResultObject(null, OperDataTypeConstants.EDIT);
 	}
+	
+	/**
+	 * 更新指定用户的面部特征
+	 * <p>请求方式：PUT</p>
+	 * @return
+	 */
+	public Object updateFaceFeature(HttpServletRequest request, IJson ijson){
+		JSONObject jsonObject = getJSONObject(ijson);
+		resultObject = BuiltinResourceInstance.getInstance("SysUserService", SysUserService.class).updateFaceFeature(jsonObject.getString("userId"));
+		return getResultObject(null, OperDataTypeConstants.EDIT);
+	}
 }

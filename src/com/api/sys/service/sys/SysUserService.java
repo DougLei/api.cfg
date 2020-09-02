@@ -1,9 +1,11 @@
 package com.api.sys.service.sys;
 
+import java.io.File;
 import java.util.Date;
 
 import com.alibaba.fastjson.JSONObject;
 import com.api.annotation.Service;
+import com.api.cache.FaceEngineContext;
 import com.api.cache.SysContext;
 import com.api.constants.ResourcePropNameConstants;
 import com.api.constants.SqlStatementTypeConstants;
@@ -597,6 +599,8 @@ public class SysUserService extends AService{
 			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).deleteAccount(userId);
 		}
 		
+		FaceEngineContext.removeFaceFeature(userId);
+		
 //		commonDeleteOper(user, userId);
 		return null;
 	}
@@ -621,6 +625,8 @@ public class SysUserService extends AService{
 			BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).physicalDeleteAccount(userId);
 		}
 		
+		FaceEngineContext.removeFaceFeature(userId);
+		
 		commonDeleteOper(user, userId);
 		return null;
 	}
@@ -643,5 +649,27 @@ public class SysUserService extends AService{
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserRoleLinks where leftId = ?", userId);
 		// 删除所属的用户组
 		HibernateUtil.executeUpdateByHqlArr(SqlStatementTypeConstants.DELETE, "delete SysUserGroupDetail where userId = ?", userId);
+	}
+
+	
+	/**
+	 * 更新指定用户的面部特征
+	 * @param userId
+	 * @return
+	 */
+	public String updateFaceFeature(String userId) {
+		if(StrUtils.isEmpty(userId))
+			return "更新面部特征的userId不能为空";
+		
+		Object path = HibernateUtil.executeUniqueQueryBySqlArr("select path from SYS_FACE_IMAGE where ref_data_id=?", userId);
+		if(path == null){
+			FaceEngineContext.removeFaceFeature(userId);
+		}else{
+			File faceImage = new File(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + ((Object[])path)[0]);
+			if(!faceImage.exists())
+				return ((Object[])path)[0] + "路径下没有面部照片";
+			FaceEngineContext.updateFaceFeature(userId, faceImage);
+		}
+		return null;
 	}
 }

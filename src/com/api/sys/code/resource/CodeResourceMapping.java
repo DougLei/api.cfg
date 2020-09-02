@@ -180,6 +180,7 @@ public class CodeResourceMapping {
 		put("/user/account/pwd/updateSelf/put", SysUserController.class, "updatePasswordSelf");
 		put("/user/account/pwd/updateSelfNoLogin/put", SysUserController.class, "updatePasswordSelfNoLogin");
 		put("/user/account/pwd/reset/put", SysUserController.class, "resetPassword");
+		put("/user/faceFeature/update/put", SysUserController.class, "updateFaceFeature");
 		
 		// 账户操作
 		put("/account/physical_delete/delete", SysAccountController.class, "physicalDelete");
@@ -189,7 +190,6 @@ public class CodeResourceMapping {
 		put("/login_out/post", SysAccountController.class, "loginOut");
 		
 		// 账户卡操作
-		put("/login2/post", SysAccountCardController.class, "loginById");
 		put("/loginByCert/post", SysAccountCardController.class, "loginByCert");
 		put("/card/login/post", SysAccountCardController.class, "login");
 		put("/card/user/relation/add/post", SysAccountCardController.class, "addCardAndUserRelation");

@@ -69,7 +69,6 @@ public class SysFileService extends AService{
 		ServletFileUpload servletUpload = new ServletFileUpload(factory);
 		servletUpload.setHeaderEncoding(EncodingConstants.UTF_8);// 设置头的编码格式
 		
-		
 		List<FileItem> fileList = null;
 		List<String> filePathList = null;// 记录文件在服务器上的路径，如果上传出现错误，要删除已经上传的数据
 		try {

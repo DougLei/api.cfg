@@ -40,12 +40,12 @@ public class SysAccountCardService extends AService{
 	
 	/**
 	 * 刷卡登陆
-	 * @param string
-	 * @param accountCard
+	 * @param clientIp
+	 * @param userId
 	 * @return
 	 */
-	public SysAccountOnlineStatus loginById(String clientIp, SysAccountCard originAccountCard) {
-		SysAccount account = getObjectById(originAccountCard.getId(), SysAccount.class);
+	public SysAccountOnlineStatus loginById(String clientIp, String userId) {
+		SysAccount account = getObjectById(userId, SysAccount.class);
 		return BuiltinResourceInstance.getInstance("SysAccountService", SysAccountService.class).loginByCard(clientIp, account.getLoginName());
 	}
 	
