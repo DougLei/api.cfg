@@ -56,7 +56,11 @@ public class InitSysDataListener implements ServletContextListener {
 		initGSqlParser();
 		
 		// 初始化刷脸登录的引擎
-		initFaceEngine();
+		try {
+			initFaceEngine();
+		} catch (Exception e) {
+			logger.info("");
+		}
 	}
 	
 	/**
@@ -93,7 +97,11 @@ public class InitSysDataListener implements ServletContextListener {
 			FaceEngineContext.setFaceEngine(new FaceEngine(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "ddl" + File.separatorChar + "face"));
 		} catch (Throwable e) {
 			logger.info("这个是eclipse中测试用, 使用project路径加载FaceEngine: D:\\workspace3\\api.cfg\\resources\\dll\\face");
-			FaceEngineContext.setFaceEngine(new FaceEngine("D:\\workspace3\\api.cfg\\resources\\dll\\face"));
+			try {
+				FaceEngineContext.setFaceEngine(new FaceEngine("D:\\workspace3\\api.cfg\\resources\\dll\\face"));
+			} catch (Exception e1) {
+				logger.info("从eclipse中测试用, 使用project路径加载FaceEngine: D:\\workspace3\\api.cfg\\resources\\dll\\face, 仍然出现异常, 所以目前系统不支持使用人脸认证功能");
+			}
 		} finally {
 			HibernateUtil.closeCurrentThreadSession();
 		}
