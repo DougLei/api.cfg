@@ -4,6 +4,8 @@ import gudusoft.gsqlparser.EDbVendor;
 import gudusoft.gsqlparser.TGSqlParser;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -89,10 +91,10 @@ public class InitSysDataListener implements ServletContextListener {
 	 */
 	private void initFaceEngine() {
 		try {
-			logger.info("先从tomcat的目录上, 加载FaceEngine: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "ddl" + File.separatorChar + "face");
-			FaceEngineContext.setFaceEngine(new FaceEngine(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "ddl" + File.separatorChar + "face"));
+			logger.info("先从tomcat的目录上, 加载FaceEngine: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "dll" + File.separatorChar + "face");
+			FaceEngineContext.setFaceEngine(new FaceEngine(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "dll" + File.separatorChar + "face"));
 		} catch (Throwable e) {
-			logger.info("这个是eclipse中测试用, 使用project路径加载FaceEngine: D:\\workspace3\\api.cfg\\resources\\dll\\face");
+			logger.info("从tomcat路径加载FaceEngine出现异常: {}", getExceptionDetailMessage(e));
 			try {
 				FaceEngineContext.setFaceEngine(new FaceEngine("D:\\workspace3\\api.cfg\\resources\\dll\\face"));
 			} catch (Throwable e1) {
@@ -101,10 +103,30 @@ public class InitSysDataListener implements ServletContextListener {
 		} finally {
 			HibernateUtil.closeCurrentThreadSession();
 		}
-		FaceEngineContext.similarScore = Float.parseFloat(SysContext.getSystemConfig("face.similar.score"));
-        logger.info("成功加载FaceEngine, 设置的相似度阈值为: {}", FaceEngineContext.similarScore);
 	}
 
 	public void contextDestroyed(ServletContextEvent sc) {
+	}
+	
+	/**
+	 * 获取异常的详细信息
+	 * <p>错在哪个类，哪一行</p>
+	 * @param t
+	 * @return
+	 */
+	private static String getExceptionDetailMessage(Throwable t){
+		PrintWriter pw = null;
+		try {
+			StringWriter sw = new StringWriter();
+			pw = new PrintWriter(sw);
+			t.printStackTrace(pw);
+			return sw.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			pw.close();
+			pw = null;
+		}
 	}
 }

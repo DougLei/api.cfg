@@ -91,6 +91,9 @@ public class FaceEngineContext {
         		}
 			}
         }
+       
+    	FaceEngineContext.similarScore = Float.parseFloat(SysContext.getSystemConfig("face.similar.score"));
+        logger.info("成功加载FaceEngine, 设置的相似度阈值为: {}", FaceEngineContext.similarScore);
 	}
 	
 	/**
