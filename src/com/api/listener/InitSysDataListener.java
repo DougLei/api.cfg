@@ -114,7 +114,7 @@ public class InitSysDataListener implements ServletContextListener {
 	 * @param t
 	 * @return
 	 */
-	private static String getExceptionDetailMessage(Throwable t){
+	public static String getExceptionDetailMessage(Throwable t){
 		PrintWriter pw = null;
 		try {
 			StringWriter sw = new StringWriter();

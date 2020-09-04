@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.api.listener.InitSysDataListener;
 import com.api.util.hibernate.HibernateUtil;
 import com.arcsoft.face.EngineConfiguration;
 import com.arcsoft.face.FaceEngine;
@@ -39,11 +40,30 @@ public class FaceEngineContext {
 	
 	@SuppressWarnings("unchecked")
 	public static void setFaceEngine(FaceEngine faceEngine) {
+		logger.info("加载FaceEngine成功");
+		
 		FaceEngineContext.faceEngine = faceEngine;
 		
-		int errorCode = FaceEngineContext.faceEngine.activeOnline(SysContext.getSystemConfig("face.app.id"), SysContext.getSystemConfig("face.sdk.key"));
+//		int errorCode = FaceEngineContext.faceEngine.activeOnline(SysContext.getSystemConfig("face.app.id"), SysContext.getSystemConfig("face.sdk.key"));
+		int errorCode;
+		
+		try {
+			logger.info("先从tomcat的目录上, 加载FaceEngine授权文件: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "FaceEngine.dat");
+			errorCode = faceEngine.activeOffline(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "FaceEngine.dat");
+		} catch (Throwable e) {
+			logger.info("从tomcat路径加载FaceEngine授权文件出现异常: {}", InitSysDataListener.getExceptionDetailMessage(e));
+			try {
+				errorCode = faceEngine.activeOffline("D:\\workspace3\\api.cfg\\resources\\FaceEngine.dat");
+			} catch (Throwable e1) {
+				logger.info("从eclipse中测试用, 使用project路径加载FaceEngine授权: D:\\workspace3\\api.cfg\\resources\\FaceEngine.dat, 仍然出现异常, 所以目前系统不支持使用人脸认证功能");
+				return;
+			}
+		}
+		
         if(errorCode != ErrorInfo.MOK.getValue() && errorCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED.getValue())
         	throw new RuntimeException("刷脸登录用FaceEngine激活失败, 请联系开发人员, errorCode="+errorCode);
+        
+        logger.info("加载FaceEngine授权文件成功");
         
         //引擎配置
         EngineConfiguration engineConfiguration = new EngineConfiguration();
