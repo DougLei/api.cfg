@@ -147,6 +147,9 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	private Integer pwdExpired;
 	
 	@JSONField(serialize = false)
+	private String pwd;
+	
+	@JSONField(serialize = false)
 	private String stationname; // 16厂需要的字段, 岗位资质
 	@JSONField(serialize = false)
 	private Date stationdate; // 16厂需要的字段, 岗位资质有效期
@@ -319,6 +322,12 @@ public class SysUser extends BasicEntity implements IEntity, IEntityPropAnalysis
 	}
 	public void setStationdate(Date stationdate) {
 		this.stationdate = stationdate;
+	}
+	public String getPwd() {
+		return pwd;
+	}
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
 	}
 	public Integer getPwdExpired() {
 		return pwdExpired;

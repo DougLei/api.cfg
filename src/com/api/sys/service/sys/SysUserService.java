@@ -542,6 +542,7 @@ public class SysUserService extends AService{
 			account.setId(user.getId());
 			// ----
 			account.setLoginName(user.getWorkNo());
+			account.setLoginPwd(user.getPwd());
 			account.setTel(user.getTel());
 			account.setEmail(user.getEmail());
 			account.setWorkNo(user.getWorkNo());
