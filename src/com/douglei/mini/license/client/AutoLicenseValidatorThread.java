@@ -31,7 +31,8 @@ class AutoLicenseValidatorThread extends Thread{
 			}
 			
 			l = System.currentTimeMillis() - lastValidateTime - sleep;
-			if(l < -1000) {
+			if(l < -10000) {
+				logger.info("当前时间[{}], 减去最后一次验证时间[{}]和sleep时间[{}], 结果为: {}", System.currentTimeMillis(), lastValidateTime, sleep, l);
 				validator.updateResult(new ValidationResult() {
 					@Override
 					public String getMessage() {

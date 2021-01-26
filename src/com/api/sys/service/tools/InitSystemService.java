@@ -4,11 +4,16 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.api.annotation.Service;
 import com.api.cache.ProjectIdRefDatabaseIdMapping;
@@ -46,6 +51,7 @@ import com.api.util.hibernate.HibernateUtil;
 @SuppressWarnings("unchecked")
 @Service
 public class InitSystemService extends AService{
+	private static final Logger logger = LoggerFactory.getLogger(InitSystemService.class);
 
 	/**
 	 * 系统首次启动时，初始化系统的基础数据
@@ -283,11 +289,34 @@ public class InitSystemService extends AService{
 			
 			HibernateUtil.commitTransaction();
 		} catch (Exception e) {
+			logger.error(getExceptionDetailMessage(e));
 			HibernateUtil.rollbackTransaction();
 			Log4jUtil.error("系统初始化出现异常，异常信息为:{}", ExceptionUtil.getErrMsg(e));
 			System.exit(0);
 		} finally{
 			HibernateUtil.closeCurrentThreadSession();
+		}
+	}
+	
+	/**
+	 * 获取异常的详细信息
+	 * <p>错在哪个类，哪一行</p>
+	 * @param t
+	 * @return
+	 */
+	private String getExceptionDetailMessage(Throwable t){
+		PrintWriter pw = null;
+		try {
+			StringWriter sw = new StringWriter();
+			pw = new PrintWriter(sw);
+			t.printStackTrace(pw);
+			return sw.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			pw.close();
+			pw = null;
 		}
 	}
 	

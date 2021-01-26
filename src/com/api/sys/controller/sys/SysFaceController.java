@@ -39,6 +39,8 @@ public class SysFaceController extends AController{
 		CurrentThreadContext.getReqLogData().getReqLog().setType(SysReqLog.LOGIN);// 标识为登陆日志
 		
 		FaceFeature requestFaceFeature = getRequestFaceFeature(request);
+		if(requestFaceFeature == null)
+			return "没有识别到人脸信息";
 		String targetCode = FaceEngineContext.compare(requestFaceFeature);
 		if(targetCode == null)
 			return "您的面部与当前面部库中的数据不匹配";
@@ -62,9 +64,12 @@ public class SysFaceController extends AController{
 	private FaceFeature getRequestFaceFeature(HttpServletRequest request) {
 		try {
 			String imageString = HttpHelperUtil.analysisFormData(request).toString();
-			return FaceEngineContext.extractFaceFeature(new ByteArrayInputStream(Base64.decode(imageString.substring(imageString.indexOf(",")+1))));
+			logger.info("当前用户传入的面部照片字符串为: {}", imageString);
+			FaceFeature feature = FaceEngineContext.extractFaceFeature(new ByteArrayInputStream(Base64.decode(imageString.substring(imageString.indexOf(",")+1))));
+			logger.info("提取当前用户的面部特征为: {}", feature);
+			return feature;
 		} catch (Exception e) {
-			logger.error("获取请求的面部特性时出现异常: {}", e);
+			logger.error("获取当前用户的面部特性时出现异常: {}", e);
 			return null;
 		}
 	}

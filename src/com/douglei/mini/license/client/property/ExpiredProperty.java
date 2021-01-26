@@ -5,6 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.douglei.mini.license.client.ValidationResult;
 import com.douglei.tools.utils.serialize.JdkSerializeProcessor;
 
@@ -13,6 +16,7 @@ import com.douglei.tools.utils.serialize.JdkSerializeProcessor;
  * @author DougLei
  */
 public class ExpiredProperty extends Property {
+	private static final Logger logger = LoggerFactory.getLogger(ExpiredProperty.class);
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	private final String lastSystemTimeFilePath = System.getProperty("user.home") + File.separatorChar + ".lst" + File.separatorChar + "lst"; // 记录上一次系统时间的文件路径
 	private int leftDays; // 剩余天数
@@ -72,6 +76,7 @@ public class ExpiredProperty extends Property {
 		File lastSystemTimeFile = new File(lastSystemTimeFilePath);
 		if(lastSystemTimeFile.exists()) {
 			Date lastSystemTime = JdkSerializeProcessor.deserializeFromFile(Date.class, lastSystemTimeFile);
+			logger.info("当前时间: {}, 上一次验证时间: {}", current.getTime(), lastSystemTime.getTime());
 			if((current.getTime()-lastSystemTime.getTime()) <= 0) {
 				return new ValidationResult() {
 					

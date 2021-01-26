@@ -91,7 +91,7 @@ public class InitSysDataListener implements ServletContextListener {
 	 */
 	private void initFaceEngine() {
 		try {
-			logger.info("先从tomcat的目录上, 加载FaceEngine: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "dll" + File.separatorChar + "face");
+			logger.info("从tomcat的目录上, 加载FaceEngine: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "dll" + File.separatorChar + "face");
 			FaceEngineContext.setFaceEngine(new FaceEngine(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "dll" + File.separatorChar + "face"));
 		} catch (Throwable e) {
 			logger.info("从tomcat路径加载FaceEngine出现异常: {}", getExceptionDetailMessage(e));

@@ -2,6 +2,7 @@ package com.api.util.hibernate;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +132,7 @@ public class HibernateUtil {
 				if(StrUtils.isEmpty(hbmContent)){
 					break;
 				}
-				inputs.add(new ByteArrayInputStream(hbmContent.getBytes()));
+				inputs.add(new ByteArrayInputStream(hbmContent.getBytes(StandardCharsets.UTF_8)));
 			}
 			getSessionFactory().appendNewHbmConfig(inputs);
 		}

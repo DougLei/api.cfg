@@ -41,14 +41,12 @@ public class FaceEngineContext {
 	@SuppressWarnings("unchecked")
 	public static void setFaceEngine(FaceEngine faceEngine) {
 		logger.info("加载FaceEngine成功");
-		
 		FaceEngineContext.faceEngine = faceEngine;
 		
 //		int errorCode = FaceEngineContext.faceEngine.activeOnline(SysContext.getSystemConfig("face.app.id"), SysContext.getSystemConfig("face.sdk.key"));
 		int errorCode;
-		
 		try {
-			logger.info("先从tomcat的目录上, 加载FaceEngine授权文件: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "FaceEngine.dat");
+			logger.info("从tomcat的目录上, 加载FaceEngine授权文件: {}", SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "FaceEngine.dat");
 			errorCode = faceEngine.activeOffline(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + "WEB-INF" + File.separatorChar + "classes" + File.separatorChar + "FaceEngine.dat");
 		} catch (Throwable e) {
 			logger.info("从tomcat路径加载FaceEngine授权文件出现异常: {}", InitSysDataListener.getExceptionDetailMessage(e));
@@ -62,8 +60,7 @@ public class FaceEngineContext {
 		
         if(errorCode != ErrorInfo.MOK.getValue() && errorCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED.getValue())
         	throw new RuntimeException("刷脸登录用FaceEngine激活失败, 请联系开发人员, errorCode="+errorCode);
-        
-        logger.info("加载FaceEngine授权文件成功");
+        logger.info("加载FaceEngine授权文件成功, errorCode={}", errorCode);
         
         //引擎配置
         EngineConfiguration engineConfiguration = new EngineConfiguration();
@@ -86,19 +83,25 @@ public class FaceEngineContext {
         errorCode = FaceEngineContext.faceEngine.init(engineConfiguration);
         if (errorCode != ErrorInfo.MOK.getValue()) 
         	throw new RuntimeException("刷脸登录用FaceEngine初始化失败, 请联系开发人员, errorCode="+errorCode);
+        logger.info("初始化FaceEngine, errorCode={}", errorCode);
         
-        // 初始化已存在的面部特征集合
+        logger.info("初始化已存在的面部特征集合");
         HibernateUtil.openSessionToCurrentThread();
-        List<Object[]> faces = HibernateUtil.executeListQueryBySqlArr("select ref_data_id, path from SYS_FACE_IMAGE");
+        List<Object[]> faces = HibernateUtil.executeListQueryBySqlArr("select ref_data_id, path, LOGIN_NAME from SYS_FACE_IMAGE f left join sys_account a on (f.REF_DATA_ID = a.ID)");
         if(faces != null && !faces.isEmpty()){
         	File file;
         	List<FaceInfo> faceInfoList = new ArrayList<FaceInfo>(1);
         	ImageInfo imageInfo;
         	FaceFeature faceFeature;
         	for (Object[] objects : faces) {
+        		if(objects[0] == null || objects[1] == null){
+        			logger.info("ref_data_id=[{}], path=[{}]", objects[0], objects[1]);
+        			continue;
+        		}
+        			
         		file = new File(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + objects[1].toString());
-        		logger.info("加载file={} 的FaceImage", file);
         		if(file.exists()){
+        			logger.info("加载userId={}, loginName={}, file={} 的FaceImage", objects[0], objects[2], file);
         			imageInfo = getRGBData(new File(SysContext.WEB_SYSTEM_CONTEXT_REALPATH + objects[1].toString()));
             		faceEngine.detectFaces(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfoList);
             		
@@ -113,7 +116,7 @@ public class FaceEngineContext {
         }
        
     	FaceEngineContext.similarScore = Float.parseFloat(SysContext.getSystemConfig("face.similar.score"));
-        logger.info("成功加载FaceEngine, 设置的相似度阈值为: {}", FaceEngineContext.similarScore);
+        logger.info("成功完成FaceEngine的初始化, 系统设置的相似度阈值为: {}", FaceEngineContext.similarScore);
 	}
 	
 	/**
@@ -122,9 +125,12 @@ public class FaceEngineContext {
 	 * @return
 	 */
 	public static FaceFeature extractFaceFeature(InputStream input){
+		System.out.println("synchronized =========================================> synchronized");
 		ImageInfo imageInfo = getRGBData(input);
 		List<FaceInfo> faceInfoList = new ArrayList<FaceInfo>(1);
-		faceEngine.detectFaces(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfoList);
+		synchronized (faceEngine) {
+			faceEngine.detectFaces(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getImageFormat(), faceInfoList);
+		}
 		
 		if(faceInfoList.isEmpty())
 			return null;
@@ -144,6 +150,7 @@ public class FaceEngineContext {
 			FaceSimilar faceSimilar = new FaceSimilar();
 			for (Entry<String, FaceFeature> entity : faceFeatureMap.entrySet()) {
 				faceEngine.compareFaceFeature(entity.getValue(), requestFaceFeature, faceSimilar);
+				logger.info("使用用户id为[{}]的面部特征, 与当前用户的面部特征比较, 相似度值为:[{}]", entity.getKey(), faceSimilar.getScore());
 				if(faceSimilar.getScore() >= similarScore)
 					return entity.getKey();
 			}
